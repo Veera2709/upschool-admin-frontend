@@ -3,8 +3,8 @@ import { ListGroup, Dropdown, Media } from 'react-bootstrap';
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
 import { Link } from 'react-router-dom';
-import PerfectScrollbar from 'react-perfect-scrollbar';
-import jwt from 'jwt-decode';
+// import PerfectScrollbar from 'react-perfect-scrollbar';
+// import jwt from 'jwt-decode';
 
 import ChatList from './ChatList';
 import { ConfigContext } from '../../../../contexts/ConfigContext';
