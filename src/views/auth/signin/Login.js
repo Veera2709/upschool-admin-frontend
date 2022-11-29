@@ -320,7 +320,7 @@ const Login = ({ className, ...rest }) => {
 
                 const formData = { user_otp: values.user_otp.trim() };
 
-                setUserOTP(formData.user_otp);
+                setUserOTP(values.user_otp.trim());
               
                 axios
                   .post(
