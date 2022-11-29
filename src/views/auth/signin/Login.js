@@ -23,6 +23,7 @@ const Login = ({ className, ...rest }) => {
   const [loader, showLoader, hideLoader] = useFullPageLoader();
 
   const [userEmail, setUserEmail] = useState('');
+  const [userOTP, setUserOTP] = useState('');
 
   const handleLoginWithOTP = () => setToggle(!toggle);
 
@@ -188,6 +189,7 @@ const Login = ({ className, ...rest }) => {
                   showLoader();
 
                   const formData = { user_email: values.email.trim().toLowerCase() };
+                  
                   axios
                     .post(
                       dynamicUrl.loginWithOTP,
@@ -235,6 +237,7 @@ const Login = ({ className, ...rest }) => {
                         // Request made and server responded
                         console.log(error.response.data);
                         setStatus({ success: false });
+                        
                         setErrors({ submit: error.response.data });
                       } else if (error.request) {
                         // The request was made but no response was received
@@ -316,12 +319,15 @@ const Login = ({ className, ...rest }) => {
                 showLoader();
 
                 const formData = { user_otp: values.user_otp.trim() };
+
+                setUserOTP(formData.user_otp);
+              
                 axios
                   .post(
                     dynamicUrl.validateOTP,
                     {
                       data: {
-                        entered_otp: formData.user_otp,
+                        entered_otp: userOTP,
                         user_email: userEmail
                       }
                     },
@@ -349,6 +355,7 @@ const Login = ({ className, ...rest }) => {
                       // Request made and server responded
                       console.log(error.response.data);
                       setStatus({ success: false });
+                      setUserOTP('');
                       setErrors({ submit: error.response.data });
                       setOtpSent(true);
                     } else if (error.request) {
