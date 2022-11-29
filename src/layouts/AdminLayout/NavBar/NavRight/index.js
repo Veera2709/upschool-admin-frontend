@@ -1,14 +1,14 @@
 import React, { useContext, useState } from 'react';
-import { ListGroup, Dropdown, Media } from 'react-bootstrap';
+import { ListGroup, Dropdown } from 'react-bootstrap';
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
 import { Link } from 'react-router-dom';
-import PerfectScrollbar from 'react-perfect-scrollbar';
-import jwt from 'jwt-decode';
+// import PerfectScrollbar from 'react-perfect-scrollbar';
+// import jwt from 'jwt-decode';
 
 import ChatList from './ChatList';
 import { ConfigContext } from '../../../../contexts/ConfigContext';
-import useAuth from '../../../../hooks/useAuth';
+// import useAuth from '../../../../hooks/useAuth';
 
 import dynamicUrl from '../../../../helper/dynamicUrls';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
@@ -21,7 +21,7 @@ import user from '../../../../assets/images/user/gravatar.png';
 const NavRight = () => {
   let history = useHistory();
   const configContext = useContext(ConfigContext);
-  const { logout } = useAuth();
+  // const { logout } = useAuth();
   const { rtlLayout } = configContext.state;
 
   const [listOpen, setListOpen] = useState(false);

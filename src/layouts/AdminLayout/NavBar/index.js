@@ -5,7 +5,7 @@ import NavLeft from './NavLeft';
 import NavRight from './NavRight';
 
 import { ConfigContext } from '../../../contexts/ConfigContext';
-import logo from '../../../assets/images/logo.png';
+// import logo from '../../../assets/images/logo.png';
 import * as actionType from '../../../store/actions';
 
 const NavBar = () => {
