@@ -23,7 +23,6 @@ const Login = ({ className, ...rest }) => {
   const [loader, showLoader, hideLoader] = useFullPageLoader();
 
   const [userEmail, setUserEmail] = useState('');
-  const [userOTP, setUserOTP] = useState('');
 
   const handleLoginWithOTP = () => setToggle(!toggle);
 
@@ -319,15 +318,13 @@ const Login = ({ className, ...rest }) => {
                 showLoader();
 
                 const formData = { user_otp: values.user_otp.trim() };
-
-                setUserOTP(values.user_otp.trim());
               
                 axios
                   .post(
                     dynamicUrl.validateOTP,
                     {
                       data: {
-                        entered_otp: userOTP,
+                        entered_otp: formData.user_otp,
                         user_email: userEmail
                       }
                     },
@@ -355,7 +352,6 @@ const Login = ({ className, ...rest }) => {
                       // Request made and server responded
                       console.log(error.response.data);
                       setStatus({ success: false });
-                      setUserOTP('');
                       setErrors({ submit: error.response.data });
                       setOtpSent(true);
                     } else if (error.request) {
