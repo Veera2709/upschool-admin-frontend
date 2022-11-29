@@ -350,7 +350,7 @@ const Login = ({ className, ...rest }) => {
                       console.log(error.response.data);
                       setStatus({ success: false });
                       setErrors({ submit: error.response.data });
-                      setOtpSent(false);
+                      setOtpSent(true);
                     } else if (error.request) {
                       // The request was made but no response was received
                       console.log(error.request);
