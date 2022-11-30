@@ -49,6 +49,12 @@ const routes = [
   },
   {
     exact: true,
+    // guard: GuestGuard,
+    path: '/auth/loginWithOTP',
+    component: lazy(() => import('./views/auth/signin/LoginWithOTP'))
+  },
+  {
+    exact: true,
     path: '/404',
     component: lazy(() => import('./views/errors/NotFound404'))
   },
