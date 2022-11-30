@@ -17,7 +17,6 @@ const Signin1 = () => {
   const [toggle, setToggle] = useState(false);
 
   const handleLogin = () => {
-    alert(toggle)
     setToggle(!toggle)
   }
 
