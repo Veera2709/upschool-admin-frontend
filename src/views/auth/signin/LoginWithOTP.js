@@ -27,6 +27,10 @@ const LoginWithOTP = ({ className, handleLogin, ...rest }) => {
     const [userEmail, setUserEmail] = useState('');
 
     const handleSignIn = () => {
+
+        sessionStorage.clear();
+        localStorage.clear();
+
         history.push('/auth/signin-1');
         handleLogin();
     }
