@@ -78,6 +78,9 @@ const Login = ({ className, handleLogin, ...rest }) => {
 
                   } else {
 
+                    sessionStorage.clear();
+                    localStorage.clear();
+
                     history.push('/auth/signin-1');
                     window.location.reload();
 
