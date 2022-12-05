@@ -1,10 +1,10 @@
 const menuItems = {
   items: [
     {
-      id: 'navigation',
-      title: 'Navigation',
-      type: 'group',
-      icon: 'icon-navigation',
+      // id: 'navigation',
+      // title: 'Navigation',
+      // type: 'group',
+      // icon: 'icon-navigation',
       children: [
         {
           id: 'dashboard',
@@ -376,11 +376,17 @@ const menuItems = {
             type: 'badge-success'
           },
           children: [
+            // {
+            //   id: 'sch-dashboard',
+            //   title: 'Dashboard',
+            //   type: 'item',
+            //   url: '/school/sch-dashboard'
+            // },
             {
-              id: 'sch-dashboard',
-              title: 'Dashboard',
+              id: 'sch-addSchool',
+              title: 'Add School',
               type: 'item',
-              url: '/school/sch-dashboard'
+              url: '/school/sch-school'
             },
             {
               id: 'sch-student',
