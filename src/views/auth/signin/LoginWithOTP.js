@@ -207,7 +207,7 @@ const LoginWithOTP = ({ className, handleLogin, ...rest }) => {
                                                         {
                                                             data: {
                                                                 entered_otp: formData.user_otp,
-                                                                user_email: userEmail
+                                                                user_email: userEmail.toLowerCase()
                                                             }
                                                         },
                                                         {
