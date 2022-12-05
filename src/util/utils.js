@@ -2,7 +2,7 @@ import moment from 'moment';
 
 import jwt_decode from 'jwt-decode';
 
-import * as Constants from '../helper/constants';
+import * as Constants from '../config/constant';
 
 export const strToLowercase = (str) => str.toLowerCase();
 
