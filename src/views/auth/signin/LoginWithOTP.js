@@ -74,7 +74,7 @@ const LoginWithOTP = ({ className, handleLogin, ...rest }) => {
                                                             dynamicUrl.loginWithOTP,
                                                             {
                                                                 data: {
-                                                                    user_email: formData.user_email,
+                                                                    user_email: formData.user_email.toLowerCase(),
                                                                 }
                                                             },
                                                             {
