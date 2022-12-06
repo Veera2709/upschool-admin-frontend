@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios'
 import { Row, Col, Card, Pagination, Button, Modal } from 'react-bootstrap';
 import BTable from 'react-bootstrap/Table';
 
@@ -8,6 +9,7 @@ import { useTable, useSortBy, usePagination, useGlobalFilter } from 'react-table
 import makeData from '../../../data/schoolData';
 
 import AddSchoolForm from './AddSchoolForm'
+import dynamicUrl from '../../../helper/dynamicUrls';
 
 function Table({ columns, data, modalOpen }) {
     const {
@@ -149,7 +151,7 @@ const School = () => {
             },
             {
                 Header: ' School Name',
-                accessor: 'name'
+                accessor: 'school_name'
             },
             {
                 Header: 'Email',
@@ -161,19 +163,38 @@ const School = () => {
             },
             {
                 Header: 'Options',
-                accessor: 'action'
+                accessor: 'actions'
             }
         ],
         []
     );
 
-    const data = React.useMemo(() => makeData(80), []);
-
+    // const data = React.useMemo(() => makeData(80), []);
+    const [data, setData] = useState([]);
+    console.log('data: ', data)
     const [isOpen, setIsOpen] = useState(false);
 
     const openHandler = () => {
         setIsOpen(true);
     };
+
+    const fetchSchoolData = async () => {
+        axios.post(dynamicUrl.fetchAllSchool, {}, {
+            headers: { Authorization: sessionStorage.getItem('user_jwt') }
+        })
+            .then((response) => {
+                const resultData = response.data.Items;
+                setData(resultData);
+            })
+            .catch((err) => {
+                console.log(err)
+            })
+    }
+
+    useEffect(() => {
+        fetchSchoolData();
+        console.log('token: ', sessionStorage.getItem('user_jwt'))
+    }, [])
 
     return (
         <React.Fragment>
