@@ -147,7 +147,7 @@ const School = () => {
         () => [
             {
                 Header: '#',
-                accessor: 'avatar'
+                accessor: 'school_avatar'
             },
             {
                 Header: ' School Name',
@@ -178,13 +178,43 @@ const School = () => {
         setIsOpen(true);
     };
 
-    const fetchSchoolData = async () => {
+    const fetchSchoolData = () => {
         axios.post(dynamicUrl.fetchAllSchool, {}, {
             headers: { Authorization: sessionStorage.getItem('user_jwt') }
         })
             .then((response) => {
-                const resultData = response.data.Items;
-                setData(resultData);
+                let resultData = response.data.Items;
+                let finalDataArray = [];
+                for (let index = 0; index < resultData.length; index++) {
+                    resultData[index]['school_avatar'] = <img src={resultData[index].school_logoURL} />
+                    resultData[index]['actions'] = (
+                        <>
+                            <Button
+                                size="sm"
+                                className="btn btn-icon btn-rounded btn-primary"
+                            // onClick={(e) => history.push(`/admin-portal/admin-casedetails/${resultData[index].client_id}/all_cases`)}
+                            >
+                                <i className="feather icon-eye" /> &nbsp; View
+                            </Button>
+                            &nbsp;
+                            <Button
+                                size="sm"
+                                className="btn btn-icon btn-rounded btn-info"
+                            // onClick={(e) => saveClientId(e, resultData[index].client_id, 'Edit')}
+                            >
+                                <i className="feather icon-edit" /> &nbsp; Edit
+                            </Button>
+                            &nbsp;
+                            {/* <Button size='sm' className="btn btn-icon btn-rounded btn-danger" onClick={(e) => saveClientIdDelete(e, responseData[index].client_id)}>
+                            <i className="feather icon-delete" /> &nbsp; Delete
+                          </Button> */}
+                        </>
+                    );
+                    finalDataArray.push(resultData[index]);
+                    console.log('finalDataArray: ', finalDataArray)
+                }
+                setData(finalDataArray);
+                console.log('resultData: ', finalDataArray);
             })
             .catch((err) => {
                 console.log(err)
@@ -193,10 +223,9 @@ const School = () => {
 
     useEffect(() => {
         fetchSchoolData();
-        console.log('token: ', sessionStorage.getItem('user_jwt'))
     }, [])
 
-    return (
+    return data.length <= 0 ? null : (
         <React.Fragment>
             <Row>
                 <Col sm={12}>
