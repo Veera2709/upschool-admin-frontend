@@ -101,7 +101,7 @@ function Table({ columns, data, modalOpen }) {
                         return (
                             <tr {...row.getRowProps()}>
                                 {row.cells.map((cell) => {
-                                    return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>;
+                                    return <td  {...cell.getCellProps()}>{cell.render('Cell')}</td>;
                                 })}
                             </tr>
                         );
@@ -153,14 +153,14 @@ const School = () => {
                 Header: ' School Name',
                 accessor: 'school_name'
             },
-            {
-                Header: 'Email',
-                accessor: 'email'
-            },
-            {
-                Header: 'Primary Contact',
-                accessor: 'roll'
-            },
+            // {
+            //     Header: 'Email',
+            //     accessor: 'email'
+            // },
+            // {
+            //     Header: 'Primary Contact',
+            //     accessor: 'roll'
+            // },
             {
                 Header: 'Options',
                 accessor: 'actions'
@@ -186,17 +186,17 @@ const School = () => {
                 let resultData = response.data.Items;
                 let finalDataArray = [];
                 for (let index = 0; index < resultData.length; index++) {
-                    resultData[index]['school_avatar'] = <img src={resultData[index].school_logoURL} />
+                    resultData[index]['school_avatar'] = <img className='circle-image' src={resultData[index].school_logoURL} />
                     resultData[index]['actions'] = (
                         <>
-                            <Button
+                            {/* <Button
                                 size="sm"
                                 className="btn btn-icon btn-rounded btn-primary"
                             // onClick={(e) => history.push(`/admin-portal/admin-casedetails/${resultData[index].client_id}/all_cases`)}
                             >
                                 <i className="feather icon-eye" /> &nbsp; View
                             </Button>
-                            &nbsp;
+                            &nbsp; */}
                             <Button
                                 size="sm"
                                 className="btn btn-icon btn-rounded btn-info"
@@ -205,9 +205,11 @@ const School = () => {
                                 <i className="feather icon-edit" /> &nbsp; Edit
                             </Button>
                             &nbsp;
-                            {/* <Button size='sm' className="btn btn-icon btn-rounded btn-danger" onClick={(e) => saveClientIdDelete(e, responseData[index].client_id)}>
+                            <Button size='sm' className="btn btn-icon btn-rounded btn-danger" 
+                            // onClick={(e) => saveClientIdDelete(e, responseData[index].client_id)}
+                            >
                             <i className="feather icon-delete" /> &nbsp; Delete
-                          </Button> */}
+                          </Button>
                         </>
                     );
                     finalDataArray.push(resultData[index]);
