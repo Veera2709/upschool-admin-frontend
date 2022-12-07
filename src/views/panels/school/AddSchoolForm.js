@@ -119,7 +119,7 @@ function AddSchool(className, rest, newUpload) {
                     // console.log('formData: ', JSON.stringify(formData))
                     console.log('formData: ', JSON.stringify({ data: formData }))
 
-                    axios.post(dynamicUrl.fetchAllSchool, { data: formData }, {
+                    axios.post(dynamicUrl.insertSchool, { data: formData }, {
                         headers: { Authorization: sessionStorage.getItem('user_jwt') }
                     })
                         .then((response) => {
