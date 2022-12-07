@@ -367,46 +367,45 @@ const menuItems = {
           ]
         },
         {
-          id: 'school',
-          title: 'School',
-          type: 'collapse',
-          icon: 'feather icon-book',
-          badge: {
-            title: 'New',
-            type: 'badge-success'
-          },
-          children: [
+          // id: 'school',
+          // title: 'School',
+          // type: 'collapse',
+          // icon: 'feather icon-book',
+         
+          // children: [
             // {
             //   id: 'sch-dashboard',
             //   title: 'Dashboard',
             //   type: 'item',
             //   url: '/school/sch-dashboard'
             // },
-            {
+            // {
               id: 'sch-addSchool',
-              title: 'Add School',
+              // title: 'Add School',
+              title: 'School',
+              icon: 'feather icon-book',
               type: 'item',
               url: '/school/sch-school'
-            },
-            {
-              id: 'sch-student',
-              title: 'Student',
-              type: 'item',
-              url: '/school/sch-student'
-            },
-            {
-              id: 'sch-parents',
-              title: 'Parents',
-              type: 'item',
-              url: '/school/sch-parents'
-            },
-            {
-              id: 'sch-teacher',
-              title: 'Teacher',
-              type: 'item',
-              url: '/school/sch-teacher'
-            }
-          ]
+            // },
+            // {
+            //   id: 'sch-student',
+            //   title: 'Student',
+            //   type: 'item',
+              // url: '/school/sch-student'
+            // },
+            // {
+            //   id: 'sch-parents',
+            //   title: 'Parents',
+            //   type: 'item',
+            //   url: '/school/sch-parents'
+            // },
+            // {
+            //   id: 'sch-teacher',
+            //   title: 'Teacher',
+            //   type: 'item',
+            //   url: '/school/sch-teacher'
+            // }
+          // ]
         },
         {
           id: 'sis',
