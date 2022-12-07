@@ -371,42 +371,55 @@ const menuItems = {
           // title: 'School',
           // type: 'collapse',
           // icon: 'feather icon-book',
-         
+
           // children: [
-            // {
-            //   id: 'sch-dashboard',
-            //   title: 'Dashboard',
-            //   type: 'item',
-            //   url: '/school/sch-dashboard'
-            // },
-            // {
-              id: 'sch-addSchool',
-              // title: 'Add School',
-              title: 'School',
-              icon: 'feather icon-book',
-              type: 'item',
-              url: '/school/sch-school'
-            // },
-            // {
-            //   id: 'sch-student',
-            //   title: 'Student',
-            //   type: 'item',
-              // url: '/school/sch-student'
-            // },
-            // {
-            //   id: 'sch-parents',
-            //   title: 'Parents',
-            //   type: 'item',
-            //   url: '/school/sch-parents'
-            // },
-            // {
-            //   id: 'sch-teacher',
-            //   title: 'Teacher',
-            //   type: 'item',
-            //   url: '/school/sch-teacher'
-            // }
+          // {
+          //   id: 'sch-dashboard',
+          //   title: 'Dashboard',
+          //   type: 'item',
+          //   url: '/school/sch-dashboard'
+          // },
+          // {
+          id: 'sch-addSchool',
+          // title: 'Add School',
+          title: 'School',
+          icon: 'feather icon-book',
+          type: 'item',
+          url: '/school/sch-school'
+          // },
+          // {
+          //   id: 'sch-student',
+          //   title: 'Student',
+          //   type: 'item',
+          // url: '/school/sch-student'
+          // },
+          // {
+          //   id: 'sch-parents',
+          //   title: 'Parents',
+          //   type: 'item',
+          //   url: '/school/sch-parents'
+          // },
+          // {
+          //   id: 'sch-teacher',
+          //   title: 'Teacher',
+          //   type: 'item',
+          //   url: '/school/sch-teacher'
+          // }
           // ]
         },
+
+        // {
+        //   id: 'tpc-addTopic',
+        //   // title: 'Add School',
+        //   title: 'Topic',
+        //   icon: 'feather icon-book',
+        //   type: 'item',
+        //   url: '/topic/tpc-topic'
+
+
+
+
+        // },
         {
           id: 'sis',
           title: 'SIS',

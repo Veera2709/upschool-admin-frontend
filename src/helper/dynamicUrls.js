@@ -8,7 +8,10 @@ const dynamicUrl = {
     validateOTP: baseUrl + '/validateOTP',
     logout: baseUrl + '/logout',
     insertSchool: baseUrl + '/insertSchool',
-    fetchAllSchool: baseUrl + '/fetchAllSchool'
+    fetchAllSchool: baseUrl + '/fetchAllSchool',
+    updateSchool: baseUrl + '/updateSchool',
+    fetchIndividualSchool: baseUrl + '/fetchIndividualSchool',
+    deleteSchool: baseUrl + '/deleteSchool'
 }
 
 export default dynamicUrl;
