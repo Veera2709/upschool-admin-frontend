@@ -16,7 +16,7 @@ const EditSchoolForm = ({ className, rest, id }) => {
 
     let history = useHistory();
 
-    const [imgFile, setImgFile] = useState();
+    const [imgFile, setImgFile] = useState([]);
     let [data, setData] = useState([]);
     const [scbscription_active, setScbscription_active] = useState('');
     const [previousData, setPreviousData] = useState([]);
