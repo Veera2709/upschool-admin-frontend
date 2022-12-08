@@ -215,10 +215,14 @@ const School = () => {
                         if (result) {
                             console.log('inside res');
                             return MySwal.fire('', 'Poof! Your school has been deleted!', 'success');
+                            
+
                         } else {
                             console.log('else res');
                             // Request made and server responded
                             return MySwal.fire('', 'Failed to delete your School!', 'error');
+                            
+
                         }
                     })
                     .catch((error) => {
@@ -226,14 +230,17 @@ const School = () => {
                             // Request made and server responded
                             console.log(error.response.data);
                             return MySwal.fire('', 'Failed to delete your School!', 'error');
+                            
                         } else if (error.request) {
                             // The request was made but no response was received
                             console.log(error.request);
                             return MySwal.fire('', 'Failed to delete your School!', 'error');
+                            
                         } else {
                             // Something happened in setting up the request that triggered an Error
                             console.log('Error', error.message);
                             return MySwal.fire('', 'Failed to delete your School!', 'error');
+                            
                         }
                     });
             } else {
