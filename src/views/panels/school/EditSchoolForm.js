@@ -12,16 +12,19 @@ import dynamicUrl from "../../../helper/dynamicUrls";
 import { useHistory } from 'react-router-dom';
 
 
-const EditSchoolForm = ({ className, rest, id }) => {
+const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool }) => {
 
     let history = useHistory();
 
     const [imgFile, setImgFile] = useState([]);
     let [data, setData] = useState([]);
-    const [scbscription_active, setScbscription_active] = useState('');
+    const [subscription_active, setSubscription_active] = useState('');
     const [previousData, setPreviousData] = useState([]);
     const [copy, setCopy] = useState(false);
     const [loader, showLoader, hideLoader] = useFullPageLoader();
+    const [updatedImage, setUpdatedImage] = useState('');
+    const [fileValue, setFileValue] = useState('');
+    const [_radio, _setRadio] = useState(false);
 
     const contactNameRef = useRef('');
     const addressLine1Ref = useRef('');
@@ -41,8 +44,32 @@ const EditSchoolForm = ({ className, rest, id }) => {
         });
     };
 
+    // On file select (from the pop up)
+    // const onFileChange = event => {
+
+    //     console.log("File Changed!", event.target.files[0]);
+    //     // Update the state
+    //     this.setState({ selectedFile: event.target.files[0] });
+
+    // };
+
     const previewImage = (e) => {
+        console.log("File Updated!")
+        console.log(e.target.files[0]);
+        console.log(e.target.files[0].name);
+        setFileValue(e.target.files[0])
+        setUpdatedImage(e.target.files[0].name);
         setImgFile(URL.createObjectURL(e.target.files[0]));
+    }
+
+    const handleRadioChange = (e) => {
+
+        console.log("handleRadioChange", _radio);
+        // console.log("subscription_active", subscription_active);
+
+        _setRadio(!_radio);
+        _radio === true ? setSubscription_active('No') : setSubscription_active('Yes');
+        console.log(subscription_active);
     }
 
     const handlesetCopyInputs = () => {
@@ -93,15 +120,18 @@ const EditSchoolForm = ({ className, rest, id }) => {
 
                     console.log('inside res initial data');
 
-                    { console.log(response.data.Items[0].scbscription_active) }
+                    { console.log(response.data.Items[0].subscription_active) }
                     { console.log(response.data.Items[0].school_logoURL) }
 
                     let individual_client_data = response.data.Items[0];
 
-                    let previousSubscription = response.data.Items[0].scbscription_active;
+                    let previousSubscription = response.data.Items[0].subscription_active;
                     let previousImage = response.data.Items[0].school_logoURL;
 
-                    setScbscription_active(previousSubscription);
+                    setSubscription_active(previousSubscription);
+
+                    const radioValue = response.data.Items[0].subscription_active === 'Yes' ? true : false;
+                    _setRadio(radioValue);
                     setImgFile(previousImage);
                     setPreviousData(individual_client_data);
 
@@ -138,14 +168,14 @@ const EditSchoolForm = ({ className, rest, id }) => {
         <>
             {previousData.length === 0 || previousData.length === "0" ? <></> : (
                 <>
-                    {console.log(scbscription_active)}
+                    {console.log(subscription_active)}
                     {console.log(imgFile)}
 
                     < Formik
                         initialValues={{
                             schoolName: previousData === {} ? '' : previousData.school_name,
                             school_logo: "",
-                            subscription_active: scbscription_active,
+                            subscription_active: subscription_active,
                             contact_name: previousData === {} ? '' : previousData.school_contact_info.business_address.contact_name,
                             address_line1: previousData === {} ? '' : previousData.school_contact_info.business_address.address_line1,
                             address_line2: previousData === {} ? '' : previousData.school_contact_info.business_address.address_line2,
@@ -192,8 +222,8 @@ const EditSchoolForm = ({ className, rest, id }) => {
                                 data: {
                                     school_id: id,
                                     school_name: values.schoolName,
-                                    school_logo: 'testImage.png',
-                                    subscription_active: scbscription_active,
+                                    school_logo: updatedImage === "" ? previousData.school_logo : updatedImage,
+                                    subscription_active: subscription_active,
                                     school_contact_info: {
                                         business_address: {
                                             contact_name: values.contact_name,
@@ -213,13 +243,6 @@ const EditSchoolForm = ({ className, rest, id }) => {
                                             phone_no: copy === true ? values.phoneNumber : values.phoneNumber2,
                                             GST_no: values.gst_number
 
-                                            // contact_name: copy === true ? values.contact_name2 : values.contact_name,
-                                            // address_line1: copy === true ? values.address_line1_2 : values.address_line1,
-                                            // address_line2: copy === true ? values.address_line2_2 : values.address_line2,
-                                            // city: copy === true ? values.city2 : values.city,
-                                            // pincode: copy === true ? values.pincode2 : values.pincode,
-                                            // phone_no: copy === true ? values.phoneNumber2 : values.phoneNumber,
-                                            // GST_no: values.gst_number
                                         },
                                     }
                                 }
@@ -228,19 +251,16 @@ const EditSchoolForm = ({ className, rest, id }) => {
                             console.log('form Data: ', formData)
 
                             let allFilesData = [];
-                            const fileNameArray = ['school_logo'];
 
-                            fileNameArray.forEach((fileName) => {
-                                let selectedFile = document.getElementById(fileName).files[0];
-                                console.log('File!');
-                                console.log(selectedFile);
-                                if (selectedFile) {
-                                    console.log('File if!');
-                                    allFilesData.push(selectedFile);
-                                } else {
-                                    console.log('File else!');
-                                }
-                            });
+                            let selectedFile = document.getElementById("school_logo").files[0];
+                            console.log('File!');
+                            console.log(selectedFile);
+                            if (selectedFile) {
+                                console.log('File if!');
+                                allFilesData.push(selectedFile);
+                            } else {
+                                console.log('File else!');
+                            }
 
                             if (allFilesData.length === 0) {
                                 showLoader();
@@ -280,10 +300,46 @@ const EditSchoolForm = ({ className, rest, id }) => {
 
                                         // Upload Image to S3
 
-                                        console.log(response.data[0].file_upload_url);
+                                        let uploadParams = response.data;
+                                        // setDisableButton(false);
+                                        hideLoader();
+                                        console.log('Proceeding with file upload');
 
-                                        const MySwal = withReactContent(Swal);
-                                        MySwal.fire('', 'Your school has been updated!', 'success');
+                                        if (Array.isArray(uploadParams)) {
+
+                                            for (let index = 0; index < uploadParams.length; index++) {
+
+                                                let keyNameArr = Object.keys(uploadParams[index]);
+                                                let keyName = keyNameArr[0];
+                                                console.log('KeyName', keyName);
+
+                                                let blobField = fileValue;
+                                                console.log({
+                                                    blobField
+                                                });
+
+                                                let tempObj = uploadParams[index];
+
+                                                let result = fetch(tempObj[keyName], {
+                                                    method: 'PUT',
+                                                    body: blobField
+                                                });
+
+                                                console.log({
+                                                    result
+                                                });
+                                            }
+
+                                            setIsOpenEditSchool(false);
+                                            const MySwal = withReactContent(Swal);
+                                            MySwal.fire('', 'Your school has been updated!', 'success');
+                                            
+                                        } else {
+
+                                            console.log('No files uploaded');
+                                            
+
+                                        }
                                     } else {
 
                                         console.log('else res');
@@ -291,7 +347,8 @@ const EditSchoolForm = ({ className, rest, id }) => {
                                         hideLoader();
                                         // Request made and server responded
                                         setStatus({ success: false });
-                                        setErrors({ submit: 'Error in generating OTP' });
+                                        setErrors({ submit: 'Error in Editing School' });
+                                        
 
                                     }
                                 })
@@ -302,16 +359,17 @@ const EditSchoolForm = ({ className, rest, id }) => {
                                         console.log(error.response.data);
                                         setStatus({ success: false });
                                         setErrors({ submit: error.response.data });
-
+                                        
                                     } else if (error.request) {
                                         // The request was made but no response was received
                                         console.log(error.request);
                                         hideLoader();
-
+                                        
                                     } else {
                                         // Something happened in setting up the request that triggered an Error
                                         console.log('Error', error.message);
                                         hideLoader();
+                                        
                                     }
                                 })
 
@@ -342,12 +400,38 @@ const EditSchoolForm = ({ className, rest, id }) => {
                                     <div className="col-md-6">
 
                                         <div className="form-group fill">
-                                            <label className="floating-label" >
-                                                <small className="text-danger">
-                                                    * </small>
-                                                Scbscription Active
-                                            </label>
-                                            {Constants.AddressForm.YesNo.map((radio, idx) => (
+
+                                            <div className="row">
+                                                <div className="col">
+                                                    <label className="floating-label" >
+                                                        <small className="text-danger">
+                                                            * </small>
+                                                        Subscription Active
+                                                    </label>
+                                                </div>
+
+                                                <div className="col">
+                                                    <div className="row profile-view-radio-button-view">
+                                                        <Form.Check
+                                                            id={`radio-fresher`}
+                                                            label="Yes"
+                                                            error={touched.fresher && errors.fresher}
+                                                            type="switch"
+                                                            variant={'outline-primary'}
+                                                            name="radio-fresher"
+                                                            // value={subscription_active}
+                                                            checked={_radio}
+                                                            onChange={(e) => handleRadioChange(e)}
+                                                        // className='ml-3 col-md-6'
+                                                        />
+
+                                                        {/* <Form.Label className="profile-view-question" id={`radio-fresher`}>
+                                                            {subscription_active === true ? 'Yes' : 'No'}
+                                                        </Form.Label> */}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {/* {Constants.AddressForm.YesNo.map((radio, idx) => (
                                                 <div key={idx}>
                                                     < div className="col-md-3" >
                                                         <div className="row profile-view-radio-button-view">
@@ -359,8 +443,8 @@ const EditSchoolForm = ({ className, rest, id }) => {
                                                                 variant={'outline-primary'}
                                                                 name="radio-fresher"
                                                                 value={radio.value}
-                                                                checked={scbscription_active === radio.value}
-                                                                onChange={(e) => setScbscription_active(e.currentTarget.value)}
+                                                                checked={subscription_active === radio.value}
+                                                                onChange={(e) => setSubscription_active(e.currentTarget.value)}
                                                             // className='ml-3 col-md-6'
                                                             />
                                                             <Form.Label className="profile-view-question" id={`radio-fresher-${idx}`}>
@@ -370,7 +454,7 @@ const EditSchoolForm = ({ className, rest, id }) => {
                                                     </div>
                                                 </div>
                                             ))}
-                                            {touched.fresher && errors.fresher && <small className="text-danger form-text">{errors.fresher}</small>}
+                                            {touched.fresher && errors.fresher && <small className="text-danger form-text">{errors.fresher}</small>} */}
                                         </div>
                                     </div>
                                 </div>
@@ -391,6 +475,7 @@ const EditSchoolForm = ({ className, rest, id }) => {
                                                 id="school_logo"
                                                 type="file"
                                                 onChange={previewImage}
+
                                                 value={values.school_logo}
                                             />
                                             {touched.school_logo && errors.school_logo && (
@@ -528,7 +613,7 @@ const EditSchoolForm = ({ className, rest, id }) => {
                                                 )}
                                             </div>
 
-                                            <Form.Check type='checkbox' id={`default-checkbox`} label={`Same as Primary Address`} checked={copy} onChange={handlesetCopyInputs} />
+                                            <Form.Check type='checkbox' id={`default-checkbox`} label={`Same as Business Address`} checked={copy} onChange={handlesetCopyInputs} />
 
 
 
@@ -680,25 +765,26 @@ const EditSchoolForm = ({ className, rest, id }) => {
                                             </div>
 
                                         </div>
-                                    </div>
-                                </div>
 
-                                {errors.submit && (
-                                    <Col sm={12}>
-                                        <Alert variant="danger">{errors.submit}</Alert>
-                                    </Col>
-                                )}
+                                        {errors.submit && (
+                                            <Col sm={12}>
+                                                <Alert variant="danger">{errors.submit}</Alert>
+                                            </Col>
+                                        )}
 
-                                {loader}
+                                        {loader}
 
-
-                                <div className="row">
-                                    <div className="form-group fill">
-                                        <div className="center col-sm-12">
-                                            <button color="success" disabled={isSubmitting} type="submit" className="btn-block btn btn-success btn-large">Save</button>
+                                        <div className="row">
+                                            <div className="col-md-8"></div>
+                                            <div className="col-md-4">
+                                                <button color="success" disabled={isSubmitting} type="submit" className="btn-block btn btn-success btn-large">Save</button>
+                                            </div>
                                         </div>
+
                                     </div>
                                 </div>
+
+
 
                             </form>
                         )
