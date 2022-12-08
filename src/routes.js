@@ -422,16 +422,16 @@ const routes = [
         path: '/school/sch-school',
         component: lazy(() => import('./views/panels/school/School'))
       },
-      {
-        exact: true,
-        path: '/school/sch-parents',
-        component: lazy(() => import('./views/panels/school/Parents'))
-      },
-      {
-        exact: true,
-        path: '/school/sch-teacher',
-        component: lazy(() => import('./views/panels/school/Teacher'))
-      },
+      // {
+      //   exact: true,
+      //   path: '/school/sch-parents',
+      //   component: lazy(() => import('./views/panels/school/Parents'))
+      // },
+      // {
+      //   exact: true,
+      //   path: '/school/sch-teacher',
+      //   component: lazy(() => import('./views/panels/school/Teacher'))
+      // },
       {
         exact: true,
         path: '/sis/sis-dashboard',
