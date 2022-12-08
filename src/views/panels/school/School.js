@@ -156,14 +156,18 @@ const School = () => {
                 Header: ' School Name',
                 accessor: 'school_name'
             },
-            // {
-            //     Header: 'Email',
-            //     accessor: 'email'
-            // },
-            // {
-            //     Header: 'Primary Contact',
-            //     accessor: 'roll'
-            // },
+            {
+                Header: 'Phone Number',
+                accessor: 'phone_number'
+            },
+            {
+                Header: 'city',
+                accessor: 'city'
+            },
+            {
+                Header: 'Subscription Active',
+                accessor: 'subscription_active'
+            },
             {
                 Header: 'Options',
                 accessor: 'actions'
@@ -179,6 +183,7 @@ const School = () => {
 
     const [isOpenEditSchool, setIsOpenEditSchool] = useState(false);
     const [editID, setEditID] = useState('');
+    const [toggle, setToggle]   = useState(true);
 
     const handleDeleteSchool = (school_id) => {
         const MySwal = withReactContent(Swal);
@@ -270,6 +275,10 @@ const School = () => {
                 let finalDataArray = [];
                 for (let index = 0; index < resultData.length; index++) {
                     resultData[index]['school_avatar'] = <img className='circle-image' src={resultData[index].school_logoURL} />
+                    resultData[index]['school_name'] = <p>{resultData[index].school_name}</p>
+                    resultData[index]['phone_number'] = <p>{resultData[index].school_contact_info.business_address.phone_no}</p>
+                    resultData[index]['city'] = <p>{resultData[index].school_contact_info.business_address.city}</p>
+                    resultData[index]['subscription_active'] = <p>{resultData[index].subscription_active}</p>
                     resultData[index]['actions'] = (
                         <>
                             {/* <Button
@@ -316,6 +325,14 @@ const School = () => {
     useEffect(() => {
         fetchSchoolData();
     }, [])
+
+    // useEffect(()=>{
+    //     console.log('inSchool', sessionStorage.getItem('flag'))
+    //     if(sessionStorage.getItem('flag') === false ){
+    //         setIsOpen(false);
+    //         fetchSchoolData();
+    //     }
+    // }, [] )
 
     return data.length <= 0 ? null : (
         <React.Fragment>
