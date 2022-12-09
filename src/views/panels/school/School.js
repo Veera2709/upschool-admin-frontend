@@ -1,13 +1,17 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios'
 import { Row, Col, Card, Pagination, Button, Modal } from 'react-bootstrap';
 import BTable from 'react-bootstrap/Table';
-
+import withReactContent from 'sweetalert2-react-content';
+import Swal from 'sweetalert2';
 import { GlobalFilter } from './GlobalFilter';
 
 import { useTable, useSortBy, usePagination, useGlobalFilter } from 'react-table';
-import makeData from '../../../data/schoolData';
+// import makeData from '../../../data/schoolData';
 
-import AddSchoolForm from './AddSchoolForm'
+import AddSchoolForm from './AddSchoolForm';
+import dynamicUrl from '../../../helper/dynamicUrls';
+import EditSchoolForm from './EditSchoolForm';
 
 function Table({ columns, data, modalOpen }) {
     const {
@@ -99,7 +103,7 @@ function Table({ columns, data, modalOpen }) {
                         return (
                             <tr {...row.getRowProps()}>
                                 {row.cells.map((cell) => {
-                                    return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>;
+                                    return <td  {...cell.getCellProps()}>{cell.render('Cell')}</td>;
                                 })}
                             </tr>
                         );
@@ -136,6 +140,7 @@ function Table({ columns, data, modalOpen }) {
                     </Pagination>
                 </Col>
             </Row>
+
         </>
     );
 }
@@ -145,37 +150,191 @@ const School = () => {
         () => [
             {
                 Header: '#',
-                accessor: 'avatar'
+                accessor: 'school_avatar'
             },
             {
                 Header: ' School Name',
-                accessor: 'name'
+                accessor: 'school_name'
             },
             {
-                Header: 'Email',
-                accessor: 'email'
+                Header: 'Phone Number',
+                accessor: 'phone_number'
             },
             {
-                Header: 'Primary Contact',
-                accessor: 'roll'
+                Header: 'city',
+                accessor: 'city'
+            },
+            {
+                Header: 'Subscription Active',
+                accessor: 'subscription_active'
             },
             {
                 Header: 'Options',
-                accessor: 'action'
+                accessor: 'actions'
             }
         ],
         []
     );
 
-    const data = React.useMemo(() => makeData(80), []);
-
+    // const data = React.useMemo(() => makeData(80), []);
+    const [data, setData] = useState([]);
+    console.log('data: ', data)
     const [isOpen, setIsOpen] = useState(false);
+
+    const [isOpenEditSchool, setIsOpenEditSchool] = useState(false);
+    const [editID, setEditID] = useState('');
+    const [toggle, setToggle]   = useState(true);
+
+    const handleDeleteSchool = (school_id) => {
+        const MySwal = withReactContent(Swal);
+        MySwal.fire({
+            title: 'Are you sure?',
+            text: 'Once deleted, you will not be able to recover!',
+            type: 'warning',
+            showCloseButton: true,
+            showCancelButton: true
+        }).then((willDelete) => {
+            if (willDelete.value) {
+                axios
+                    .post(
+                        dynamicUrl.deleteSchool,
+                        {
+                            data: {
+                                school_id: school_id,
+                            }
+                        },
+                        {
+                            headers: { Authorization: sessionStorage.getItem('user_jwt') }
+                        }
+                    )
+                    .then((response) => {
+                        console.log({ response });
+                        console.log(response.status);
+                        console.log(response.status === 200);
+                        let result = response.status === 200;
+                        if (result) {
+                            console.log('inside res');
+                            return MySwal.fire('', 'Poof! Your school has been deleted!', 'success');
+                            
+
+                        } else {
+                            console.log('else res');
+                            // Request made and server responded
+                            return MySwal.fire('', 'Failed to delete your School!', 'error');
+                            
+
+                        }
+                    })
+                    .catch((error) => {
+                        if (error.response) {
+                            // Request made and server responded
+                            console.log(error.response.data);
+                            return MySwal.fire('', 'Failed to delete your School!', 'error');
+                            
+                        } else if (error.request) {
+                            // The request was made but no response was received
+                            console.log(error.request);
+                            return MySwal.fire('', 'Failed to delete your School!', 'error');
+                            
+                        } else {
+                            // Something happened in setting up the request that triggered an Error
+                            console.log('Error', error.message);
+                            return MySwal.fire('', 'Failed to delete your School!', 'error');
+                            
+                        }
+                    });
+            } else {
+                return MySwal.fire('', 'Your School is safe!', 'error');
+            }
+        });
+    };
+
+    const handleEditSchool = (e, school_id) => {
+
+        e.preventDefault();
+        setEditID(school_id);
+        setIsOpenEditSchool(true);
+
+        console.log('edit school');
+        console.log(school_id);
+        console.log(isOpenEditSchool);
+
+        // showEditSchoolModal(school_id);
+    }
 
     const openHandler = () => {
         setIsOpen(true);
     };
 
-    return (
+    const fetchSchoolData = () => {
+        axios.post(dynamicUrl.fetchAllSchool, {}, {
+            headers: { Authorization: sessionStorage.getItem('user_jwt') }
+        })
+            .then((response) => {
+                let resultData = response.data.Items;
+                let finalDataArray = [];
+                for (let index = 0; index < resultData.length; index++) {
+                    resultData[index]['school_avatar'] = <img className='img-fluid img-radius wid-40' src={resultData[index].school_logoURL} />
+                    resultData[index]['school_name'] = <p>{resultData[index].school_name}</p>
+                    resultData[index]['phone_number'] = <p>{resultData[index].school_contact_info.business_address.phone_no}</p>
+                    resultData[index]['city'] = <p>{resultData[index].school_contact_info.business_address.city}</p>
+                    resultData[index]['subscription_active'] = <p>{resultData[index].subscription_active}</p>
+                    resultData[index]['actions'] = (
+                        <>
+                            {/* <Button
+                                size="sm"
+                                className="btn btn-icon btn-rounded btn-primary"
+                            // onClick={(e) => history.push(`/admin-portal/admin-casedetails/${resultData[index].client_id}/all_cases`)}
+                            >
+                                <i className="feather icon-eye" /> &nbsp; View
+                            </Button>
+                            &nbsp; */}
+
+
+                            <Button onClick={(e) => {
+                                handleEditSchool(e, resultData[index].school_id);
+                            }}
+                                size="sm"
+                                className="btn btn-icon btn-rounded btn-info"
+                            >
+                                <i className="feather icon-edit" /> &nbsp; Edit
+                            </Button>
+                            &nbsp;
+                            <Button onClick={() => {
+                                handleDeleteSchool(resultData[index].school_id)
+
+                            }}
+                                size='sm' className="btn btn-icon btn-rounded btn-danger"
+                            // onClick={(e) => saveClientIdDelete(e, responseData[index].client_id)}
+                            >
+                                <i className="feather icon-delete" /> &nbsp; Delete
+                            </Button>
+                        </>
+                    );
+                    finalDataArray.push(resultData[index]);
+                    console.log('finalDataArray: ', finalDataArray)
+                }
+                setData(finalDataArray);
+                console.log('resultData: ', finalDataArray);
+            })
+            .catch((err) => {
+                console.log(err)
+            })
+    }
+
+    useEffect(() => {
+        fetchSchoolData();
+    }, [])
+
+    // useEffect(()=>{
+    //     console.log('inSchool', sessionStorage.getItem('flag'))
+    //     if(sessionStorage.getItem('flag') === false ){
+    //         setIsOpen(false);
+    //         fetchSchoolData();
+    //     }
+    // }, [] )
+
+    return data.length <= 0 ? null : (
         <React.Fragment>
             <Row>
                 <Col sm={12}>
@@ -203,7 +362,23 @@ const School = () => {
                     </Modal>
                 </Col>
             </Row>
-        </React.Fragment >
+
+            <Modal dialogClassName="my-modal" show={isOpenEditSchool} onHide={() => setIsOpenEditSchool(false)}>
+
+                <Modal.Header closeButton>
+
+                    <Modal.Title as="h5">Edit School</Modal.Title>
+
+                </Modal.Header>
+
+                <Modal.Body>
+
+                    <EditSchoolForm id={editID} setIsOpenEditSchool={setIsOpenEditSchool} />
+
+                </Modal.Body>
+
+            </Modal>
+        </React.Fragment>
     );
 };
 export default School;

@@ -226,10 +226,10 @@ const EditDigiCard = (
                                 .max(50, Constants.AddDigiCard.DigiCardtitleTooLong)
                                 .matches(Constants.AddDigiCard.DigiCardtitleRegex, Constants.AddDigiCard.DigiCardtitleValidation)
                                 .required(Constants.AddDigiCard.DigiCardtitleRequired),
-                            digicard_image: Yup.string()
-                                .trim()
-                                .nullable(true, Constants.AddDigiCard.DigiCardFileNotNull)
-                                .required(Constants.AddDigiCard.DigiCardfileRequired),
+                            // digicard_image: Yup.string()
+                            //     .trim()
+                            //     .nullable(true, Constants.AddDigiCard.DigiCardFileNotNull)
+                            //     .required(Constants.AddDigiCard.DigiCardfileRequired),
                             // digicardcontent: Yup.string()
 
                             // .required(Constants.AddDigiCard.DigiCardRequired),
@@ -241,7 +241,9 @@ const EditDigiCard = (
                             var formData;
 
                             if (values.digicard_image === '') {
+                                console.log("if condition");
                                 formData = {
+                                    digi_card_id:individualDigiCardData.digi_card_id,
                                     digi_card_name: values.digicardname,
                                     digi_card_title: values.digicardtitle,
                                     digi_card_files: [values.digicard_image],
@@ -250,7 +252,9 @@ const EditDigiCard = (
                                     digi_card_keywords: tags
                                 };
                             } else {
+                                console.log("else condition");
                                 formData = {
+                                    digi_card_id:individualDigiCardData.digi_card_id,
                                     digi_card_name: values.digicardname,
                                     digi_card_title: values.digicardtitle,
                                     digi_card_files: [values.digicard_image],
@@ -279,9 +283,6 @@ const EditDigiCard = (
                                                 let keyNameArr = Object.keys(uploadParams[index]);
                                                 let keyName = keyNameArr[0];
                                                 console.log('KeyName', keyName);
-                                                console.log(document.getElementById(keyName));
-                                                console.log(document.getElementById(keyName).files);
-                                                console.log(document.getElementById(keyName).files[0]);
 
                                                 let blobField = document.getElementById('digicard_image').files[0];
                                                 console.log({
