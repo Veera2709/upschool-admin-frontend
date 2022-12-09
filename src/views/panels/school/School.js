@@ -258,8 +258,6 @@ const School = () => {
         console.log('edit school');
         console.log(school_id);
         console.log(isOpenEditSchool);
-
-        // showEditSchoolModal(school_id);
     }
 
     const openHandler = () => {
@@ -274,7 +272,7 @@ const School = () => {
                 let resultData = response.data.Items;
                 let finalDataArray = [];
                 for (let index = 0; index < resultData.length; index++) {
-                    resultData[index]['school_avatar'] = <img className='circle-image' src={resultData[index].school_logoURL} />
+                    resultData[index]['school_avatar'] = <img className='img-fluid img-radius wid-40' src={resultData[index].school_logoURL} />
                     resultData[index]['school_name'] = <p>{resultData[index].school_name}</p>
                     resultData[index]['phone_number'] = <p>{resultData[index].school_contact_info.business_address.phone_no}</p>
                     resultData[index]['city'] = <p>{resultData[index].school_contact_info.business_address.city}</p>
