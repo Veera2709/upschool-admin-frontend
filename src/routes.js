@@ -122,6 +122,26 @@ const routes = [
         path: '/admin-portal/admin-dashboard',
         component: lazy(() => import('./views/panels/admin-portal/Dashboard'))
       },
+
+      //digi card
+      {
+        exact: true,
+        path: '/auth/digicard',
+        component: lazy(() => import('./views/auth/digicard/DigiCard'))
+      },
+      //add didgicard
+      {
+        exact: true,
+        path: '/auth/add-digicard',
+        component: lazy(() => import('./views/auth/digicard/AddDigiCard'))
+      },
+      
+      //add didgicard
+      {
+        exact: true,
+        path: '/auth/editDigiCard/:digi_card_id',
+        component: lazy(() => import('./views/auth/digicard/EditDigiCard'))
+      },
       {
         exact: true,
         path: '/app/dashboard/analytics',
