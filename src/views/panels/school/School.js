@@ -258,8 +258,6 @@ const School = () => {
         console.log('edit school');
         console.log(school_id);
         console.log(isOpenEditSchool);
-
-        // showEditSchoolModal(school_id);
     }
 
     const openHandler = () => {
