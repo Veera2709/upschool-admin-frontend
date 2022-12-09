@@ -17,7 +17,6 @@ const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool }) => {
     let history = useHistory();
 
     const [imgFile, setImgFile] = useState([]);
-    let [data, setData] = useState([]);
     const [subscription_active, setSubscription_active] = useState('');
     const [previousData, setPreviousData] = useState([]);
     const [copy, setCopy] = useState(false);
@@ -44,15 +43,6 @@ const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool }) => {
         });
     };
 
-    // On file select (from the pop up)
-    // const onFileChange = event => {
-
-    //     console.log("File Changed!", event.target.files[0]);
-    //     // Update the state
-    //     this.setState({ selectedFile: event.target.files[0] });
-
-    // };
-
     const previewImage = (e) => {
         console.log("File Updated!")
         console.log(e.target.files[0]);
@@ -62,38 +52,14 @@ const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool }) => {
         setImgFile(URL.createObjectURL(e.target.files[0]));
     }
 
-    const handleRadioChange = (e) => {
+    const handleCopyAddress = () => {
+        setCopy(!copy);
+    }
 
-        console.log("handleRadioChange", _radio);
-        // console.log("subscription_active", subscription_active);
+    const handleRadioChange = (e) => {
 
         _setRadio(!_radio);
         _radio === true ? setSubscription_active('No') : setSubscription_active('Yes');
-        console.log(subscription_active);
-    }
-
-    const handlesetCopyInputs = () => {
-
-        console.log('copy');
-        setCopy(!copy);
-
-        console.log(data);
-        console.log(copy);
-        setData({
-            contact_name: contactNameRef.current.value,
-            address_line1: addressLine1Ref.current.value,
-            address_line2: addressLine2Ref.current.value,
-            city: cityRef.current.value,
-            pincode: pincodeRef.current.value,
-            phoneNumber: phoneNumberRef.current.value,
-
-            contact_name2: data === {} ? '' : contactNameRef.current.value,
-            address_line1_2: data === {} ? '' : addressLine1Ref.current.value,
-            address_line2_2: data === {} ? '' : addressLine2Ref.current.value,
-            city2: data === {} ? '' : cityRef.current.value,
-            pincode2: data === {} ? '' : pincodeRef.current.value,
-            phoneNumber2: data === {} ? '' : phoneNumberRef.current.value,
-        })
     }
 
     useEffect(() => {
@@ -134,7 +100,6 @@ const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool }) => {
                     _setRadio(radioValue);
                     setImgFile(previousImage);
                     setPreviousData(individual_client_data);
-
                 } else {
                     console.log('else res');
                     hideLoader();
@@ -172,25 +137,30 @@ const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool }) => {
                     {console.log(imgFile)}
 
                     < Formik
-                        initialValues={{
-                            schoolName: previousData === {} ? '' : previousData.school_name,
-                            school_logo: "",
-                            subscription_active: subscription_active,
-                            contact_name: previousData === {} ? '' : previousData.school_contact_info.business_address.contact_name,
-                            address_line1: previousData === {} ? '' : previousData.school_contact_info.business_address.address_line1,
-                            address_line2: previousData === {} ? '' : previousData.school_contact_info.business_address.address_line2,
-                            city: previousData === {} ? '' : previousData.school_contact_info.business_address.city,
-                            pincode: previousData === {} ? '' : previousData.school_contact_info.business_address.pincode,
-                            phoneNumber: previousData === {} ? '' : previousData.school_contact_info.business_address.phone_no,
-                            contact_name2: previousData === {} ? '' : previousData.school_contact_info.billing_address.contact_name,
-                            address_line1_2: previousData === {} ? '' : previousData.school_contact_info.billing_address.address_line1,
-                            address_line2_2: previousData === {} ? '' : previousData.school_contact_info.billing_address.address_line2,
-                            city2: previousData === {} ? '' : previousData.school_contact_info.billing_address.city,
-                            pincode2: previousData === {} ? '' : previousData.school_contact_info.billing_address.pincode,
-                            phoneNumber2: previousData === {} ? '' : previousData.school_contact_info.billing_address.phone_no,
-                            gst_number: previousData === {} ? '' : previousData.school_contact_info.billing_address.GST_no,
-                            // submit: null
-                        }}
+
+                        initialValues={
+                            {
+                                schoolName: previousData === {} ? '' : previousData.school_name,
+                                school_logo: "",
+                                subscription_active: subscription_active,
+                                contact_name: previousData === {} ? '' : previousData.school_contact_info.business_address.contact_name,
+                                address_line1: previousData === {} ? '' : previousData.school_contact_info.business_address.address_line1,
+                                address_line2: previousData === {} ? '' : previousData.school_contact_info.business_address.address_line2,
+                                city: previousData === {} ? '' : previousData.school_contact_info.business_address.city,
+                                pincode: previousData === {} ? '' : previousData.school_contact_info.business_address.pincode,
+                                phoneNumber: previousData === {} ? '' : previousData.school_contact_info.business_address.phone_no,
+
+
+                                contact_name2: previousData === {} ? '' : previousData.school_contact_info.billing_address.contact_name,
+                                address_line1_2: previousData === {} ? '' : previousData.school_contact_info.billing_address.address_line1,
+                                address_line2_2: previousData === {} ? '' : previousData.school_contact_info.billing_address.address_line2,
+                                city2: previousData === {} ? '' : previousData.school_contact_info.billing_address.city,
+                                pincode2: previousData === {} ? '' : previousData.school_contact_info.billing_address.pincode,
+                                phoneNumber2: previousData === {} ? '' : previousData.school_contact_info.billing_address.phone_no,
+                                gst_number: previousData === {} ? '' : previousData.school_contact_info.billing_address.GST_no,
+                                // submit: null
+                            }
+                        }
                         validationSchema={
                             Yup.object().shape({
                                 schoolName: Yup.string().max(255).required('School Name is required'),
@@ -333,11 +303,11 @@ const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool }) => {
                                             setIsOpenEditSchool(false);
                                             const MySwal = withReactContent(Swal);
                                             MySwal.fire('', 'Your school has been updated!', 'success');
-                                            
+
                                         } else {
 
                                             console.log('No files uploaded');
-                                            
+
 
                                         }
                                     } else {
@@ -348,7 +318,7 @@ const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool }) => {
                                         // Request made and server responded
                                         setStatus({ success: false });
                                         setErrors({ submit: 'Error in Editing School' });
-                                        
+
 
                                     }
                                 })
@@ -359,23 +329,23 @@ const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool }) => {
                                         console.log(error.response.data);
                                         setStatus({ success: false });
                                         setErrors({ submit: error.response.data });
-                                        
+
                                     } else if (error.request) {
                                         // The request was made but no response was received
                                         console.log(error.request);
                                         hideLoader();
-                                        
+
                                     } else {
                                         // Something happened in setting up the request that triggered an Error
                                         console.log('Error', error.message);
                                         hideLoader();
-                                        
+
                                     }
                                 })
 
                         }}
                     >
-                        {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
+                        {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, setFieldValue }) => (
                             <form noValidate onSubmit={handleSubmit} className={className} {...rest}>
 
                                 <div className="row">
@@ -431,30 +401,7 @@ const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool }) => {
                                                     </div>
                                                 </div>
                                             </div>
-                                            {/* {Constants.AddressForm.YesNo.map((radio, idx) => (
-                                                <div key={idx}>
-                                                    < div className="col-md-3" >
-                                                        <div className="row profile-view-radio-button-view">
-                                                            <Form.Check
-                                                                key={idx}
-                                                                id={`radio-fresher-${idx}`}
-                                                                error={touched.fresher && errors.fresher}
-                                                                type="radio"
-                                                                variant={'outline-primary'}
-                                                                name="radio-fresher"
-                                                                value={radio.value}
-                                                                checked={subscription_active === radio.value}
-                                                                onChange={(e) => setSubscription_active(e.currentTarget.value)}
-                                                            // className='ml-3 col-md-6'
-                                                            />
-                                                            <Form.Label className="profile-view-question" id={`radio-fresher-${idx}`}>
-                                                                {radio.label}
-                                                            </Form.Label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            ))}
-                                            {touched.fresher && errors.fresher && <small className="text-danger form-text">{errors.fresher}</small>} */}
+
                                         </div>
                                     </div>
                                 </div>
@@ -613,10 +560,27 @@ const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool }) => {
                                                 )}
                                             </div>
 
-                                            <Form.Check type='checkbox' id={`default-checkbox`} label={`Same as Business Address`} checked={copy} onChange={handlesetCopyInputs} />
+                                            <Form.Check
+                                                type='checkbox'
+                                                id={`default-checkbox`}
+                                                label={`Same as Business Address`}
+                                                checked={copy}
+                                                onClick={() => {
+                                                    console.log("copy", copy);
 
+                                                    copy === false ? setFieldValue('contact_name2', contactNameRef.current.value) : setFieldValue('contact_name2', '')
 
+                                                    copy === false ? setFieldValue('address_line1_2', addressLine1Ref.current.value) : setFieldValue('address_line1_2', '')
 
+                                                    copy === false ? setFieldValue('address_line2_2', addressLine2Ref.current.value) : setFieldValue('address_line2_2', '')
+
+                                                    copy === false ? setFieldValue('city2', cityRef.current.value) : setFieldValue('city2', '')
+
+                                                    copy === false ? setFieldValue('pincode2', pincodeRef.current.value) : setFieldValue('pincode2', '')
+
+                                                    copy === false ? setFieldValue('phoneNumber2', phoneNumberRef.current.value) : setFieldValue('phoneNumber2', '')
+
+                                                }} onChange={handleCopyAddress} />
                                         </div>
                                     </div>
                                     <div className="col-md-6">
