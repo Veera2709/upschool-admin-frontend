@@ -85,6 +85,7 @@ const AddDigiCard = (
 
   const [tags, setTags] = useState([]);
   const [imgFile, setImgFile] = useState([]);
+  
 
 
   const handleDelete = (i, states) => {
@@ -106,6 +107,10 @@ const AddDigiCard = (
       icon: alert.type
     });
   };
+
+  const previewImage = (e) => {
+    setImgFile(URL.createObjectURL(e.target.files[0]));
+}
 
   // const html = `
   //           <h2 style="text-align:center;">The Flavorful Tuscany Meetup</h2>
@@ -333,23 +338,26 @@ const AddDigiCard = (
                       {/* {isClientExists && <small className="text-danger form-text">{MESSAGES.ERROR.ClientNameExists}</small>} */}
                     </div>
                     <div className="form-group fill">
-                      <label className="floating-label" htmlFor="digicard_image">
-                        <small className="text-danger">* </small>Choose File
-                      </label>
-                      <input
-                        className="form-control"
-                        error={touched.entityName && errors.entityName}
-                        name="digicard_image"
-                        id="digicard_image"
-                        onBlur={handleBlur}
-                        onChange={handleChange}
-                        type="file"
-                        value={values.digicard_image}
-                      />
-                      {touched.digicard_image && errors.digicard_image && (
-                        <small className="text-danger form-text">{errors.digicard_image}</small>
-                      )}
-                    </div>
+                                            <label className="floating-label" htmlFor="digicard_image">
+                                                <small className="text-danger">* </small>Choose File
+                                            </label>
+                                            <input
+                                                className="form-control"
+                                                error={touched.entityName && errors.entityName}
+                                                name="digicard_image"
+                                                id="digicard_image"
+                                                onBlur={handleBlur}
+                                                onChange={(e) => {
+                                                    handleChange(e);
+                                                    previewImage(e);
+                                                }}
+                                                type="file"
+                                                value={values.digicard_image}
+                                            />
+                                            {touched.digicard_image && errors.digicard_image && (
+                                                <small className="text-danger form-text">{errors.digicard_image}</small>
+                                            )}
+                                        </div>
                     <div className='ReactTags'>
                       <label className="floating-label">
                         <small className="text-danger">* </small>KeyWords

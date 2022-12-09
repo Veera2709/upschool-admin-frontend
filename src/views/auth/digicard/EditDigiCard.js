@@ -200,7 +200,7 @@ const EditDigiCard = (
 
     }, []);
 
-    return isEmptyObject(individualDigiCardData && articleData) ? null : (
+    return isEmptyObject(individualDigiCardData && articleData)  ? null : (
         <div>
             <Card>
                 <Card.Body>
