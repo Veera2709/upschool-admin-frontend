@@ -560,27 +560,6 @@ const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool }) => {
                                                 )}
                                             </div>
 
-                                            <Form.Check
-                                                type='checkbox'
-                                                id={`default-checkbox`}
-                                                label={`Same as Business Address`}
-                                                checked={copy}
-                                                onClick={() => {
-                                                    console.log("copy", copy);
-
-                                                    copy === false ? setFieldValue('contact_name2', contactNameRef.current.value) : setFieldValue('contact_name2', '')
-
-                                                    copy === false ? setFieldValue('address_line1_2', addressLine1Ref.current.value) : setFieldValue('address_line1_2', '')
-
-                                                    copy === false ? setFieldValue('address_line2_2', addressLine2Ref.current.value) : setFieldValue('address_line2_2', '')
-
-                                                    copy === false ? setFieldValue('city2', cityRef.current.value) : setFieldValue('city2', '')
-
-                                                    copy === false ? setFieldValue('pincode2', pincodeRef.current.value) : setFieldValue('pincode2', '')
-
-                                                    copy === false ? setFieldValue('phoneNumber2', phoneNumberRef.current.value) : setFieldValue('phoneNumber2', '')
-
-                                                }} onChange={handleCopyAddress} />
                                         </div>
                                     </div>
                                     <div className="col-md-6">
@@ -730,6 +709,28 @@ const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool }) => {
 
                                         </div>
 
+                                        <Form.Check
+                                            type='checkbox'
+                                            id={`default-checkbox`}
+                                            label={`Same as Business Address`}
+                                            checked={copy}
+                                            onClick={() => {
+                                                console.log("copy", copy);
+
+                                                copy === false ? setFieldValue('contact_name2', contactNameRef.current.value) : setFieldValue('contact_name2', '')
+
+                                                copy === false ? setFieldValue('address_line1_2', addressLine1Ref.current.value) : setFieldValue('address_line1_2', '')
+
+                                                copy === false ? setFieldValue('address_line2_2', addressLine2Ref.current.value) : setFieldValue('address_line2_2', '')
+
+                                                copy === false ? setFieldValue('city2', cityRef.current.value) : setFieldValue('city2', '')
+
+                                                copy === false ? setFieldValue('pincode2', pincodeRef.current.value) : setFieldValue('pincode2', '')
+
+                                                copy === false ? setFieldValue('phoneNumber2', phoneNumberRef.current.value) : setFieldValue('phoneNumber2', '')
+
+                                            }} onChange={handleCopyAddress} />
+
                                         {errors.submit && (
                                             <Col sm={12}>
                                                 <Alert variant="danger">{errors.submit}</Alert>
@@ -737,6 +738,8 @@ const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool }) => {
                                         )}
 
                                         {loader}
+
+                                        <br/>
 
                                         <div className="row">
                                             <div className="col-md-8"></div>
