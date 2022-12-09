@@ -7,11 +7,11 @@ const dynamicUrl = {
     loginWithOTP: baseUrl + '/loginWithOTP',
     validateOTP: baseUrl + '/validateOTP',
     logout: baseUrl + '/logout',
-    insertSchool: baseUrl + '/insertSchool',
-    fetchAllSchool: baseUrl + '/fetchAllSchool',
-    updateSchool: baseUrl + '/updateSchool',
-    fetchIndividualSchool: baseUrl + '/fetchIndividualSchool',
-    deleteSchool: baseUrl + '/deleteSchool'
+    insertDigicard: baseUrl + '/addDigiCard',
+    fetchAllDigiCards: baseUrl + '/fetchAllDigiCards',
+    fetchIndividualDigiCard: baseUrl + '/fetchIndividualDigiCard',
+    editDigiCard: baseUrl + '/editDigiCard',
+    deleteDigiCard: baseUrl + '/deleteDigiCard',
 }
 
 export default dynamicUrl;

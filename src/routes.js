@@ -73,31 +73,31 @@ const routes = [
     path: '/maintenance/offline-ui',
     component: lazy(() => import('./views/maintenance/OfflineUI'))
   },
-  // {
-  //   exact: true,
-  //   path: '/auth/signup-1',
-  //   component: lazy(() => import('./views/auth/signup/SignUp1'))
-  // },
-  // {
-  //   exact: true,
-  //   path: '/auth/signup-2',
-  //   component: lazy(() => import('./views/auth/signup/SignUp2'))
-  // },
-  // {
-  //   exact: true,
-  //   path: '/auth/signin-2',
-  //   component: lazy(() => import('./views/auth/signin/SignIn2'))
-  // },
-  // {
-  //   exact: true,
-  //   path: '/auth/reset-password-1',
-  //   component: lazy(() => import('./views/auth/reset-password/ResetPassword1'))
-  // },
-  // {
-  //   exact: true,
-  //   path: '/auth/reset-password-2',
-  //   component: lazy(() => import('./views/auth/reset-password/ResetPassword2'))
-  // },
+  {
+    exact: true,
+    path: '/auth/signup-1',
+    component: lazy(() => import('./views/auth/signup/SignUp1'))
+  },
+  {
+    exact: true,
+    path: '/auth/signup-2',
+    component: lazy(() => import('./views/auth/signup/SignUp2'))
+  },
+  {
+    exact: true,
+    path: '/auth/signin-2',
+    component: lazy(() => import('./views/auth/signin/SignIn2'))
+  },
+  {
+    exact: true,
+    path: '/auth/reset-password-1',
+    component: lazy(() => import('./views/auth/reset-password/ResetPassword1'))
+  },
+  {
+    exact: true,
+    path: '/auth/reset-password-2',
+    component: lazy(() => import('./views/auth/reset-password/ResetPassword2'))
+  },
   {
     exact: true,
     path: '/auth/change-password',
@@ -121,6 +121,26 @@ const routes = [
         exact: true,
         path: '/admin-portal/admin-dashboard',
         component: lazy(() => import('./views/panels/admin-portal/Dashboard'))
+      },
+
+      //digi card
+      {
+        exact: true,
+        path: '/auth/digicard',
+        component: lazy(() => import('./views/auth/digicard/DigiCard'))
+      },
+      //add didgicard
+      {
+        exact: true,
+        path: '/auth/add-digicard',
+        component: lazy(() => import('./views/auth/digicard/AddDigiCard'))
+      },
+      
+      //add didgicard
+      {
+        exact: true,
+        path: '/auth/editDigiCard/:digi_card_id',
+        component: lazy(() => import('./views/auth/digicard/EditDigiCard'))
       },
       {
         exact: true,
@@ -419,19 +439,14 @@ const routes = [
       },
       {
         exact: true,
-        path: '/school/sch-school',
-        component: lazy(() => import('./views/panels/school/School'))
+        path: '/school/sch-parents',
+        component: lazy(() => import('./views/panels/school/Parents'))
       },
-      // {
-      //   exact: true,
-      //   path: '/school/sch-parents',
-      //   component: lazy(() => import('./views/panels/school/Parents'))
-      // },
-      // {
-      //   exact: true,
-      //   path: '/school/sch-teacher',
-      //   component: lazy(() => import('./views/panels/school/Teacher'))
-      // },
+      {
+        exact: true,
+        path: '/school/sch-teacher',
+        component: lazy(() => import('./views/panels/school/Teacher'))
+      },
       {
         exact: true,
         path: '/sis/sis-dashboard',

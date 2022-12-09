@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios'
 import { Row, Col, Card, Pagination, Button, Modal } from 'react-bootstrap';
 import BTable from 'react-bootstrap/Table';
 
@@ -6,8 +7,10 @@ import { GlobalFilter } from './GlobalFilter';
 
 import { useTable, useSortBy, usePagination, useGlobalFilter } from 'react-table';
 import makeData from '../../../data/schoolData';
+import { useHistory } from 'react-router-dom';
 
-import AddSchoolForm from './AddSchoolForm'
+// import AddSchoolForm from './AddSchoolForm'
+import dynamicUrl from '../../../helper/dynamicUrls';
 
 function Table({ columns, data, modalOpen }) {
     const {
@@ -40,6 +43,16 @@ function Table({ columns, data, modalOpen }) {
         usePagination
     );
 
+    const [isOpen,setIsOpen] = useState(false);
+
+
+    let history = useHistory();
+
+    const adddigicard = () => {
+        history.push('/auth/add-digicard');
+        setIsOpen(true);
+    }
+
     return (
         <>
             <Row className="mb-3">
@@ -62,8 +75,8 @@ function Table({ columns, data, modalOpen }) {
                 </Col>
                 <Col className="d-flex justify-content-end">
                     <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
-                    <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={modalOpen}>
-                        <i className="feather icon-plus" /> Add School
+                    <Button className='btn-sm btn-round has-ripple ml-2 btn btn-success' onClick={() => { adddigicard(); }}  >
+                        ADD DigiCard
                     </Button>
                 </Col>
             </Row>
@@ -140,48 +153,91 @@ function Table({ columns, data, modalOpen }) {
     );
 }
 
-const School = () => {
+const TestDigi = () => {
     const columns = React.useMemo(
         () => [
             {
                 Header: '#',
-                accessor: 'avatar'
+                accessor: 'digicard_image'
             },
             {
-                Header: ' School Name',
-                accessor: 'name'
-            },
-            {
-                Header: 'Email',
-                accessor: 'email'
-            },
-            {
-                Header: 'Primary Contact',
-                accessor: 'roll'
+                Header: 'DigiCard Name',
+                accessor: 'digi_card_name'
             },
             {
                 Header: 'Options',
-                accessor: 'action'
+                accessor: 'actions'
             }
         ],
         []
     );
 
-    const data = React.useMemo(() => makeData(80), []);
-
+    // const data = React.useMemo(() => makeData(80), []);
+    const [data, setData] = useState([]);
+    console.log('data: ', data)
     const [isOpen, setIsOpen] = useState(false);
 
     const openHandler = () => {
         setIsOpen(true);
     };
 
-    return (
+    let history = useHistory();
+
+    const fetchAllDigiCards = () => {
+        axios.post(dynamicUrl.fetchAllDigiCards, {}, {
+            headers: { Authorization: sessionStorage.getItem('user_jwt') }
+        })
+            .then((response) => {
+                let resultData = response.data.Items;
+                let finalDataArray = [];
+                for (let index = 0; index < resultData.length; index++) {
+                    resultData[index]['digicard_image'] = <img class="img-fluid img-radius wid-40" src={resultData[index].digicard_imageURL} />
+                    resultData[index]['actions'] = (
+                        <>
+                            <Button
+                                size="sm"
+                                className="btn btn-icon btn-rounded btn-primary"
+                                onClick={(e) => history.push(`/auth/editDigiCard/${resultData[index]. digi_card_id}`)}
+                            // onClick={(e) => history.push(`/admin-portal/admin-casedetails/${resultData[index].client_id}/all_cases`)}
+                            >
+                                <i className="feather icon-edit" /> &nbsp; Edit
+                            </Button>
+                            &nbsp;
+                            <Button
+                                size="sm"
+                                className="btn btn-icon btn-rounded btn-danger"
+                            // onClick={(e) => saveClientId(e, resultData[index].client_id, 'Edit')}
+                            >
+                                <i className="feather icon-trash-2 " /> &nbsp; Delete
+                            </Button>
+                            &nbsp;
+                            {/* <Button size='sm' className="btn btn-icon btn-rounded btn-danger" onClick={(e) => saveClientIdDelete(e, responseData[index].client_id)}>
+                            <i className="feather icon-delete" /> &nbsp; Delete
+                          </Button> */}
+                        </>
+                    );
+                    finalDataArray.push(resultData[index]);
+                    console.log('finalDataArray: ', finalDataArray)
+                }
+                setData(finalDataArray);
+                console.log('resultData: ', finalDataArray);
+            })
+            .catch((err) => {
+                console.log(err)
+            })
+    }
+
+    useEffect(() => {
+        fetchAllDigiCards();
+    }, [])
+
+    return  (
         <React.Fragment>
             <Row>
                 <Col sm={12}>
                     <Card>
                         <Card.Header>
-                            <Card.Title as="h5">Schools List</Card.Title>
+                            <Card.Title as="h5">DigiCard List</Card.Title>
                         </Card.Header>
                         <Card.Body>
                             <Table columns={columns} data={data} modalOpen={openHandler} />
@@ -192,7 +248,7 @@ const School = () => {
                             <Modal.Title as="h5">Add School</Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
-                            <AddSchoolForm />
+                            {/* <AddSchoolForm /> */}
                         </Modal.Body>
                         {/* <Modal.Footer>
                             <Button variant="danger" onClick={() => setIsOpen(false)}>
@@ -206,4 +262,4 @@ const School = () => {
         </React.Fragment >
     );
 };
-export default School;
+export default TestDigi;

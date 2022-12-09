@@ -1,15 +1,16 @@
 const menuItems = {
   items: [
     {
-      // id: 'navigation',
-      // title: 'Navigation',
-      // type: 'group',
-      // icon: 'icon-navigation',
+      id: 'navigation',
+      title: 'Navigation',
+      type: 'group',
+      icon: 'icon-navigation',
       children: [
         {
           id: 'dashboard',
           title: 'Dashboard',
           type: 'collapse',
+          
           icon: 'feather icon-home',
           children: [
             {
@@ -187,7 +188,105 @@ const menuItems = {
               url: '/users/user-list'
             }
           ]
-        }
+        },
+        {
+          id: 'layout',
+          title: 'DigiCard',
+          type: 'item',
+          icon: 'feather icon-layout',
+          url: '/auth/digicard'
+          // children: [
+          //   {
+          //     id: 'vertical',
+          //     title: 'Vertical',
+          //     type: 'collapse',
+          //     children: [
+          //       {
+          //         id: 'static',
+          //         title: 'Static',
+          //         type: 'item',
+          //         url: '/layout/vertical/static',
+          //         target: true
+          //       },
+          //       {
+          //         id: 'fixed',
+          //         title: 'Fixed',
+          //         type: 'item',
+          //         url: '/layout/vertical/fixed',
+          //         target: true
+          //       },
+          //       {
+          //         id: 'nav-fixed',
+          //         title: 'Navbar Fixed',
+          //         type: 'item',
+          //         url: '/layout/vertical/nav-fixed',
+          //         target: true
+          //       },
+          //       {
+          //         id: 'collapse-menu',
+          //         title: 'Collapse Menu',
+          //         type: 'item',
+          //         url: '/layout/vertical/collapse-menu',
+          //         target: true
+          //       },
+          //       {
+          //         id: 'v-rtl',
+          //         title: 'Vertical RTL',
+          //         type: 'item',
+          //         url: '/layout/vertical/v-rtl',
+          //         target: true
+          //       }
+          //     ]
+          //   },
+          //   {
+          //     id: 'horizontal',
+          //     title: 'Horizontal',
+          //     type: 'item',
+          //     url: '/layout/horizontal',
+          //     target: true
+          //   },
+          //   {
+          //     id: 'horizontal-v2',
+          //     title: 'Horizontal v2',
+          //     type: 'item',
+          //     url: '/layout/horizontal-v2',
+          //     target: true
+          //   },
+          //   {
+          //     id: 'horizontal-rtl',
+          //     title: 'Horizontal RTL',
+          //     type: 'item',
+          //     url: '/layout/horizontal-rtl',
+          //     target: true
+          //   },
+          //   {
+          //     id: 'box',
+          //     title: 'Box Layout',
+          //     type: 'item',
+          //     url: '/layout/box',
+          //     target: true
+          //   },
+          //   {
+          //     id: 'light',
+          //     title: 'Light Layout',
+          //     type: 'item',
+          //     url: '/layout/light',
+          //     target: true
+          //   },
+          //   {
+          //     id: 'dark',
+          //     title: 'Dark Layout',
+          //     type: 'item',
+          //     url: '/layout/dark',
+          //     target: true,
+          //     badge: {
+          //       title: 'Hot',
+          //       type: 'badge-danger'
+          //     }
+          //   }
+          // ]
+        },
+       
       ]
     },
     {
@@ -367,59 +466,41 @@ const menuItems = {
           ]
         },
         {
-          // id: 'school',
-          // title: 'School',
-          // type: 'collapse',
-          // icon: 'feather icon-book',
-
-          // children: [
-          // {
-          //   id: 'sch-dashboard',
-          //   title: 'Dashboard',
-          //   type: 'item',
-          //   url: '/school/sch-dashboard'
-          // },
-          // {
-          id: 'sch-addSchool',
-          // title: 'Add School',
+          id: 'school',
           title: 'School',
+          type: 'collapse',
           icon: 'feather icon-book',
-          type: 'item',
-          url: '/school/sch-school'
-          // },
-          // {
-          //   id: 'sch-student',
-          //   title: 'Student',
-          //   type: 'item',
-          // url: '/school/sch-student'
-          // },
-          // {
-          //   id: 'sch-parents',
-          //   title: 'Parents',
-          //   type: 'item',
-          //   url: '/school/sch-parents'
-          // },
-          // {
-          //   id: 'sch-teacher',
-          //   title: 'Teacher',
-          //   type: 'item',
-          //   url: '/school/sch-teacher'
-          // }
-          // ]
+          badge: {
+            title: 'New',
+            type: 'badge-success'
+          },
+          children: [
+            {
+              id: 'sch-dashboard',
+              title: 'Dashboard',
+              type: 'item',
+              url: '/school/sch-dashboard'
+            },
+            {
+              id: 'sch-student',
+              title: 'Student',
+              type: 'item',
+              url: '/school/sch-student'
+            },
+            {
+              id: 'sch-parents',
+              title: 'Parents',
+              type: 'item',
+              url: '/school/sch-parents'
+            },
+            {
+              id: 'sch-teacher',
+              title: 'Teacher',
+              type: 'item',
+              url: '/school/sch-teacher'
+            }
+          ]
         },
-
-        // {
-        //   id: 'tpc-addTopic',
-        //   // title: 'Add School',
-        //   title: 'Topic',
-        //   icon: 'feather icon-book',
-        //   type: 'item',
-        //   url: '/topic/tpc-topic'
-
-
-
-
-        // },
         {
           id: 'sis',
           title: 'SIS',

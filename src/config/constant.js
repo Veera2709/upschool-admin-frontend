@@ -282,10 +282,6 @@ export const Common = {
 };
 
 export const AddressForm = {
-  YesNo: [
-    { label: 'Yes', value: 'Yes' },
-    { label: 'No', value: 'No' }
-  ],
   curAddressRequired: 'Address is required!',
   curAddressTooShort: 'Address is too short!',
   curAddressTooLong: 'Address is too long!',
@@ -381,7 +377,10 @@ export const AddressForm = {
   validProofType: 'Proof type must contain only alphabets',
 
 
-  
+  YesNo: [
+    { label: 'Yes', value: 'Yes' },
+    { label: 'No', value: 'No' }
+  ],
 };
 
 // export default constant
