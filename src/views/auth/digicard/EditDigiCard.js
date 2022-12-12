@@ -154,13 +154,12 @@ const EditDigiCard = (
 
                     console.log('inside res initial data');
 
-                    { console.log(response.data.Items[0].scbscription_active) }
-                    { console.log(response.data.Items[0].school_logoURL) }
+                    
 
                     let individual_client_data = response.data.Items[0];
                     let previousImage = response.data.Items[0].digicard_imageURL;
                     console.log("individual_client_data", individual_client_data);
-
+                    console.log("keyWords",individual_client_data.digi_card_keywords);
                     // let previousSubscription = response.data.Items[0].scbscription_active;
 
 
@@ -169,6 +168,7 @@ const EditDigiCard = (
                     setIndividualDigiCardData(individual_client_data);
                     setArticleData(individual_client_data.digi_card_content)
                     setTags(individual_client_data.digi_card_keywords)
+                    
                     console.log('individualDigiCardData', individualDigiCardData);
 
 
@@ -264,6 +264,7 @@ const EditDigiCard = (
                                 };
                             }
 
+                            console.log("edit form data",formData);
                             axios
                                 .post(dynamicUrl.editDigiCard, { data: formData }, { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
                                 .then(async (response) => {
@@ -417,6 +418,7 @@ const EditDigiCard = (
                                                 }}
                                                 type="file"
                                                 value={values.digicard_image}
+                                                accept="image/*"
                                             />
                                             {touched.digicard_image && errors.digicard_image && (
                                                 <small className="text-danger form-text">{errors.digicard_image}</small>

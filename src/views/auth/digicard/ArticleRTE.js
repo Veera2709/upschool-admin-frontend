@@ -6,7 +6,8 @@ import "../digicard/Styles/suneditor.min.css";
 import katex from 'katex'
 import 'katex/dist/katex.min.css'
 
-import 'suneditor/dist/css/suneditor.min.css'
+import 'suneditor/dist/css/suneditor.min.css';
+import EditTable from './Table'
 
 function ArticleRTE({
   setArticleSize,
