@@ -200,7 +200,7 @@ const EditDigiCard = (
 
     }, []);
 
-    return isEmptyObject(individualDigiCardData && articleData)  ? null : (
+    return isEmptyObject(individualDigiCardData)  ? null : (
         <div>
             <Card>
                 <Card.Body>
@@ -263,8 +263,7 @@ const EditDigiCard = (
                                     digi_card_keywords: tags
                                 };
                             }
-
-                            console.log("edit form data",formData);
+                            
                             axios
                                 .post(dynamicUrl.editDigiCard, { data: formData }, { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
                                 .then(async (response) => {
@@ -418,7 +417,6 @@ const EditDigiCard = (
                                                 }}
                                                 type="file"
                                                 value={values.digicard_image}
-                                                accept="image/*"
                                             />
                                             {touched.digicard_image && errors.digicard_image && (
                                                 <small className="text-danger form-text">{errors.digicard_image}</small>

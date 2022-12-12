@@ -20,6 +20,7 @@ import ArticleRTE from './ArticleRTE'
 import { areFilesInvalid } from '../../../util/utils';
 import { useEffect } from 'react';
 import logo from './img/logo.png'
+import { useHistory } from 'react-router-dom';
 
 
 // import { Button,Container,Row ,Col  } from 'react-bootstrap';
@@ -55,7 +56,7 @@ const AddDigiCard = (
   const [invalidFile, setInvalidFile] = useState(false);
   const [currentFeature, setCurrentFeature] = useState("");
   const [title, setTitle] = useState("");
-  const [articleData, setArticleData] = useState("");
+ 
   const [category, setCategory] = useState("");
   const [categoryNameEdit, setCategoryNameEdit] = useState("");
   const [categoryName, setCategoryName] = useState("");
@@ -87,6 +88,8 @@ const AddDigiCard = (
 
   const [tags, setTags] = useState([]);
   const [imgFile, setImgFile] = useState([]);
+  const [articleData, setArticleData] = useState("");
+  let history = useHistory();
   
 
 
@@ -115,6 +118,11 @@ const AddDigiCard = (
   const previewImage = (e) => {
     setImgFile(URL.createObjectURL(e.target.files[0]));
 }
+
+  const previewData =()=>{
+    var previewData=JSON.stringify(articleData)
+    history.push(`/auth/preview/${previewData}`)
+  }
 
    
    useEffect(()=>{
@@ -146,26 +154,27 @@ const AddDigiCard = (
                 .max(50, Constants.AddDigiCard.DigiCardtitleTooLong)
                 .matches(Constants.AddDigiCard.DigiCardtitleRegex, Constants.AddDigiCard.DigiCardtitleValidation)
                 .required(Constants.AddDigiCard.DigiCardtitleRequired),
-              // digicard_image: Yup.string()
-              //   .trim()
-              //   .nullable(true, Constants.AddDigiCard.DigiCardFileNotNull)
-              //   .required(Constants.AddDigiCard.DigiCardfileRequired),
-              // digicardcontent: Yup.string()
+              digicard_image: Yup.string()
+                .trim()
+                .nullable(true, Constants.AddDigiCard.DigiCardFileNotNull)
+                .required(Constants.AddDigiCard.DigiCardfileRequired),
+              digicardcontent: Yup.string()
 
-              // .required(Constants.AddDigiCard.DigiCardRequired),
+              .required(Constants.AddDigiCard.DigiCardRequired),
             })}
 
 
             onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
               var formData;
 
+              console.log("values",values.digicard_image);
               if (values.digicard_image === '') {
                   console.log("if condition");
                   formData = {
                       digi_card_name: values.digicardname,
                       digi_card_title: values.digicardtitle,
                       digi_card_files: [values.digicard_image],
-                      digicard_image: "C:\\fakepath\\MicrosoftTeams-image.png",
+                      digicard_image: 'C:\\fakepath\\logo.png',
                       digi_card_content: articleData,
                       digi_card_keywords: tags
                   };
@@ -391,7 +400,7 @@ const AddDigiCard = (
                       value={values.digicardcontent}
                     /> */}
                     {/* <AddArticles /> */}
-                    <ArticleRTE
+                    <ArticleRTE 
                       setArticleSize={setArticleSize}
                       setImageCount={setImageCount}
                       imageCount={imageCount}
@@ -420,7 +429,29 @@ const AddDigiCard = (
                 </Row>
               </form>
             )}
+            
           </Formik>
+          <Row>
+                  <Col sm={10}>
+                  </Col>
+                  <div className="form-group fill float-end" >
+                    <Col sm={12} className="center">
+                      <Button
+                        className="btn-block"
+                        color="success"
+                        size="large"
+                        type="submit"
+                        variant="success"
+                      // disabled={disableButton === true}
+                      // onClick={(e) => {alert(`/auth/preview/${articleData}`); history.push(`/auth/preview/jklkjlk`)}}
+                      onClick={previewData}
+                      >
+                        preview
+                      </Button>
+                    </Col>
+                  </div>
+                </Row>
+          
         </Card.Body>
 
       </Card>
