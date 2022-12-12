@@ -98,11 +98,11 @@ const routes = [
   //   path: '/auth/reset-password-2',
   //   component: lazy(() => import('./views/auth/reset-password/ResetPassword2'))
   // },
-  {
-    exact: true,
-    path: '/auth/change-password',
-    component: lazy(() => import('./views/auth/ChangePassword'))
-  },
+  // {
+  //   exact: true,
+  //   path: '/auth/change-password',
+  //   component: lazy(() => import('./views/auth/ChangePassword'))
+  // },
   {
     exact: true,
     path: '/auth/profile-settings',
@@ -122,25 +122,35 @@ const routes = [
         path: '/admin-portal/admin-dashboard',
         component: lazy(() => import('./views/panels/admin-portal/Dashboard'))
       },
+      {
+        exact: true,
+        path: '/admin-portal/school',
+        component: lazy(() => import('./views/panels/admin-portal/school/Dashboard'))
+      },
+      {
+        exact: true,
+        path: '/admin-portal/users',
+        component: lazy(() => import('./views/panels/admin-portal/users/UsersBulkUpload'))
+      },
 
       //digi card
       {
         exact: true,
-        path: '/auth/digicard',
-        component: lazy(() => import('./views/auth/digicard/DigiCard'))
+        path: '/admin-portal/digicard',
+        component: lazy(() => import('./views/panels/admin-portal/digicard/DigiCard'))
       },
       //add didgicard
       {
         exact: true,
-        path: '/auth/add-digicard',
-        component: lazy(() => import('./views/auth/digicard/AddDigiCard'))
+        path: '/admin-portal/add-digicard',
+        component: lazy(() => import('./views/panels/admin-portal/digicard/AddDigiCard'))
       },
-      
+
       //add didgicard
       {
         exact: true,
-        path: '/auth/editDigiCard/:digi_card_id',
-        component: lazy(() => import('./views/auth/digicard/EditDigiCard'))
+        path: '/admin-portal/editDigiCard/:digi_card_id',
+        component: lazy(() => import('./views/panels/admin-portal/digicard/EditDigiCard'))
       },
       {
         exact: true,
@@ -427,21 +437,16 @@ const routes = [
         path: '/membership/mshp-membership',
         component: lazy(() => import('./views/panels/membership/Membership'))
       },
-      {
-        exact: true,
-        path: '/school/sch-dashboard',
-        component: lazy(() => import('./views/panels/school/Dashboard'))
-      },
-      {
-        exact: true,
-        path: '/school/sch-student',
-        component: lazy(() => import('./views/panels/school/Student'))
-      },
-      {
-        exact: true,
-        path: '/school/sch-school',
-        component: lazy(() => import('./views/panels/school/School'))
-      },
+      // {
+      //   exact: true,
+      //   path: '/school/sch-student',
+      //   component: lazy(() => import('./views/panels/school/Student'))
+      // },
+      // {
+      //   exact: true,
+      //   path: '/school/sch-school',
+      //   component: lazy(() => import('./views/panels/school/School'))
+      // },
       // {
       //   exact: true,
       //   path: '/school/sch-parents',
