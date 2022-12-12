@@ -125,7 +125,7 @@ const routes = [
       {
         exact: true,
         path: '/admin-portal/school',
-        component: lazy(() => import('./views/panels/admin-portal/school/Dashboard'))
+        component: lazy(() => import('./views/panels/admin-portal/school/School'))
       },
       {
         exact: true,

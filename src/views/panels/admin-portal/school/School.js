@@ -214,7 +214,7 @@ const School = () => {
                         let result = response.status === 200;
                         if (result) {
                             console.log('inside res');
-                            return MySwal.fire('', 'Poof! Your school has been deleted!', 'success');
+                            return MySwal.fire('', 'Your school has been deleted!', 'success');
                             
 
                         } else {
