@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios'
 import { Row, Col, Card, Pagination, Button, Modal, ModalBody, Form } from 'react-bootstrap';
-import useFullPageLoader from '../../../helper/useFullPageLoader';
+import useFullPageLoader from '../../../../helper/useFullPageLoader';
 // import dynamicUrl from '../../../helper/dynamicUrl';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
-import { areFilesInvalid } from '../../../util/utils';
-import * as Constants from '../../../config/constant'
+import { areFilesInvalid } from '../../../../util/utils';
+import * as Constants from '../../../../config/constant'
 import withReactContent from 'sweetalert2-react-content';
 import Swal from 'sweetalert2';
-import dynamicUrl from '../../../helper/dynamicUrls';
+import dynamicUrl from '../../../../helper/dynamicUrls';
 
 // import { areFilesInvalid } from '../../../../util/utils';
 // import { bgvAlerts } from '../bgv-api/bgvAlerts';
