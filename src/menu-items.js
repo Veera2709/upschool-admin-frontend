@@ -10,6 +10,7 @@ const menuItems = {
           id: 'dashboard',
           title: 'Dashboard',
           type: 'collapse',
+          url: '/app/dashboard/analytics',
           icon: 'feather icon-home',
           children: [
             {

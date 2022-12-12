@@ -10,10 +10,21 @@ import { BASENAME } from './config/constant';
 
 const App = () => {
 
-  useEffect(()=>{
+  const arrow_keys_handler = function (e) {
+    switch (e.code) {
+      // case "ArrowUp": case "ArrowDown": case "ArrowLeft": case "ArrowRight":
+      // case "Space": e.preventDefault(); break;
+      case "ArrowUp": case "ArrowDown":
+        e.preventDefault(); break;
+      default: break; // do not block other keys
+    }
+  };
+  window.addEventListener("keydown", arrow_keys_handler, false);
+
+  useEffect(() => {
     sessionStorage.setItem('flag', true);
   }, [])
-  
+
   return (
     <React.Fragment>
       <Router basename={BASENAME}>
