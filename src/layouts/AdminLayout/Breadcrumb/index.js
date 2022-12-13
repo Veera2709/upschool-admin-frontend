@@ -8,7 +8,7 @@ import { BASE_TITLE, BASENAME } from '../../../config/constant';
 const Breadcrumb = () => {
   const [main, setMain] = useState([]);
   const [item, setItem] = useState([]);
-  // console.log('main: ', main);
+
   useEffect(() => {
     navigation.items.map((item, index) => {
       if (item.type && item.type === 'group') {
@@ -25,8 +25,6 @@ const Breadcrumb = () => {
           getCollapse(collapse);
         } else if (collapse.type && collapse.type === 'item') {
           if (document.location.pathname === BASENAME + collapse.url) {
-            console.log('item: ', item)
-            console.log('BASENAME + collapse.url: ', BASENAME + collapse.url)
             setMain(item);
             setItem(collapse);
           }
@@ -57,8 +55,6 @@ const Breadcrumb = () => {
     );
 
     if (item.breadcrumbs !== false) {
-      console.log('title: ', title);
-      console.log('location: ', window.location.pathname);
       breadcrumbContent = (
         <div className="page-header">
           <div className="page-block">

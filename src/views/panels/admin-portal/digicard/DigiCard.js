@@ -6,13 +6,14 @@ import BTable from 'react-bootstrap/Table';
 import { GlobalFilter } from './GlobalFilter';
 
 import { useTable, useSortBy, usePagination, useGlobalFilter } from 'react-table';
+import makeData from '../../../data/schoolData';
 import { useHistory } from 'react-router-dom';
 
 
-import dynamicUrl from '../../../../helper/dynamicUrls';
-import MESSAGES from '../../../../helper/messages';
-import { SessionStorage } from '../../../../util/SessionStorage';
-import useFullPageLoader from '../../../../helper/useFullPageLoader';
+import dynamicUrl from '../../../helper/dynamicUrls';
+import MESSAGES from '../../../helper/messages';
+import { SessionStorage } from '../../../util/SessionStorage';
+import useFullPageLoader from '../../../helper/useFullPageLoader';
 import withReactContent from 'sweetalert2-react-content';
 
 
@@ -183,6 +184,7 @@ const DigiCard = () => {
   console.log('data: ', data)
   const [isOpen, setIsOpen] = useState(false);
   const [loader, showLoader, hideLoader] = useFullPageLoader();
+  const [reloadAllData, setReloadAllData] = useState('Fetched');
   const MySwal = withReactContent(Swal);
 
 
@@ -190,47 +192,61 @@ const DigiCard = () => {
     setIsOpen(true);
   };
 
-  const sweetAlertHandler = (alert) => {
-    MySwal.fire({
-      title: alert.title,
-      text: alert.text,
-      icon: alert.type
-    });
-  };
+ 
 
   let history = useHistory();
 
-  function deleteDigicard(digi_card_id) {
+  function deleteDigicard(digi_card_id,digi_card_name) {
     console.log("digi_card_id", digi_card_id);
-    var data ={
-      "digi_card_id":digi_card_id
+    var data = {
+      "digi_card_id": digi_card_id
     }
-    axios
-      .post(dynamicUrl.deleteDigiCard, { data: data }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
-      .then((response) => {
-        if (response.Error) {
-          hideLoader();
-          sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
+
+    const sweetConfirmHandler = () => {
+      const MySwal = withReactContent(Swal);
+      MySwal.fire({
+        title: 'Are you sure?',
+        text: 'Confirm deleting this DigiCard',
+        type: 'warning',
+        showCloseButton: true,
+        showCancelButton: true
+      }).then((willDelete) => {
+        if (willDelete.value) {
+          axios
+            .post(dynamicUrl.deleteDigiCard, { data: data }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
+            .then((response) => {
+              if (response.Error) {
+                hideLoader();
+                sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
+              } else {
+                setReloadAllData("Deleted");
+                //  MySwal.fire('', MESSAGES.INFO.CLIENT_DELETED, 'success');
+                return MySwal.fire('', 'The '+digi_card_name+' is Deleted', 'success');
+                // fetchAllDigiCards();
+              }
+            })
+            .catch((error) => {
+              if (error.response) {
+                // Request made and server responded
+                console.log(error.response.data);
+                hideLoader();
+                sweetConfirmHandler({ title: 'Error', type: 'error', text: error.response.data });
+              } else if (error.request) {
+                // The request was made but no response was received
+                console.log(error.request);
+                hideLoader();
+              } else {
+                // Something happened in setting up the request that triggered an Error
+                console.log('Error', error.message);
+                hideLoader();
+              }
+            });
         } else {
-          MySwal.fire('', MESSAGES.INFO.CLIENT_DELETED, 'success');
-        }
-      })
-      .catch((error) => {
-        if (error.response) {
-          // Request made and server responded
-          console.log(error.response.data);
-          hideLoader();
-          sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
-        } else if (error.request) {
-          // The request was made but no response was received
-          console.log(error.request);
-          hideLoader();
-        } else {
-          // Something happened in setting up the request that triggered an Error
-          console.log('Error', error.message);
-          hideLoader();
+          return MySwal.fire('', 'DigiCard is safe!', 'error');
         }
       });
+    };
+    sweetConfirmHandler();
 
   }
 
@@ -242,7 +258,7 @@ const DigiCard = () => {
         let resultData = response.data.Items;
         let finalDataArray = [];
         for (let index = 0; index < resultData.length; index++) {
-          resultData[index]['digicard_image'] = <img class="img-fluid img-radius wid-40" src={resultData[index].digicard_imageURL} />
+          resultData[index]['digicard_image'] = <img class="img-fluid img-radius wid-40" alt="Poison regulate" src={resultData[index].digicard_imageURL} />
           resultData[index]['actions'] = (
             <>
               <Button
@@ -257,7 +273,7 @@ const DigiCard = () => {
               <Button
                 size="sm"
                 className="btn btn-icon btn-rounded btn-danger"
-                onClick={(e) => deleteDigicard(resultData[index].digi_card_id)}
+                onClick={(e) => deleteDigicard(resultData[index].digi_card_id,resultData[index].digi_card_name)}
               >
                 <i className="feather icon-trash-2 " /> &nbsp; Delete
               </Button>
@@ -280,7 +296,7 @@ const DigiCard = () => {
 
   useEffect(() => {
     fetchAllDigiCards();
-  }, [])
+  }, [reloadAllData])
 
   return (
     <React.Fragment>
