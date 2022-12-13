@@ -6,7 +6,10 @@ import "../digicard/Styles/suneditor.min.css";
 import katex from 'katex'
 import 'katex/dist/katex.min.css'
 
-import 'suneditor/dist/css/suneditor.min.css'
+import 'suneditor/dist/css/suneditor.min.css';
+// import EditTable from './Table'
+
+import plugins from 'suneditor/src/plugins'
 
 function ArticleRTE({
   setArticleSize,
@@ -29,7 +32,8 @@ function ArticleRTE({
 
   return (
     <div>
-      <SunEditor
+      {/* <EditTable> </EditTable> */}
+      <SunEditor placeholder="Please type here..."
         disable={sessionStorage.getItem("user_role") == "Viewer"}
         setContents={articleData}
         showToolbar={true}
@@ -38,6 +42,26 @@ function ArticleRTE({
         setOptions={{
           // imageUploadSizeLimit: "250000",
           katex: katex,
+          plugins: plugins,
+          font : [
+            'Arial',
+            'tohoma',
+            'Courier New,Courier',
+            'Verdana',
+            'Trebuchet MS',
+            'Times New Roman',
+            'Georgia',
+            'Garamond',
+            'Courier New',
+            'Brush Script MT',
+            'Times',
+            'Helvetica',
+            'Geneva',
+            'Courier New',
+
+        ],
+        preview :[{pathpath : '/admin-portal/admin-dashboard'}
+        ],
           buttonList: [
             ['undo', 'redo'],
             ['font', 'fontSize', 'formatBlock'],

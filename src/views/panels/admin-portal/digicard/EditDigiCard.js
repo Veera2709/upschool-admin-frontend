@@ -2,27 +2,29 @@ import React, { useState, useEffect } from 'react';
 // import './style.css'
 import { Row, Col, Card, Button, Modal } from 'react-bootstrap';
 // import CkDecoupledEditor from '../../../components/CK-Editor/CkDecoupledEditor';
-import * as Constants from '../../../../helper/constants';
+import * as Constants from '../../../helper/constants';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
-import dynamicUrl from '../../../../helper/dynamicUrls';
+import dynamicUrl from '../../../helper/dynamicUrls';
 import ReactTags from 'react-tag-autocomplete';
 import 'jodit';
 import 'jodit/build/jodit.min.css';
 import JoditEditor from 'jodit-react';
-import MESSAGES from '../../../../helper/messages';
+import MESSAGES from '../../../helper/messages';
 import Swal from 'sweetalert2';
-import useFullPageLoader from '../../../../helper/useFullPageLoader';
+import useFullPageLoader from '../../../helper/useFullPageLoader';
 import withReactContent from 'sweetalert2-react-content';
 import AddArticles from '../digicard/AddArticles'
 import ArticleRTE from './ArticleRTE'
-import { areFilesInvalid } from '../../../../util/utils';
-import { isEmptyObject } from '../../../../util/utils';
+import { areFilesInvalid } from '../../../util/utils';
+import { isEmptyObject } from '../../../util/utils';
 
 
 
 import { Link, useHistory, useParams } from 'react-router-dom';
+
+import { SessionStorage } from '../../../util/SessionStorage';
 
 
 
@@ -152,13 +154,12 @@ const EditDigiCard = (
 
                     console.log('inside res initial data');
 
-                    { console.log(response.data.Items[0].scbscription_active) }
-                    { console.log(response.data.Items[0].school_logoURL) }
+                    
 
                     let individual_client_data = response.data.Items[0];
                     let previousImage = response.data.Items[0].digicard_imageURL;
                     console.log("individual_client_data", individual_client_data);
-
+                    console.log("keyWords",individual_client_data.digi_card_keywords);
                     // let previousSubscription = response.data.Items[0].scbscription_active;
 
 
@@ -167,6 +168,7 @@ const EditDigiCard = (
                     setIndividualDigiCardData(individual_client_data);
                     setArticleData(individual_client_data.digi_card_content)
                     setTags(individual_client_data.digi_card_keywords)
+                    
                     console.log('individualDigiCardData', individualDigiCardData);
 
 
@@ -198,7 +200,7 @@ const EditDigiCard = (
 
     }, []);
 
-    return isEmptyObject(individualDigiCardData && articleData) ? null : (
+    return isEmptyObject(individualDigiCardData)  ? null : (
         <div>
             <Card>
                 <Card.Body>
@@ -261,7 +263,7 @@ const EditDigiCard = (
                                     digi_card_keywords: tags
                                 };
                             }
-
+                            
                             axios
                                 .post(dynamicUrl.editDigiCard, { data: formData }, { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
                                 .then(async (response) => {

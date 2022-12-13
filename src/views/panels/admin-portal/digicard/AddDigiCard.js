@@ -1,23 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState ,useCallback} from 'react';
 // import './style.css'
 import { Row, Col, Card, Button, Modal } from 'react-bootstrap';
 // import CkDecoupledEditor from '../../../components/CK-Editor/CkDecoupledEditor';
-import * as Constants from '../../../../helper/constants';
+import * as Constants from '../../../helper/constants';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
-import dynamicUrl from '../../../../helper/dynamicUrls';
+import dynamicUrl from '../../../helper/dynamicUrls';
 import ReactTags from 'react-tag-autocomplete';
 import 'jodit';
 import 'jodit/build/jodit.min.css';
 import JoditEditor from 'jodit-react';
-import MESSAGES from '../../../../helper/messages';
+import MESSAGES from '../../../helper/messages';
 import Swal from 'sweetalert2';
-import useFullPageLoader from '../../../../helper/useFullPageLoader';
+import useFullPageLoader from '../../../helper/useFullPageLoader';
 import withReactContent from 'sweetalert2-react-content';
 import AddArticles from '../digicard/AddArticles'
 import ArticleRTE from './ArticleRTE'
-import { areFilesInvalid } from '../../../../util/utils';
+import { areFilesInvalid } from '../../../util/utils';
+import { useEffect } from 'react';
+import logo from './img/logo.png'
+import { useHistory } from 'react-router-dom';
 
 
 // import { Button,Container,Row ,Col  } from 'react-bootstrap';
@@ -53,7 +56,7 @@ const AddDigiCard = (
   const [invalidFile, setInvalidFile] = useState(false);
   const [currentFeature, setCurrentFeature] = useState("");
   const [title, setTitle] = useState("");
-  const [articleData, setArticleData] = useState("");
+ 
   const [category, setCategory] = useState("");
   const [categoryNameEdit, setCategoryNameEdit] = useState("");
   const [categoryName, setCategoryName] = useState("");
@@ -85,6 +88,9 @@ const AddDigiCard = (
 
   const [tags, setTags] = useState([]);
   const [imgFile, setImgFile] = useState([]);
+  const [articleData, setArticleData] = useState("");
+  let history = useHistory();
+  
 
 
   const handleDelete = (i, states) => {
@@ -99,6 +105,8 @@ const AddDigiCard = (
   };
 
 
+
+
   const sweetAlertHandler = (alert) => {
     MySwal.fire({
       title: alert.title,
@@ -107,49 +115,20 @@ const AddDigiCard = (
     });
   };
 
-  // const html = `
-  //           <h2 style="text-align:center;">The Flavorful Tuscany Meetup</h2>
-  //           <h3 style="text-align:center;">Welcome letter</h3>
-  //           <p>Dear Guest,</p>
-  //           <p>We are delighted to welcome you to the annual <i>Flavorful Tuscany Meetup</i> and hope you will enjoy the programmer as well as your stay at the <a href="http://ckeditor.com">Bilancino Hotel</a>.</p>
-  //           <p>Please find below the full schedule of the event.</p>
-  //           <figure class="table ck-widget ck-widget_selectable" contenteditable="false">
-  //               <table>
-  //                   <thead>
-  //                       <tr>
-  //                           <th class="ck-editor__editable ck-editor__nested-editable" contenteditable="true" colspan="2">Saturday, July 14</th>
-  //                       </tr>
-  //                   </thead>
-  //                   <tbody>
-  //                       <tr>
-  //                           <td class="ck-editor__editable ck-editor__nested-editable" contenteditable="true">9:30&nbsp;AM&nbsp;-&nbsp;11:30&nbsp;AM</td>
-  //                           <td class="ck-editor__editable ck-editor__nested-editable" contenteditable="true">Americano vs. Brewed - “know coffee” with <strong>Stefano Garau</strong></td>
-  //                       </tr>
-  //                       <tr>
-  //                           <td class="ck-editor__editable ck-editor__nested-editable" contenteditable="true">1:00&nbsp;PM&nbsp;-&nbsp;3:00&nbsp;PM</td>
-  //                           <td class="ck-editor__editable ck-editor__nested-editable" contenteditable="true">Pappardelle al pomodoro -
-  //                               <mark class="marker-yellow">live cooking</mark> with <strong>Rita</strong></td>
-  //                       </tr>
-  //                       <tr>
-  //                           <td class="ck-editor__editable ck-editor__nested-editable" contenteditable="true">5:00&nbsp;PM&nbsp;-&nbsp;8:00&nbsp;PM</td>
-  //                           <td class="ck-editor__editable ck-editor__nested-editable" contenteditable="true">Tuscan vineyards at a glancewith <strong>Frederico Riscoli</strong></td>
-  //                       </tr>
-  //                   </tbody>
-  //               </table>
-  //           </figure>
-  //           <blockquote>
-  //               <p>The annual Flavorful Tuscany meetups are always a culinary discovery. You get the best of Tuscan flavors during an intense one-day stay at one of the top hotels of the region. All the
-  //                   sessions are lead by top chefs passionate about their profession. I would certainly recommend to save the date in your calendar for this one!</p>
-  //               <p>Angelina Calvino, food journalist</p>
-  //           </blockquote>
-  //           <p>Please arrive at the <a href="http://ckeditor.com">Bilancino Hotel</a> reception desk
-  //               <mark class="marker-yellow">at least half an hour earlier</mark> to make sure that the registration process goes as smoothly as possible.</p>
-  //           <p>We look forward to welcoming you to the event.</p>
-  //           <p><strong>Victoria Valc</strong></p>
-  //           <p><strong>Event Manager</strong></p>
-  //           <p><strong>Bilancino Hotel</strong></p>
-  //       `;
+  const previewImage = (e) => {
+    setImgFile(URL.createObjectURL(e.target.files[0]));
+}
 
+  const previewData =()=>{
+    var previewData=JSON.stringify(articleData)
+    history.push(`/auth/preview/${previewData}`)
+  }
+
+   
+   useEffect(()=>{
+    setImgFile(logo)
+   },[])
+  
   return (
     <div>
       <Card>
@@ -179,21 +158,37 @@ const AddDigiCard = (
                 .trim()
                 .nullable(true, Constants.AddDigiCard.DigiCardFileNotNull)
                 .required(Constants.AddDigiCard.DigiCardfileRequired),
-              // digicardcontent: Yup.string()
+              digicardcontent: Yup.string()
 
-              // .required(Constants.AddDigiCard.DigiCardRequired),
+              .required(Constants.AddDigiCard.DigiCardRequired),
             })}
 
 
             onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-              const formData = {
-                digi_card_name: values.digicardname,
-                digi_card_title: values.digicardtitle,
-                digi_card_files: [values.digicard_image],
-                digicard_image: values.digicard_image,
-                digi_card_content: articleData,
-                digi_card_keywords:tags
-              };
+              var formData;
+
+              console.log("values",values.digicard_image);
+              if (values.digicard_image === '') {
+                  console.log("if condition");
+                  formData = {
+                      digi_card_name: values.digicardname,
+                      digi_card_title: values.digicardtitle,
+                      digi_card_files: [values.digicard_image],
+                      digicard_image: 'C:\\fakepath\\logo.png',
+                      digi_card_content: articleData,
+                      digi_card_keywords: tags
+                  };
+              } else {
+                  console.log("else condition");
+                  formData = {
+                      digi_card_name: values.digicardname,
+                      digi_card_title: values.digicardtitle,
+                      digi_card_files: [values.digicard_image],
+                      digicard_image: values.digicard_image,
+                      digi_card_content: articleData,
+                      digi_card_keywords: tags
+                  };
+              }
 
               axios
                 .post(dynamicUrl.insertDigicard, { data: formData }, { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
@@ -333,23 +328,27 @@ const AddDigiCard = (
                       {/* {isClientExists && <small className="text-danger form-text">{MESSAGES.ERROR.ClientNameExists}</small>} */}
                     </div>
                     <div className="form-group fill">
-                      <label className="floating-label" htmlFor="digicard_image">
-                        <small className="text-danger">* </small>Choose File
-                      </label>
-                      <input
-                        className="form-control"
-                        error={touched.entityName && errors.entityName}
-                        name="digicard_image"
-                        id="digicard_image"
-                        onBlur={handleBlur}
-                        onChange={handleChange}
-                        type="file"
-                        value={values.digicard_image}
-                      />
-                      {touched.digicard_image && errors.digicard_image && (
-                        <small className="text-danger form-text">{errors.digicard_image}</small>
-                      )}
-                    </div>
+                                            <label className="floating-label" htmlFor="digicard_image">
+                                                <small className="text-danger">* </small>Choose File
+                                            </label>
+                                            <input
+                                                className="form-control"
+                                                error={touched.entityName && errors.entityName}
+                                                name="digicard_image"
+                                                id="digicard_image"
+                                                onBlur={handleBlur}
+                                                onChange={(e) => {
+                                                    handleChange(e);
+                                                    previewImage(e);
+                                                }}
+                                                type="file"
+                                                value={values.digicard_image}
+                                                accept="image/*"
+                                            />
+                                            {touched.digicard_image && errors.digicard_image && (
+                                                <small className="text-danger form-text">{errors.digicard_image}</small>
+                                            )}
+                                        </div>
                     <div className='ReactTags'>
                       <label className="floating-label">
                         <small className="text-danger">* </small>KeyWords
@@ -401,7 +400,7 @@ const AddDigiCard = (
                       value={values.digicardcontent}
                     /> */}
                     {/* <AddArticles /> */}
-                    <ArticleRTE
+                    <ArticleRTE 
                       setArticleSize={setArticleSize}
                       setImageCount={setImageCount}
                       imageCount={imageCount}
@@ -430,7 +429,29 @@ const AddDigiCard = (
                 </Row>
               </form>
             )}
+            
           </Formik>
+          <Row>
+                  <Col sm={10}>
+                  </Col>
+                  <div className="form-group fill float-end" >
+                    <Col sm={12} className="center">
+                      <Button
+                        className="btn-block"
+                        color="success"
+                        size="large"
+                        type="submit"
+                        variant="success"
+                      // disabled={disableButton === true}
+                      // onClick={(e) => {alert(`/auth/preview/${articleData}`); history.push(`/auth/preview/jklkjlk`)}}
+                      onClick={previewData}
+                      >
+                        preview
+                      </Button>
+                    </Col>
+                  </div>
+                </Row>
+          
         </Card.Body>
 
       </Card>

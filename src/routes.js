@@ -113,10 +113,12 @@ const routes = [
     path: '/auth/tabs-auth',
     component: lazy(() => import('./views/auth/TabsAuth'))
   },
+ 
   {
     path: '*',
     layout: AdminLayout,
     routes: [
+
       {
         exact: true,
         path: '/admin-portal/admin-dashboard',
@@ -151,6 +153,12 @@ const routes = [
         exact: true,
         path: '/admin-portal/editDigiCard/:digi_card_id',
         component: lazy(() => import('./views/panels/admin-portal/digicard/EditDigiCard'))
+      },
+      //preview
+      {
+        exact: true,
+        path: '/auth/preview/:digiCardContent',
+        component: lazy(() => import('./views/auth/digicard/Preview'))
       },
       {
         exact: true,
