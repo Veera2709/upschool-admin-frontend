@@ -10,6 +10,11 @@ import { BASENAME } from './config/constant';
 
 const App = () => {
 
+  useEffect(() => {
+    window.process = {
+      ...window.process,
+    };
+
   const arrow_keys_handler = function (e) {
     switch (e.code) {
       // case "ArrowUp": case "ArrowDown": case "ArrowLeft": case "ArrowRight":
@@ -18,8 +23,10 @@ const App = () => {
         e.preventDefault(); break;
       default: break; // do not block other keys
     }
-  };
-  window.addEventListener("keydown", arrow_keys_handler, false);
+    window.addEventListener("keydown", arrow_keys_handler, false);
+  }
+  },[]);
+  
 
   useEffect(() => {
     sessionStorage.setItem('flag', true);

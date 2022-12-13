@@ -1,23 +1,23 @@
-import React, { useState ,useCallback} from 'react';
+import React, { useState, useCallback } from 'react';
 // import './style.css'
 import { Row, Col, Card, Button, Modal } from 'react-bootstrap';
 // import CkDecoupledEditor from '../../../components/CK-Editor/CkDecoupledEditor';
-import * as Constants from '../../../helper/constants';
+import * as Constants from '../../../../helper/constants';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
-import dynamicUrl from '../../../helper/dynamicUrls';
+import dynamicUrl from '../../../../helper/dynamicUrls';
 import ReactTags from 'react-tag-autocomplete';
 import 'jodit';
 import 'jodit/build/jodit.min.css';
 import JoditEditor from 'jodit-react';
-import MESSAGES from '../../../helper/messages';
+import MESSAGES from '../../../../helper/messages';
 import Swal from 'sweetalert2';
-import useFullPageLoader from '../../../helper/useFullPageLoader';
+import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import withReactContent from 'sweetalert2-react-content';
 import AddArticles from '../digicard/AddArticles'
 import ArticleRTE from './ArticleRTE'
-import { areFilesInvalid } from '../../../util/utils';
+import { areFilesInvalid } from '../../../../util/utils';
 import { useEffect } from 'react';
 import logo from './img/logo.png'
 import { useHistory } from 'react-router-dom';
@@ -56,7 +56,7 @@ const AddDigiCard = (
   const [invalidFile, setInvalidFile] = useState(false);
   const [currentFeature, setCurrentFeature] = useState("");
   const [title, setTitle] = useState("");
- 
+
   const [category, setCategory] = useState("");
   const [categoryNameEdit, setCategoryNameEdit] = useState("");
   const [categoryName, setCategoryName] = useState("");
@@ -90,7 +90,7 @@ const AddDigiCard = (
   const [imgFile, setImgFile] = useState([]);
   const [articleData, setArticleData] = useState("");
   let history = useHistory();
-  
+
 
 
   const handleDelete = (i, states) => {
@@ -117,23 +117,20 @@ const AddDigiCard = (
 
   const previewImage = (e) => {
     setImgFile(URL.createObjectURL(e.target.files[0]));
-}
-
-  const previewData =()=>{
-    var previewData=JSON.stringify(articleData)
-    history.push(`/auth/preview/${previewData}`)
   }
 
-   
-   useEffect(()=>{
+ 
+
+
+  useEffect(() => {
     setImgFile(logo)
-   },[])
-  
+  }, [])
+
   return (
     <div>
       <Card>
         <Card.Body>
-        <Card.Title>Add DigiCard</Card.Title>
+          <Card.Title>Add DigiCard</Card.Title>
           <Formik
             initialValues={{
               digicardname: '',
@@ -158,37 +155,22 @@ const AddDigiCard = (
                 .trim()
                 .nullable(true, Constants.AddDigiCard.DigiCardFileNotNull)
                 .required(Constants.AddDigiCard.DigiCardfileRequired),
-              digicardcontent: Yup.string()
-
-              .required(Constants.AddDigiCard.DigiCardRequired),
             })}
 
 
             onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-              var formData;
 
-              console.log("values",values.digicard_image);
-              if (values.digicard_image === '') {
-                  console.log("if condition");
-                  formData = {
-                      digi_card_name: values.digicardname,
-                      digi_card_title: values.digicardtitle,
-                      digi_card_files: [values.digicard_image],
-                      digicard_image: 'C:\\fakepath\\logo.png',
-                      digi_card_content: articleData,
-                      digi_card_keywords: tags
-                  };
-              } else {
-                  console.log("else condition");
-                  formData = {
-                      digi_card_name: values.digicardname,
-                      digi_card_title: values.digicardtitle,
-                      digi_card_files: [values.digicard_image],
-                      digicard_image: values.digicard_image,
-                      digi_card_content: articleData,
-                      digi_card_keywords: tags
-                  };
-              }
+              console.log("on submit");
+              var formData = {
+                digi_card_name: values.digicardname,
+                digi_card_title: values.digicardtitle,
+                digi_card_files: [values.digicard_image],
+                digicard_image: values.digicard_image,
+                digi_card_content: articleData,
+                digi_card_keywords: tags
+              };
+
+
 
               axios
                 .post(dynamicUrl.insertDigicard, { data: formData }, { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
@@ -328,27 +310,27 @@ const AddDigiCard = (
                       {/* {isClientExists && <small className="text-danger form-text">{MESSAGES.ERROR.ClientNameExists}</small>} */}
                     </div>
                     <div className="form-group fill">
-                                            <label className="floating-label" htmlFor="digicard_image">
-                                                <small className="text-danger">* </small>Choose File
-                                            </label>
-                                            <input
-                                                className="form-control"
-                                                error={touched.entityName && errors.entityName}
-                                                name="digicard_image"
-                                                id="digicard_image"
-                                                onBlur={handleBlur}
-                                                onChange={(e) => {
-                                                    handleChange(e);
-                                                    previewImage(e);
-                                                }}
-                                                type="file"
-                                                value={values.digicard_image}
-                                                accept="image/*"
-                                            />
-                                            {touched.digicard_image && errors.digicard_image && (
-                                                <small className="text-danger form-text">{errors.digicard_image}</small>
-                                            )}
-                                        </div>
+                      <label className="floating-label" htmlFor="digicard_image">
+                        <small className="text-danger">* </small>Choose File
+                      </label>
+                      <input
+                        className="form-control"
+                        error={touched.entityName && errors.entityName}
+                        name="digicard_image"
+                        id="digicard_image"
+                        onBlur={handleBlur}
+                        onChange={(e) => {
+                          handleChange(e);
+                          previewImage(e);
+                        }}
+                        type="file"
+                        value={values.digicard_image}
+                        accept="image/*"
+                      />
+                      {touched.digicard_image && errors.digicard_image && (
+                        <small className="text-danger form-text">{errors.digicard_image}</small>
+                      )}
+                    </div>
                     <div className='ReactTags'>
                       <label className="floating-label">
                         <small className="text-danger">* </small>KeyWords
@@ -381,7 +363,7 @@ const AddDigiCard = (
                     <div className="form-group fill">
                       <label className="floating-label" htmlFor="digicardtitle">
                         <small className="text-danger">* </small>Logo preview
-                      </label><br/>
+                      </label><br />
                       <img width={150} src={imgFile} alt="" className="img-fluid mb-3" />
                     </div>
 
@@ -400,7 +382,7 @@ const AddDigiCard = (
                       value={values.digicardcontent}
                     /> */}
                     {/* <AddArticles /> */}
-                    <ArticleRTE 
+                    <ArticleRTE
                       setArticleSize={setArticleSize}
                       setImageCount={setImageCount}
                       imageCount={imageCount}
@@ -429,9 +411,9 @@ const AddDigiCard = (
                 </Row>
               </form>
             )}
-            
+
           </Formik>
-          <Row>
+          {/* <Row>
                   <Col sm={10}>
                   </Col>
                   <div className="form-group fill float-end" >
@@ -451,7 +433,7 @@ const AddDigiCard = (
                     </Col>
                   </div>
                 </Row>
-          
+           */}
         </Card.Body>
 
       </Card>
