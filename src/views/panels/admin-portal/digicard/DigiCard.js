@@ -6,7 +6,7 @@ import BTable from 'react-bootstrap/Table';
 import { GlobalFilter } from './GlobalFilter';
 
 import { useTable, useSortBy, usePagination, useGlobalFilter } from 'react-table';
-import makeData from '../../../../data/schoolData';
+// import makeData from '../../../data/schoolData';
 import { useHistory } from 'react-router-dom';
 
 
@@ -56,7 +56,7 @@ function Table({ columns, data, modalOpen }) {
   let history = useHistory();
 
   const adddigicard = () => {
-    history.push('/auth/add-digicard');
+    history.push('/admin-portal/add-digicard');
     setIsOpen(true);
   }
 
@@ -264,7 +264,7 @@ const DigiCard = () => {
               <Button
                 size="sm"
                 className="btn btn-icon btn-rounded btn-primary"
-                onClick={(e) => history.push(`/auth/editDigiCard/${resultData[index].digi_card_id}`)}
+                onClick={(e) => history.push(`/admin-portal/editDigiCard/${resultData[index].digi_card_id}`)}
               // onClick={(e) => history.push(`/admin-portal/admin-casedetails/${resultData[index].client_id}/all_cases`)}
               >
                 <i className="feather icon-edit" /> &nbsp; Edit

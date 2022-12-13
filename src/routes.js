@@ -155,12 +155,7 @@ const routes = [
         component: lazy(() => import('./views/panels/admin-portal/digicard/EditDigiCard'))
       },
       //preview
-      // {
-      //   exact: true,
-      //   path: '/auth/preview/:digiCardContent',
-      //   // component: lazy(() => import('./views/auth/digicard/Preview'))
-      //   component: lazy(() => import('./views/auth/'))
-      // },
+     
       {
         exact: true,
         path: '/app/dashboard/analytics',
@@ -449,7 +444,7 @@ const routes = [
       // {
       //   exact: true,
       //   path: '/school/sch-student',
-      //   component: lazy(() => import('./views/panels/school/Student'))
+      //   component: lazy(() => import('./views/panels/admin-portal/school/Student'))
       // },
       {
         exact: true,
@@ -459,12 +454,12 @@ const routes = [
       // {
       //   exact: true,
       //   path: '/school/sch-parents',
-      //   component: lazy(() => import('./views/panels/school/Parents'))
+      //   component: lazy(() => import('./views/panels/admin-portal/school/Parents'))
       // },
       // {
       //   exact: true,
       //   path: '/school/sch-teacher',
-      //   component: lazy(() => import('./views/panels/school/Teacher'))
+      //   component: lazy(() => import('./views/panels/admin-portal/school/Teacher'))
       // },
       {
         exact: true,
