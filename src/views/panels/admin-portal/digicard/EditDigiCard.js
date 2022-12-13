@@ -24,6 +24,8 @@ import { isEmptyObject } from '../../../../util/utils';
 
 import { Link, useHistory, useParams } from 'react-router-dom';
 
+import { SessionStorage } from '../../../../util/SessionStorage';
+
 
 
 
@@ -152,13 +154,12 @@ const EditDigiCard = (
 
                     console.log('inside res initial data');
 
-                    { console.log(response.data.Items[0].scbscription_active) }
-                    { console.log(response.data.Items[0].school_logoURL) }
+
 
                     let individual_client_data = response.data.Items[0];
                     let previousImage = response.data.Items[0].digicard_imageURL;
                     console.log("individual_client_data", individual_client_data);
-
+                    console.log("keyWords", individual_client_data.digi_card_keywords);
                     // let previousSubscription = response.data.Items[0].scbscription_active;
 
 
@@ -167,6 +168,7 @@ const EditDigiCard = (
                     setIndividualDigiCardData(individual_client_data);
                     setArticleData(individual_client_data.digi_card_content)
                     setTags(individual_client_data.digi_card_keywords)
+
                     console.log('individualDigiCardData', individualDigiCardData);
 
 
@@ -198,7 +200,7 @@ const EditDigiCard = (
 
     }, []);
 
-    return isEmptyObject(individualDigiCardData && articleData) ? null : (
+    return isEmptyObject(individualDigiCardData) ? null : (
         <div>
             <Card>
                 <Card.Body>
@@ -241,7 +243,7 @@ const EditDigiCard = (
                             if (values.digicard_image === '') {
                                 console.log("if condition");
                                 formData = {
-                                    digi_card_id:individualDigiCardData.digi_card_id,
+                                    digi_card_id: individualDigiCardData.digi_card_id,
                                     digi_card_name: values.digicardname,
                                     digi_card_title: values.digicardtitle,
                                     digi_card_files: [values.digicard_image],
@@ -252,7 +254,7 @@ const EditDigiCard = (
                             } else {
                                 console.log("else condition");
                                 formData = {
-                                    digi_card_id:individualDigiCardData.digi_card_id,
+                                    digi_card_id: individualDigiCardData.digi_card_id,
                                     digi_card_name: values.digicardname,
                                     digi_card_title: values.digicardtitle,
                                     digi_card_files: [values.digicard_image],
@@ -415,6 +417,7 @@ const EditDigiCard = (
                                                 }}
                                                 type="file"
                                                 value={values.digicard_image}
+                                                accept="image/*"
                                             />
                                             {touched.digicard_image && errors.digicard_image && (
                                                 <small className="text-danger form-text">{errors.digicard_image}</small>
