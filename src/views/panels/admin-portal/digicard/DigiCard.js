@@ -6,14 +6,14 @@ import BTable from 'react-bootstrap/Table';
 import { GlobalFilter } from './GlobalFilter';
 
 import { useTable, useSortBy, usePagination, useGlobalFilter } from 'react-table';
-import makeData from '../../../data/schoolData';
+import makeData from '../../../../data/schoolData';
 import { useHistory } from 'react-router-dom';
 
 
-import dynamicUrl from '../../../helper/dynamicUrls';
-import MESSAGES from '../../../helper/messages';
-import { SessionStorage } from '../../../util/SessionStorage';
-import useFullPageLoader from '../../../helper/useFullPageLoader';
+import dynamicUrl from '../../../../helper/dynamicUrls';
+import MESSAGES from '../../../../helper/messages';
+import { SessionStorage } from '../../../../util/SessionStorage';
+import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import withReactContent from 'sweetalert2-react-content';
 
 
@@ -192,11 +192,11 @@ const DigiCard = () => {
     setIsOpen(true);
   };
 
- 
+
 
   let history = useHistory();
 
-  function deleteDigicard(digi_card_id,digi_card_name) {
+  function deleteDigicard(digi_card_id, digi_card_name) {
     console.log("digi_card_id", digi_card_id);
     var data = {
       "digi_card_id": digi_card_id
@@ -221,7 +221,7 @@ const DigiCard = () => {
               } else {
                 setReloadAllData("Deleted");
                 //  MySwal.fire('', MESSAGES.INFO.CLIENT_DELETED, 'success');
-                return MySwal.fire('', 'The '+digi_card_name+' is Deleted', 'success');
+                return MySwal.fire('', 'The ' + digi_card_name + ' is Deleted', 'success');
                 // fetchAllDigiCards();
               }
             })
@@ -273,7 +273,7 @@ const DigiCard = () => {
               <Button
                 size="sm"
                 className="btn btn-icon btn-rounded btn-danger"
-                onClick={(e) => deleteDigicard(resultData[index].digi_card_id,resultData[index].digi_card_name)}
+                onClick={(e) => deleteDigicard(resultData[index].digi_card_id, resultData[index].digi_card_name)}
               >
                 <i className="feather icon-trash-2 " /> &nbsp; Delete
               </Button>
