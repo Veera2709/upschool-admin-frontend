@@ -417,6 +417,7 @@ const EditDigiCard = (
                                                 }}
                                                 type="file"
                                                 value={values.digicard_image}
+                                                accept="image/*"
                                             />
                                             {touched.digicard_image && errors.digicard_image && (
                                                 <small className="text-danger form-text">{errors.digicard_image}</small>
