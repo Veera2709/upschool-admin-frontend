@@ -7,7 +7,7 @@ const dynamicUrl = {
     loginWithOTP: baseUrl + '/loginWithOTP',
     validateOTP: baseUrl + '/validateOTP',
     logout: baseUrl + '/logout',
-    
+
     insertDigicard: baseUrl + '/addDigiCard',
     fetchAllDigiCards: baseUrl + '/fetchAllDigiCards',
     fetchIndividualDigiCard: baseUrl + '/fetchIndividualDigiCard',

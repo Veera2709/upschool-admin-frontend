@@ -113,7 +113,7 @@ const routes = [
     path: '/auth/tabs-auth',
     component: lazy(() => import('./views/auth/TabsAuth'))
   },
- 
+
   {
     path: '*',
     layout: AdminLayout,
@@ -446,11 +446,11 @@ const routes = [
       //   path: '/school/sch-student',
       //   component: lazy(() => import('./views/panels/admin-portal/school/Student'))
       // },
-      // {
-      //   exact: true,
-      //   path: '/school/sch-school',
-      //   component: lazy(() => import('../views/panels/admin-portal/school/School'))
-      // },
+      {
+        exact: true,
+        path: '/school/sch-school',
+        component: lazy(() => import('./views/panels/admin-portal/school/School'))
+      },
       // {
       //   exact: true,
       //   path: '/school/sch-parents',
