@@ -65,7 +65,7 @@ const Breadcrumb = () => {
                 </div>
                 <ListGroup as="ul" bsPrefix=" " className="breadcrumb">
                   <ListGroup.Item as="li" bsPrefix=" " className="breadcrumb-item">
-                    <Link to="/">
+                    <Link to="/admin-portal/admin-dashboard">
                       <i className="feather icon-home" />
                     </Link>
                   </ListGroup.Item>

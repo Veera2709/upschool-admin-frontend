@@ -1,0 +1,163 @@
+@font-face {
+  font-family: "CerebriSans";
+  src: local("CerebriSans"),
+    /* url(../Assets/Fonts/Cerebri_Sans/CerebriSansPro-Regular.otf) */
+      url(https://pos-icons.s3.ap-southeast-1.amazonaws.com/CerebriSansPro-Regular.otf)
+      format("opentype");
+}
+#main-device {
+  border: 5px solid #343a40;
+  overflow-y: scroll;
+  border-radius: 10px;
+  background-color: #e5e5e5;
+  padding: 10px;
+}
+.headline {
+  font-family: "CerebriSans";
+  letter-spacing: 0em;
+  text-align: left;
+  color: #2a3033;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 24px;
+  line-height: 31px;
+}
+.main-device {
+  font-family: "CerebriSans";
+  width: fit-content;
+  background-color: transparent;
+  line-height: 22px;
+  letter-spacing: 0em;
+  pointer-events: none;
+}
+.parent {
+  display: flex;
+  justify-content: center;
+  background-color: #343a40;
+}
+.close-button {
+  background-color: #343a40;
+  padding: 3px;
+}
+.close-button-child {
+  background-color: transparent;
+  float: right;
+  color: white;
+  border: none;
+}
+.close-button-child:hover {
+  background-color: red;
+}
+img {
+  max-width: 100%;
+  max-height: 100%;
+  box-shadow: 0px 6px 22px rgba(0, 0, 0, 0.06);
+  border-radius: 16px;
+  padding: 2px;
+}
+
+#main-device::-webkit-scrollbar {
+  display: none;
+}
+#main-device {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.logo-preview {
+  display: flex;
+  justify-content: center;
+  padding-left: 1vw;
+}
+.preview-body {
+  font-family: "CerebriSans";
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 22px;
+  letter-spacing: 0em;
+  text-align: left;
+}
+.didyou {
+  font-family: "CerebriSans";
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 19px;
+  letter-spacing: 0em;
+  text-align: center;
+  margin-bottom: 20px;
+  color: #202426;
+}
+.like-dislike {
+  color: #8c8c8c;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+
+  display: flex;
+  justify-content: space-around;
+  text-align: left;
+  margin-left: 40px;
+  margin-right: 40px;
+}
+.like-dislike-child {
+  background: transparent;
+  font-size: 28px;
+  border: 0px;
+  text-align: center;
+}
+.like-text {
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 14px;
+  letter-spacing: 0em;
+  text-align: center;
+  color: #202426;
+}
+.could {
+  text-align: center;
+  letter-spacing: 0em;
+  color: #202426;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 16px;
+  line-height: 21px;
+}
+.please {
+  text-align: center;
+  color: #737a7d;
+  font-family: "CerebriSans";
+  font-style: normal;
+  font-weight: normal;
+  font-size: 16px;
+  line-height: 22px;
+}
+.phone {
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 24px;
+  letter-spacing: 0em;
+  text-align: center;
+  color: #4829aa;
+}
+.bodytext {
+  color: #737a7d;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 16px;
+  line-height: 140%;
+}
+.bodytext > table > tbody > tr > td {
+  border: 1px solid black;
+  word-wrap: break-word;
+}
+.bodytext > table {
+  margin: auto;
+  max-width: 100%;
+  max-height: 100%;
+  padding: 2px;
+  table-layout: fixed;
+  width: 100%;
+}
