@@ -120,7 +120,10 @@ const AddDigiCard = (
   }
 
  
-
+ const previewData =()=>{
+  sessionStorage.setItem("data",articleData)
+  history.push(`/admin-portal/preview`)
+ }
 
   useEffect(() => {
     setImgFile(logo)
@@ -413,7 +416,7 @@ const AddDigiCard = (
             )}
 
           </Formik>
-          {/* <Row>
+          <Row>
                   <Col sm={10}>
                   </Col>
                   <div className="form-group fill float-end" >
@@ -433,7 +436,7 @@ const AddDigiCard = (
                     </Col>
                   </div>
                 </Row>
-           */}
+          
         </Card.Body>
 
       </Card>
