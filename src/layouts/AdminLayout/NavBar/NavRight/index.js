@@ -227,13 +227,13 @@ const NavRight = () => {
             <Dropdown.Menu alignRight className="profile-notification">
               <div className="pro-head">
                 <img src={user} className="img-radius" alt="User Profile" />
-                <span>John Doe</span>
+                <span>UpSchool Admin</span>
                 <Link to="#" className="dud-logout" title="Logout">
                   <i className="feather icon-log-out" />
                 </Link>
               </div>
               <ListGroup as="ul" bsPrefix=" " variant="flush" className="pro-body">
-                <ListGroup.Item as="li" bsPrefix=" ">
+                {/* <ListGroup.Item as="li" bsPrefix=" ">
                   <Link to="#" className="dropdown-item">
                     <i className="feather icon-settings" /> Settings
                   </Link>
@@ -242,7 +242,7 @@ const NavRight = () => {
                   <Link to="#" className="dropdown-item">
                     <i className="feather icon-user" /> Profile
                   </Link>
-                </ListGroup.Item>
+                </ListGroup.Item> */}
                 {/* <ListGroup.Item as="li" bsPrefix=" ">
                   <Link to="#" className="dropdown-item">
                     <i className="feather icon-mail" /> My Messages
