@@ -10,6 +10,7 @@ const menuItems = {
           id: 'dashboard',
           title: 'Dashboard',
           type: 'collapse',
+          url: '/app/dashboard/analytics',
           icon: 'feather icon-home',
           children: [
             {
@@ -187,7 +188,7 @@ const menuItems = {
               url: '/users/user-list'
             }
           ]
-          }
+        }
       ]
     },
     {
@@ -367,14 +368,7 @@ const menuItems = {
           ]
         },
         {
-          id: 'layout',
-          title: 'DigiCard',
-          type: 'item',
-          icon: 'feather icon-layout',
-          url: '/auth/digicard'
-        },
-        {
-           // id: 'school',
+          // id: 'school',
           // title: 'School',
           // type: 'collapse',
           // icon: 'feather icon-book',
@@ -391,42 +385,42 @@ const menuItems = {
           // title: 'Add School',
           title: 'School',
           icon: 'feather icon-book',
-              type: 'item',
-              url: '/school/sch-school'          
-              // },
-              // {
-              //   id: 'sch-student',
-              //   title: 'Student',
-              //   type: 'item',
-              // url: '/school/sch-student'
-              // },
-              // {
-              //   id: 'sch-parents',
-              //   title: 'Parents',
-              //   type: 'item',
-              //   url: '/school/sch-parents'
-              // },
-              // {
-              //   id: 'sch-teacher',
-              //   title: 'Teacher',
-              //   type: 'item',
-              //   url: '/school/sch-teacher'
-              // }
-              // ]
-                    }, 
-                                       
-                    // {
-                    //   id: 'tpc-addTopic',
-                    //   // title: 'Add School',
-                    //   title: 'Topic',
-                    //   icon: 'feather icon-book',
-                    //   type: 'item',
-                    //   url: '/topic/tpc-topic'
-            
-            
-            
-            
-                    // },
+          type: 'item',
+          url: '/school/sch-school'
+          // },
+          // {
+          //   id: 'sch-student',
+          //   title: 'Student',
+          //   type: 'item',
+          // url: '/school/sch-student'
+          // },
+          // {
+          //   id: 'sch-parents',
+          //   title: 'Parents',
+          //   type: 'item',
+          //   url: '/school/sch-parents'
+          // },
+          // {
+          //   id: 'sch-teacher',
+          //   title: 'Teacher',
+          //   type: 'item',
+          //   url: '/school/sch-teacher'
+          // }
+          // ]
+        },
+
+        // {
+        //   id: 'tpc-addTopic',
+        //   // title: 'Add School',
+        //   title: 'Topic',
+        //   icon: 'feather icon-book',
+        //   type: 'item',
+        //   url: '/topic/tpc-topic'
+
+
+
+
+        // },
         {
           id: 'sis',
           title: 'SIS',

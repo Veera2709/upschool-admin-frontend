@@ -28,6 +28,18 @@
   top: 7px;
 }*/
 
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
 .pcoded-navbar {
 
   &.mob-open~.pcoded-header:before,
@@ -327,4 +339,14 @@ body>div.fade.modal.show>div>div {
   background-clip: padding-box;
   border: 1px solid rgba(0, 0, 0, 0.2);
   border-radius: 5px;
+}
+
+.circle-image {
+  width: 50px;
+  height: 50px;
+  border-radius: 100%;
+  margin: 20px;
+
+  object-fit: cover;
+  object-position: center right;
 }
