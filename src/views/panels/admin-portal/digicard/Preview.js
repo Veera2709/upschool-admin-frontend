@@ -20,6 +20,12 @@ function Preview() {
     const [id, setId] = useState('iPhoneX');
     const [previewData, setPreviewData] = useState();
     const [htmlContent, setHtmlContent] = useState("");
+    const [isShown, setIsShown] = useState(true);
+
+
+    const handleClick = event => {
+        setIsShown(current => !current);
+      };
 
     useEffect(() => {
         setPreviewData(JSON.parse(sessionStorage.getItem('data')))
@@ -71,11 +77,14 @@ function Preview() {
                                 {/* <h1 id='digicardName'>{previewData.digi_card_name}</h1><br /> */}
                                 
                                 <h3 id='digicardTitle' style={{whiteSpace: 'pre-wrap', overflowWrap: 'break-word'}}>{previewData.digi_card_title}</h3><br />
-                                <div >
+                                <div style={{display: isShown ? 'block' : 'none',whiteSpace: 'pre-wrap', overflowWrap: 'break-word'}} >
                                 {ReactHtmlParser(htmlContent)}
                                 </div><br/>
                                 <div className="d-flex justify-content-center">
-                                <Button id='redmore'>RED MORE</Button>
+                                <Button id='redmore' onClick={handleClick} style={{display: isShown ? 'block' : 'none'}} >RED MORE</Button><br/>
+                                </div>
+                                <div style={{display: isShown ? 'none' : 'block'}}>
+                                {ReactHtmlParser(htmlContent)}
                                 </div>
                         </DeviceFrameset>
                         </Col>
