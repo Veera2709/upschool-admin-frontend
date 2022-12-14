@@ -83,7 +83,7 @@ function Table({ columns, data, modalOpen }) {
         <Col className="d-flex justify-content-end">
           <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
           <Button className='btn-sm btn-round has-ripple ml-2 btn btn-success' onClick={() => { adddigicard(); }}  >
-            ADD DigiCard
+            ADD DIGICARD
           </Button>
         </Col>
       </Row>
@@ -310,20 +310,20 @@ const DigiCard = () => {
               <Table columns={columns} data={data} modalOpen={openHandler} />
             </Card.Body>
           </Card>
-          <Modal dialogClassName="my-modal" show={isOpen} onHide={() => setIsOpen(false)}>
+          {/* <Modal dialogClassName="my-modal" show={isOpen} onHide={() => setIsOpen(false)}>
             <Modal.Header closeButton>
               <Modal.Title as="h5">Add School</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-              {/* <AddSchoolForm /> */}
+              <AddSchoolForm />
             </Modal.Body>
-            {/* <Modal.Footer>
+            <Modal.Footer>
                             <Button variant="danger" onClick={() => setIsOpen(false)}>
                                 Clear
                             </Button>
                             <Button variant="primary">Submit</Button>
-                        </Modal.Footer> */}
-          </Modal>
+                        </Modal.Footer>
+          </Modal> */}
         </Col>
       </Row>
     </React.Fragment >

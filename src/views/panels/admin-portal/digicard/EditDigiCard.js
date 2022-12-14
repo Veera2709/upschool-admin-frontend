@@ -238,6 +238,7 @@ const EditDigiCard = (
 
                         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
 
+                            
                             var formData;
 
                             if (values.digicard_image === '') {
