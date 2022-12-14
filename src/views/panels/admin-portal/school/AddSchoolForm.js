@@ -14,7 +14,7 @@ import dynamicUrl from '../../../../helper/dynamicUrls';
 // import { areFilesInvalid } from '../../../../util/utils';
 // import { bgvAlerts } from '../bgv-api/bgvAlerts';
 
-function AddSchool(className, rest, setIsOpen) {
+function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
 
     console.log(setIsOpen);
 
@@ -188,7 +188,12 @@ function AddSchool(className, rest, setIsOpen) {
                                         });
 
                                         const timeOutFunction = () => {
-                                            window.location.reload();
+                                            setIsOpen(false);
+                                            const MySwal = withReactContent(Swal);
+
+                                            MySwal.fire('', 'Your school has been added!', 'success');
+
+                                            fetchSchoolData();
                                         }
                                         setTimeout(timeOutFunction, 1000);
                                     }
