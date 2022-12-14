@@ -37,6 +37,7 @@ export const AddDigiCard = {
   
   DigiCardFileNotNull: 'Digicard Image should not be null!',
   DigiCardfileRequired: 'Digicard Image is required!',
+  DigiCardKeyRequired: 'Digicard Key Words are required!',
 
   UserNameValidation: 'User name should contain only alphabets!',
   ValidContact: 'Must be a valid contact number!',

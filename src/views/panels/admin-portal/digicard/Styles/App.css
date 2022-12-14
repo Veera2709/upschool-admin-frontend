@@ -1,4 +1,4 @@
-.container{
+/* .container{
   display: flex;
   align-items: center;
   justify-content: center;
@@ -39,4 +39,41 @@
   height: 12px;
   background: #000;
   border-radius: 10px;
+} */
+
+.App {
+  font-family: sans-serif;
+  text-align: center;
 }
+#digicardName{
+  text-align: center;
+}
+.digicardTitle{
+  text-align: center;
+  inline-size: 560px;
+  overflow-wrap: break-word;
+ 
+}
+
+#iPhone8 #iPhoneX{
+  text-align: center;
+  inline-size: 358px;
+  overflow-wrap: break-word;
+  
+}
+#htc #sgs{
+  text-align: center;
+  inline-size: 305px;
+  overflow-wrap: break-word;
+ 
+}
+/* .preview{
+  text-align: center;
+} */
+.main{
+  display: flex;
+  justify-content: space-between;
+}
+/* #primary{
+  padding: 20px auto;
+} */
