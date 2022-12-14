@@ -103,6 +103,7 @@ const AddDigiCard = (
 
   const handleAddition = (tag, state) => {
     const newTags = [].concat(tags, tag);
+   
     setTags(newTags);
   };
 
@@ -157,7 +158,8 @@ const AddDigiCard = (
               digicardname: '',
               digicardtitle: '',
               digicard_image: '',
-              digicardcontent: ''
+              digicardcontent: '',
+              // digicardKeywords:[]
             }}
             validationSchema={Yup.object().shape({
               digicardname: Yup.string()
@@ -176,17 +178,11 @@ const AddDigiCard = (
                 .trim()
                 .nullable(true, Constants.AddDigiCard.DigiCardFileNotNull)
                 .required(Constants.AddDigiCard.DigiCardfileRequired),
-              // tags: Yup.array()
-              // .required("Provide at least one tag"),
+              // digicardKeywords: Yup.array()
+              // .required(Constants.AddDigiCard.DigiCardKeyRequired),
             })}
 
             onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-
-              if(tags === undefined){
-                setDisplay('block')
-              }else{
-                setDisplay('none')
-              }
 
 
               console.log("on submit");
@@ -367,6 +363,7 @@ const AddDigiCard = (
                         <small className="text-danger">* </small>KeyWords
                       </label>
                       <ReactTags
+                        error={touched.digicardKeywords && errors.digicardKeywords}
                         classNames={{ root: 'react-tags bootstrap-tagsinput', selectedTag: 'react-tags__selected-tag btn-primary' }}
                         allowNew={true}
                         tags={tags}
@@ -374,7 +371,8 @@ const AddDigiCard = (
                         onAddition={(e) => handleAddition(e)}
                         name='digicardKeywords'
                       />
-                      <small className="text-danger form-text" style={{display: {display} }}> keyWords are Required</small>
+                       {touched.digicardKeywords && errors.digicardKeywords && (
+                        <small className="text-danger form-text">{errors.digicardKeywords}</small>)}
                     </div>
                   </Col>
                   <Col sm={6}>

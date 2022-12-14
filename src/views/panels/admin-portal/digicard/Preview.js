@@ -52,12 +52,13 @@ function Preview() {
                                     <Row className="justify-content-md-center">
                                         <Col xs lg="2">
                                         </Col>
-                                        <Col md="auto"><img src={previewData.imgUrl}></img></Col>
+                                        <Col md="auto"><img src={previewData.imgUrl} className='img-fluid  wid-150'></img></Col>
                                         <Col xs lg="2">
                                         </Col>
                                     </Row>
                                 </Container><br />
-                                <h3 id={id} className='digicardTitle'>{previewData.digi_card_title}</h3><br />
+                                {/* <h1 id='digicardName'>{previewData.digi_card_name}</h1><br /> */}
+                                <h3 id='digicardTitle' style={{whiteSpace: 'pre-wrap', overflowWrap: 'break-word'}}>{previewData.digi_card_title}</h3><br />
                             </div>
                         </DeviceFrameset>
                         </Col>

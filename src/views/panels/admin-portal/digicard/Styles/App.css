@@ -48,24 +48,8 @@
 #digicardName{
   text-align: center;
 }
-#ipad{
+#digicardTitle{
   text-align: center;
-  inline-size: 560px;
-  overflow-wrap: break-word;
- 
-}
-
-#iPhone8 #iPhoneX{
-  text-align: center;
-  inline-size: 358px;
-  overflow-wrap: break-word;
-  
-}
-#htc #sgs{
-  text-align: center;
-  inline-size: 305px;
-  overflow-wrap: break-word;
- 
 }
 /* .preview{
   text-align: center;
@@ -74,6 +58,7 @@
   display: flex;
   justify-content: space-between;
 }
-/* #primary{
-  padding: 20px auto;
-} */
+#digicardTitle{
+  background: #000;
+  color: white;
+}
