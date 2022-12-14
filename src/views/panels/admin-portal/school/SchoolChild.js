@@ -65,6 +65,7 @@ function Table({ columns, data, modalOpen }) {
                     </select>
                     entries
                 </Col>
+
                 <Col className="d-flex justify-content-end">
                     <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
                     <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={modalOpen}>
@@ -321,14 +322,6 @@ const SchoolChild = (props) => {
         fetchSchoolData();
     }, [_data])
 
-    // useEffect(()=>{
-    //     console.log('inSchool', sessionStorage.getItem('flag'))
-    //     if(sessionStorage.getItem('flag') === false ){
-    //         setIsOpen(false);
-    //         fetchSchoolData();
-    //     }
-    // }, [] )
-
     return isEmptyArray(schoolData) ? null : (
         <React.Fragment>
             <Row>
@@ -346,7 +339,7 @@ const SchoolChild = (props) => {
                             <Modal.Title as="h5">Add School</Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
-                            <AddSchoolForm />
+                            <AddSchoolForm setIsOpen={setIsOpen} />
                         </Modal.Body>
                         {/* <Modal.Footer>
                             <Button variant="danger" onClick={() => setIsOpen(false)}>

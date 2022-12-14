@@ -58,13 +58,16 @@ function Table({ columns, data, modalOpen }) {
           </select>
           entries
         </Col>
+
         <Col className="d-flex justify-content-end">
           <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
-          <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={modalOpen}>
+          <Button variant="success" className="btn-sm btn-round has-ripple
+           ml-2" onClick={modalOpen}>
             <i className="feather icon-plus" /> Add Patient
           </Button>
         </Col>
       </Row>
+
       <BTable striped bordered hover responsive {...getTableProps()}>
         <thead>
           {headerGroups.map((headerGroup) => (
@@ -118,7 +121,8 @@ function Table({ columns, data, modalOpen }) {
               className="form-control ml-2"
               defaultValue={pageIndex + 1}
               onChange={(e) => {
-                const page = e.target.value ? Number(e.target.value) - 1 : 0;
+                const page = e.target.value ? Number(e.target.value) -
+                  1 : 0;
                 gotoPage(page);
               }}
               style={{ width: '100px' }}
