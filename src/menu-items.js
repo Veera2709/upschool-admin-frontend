@@ -1,426 +1,342 @@
 const menuItems = {
   items: [
-    {
-      // id: 'navigation',
-      // title: 'Navigation',
-      // type: 'group',
-      // icon: 'icon-navigation',
-      children: [
-        {
-          id: 'dashboard',
-          title: 'Dashboard',
-          type: 'collapse',
-          url: '/app/dashboard/analytics',
-          icon: 'feather icon-home',
-          children: [
-            {
-              id: 'analytics',
-              title: 'Analytics',
-              type: 'item',
-              url: '/app/dashboard/analytics',
-              breadcrumbs: false
-            },
-            {
-              id: 'sales',
-              title: 'Sales',
-              type: 'item',
-              url: '/app/dashboard/sales',
-              badge: {
-                title: 'NEW',
-                type: 'badge-danger'
-              }
-            }
-          ]
-        },
-        {
-          id: 'layout',
-          title: 'Page Layouts',
-          type: 'collapse',
-          icon: 'feather icon-layout',
-          children: [
-            {
-              id: 'vertical',
-              title: 'Vertical',
-              type: 'collapse',
-              children: [
-                {
-                  id: 'static',
-                  title: 'Static',
-                  type: 'item',
-                  url: '/layout/vertical/static',
-                  target: true
-                },
-                {
-                  id: 'fixed',
-                  title: 'Fixed',
-                  type: 'item',
-                  url: '/layout/vertical/fixed',
-                  target: true
-                },
-                {
-                  id: 'nav-fixed',
-                  title: 'Navbar Fixed',
-                  type: 'item',
-                  url: '/layout/vertical/nav-fixed',
-                  target: true
-                },
-                {
-                  id: 'collapse-menu',
-                  title: 'Collapse Menu',
-                  type: 'item',
-                  url: '/layout/vertical/collapse-menu',
-                  target: true
-                },
-                {
-                  id: 'v-rtl',
-                  title: 'Vertical RTL',
-                  type: 'item',
-                  url: '/layout/vertical/v-rtl',
-                  target: true
-                }
-              ]
-            },
-            {
-              id: 'horizontal',
-              title: 'Horizontal',
-              type: 'item',
-              url: '/layout/horizontal',
-              target: true
-            },
-            {
-              id: 'horizontal-v2',
-              title: 'Horizontal v2',
-              type: 'item',
-              url: '/layout/horizontal-v2',
-              target: true
-            },
-            {
-              id: 'horizontal-rtl',
-              title: 'Horizontal RTL',
-              type: 'item',
-              url: '/layout/horizontal-rtl',
-              target: true
-            },
-            {
-              id: 'box',
-              title: 'Box Layout',
-              type: 'item',
-              url: '/layout/box',
-              target: true
-            },
-            {
-              id: 'light',
-              title: 'Light Layout',
-              type: 'item',
-              url: '/layout/light',
-              target: true
-            },
-            {
-              id: 'dark',
-              title: 'Dark Layout',
-              type: 'item',
-              url: '/layout/dark',
-              target: true,
-              badge: {
-                title: 'Hot',
-                type: 'badge-danger'
-              }
-            }
-          ]
-        },
-        {
-          id: 'widgets',
-          title: 'Widget',
-          type: 'collapse',
-          icon: 'feather icon-layers',
-          badge: {
-            title: '100+',
-            type: 'badge-info'
-          },
-          children: [
-            {
-              id: 'widget-statistic',
-              title: 'Statistic',
-              type: 'item',
-              url: '/app/widgets/widget-statistic'
-            },
-            {
-              id: 'widget-data',
-              title: 'Data',
-              type: 'item',
-              url: '/app/widgets/widget-data'
-            },
-            {
-              id: 'widget-chart',
-              title: 'Chart',
-              type: 'item',
-              url: '/app/widgets/widget-chart'
-            }
-          ]
-        },
-        {
-          id: 'users',
-          title: 'Users',
-          type: 'collapse',
-          icon: 'feather icon-users',
-          badge: {
-            title: 'New',
-            type: 'badge-warning'
-          },
-          children: [
-            {
-              id: 'user-profile',
-              title: 'Profile',
-              type: 'item',
-              url: '/users/user-profile',
-              breadcrumbs: false
-            },
-            {
-              id: 'user-cards',
-              title: 'User Card',
-              type: 'item',
-              url: '/users/user-cards'
-            },
-            {
-              id: 'user-list',
-              title: 'User List',
-              type: 'item',
-              url: '/users/user-list'
-            }
-          ]
-        }
-      ]
-    },
+    // {
+    //   // id: 'navigation',
+    //   // title: 'Navigation',
+    //   // type: 'group',
+    //   // icon: 'icon-navigation',
+    //   children: [
+    //     {
+    //       id: 'dashboard',
+    //       title: 'Dashboard',
+    //       type: 'collapse',
+    //       icon: 'feather icon-home',
+    //       children: [
+    //         {
+    //           id: 'analytics',
+    //           title: 'Analytics',
+    //           type: 'item',
+    //           url: '/app/dashboard/analytics',
+    //           breadcrumbs: false
+    //         },
+    //         {
+    //           id: 'sales',
+    //           title: 'Sales',
+    //           type: 'item',
+    //           url: '/app/dashboard/sales',
+    //           badge: {
+    //             title: 'NEW',
+    //             type: 'badge-danger'
+    //           }
+    //         }
+    //       ]
+    //     },
+    //     {
+    //       id: 'layout',
+    //       title: 'Page Layouts',
+    //       type: 'collapse',
+    //       icon: 'feather icon-layout',
+    //       children: [
+    //         {
+    //           id: 'vertical',
+    //           title: 'Vertical',
+    //           type: 'collapse',
+    //           children: [
+    //             {
+    //               id: 'static',
+    //               title: 'Static',
+    //               type: 'item',
+    //               url: '/layout/vertical/static',
+    //               target: true
+    //             },
+    //             {
+    //               id: 'fixed',
+    //               title: 'Fixed',
+    //               type: 'item',
+    //               url: '/layout/vertical/fixed',
+    //               target: true
+    //             },
+    //             {
+    //               id: 'nav-fixed',
+    //               title: 'Navbar Fixed',
+    //               type: 'item',
+    //               url: '/layout/vertical/nav-fixed',
+    //               target: true
+    //             },
+    //             {
+    //               id: 'collapse-menu',
+    //               title: 'Collapse Menu',
+    //               type: 'item',
+    //               url: '/layout/vertical/collapse-menu',
+    //               target: true
+    //             },
+    //             {
+    //               id: 'v-rtl',
+    //               title: 'Vertical RTL',
+    //               type: 'item',
+    //               url: '/layout/vertical/v-rtl',
+    //               target: true
+    //             }
+    //           ]
+    //         },
+    //         {
+    //           id: 'horizontal',
+    //           title: 'Horizontal',
+    //           type: 'item',
+    //           url: '/layout/horizontal',
+    //           target: true
+    //         },
+    //         {
+    //           id: 'horizontal-v2',
+    //           title: 'Horizontal v2',
+    //           type: 'item',
+    //           url: '/layout/horizontal-v2',
+    //           target: true
+    //         },
+    //         {
+    //           id: 'horizontal-rtl',
+    //           title: 'Horizontal RTL',
+    //           type: 'item',
+    //           url: '/layout/horizontal-rtl',
+    //           target: true
+    //         },
+    //         {
+    //           id: 'box',
+    //           title: 'Box Layout',
+    //           type: 'item',
+    //           url: '/layout/box',
+    //           target: true
+    //         },
+    //         {
+    //           id: 'light',
+    //           title: 'Light Layout',
+    //           type: 'item',
+    //           url: '/layout/light',
+    //           target: true
+    //         },
+    //         {
+    //           id: 'dark',
+    //           title: 'Dark Layout',
+    //           type: 'item',
+    //           url: '/layout/dark',
+    //           target: true,
+    //           badge: {
+    //             title: 'Hot',
+    //             type: 'badge-danger'
+    //           }
+    //         }
+    //       ]
+    //     },
+    //     {
+    //       id: 'widgets',
+    //       title: 'Widget',
+    //       type: 'collapse',
+    //       icon: 'feather icon-layers',
+    //       badge: {
+    //         title: '100+',
+    //         type: 'badge-info'
+    //       },
+    //       children: [
+    //         {
+    //           id: 'widget-statistic',
+    //           title: 'Statistic',
+    //           type: 'item',
+    //           url: '/app/widgets/widget-statistic'
+    //         },
+    //         {
+    //           id: 'widget-data',
+    //           title: 'Data',
+    //           type: 'item',
+    //           url: '/app/widgets/widget-data'
+    //         },
+    //         {
+    //           id: 'widget-chart',
+    //           title: 'Chart',
+    //           type: 'item',
+    //           url: '/app/widgets/widget-chart'
+    //         }
+    //       ]
+    //     },
+    //     {
+    //       id: 'users',
+    //       title: 'Users',
+    //       type: 'collapse',
+    //       icon: 'feather icon-users',
+    //       badge: {
+    //         title: 'New',
+    //         type: 'badge-warning'
+    //       },
+    //       children: [
+    //         {
+    //           id: 'user-profile',
+    //           title: 'Profile',
+    //           type: 'item',
+    //           url: '/users/user-profile',
+    //           breadcrumbs: false
+    //         },
+    //         {
+    //           id: 'user-cards',
+    //           title: 'User Card',
+    //           type: 'item',
+    //           url: '/users/user-cards'
+    //         },
+    //         {
+    //           id: 'user-list',
+    //           title: 'User List',
+    //           type: 'item',
+    //           url: '/users/user-list'
+    //         }
+    //       ]
+    //     }
+    //   ]
+    // },
     {
       id: 'admin-panel',
       title: 'Admin Panel',
       type: 'group',
       icon: 'icon-monitor',
       children: [
+        // {
+        //   id: 'hospital',
+        //   title: 'Hospital',
+        //   type: 'collapse',
+        //   icon: 'feather icon-activity',
+        //   children: [
+        //     {
+        //       id: 'hosp-dashboard',
+        //       title: 'Dashboard',
+        //       type: 'item',
+        //       url: '/hospital/hosp-dashboard'
+        //     },
+        //     {
+        //       id: 'hosp-department',
+        //       title: 'Department',
+        //       type: 'item',
+        //       url: '/hospital/hosp-department'
+        //     },
+        //     {
+        //       id: 'hosp-doctor',
+        //       title: 'Doctor',
+        //       type: 'item',
+        //       url: '/hospital/hosp-doctor'
+        //     },
+        //     {
+        //       id: 'hosp-patient',
+        //       title: 'Patient',
+        //       type: 'item',
+        //       url: '/hospital/hosp-patient'
+        //     },
+        //     {
+        //       id: 'hosp-nurse',
+        //       title: 'Nurse',
+        //       type: 'item',
+        //       url: '/hospital/hosp-nurse'
+        //     },
+        //     {
+        //       id: 'hosp-pharmacist',
+        //       title: 'Pharmacist',
+        //       type: 'item',
+        //       url: '/hospital/hosp-pharmacist'
+        //     },
+        //     {
+        //       id: 'hosp-laboratory',
+        //       title: 'Laboratory',
+        //       type: 'item',
+        //       url: '/hospital/hosp-laboratory'
+        //     }
+        //   ]
+        // },
+        // {
+        //   id: 'helpdesk',
+        //   title: 'Helpdesk',
+        //   type: 'collapse',
+        //   icon: 'feather icon-help-circle',
+        //   children: [
+        //     {
+        //       id: 'hd-dashboard',
+        //       title: 'Dashboard',
+        //       type: 'item',
+        //       url: '/helpdesk/hd-dashboard'
+        //     },
+        //     {
+        //       id: 'hd-ticket',
+        //       title: 'Create Ticket',
+        //       type: 'item',
+        //       url: '/helpdesk/hd-ticket'
+        //     },
+        //     {
+        //       id: 'hd-ticket-list',
+        //       title: 'Ticket List',
+        //       type: 'item',
+        //       url: '/helpdesk/hd-ticket-list'
+        //     },
+        //     {
+        //       id: 'hd-ticket-details',
+        //       title: 'Ticket Detail',
+        //       type: 'item',
+        //       url: '/helpdesk/hd-ticket-details'
+        //     },
+        //     {
+        //       id: 'hd-customer-list',
+        //       title: 'Customer',
+        //       type: 'item',
+        //       url: '/helpdesk/hd-customer-list'
+        //     }
+        //   ]
+        // },
+        // {
+        //   id: 'project-crm',
+        //   title: 'Project & CRM',
+        //   type: 'collapse',
+        //   icon: 'feather icon-package',
+        //   children: [
+        //     {
+        //       id: 'pc-dashboard',
+        //       title: 'Dashboard',
+        //       type: 'item',
+        //       url: '/project-crm/pc-dashboard'
+        //     },
+        //     {
+        //       id: 'pc-customers',
+        //       title: 'Customers',
+        //       type: 'item',
+        //       url: '/project-crm/pc-customers'
+        //     },
+        //     {
+        //       id: 'pc-project',
+        //       title: 'Project',
+        //       type: 'item',
+        //       url: '/project-crm/pc-project'
+        //     },
+        //     {
+        //       id: 'pc-task',
+        //       title: 'Task',
+        //       type: 'item',
+        //       url: '/project-crm/pc-task'
+        //     }
+        //   ]
+        // },
         {
-          id: 'hospital',
-          title: 'Hospital',
-          type: 'collapse',
-          icon: 'feather icon-activity',
-          children: [
-            {
-              id: 'hosp-dashboard',
-              title: 'Dashboard',
-              type: 'item',
-              url: '/hospital/hosp-dashboard'
-            },
-            {
-              id: 'hosp-department',
-              title: 'Department',
-              type: 'item',
-              url: '/hospital/hosp-department'
-            },
-            {
-              id: 'hosp-doctor',
-              title: 'Doctor',
-              type: 'item',
-              url: '/hospital/hosp-doctor'
-            },
-            {
-              id: 'hosp-patient',
-              title: 'Patient',
-              type: 'item',
-              url: '/hospital/hosp-patient'
-            },
-            {
-              id: 'hosp-nurse',
-              title: 'Nurse',
-              type: 'item',
-              url: '/hospital/hosp-nurse'
-            },
-            {
-              id: 'hosp-pharmacist',
-              title: 'Pharmacist',
-              type: 'item',
-              url: '/hospital/hosp-pharmacist'
-            },
-            {
-              id: 'hosp-laboratory',
-              title: 'Laboratory',
-              type: 'item',
-              url: '/hospital/hosp-laboratory'
-            }
-          ]
-        },
-        {
-          id: 'helpdesk',
-          title: 'Helpdesk',
-          type: 'collapse',
-          icon: 'feather icon-help-circle',
-          children: [
-            {
-              id: 'hd-dashboard',
-              title: 'Dashboard',
-              type: 'item',
-              url: '/helpdesk/hd-dashboard'
-            },
-            {
-              id: 'hd-ticket',
-              title: 'Create Ticket',
-              type: 'item',
-              url: '/helpdesk/hd-ticket'
-            },
-            {
-              id: 'hd-ticket-list',
-              title: 'Ticket List',
-              type: 'item',
-              url: '/helpdesk/hd-ticket-list'
-            },
-            {
-              id: 'hd-ticket-details',
-              title: 'Ticket Detail',
-              type: 'item',
-              url: '/helpdesk/hd-ticket-details'
-            },
-            {
-              id: 'hd-customer-list',
-              title: 'Customer',
-              type: 'item',
-              url: '/helpdesk/hd-customer-list'
-            }
-          ]
-        },
-        {
-          id: 'project-crm',
-          title: 'Project & CRM',
-          type: 'collapse',
-          icon: 'feather icon-package',
-          children: [
-            {
-              id: 'pc-dashboard',
-              title: 'Dashboard',
-              type: 'item',
-              url: '/project-crm/pc-dashboard'
-            },
-            {
-              id: 'pc-customers',
-              title: 'Customers',
-              type: 'item',
-              url: '/project-crm/pc-customers'
-            },
-            {
-              id: 'pc-project',
-              title: 'Project',
-              type: 'item',
-              url: '/project-crm/pc-project'
-            },
-            {
-              id: 'pc-task',
-              title: 'Task',
-              type: 'item',
-              url: '/project-crm/pc-task'
-            }
-          ]
-        },
-        {
-          id: 'membership',
-          title: 'Membership',
-          type: 'collapse',
-          icon: 'feather icon-user-check',
-          children: [
-            {
-              id: 'mshp-dashboard',
-              title: 'Dashboard',
-              type: 'item',
-              url: '/membership/mshp-dashboard'
-            },
-            {
-              id: 'mshp-email',
-              title: 'Email Templates',
-              type: 'item',
-              url: '/membership/mshp-email'
-            },
-            {
-              id: 'mshp-country',
-              title: 'Country',
-              type: 'item',
-              url: '/membership/mshp-country'
-            },
-            {
-              id: 'mshp-coupons',
-              title: 'Coupons',
-              type: 'item',
-              url: '/membership/mshp-coupons'
-            },
-            {
-              id: 'mshp-newsletter',
-              title: 'Newsletter',
-              type: 'item',
-              url: '/membership/mshp-newsletter'
-            },
-            {
-              id: 'mshp-user',
-              title: 'User',
-              type: 'item',
-              url: '/membership/mshp-user'
-            },
-            {
-              id: 'mshp-membership',
-              title: 'Membership',
-              type: 'item',
-              url: '/membership/mshp-membership'
-            }
-          ]
-        },
-        {
-          // id: 'school',
-          // title: 'School',
-          // type: 'collapse',
-          // icon: 'feather icon-book',
-
-          // children: [
-          // {
-          //   id: 'sch-dashboard',
-          //   title: 'Dashboard',
-          //   type: 'item',
-          //   url: '/school/sch-dashboard'
-          // },
-          // {
           id: 'sch-addSchool',
-          // title: 'Add School',
           title: 'School',
           icon: 'feather icon-book',
           type: 'item',
-          url: '/school/sch-school'
-          // },
-          // {
-          //   id: 'sch-student',
-          //   title: 'Student',
-          //   type: 'item',
-          // url: '/school/sch-student'
-          // },
-          // {
-          //   id: 'sch-parents',
-          //   title: 'Parents',
-          //   type: 'item',
-          //   url: '/school/sch-parents'
-          // },
-          // {
-          //   id: 'sch-teacher',
-          //   title: 'Teacher',
-          //   type: 'item',
-          //   url: '/school/sch-teacher'
-          // }
-          // ]
+          url: '/admin-portal/school'
         },
-
-        // {
-        //   id: 'tpc-addTopic',
-        //   // title: 'Add School',
-        //   title: 'Topic',
-        //   icon: 'feather icon-book',
-        //   type: 'item',
-        //   url: '/topic/tpc-topic'
-
-
-
-
-        // },
+        {
+          id: 'users',
+          title: 'Users',
+          type: 'item',
+          icon: 'feather icon-users',
+          url: '/admin-portal/users'
+        },
+        {
+          id: 'layout',
+          title: 'DigiCard',
+          type: 'item',
+          icon: 'feather icon-layout',
+          url: '/admin-portal/digicard'
+        },       
         {
           id: 'sis',
           title: 'SIS',

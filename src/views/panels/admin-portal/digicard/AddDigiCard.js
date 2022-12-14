@@ -119,10 +119,7 @@ const AddDigiCard = (
     setImgFile(URL.createObjectURL(e.target.files[0]));
   }
 
-  const previewData = () => {
-    var previewData = JSON.stringify(articleData)
-    history.push(`/auth/preview/${previewData}`)
-  }
+ 
 
 
   useEffect(() => {
@@ -158,37 +155,22 @@ const AddDigiCard = (
                 .trim()
                 .nullable(true, Constants.AddDigiCard.DigiCardFileNotNull)
                 .required(Constants.AddDigiCard.DigiCardfileRequired),
-              digicardcontent: Yup.string()
-
-                .required(Constants.AddDigiCard.DigiCardRequired),
             })}
 
 
             onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-              var formData;
 
-              console.log("values", values.digicard_image);
-              if (values.digicard_image === '') {
-                console.log("if condition");
-                formData = {
-                  digi_card_name: values.digicardname,
-                  digi_card_title: values.digicardtitle,
-                  digi_card_files: [values.digicard_image],
-                  digicard_image: 'C:\\fakepath\\logo.png',
-                  digi_card_content: articleData,
-                  digi_card_keywords: tags
-                };
-              } else {
-                console.log("else condition");
-                formData = {
-                  digi_card_name: values.digicardname,
-                  digi_card_title: values.digicardtitle,
-                  digi_card_files: [values.digicard_image],
-                  digicard_image: values.digicard_image,
-                  digi_card_content: articleData,
-                  digi_card_keywords: tags
-                };
-              }
+              console.log("on submit");
+              var formData = {
+                digi_card_name: values.digicardname,
+                digi_card_title: values.digicardtitle,
+                digi_card_files: [values.digicard_image],
+                digicard_image: values.digicard_image,
+                digi_card_content: articleData,
+                digi_card_keywords: tags
+              };
+
+
 
               axios
                 .post(dynamicUrl.insertDigicard, { data: formData }, { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
@@ -431,27 +413,27 @@ const AddDigiCard = (
             )}
 
           </Formik>
-          <Row>
-            <Col sm={10}>
-            </Col>
-            <div className="form-group fill float-end" >
-              <Col sm={12} className="center">
-                <Button
-                  className="btn-block"
-                  color="success"
-                  size="large"
-                  type="submit"
-                  variant="success"
-                  // disabled={disableButton === true}
-                  // onClick={(e) => {alert(`/auth/preview/${articleData}`); history.push(`/auth/preview/jklkjlk`)}}
-                  onClick={previewData}
-                >
-                  preview
-                </Button>
-              </Col>
-            </div>
-          </Row>
-
+          {/* <Row>
+                  <Col sm={10}>
+                  </Col>
+                  <div className="form-group fill float-end" >
+                    <Col sm={12} className="center">
+                      <Button
+                        className="btn-block"
+                        color="success"
+                        size="large"
+                        type="submit"
+                        variant="success"
+                      // disabled={disableButton === true}
+                      // onClick={(e) => {alert(`/auth/preview/${articleData}`); history.push(`/auth/preview/jklkjlk`)}}
+                      onClick={previewData}
+                      >
+                        preview
+                      </Button>
+                    </Col>
+                  </div>
+                </Row>
+           */}
         </Card.Body>
 
       </Card>

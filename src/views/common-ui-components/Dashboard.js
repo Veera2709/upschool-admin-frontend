@@ -6,11 +6,11 @@ const Dashboard = () => {
     let history = useHistory();
     console.log("Dashboard");
 
-    useEffect(() => {
-        window.addEventListener('popstate', (e) => {
-            window.history.go(1);
-        });
-    }, []);
+    // useEffect(() => {
+    //     window.addEventListener('popstate', (e) => {
+    //         window.history.go(1);
+    //     });
+    // }, []);
 
     const validateJWT = sessionStorage.getItem('user_jwt');
 
