@@ -45,9 +45,6 @@
   font-family: sans-serif;
   text-align: center;
 }
-#digicardName{
-  text-align: center;
-}
 #digicardTitle{
   text-align: center;
 }
@@ -59,6 +56,17 @@
   justify-content: space-between;
 }
 #digicardTitle{
-  background: #000;
+  text-shadow: 0 0 20px #9a9595, 0 0 5px #2a2728;
+}
+#img{
+  margin-top:70px ;
+  width: 200px;
+}
+
+.justify-content-md-cente{
+ display: flex;
+}
+span{
+  background-color: black;
   color: white;
 }
