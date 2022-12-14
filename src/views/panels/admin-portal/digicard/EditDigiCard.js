@@ -95,6 +95,7 @@ const EditDigiCard = (
     const [tags, setTags] = useState([]);
     const [imgFile, setImgFile] = useState([]);
     const [articleData, setArticleData] = useState("");
+    const [display, setDisplay] = useState('none');
 
     const [individualDigiCardData, setIndividualDigiCardData] = useState([]);
     console.log('individualDigiCardData', individualDigiCardData);
@@ -238,6 +239,11 @@ const EditDigiCard = (
 
                         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
 
+                            if(tags === undefined){
+                                setDisplay('block')
+                              }else{
+                                setDisplay('none')
+                              }
                             var formData;
 
                             if (values.digicard_image === '') {
@@ -434,6 +440,7 @@ const EditDigiCard = (
                                                 onDelete={handleDelete}
                                                 onAddition={(e) => handleAddition(e)}
                                             />
+                                            <small className="text-danger form-text" style={{display: {display} }}> keyWords are Required</small>
                                         </div>
                                     </Col>
                                     <Col sm={6}>

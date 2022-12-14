@@ -88,6 +88,7 @@ const AddDigiCard = (
 
   const [tags, setTags] = useState([]);
   const [ImgURL, setImgURL] = useState([]);
+  const [display, setDisplay] = useState('none');
   const [imgFile, setImgFile] = useState([]);
   const [articleData, setArticleData] = useState("");
   let history = useHistory();
@@ -156,8 +157,7 @@ const AddDigiCard = (
               digicardname: '',
               digicardtitle: '',
               digicard_image: '',
-              digicardcontent: '',
-              digicardKeywords:''
+              digicardcontent: ''
             }}
             validationSchema={Yup.object().shape({
               digicardname: Yup.string()
@@ -176,12 +176,19 @@ const AddDigiCard = (
                 .trim()
                 .nullable(true, Constants.AddDigiCard.DigiCardFileNotNull)
                 .required(Constants.AddDigiCard.DigiCardfileRequired),
+              // tags: Yup.array()
+              // .required("Provide at least one tag"),
             })}
 
             onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
 
-            
-              
+              if(tags === undefined){
+                setDisplay('block')
+              }else{
+                setDisplay('none')
+              }
+
+
               console.log("on submit");
               var formData = {
                 digi_card_name: values.digicardname,
@@ -367,6 +374,7 @@ const AddDigiCard = (
                         onAddition={(e) => handleAddition(e)}
                         name='digicardKeywords'
                       />
+                      <small className="text-danger form-text" style={{display: {display} }}> keyWords are Required</small>
                     </div>
                   </Col>
                   <Col sm={6}>

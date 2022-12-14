@@ -57,7 +57,7 @@ function Preview() {
                                         </Col>
                                     </Row>
                                 </Container><br />
-                                <h3 id={id} className='digicardTitle' style={{whiteSpace: 'pre-wrap', overflowWrap: 'break-word'}}>{previewData.digi_card_title}</h3><br />
+                                <h3 id={id} className='digicardTitle'>{previewData.digi_card_title}</h3><br />
                             </div>
                         </DeviceFrameset>
                         </Col>
