@@ -8,6 +8,7 @@ import { isEmptyObject } from '../../../../util/utils';
 import "./Styles/App.css"
 import 'bootstrap/dist/css/bootstrap.min.css';
 import ReactHtmlParser from 'react-html-parser'
+import { Scrollbars } from 'react-custom-scrollbars';
 
 
 
@@ -18,12 +19,17 @@ function Preview() {
     const [data, setData] = useState();
 
     const [id, setId] = useState('iphonex');
+    const [scrollBar, setscrollBar] = useState('iphonex');
     const [previewData, setPreviewData] = useState();
     const [htmlContent, setHtmlContent] = useState("");
     const [isShown, setIsShown] = useState(true);
 
 
 
+
+    const readMore = () => {
+        setIsShown(false)
+    }
 
     useEffect(() => {
         setPreviewData(JSON.parse(sessionStorage.getItem('data')))
@@ -83,27 +89,37 @@ function Preview() {
                                 {ReactHtmlParser(htmlContent)}
                                 </div>
                             </div> */}
-                            <div>
-                            <Container>
-                                <Row>
-                                    <Col sm>
-                                    </Col>
-                                    <Col>
-                                        <Card  id={id}>
-                                            <Card.Img variant="top" src={previewData.imgUrl} className='img-fluid  wid-160' />
-                                            <Card.Body>
-                                                <Card.Title style={{whiteSpace: 'pre-wrap', overflowWrap: 'break-word'}}>{previewData.digi_card_title}</Card.Title>
-                                                <Card.Text>
-                                                    Some quick example text to build on the card title and make up the
-                                                    bulk of the card's content.
-                                                </Card.Text>
-                                                <Button variant="primary">RED MORE</Button>
-                                            </Card.Body>
-                                        </Card>
-                                    </Col>
-                                    <Col sm></Col>
-                                </Row>
-                            </Container>
+                            <div style={{ display: isShown ? 'block' : 'none' }}>
+                                <Container>
+                                    <Row>
+                                        <Col sm>
+                                        </Col>
+                                        <Col>
+                                            <Card id={id}>
+                                                <Card.Img variant="top" src={previewData.imgUrl} className='img-fluid  wid-160' />
+                                                <Card.Body>
+                                                    <Card.Title style={{ whiteSpace: 'pre-wrap', overflowWrap: 'break-word' }}>{previewData.digi_card_title}</Card.Title>
+                                                    <Card.Text>
+                                                        Some quick example text to build on the card title and make up the
+                                                        bulk of the card's content.
+                                                    </Card.Text>
+                                                    <Button variant="primary" onClick={readMore}>RED MORE</Button>
+                                                </Card.Body>
+                                            </Card>
+                                        </Col>
+                                        <Col sm></Col>
+                                    </Row>
+                                </Container>
+                            </div>
+                            <div style={{ display: isShown ? 'none' : 'block', whiteSpace: 'pre-wrap', overflowWrap: 'break-word' }} id='digicardText'>
+
+                                <Scrollbars
+                                    autoHeight
+                                    autoHeightMin={100}
+                                    autoHeightMax={500}>
+                                    <h3 id='digicardTitle' style={{ whiteSpace: 'pre-wrap', overflowWrap: 'break-word' }}>{previewData.digi_card_title}</h3><br />
+                                    {ReactHtmlParser(htmlContent)}
+                                </Scrollbars>
                             </div>
                         </DeviceFrameset>
                     </Col>

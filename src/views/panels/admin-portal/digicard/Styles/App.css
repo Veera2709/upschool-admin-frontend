@@ -114,6 +114,17 @@ span{
   padding: 20px 20px 20px 20px;
 }
 
+      
+
+#digicardText{
+  margin-top: 50px;
+}
+
+#iphonex{
+  margin-top: 50px;
+  height: 710px;
+  overflow-y: auto;
+}
 /* 
 ol  {
   clear: both;
