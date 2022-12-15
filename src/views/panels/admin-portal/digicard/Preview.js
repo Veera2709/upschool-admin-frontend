@@ -77,14 +77,17 @@ function Preview() {
                                 {/* <h1 id='digicardName'>{previewData.digi_card_name}</h1><br /> */}
                                 
                                 <h3 id='digicardTitle' style={{whiteSpace: 'pre-wrap', overflowWrap: 'break-word'}}>{previewData.digi_card_title}</h3><br />
-                                <div style={{display: isShown ? 'block' : 'none',whiteSpace: 'pre-wrap', overflowWrap: 'break-word'}} >
+                                {/* <div style={{display: isShown ? 'block' : 'none',whiteSpace: 'pre-wrap', overflowWrap: 'break-word'}} id='digicardText'>
                                 {ReactHtmlParser(htmlContent)}
                                 </div><br/>
                                 <div className="d-flex justify-content-center">
                                 <Button id='redmore' onClick={handleClick} style={{display: isShown ? 'block' : 'none'}} >RED MORE</Button><br/>
-                                </div>
-                                <div style={{display: isShown ? 'none' : 'block'}}>
+                                </div> */}
+                                {/* <div style={{display: isShown ? 'none' : 'block'}}>
                                 {ReactHtmlParser(htmlContent)}
+                                </div> */}
+                                <div id='digicardText'>
+                                    {ReactHtmlParser(htmlContent)}
                                 </div>
                         </DeviceFrameset>
                         </Col>
