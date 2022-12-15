@@ -23,7 +23,10 @@ const dynamicUrl = {
     fetchSchoolIdNames: baseUrl + '/fetchSchoolIdNames',
     fetchAllUsersData: baseUrl + '/fetchAllUsersData',
     getUserBulkuploadUrl: baseUrl + '/getUserBulkuploadUrl',
-    bulkUsersUpload: baseUrl + '/bulkUsersUpload'
+    bulkUsersUpload: baseUrl + '/bulkUsersUpload',
+    fetchIndividualUser: baseUrl + '/fetchIndividualUser',
+    updateUser: baseUrl + '/updateUser',
+    deleteUser: baseUrl + '/deleteUser'
 
 }
 

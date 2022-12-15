@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import chroma from 'chroma-js';
 import { Link, useHistory, useParams } from 'react-router-dom';
-import { Row, Col, Card, Pagination, Button, Modal } from 'react-bootstrap';
+import { Row, Col, Card, Pagination, Button, Modal, Alert } from 'react-bootstrap';
 import BTable from 'react-bootstrap/Table';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
@@ -224,15 +224,10 @@ const UserData = (props) => {
 
   const [isOpen, setIsOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [validationObj, setValidationObj] = useState({});
 
   const [clients, setClients] = useState([]);
   const [multiSelectClients, setMultiSelectClients] = useState([]);
-  const [clientId, setClientId] = useState('N.A.');
-  const [category, setCategory] = useState('');
-  const [selectCategory, setSelectCategory] = useState('Admin');
-  const [type, setType] = useState('N.A.');
-  const [component, setComponent] = useState([]);
-  const [defaultValueData, setDefaultValueData] = useState([]);
   const [selectedClients, setSelectedClients] = useState('N.A.');
   const [isLoading, setIsLoading] = useState(false);
   const { user_id } = decodeJWT(sessionStorage.getItem('user_jwt'));
@@ -240,6 +235,8 @@ const UserData = (props) => {
   const [userId, setUserId] = useState(user_id);
   const [supervisor, setSupervisor] = useState('N.A.');
   const [editUsersId, setEditUsersId] = useState('');
+
+  const phoneRegExp = /^(\+91[\-\s]?)?[0]?(91)?[789]\d{9}$/;
 
   const MySwal = withReactContent(Swal);
 
@@ -286,12 +283,50 @@ const UserData = (props) => {
     let responseData = _data;
     // let responseData = [];
 
+    console.log("responseData", responseData);
+
     let finalDataArray = [];
     for (let index = 0; index < responseData.length; index++) {
       responseData[index].id = index + 1;
+
+      let userId;
+
+      if (responseData[index].user_role === "Teacher") {
+        userId = responseData[index].teacher_id;
+        setValidationObj({
+          firstName: Yup.string().max(255).required('First Name is required'),
+          lastName: Yup.string().max(255).required('Last Name is required'),
+          userEmail: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
+          phoneNumber: Yup.string().matches(phoneRegExp, 'Phone number is not valid').max(255).required('Phone Number is required'),
+          userRole: Yup.string().max(255).required('User Role is required')
+        })
+      } else if (responseData[index].user_role === "Student") {
+
+        userId = responseData[index].student_id;
+        setValidationObj({
+          firstName: Yup.string().max(255).required('First Name is required'),
+          lastName: Yup.string().max(255).required('Last Name is required'),
+          userEmail: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
+          phoneNumber: Yup.string().matches(phoneRegExp, 'Phone number is not valid').max(255).required('Phone Number is required'),
+          userRole: Yup.string().max(255).required('User Role is required'),
+          class: Yup.string().max(255).required('Class is required'),
+          section: Yup.string().max(255).required('Section is required'),
+        })
+
+      } else {
+        userId = responseData[index].parent_id;
+        setValidationObj({
+          firstName: Yup.string().max(255).required('First Name is required'),
+          lastName: Yup.string().max(255).required('Last Name is required'),
+          userEmail: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
+          phoneNumber: Yup.string().matches(phoneRegExp, 'Phone number is not valid').max(255).required('Phone Number is required'),
+          userRole: Yup.string().max(255).required('User Role is required')
+        })
+      }
+
       responseData[index]['action'] = (
         <>
-          <Button size="sm" className="btn btn-icon btn-rounded btn-info" onClick={(e) => saveUserId(e, responseData[index].user_id)}>
+          <Button size="sm" className="btn btn-icon btn-rounded btn-info" onClick={(e) => saveUserId(e, userId)}>
             <i className="feather icon-edit" /> &nbsp; Edit
           </Button>{' '}
           &nbsp;
@@ -314,78 +349,107 @@ const UserData = (props) => {
 
   const getIndividualUser = (user_id) => {
     setEditUsersId(user_id);
+
     const values = {
       user_id: user_id
     };
+
     console.log(values);
-    axios
-      .post(
-        dynamicUrl.fetchIndividualUser,
-        { data: values },
-        {
-          headers: { Authorization: SessionStorage.getItem('user_jwt') }
-        }
-      )
-      .then((response) => {
-        setIndividualUserData(response.data.Items[0]);
 
-        console.log(response.data.Items[0]);
-        hideLoader();
-        setType(response.data.Items[0].user_type);
-        setClientId(response.data.Items[0].user_client_id);
-
-        if (sessionStorage.getItem('user_category') !== 'Client') {
-          setCategory(response.data.Items[0].user_category);
-        }
-
-        setSelectCategory(response.data.Items[0].user_category);
-        // setComponent(response.data.Items[0].user_components);
-
-        console.log(response.data.Items[0].user_components);
-
-        if (response.data.Items[0].user_components.length !== 0) {
-          let individual_user_data = response.data.Items[0];
-          console.log({ individual_user_data });
-
-          let final_array = [];
-          let final_component = [];
-
-          for (var i = 0; i < individual_user_data.user_components.length; i++) {
-            var newArray = colourOptions.filter(function (el) {
-              return el.value === individual_user_data.user_components[i];
-            });
-            final_array.push(newArray[0]);
-            final_component.push(individual_user_data.user_components[i]);
+    let response = {
+      data: {
+        Items: [
+          {
+            id: 1,
+            teacher_id: "jdngu2g982qu3iung9q3ht984hgniuq3gn93q84u89tng98394u8t",
+            user_email: "teacher@gmail.com",
+            user_firstname: "first",
+            user_lastname: "second",
+            user_phone_no: "9312312312",
+            user_role: "Teacher",
+            dob: "1997-05-27",
+            class: "10",
+            section: "A"
           }
+        ]
+      }
+    }
 
-          console.log({ final_array });
-          console.log({ final_component });
-          setDefaultValueData(final_array);
-          console.log({ defaultValueData });
-          setComponent(final_component);
-          setIsEditModalOpen(true);
-        } else {
-          setComponent([]);
-          setIsEditModalOpen(true);
-        }
-      })
-      .catch((error) => {
-        if (error.response) {
-          // Request made and server responded
-          console.log(error.response.data);
-          setIsEditModalOpen(false);
-          hideLoader();
-          sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
-        } else if (error.request) {
-          // The request was made but no response was received
-          hideLoader();
-          console.log(error.request);
-        } else {
-          // Something happened in setting up the request that triggered an Error
-          hideLoader();
-          console.log('Error', error.message);
-        }
-      });
+
+    console.log(response.data.Items[0]);
+    hideLoader();
+
+    if (response.data.Items[0]) {
+
+      let individual_user_data = response.data.Items[0];
+      console.log({ individual_user_data });
+
+      setIndividualUserData(individual_user_data);
+      setIsEditModalOpen(true);
+
+    } else {
+
+      setIsEditModalOpen(true);
+    }
+
+    // axios
+    //   .post(
+    //     dynamicUrl.fetchIndividualUser,
+    //     { data: values },
+    //     {
+    //       headers: { Authorization: SessionStorage.getItem('user_jwt') }
+    //     }
+    //   )
+    //   .then((response) => {
+    //     setIndividualUserData(response.data.Items[0]);
+
+    //     console.log(response.data.Items[0]);
+    //     hideLoader();      
+
+    //     if (response.data.Items[0].user_components.length !== 0) {
+    //       let individual_user_data = response.data.Items[0];
+    //       console.log({ individual_user_data });
+
+    //       let final_array = [];
+    //       let final_component = [];
+
+    //       for (var i = 0; i < individual_user_data.user_components.length; i++) {
+    //         var newArray = colourOptions.filter(function (el) {
+    //           return el.value === individual_user_data.user_components[i];
+    //         });
+    //         final_array.push(newArray[0]);
+    //         final_component.push(individual_user_data.user_components[i]);
+    //       }
+
+    //       console.log({ final_array });
+    //       console.log({ final_component });
+
+    //       setDefaultValueData(final_array);
+    //       console.log({ defaultValueData });
+    //       setComponent(final_component);
+    //       setIsEditModalOpen(true);
+    //     } else {
+    //       setComponent([]);
+    //       setIsEditModalOpen(true);
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     if (error.response) {
+    //       // Request made and server responded
+    //       console.log(error.response.data);
+    //       setIsEditModalOpen(false);
+    //       hideLoader();
+    //       sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+    //     } else if (error.request) {
+    //       // The request was made but no response was received
+    //       hideLoader();
+    //       console.log(error.request);
+    //     } else {
+    //       // Something happened in setting up the request that triggered an Error
+    //       hideLoader();
+    //       console.log('Error', error.message);
+    //     }
+    //   });
   };
 
   const deleteUser = (user_id) => {
@@ -424,10 +488,6 @@ const UserData = (props) => {
   const openHandler = () => {
     setIsOpen(true);
   };
-
-  useEffect(() => {
-    // selectCategory==='Select Category'?'':''
-  }, [selectCategory]);
 
 
   const _SubmitUser = (values) => {
@@ -481,7 +541,6 @@ const UserData = (props) => {
   const _UpdateUser = (values) => {
     console.log(values);
     console.log('Submitted');
-    console.log({ defaultValueData });
 
     switch (sessionStorage.getItem('user_category')) {
       case 'Operation Supervisor':
@@ -528,17 +587,6 @@ const UserData = (props) => {
       });
   };
 
-  const handleInputFields = async () => {
-    switch (sessionStorage.getItem('user_category')) {
-      case 'Client':
-        setSelectCategory('Client');
-        setType('Employee');
-        break;
-      default:
-        break;
-    }
-  };
-
   const validationSchema = Yup.object().shape({
     userName: Yup.string()
       .min(2, Constants.AddUserForm.UserNameIsTooShort)
@@ -577,10 +625,6 @@ const UserData = (props) => {
       .required(Constants.AddUserForm.PhonNumberRequired),
     selectCategory: Yup.string()
   });
-
-  useEffect(() => {
-    handleInputFields();
-  }, []);
 
   useEffect(() => {
     fetchUserData();
@@ -627,6 +671,240 @@ const UserData = (props) => {
             </Row>
           </React.Fragment>
 
+          <Modal dialogClassName="my-modal" show={isEditModalOpen} onHide={() => setIsEditModalOpen(false)}>
+            <Modal.Header closeButton>
+              <Modal.Title as="h5">Update User</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Formik
+                initialValues={{
+                  firstName: individualUserData.user_firstname,
+                  lastName: individualUserData.user_lastname,
+                  userEmail: individualUserData.user_email,
+                  phoneNumber: individualUserData.user_phone_no,
+                  userRole: individualUserData.user_role,
+                  dob: individualUserData.dob,
+                  class: individualUserData.class,
+                  section: individualUserData.section
+
+                }}
+                validationSchema={
+                  Yup.object().shape(validationObj)
+                }
+                onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
+
+                  console.log("Submit")
+                  setStatus({ success: true });
+                  setSubmitting(true);
+
+                  const formData = {
+                    user_firstname: values.firstName,
+                    user_lastname: values.lastName,
+                    user_email: values.userEmail,
+                    user_phone_no: values.phoneNumber,
+                    user_role: values.userRole,
+
+
+                  };
+
+                  console.log(formData);
+                  showLoader();
+                  _UpdateUser(formData);
+                }}
+              >
+                {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
+                  <form noValidate onSubmit={handleSubmit}>
+                    <Row>
+                      <Col>
+                        <Row>
+                          <Col>
+                            <div className="form-group fill">
+                              <label className="floating-label" htmlFor="firstName">
+                                <small className="text-danger">* </small>First Name
+                              </label>
+                              <input
+                                className="form-control"
+                                error={touched.firstName && errors.firstName}
+                                name="firstName"
+                                onBlur={handleBlur}
+                                onChange={handleChange}
+                                type="text"
+                                value={values.firstName}
+                              />
+                              {touched.firstName && errors.firstName && <small className="text-danger form-text">{errors.firstName}</small>}
+                            </div>
+                          </Col>
+
+                          <Col>
+                            <div className="form-group fill">
+                              <label className="floating-label" htmlFor="lastName">
+                                <small className="text-danger">* </small>Last Name
+                              </label>
+                              <input
+                                className="form-control"
+                                error={touched.lastName && errors.lastName}
+                                name="lastName"
+                                onBlur={handleBlur}
+                                onChange={handleChange}
+                                type="text"
+                                value={values.lastName}
+                              />
+                              {touched.lastName && errors.lastName && <small className="text-danger form-text">{errors.lastName}</small>}
+                            </div>
+                          </Col>
+
+                        </Row>
+
+                        <Row>
+                          <Col>
+                            <div className="form-group fill">
+                              <label className="floating-label" htmlFor="userEmail">
+                                <small className="text-danger">* </small>Email ID
+                              </label>
+                              <input
+                                className="form-control"
+                                error={touched.userEmail && errors.userEmail}
+                                name="userEmail"
+                                onBlur={handleBlur}
+                                onChange={handleChange}
+                                type="email"
+                                value={values.userEmail}
+
+                              />
+                              {touched.userEmail && errors.userEmail && <small className="text-danger form-text">{errors.userEmail}</small>}
+                            </div>
+                          </Col>
+                          <Col>
+                            <div className="form-group fill">
+                              <label className="floating-label" htmlFor="phoneNumber">
+                                <small className="text-danger">* </small>Phone No
+                              </label>
+                              <input
+                                className="form-control"
+                                error={touched.phoneNumber && errors.phoneNumber}
+                                name="phoneNumber"
+                                onBlur={handleBlur}
+                                onChange={handleChange}
+                                type="number"
+                                value={values.phoneNumber}
+
+                              />
+                              {touched.phoneNumber && errors.phoneNumber && <small className="text-danger form-text">{errors.phoneNumber}</small>}
+                            </div>
+                          </Col>
+                        </Row>
+
+                        <Row>
+                          <Col>
+                            <div className="form-group fill">
+                              <label className="floating-label" htmlFor="userRole">
+                                <small className="text-danger">* </small>User Role
+                              </label>
+                              <input
+                                className="form-control"
+                                error={touched.userRole && errors.userRole}
+                                name="userRole"
+                                onBlur={handleBlur}
+                                onChange={handleChange}
+                                type="text"
+                                value={values.userRole}
+
+                              />
+                              {touched.userRole && errors.userRole && <small className="text-danger form-text">{errors.userRole}</small>}
+                            </div>
+                          </Col>
+                          <Col>
+                            <div className="form-group fill">
+                              <label className="floating-label" htmlFor="dob">
+                                <small className="text-danger">* </small>DOB
+                              </label>
+                              <input
+                                className="form-control"
+                                error={touched.dob && errors.dob}
+                                name="dob"
+                                onBlur={handleBlur}
+                                onChange={handleChange}
+                                type="date"
+                                value={values.dob}
+
+                              />
+                              {touched.dob && errors.dob && <small className="text-danger form-text">{errors.dob}</small>}
+                            </div>
+                          </Col>
+                        </Row>
+
+                        {individualUserData.class && individualUserData.section && (
+                          <>
+                            <Row>
+                              <Col>
+                                <div className="form-group fill">
+                                  <label className="floating-label" htmlFor="class">
+                                    <small className="text-danger">* </small>Class
+                                  </label>
+                                  <input
+                                    className="form-control"
+                                    error={touched.class && errors.class}
+                                    name="class"
+                                    onBlur={handleBlur}
+                                    onChange={handleChange}
+                                    type="text"
+                                    value={values.class}
+
+                                  />
+                                  {touched.class && errors.class && <small className="text-danger form-text">{errors.class}</small>}
+                                </div>
+                              </Col>
+                              <Col>
+                                <div className="form-group fill">
+                                  <label className="floating-label" htmlFor="section">
+                                    <small className="text-danger">* </small>Section
+                                  </label>
+                                  <input
+                                    className="form-control"
+                                    error={touched.section && errors.section}
+                                    name="section"
+                                    onBlur={handleBlur}
+                                    onChange={handleChange}
+                                    type="text"
+                                    value={values.section}
+
+                                  />
+                                  {touched.section && errors.section && <small className="text-danger form-text">{errors.section}</small>}
+                                </div>
+                              </Col>
+                            </Row>
+                          </>
+                        )}
+
+
+                        {errors.submit && (
+                          <Col sm={12}>
+                            <Alert variant="danger">{errors.submit}</Alert>
+                          </Col>
+                        )}
+
+
+                        <hr />
+
+                        <Row>
+
+                          <Col></Col>
+
+                          <Button type="submit" color="success" variant="success">
+                            Update
+                          </Button>
+
+
+                        </Row>
+
+
+                      </Col>
+                    </Row>
+                  </form>
+                )}
+              </Formik>
+            </Modal.Body>
+          </Modal>
         </>
       )
       }
