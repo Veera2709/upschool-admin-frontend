@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { DeviceFrameset } from 'react-device-frameset';
-import { Container, Row, Col, Button } from 'react-bootstrap';
+import { Container, Row, Col, Button, Card } from 'react-bootstrap';
 import '../../../../../node_modules/react-device-frameset/dist/styles/marvel-devices.min.css'
 import '../../../../../node_modules/react-device-frameset/dist/styles/device-selector.min.css'
 import { useEffect } from "react";
@@ -17,55 +17,54 @@ function Preview() {
     const [device, setDevice] = useState('iPhone X');
     const [data, setData] = useState();
 
-    const [id, setId] = useState('iPhoneX');
+    const [id, setId] = useState('iphonex');
     const [previewData, setPreviewData] = useState();
     const [htmlContent, setHtmlContent] = useState("");
     const [isShown, setIsShown] = useState(true);
 
 
-    const handleClick = event => {
-        setIsShown(current => !current);
-      };
+
 
     useEffect(() => {
         setPreviewData(JSON.parse(sessionStorage.getItem('data')))
         // var data = JSON.parse(sessionStorage.getItem('data'));
         // console.log("data.articleData",data.articleData);
         var text = JSON.parse(sessionStorage.getItem('data'));
-    console.log("Text", text);
-    // document.getElementById('text').innerHTML=text.articleData;
+        console.log("Text", text);
+        // document.getElementById('text').innerHTML=text.articleData;
         setData(text.articleData);
         setHtmlContent(text.articleData);
-        
+
     }, [])
 
     return isEmptyObject(previewData) ? null : (
 
         <div className="main">
-                <Container>
-                    <Row>
-                        <Col sm ={4}>
-                        <br/>
-                            <Button id='primary' variant="primary" onClick={(e) =>{
-                                setDevice("iPhone 8");
-                                setId("iPhone8");
-                                }}>iPhone 8</Button>
-                            <br />
-                            <br />
-                            <Button id='primary' variant="primary" onClick={(e) => {setDevice("HTC One"); setId('htc')}}>HTC One </Button>
-                            <br />
-                            <br />
-                            <Button id='primary'  variant="primary" onClick={(e) =>{ setDevice("Samsung Galaxy S5"); setId('sgs')}}>Samsung Galaxy S5</Button>
-                            <br/>
-                            <br/>
-                            <Button id='primary'  variant="primary" onClick={() => {setDevice("iPad Mini"); setId('ipad')}}>Ipad</Button>
-                        </Col>
-                        <Col sm={1}> 
-                     
-                        </Col>
-                        <Col sm={6}>
-                        <DeviceFrameset device={device} color="gold">
-                                <Container>
+            <Container>
+                <Row>
+                    <Col sm={4}>
+                        <br />
+                        <Button id='primary' variant="primary" onClick={(e) => {
+                            setDevice("iPhone 8");
+                            setId("card");
+                        }}>iPhone 8</Button>
+                        <br />
+                        <br />
+                        <Button id='primary' variant="primary" onClick={(e) => { setDevice("HTC One"); setId('card1') }}>HTC One </Button>
+                        <br />
+                        <br />
+                        <Button id='primary' variant="primary" onClick={(e) => { setDevice("Samsung Galaxy S5"); setId('card1') }}>Samsung Galaxy S5</Button>
+                        <br />
+                        <br />
+                        <Button id='primary' variant="primary" onClick={() => { setDevice("iPad Mini"); setId('ipad') }}>Ipad</Button>
+                    </Col>
+                    <Col sm={1}>
+
+                    </Col>
+                    <Col sm={6}>
+                        <DeviceFrameset device={device} color="gold" >
+                            {/* <div>
+                            <Container>
                                     <Row className="justify-content-md-center">
                                         <Col xs lg="2">
                                         </Col>
@@ -74,25 +73,42 @@ function Preview() {
                                         </Col>
                                     </Row>
                                 </Container><br />
-                                {/* <h1 id='digicardName'>{previewData.digi_card_name}</h1><br /> */}
+                                <h1 id='digicardName'>{previewData.digi_card_name}</h1><br />
                                 
                                 <h3 id='digicardTitle' style={{whiteSpace: 'pre-wrap', overflowWrap: 'break-word'}}>{previewData.digi_card_title}</h3><br />
-                                {/* <div style={{display: isShown ? 'block' : 'none',whiteSpace: 'pre-wrap', overflowWrap: 'break-word'}} id='digicardText'>
+                                <div style={{display: isShown ? 'block' : 'none',whiteSpace: 'pre-wrap', overflowWrap: 'break-word'}} id='digicardText'>
                                 {ReactHtmlParser(htmlContent)}
                                 </div><br/>
-                                <div className="d-flex justify-content-center">
-                                <Button id='redmore' onClick={handleClick} style={{display: isShown ? 'block' : 'none'}} >RED MORE</Button><br/>
-                                </div> */}
-                                {/* <div style={{display: isShown ? 'none' : 'block'}}>
+                                <div style={{display: isShown ? 'none' : 'block'}}>
                                 {ReactHtmlParser(htmlContent)}
-                                </div> */}
-                                <div id='digicardText'>
-                                    {ReactHtmlParser(htmlContent)}
                                 </div>
+                            </div> */}
+                            <div>
+                            <Container>
+                                <Row>
+                                    <Col sm>
+                                    </Col>
+                                    <Col>
+                                        <Card  id={id}>
+                                            <Card.Img variant="top" src={previewData.imgUrl} className='img-fluid  wid-160' />
+                                            <Card.Body>
+                                                <Card.Title style={{whiteSpace: 'pre-wrap', overflowWrap: 'break-word'}}>{previewData.digi_card_title}</Card.Title>
+                                                <Card.Text>
+                                                    Some quick example text to build on the card title and make up the
+                                                    bulk of the card's content.
+                                                </Card.Text>
+                                                <Button variant="primary">RED MORE</Button>
+                                            </Card.Body>
+                                        </Card>
+                                    </Col>
+                                    <Col sm></Col>
+                                </Row>
+                            </Container>
+                            </div>
                         </DeviceFrameset>
-                        </Col>
-                    </Row>
-                </Container>
+                    </Col>
+                </Row>
+            </Container>
         </div>
 
     )
