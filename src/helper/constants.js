@@ -37,6 +37,7 @@ export const AddDigiCard = {
   
   DigiCardFileNotNull: 'Digicard Image should not be null!',
   DigiCardfileRequired: 'Digicard Image is required!',
+  DigiCardKeyRequired: 'Digicard Key Words are required!',
 
   UserNameValidation: 'User name should contain only alphabets!',
   ValidContact: 'Must be a valid contact number!',
@@ -514,6 +515,7 @@ export const CompanyCheckForm = {
 };
 
 export const Common = {
+  GSTRegex: /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/,
   max200Char: 'comment should contain maximum 200 characters!',
   forgotPassword: 'Forgot Password?',
   alphabetsRegex: `^(?=.*[a-zA-Z])[a-zA-Z]+$`,

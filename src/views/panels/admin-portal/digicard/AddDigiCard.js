@@ -87,6 +87,8 @@ const AddDigiCard = (
 
 
   const [tags, setTags] = useState([]);
+  const [ImgURL, setImgURL] = useState([]);
+  const [display, setDisplay] = useState('none');
   const [imgFile, setImgFile] = useState([]);
   const [articleData, setArticleData] = useState("");
   let history = useHistory();
@@ -101,10 +103,20 @@ const AddDigiCard = (
 
   const handleAddition = (tag, state) => {
     const newTags = [].concat(tags, tag);
+   
     setTags(newTags);
   };
 
 
+  function encodeImageFileAsURL() {
+    var file = document.getElementById('digicard_image').files[0];
+    var reader = new FileReader();
+    reader.onloadend = function () {
+      console.log('RESULT', reader.result)
+      setImgURL(reader.result)
+    }
+    reader.readAsDataURL(file);
+  }
 
 
   const sweetAlertHandler = (alert) => {
@@ -119,8 +131,18 @@ const AddDigiCard = (
     setImgFile(URL.createObjectURL(e.target.files[0]));
   }
 
- 
 
+  const previewData = () => {
+    var data = {
+      imgUrl: ImgURL,
+      articleData: articleData,
+      digi_card_name: document.getElementById('name').value,
+      digi_card_title: document.getElementById('title').value
+    }
+
+    sessionStorage.setItem("data", JSON.stringify(data))
+    history.push(`/admin-portal/preview`)
+  }
 
   useEffect(() => {
     setImgFile(logo)
@@ -136,7 +158,8 @@ const AddDigiCard = (
               digicardname: '',
               digicardtitle: '',
               digicard_image: '',
-              digicardcontent: ''
+              digicardcontent: '',
+              // digicardKeywords:[]
             }}
             validationSchema={Yup.object().shape({
               digicardname: Yup.string()
@@ -155,10 +178,12 @@ const AddDigiCard = (
                 .trim()
                 .nullable(true, Constants.AddDigiCard.DigiCardFileNotNull)
                 .required(Constants.AddDigiCard.DigiCardfileRequired),
+              // digicardKeywords: Yup.array()
+              // .required(Constants.AddDigiCard.DigiCardKeyRequired),
             })}
 
-
             onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
+
 
               console.log("on submit");
               var formData = {
@@ -305,6 +330,7 @@ const AddDigiCard = (
                         onChange={handleChange}
                         type="text"
                         value={values.digicardname}
+                        id='name'
                       />
                       {touched.digicardname && errors.digicardname && <small className="text-danger form-text">{errors.digicardname}</small>}
                       {/* {isClientExists && <small className="text-danger form-text">{MESSAGES.ERROR.ClientNameExists}</small>} */}
@@ -322,6 +348,7 @@ const AddDigiCard = (
                         onChange={(e) => {
                           handleChange(e);
                           previewImage(e);
+                          encodeImageFileAsURL(e);
                         }}
                         type="file"
                         value={values.digicard_image}
@@ -336,12 +363,16 @@ const AddDigiCard = (
                         <small className="text-danger">* </small>KeyWords
                       </label>
                       <ReactTags
+                        error={touched.digicardKeywords && errors.digicardKeywords}
                         classNames={{ root: 'react-tags bootstrap-tagsinput', selectedTag: 'react-tags__selected-tag btn-primary' }}
                         allowNew={true}
                         tags={tags}
                         onDelete={handleDelete}
                         onAddition={(e) => handleAddition(e)}
+                        name='digicardKeywords'
                       />
+                       {touched.digicardKeywords && errors.digicardKeywords && (
+                        <small className="text-danger form-text">{errors.digicardKeywords}</small>)}
                     </div>
                   </Col>
                   <Col sm={6}>
@@ -357,6 +388,7 @@ const AddDigiCard = (
                         onChange={handleChange}
                         type="text"
                         value={values.digicardtitle}
+                        id='title'
                       />
                       {touched.digicardtitle && errors.digicardtitle && <small className="text-danger form-text">{errors.digicardtitle}</small>}
                     </div>
@@ -413,27 +445,27 @@ const AddDigiCard = (
             )}
 
           </Formik>
-          {/* <Row>
-                  <Col sm={10}>
-                  </Col>
-                  <div className="form-group fill float-end" >
-                    <Col sm={12} className="center">
-                      <Button
-                        className="btn-block"
-                        color="success"
-                        size="large"
-                        type="submit"
-                        variant="success"
-                      // disabled={disableButton === true}
-                      // onClick={(e) => {alert(`/auth/preview/${articleData}`); history.push(`/auth/preview/jklkjlk`)}}
-                      onClick={previewData}
-                      >
-                        preview
-                      </Button>
-                    </Col>
-                  </div>
-                </Row>
-           */}
+          <Row>
+            <Col sm={10}>
+            </Col>
+            <div className="form-group fill float-end" >
+              <Col sm={12} className="center">
+                <Button
+                  className="btn-block"
+                  color="success"
+                  size="large"
+                  type="submit"
+                  variant="success"
+                  // disabled={disableButton === true}
+                  // onClick={(e) => {alert(`/auth/preview/${articleData}`); history.push(`/auth/preview/jklkjlk`)}}
+                  onClick={previewData}
+                >
+                  preview
+                </Button>
+              </Col>
+            </div>
+          </Row>
+
         </Card.Body>
 
       </Card>
