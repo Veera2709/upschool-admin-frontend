@@ -123,17 +123,17 @@ const AddDigiCard = (
   }
 
 
-  const previewData = () => {
-    var data = {
-      imgUrl: ImgURL,
-      articleData: articleData,
-      digi_card_name: document.getElementById('name').value,
-      digi_card_title: document.getElementById('title').value
-    }
+  // const previewData = () => {
+  //   var data = {
+  //     imgUrl: ImgURL,
+  //     articleData: articleData,
+  //     digi_card_name: document.getElementById('name').value,
+  //     digi_card_title: document.getElementById('title').value
+  //   }
 
-    sessionStorage.setItem("data", JSON.stringify(data))
-    history.push(`/admin-portal/preview`)
-  }
+  //   sessionStorage.setItem("data", JSON.stringify(data))
+  //   history.push(`/admin-portal/preview`)
+  // }
 
   useEffect(() => {
     setImgFile(logo)
@@ -470,7 +470,7 @@ const AddDigiCard = (
           <Row>
             <Col sm={10}>
             </Col>
-            <div className="form-group fill float-end" >
+            {/* <div className="form-group fill float-end" >
               <Col sm={12} className="center">
                 <Button
                   className="btn-block"
@@ -478,14 +478,12 @@ const AddDigiCard = (
                   size="large"
                   type="submit"
                   variant="success"
-                  // disabled={disableButton === true}
-                  // onClick={(e) => {alert(`/auth/preview/${articleData}`); history.push(`/auth/preview/jklkjlk`)}}
                   onClick={previewData}
                 >
                   preview
                 </Button>
               </Col>
-            </div>
+            </div> */}
           </Row>
 
         </Card.Body>

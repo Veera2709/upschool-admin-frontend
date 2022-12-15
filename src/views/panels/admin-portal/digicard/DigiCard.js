@@ -113,6 +113,8 @@ function Table({ columns, data, modalOpen }) {
             </tr>
           ))}
         </thead>
+
+        
         <tbody {...getTableBodyProps()}>
           {page.map((row, i) => {
             prepareRow(row);
@@ -193,7 +195,6 @@ const DigiCard = () => {
   };
 
 
-
   let history = useHistory();
 
   function deleteDigicard(digi_card_id, digi_card_name) {
@@ -213,7 +214,7 @@ const DigiCard = () => {
       }).then((willDelete) => {
         if (willDelete.value) {
           axios
-          
+
             .post(dynamicUrl.deleteDigiCard, { data: data }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
             .then((response) => {
               if (response.Error) {

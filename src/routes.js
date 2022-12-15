@@ -73,11 +73,11 @@ const routes = [
     path: '/maintenance/offline-ui',
     component: lazy(() => import('./views/maintenance/OfflineUI'))
   },
-  {
-    exact: true,
-    path: '/admin-portal/preview',
-    component: lazy(() => import('./views/panels/admin-portal/digicard/Preview'))
-  },
+  // {
+  //   exact: true,
+  //   path: '/admin-portal/preview',
+  //   component: lazy(() => import('./views/panels/admin-portal/digicard/Preview'))
+  // },
   // {
   //   exact: true,
   //   path: '/auth/signup-1',
