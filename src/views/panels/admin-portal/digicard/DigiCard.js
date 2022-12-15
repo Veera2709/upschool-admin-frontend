@@ -223,6 +223,7 @@ const DigiCard = () => {
                 //  MySwal.fire('', MESSAGES.INFO.CLIENT_DELETED, 'success');
                 return MySwal.fire('', 'The ' + digi_card_name + ' is Deleted', 'success');
                 // fetchAllDigiCards();
+                
               }
             })
             .catch((error) => {
