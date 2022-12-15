@@ -83,7 +83,7 @@ function Table({ columns, data, modalOpen }) {
         <Col className="d-flex justify-content-end">
           <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
           <Button className='btn-sm btn-round has-ripple ml-2 btn btn-success' onClick={() => { adddigicard(); }}  >
-            ADD DIGICARD
+            Add DigiCard
           </Button>
         </Col>
       </Row>
