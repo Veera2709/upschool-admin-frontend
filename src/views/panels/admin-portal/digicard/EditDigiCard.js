@@ -26,17 +26,7 @@ import { Link, useHistory, useParams } from 'react-router-dom';
 
 import { SessionStorage } from '../../../../util/SessionStorage';
 
-
-
-
 // import { Button,Container,Row ,Col  } from 'react-bootstrap';
-
-
-
-
-
-
-
 
 const EditDigiCard = (
     setTabChange,
@@ -94,6 +84,7 @@ const EditDigiCard = (
 
     const [tags, setTags] = useState([]);
     const [imgFile, setImgFile] = useState([]);
+    const [voiceNote, setVoiceNote] = useState([]);
     const [articleData, setArticleData] = useState("");
 
     const [individualDigiCardData, setIndividualDigiCardData] = useState([]);
@@ -128,7 +119,9 @@ const EditDigiCard = (
         setImgFile(URL.createObjectURL(e.target.files[0]));
     }
 
-
+    const previewVoiceNote = (e) => {
+        setVoiceNote(URL.createObjectURL(e.target.files[0]));
+    }
 
     useEffect(() => {
 
@@ -154,23 +147,22 @@ const EditDigiCard = (
 
                     console.log('inside res initial data');
 
-
-
                     let individual_client_data = response.data.Items[0];
                     let previousImage = response.data.Items[0].digicard_imageURL;
+                    let previousVoiceNote = response.data.Items[0].digicard_voice_noteURL;
+                    console.log("previousVoiceNote", previousVoiceNote);
                     console.log("individual_client_data", individual_client_data);
                     console.log("keyWords", individual_client_data.digi_card_keywords);
                     // let previousSubscription = response.data.Items[0].scbscription_active;
 
-
                     // setScbscription_active(previousSubscription);
                     setImgFile(previousImage);
+                    setVoiceNote(previousVoiceNote);
                     setIndividualDigiCardData(individual_client_data);
                     setArticleData(individual_client_data.digi_card_content)
                     setTags(individual_client_data.digi_card_keywords)
 
                     console.log('individualDigiCardData', individualDigiCardData);
-
 
                 } else {
                     console.log('else res');
@@ -210,6 +202,7 @@ const EditDigiCard = (
                             digicardname: individualDigiCardData.digi_card_name,
                             digicardtitle: individualDigiCardData.digi_card_title,
                             digicard_image: '',
+                            digicard_voice_note: '',
                             digicardcontent: articleData,
                             digi_card_keywords: tags
                         }}
@@ -249,6 +242,7 @@ const EditDigiCard = (
                                     digi_card_title: values.digicardtitle,
                                     digi_card_files: [values.digicard_image],
                                     digicard_image: imgFile,
+                                    digicard_voice_note: voiceNote,
                                     digi_card_content: articleData,
                                     digi_card_keywords: tags
                                 };
@@ -260,6 +254,7 @@ const EditDigiCard = (
                                     digi_card_title: values.digicardtitle,
                                     digi_card_files: [values.digicard_image],
                                     digicard_image: values.digicard_image,
+                                    digicard_voice_note: values.digicard_voice_note,
                                     digi_card_content: articleData,
                                     digi_card_keywords: tags
                                 };
@@ -285,7 +280,7 @@ const EditDigiCard = (
                                                 let keyName = keyNameArr[0];
                                                 console.log('KeyName', keyName);
 
-                                                let blobField = document.getElementById('digicard_image').files[0];
+                                                let blobField = document.getElementById(keyName).files[0];
                                                 console.log({
                                                     blobField
                                                 });
@@ -404,7 +399,7 @@ const EditDigiCard = (
                                         </div>
                                         <div className="form-group fill">
                                             <label className="floating-label" htmlFor="digicard_image">
-                                                <small className="text-danger">* </small>Choose File
+                                                <small className="text-danger">* </small>DigiCard Logo
                                             </label>
                                             <input
                                                 className="form-control"
@@ -422,6 +417,29 @@ const EditDigiCard = (
                                             />
                                             {touched.digicard_image && errors.digicard_image && (
                                                 <small className="text-danger form-text">{errors.digicard_image}</small>
+                                            )}
+                                        </div>
+                                        <div className="form-group fill">
+                                            <label className="floating-label" htmlFor="digicard_voice_note">
+                                                <small className="text-danger">* </small>Voice Note
+                                            </label>
+                                            <input
+                                                className="form-control"
+                                                error={touched.digicard_voice_note && errors.digicard_voice_note}
+                                                name="digicard_voice_note"
+                                                id="digicard_voice_note"
+                                                onBlur={handleBlur}
+                                                onChange={(e) => {
+                                                handleChange(e);
+                                                previewVoiceNote(e);
+                                                }}
+                                                type="file"
+                                                value={values.digicard_voice_note}
+                                                accept=".mp3,audio/*"
+                                                // accept="image/*"
+                                            />
+                                            {touched.digicard_voice_note && errors.digicard_voice_note && (
+                                                <small className="text-danger form-text">{errors.digicard_voice_note}</small>
                                             )}
                                         </div>
                                         <div className='ReactTags'>
@@ -459,7 +477,15 @@ const EditDigiCard = (
                                             </label><br />
                                             <img width={150} src={imgFile} alt="" className="img-fluid mb-3" />
                                         </div>
-
+                                        <div className="form-group fill">
+                                            <label className="floating-label" htmlFor="digicardtitle">
+                                                <small className="text-danger">* </small>Voice Note Preview
+                                            </label><br />
+                                            {/* <img width={150} src={voiceNote} alt="" className="img-fluid mb-3" /> */}
+                                            <audio controls>
+                                                <source src={voiceNote} alt="Audio" type="audio/mp3"/>
+                                            </audio>
+                                        </div>
 
                                     </Col>
                                 </Row>
