@@ -213,6 +213,7 @@ const DigiCard = () => {
       }).then((willDelete) => {
         if (willDelete.value) {
           axios
+          
             .post(dynamicUrl.deleteDigiCard, { data: data }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
             .then((response) => {
               if (response.Error) {
@@ -223,7 +224,7 @@ const DigiCard = () => {
                 //  MySwal.fire('', MESSAGES.INFO.CLIENT_DELETED, 'success');
                 return MySwal.fire('', 'The ' + digi_card_name + ' is Deleted', 'success');
                 // fetchAllDigiCards();
-                
+
               }
             })
             .catch((error) => {

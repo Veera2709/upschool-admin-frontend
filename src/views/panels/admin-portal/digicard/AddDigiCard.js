@@ -110,8 +110,6 @@ const AddDigiCard = (
     }
     reader.readAsDataURL(file);
   }
-
-
   const sweetAlertHandler = (alert) => {
     MySwal.fire({
       title: alert.title,
