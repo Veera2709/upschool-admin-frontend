@@ -69,6 +69,8 @@
 span{
   background-color: black;
   color: white;
+  width: 80%;
+  margin: 5px auto;
 }
 
 #digicardText{
@@ -76,6 +78,53 @@ span{
  display: none
 }
 
+#digicardText h3 {
+  text-decoration: underline;
+}
+#digicardText{
+  /* padding: 17px 15px */
+  padding-left: 15px;
+  padding-right: 10px;
+}
+
+#digicardText h1{
+  font-family: fantasy;
+
+}
+#deviceScroll{
+  height: 100px;      
+   overflow-y: auto
+}
+#ipad{
+  margin-top: 100px;
+  padding: 50px 50px 50px 50px;
+  width: 20rem;
+}
+
+#iphonex{
+  margin-top:100px;
+  padding: 50px 50px 70px 50px;
+}
+#card{
+  margin-top:60px;
+  padding: 50px 50px 70px 50px;
+}
+#card1{
+  margin-top:50px;
+  padding: 20px 20px 20px 20px;
+}
+
+      
+
+#digicardText{
+  margin-top: 50px;
+}
+
+#iphonex{
+  margin-top: 50px;
+  height: 710px;
+  overflow-y: auto;
+}
 /* 
 ol  {
   clear: both;

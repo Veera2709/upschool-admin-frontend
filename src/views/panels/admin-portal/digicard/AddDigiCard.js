@@ -17,10 +17,13 @@ import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import withReactContent from 'sweetalert2-react-content';
 import AddArticles from '../digicard/AddArticles'
 import ArticleRTE from './ArticleRTE'
-import { areFilesInvalid } from '../../../../util/utils';
+import { areFilesInvalid, isEmptyObject } from '../../../../util/utils';
 import { useEffect } from 'react';
 import logo from './img/logo.png'
 import { useHistory } from 'react-router-dom';
+import Select from 'react-select';
+import { isEmptyArray } from '../../../../util/utils';
+
 
 
 // import { Button,Container,Row ,Col  } from 'react-bootstrap';
@@ -39,6 +42,8 @@ const AddDigiCard = (
   setCurrentSubCategory
 ) => {
 
+
+  const colourOptions = [];
 
   const [content, setContent] = useState('');
   const [loader, showLoader, hideLoader] = useFullPageLoader();
@@ -74,9 +79,7 @@ const AddDigiCard = (
   const [finalSequenceNo, setFinalSequenceNo] = useState("");
   const [articleSize, setArticleSize] = useState(20);
   const [imageCount, setImageCount] = useState(0);
-
-
-
+  const [multiOptions, selectedOption] = useState(0);
 
 
   const [tags, setTags] = useState([]);
@@ -84,8 +87,16 @@ const AddDigiCard = (
   const [display, setDisplay] = useState('none');
   const [imgFile, setImgFile] = useState([]);
   const [articleData, setArticleData] = useState("");
+  const [articleDataTitle, setArticleDataTtitle] = useState("");
+  const [digitalTitles, setDigitalTitles] = useState(0);
+
   let history = useHistory();
 
+
+
+  const getMultiOptions = (e) => {
+    selectedOption(e);
+  }
 
 
   const handleDelete = (i, states) => {
@@ -123,20 +134,41 @@ const AddDigiCard = (
   }
 
 
-  const previewData = () => {
-    var data = {
-      imgUrl: ImgURL,
-      articleData: articleData,
-      digi_card_name: document.getElementById('name').value,
-      digi_card_title: document.getElementById('title').value
-    }
 
-    sessionStorage.setItem("data", JSON.stringify(data))
-    history.push(`/admin-portal/preview`)
-  }
+  // const previewData = () => {
+  //   var data = {
+  //     imgUrl: ImgURL,
+  //     articleData: articleData,
+  //     digi_card_name: document.getElementById('name').value,
+  //     digi_card_title: document.getElementById('title').value
+  //   }
+
+  //   sessionStorage.setItem("data", JSON.stringify(data))
+  //   history.push(`/admin-portal/preview`)
+  // }
 
   useEffect(() => {
     setImgFile(logo)
+
+    axios.post(dynamicUrl.fetchAllDigiCards, {}, {
+      headers: { Authorization: sessionStorage.getItem('user_jwt') }
+    })
+      .then((response) => {
+        console.log(response.data.Items);
+        let resultData = response.data.Items;
+
+
+        resultData.forEach((item, index) => {
+          item.digicard_status === 'Active' ? colourOptions.push({ value: item.digi_card_name, label: item.digi_card_name }) : colourOptions.push({ value: item.digi_card_name, label: item.digi_card_name, isDisabled: true })
+          // console.log("item",item)
+        }
+        );
+        console.log("colourOptions", colourOptions);
+        setDigitalTitles(colourOptions)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
   }, [])
 
   return (
@@ -150,7 +182,7 @@ const AddDigiCard = (
               digicardtitle: '',
               digicard_image: '',
               digicardcontent: '',
-              // digicardKeywords:[],
+              digicardtitleExcerpt: '',
               digicard_voice_note: ''
             }}
             validationSchema={Yup.object().shape({
@@ -181,16 +213,18 @@ const AddDigiCard = (
 
             onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
 
-
+              console.log("multiOptions", multiOptions);
               console.log("on submit");
               var formData = {
                 digi_card_name: values.digicardname,
                 digi_card_title: values.digicardtitle,
                 digi_card_files: [values.digicard_image],
                 digicard_image: values.digicard_image,
+                digi_card_excerpt: articleDataTitle,
                 digi_card_content: articleData,
                 digi_card_keywords: tags,
-                digicard_voice_note: values.digicard_voice_note
+                digicard_voice_note: values.digicard_voice_note,
+                related_digi_cards: multiOptions
               };
 
 
@@ -420,10 +454,46 @@ const AddDigiCard = (
                       </label><br />
                       <img width={150} src={imgFile} alt="" className="img-fluid mb-3" />
                     </div>
-
-
+                    <div className="form-group fill" style={{ position: "relative", zIndex: 10 }}>
+                      <label className="floating-label" htmlFor="digicardtitle">
+                        <small className="text-danger">* </small>Related DigiCard Titles
+                      </label>
+                      <Select
+                        className="basic-single"
+                        classNamePrefix="select"
+                        name="color"
+                        isMulti
+                        closeMenuOnSelect={false}
+                        // onChange={handleChange}
+                        // value={selectedOption}
+                        onChange={getMultiOptions}
+                        options={digitalTitles}
+                        placeholder="Which is your favourite colour?"
+                      />
+                    </div>
                   </Col>
                 </Row>
+                <Row>
+                  <Col sm='12'>
+                    <label className="floating-label" htmlFor="digicardtitleExcerpt">
+                      <small className="text-danger">* </small>DigiCard Excerpt
+                    </label>
+                    {/* <JoditEditor className='form-control'
+                      name='digicardcontent'
+                      onBlur={(newContent) => setContent(newContent)}
+                      onChange={handleChange}
+                      value={values.digicardcontent}
+                    /> */}
+                    {/* <AddArticles /> */}
+                    <ArticleRTE
+                      setArticleSize={setArticleSize}
+                      setImageCount={setImageCount}
+                      imageCount={imageCount}
+                      articleData={articleDataTitle}
+                      setArticleData={setArticleDataTtitle}
+                    />
+                  </Col>
+                </Row><br></br>
                 <Row>
                   <Col sm='12'>
                     <label className="floating-label" htmlFor="digicardtitle">
@@ -470,7 +540,7 @@ const AddDigiCard = (
           <Row>
             <Col sm={10}>
             </Col>
-            <div className="form-group fill float-end" >
+            {/* <div className="form-group fill float-end" >
               <Col sm={12} className="center">
                 <Button
                   className="btn-block"
@@ -478,16 +548,13 @@ const AddDigiCard = (
                   size="large"
                   type="submit"
                   variant="success"
-                  // disabled={disableButton === true}
-                  // onClick={(e) => {alert(`/auth/preview/${articleData}`); history.push(`/auth/preview/jklkjlk`)}}
                   onClick={previewData}
                 >
                   preview
                 </Button>
               </Col>
-            </div>
+            </div> */}
           </Row>
-
         </Card.Body>
 
       </Card>
