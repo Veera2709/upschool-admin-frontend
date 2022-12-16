@@ -45,9 +45,6 @@
   font-family: sans-serif;
   text-align: center;
 }
-#digicardName{
-  text-align: center;
-}
 #digicardTitle{
   text-align: center;
 }
@@ -59,6 +56,136 @@
   justify-content: space-between;
 }
 #digicardTitle{
-  background: #000;
+  text-shadow: 0 0 20px #9a9595, 0 0 5px #2a2728;
+}
+#img{
+  margin-top:70px ;
+  width: 200px;
+}
+
+.justify-content-md-cente{
+ display: flex;
+}
+span{
+  background-color: black;
   color: white;
+}
+
+#digicardText{
+ height: 0px;
+ display: none
+}
+
+/* 
+ol  {
+  clear: both;
+  list-style: none;
+  padding-left: 2%;
+}
+ol  li {
+  margin: 2em 0;
+  padding-top: 1em;
+  display: block;
+  position: relative;
+  counter-increment: inst;
+}
+ol  li::before {
+  content: counter(inst);
+  
+  background: rgba(255, 150, 0, 0.35);
+  color: #fff;
+  
+  font-size: 1em;
+  font-weight: 700;
+  font-style: italic;
+  text-shadow: 1px 1px rgba(255, 150, 0, 0.5);
+  
+  border-radius: 0 0.675em 0.675em 0;
+  font-size: 1.5em;
+  text-align: center;
+  
+  padding-top: 0;
+  padding-left: 2.25%;
+  left: -5%;
+  top: -0.65em;
+  height: 1.35em;
+  width: 1.35em;
+  position: absolute;
+  
+  transition: all 0.2s ease-in-out;
+  
+  z-index: -1;
+}
+@media (min-width: 33em) {
+  ol  li:before {
+    border-radius: 50%;
+    font-size: 1.5em;
+    height: 1.35em;
+    margin-left: 2.5%;
+    padding-left: 0;
+    padding-top: 0;
+    top: -0.15em;
+    width: 1.35em;
+    z-index: -1;
+  }
+} */
+
+
+
+@import url("https://fonts.googleapis.com/css?family=Lato:400,400i,700");
+  
+ol {
+  max-width: 350px;
+  counter-reset: my-awesome-counter;
+  list-style: none;
+  padding-left: 40px;
+}
+ol li {
+  margin: 0 0 0.5rem 0;
+  counter-increment: my-awesome-counter;
+  position: relative;
+}
+ol li::before {
+  content: counter(my-awesome-counter);
+  color: #fcd000;
+  font-size: 1.5rem;
+  font-weight: bold;
+  position: absolute;
+  --size: 32px;
+  left: calc(-1 * var(--size) - 10px);
+  line-height: var(--size);
+  width: var(--size);
+  height: var(--size);
+  top: 0;
+  transform: rotate(-10deg);
+  background: black;
+  border-radius: 50%;
+  text-align: center;
+  box-shadow: 1px 1px 0 #999;
+} 
+
+
+/* 
+ol {
+  list-style: none;
+  counter-reset: item;
+}
+li {
+  counter-increment: item;
+  margin-bottom: 5px;
+}
+li:before {
+  margin-right: 10px;
+  content: counter(item);
+  background: lightblue;
+  border-radius: 100%;
+  color: white;
+  width: 1.2em;
+  text-align: center;
+  display: inline-block;
+} */
+
+h2{
+  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  font-size: 5px;
 }

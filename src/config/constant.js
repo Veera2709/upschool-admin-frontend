@@ -38,7 +38,7 @@ export const Common = {
   forgotPassword: 'Forgot Password?',
   alphabetsRegex: `^(?=.*[a-zA-Z])[a-zA-Z]+$`,
   alphabetsWithSpaceRegex: "^[A-Za-z? ,_-]+$",
-  pincodeWithPositiveNumber: "^[1-9]+[0-9]*$",
+  positiveNumber: "^[1-9]+[0-9]*$",
   // UserNameRegex: /^([a-zA-Z]+\s)*[a-zA-Z]+$/, //accepts numbers
   UserNameRegex: /^[a-zA-Z ]+$/, //accepts numbers
   AlphaNumaricRegex: '[A-Za-z0-9_]',
