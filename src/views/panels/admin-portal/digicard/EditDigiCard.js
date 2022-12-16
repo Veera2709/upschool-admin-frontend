@@ -279,7 +279,6 @@ const EditDigiCard = (
                                 console.log("if condition");
                                 formData = {
                                     digi_card_id: individualDigiCardData.digi_card_id,
-                                    digi_card_name: values.digicardname,
                                     digi_card_title: values.digicardtitle,
                                     digi_card_files: [values.digicard_image],
                                     digicard_image: imgFile,
@@ -293,7 +292,6 @@ const EditDigiCard = (
                                 console.log("else condition");
                                 formData = {
                                     digi_card_id: individualDigiCardData.digi_card_id,
-                                    digi_card_name: values.digicardname,
                                     digi_card_title: values.digicardtitle,
                                     digi_card_files: [values.digicard_image],
                                     digicard_image: values.digicard_image,
