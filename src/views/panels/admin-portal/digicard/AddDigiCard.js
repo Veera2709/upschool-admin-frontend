@@ -41,7 +41,7 @@ const AddDigiCard = (
   terminal,
   setCurrentSubCategory
 ) => {
-   
+
 
   const colourOptions = [];
 
@@ -152,26 +152,26 @@ const AddDigiCard = (
 
     axios.post(dynamicUrl.fetchAllDigiCards, {}, {
       headers: { Authorization: sessionStorage.getItem('user_jwt') }
-  })
+    })
       .then((response) => {
-          console.log(response.data.Items);
-          let resultData = response.data.Items;
+        console.log(response.data.Items);
+        let resultData = response.data.Items;
 
-          
-          resultData.forEach((item, index) => {
-            item.digicard_status === 'Active' ? colourOptions.push({ value: item.digi_card_name, label: item.digi_card_name }) : colourOptions.push({ value: item.digi_card_name, label: item.digi_card_name, isDisabled: true })
-            // console.log("item",item)
-          }
-          );
-          console.log("colourOptions",colourOptions);
-          setDigitalTitles(colourOptions)
+
+        resultData.forEach((item, index) => {
+          item.digicard_status === 'Active' ? colourOptions.push({ value: item.digi_card_name, label: item.digi_card_name }) : colourOptions.push({ value: item.digi_card_name, label: item.digi_card_name, isDisabled: true })
+          // console.log("item",item)
+        }
+        );
+        console.log("colourOptions", colourOptions);
+        setDigitalTitles(colourOptions)
       })
       .catch((err) => {
-          console.log(err)
+        console.log(err)
       })
   }, [])
 
-  return  (
+  return (
     <div>
       <Card>
         <Card.Body>
@@ -182,7 +182,7 @@ const AddDigiCard = (
               digicardtitle: '',
               digicard_image: '',
               digicardcontent: '',
-              digicardtitleExcerpt:'',
+              digicardtitleExcerpt: '',
               digicard_voice_note: ''
             }}
             validationSchema={Yup.object().shape({
@@ -213,18 +213,18 @@ const AddDigiCard = (
 
             onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
 
-              console.log("multiOptions",multiOptions);
+              console.log("multiOptions", multiOptions);
               console.log("on submit");
               var formData = {
                 digi_card_name: values.digicardname,
                 digi_card_title: values.digicardtitle,
                 digi_card_files: [values.digicard_image],
                 digicard_image: values.digicard_image,
-                digi_card_excerpt:articleDataTitle,
+                digi_card_excerpt: articleDataTitle,
                 digi_card_content: articleData,
                 digi_card_keywords: tags,
                 digicard_voice_note: values.digicard_voice_note,
-                related_digi_cards:multiOptions
+                related_digi_cards: multiOptions
               };
 
 
@@ -454,22 +454,22 @@ const AddDigiCard = (
                       </label><br />
                       <img width={150} src={imgFile} alt="" className="img-fluid mb-3" />
                     </div>
-                    <div className="form-group fill"  style={{ position: "relative",zIndex: 10}}>
-                    <label className="floating-label" htmlFor="digicardtitle">
-                      <small className="text-danger">* </small>Related DigiCard Titles
-                    </label>
-                    <Select
-                      className="basic-single"
-                      classNamePrefix="select"
-                      name="color"
-                      isMulti
-                      closeMenuOnSelect={false}
-                      // onChange={handleChange}
-                      // value={selectedOption}
-                      onChange={getMultiOptions} 
-                      options={digitalTitles}
-                      placeholder="Which is your favourite colour?" 
-                    />
+                    <div className="form-group fill" style={{ position: "relative", zIndex: 10 }}>
+                      <label className="floating-label" htmlFor="digicardtitle">
+                        <small className="text-danger">* </small>Related DigiCard Titles
+                      </label>
+                      <Select
+                        className="basic-single"
+                        classNamePrefix="select"
+                        name="color"
+                        isMulti
+                        closeMenuOnSelect={false}
+                        // onChange={handleChange}
+                        // value={selectedOption}
+                        onChange={getMultiOptions}
+                        options={digitalTitles}
+                        placeholder="Which is your favourite colour?"
+                      />
                     </div>
                   </Col>
                 </Row>

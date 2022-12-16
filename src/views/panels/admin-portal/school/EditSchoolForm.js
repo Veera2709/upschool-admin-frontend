@@ -12,7 +12,7 @@ import dynamicUrl from "../../../../helper/dynamicUrls";
 import { useHistory } from 'react-router-dom';
 
 
-const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool }) => {
+const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool, fetchSchoolData }) => {
 
     let history = useHistory();
 
@@ -303,7 +303,7 @@ const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool }) => {
                                             setIsOpenEditSchool(false);
                                             const MySwal = withReactContent(Swal);
                                             MySwal.fire('', 'Your school has been updated!', 'success');
-
+                                            fetchSchoolData();
                                         } else {
 
                                             console.log('No files uploaded');
@@ -739,7 +739,7 @@ const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool }) => {
 
                                         {loader}
 
-                                        <br/>
+                                        <br />
 
                                         <div className="row">
                                             <div className="col-md-8"></div>

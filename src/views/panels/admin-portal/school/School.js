@@ -57,10 +57,10 @@ const School = () => {
                 className="mb-3"
             >
                 <Tab eventKey={1} title="Subscription Active" >
-                    <SchoolChild _data={_data} />
+                    <SchoolChild _data={_data} fetchSchoolData={fetchSchoolData} />
                 </Tab>
                 <Tab eventKey={2} title="Subscription Inactive">
-                    <SchoolChild _data={_data} />
+                    <SchoolChild _data={_data} fetchSchoolData={fetchSchoolData} />
                 </Tab>
             </Tabs>
         </div>
