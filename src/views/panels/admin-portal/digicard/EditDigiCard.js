@@ -261,10 +261,10 @@ const EditDigiCard = (
                                 .max(50, Constants.AddDigiCard.DigiCardtitleTooLong)
                                 .matches(Constants.AddDigiCard.DigiCardtitleRegex, Constants.AddDigiCard.DigiCardtitleValidation)
                                 .required(Constants.AddDigiCard.DigiCardtitleRequired),
-                            digicard_image: Yup.string()
-                                .trim()
-                                .nullable(true, Constants.AddDigiCard.DigiCardFileNotNull)
-                                .required(Constants.AddDigiCard.DigiCardfileRequired),
+                            // digicard_image: Yup.string()
+                            //     .trim()
+                            //     .nullable(true, Constants.AddDigiCard.DigiCardFileNotNull)
+                            //     .required(Constants.AddDigiCard.DigiCardfileRequired),
                           
                         })}
 
