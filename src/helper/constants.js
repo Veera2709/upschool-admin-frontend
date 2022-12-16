@@ -35,8 +35,12 @@ export const AddDigiCard = {
   DigiCardtitleTooLong: 'Digicard title is too long!',
   DigiCardtitleValidation: 'Digicard title should contain only alphabets and numbers!',
   
-  DigiCardFileNotNull: 'Digicard Image should not be null!',
-  DigiCardfileRequired: 'Digicard Image is required!',
+  DigiCardImageNotNull: 'Digicard Image should not be null!',
+  DigiCardImageRequired: 'Digicard Image is required!',
+
+  DigiCardFileNotNull: 'Digicard File should not be null!',
+  DigiCardfileRequired: 'Digicard File is required!',
+
   DigiCardKeyRequired: 'Digicard Key Words are required!',
 
   UserNameValidation: 'User name should contain only alphabets!',

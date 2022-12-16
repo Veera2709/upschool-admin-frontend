@@ -254,7 +254,7 @@ const DigiCardChild = (props) => {
         let finalDataArray = [];
         for (let index = 0; index < resultData.length; index++) {
             resultData[index]['digicard_image'] = <img className='img-fluid img-radius wid-50 circle-image' src={resultData[index].digicard_imageURL} alt="school_image" />
-            resultData[index]['digi_card_name'] = <p>{resultData[index].digi_card_name}</p>
+            // resultData[index]['digi_card_name'] = <p>{resultData[index].digi_card_name}</p>
             resultData[index]['actions'] = (
                 <>
                     <>
@@ -270,7 +270,7 @@ const DigiCardChild = (props) => {
                         <Button
                             size="sm"
                             className="btn btn-icon btn-rounded btn-danger"
-                            onClick={(e) => deleteDigicard(resultData[index].digi_card_id, resultData[index].lc_digi_card_name)}
+                            onClick={(e) => deleteDigicard(resultData[index].digi_card_id, resultData[index].digi_card_name)}
                         >
                             <i className="feather icon-trash-2 " /> &nbsp; Delete
                         </Button>

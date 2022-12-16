@@ -79,7 +79,7 @@ const AddDigiCard = (
   const [finalSequenceNo, setFinalSequenceNo] = useState("");
   const [articleSize, setArticleSize] = useState(20);
   const [imageCount, setImageCount] = useState(0);
-  const [multiOptions, selectedOption] = useState(0);
+  const [multiOptions, setMultiOptions] = useState([]);
 
 
   const [tags, setTags] = useState([]);
@@ -90,12 +90,14 @@ const AddDigiCard = (
   const [articleDataTitle, setArticleDataTtitle] = useState("");
   const [digitalTitles, setDigitalTitles] = useState(0);
 
+  const [isShown, setIsShown] = useState(false);
+  
+  
+
   let history = useHistory();
 
-
-
   const getMultiOptions = (e) => {
-    selectedOption(e);
+    setMultiOptions(e);
   }
 
 
@@ -160,7 +162,6 @@ const AddDigiCard = (
           
           resultData.forEach((item, index) => {
             item.digicard_status === 'Active' ? colourOptions.push({ value: item.digi_card_name, label: item.digi_card_name }) : colourOptions.push({ value: item.digi_card_name, label: item.digi_card_name, isDisabled: true })
-            // console.log("item",item)
           }
           );
           console.log("colourOptions",colourOptions);
@@ -183,7 +184,8 @@ const AddDigiCard = (
               digicard_image: '',
               digicardcontent: '',
               digicardtitleExcerpt:'',
-              digicard_voice_note: ''
+              digicard_voice_note: '',
+              clientComponents:multiOptions
             }}
             validationSchema={Yup.object().shape({
               digicardname: Yup.string()
@@ -206,12 +208,13 @@ const AddDigiCard = (
                 .trim()
                 .nullable(true, Constants.AddDigiCard.DigiCardFileNotNull)
                 .required(Constants.AddDigiCard.DigiCardfileRequired),
-              // digicardKeywords: Yup.array()
-              // .required(Constants.AddDigiCard.DigiCardKeyRequired),
+              // clientComponents: Yup.array().required("Provide at least one tag").min(1)
             })}
 
 
+
             onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
+             
 
               console.log("multiOptions",multiOptions);
               console.log("on submit");
@@ -308,11 +311,11 @@ const AddDigiCard = (
                     hideLoader();
                   }
                 });
-              // setSubmitting(true);
+          
               console.log(formData);
               console.log('Submitting');
 
-              // sla file validation
+
               let allFilesData = [];
               const fileNameArray = ['digicard_image'];
 
@@ -325,23 +328,16 @@ const AddDigiCard = (
                 }
               });
 
-              console.log(allFilesData);
-
+              console.log(allFilesData)
               if (allFilesData.length === 0) {
                 showLoader();
-                // if (contact === false) {
                 setDisableButton(true);
-                // _SubmitClient(formData);
-                // }
               } else {
                 if (areFilesInvalid(allFilesData) !== 0) {
                   setInvalidFile(true);
                 } else {
                   showLoader();
-                  // if (contact === false) {
                   setDisableButton(true);
-                  // _SubmitClient(formData);
-                  // }
                 }
               }
             }}
@@ -455,21 +451,22 @@ const AddDigiCard = (
                       <img width={150} src={imgFile} alt="" className="img-fluid mb-3" />
                     </div>
                     <div className="form-group fill"  style={{ position: "relative",zIndex: 10}}>
-                    <label className="floating-label" htmlFor="digicardtitle">
+                    <label className="floating-label" htmlFor="clientComponents">
                       <small className="text-danger">* </small>Related DigiCard Titles
                     </label>
                     <Select
                       className="basic-single"
                       classNamePrefix="select"
-                      name="color"
+                      // name="digiCardTitle"
                       isMulti
                       closeMenuOnSelect={false}
-                      // onChange={handleChange}
-                      // value={selectedOption}
                       onChange={getMultiOptions} 
                       options={digitalTitles}
                       placeholder="Which is your favourite colour?" 
-                    />
+                    /><br/>
+                      {touched.clientComponents && errors.clientComponents && (
+                            <small className="text-danger form-text">{errors.clientComponents}</small>
+                          )}
                     </div>
                   </Col>
                 </Row>
@@ -478,42 +475,37 @@ const AddDigiCard = (
                     <label className="floating-label" htmlFor="digicardtitleExcerpt">
                       <small className="text-danger">* </small>DigiCard Excerpt
                     </label>
-                    {/* <JoditEditor className='form-control'
-                      name='digicardcontent'
-                      onBlur={(newContent) => setContent(newContent)}
-                      onChange={handleChange}
-                      value={values.digicardcontent}
-                    /> */}
-                    {/* <AddArticles /> */}
                     <ArticleRTE
                       setArticleSize={setArticleSize}
                       setImageCount={setImageCount}
                       imageCount={imageCount}
                       articleData={articleDataTitle}
                       setArticleData={setArticleDataTtitle}
+
                     />
                   </Col>
+                  <br/>
                 </Row><br></br>
                 <Row>
                   <Col sm='12'>
                     <label className="floating-label" htmlFor="digicardtitle">
                       <small className="text-danger">* </small>DigiCard Content
                     </label>
-                    {/* <JoditEditor className='form-control'
-                      name='digicardcontent'
-                      onBlur={(newContent) => setContent(newContent)}
-                      onChange={handleChange}
-                      value={values.digicardcontent}
-                    /> */}
-                    {/* <AddArticles /> */}
                     <ArticleRTE
                       setArticleSize={setArticleSize}
                       setImageCount={setImageCount}
                       imageCount={imageCount}
                       articleData={articleData}
                       setArticleData={setArticleData}
+                      onChange={handleChange}
+                      name="digicardcontent"
+                      
                     />
                   </Col>
+                  {/* {touched.digicardcontent && errors.digicardcontent && <small className="text-danger form-text">{errors.digicardcontent}</small>} */}
+
+                  <br/>
+                    {/* <small className="text-danger form-text" >Select DigiCard Titles</small> */}
                 </Row><br></br>
                 <Row>
                   <Col sm={10}>
