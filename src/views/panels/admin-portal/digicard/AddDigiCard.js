@@ -188,12 +188,12 @@ const AddDigiCard = (
               clientComponents:multiOptions
             }}
             validationSchema={Yup.object().shape({
-              digicardname: Yup.string()
-                .trim()
-                .min(2, Constants.AddDigiCard.DigiCardNameTooShort)
-                .max(50, Constants.AddDigiCard.DigiCardNameTooLong)
-                .matches(Constants.AddDigiCard.DigiCardNameRegex, Constants.AddDigiCard.DigiCardNameValidation)
-                .required(Constants.AddDigiCard.DigiCardNameRequired),
+              // digicardname: Yup.string()
+              //   .trim()
+              //   .min(2, Constants.AddDigiCard.DigiCardNameTooShort)
+              //   .max(50, Constants.AddDigiCard.DigiCardNameTooLong)
+              //   .matches(Constants.AddDigiCard.DigiCardNameRegex, Constants.AddDigiCard.DigiCardNameValidation)
+              //   .required(Constants.AddDigiCard.DigiCardNameRequired),
               digicardtitle: Yup.string()
                 .trim()
                 .min(2, Constants.AddDigiCard.DigiCardtitleTooShort)
@@ -204,10 +204,10 @@ const AddDigiCard = (
                 .trim()
                 .nullable(true, Constants.AddDigiCard.DigiCardImageNotNull)
                 .required(Constants.AddDigiCard.DigiCardImageRequired),
-              digicard_voice_note: Yup.string()
-                .trim()
-                .nullable(true, Constants.AddDigiCard.DigiCardFileNotNull)
-                .required(Constants.AddDigiCard.DigiCardfileRequired),
+              // digicard_voice_note: Yup.string()
+              //   .trim()
+              //   .nullable(true, Constants.AddDigiCard.DigiCardFileNotNull)
+              //   .required(Constants.AddDigiCard.DigiCardfileRequired),
               // clientComponents: Yup.array().required("Provide at least one tag").min(1)
             })}
 
@@ -219,7 +219,7 @@ const AddDigiCard = (
               console.log("multiOptions",multiOptions);
               console.log("on submit");
               var formData = {
-                digi_card_name: values.digicardname,
+                // digi_card_name: values.digicardname,
                 digi_card_title: values.digicardtitle,
                 digi_card_files: [values.digicard_image],
                 digicard_image: values.digicard_image,
@@ -347,22 +347,21 @@ const AddDigiCard = (
                 <Row>
                   {/* {edit1Toggle && <Loader />} */}
                   <Col sm={6}>
-                    <div className="form-group fill">
-                      <label className="floating-label" htmlFor="digicardname">
-                        <small className="text-danger">* </small>DigiCard Name
+                  <div className="form-group fill">
+                      <label className="floating-label" htmlFor="digicardtitle">
+                        <small className="text-danger">* </small>DigiCard Title
                       </label>
                       <input
                         className="form-control"
-                        error={touched.digicardname && errors.digicardname}
-                        name="digicardname"
+                        error={touched.digicardtitle && errors.digicardtitle}
+                        name="digicardtitle"
                         onBlur={handleBlur}
                         onChange={handleChange}
                         type="text"
-                        value={values.digicardname}
-                        id='name'
+                        value={values.digicardtitle}
+                        id='title'
                       />
-                      {touched.digicardname && errors.digicardname && <small className="text-danger form-text">{errors.digicardname}</small>}
-                      {/* {isClientExists && <small className="text-danger form-text">{MESSAGES.ERROR.ClientNameExists}</small>} */}
+                      {touched.digicardtitle && errors.digicardtitle && <small className="text-danger form-text">{errors.digicardtitle}</small>}
                     </div>
                     <div className="form-group fill">
                       <label className="floating-label" htmlFor="digicard_image">
@@ -425,31 +424,7 @@ const AddDigiCard = (
                         name='digicardKeywords'
                       />
                       {/* {touched.digicardKeywords && errors.digicardKeywords && (<small className="text-danger form-text">{errors.digicardKeywords}</small>)} */}
-                    </div>
-                  </Col>
-                  <Col sm={6}>
-                    <div className="form-group fill">
-                      <label className="floating-label" htmlFor="digicardtitle">
-                        <small className="text-danger">* </small>DigiCard Title
-                      </label>
-                      <input
-                        className="form-control"
-                        error={touched.digicardtitle && errors.digicardtitle}
-                        name="digicardtitle"
-                        onBlur={handleBlur}
-                        onChange={handleChange}
-                        type="text"
-                        value={values.digicardtitle}
-                        id='title'
-                      />
-                      {touched.digicardtitle && errors.digicardtitle && <small className="text-danger form-text">{errors.digicardtitle}</small>}
-                    </div>
-                    <div className="form-group fill">
-                      <label className="floating-label" htmlFor="digicardtitle">
-                        <small className="text-danger">* </small>Logo preview
-                      </label><br />
-                      <img width={150} src={imgFile} alt="" className="img-fluid mb-3" />
-                    </div>
+                    </div><br/>
                     <div className="form-group fill"  style={{ position: "relative",zIndex: 10}}>
                     <label className="floating-label" htmlFor="clientComponents">
                       <small className="text-danger">* </small>Related DigiCard Titles
@@ -468,6 +443,16 @@ const AddDigiCard = (
                             <small className="text-danger form-text">{errors.clientComponents}</small>
                           )}
                     </div>
+                  </Col>
+                  <Col sm={6}><br/>
+                    
+                    <div className="form-group fill">
+                      <label className="floating-label" htmlFor="digicardtitle">
+                        <small className="text-danger">* </small>Logo preview
+                      </label><br />
+                      <img width={150} src={imgFile} alt="" className="img-fluid mb-3" />
+                    </div>
+                  
                   </Col>
                 </Row>
                 <Row>
