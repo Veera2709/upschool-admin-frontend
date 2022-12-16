@@ -137,9 +137,14 @@ const routes = [
       {
         exact: true,
         path: '/admin-portal/users',
+        component: lazy(() => import('./views/panels/admin-portal/users/ListUsers'))
+      },
+      {
+        exact: true,
+        path: '/admin-portal/add-users',
         component: lazy(() => import('./views/panels/admin-portal/users/UsersBulkUpload'))
       },
-
+      
       //digi card
       {
         exact: true,

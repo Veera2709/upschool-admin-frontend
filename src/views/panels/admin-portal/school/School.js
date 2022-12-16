@@ -6,6 +6,15 @@ import { useState } from 'react';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 
+// // import React, { useState } from 'react';
+// import { Row, Col, Card, Pagination, Button, Modal } from 'react-bootstrap';
+// import BTable from 'react-bootstrap/Table';
+
+// import { GlobalFilter } from './GlobalFilter';
+
+// import { useTable, useSortBy, usePagination, useGlobalFilter } from 'react-table';
+// // import makeData from '../../../data/schoolData';
+
 const School = () => {
     const [_data, _setData] = useState([]);
     const [subscriptionActive, setSubscriptionActive] = useState([]);

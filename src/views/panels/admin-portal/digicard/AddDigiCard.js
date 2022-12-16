@@ -82,9 +82,6 @@ const AddDigiCard = (
   const [multiOptions, selectedOption] = useState(0);
 
 
-
-
-
   const [tags, setTags] = useState([]);
   const [ImgURL, setImgURL] = useState([]);
   const [display, setDisplay] = useState('none');
@@ -124,8 +121,6 @@ const AddDigiCard = (
     }
     reader.readAsDataURL(file);
   }
-
-
   const sweetAlertHandler = (alert) => {
     MySwal.fire({
       title: alert.title,
@@ -553,8 +548,6 @@ const AddDigiCard = (
                   size="large"
                   type="submit"
                   variant="success"
-                  // disabled={disableButton === true}
-                  // onClick={(e) => {alert(`/auth/preview/${articleData}`); history.push(`/auth/preview/jklkjlk`)}}
                   onClick={previewData}
                 >
                   preview
@@ -562,7 +555,6 @@ const AddDigiCard = (
               </Col>
             </div> */}
           </Row>
-
         </Card.Body>
 
       </Card>

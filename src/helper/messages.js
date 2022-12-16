@@ -80,10 +80,10 @@ const MESSAGES = {
     InappropriateAge: 'The employee is below 18',
     JoinDateReleivingDateMismatch: 'Releiving date should be ahead of joining date',
     InvalidFilesPresent: 'Uploaded files should be less than 1MB. Supported formats are .png, .jpg, .jpeg, .pdf',
-    InvalidFilesPresentBulkUpload: 'Uploaded files should be less than 10MB. Supported formats are .xlsx, .zip',
+    InvalidFilesPresentBulkUpload: 'Uploaded files should be less than 10MB. Supported formats are .xlsx',
     UploadMandatoryFiles: 'Please upload aadhar and pan card',
     NoFilesPresent: 'Please upload the mandatory evidences!',
-    NoFilesPresentBulkUpload: 'Please upload the mandatory files!',
+    NoFilesPresentBulkUpload: 'Please upload file!',
     NoFilesPresentIdentification: 'Please upload the mandatory aadhar and pan evidence!'
   }
 };

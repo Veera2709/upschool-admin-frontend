@@ -14,7 +14,10 @@ import dynamicUrl from '../../../../helper/dynamicUrls';
 // import { areFilesInvalid } from '../../../../util/utils';
 // import { bgvAlerts } from '../bgv-api/bgvAlerts';
 
-function AddSchool(className, rest, newUpload) {
+function AddSchool(className, rest, setIsOpen) {
+
+    console.log(setIsOpen);
+
     const [imgFile, setImgFile] = useState('');
     let [data, setData] = useState({});
     const [_radio, _setRadio] = useState(false);
@@ -73,7 +76,7 @@ function AddSchool(className, rest, newUpload) {
 
     const handleRadioChange = (e) => {
         _setRadio(!_radio);
-        _radio === true ? setScbscription_active('Yes') : setScbscription_active('No');
+        _radio === true ? setScbscription_active('No') : setScbscription_active('Yes');
     }
 
     return (
@@ -102,19 +105,19 @@ function AddSchool(className, rest, newUpload) {
                 }}
                 validationSchema={Yup.object().shape({
                     school_name: Yup.string().matches(Constants.Common.alphabetsRegex, 'School Name must contain only alphabets!').max(255).required('School Name is required'),
-                    contact_name: Yup.string().matches(Constants.Common.alphabetsRegex,'Contact Name must contain only alphabets!').max(255).required('Contact Name is required'),
+                    contact_name: Yup.string().matches(Constants.Common.alphabetsRegex, 'Contact Name must contain only alphabets!').max(255).required('Contact Name is required'),
                     address_line1: Yup.string().max(255).required('Address Line 1 is required'),
                     address_line2: Yup.string().max(255).required('Address Line 2 is required'),
                     city: Yup.string().max(100).required('City is required'),
                     pincode: Yup.string().min(6, 'pincode must be 6 charactor').max(6, 'pincode must be 6 charactor').required('Pincode is required'),
                     phone_no: Yup.string().min(10, 'phone number must be 10 charactar').max(10, 'phone number must be 10 charactar').required('Phone Number is required'),
-                    contact_name2: Yup.string().matches(Constants.Common.alphabetsRegex,'Contact Name must contain only alphabets!').max(255).required('Contact Name is required'),
+                    contact_name2: Yup.string().matches(Constants.Common.alphabetsRegex, 'Contact Name must contain only alphabets!').max(255).required('Contact Name is required'),
                     addres_line1_2: Yup.string().max(255).required('Address Line 1 is required'),
                     address_line2_2: Yup.string().max(255).required('Address Line 2 is required'),
                     city2: Yup.string().max(255).required('City is required'),
                     pincode2: Yup.string().min(6, 'pincode must be 6 charactor').max(6, 'pincode must be 6 charactor').required('Pincode is required'),
-                    phone_no2: Yup.string().min(10, 'pincode must be 10 charactor').max(10, 'pincode must be 10 charactor').required('Phone Number is required'),
-                    GST_no: Yup.string().max(255).required('GST Number is required'),
+                    phone_no2: Yup.string().min(10, 'phone Number must be 10 charactor').max(10, 'pincode must be 10 charactor').required('Phone Number is required'),
+                    GST_no: Yup.string().matches(Constants.Common.GSTRegex, 'GST number must be 22AAAAA0000A1Z5 format').required('GST Number is required'),
                 })}
                 onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
                     setSubmitting(true);
@@ -183,12 +186,16 @@ function AddSchool(className, rest, newUpload) {
                                         console.log({
                                             result
                                         });
-                                        sessionStorage.setItem('flag', false);
-                                        window.location.reload();
+
+                                        const timeOutFunction = () => {
+                                            window.location.reload();
+                                        }
+                                        setTimeout(timeOutFunction, 1000);
                                     }
+
+                                    // setIsOpen(false);
                                 } else {
                                     console.log('No files uploaded');
-                                    sessionStorage.setItem('flag', false);
                                     // sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingClient });
                                     // hideLoader();
                                     // setDisableButton(false);
@@ -202,8 +209,7 @@ function AddSchool(className, rest, newUpload) {
                                 // Request made and server responded
                                 setStatus({ success: false });
                                 setErrors({ submit: 'Error in generating OTP' });
-                                sessionStorage.setItem('flag', false);
-                                window.location.reload();
+                                // window.location.reload();
                             }
                         })
                         .catch((error) => {
@@ -213,20 +219,17 @@ function AddSchool(className, rest, newUpload) {
                                 console.log(error.response.data);
                                 setStatus({ success: false });
                                 setErrors({ submit: error.response.data });
-                                sessionStorage.setItem('flag', false);
-                                window.location.reload();
+                                // window.location.reload();
                             } else if (error.request) {
                                 // The request was made but no response was received
                                 console.log(error.request);
                                 hideLoader();
-                                sessionStorage.setItem('flag', false);
-                                window.location.reload();
+                                // window.location.reload();
                             } else {
                                 // Something happened in setting up the request that triggered an Error
                                 console.log('Error', error.message);
                                 hideLoader();
-                                sessionStorage.setItem('flag', false);
-                                window.location.reload();
+                                // window.location.reload();
                             }
                         });
 
@@ -310,7 +313,8 @@ function AddSchool(className, rest, newUpload) {
                                         type="file"
                                         accept="image/png, image/jpeg, image/jpg"
                                         onChange={previewImage}
-                                        value={values.school_logo} ref={schoolLogoRef}
+                                        value={values.school_logo}
+                                    // ref={schoolLogoRef}
                                     />
                                     {touched.school_logo && errors.school_logo && (
                                         <small className="text-danger form-text">{errors.school_logo}</small>
@@ -616,7 +620,7 @@ function AddSchool(className, rest, newUpload) {
                                                         onBlur={handleBlur}
                                                         onChange={handleChange}
                                                         onWheel={(e) => e.target.blur()}
-                                                        type="number"
+                                                        type="text"
                                                         ref={gst_numberRef}
                                                         value={values.GST_no}
                                                     />
