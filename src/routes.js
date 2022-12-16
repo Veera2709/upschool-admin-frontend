@@ -158,13 +158,12 @@ const routes = [
         component: lazy(() => import('./views/panels/admin-portal/digicard/AddDigiCard'))
       },
 
-      //add didgicard
+      //edit didgicard
       {
         exact: true,
         path: '/admin-portal/editDigiCard/:digi_card_id',
         component: lazy(() => import('./views/panels/admin-portal/digicard/EditDigiCard'))
       },
-      //preview
       
      
       {
