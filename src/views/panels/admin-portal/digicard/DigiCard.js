@@ -13,6 +13,9 @@ const DigiCard = () => {
     const [subscriptionActive, setSubscriptionActive] = useState([]);
     const [subscriptionInActive, setSubscriptionInActive] = useState([]);
 
+    console.log("subscriptionActive -- ", subscriptionActive);
+    console.log("subscriptionInActive -- ", subscriptionInActive);
+
     const fetchDigcardData = () => {
         axios.post(dynamicUrl.fetchAllDigiCards, {}, {
             headers: { Authorization: sessionStorage.getItem('user_jwt') }
@@ -20,9 +23,10 @@ const DigiCard = () => {
             .then((response) => {
                 console.log(response.data.Items);
                 let resultData = response.data.Items;
-                setSubscriptionActive(resultData && resultData.filter(p => p.digicard_status === 'Active'));
-                setSubscriptionInActive(resultData && resultData.filter(p => p.digicard_status === 'Archived'));
-                _setData(resultData && resultData.filter(p => p.digicard_status === 'Active'))
+                setSubscriptionActive(resultData && resultData.filter(e => e.digicard_status === 'Active'));
+                setSubscriptionInActive(resultData && resultData.filter(e => e.digicard_status === 'Archived'));
+                _setData(resultData && resultData.filter(e => e.digicard_status === 'Active'))
+               
                 
             })
             .catch((err) => {
