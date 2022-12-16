@@ -7,7 +7,7 @@ const dynamicUrl = {
     loginWithOTP: baseUrl + '/loginWithOTP',
     validateOTP: baseUrl + '/validateOTP',
     logout: baseUrl + '/logout',
-
+    
     insertDigicard: baseUrl + '/addDigiCard',
     fetchAllDigiCards: baseUrl + '/fetchAllDigiCards',
     fetchIndividualDigiCard: baseUrl + '/fetchIndividualDigiCard',
@@ -23,7 +23,10 @@ const dynamicUrl = {
     fetchSchoolIdNames: baseUrl + '/fetchSchoolIdNames',
     fetchAllUsersData: baseUrl + '/fetchAllUsersData',
     getUserBulkuploadUrl: baseUrl + '/getUserBulkuploadUrl',
-    bulkUsersUpload: baseUrl + '/bulkUsersUpload'
+    bulkUsersUpload: baseUrl + '/bulkUsersUpload',
+    fetchIndividualUser: baseUrl + '/fetchIndividualUser',
+    updateUser: baseUrl + '/updateUser',
+    deleteUser: baseUrl + '/deleteUser'
 
 }
 

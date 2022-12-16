@@ -19,6 +19,8 @@ import AddArticles from '../digicard/AddArticles'
 import ArticleRTE from './ArticleRTE'
 import { areFilesInvalid } from '../../../../util/utils';
 import { isEmptyObject } from '../../../../util/utils';
+import Select from 'react-select';
+
 
 
 
@@ -26,17 +28,7 @@ import { Link, useHistory, useParams } from 'react-router-dom';
 
 import { SessionStorage } from '../../../../util/SessionStorage';
 
-
-
-
 // import { Button,Container,Row ,Col  } from 'react-bootstrap';
-
-
-
-
-
-
-
 
 const EditDigiCard = (
     setTabChange,
@@ -52,6 +44,8 @@ const EditDigiCard = (
     setCurrentSubCategory
 ) => {
 
+
+    const colourOptions = [];
 
     const [content, setContent] = useState('');
     const [loader, showLoader, hideLoader] = useFullPageLoader();
@@ -94,15 +88,27 @@ const EditDigiCard = (
 
     const [tags, setTags] = useState([]);
     const [imgFile, setImgFile] = useState([]);
+    const [voiceNote, setVoiceNote] = useState([]);
     const [articleData, setArticleData] = useState("");
+    const [articleDataTitle, setArticleDataTtitle] = useState("");
+    const [digiCardTitles, setDigitalTitles] = useState(0);
+    const [defaultOptions, setDefaultOptions] = useState(0);
+  const [multiOptions, selectedOption] = useState(0);
+  
+
+
+
 
     const [individualDigiCardData, setIndividualDigiCardData] = useState([]);
     console.log('individualDigiCardData', individualDigiCardData);
+    console.log("defaultOptions",defaultOptions);
 
     const { digi_card_id } = useParams();
+   
 
-
-
+    const getMultiOptions = (e) => {
+        selectedOption(e);
+      }
 
     const handleDelete = (i, states) => {
         const newTags = tags.slice(0);
@@ -128,10 +134,34 @@ const EditDigiCard = (
         setImgFile(URL.createObjectURL(e.target.files[0]));
     }
 
+    const previewVoiceNote = (e) => {
+        setVoiceNote(URL.createObjectURL(e.target.files[0]));
+    }
 
+
+    const fetchAllDigiCards =()=>{
+        axios.post(dynamicUrl.fetchAllDigiCards, {}, {
+            headers: { Authorization: sessionStorage.getItem('user_jwt') }
+        })
+            .then((response) => {
+                console.log(response.data.Items);
+                let resultData = response.data.Items;
+      
+                
+                resultData.forEach((item, index) => {
+                  item.digicard_status === 'Active' ? colourOptions.push({ value: item.digi_card_name, label: item.digi_card_name }) : colourOptions.push({ value: item.digi_card_name, label: item.digi_card_name, isDisabled: true })
+                  // console.log("item",item)
+                }
+                );
+                console.log("colourOptions",colourOptions);
+                setDigitalTitles(colourOptions)
+            })
+            .catch((err) => {
+                console.log(err)
+            })                                                                          
+    }
 
     useEffect(() => {
-
         axios
             .post(
                 dynamicUrl.fetchIndividualDigiCard,
@@ -154,23 +184,26 @@ const EditDigiCard = (
 
                     console.log('inside res initial data');
 
-
-
                     let individual_client_data = response.data.Items[0];
                     let previousImage = response.data.Items[0].digicard_imageURL;
+                    let previousVoiceNote = response.data.Items[0].digicard_voice_noteURL;
+                    console.log("previousVoiceNote", previousVoiceNote);
                     console.log("individual_client_data", individual_client_data);
                     console.log("keyWords", individual_client_data.digi_card_keywords);
                     // let previousSubscription = response.data.Items[0].scbscription_active;
 
-
                     // setScbscription_active(previousSubscription);
                     setImgFile(previousImage);
+                    setVoiceNote(previousVoiceNote);
                     setIndividualDigiCardData(individual_client_data);
                     setArticleData(individual_client_data.digi_card_content)
+                    setArticleDataTtitle(individual_client_data.digi_card_excerpt)
                     setTags(individual_client_data.digi_card_keywords)
+                    setDefaultOptions(individual_client_data.related_digi_cards)
+                    selectedOption(individual_client_data.related_digi_cards)
+                    console.log("defaultOptions",individual_client_data.related_digi_cards);    
 
                     console.log('individualDigiCardData', individualDigiCardData);
-
 
                 } else {
                     console.log('else res');
@@ -198,9 +231,11 @@ const EditDigiCard = (
                 }
             });
 
+            fetchAllDigiCards();
+
     }, []);
 
-    return isEmptyObject(individualDigiCardData) ? null : (
+    return isEmptyObject(individualDigiCardData && defaultOptions) ? null : (
         <div>
             <Card>
                 <Card.Body>
@@ -210,7 +245,7 @@ const EditDigiCard = (
                             digicardname: individualDigiCardData.digi_card_name,
                             digicardtitle: individualDigiCardData.digi_card_title,
                             digicard_image: '',
-                            digicardcontent: articleData,
+                            digicard_voice_note: '',
                             digi_card_keywords: tags
                         }}
                         validationSchema={Yup.object().shape({
@@ -237,6 +272,8 @@ const EditDigiCard = (
 
 
                         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
+                            console.log("multiOptions in submitting time",multiOptions);
+
 
                             var formData;
 
@@ -248,8 +285,11 @@ const EditDigiCard = (
                                     digi_card_title: values.digicardtitle,
                                     digi_card_files: [values.digicard_image],
                                     digicard_image: imgFile,
+                                    digicard_voice_note: voiceNote,
+                                    digi_card_excerpt: articleDataTitle,
                                     digi_card_content: articleData,
-                                    digi_card_keywords: tags
+                                    digi_card_keywords: tags,
+                                    related_digi_cards:multiOptions
                                 };
                             } else {
                                 console.log("else condition");
@@ -259,8 +299,11 @@ const EditDigiCard = (
                                     digi_card_title: values.digicardtitle,
                                     digi_card_files: [values.digicard_image],
                                     digicard_image: values.digicard_image,
+                                    digicard_voice_note: values.digicard_voice_note,
+                                    digi_card_excerpt: articleDataTitle,
                                     digi_card_content: articleData,
-                                    digi_card_keywords: tags
+                                    digi_card_keywords: tags,
+                                    related_digi_cards:multiOptions
                                 };
                             }
 
@@ -284,7 +327,7 @@ const EditDigiCard = (
                                                 let keyName = keyNameArr[0];
                                                 console.log('KeyName', keyName);
 
-                                                let blobField = document.getElementById('digicard_image').files[0];
+                                                let blobField = document.getElementById(keyName).files[0];
                                                 console.log({
                                                     blobField
                                                 });
@@ -403,7 +446,7 @@ const EditDigiCard = (
                                         </div>
                                         <div className="form-group fill">
                                             <label className="floating-label" htmlFor="digicard_image">
-                                                <small className="text-danger">* </small>Choose File
+                                                <small className="text-danger">* </small>DigiCard Logo
                                             </label>
                                             <input
                                                 className="form-control"
@@ -422,6 +465,38 @@ const EditDigiCard = (
                                             {touched.digicard_image && errors.digicard_image && (
                                                 <small className="text-danger form-text">{errors.digicard_image}</small>
                                             )}
+                                        </div>
+                                        <div className="form-group fill">
+                                            <label className="floating-label" htmlFor="digicard_voice_note">
+                                                <small className="text-danger">* </small>Voice Note
+                                            </label>
+                                            <input
+                                                className="form-control"
+                                                error={touched.digicard_voice_note && errors.digicard_voice_note}
+                                                name="digicard_voice_note"
+                                                id="digicard_voice_note"
+                                                onBlur={handleBlur}
+                                                onChange={(e) => {
+                                                    handleChange(e);
+                                                    previewVoiceNote(e);
+                                                }}
+                                                type="file"
+                                                value={values.digicard_voice_note}
+                                                accept=".mp3,audio/*"
+                                            // accept="image/*"
+                                            />
+                                            {touched.digicard_voice_note && errors.digicard_voice_note && (
+                                                <small className="text-danger form-text">{errors.digicard_voice_note}</small>
+                                            )}
+                                        </div>
+                                        <div className="form-group fill">
+                                            <label className="floating-label" htmlFor="digicard">
+                                                <small className="text-danger">* </small>Voice Note Preview
+                                            </label><br />
+                                            {/* <img width={150} src={voiceNote} alt="" className="img-fluid mb-3" /> */}
+                                            <audio controls>
+                                                <source src={voiceNote} alt="Audio" type="audio/mp3" />
+                                            </audio>
                                         </div>
                                         <div className='ReactTags'>
                                             <label className="floating-label" htmlFor="digicard_image">
@@ -458,22 +533,47 @@ const EditDigiCard = (
                                             </label><br />
                                             <img width={150} src={imgFile} alt="" className="img-fluid mb-3" />
                                         </div>
-
+                                        <div className="form-group fill" style={{ position: "relative", zIndex: 10 }}>
+                                            <label className="floating-label" htmlFor="digicardtitle">
+                                                <small className="text-danger">* </small>Related DigiCard Titles
+                                            </label>
+                                            <Select
+                                               defaultValue ={defaultOptions}
+                                                className="basic-single"
+                                                classNamePrefix="select"
+                                                name="color"
+                                                isMulti
+                                                closeMenuOnSelect={false}
+                                                // onChange={handleChange}
+                                                // value={selectedOption}
+                                                onChange={getMultiOptions}
+                                                options={digiCardTitles}
+                                                placeholder="Select"
+                                            />
+                                        </div>
+                                       
 
                                     </Col>
                                 </Row>
                                 <Row>
                                     <Col sm='12'>
                                         <label className="floating-label" htmlFor="digicardtitle">
+                                            <small className="text-danger">* </small>DigiCard Excerpt
+                                        </label>
+                                        <ArticleRTE
+                                            setArticleSize={setArticleSize}
+                                            setImageCount={setImageCount}
+                                            imageCount={imageCount}
+                                            articleData={articleDataTitle}
+                                            setArticleData={setArticleDataTtitle}
+                                        />
+                                    </Col>
+                                </Row><br></br>
+                                <Row>
+                                    <Col sm='12'>
+                                        <label className="floating-label" htmlFor="digicardtitle">
                                             <small className="text-danger">* </small>DigiCard Content
                                         </label>
-                                        {/* <JoditEditor className='form-control'
-                      name='digicardcontent'
-                      onBlur={(newContent) => setContent(newContent)}
-                      onChange={handleChange}
-                      value={values.digicardcontent}
-                    /> */}
-                                        {/* <AddArticles /> */}
                                         <ArticleRTE
                                             setArticleSize={setArticleSize}
                                             setImageCount={setImageCount}
