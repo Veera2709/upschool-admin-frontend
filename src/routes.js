@@ -144,7 +144,27 @@ const routes = [
         path: '/admin-portal/add-users',
         component: lazy(() => import('./views/panels/admin-portal/users/UsersBulkUpload'))
       },
-      
+
+      //TOPICS
+      //Get Topics
+      {
+        exact: true,
+        path: '/admin-portal/Topics/topicsList',
+        component: lazy(() => import('./views/panels/admin-portal/Topics/TopicsList'))
+      },
+      // Add Topics
+      {
+        exact: true,
+        path: '/admin-portal/Topics/addTopics',
+        component: lazy(() => import('./views/panels/admin-portal/Topics/AddTopics'))
+      },
+      // Edit Topics
+      {
+        exact: true,
+        path: '/admin-portal/Topics/editTopic/:topic_id',
+        component: lazy(() => import('./views/panels/admin-portal/Topics/EditTopics'))
+      },
+
       //digi card
       {
         exact: true,
@@ -164,8 +184,9 @@ const routes = [
         path: '/admin-portal/editDigiCard/:digi_card_id',
         component: lazy(() => import('./views/panels/admin-portal/digicard/EditDigiCard'))
       },
-      
-     
+      //preview
+
+
       {
         exact: true,
         path: '/app/dashboard/analytics',

@@ -14,10 +14,7 @@ import dynamicUrl from '../../../../helper/dynamicUrls';
 // import { areFilesInvalid } from '../../../../util/utils';
 // import { bgvAlerts } from '../bgv-api/bgvAlerts';
 
-function AddSchool(className, rest, setIsOpen) {
-
-    console.log(setIsOpen);
-
+function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
     const [imgFile, setImgFile] = useState('');
     let [data, setData] = useState({});
     const [_radio, _setRadio] = useState(false);
@@ -104,19 +101,19 @@ function AddSchool(className, rest, setIsOpen) {
                     GST_no: data === {} ? '' : data.GST_no,
                 }}
                 validationSchema={Yup.object().shape({
-                    school_name: Yup.string().matches(Constants.Common.alphabetsRegex, 'School Name must contain only alphabets!').max(255).required('School Name is required'),
-                    contact_name: Yup.string().matches(Constants.Common.alphabetsRegex, 'Contact Name must contain only alphabets!').max(255).required('Contact Name is required'),
+                    school_name: Yup.string().matches(Constants.Common.alphabetsWithSpaceRegex, 'School Name must contain only alphabets!').max(255).required('School Name is required'),
+                    contact_name: Yup.string().matches(Constants.Common.alphabetsWithSpaceRegex, 'Contact Name must contain only alphabets!').max(255).required('Contact Name is required'),
                     address_line1: Yup.string().max(255).required('Address Line 1 is required'),
                     address_line2: Yup.string().max(255).required('Address Line 2 is required'),
-                    city: Yup.string().max(100).required('City is required'),
-                    pincode: Yup.string().min(6, 'pincode must be 6 charactor').max(6, 'pincode must be 6 charactor').required('Pincode is required'),
-                    phone_no: Yup.string().min(10, 'phone number must be 10 charactar').max(10, 'phone number must be 10 charactar').required('Phone Number is required'),
-                    contact_name2: Yup.string().matches(Constants.Common.alphabetsRegex, 'Contact Name must contain only alphabets!').max(255).required('Contact Name is required'),
+                    city: Yup.string().matches(Constants.Common.alphabetsWithSpaceRegex, 'city Name must contain only alphabets!').max(100).required('City is required'),
+                    pincode: Yup.string().matches(Constants.Common.positiveNumber, 'pincode required').max(6, 'pincode must be 6 charactor').required('Pincode is required'),
+                    phone_no: Yup.string().matches(Constants.Common.positiveNumber, 'Phone Number required').max(10, 'phone number must be 10 charactar').required('Phone Number is required'),
+                    contact_name2: Yup.string().matches(Constants.Common.alphabetsWithSpaceRegex, 'Contact Name must contain only alphabets!').max(255).required('Contact Name is required'),
                     addres_line1_2: Yup.string().max(255).required('Address Line 1 is required'),
                     address_line2_2: Yup.string().max(255).required('Address Line 2 is required'),
-                    city2: Yup.string().max(255).required('City is required'),
-                    pincode2: Yup.string().min(6, 'pincode must be 6 charactor').max(6, 'pincode must be 6 charactor').required('Pincode is required'),
-                    phone_no2: Yup.string().min(10, 'phone Number must be 10 charactor').max(10, 'pincode must be 10 charactor').required('Phone Number is required'),
+                    city2: Yup.string().matches(Constants.Common.alphabetsWithSpaceRegex, 'City Name must contain only alphabets!').max(100).required('City is required'),
+                    pincode2: Yup.string().matches(Constants.Common.positiveNumber, 'pincode required').max(6, 'pincode must be 6 charactor').required('Pincode is required'),
+                    phone_no2: Yup.string().matches(Constants.Common.positiveNumber, 'Phone Number required').max(10, 'phone Number must be 10 charactor').required('Phone Number is required'),
                     GST_no: Yup.string().matches(Constants.Common.GSTRegex, 'GST number must be 22AAAAA0000A1Z5 format').required('GST Number is required'),
                 })}
                 onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
@@ -141,7 +138,7 @@ function AddSchool(className, rest, setIsOpen) {
                                 city: copy === true ? values.city : values.city2,
                                 pincode: copy === true ? Number(values.pincode) : Number(values.pincode2),
                                 phone_no: copy === true ? Number(values.phone_no) : Number(values.phone_no2),
-                                GST_no: copy === true ? Number(values.GST_no) : Number(values.GST_no),
+                                GST_no: copy === true ? values.GST_no : values.GST_no,
                             },
                         }
                     }
@@ -188,7 +185,12 @@ function AddSchool(className, rest, setIsOpen) {
                                         });
 
                                         const timeOutFunction = () => {
-                                            window.location.reload();
+                                            setIsOpen(false);
+                                            const MySwal = withReactContent(Swal);
+
+                                            MySwal.fire('', 'Your school has been added!', 'success');
+
+                                            fetchSchoolData();
                                         }
                                         setTimeout(timeOutFunction, 1000);
                                     }
@@ -215,10 +217,19 @@ function AddSchool(className, rest, setIsOpen) {
                         .catch((error) => {
                             if (error.response) {
                                 hideLoader();
+
+                                console.log("------------------------------");
+                                const MySwal = withReactContent(Swal);
+
+                                MySwal.fire('', error.response.data, 'error');
+
+                                fetchSchoolData();
                                 // Request made and server responded
                                 console.log(error.response.data);
                                 setStatus({ success: false });
                                 setErrors({ submit: error.response.data });
+
+
                                 // window.location.reload();
                             } else if (error.request) {
                                 // The request was made but no response was received
