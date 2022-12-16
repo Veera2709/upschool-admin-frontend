@@ -149,8 +149,10 @@ function Table({ columns, data, modalOpen }) {
 }
 
 const SchoolChild = (props) => {
-    const { _data } = props
+    const { _data, fetchSchoolData } = props
     console.log('_data: ', _data);
+
+
     const columns = React.useMemo(
         () => [
             {
@@ -221,12 +223,12 @@ const SchoolChild = (props) => {
                             console.log('inside res');
                             return MySwal.fire('', 'Your school has been deleted!', 'success');
 
-
+                            fetchSchoolData();
                         } else {
                             console.log('else res');
                             // Request made and server responded
                             return MySwal.fire('', 'Failed to delete your School!', 'error');
-
+                            fetchSchoolData();
 
                         }
                     })
@@ -235,17 +237,17 @@ const SchoolChild = (props) => {
                             // Request made and server responded
                             console.log(error.response.data);
                             return MySwal.fire('', 'Failed to delete your School!', 'error');
-
+                            fetchSchoolData();
                         } else if (error.request) {
                             // The request was made but no response was received
                             console.log(error.request);
                             return MySwal.fire('', 'Failed to delete your School!', 'error');
-
+                            fetchSchoolData();
                         } else {
                             // Something happened in setting up the request that triggered an Error
                             console.log('Error', error.message);
                             return MySwal.fire('', 'Failed to delete your School!', 'error');
-
+                            fetchSchoolData();
                         }
                     });
             } else {
@@ -269,7 +271,7 @@ const SchoolChild = (props) => {
         setIsOpen(true);
     };
 
-    const fetchSchoolData = () => {
+    const _fetchSchoolData = () => {
         console.log("School data func called");
         let resultData = _data && _data;
         let finalDataArray = [];
@@ -319,7 +321,7 @@ const SchoolChild = (props) => {
     }
 
     useEffect(() => {
-        fetchSchoolData();
+        _fetchSchoolData();
     }, [_data])
 
     return isEmptyArray(schoolData) ? null : (
@@ -339,7 +341,7 @@ const SchoolChild = (props) => {
                             <Modal.Title as="h5">Add School</Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
-                            <AddSchoolForm setIsOpen={setIsOpen} />
+                            <AddSchoolForm setIsOpen={setIsOpen} fetchSchoolData={fetchSchoolData} />
                         </Modal.Body>
                         {/* <Modal.Footer>
                             <Button variant="danger" onClick={() => setIsOpen(false)}>
@@ -361,7 +363,7 @@ const SchoolChild = (props) => {
 
                 <Modal.Body>
 
-                    <EditSchoolForm id={editID} setIsOpenEditSchool={setIsOpenEditSchool} />
+                    <EditSchoolForm id={editID} setIsOpenEditSchool={setIsOpenEditSchool} fetchSchoolData={fetchSchoolData} />
 
                 </Modal.Body>
 
