@@ -1606,7 +1606,7 @@
   "resolved" "https://registry.npmjs.org/@emotion/memoize/-/memoize-0.8.0.tgz"
   "version" "0.8.0"
 
-"@emotion/react@^11.1.1":
+"@emotion/react@^11.8.1":
   "integrity" "sha512-+1bcHBaNJv5nkIIgnGKVsie3otS0wF9f1T1hteF3WeVvMNQEtfZ4YyFpnphGoot3ilU/wWMgP2SgIDuHLE/wAA=="
   "resolved" "https://registry.npmjs.org/@emotion/react/-/react-11.8.2.tgz"
   "version" "11.8.2"
@@ -1956,6 +1956,18 @@
   "integrity" "sha512-dZMzN0uAjwJXWYYAcnxIwXqRTZw3o14hGe7O6uhwjD1ZQWPVYA5lASgnNskEBra0knVBsOXB4KXg+HnlKewN/A=="
   "resolved" "https://registry.npmjs.org/@firebase/webchannel-wrapper/-/webchannel-wrapper-0.5.1.tgz"
   "version" "0.5.1"
+
+"@floating-ui/core@^1.0.4":
+  "integrity" "sha512-FPFLbg2b06MIw1dqk2SOEMAMX3xlrreGjcui5OTxfBDtaKTmh0kioOVjT8gcfl58juawL/yF+S+gnq8aUYQx/Q=="
+  "resolved" "https://registry.npmjs.org/@floating-ui/core/-/core-1.0.4.tgz"
+  "version" "1.0.4"
+
+"@floating-ui/dom@^1.0.1":
+  "integrity" "sha512-ZRe5ZmtGYCd82zrjWnnMW8hN5H1otedLh0Ur6rRo6f0exbEe6IlkVvo1RO7tgiMvbF0Df8hkhdm50VcVYqwP6g=="
+  "resolved" "https://registry.npmjs.org/@floating-ui/dom/-/dom-1.0.10.tgz"
+  "version" "1.0.10"
+  dependencies:
+    "@floating-ui/core" "^1.0.4"
 
 "@fullcalendar/common@~5.10.1":
   "integrity" "sha512-EumKIJcQTvQdTs75/9dmeREFgjcRVWzqHJS1Xvlz5mNsmB+w9EINCHETRjChtAQg1WD/lTQyVj4sHsKO7vCMSw=="
@@ -11159,6 +11171,11 @@
   "resolved" "https://registry.npmjs.org/memoize-one/-/memoize-one-5.2.1.tgz"
   "version" "5.2.1"
 
+"memoize-one@^6.0.0":
+  "integrity" "sha512-rkpe71W0N0c0Xz6QD0eJETuWAJGnJ9afsl1srmwPrI+yBCkge5EycXXbYRyvL29zZVUWQCY7InPRCv3GDXuZNw=="
+  "resolved" "https://registry.npmjs.org/memoize-one/-/memoize-one-6.0.0.tgz"
+  "version" "6.0.0"
+
 "memoizerific@^1.11.3":
   "integrity" "sha1-fIekZGREwy11Q4VwkF8tvRsagFo= sha512-/EuHYwAPdLtXwAwSZkh/Gutery6pD2KYd44oQLhAvQp/50mpyduZh8Q7PYHXTCJ+wuXxt7oij2LXyIJOOYFPog=="
   "resolved" "https://registry.npmjs.org/memoizerific/-/memoizerific-1.11.3.tgz"
@@ -14153,11 +14170,6 @@
     "strip-ansi" "6.0.0"
     "text-table" "0.2.0"
 
-"react-device-frameset@^1.3.2":
-  "integrity" "sha512-XAmuQDwf7SSqBQIs8Z3eKnRYuhc95yrDv8/r3n1x3i3gmbr+cu+wpfQI6Yz6GGwAl1aamFj/nb2fxCXVmB4glw=="
-  "resolved" "https://registry.npmjs.org/react-device-frameset/-/react-device-frameset-1.3.2.tgz"
-  "version" "1.3.2"
-
 "react-dom@^15.7.0":
   "integrity" "sha512-mpjXqC2t1FuYsILOLCj0kg6pbg460byZkVA/80VtDmKU/pYmoTdHOtaMcTRIDiyXLz4sIur0cQ04nOC6iGndJg=="
   "resolved" "https://registry.npmjs.org/react-dom/-/react-dom-15.7.0.tgz"
@@ -14813,18 +14825,20 @@
     "react-input-autosize" "^3.0.0"
     "react-transition-group" "^4.3.0"
 
-"react-select@^5.2.2":
-  "integrity" "sha512-miGS2rT1XbFNjduMZT+V73xbJEeMzVkJOz727F6MeAr2hKE0uUSA8Ff7vD44H32x2PD3SRB6OXTY/L+fTV3z9w=="
-  "resolved" "https://registry.npmjs.org/react-select/-/react-select-5.2.2.tgz"
-  "version" "5.2.2"
+"react-select@^5.7.0":
+  "integrity" "sha512-lJGiMxCa3cqnUr2Jjtg9YHsaytiZqeNOKeibv6WF5zbK/fPegZ1hg3y/9P1RZVLhqBTs0PfqQLKuAACednYGhQ=="
+  "resolved" "https://registry.npmjs.org/react-select/-/react-select-5.7.0.tgz"
+  "version" "5.7.0"
   dependencies:
     "@babel/runtime" "^7.12.0"
     "@emotion/cache" "^11.4.0"
-    "@emotion/react" "^11.1.1"
+    "@emotion/react" "^11.8.1"
+    "@floating-ui/dom" "^1.0.1"
     "@types/react-transition-group" "^4.4.0"
-    "memoize-one" "^5.0.0"
+    "memoize-one" "^6.0.0"
     "prop-types" "^15.6.0"
     "react-transition-group" "^4.3.0"
+    "use-isomorphic-layout-effect" "^1.1.2"
 
 "react-simple-step-wizard@^1.0.0":
   "integrity" "sha512-Zibwuk8fsxXNFlrVvo5kQfDTlqmci3OKBRD8ageP7sj0itSz66Up2CgFLkild2/77SlnIFbcrmTy8ysNz0e3kQ=="
@@ -17740,6 +17754,11 @@
   "version" "1.3.0"
   dependencies:
     "tslib" "^2.0.0"
+
+"use-isomorphic-layout-effect@^1.1.2":
+  "integrity" "sha512-49L8yCO3iGT/ZF9QttjwLF/ZD9Iwto5LnH5LmEdk/6cFmXddqi2ulF0edxTwjj+7mqvpVVGQWvbXZdn32wRSHA=="
+  "resolved" "https://registry.npmjs.org/use-isomorphic-layout-effect/-/use-isomorphic-layout-effect-1.1.2.tgz"
+  "version" "1.1.2"
 
 "use-sidecar@^1.0.1", "use-sidecar@^1.0.5":
   "integrity" "sha512-epTbsLuzZ7lPClpz2TyryBfztm7m+28DlEv2ZCQ3MDr5ssiwyOwGH/e5F9CkfWjJ1t4clvI58yF822/GUkjjhw=="
