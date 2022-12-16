@@ -1436,7 +1436,7 @@
 
   ~ .card-footer {
     border-top: none;
-    @media only screen and(max-width:575px) {
+    @media only screen and (max-width:575px) {
       [class*='col-'] {
         margin-bottom: 10px;
       }
