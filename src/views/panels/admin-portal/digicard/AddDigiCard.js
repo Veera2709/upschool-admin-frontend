@@ -485,7 +485,6 @@ const AddDigiCard = (
               </Col>
             </div> */}
           </Row>
-
         </Card.Body>
 
       </Card>
