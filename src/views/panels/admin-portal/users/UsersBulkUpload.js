@@ -143,6 +143,8 @@ const UploadCase = ({ className, ...rest }) => {
           const uploadResponse2 = await defaultPostApi(dynamicUrl.bulkUsersUpload, bulkUploadPayload);
 
           if (uploadResponse2.status === 200) {
+
+          
             sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.FilesUploaded });
             hideLoader();
             setDisableButton(false);

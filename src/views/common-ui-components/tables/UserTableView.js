@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import chroma from 'chroma-js';
 import { Link, useHistory, useParams } from 'react-router-dom';
 import { Row, Col, Card, Pagination, Button, Modal, Alert } from 'react-bootstrap';
@@ -10,12 +10,11 @@ import { SessionStorage } from '../../../util/SessionStorage';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import MESSAGES from './../../../helper/messages';
-import * as Constants from '../../../helper/constants';
+import { isEmptyArray, decodeJWT } from '../../../util/utils';
 
 import { GlobalFilter } from './GlobalFilter';
 import { useTable, useSortBy, usePagination, useGlobalFilter } from 'react-table';
 import dynamicUrl from '../../../helper/dynamicUrls';
-import { decodeJWT } from '../../../util/utils';
 import useFullPageLoader from '../../../helper/useFullPageLoader';
 
 export const colourOptions = [
@@ -220,23 +219,25 @@ const UserData = (props) => {
 
   const [userData, setUserData] = useState([]);
   const [individualUserData, setIndividualUserData] = useState([]);
+  const [userDOB, setUserDOB] = useState('');
   const [loader, showLoader, hideLoader] = useFullPageLoader();
+  const [className_ID, setClassName_ID] = useState({});
+  const [schoolName_ID, setSchoolName_ID] = useState({});
+  const [previousSchool, setPreviousSchool] = useState('');
+  const [previousClass, setPreviousClass] = useState('');
+  const [_userID, _setUserID] = useState('');
 
   const [isOpen, setIsOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [validationObj, setValidationObj] = useState({});
 
-  const [clients, setClients] = useState([]);
-  const [multiSelectClients, setMultiSelectClients] = useState([]);
-  const [selectedClients, setSelectedClients] = useState('N.A.');
   const [isLoading, setIsLoading] = useState(false);
   const { user_id } = decodeJWT(sessionStorage.getItem('user_jwt'));
-  const { user_client_id } = decodeJWT(sessionStorage.getItem('user_jwt'));
-  const [userId, setUserId] = useState(user_id);
-  const [supervisor, setSupervisor] = useState('N.A.');
-  const [editUsersId, setEditUsersId] = useState('');
 
-  const phoneRegExp = /^(\+91[\-\s]?)?[0]?(91)?[789]\d{9}$/;
+  const classNameRef = useRef('');
+  const schoolNameRef = useRef('');
+
+  const phoneRegExp = /^(\+91[\-\s]?)?[0]?(91)?[6789]\d{9}$/;
 
   const MySwal = withReactContent(Swal);
 
@@ -248,7 +249,7 @@ const UserData = (props) => {
     });
   };
 
-  const sweetConfirmHandler = (alert, user_id) => {
+  const sweetConfirmHandler = (alert, user_id, user_role) => {
     MySwal.fire({
       title: alert.title,
       text: alert.text,
@@ -258,22 +259,22 @@ const UserData = (props) => {
     }).then((willDelete) => {
       if (willDelete.value) {
         showLoader();
-        deleteUser(user_id);
+        deleteUser(user_id, user_role);
       } else {
         return MySwal.fire('', MESSAGES.INFO.DATA_SAFE, 'error');
       }
     });
   };
 
-  const saveUserId = (e, user_id) => {
+  const saveUserId = (e, user_id, user_role) => {
     e.preventDefault();
-    getIndividualUser(user_id);
+    getIndividualUser(user_id, user_role);
     showLoader();
   };
 
-  const saveUserIdDelete = (e, user_id) => {
+  const saveUserIdDelete = (e, user_id, user_role) => {
     e.preventDefault();
-    sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: MESSAGES.INFO.NOT_ABLE_TO_RECOVER }, user_id);
+    sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: MESSAGES.INFO.NOT_ABLE_TO_RECOVER }, user_id, user_role);
   };
 
   const fetchUserData = () => {
@@ -298,7 +299,8 @@ const UserData = (props) => {
           lastName: Yup.string().max(255).required('Last Name is required'),
           userEmail: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
           phoneNumber: Yup.string().matches(phoneRegExp, 'Phone number is not valid').max(255).required('Phone Number is required'),
-          userRole: Yup.string().max(255).required('User Role is required')
+          userRole: Yup.string().max(255).required('User Role is required'),
+          school: Yup.string().max(255).required('School is required')
         })
       } else if (responseData[index].user_role === "Student") {
 
@@ -311,6 +313,7 @@ const UserData = (props) => {
           userRole: Yup.string().max(255).required('User Role is required'),
           class: Yup.string().max(255).required('Class is required'),
           section: Yup.string().max(255).required('Section is required'),
+          school: Yup.string().max(255).required('School is required')
         })
 
       } else {
@@ -320,20 +323,21 @@ const UserData = (props) => {
           lastName: Yup.string().max(255).required('Last Name is required'),
           userEmail: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
           phoneNumber: Yup.string().matches(phoneRegExp, 'Phone number is not valid').max(255).required('Phone Number is required'),
-          userRole: Yup.string().max(255).required('User Role is required')
+          userRole: Yup.string().max(255).required('User Role is required'),
+          school: Yup.string().max(255).required('School is required')
         })
       }
 
       responseData[index]['action'] = (
         <>
-          <Button size="sm" className="btn btn-icon btn-rounded btn-info" onClick={(e) => saveUserId(e, userId)}>
+          <Button size="sm" className="btn btn-icon btn-rounded btn-info" onClick={(e) => saveUserId(e, userId, responseData[index].user_role)}>
             <i className="feather icon-edit" /> &nbsp; Edit
           </Button>{' '}
           &nbsp;
           <Button
             size="sm"
             className="btn btn-icon btn-rounded btn-danger"
-            onClick={(e) => saveUserIdDelete(e, responseData[index].user_id)}
+            onClick={(e) => saveUserIdDelete(e, userId, responseData[index].user_role)}
           >
             <i className="feather icon-delete" /> &nbsp; Delete
           </Button>
@@ -347,116 +351,156 @@ const UserData = (props) => {
 
   };
 
-  const getIndividualUser = (user_id) => {
-    setEditUsersId(user_id);
+  const getIndividualUser = (user_id, user_role) => {
+    // setEditUsersId(user_id);
 
     const values = {
-      user_id: user_id
+      user_id: user_id,
+      user_role: user_role
     };
 
     console.log(values);
 
-    let response = {
+    axios
+      .post(
+        dynamicUrl.fetchIndividualUserByRole,
+        { data: values },
+        {
+          headers: { Authorization: SessionStorage.getItem('user_jwt') }
+        }
+      )
+      .then((response) => {
+
+        console.log(response.data);
+        console.log(response.data.Items[0]);
+        hideLoader();
+
+        if (response.data.Items[0]) {
+
+          let individual_user_data = response.data.Items[0];
+          console.log({ individual_user_data });
+
+          let classNameArr = response.data.classList.find(o => o.client_class_id === response.data.Items[0].class_id);
+          let schoolNameArr = response.data.schoolList.find(o => o.school_id === response.data.Items[0].school_id);
+
+          console.log(classNameArr);
+          console.log(schoolNameArr);
+
+          setClassName_ID(response.data.classList);
+          setSchoolName_ID(response.data.schoolList);
+          setPreviousSchool(schoolNameArr.school_name);
+          classNameArr === "" || classNameArr === undefined || classNameArr === "undefined" || classNameArr === "N.A." ? setPreviousClass("Select Class") : setPreviousClass(classNameArr.client_class_name);
+          setUserDOB(response.data.Items[0].user_dob)
+          setIndividualUserData(individual_user_data);
+          setIsEditModalOpen(true);
+          _setUserID(user_id);
+
+        } else {
+
+          setIsEditModalOpen(true);
+        }
+
+      })
+      .catch((error) => {
+        if (error.response) {
+          // Request made and server responded
+          console.log(error.response.data);
+          setIsEditModalOpen(false);
+          hideLoader();
+          sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+        } else if (error.request) {
+          // The request was made but no response was received
+          hideLoader();
+          console.log(error.request);
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          hideLoader();
+          console.log('Error', error.message);
+        }
+      });
+  };
+
+
+  const handleSchoolChange = () => {
+
+    const filteredResult = schoolName_ID.find((e) => e.school_name == schoolNameRef.current.value);
+
+    console.log(filteredResult.school_id);
+    console.log(filteredResult.school_name);
+
+    let sendData = {
       data: {
-        Items: [
-          {
-            id: 1,
-            teacher_id: "jdngu2g982qu3iung9q3ht984hgniuq3gn93q84u89tng98394u8t",
-            user_email: "teacher@gmail.com",
-            user_firstname: "first",
-            user_lastname: "second",
-            user_phone_no: "9312312312",
-            user_role: "Teacher",
-            dob: "1997-05-27",
-            class: "10",
-            section: "A"
-          }
-        ]
+        school_id: filteredResult.school_id
       }
     }
 
+    console.log(sendData);
 
-    console.log(response.data.Items[0]);
-    hideLoader();
-
-    if (response.data.Items[0]) {
-
-      let individual_user_data = response.data.Items[0];
-      console.log({ individual_user_data });
-
-      setIndividualUserData(individual_user_data);
-      setIsEditModalOpen(true);
-
-    } else {
-
-      setIsEditModalOpen(true);
-    }
-
-    // axios
-    //   .post(
-    //     dynamicUrl.fetchIndividualUser,
-    //     { data: values },
-    //     {
-    //       headers: { Authorization: SessionStorage.getItem('user_jwt') }
-    //     }
-    //   )
-    //   .then((response) => {
-    //     setIndividualUserData(response.data.Items[0]);
-
-    //     console.log(response.data.Items[0]);
-    //     hideLoader();      
-
-    //     if (response.data.Items[0].user_components.length !== 0) {
-    //       let individual_user_data = response.data.Items[0];
-    //       console.log({ individual_user_data });
-
-    //       let final_array = [];
-    //       let final_component = [];
-
-    //       for (var i = 0; i < individual_user_data.user_components.length; i++) {
-    //         var newArray = colourOptions.filter(function (el) {
-    //           return el.value === individual_user_data.user_components[i];
-    //         });
-    //         final_array.push(newArray[0]);
-    //         final_component.push(individual_user_data.user_components[i]);
-    //       }
-
-    //       console.log({ final_array });
-    //       console.log({ final_component });
-
-    //       setDefaultValueData(final_array);
-    //       console.log({ defaultValueData });
-    //       setComponent(final_component);
-    //       setIsEditModalOpen(true);
-    //     } else {
-    //       setComponent([]);
-    //       setIsEditModalOpen(true);
-    //     }
-    //   })
-    //   .catch((error) => {
-    //     if (error.response) {
-    //       // Request made and server responded
-    //       console.log(error.response.data);
-    //       setIsEditModalOpen(false);
-    //       hideLoader();
-    //       sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
-    //     } else if (error.request) {
-    //       // The request was made but no response was received
-    //       hideLoader();
-    //       console.log(error.request);
-    //     } else {
-    //       // Something happened in setting up the request that triggered an Error
-    //       hideLoader();
-    //       console.log('Error', error.message);
-    //     }
-    //   });
-  };
-
-  const deleteUser = (user_id) => {
-    const values = { user_id: user_id };
-    console.log(values);
     axios
-      .post(dynamicUrl.deleteUser, { data: values }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
+      .post(
+        dynamicUrl.fetchClassBasedOnSchool,
+        {
+          data: {
+            school_id: filteredResult.school_id
+          }
+        },
+        {
+          headers: { Authorization: sessionStorage.getItem('user_jwt') }
+        }
+      )
+      .then((response) => {
+
+        console.log(response.status === 200);
+        let result = response.status === 200;
+
+        hideLoader();
+        if (result) {
+
+          console.log('inside res', response.data);
+          let newClassData = response.data.Items;
+          setClassName_ID(newClassData);
+
+        } else {
+          console.log('else res');
+          hideLoader();
+
+        }
+      })
+      .catch((error) => {
+        if (error.response) {
+          hideLoader();
+          // Request made and server responded
+          console.log(error.response.data);
+
+        } else if (error.request) {
+          // The request was made but no response was received
+          console.log(error.request);
+          hideLoader();
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.log('Error', error.message);
+          hideLoader();
+        }
+      });
+
+  }
+
+  const deleteUser = (user_id, user_role) => {
+    const values = {
+      user_id: user_id,
+      user_role: user_role
+    };
+
+    console.log(values);
+
+    axios
+      .post(dynamicUrl.deleteUsersByRole,
+        {
+          data: {
+            user_id: user_id,
+            user_role: user_role
+          }
+        }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
       .then((response) => {
         if (response.Error) {
           hideLoader();
@@ -489,72 +533,12 @@ const UserData = (props) => {
     setIsOpen(true);
   };
 
-
-  const _SubmitUser = (values) => {
-    // components empty check
-    console.log(values);
-    switch (sessionStorage.getItem('user_category')) {
-      case 'Operation Supervisor':
-        if (values.user_components.length === 0) {
-          alert('Please select a component');
-          return;
-        }
-        break;
-      default:
-        break;
-    }
-    console.log('Submitted');
-    axios
-      .post(dynamicUrl.insertUsers, { data: values }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
-      .then((response) => {
-        console.log({ response });
-        if (response.Error) {
-          setIsOpen(false);
-          sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.AddingUser });
-          hideLoader();
-        } else {
-          setIsOpen(false);
-          sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingUser });
-          hideLoader();
-          fetchUserData();
-        }
-      })
-      .catch((error) => {
-        if (error.response) {
-          // Request made and server responded
-          console.log(error.response.data);
-          setIsOpen(false);
-          hideLoader();
-          sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
-        } else if (error.request) {
-          // The request was made but no response was received
-          console.log(error.request);
-          hideLoader();
-        } else {
-          // Something happened in setting up the request that triggered an Error
-          console.log('Error', error.message);
-          hideLoader();
-        }
-      });
-  };
-
-  const _UpdateUser = (values) => {
-    console.log(values);
+  const _UpdateUser = (data) => {
+    console.log(data);
     console.log('Submitted');
 
-    switch (sessionStorage.getItem('user_category')) {
-      case 'Operation Supervisor':
-        if (values.user_components.length === 0) {
-          alert('Please select a component');
-          return;
-        }
-        break;
-      default:
-        break;
-    }
-
     axios
-      .post(dynamicUrl.updateUser, { data: values }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
+      .post(dynamicUrl.updateUsersByRole, { data }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
       .then((response) => {
         console.log({ response });
         if (response.Error) {
@@ -586,45 +570,6 @@ const UserData = (props) => {
         }
       });
   };
-
-  const validationSchema = Yup.object().shape({
-    userName: Yup.string()
-      .min(2, Constants.AddUserForm.UserNameIsTooShort)
-      .max(50, Constants.AddUserForm.UserNameIsTooLong)
-      .matches(Constants.AddUserForm.UserNameRegex, Constants.AddUserForm.UserNameValidation)
-      .required(Constants.AddUserForm.UserNameIsRequired),
-    userEmail: Yup.string().trim().email(Constants.AddUserForm.ValiedEmail).required(Constants.AddUserForm.EmailRequired),
-    userPassword: Yup.string()
-      .trim()
-      .min(8, Constants.AddUserForm.PasswordMustHaveMinimum8Characters)
-      .matches(Constants.AddUserForm.PasswordRegExp, Constants.AddUserForm.PasswordValidation)
-      .required(Constants.AddUserForm.PasswordRequired),
-    userPhone: Yup.string()
-      .trim()
-      .min(10, 'Enter Valid Phone Number')
-      .max(10, 'Enter Valid Phone Number')
-      .required(Constants.AddUserForm.PhonNumberRequired),
-    selectCategory: Yup.string()
-  });
-
-  const validationSchemaPasswordNotRequired = Yup.object().shape({
-    userName: Yup.string()
-      .min(2, Constants.AddUserForm.UserNameIsTooShort)
-      .max(50, Constants.AddUserForm.UserNameIsTooLong)
-      .matches(Constants.AddUserForm.UserNameRegex, Constants.AddUserForm.UserNameValidation)
-      .required(Constants.AddUserForm.UserNameIsRequired),
-    userEmail: Yup.string().trim().email(Constants.AddUserForm.ValiedEmail).required(Constants.AddUserForm.EmailRequired),
-    userPassword: Yup.string()
-      .trim()
-      .min(8, Constants.AddUserForm.PasswordMustHaveMinimum8Characters)
-      .matches(Constants.AddUserForm.PasswordRegExp, Constants.AddUserForm.PasswordValidation),
-    userPhone: Yup.string()
-      .trim()
-      .min(10, 'Enter Valid Phone Number')
-      .max(10, 'Enter Valid Phone Number')
-      .required(Constants.AddUserForm.PhonNumberRequired),
-    selectCategory: Yup.string()
-  });
 
   useEffect(() => {
     fetchUserData();
@@ -683,9 +628,12 @@ const UserData = (props) => {
                   userEmail: individualUserData.user_email,
                   phoneNumber: individualUserData.user_phone_no,
                   userRole: individualUserData.user_role,
-                  dob: individualUserData.dob,
-                  class: individualUserData.class,
-                  section: individualUserData.section
+                  user_dob: userDOB.yyyy_mm_dd,
+                  class: individualUserData.class_id,
+                  section: individualUserData.section_id,
+                  school: individualUserData.school_id
+
+                  //individualUserData.user_dob.yyyy_mm_dd
 
                 }}
                 validationSchema={
@@ -697,19 +645,66 @@ const UserData = (props) => {
                   setStatus({ success: true });
                   setSubmitting(true);
 
-                  const formData = {
-                    user_firstname: values.firstName,
-                    user_lastname: values.lastName,
-                    user_email: values.userEmail,
-                    user_phone_no: values.phoneNumber,
-                    user_role: values.userRole,
+                  let data;
 
+                  const selectedSchoolID = schoolName_ID.find((e) => e.school_name == schoolNameRef.current.value);
 
-                  };
+                  if (values.userRole === 'Student') {
 
-                  console.log(formData);
+                    const selectedClassID = isEmptyArray(className_ID) ? "N.A." : (
+                      className_ID.find((e) => e.client_class_name == classNameRef.current.value).client_class_id
+                    )
+
+                    data = {
+
+                      student_id: _userID,
+                      class_id: selectedClassID,
+                      school_id: selectedSchoolID.school_id,
+                      section_id: values.section,
+                      user_dob: values.user_dob,
+                      user_firstname: values.firstName,
+                      user_lastname: values.lastName,
+                      user_email: values.userEmail,
+                      user_phone_no: values.phoneNumber,
+                      user_role: values.userRole
+
+                    };
+
+                  } else if (values.userRole === 'Teacher') {
+
+                    data = {
+
+                      teacher_id: _userID,
+                      school_id: selectedSchoolID.school_id,
+                      user_dob: values.user_dob,
+                      user_firstname: values.firstName,
+                      user_lastname: values.lastName,
+                      user_email: values.userEmail,
+                      user_phone_no: values.phoneNumber,
+                      user_role: values.userRole
+
+                    };
+
+                  } else {
+
+                    data = {
+
+                      parent_id: _userID,
+                      school_id: selectedSchoolID.school_id,
+                      user_dob: values.user_dob,
+                      user_firstname: values.firstName,
+                      user_lastname: values.lastName,
+                      user_email: values.userEmail,
+                      user_phone_no: values.phoneNumber,
+                      user_role: values.userRole
+
+                    };
+
+                  }
+
+                  console.log(data);
                   showLoader();
-                  _UpdateUser(formData);
+                  _UpdateUser(data);
                 }}
               >
                 {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
@@ -756,6 +751,131 @@ const UserData = (props) => {
                         </Row>
 
                         <Row>
+
+                          <Col>
+
+                            <div className="form-group fill">
+                              <label className="floating-label" htmlFor="class">
+                                <small className="text-danger">* </small>School
+                              </label>
+                              <select
+                                className="form-control"
+                                error={touched.school && errors.school}
+                                name="school"
+                                onBlur={handleBlur}
+                                // onChange={handleChange}
+                                onChange={handleSchoolChange}
+                                type="text"
+                                ref={schoolNameRef}
+                                // value={values.school}
+                                defaultValue={previousSchool}
+                              >
+
+                                {schoolName_ID.map((schoolData) => {
+
+                                  return <option key={schoolData.school_id}>
+                                    {schoolData.school_name}
+                                  </option>
+
+                                })}
+
+                              </select>
+                              {touched.school && errors.school && (
+                                <small className="text-danger form-text">{errors.school}</small>
+                              )}
+                            </div>
+                          </Col>
+
+
+                          <Col>
+                            <div className="form-group fill">
+                              <label className="floating-label" htmlFor="userRole">
+                                <small className="text-danger">* </small>Role
+                              </label>
+                              <input
+                                className="form-control"
+                                error={touched.userRole && errors.userRole}
+                                name="userRole"
+                                onBlur={handleBlur}
+                                onChange={handleChange}
+                                type="text"
+                                value={values.userRole}
+
+                              />
+                              {touched.userRole && errors.userRole && <small className="text-danger form-text">{errors.userRole}</small>}
+                            </div>
+                          </Col>
+
+                        </Row>
+
+                        {individualUserData.class_id && individualUserData.section_id && className_ID && (
+                          <>
+                            <Row>
+
+                              <Col>
+
+                                <div className="form-group fill">
+                                  <label className="floating-label" htmlFor="class">
+                                    <small className="text-danger">* </small>Class
+                                  </label>
+                                  <select
+                                    className="form-control"
+                                    error={touched.class && errors.class}
+                                    name="class"
+                                    onBlur={handleBlur}
+                                    onChange={handleChange}
+                                    type="text"
+                                    ref={classNameRef}
+                                    // value={values.class}
+                                    defaultValue={previousClass}
+                                  >
+
+                                    {
+                                      console.log("previousClass", previousClass)
+                                    }
+                                    <option>Select Class</option>
+
+                                    {console.log("className_ID", className_ID)}
+                                    {className_ID.map((classData) => {
+
+                                      return <option key={classData.client_class_id}>
+                                        {classData.client_class_name}
+                                      </option>
+
+                                    })}
+
+                                  </select>
+                                  {touched.class && errors.class && (
+                                    <small className="text-danger form-text">{errors.class}</small>
+                                  )}
+                                </div>
+                              </Col>
+
+                              <Col>
+                                <div className="form-group fill">
+                                  <label className="floating-label" htmlFor="section">
+                                    <small className="text-danger">* </small>Section
+                                  </label>
+                                  <input
+                                    className="form-control"
+                                    error={touched.section && errors.section}
+                                    name="section"
+                                    onBlur={handleBlur}
+                                    onChange={handleChange}
+                                    type="text"
+                                    value={values.section}
+
+                                  />
+                                  {touched.section && errors.section && <small className="text-danger form-text">{errors.section}</small>}
+                                </div>
+                              </Col>
+                            </Row>
+                          </>
+
+
+                        )}
+
+                        <Row>
                           <Col>
                             <div className="form-group fill">
                               <label className="floating-label" htmlFor="userEmail">
@@ -795,87 +915,28 @@ const UserData = (props) => {
                         </Row>
 
                         <Row>
-                          <Col>
-                            <div className="form-group fill">
-                              <label className="floating-label" htmlFor="userRole">
-                                <small className="text-danger">* </small>User Role
-                              </label>
-                              <input
-                                className="form-control"
-                                error={touched.userRole && errors.userRole}
-                                name="userRole"
-                                onBlur={handleBlur}
-                                onChange={handleChange}
-                                type="text"
-                                value={values.userRole}
 
-                              />
-                              {touched.userRole && errors.userRole && <small className="text-danger form-text">{errors.userRole}</small>}
-                            </div>
-                          </Col>
                           <Col>
                             <div className="form-group fill">
-                              <label className="floating-label" htmlFor="dob">
+                              <label className="floating-label" htmlFor="user_dob">
                                 <small className="text-danger">* </small>DOB
                               </label>
                               <input
                                 className="form-control"
-                                error={touched.dob && errors.dob}
-                                name="dob"
+                                error={touched.user_dob && errors.user_dob}
+                                name="user_dob"
                                 onBlur={handleBlur}
                                 onChange={handleChange}
                                 type="date"
-                                value={values.dob}
+                                value={values.user_dob}
 
                               />
-                              {touched.dob && errors.dob && <small className="text-danger form-text">{errors.dob}</small>}
+                              {touched.user_dob && errors.user_dob && <small className="text-danger form-text">{errors.user_dob}</small>}
                             </div>
                           </Col>
+
+                          <Col></Col>
                         </Row>
-
-                        {individualUserData.class && individualUserData.section && (
-                          <>
-                            <Row>
-                              <Col>
-                                <div className="form-group fill">
-                                  <label className="floating-label" htmlFor="class">
-                                    <small className="text-danger">* </small>Class
-                                  </label>
-                                  <input
-                                    className="form-control"
-                                    error={touched.class && errors.class}
-                                    name="class"
-                                    onBlur={handleBlur}
-                                    onChange={handleChange}
-                                    type="text"
-                                    value={values.class}
-
-                                  />
-                                  {touched.class && errors.class && <small className="text-danger form-text">{errors.class}</small>}
-                                </div>
-                              </Col>
-                              <Col>
-                                <div className="form-group fill">
-                                  <label className="floating-label" htmlFor="section">
-                                    <small className="text-danger">* </small>Section
-                                  </label>
-                                  <input
-                                    className="form-control"
-                                    error={touched.section && errors.section}
-                                    name="section"
-                                    onBlur={handleBlur}
-                                    onChange={handleChange}
-                                    type="text"
-                                    value={values.section}
-
-                                  />
-                                  {touched.section && errors.section && <small className="text-danger form-text">{errors.section}</small>}
-                                </div>
-                              </Col>
-                            </Row>
-                          </>
-                        )}
-
 
                         {errors.submit && (
                           <Col sm={12}>

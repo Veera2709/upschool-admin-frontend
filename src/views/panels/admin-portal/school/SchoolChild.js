@@ -12,6 +12,7 @@ import { useTable, useSortBy, usePagination, useGlobalFilter } from 'react-table
 import AddSchoolForm from './AddSchoolForm';
 import dynamicUrl from '../../../../helper/dynamicUrls';
 import EditSchoolForm from './EditSchoolForm';
+import SubscribeClass from './SubscribeClass';
 import { isEmptyArray } from '../../../../util/utils';
 
 function Table({ columns, data, modalOpen }) {
@@ -184,10 +185,12 @@ const SchoolChild = (props) => {
     // const data = React.useMemo(() => makeData(80), []);
     const [schoolData, setSchoolData] = useState([]);
     // console.log('data: ', data)
-    const [isOpen, setIsOpen] = useState(false);
+    const [isOpen, setIsOpen] = useState(false); 
 
     const [isOpenEditSchool, setIsOpenEditSchool] = useState(false);
+    const [isOpenSubscribeClass, setIsOpenSubscribeClass] = useState(false);
     const [editID, setEditID] = useState('');
+    const [subscribeID, setSubscribeClass] = useState('');
     const [toggle, setToggle] = useState(true);
 
     const handleDeleteSchool = (school_id) => {
@@ -254,6 +257,17 @@ const SchoolChild = (props) => {
         });
     };
 
+    const handleSubscribeClass = (e, school_id) => {
+
+        e.preventDefault();
+        setSubscribeClass(school_id);
+        setIsOpenSubscribeClass(true);
+
+        console.log('edit school');
+        console.log(school_id);
+        console.log(isOpenSubscribeClass);
+    }
+
     const handleEditSchool = (e, school_id) => {
 
         e.preventDefault();
@@ -291,6 +305,16 @@ const SchoolChild = (props) => {
                           &nbsp; */}
 
 
+                    <Button onClick={(e) => {
+                        handleSubscribeClass(e, resultData[index].school_id);
+                    }}
+
+                        size="sm"
+                        className="btn btn-icon btn-rounded btn-primary">
+                        <i className="feather icon-plus" />
+                        Subscribe Class
+                    </Button>
+                    &nbsp;
                     <Button onClick={(e) => {
                         handleEditSchool(e, resultData[index].school_id);
                     }}
@@ -350,6 +374,24 @@ const SchoolChild = (props) => {
                     </Modal>
                 </Col>
             </Row>
+
+
+
+            <Modal dialogClassName="my-modal" show={isOpenSubscribeClass} onHide={() => setIsOpenSubscribeClass(false)}>
+
+                <Modal.Header closeButton>
+
+                    <Modal.Title as="h5">Subscribe Class</Modal.Title>
+
+                </Modal.Header>
+
+                <Modal.Body>
+
+                    <SubscribeClass id={subscribeID} setIsOpenSubscribeClass={setIsOpenSubscribeClass} />
+
+                </Modal.Body>
+
+            </Modal>
 
             <Modal dialogClassName="my-modal" show={isOpenEditSchool} onHide={() => setIsOpenEditSchool(false)}>
 
