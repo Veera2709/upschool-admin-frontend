@@ -1,7 +1,7 @@
 const MESSAGES = {
   ERROR: {
 
-    DigiCardNameExists: 'DigiCard name exists already!',
+    DigiCardNameExists: 'DigiCard Title exists already!',
 
 
     ComponentAdding: 'Error in adding the component! Please ensure that basic details component is completed.',
