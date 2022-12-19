@@ -359,6 +359,13 @@ const menuItems = {
           // ]
         },
         {
+          id: 'chapters',
+          title: 'Chapters',
+          type: 'item',
+          icon: 'feather icon-package',
+          url: '/admin-portal/chapters/CaptersList',
+        },
+        {
           id: 'sis',
           title: 'SIS',
           type: 'collapse',

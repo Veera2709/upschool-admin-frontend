@@ -184,9 +184,25 @@ const routes = [
         path: '/admin-portal/editDigiCard/:digi_card_id',
         component: lazy(() => import('./views/panels/admin-portal/digicard/EditDigiCard'))
       },
-      //preview
-
-
+      //chapters
+      {
+        exact: true,
+        path: '/admin-portal/chapters/CaptersList',
+        component: lazy(() => import('./views/panels/admin-portal/chapters/ChaptersList'))
+      },
+      //add chapter
+      {
+        exact: true,
+        path: '/admin-portal/addChapters',
+        component: lazy(() => import('./views/panels/admin-portal/chapters/AddChapters'))
+      },
+      //edit chapter
+      {
+        exact: true,
+        path: '/admin-portal/editChapter/:chapter_id',
+        component: lazy(() => import('./views/panels/admin-portal/chapters/EditChapter'))
+      },
+      
       {
         exact: true,
         path: '/app/dashboard/analytics',

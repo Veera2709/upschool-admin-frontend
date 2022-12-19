@@ -1,6 +1,6 @@
-// const baseUrl = 'https://n4w2247vsi.execute-api.ap-south-1.amazonaws.com/dev/v1';
+const baseUrl = 'https://n4w2247vsi.execute-api.ap-south-1.amazonaws.com/dev/v1';
 
-const baseUrl = process.env.REACT_APP_LAMBDA_URL;
+// const baseUrl = process.env.REACT_APP_LAMBDA_URL;
 
 const dynamicUrl = {
     login: baseUrl + '/login',
@@ -26,7 +26,16 @@ const dynamicUrl = {
     bulkUsersUpload: baseUrl + '/bulkUsersUpload',
     fetchIndividualUser: baseUrl + '/fetchIndividualUser',
     updateUser: baseUrl + '/updateUser',
-    deleteUser: baseUrl + '/deleteUser'
+    deleteUser: baseUrl + '/deleteUser',
+
+    //chapters
+    fetchAllChapters: baseUrl + '/fetchAllChapters',
+    fetchAllTopics: baseUrl + '/fetchAllTopics',
+    addChapter: baseUrl + '/addChapter',
+    deleteChapter: baseUrl + '/deleteChapter',
+    fetchIndividualChapter: baseUrl + '/fetchIndividualChapter',
+    editChapter: baseUrl + '/editChapter',
+
 
 }
 
