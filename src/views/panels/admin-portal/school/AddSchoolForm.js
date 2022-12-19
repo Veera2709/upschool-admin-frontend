@@ -23,6 +23,8 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
     const [loader, showLoader, hideLoader] = useFullPageLoader();
 
     const schoolNameRef = useRef('');
+    const schoolBoardRef = useRef('');
+    const schoolBoardsRef = useRef('');
     const schoolLogoRef = useRef('');
     const contactNameRef = useRef('');
     const addressLine1Ref = useRef('');
@@ -49,6 +51,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
         setCopy(!copy);
         setData({
             school_name: schoolNameRef.current.value,
+            school_board: schoolBoardRef.current.value,
             school_logo: schoolLogoRef.current.value,
             contact_name: contactNameRef.current.value,
             address_line1: addressLine1Ref.current.value,
@@ -82,6 +85,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                 enableReinitialize={true}
                 initialValues={{
                     school_name: data === {} ? '' : data.school_name,
+                    school_board: data === {} ? '' : data.school_board,
                     school_logo: data === {} ? '' : data.school_logo,
                     subscription_active: scbscription_active,
 
@@ -102,6 +106,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                 }}
                 validationSchema={Yup.object().shape({
                     school_name: Yup.string().matches(Constants.Common.alphabetsWithSpaceRegex, 'School Name must contain only alphabets!').max(255).required('School Name is required'),
+                    school_board: Yup.string().required('School Board is required'),
                     contact_name: Yup.string().matches(Constants.Common.alphabetsWithSpaceRegex, 'Contact Name must contain only alphabets!').max(255).required('Contact Name is required'),
                     address_line1: Yup.string().max(255).required('Address Line 1 is required'),
                     address_line2: Yup.string().max(255).required('Address Line 2 is required'),
@@ -120,6 +125,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                     setSubmitting(true);
                     const formData = {
                         school_name: values.school_name,
+                        school_board: values.school_board,
                         school_logo: "testImg.png",
                         subscription_active: scbscription_active,
                         school_contact_info: {
@@ -292,6 +298,26 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                                         {touched.school_name && errors.school_name && (
                                             <small className="text-danger form-text">{errors.school_name}</small>
                                         )}
+                                    </div>
+
+                                    <div class="form-group fill">
+                                        <label class="floating-label" for="school_board">
+                                            <small class="text-danger">* </small>
+                                            School Board</label>
+                                        <select
+                                            as='select'
+                                            name="school_board"
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                            value={values.school_board}
+                                            ref={schoolBoardRef}
+                                            className='form-control'
+                                        >
+                                            {Constants.AddSchool.BoardsList.map((h, i) => {
+                                                return <option id={`school_boards-${i}`} keys={i} value={h.value}>{h.label}</option>
+
+                                            })}
+                                        </select>
                                     </div>
 
                                     <div class="form-group fill">
