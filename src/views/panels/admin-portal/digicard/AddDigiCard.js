@@ -225,6 +225,7 @@ const AddDigiCard = (
                 digicard_image: values.digicard_image,
                 digi_card_excerpt: articleDataTitle,
                 digi_card_content: articleData,
+                digicard_status: {value: "Active", label: "Active"},
                 digi_card_keywords: tags,
                 digicard_voice_note: values.digicard_voice_note,
                 related_digi_cards: multiOptions

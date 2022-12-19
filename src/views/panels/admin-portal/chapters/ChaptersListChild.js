@@ -203,7 +203,7 @@ const ChaptersListChild = (props) => {
         const MySwal = withReactContent(Swal);
         MySwal.fire({
           title: 'Are you sure?',
-          text: 'Confirm deleting ' + chapter_title + ' DigiCard',
+          text: 'Confirm deleting ' + chapter_title + ' Chapter',
           type: 'warning',
           showCloseButton: true,
           showCancelButton: true
@@ -242,7 +242,7 @@ const ChaptersListChild = (props) => {
                 }
               });
           } else {
-            return MySwal.fire('', 'DigiCard is safe!', 'error');
+            return MySwal.fire('', 'Chapter is safe!', 'error');
           }
         });
       };
@@ -251,7 +251,7 @@ const ChaptersListChild = (props) => {
     }
 
 
-    const allDigicardData = () => {
+    const allChaptersList = () => {
         console.log("School data func called");
         let resultData = _data && _data;
         console.log('resultData', resultData);
@@ -289,7 +289,7 @@ const ChaptersListChild = (props) => {
     }
 
     useEffect(() => {
-        allDigicardData();
+        allChaptersList();
     }, [_data])
 
     useEffect(()=>{

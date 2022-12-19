@@ -94,6 +94,10 @@ const EditDigiCard = (
     const [digiCardTitles, setDigitalTitles] = useState(0);
     const [defaultOptions, setDefaultOptions] = useState(0);
     const [multiOptions, selectedOption] = useState(0);
+    const statusOptions = [{ value: "Active", label: "Active" }, { value: "Archived", label: "Archived" }];
+    const [defaultStatusOptions, setDefaultStatusOptions] = useState(0);
+
+    const [statusOption, selectedStatusOption] = useState(0);
 
 
 
@@ -108,6 +112,11 @@ const EditDigiCard = (
 
     const getMultiOptions = (e) => {
         selectedOption(e);
+    }
+
+    const getStatusOptions = (e) => {
+        console.log("---", e);
+        selectedStatusOption(e);
     }
 
     const handleDelete = (i, states) => {
@@ -201,6 +210,7 @@ const EditDigiCard = (
                     setTags(individual_client_data.digi_card_keywords)
                     setDefaultOptions(individual_client_data.related_digi_cards)
                     selectedOption(individual_client_data.related_digi_cards)
+                    setDefaultStatusOptions(individual_client_data.digicard_status);
                     console.log("defaultOptions", individual_client_data.related_digi_cards);
 
                     console.log('individualDigiCardData', individualDigiCardData);
@@ -235,7 +245,7 @@ const EditDigiCard = (
 
     }, []);
 
-    return isEmptyObject(individualDigiCardData) || defaultOptions=='' ? null : (
+    return isEmptyObject(individualDigiCardData) || defaultOptions == '' || defaultStatusOptions === 0 ? null : (
         <div>
             <Card>
                 <Card.Body>
@@ -265,7 +275,7 @@ const EditDigiCard = (
                             //     .trim()
                             //     .nullable(true, Constants.AddDigiCard.DigiCardFileNotNull)
                             //     .required(Constants.AddDigiCard.DigiCardfileRequired),
-                          
+
                         })}
 
 
@@ -286,7 +296,8 @@ const EditDigiCard = (
                                     digi_card_excerpt: articleDataTitle,
                                     digi_card_content: articleData,
                                     digi_card_keywords: tags,
-                                    related_digi_cards: multiOptions
+                                    related_digi_cards: multiOptions,
+                                    digicard_status: statusOption
                                 };
                             } else {
                                 console.log("else condition");
@@ -299,7 +310,8 @@ const EditDigiCard = (
                                     digi_card_excerpt: articleDataTitle,
                                     digi_card_content: articleData,
                                     digi_card_keywords: tags,
-                                    related_digi_cards: multiOptions
+                                    related_digi_cards: multiOptions,
+                                    digicard_status: statusOption
                                 };
                             }
 
@@ -484,7 +496,7 @@ const EditDigiCard = (
                                                 <small className="text-danger form-text">{errors.digicard_voice_note}</small>
                                             )}
                                         </div>
-                                       
+
                                         <div className='ReactTags'>
                                             <label className="floating-label" htmlFor="digicard_image">
                                                 <small className="text-danger">* </small>KeyWords
@@ -532,6 +544,21 @@ const EditDigiCard = (
                                             <audio controls>
                                                 <source src={voiceNote} alt="Audio" type="audio/mp3" />
                                             </audio>
+                                        </div>
+
+                                        <div className="form-group fill">
+                                            <label className="floating-label" htmlFor="digicard">
+                                                <small className="text-danger">* </small>DigiCard Status
+                                            </label><br />
+                                            <Select
+                                                defaultValue={defaultStatusOptions}
+                                                className="basic-single"
+                                                classNamePrefix="select"
+                                                name="color"
+                                                options={statusOptions}
+                                                onChange={getStatusOptions}
+                                                placeholder="Select"
+                                            />
                                         </div>
 
 
