@@ -346,7 +346,7 @@ const SubscribeClass = ({ className, rest, id, setIsOpenSubscribeClass }) => {
                                                                                     onChange={event => handleFormChange(event, index)}
                                                                                 >
 
-                                                                                    <option value="" >
+                                                                                    <option>
                                                                                         Select Class
                                                                                     </option>
 
