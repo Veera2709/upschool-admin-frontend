@@ -31,6 +31,16 @@ export const CONFIG = {
   }
 };
 
+export const AddSchool = {
+  BoardsList: [
+    { label: 'State Board', value: 'State Board' },
+    { label: 'CBSE Board', value: 'CBSE Board' },
+    { label: 'ICSE Board', value: 'ICSE Board' },
+    { label: 'CISCE Board', value: 'CISCE Board' },
+    { label: 'NIOS Board', value: 'NIOS Board' },
+    { label: 'IB Board', value: 'IB Board' },
+  ]
+}
 
 export const Common = {
   GSTRegex: /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/,
