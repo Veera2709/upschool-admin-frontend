@@ -93,22 +93,22 @@ const EditDigiCard = (
     const [articleDataTitle, setArticleDataTtitle] = useState("");
     const [digiCardTitles, setDigitalTitles] = useState(0);
     const [defaultOptions, setDefaultOptions] = useState(0);
-  const [multiOptions, selectedOption] = useState(0);
-  
+    const [multiOptions, selectedOption] = useState(0);
+
 
 
 
 
     const [individualDigiCardData, setIndividualDigiCardData] = useState([]);
     console.log('individualDigiCardData', individualDigiCardData);
-    console.log("defaultOptions",defaultOptions);
+    console.log("defaultOptions", defaultOptions);
 
     const { digi_card_id } = useParams();
-   
+
 
     const getMultiOptions = (e) => {
         selectedOption(e);
-      }
+    }
 
     const handleDelete = (i, states) => {
         const newTags = tags.slice(0);
@@ -139,26 +139,26 @@ const EditDigiCard = (
     }
 
 
-    const fetchAllDigiCards =()=>{
+    const fetchAllDigiCards = () => {
         axios.post(dynamicUrl.fetchAllDigiCards, {}, {
             headers: { Authorization: sessionStorage.getItem('user_jwt') }
         })
             .then((response) => {
                 console.log(response.data.Items);
                 let resultData = response.data.Items;
-      
-                
+
+
                 resultData.forEach((item, index) => {
-                  item.digicard_status === 'Active' ? colourOptions.push({ value: item.digi_card_name, label: item.digi_card_name }) : colourOptions.push({ value: item.digi_card_name, label: item.digi_card_name, isDisabled: true })
-                  // console.log("item",item)
+                    item.digicard_status === 'Active' ? colourOptions.push({ value: item.digi_card_name, label: item.digi_card_name }) : colourOptions.push({ value: item.digi_card_name, label: item.digi_card_name, isDisabled: true })
+                    // console.log("item",item)
                 }
                 );
-                console.log("colourOptions",colourOptions);
+                console.log("colourOptions", colourOptions);
                 setDigitalTitles(colourOptions)
             })
             .catch((err) => {
                 console.log(err)
-            })                                                                          
+            })
     }
 
     useEffect(() => {
@@ -201,7 +201,7 @@ const EditDigiCard = (
                     setTags(individual_client_data.digi_card_keywords)
                     setDefaultOptions(individual_client_data.related_digi_cards)
                     selectedOption(individual_client_data.related_digi_cards)
-                    console.log("defaultOptions",individual_client_data.related_digi_cards);    
+                    console.log("defaultOptions", individual_client_data.related_digi_cards);
 
                     console.log('individualDigiCardData', individualDigiCardData);
 
@@ -231,30 +231,30 @@ const EditDigiCard = (
                 }
             });
 
-            fetchAllDigiCards();
+        fetchAllDigiCards();
 
     }, []);
 
-    return isEmptyObject(individualDigiCardData && defaultOptions) ? null : (
+    return isEmptyObject(individualDigiCardData) || defaultOptions=='' ? null : (
         <div>
             <Card>
                 <Card.Body>
                     <Card.Title>Edit DigiCard</Card.Title>
                     <Formik
                         initialValues={{
-                            digicardname: individualDigiCardData.digi_card_name,
+                            // digicardname: individualDigiCardData.digi_card_name,
                             digicardtitle: individualDigiCardData.digi_card_title,
                             digicard_image: '',
                             digicard_voice_note: '',
                             digi_card_keywords: tags
                         }}
                         validationSchema={Yup.object().shape({
-                            digicardname: Yup.string()
-                                .trim()
-                                .min(2, Constants.AddDigiCard.DigiCardNameTooShort)
-                                .max(50, Constants.AddDigiCard.DigiCardNameTooLong)
-                                .matches(Constants.AddDigiCard.DigiCardNameRegex, Constants.AddDigiCard.DigiCardNameValidation)
-                                .required(Constants.AddDigiCard.DigiCardNameRequired),
+                            // digicardname: Yup.string()
+                            //     .trim()
+                            //     .min(2, Constants.AddDigiCard.DigiCardNameTooShort)
+                            //     .max(50, Constants.AddDigiCard.DigiCardNameTooLong)
+                            //     .matches(Constants.AddDigiCard.DigiCardNameRegex, Constants.AddDigiCard.DigiCardNameValidation)
+                            //     .required(Constants.AddDigiCard.DigiCardNameRequired),
                             digicardtitle: Yup.string()
                                 .trim()
                                 .min(2, Constants.AddDigiCard.DigiCardtitleTooShort)
@@ -265,14 +265,12 @@ const EditDigiCard = (
                             //     .trim()
                             //     .nullable(true, Constants.AddDigiCard.DigiCardFileNotNull)
                             //     .required(Constants.AddDigiCard.DigiCardfileRequired),
-                            // digicardcontent: Yup.string()
-
-                            // .required(Constants.AddDigiCard.DigiCardRequired),
+                          
                         })}
 
 
                         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-                            console.log("multiOptions in submitting time",multiOptions);
+                            console.log("multiOptions in submitting time", multiOptions);
 
 
                             var formData;
@@ -289,7 +287,7 @@ const EditDigiCard = (
                                     digi_card_excerpt: articleDataTitle,
                                     digi_card_content: articleData,
                                     digi_card_keywords: tags,
-                                    related_digi_cards:multiOptions
+                                    related_digi_cards: multiOptions
                                 };
                             } else {
                                 console.log("else condition");
@@ -303,7 +301,7 @@ const EditDigiCard = (
                                     digi_card_excerpt: articleDataTitle,
                                     digi_card_content: articleData,
                                     digi_card_keywords: tags,
-                                    related_digi_cards:multiOptions
+                                    related_digi_cards: multiOptions
                                 };
                             }
 
@@ -429,20 +427,19 @@ const EditDigiCard = (
                                     {/* {edit1Toggle && <Loader />} */}
                                     <Col sm={6}>
                                         <div className="form-group fill">
-                                            <label className="floating-label" htmlFor="digicardname">
-                                                <small className="text-danger">* </small>DigiCard Name
+                                            <label className="floating-label" htmlFor="digicardtitle">
+                                                <small className="text-danger">* </small>DigiCard Title
                                             </label>
                                             <input
                                                 className="form-control"
-                                                error={touched.digicardname && errors.digicardname}
-                                                name="digicardname"
+                                                error={touched.digicardtitle && errors.digicardtitle}
+                                                name="digicardtitle"
                                                 onBlur={handleBlur}
                                                 onChange={handleChange}
                                                 type="text"
-                                                value={values.digicardname}
+                                                value={values.digicardtitle}
                                             />
-                                            {touched.digicardname && errors.digicardname && <small className="text-danger form-text">{errors.digicardname}</small>}
-                                            {/* {isClientExists && <small className="text-danger form-text">{MESSAGES.ERROR.ClientNameExists}</small>} */}
+                                            {touched.digicardtitle && errors.digicardtitle && <small className="text-danger form-text">{errors.digicardtitle}</small>}
                                         </div>
                                         <div className="form-group fill">
                                             <label className="floating-label" htmlFor="digicard_image">
@@ -489,15 +486,7 @@ const EditDigiCard = (
                                                 <small className="text-danger form-text">{errors.digicard_voice_note}</small>
                                             )}
                                         </div>
-                                        <div className="form-group fill">
-                                            <label className="floating-label" htmlFor="digicard">
-                                                <small className="text-danger">* </small>Voice Note Preview
-                                            </label><br />
-                                            {/* <img width={150} src={voiceNote} alt="" className="img-fluid mb-3" /> */}
-                                            <audio controls>
-                                                <source src={voiceNote} alt="Audio" type="audio/mp3" />
-                                            </audio>
-                                        </div>
+                                       
                                         <div className='ReactTags'>
                                             <label className="floating-label" htmlFor="digicard_image">
                                                 <small className="text-danger">* </small>KeyWords
@@ -509,36 +498,13 @@ const EditDigiCard = (
                                                 onDelete={handleDelete}
                                                 onAddition={(e) => handleAddition(e)}
                                             />
-                                        </div>
-                                    </Col>
-                                    <Col sm={6}>
-                                        <div className="form-group fill">
-                                            <label className="floating-label" htmlFor="digicardtitle">
-                                                <small className="text-danger">* </small>DigiCard Title
-                                            </label>
-                                            <input
-                                                className="form-control"
-                                                error={touched.digicardtitle && errors.digicardtitle}
-                                                name="digicardtitle"
-                                                onBlur={handleBlur}
-                                                onChange={handleChange}
-                                                type="text"
-                                                value={values.digicardtitle}
-                                            />
-                                            {touched.digicardtitle && errors.digicardtitle && <small className="text-danger form-text">{errors.digicardtitle}</small>}
-                                        </div>
-                                        <div className="form-group fill">
-                                            <label className="floating-label" htmlFor="digicardtitle">
-                                                <small className="text-danger">* </small>Logo preview
-                                            </label><br />
-                                            <img width={150} src={imgFile} alt="" className="img-fluid mb-3" />
-                                        </div>
+                                        </div><br />
                                         <div className="form-group fill" style={{ position: "relative", zIndex: 10 }}>
                                             <label className="floating-label" htmlFor="digicardtitle">
                                                 <small className="text-danger">* </small>Related DigiCard Titles
                                             </label>
                                             <Select
-                                               defaultValue ={defaultOptions}
+                                                defaultValue={defaultOptions}
                                                 className="basic-single"
                                                 classNamePrefix="select"
                                                 name="color"
@@ -551,7 +517,26 @@ const EditDigiCard = (
                                                 placeholder="Select"
                                             />
                                         </div>
-                                       
+                                    </Col>
+                                    <Col sm={6}>
+
+                                        <div className="form-group fill">
+                                            <label className="floating-label" htmlFor="digicardtitle">
+                                                <small className="text-danger">* </small>Logo preview
+                                            </label><br />
+                                            <img width={100} src={imgFile} alt="" className="img-fluid mb-3" />
+                                        </div>
+                                        <div className="form-group fill">
+                                            <label className="floating-label" htmlFor="digicard">
+                                                <small className="text-danger">* </small>Voice Note Preview
+                                            </label><br />
+                                            {/* <img width={150} src={voiceNote} alt="" className="img-fluid mb-3" /> */}
+                                            <audio controls>
+                                                <source src={voiceNote} alt="Audio" type="audio/mp3" />
+                                            </audio>
+                                        </div>
+
+
 
                                     </Col>
                                 </Row>
