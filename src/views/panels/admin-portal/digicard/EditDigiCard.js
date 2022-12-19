@@ -158,7 +158,7 @@ const EditDigiCard = (
 
 
                 resultData.forEach((item, index) => {
-                    item.digicard_status === 'Active' ? colourOptions.push({ value: item.digi_card_name, label: item.digi_card_name }) : colourOptions.push({ value: item.digi_card_name, label: item.digi_card_name, isDisabled: true })
+                    item.digicard_status.value === 'Active' ? colourOptions.push({ value: item.digi_card_title, label: item.digi_card_title }) : colourOptions.push({ value: item.digi_card_title, label: item.digi_card_title, isDisabled: true })
                     // console.log("item",item)
                 }
                 );
@@ -252,19 +252,12 @@ const EditDigiCard = (
                     <Card.Title>Edit DigiCard</Card.Title>
                     <Formik
                         initialValues={{
-                            // digicardname: individualDigiCardData.digi_card_name,
                             digicardtitle: individualDigiCardData.digi_card_title,
                             digicard_image: '',
                             digicard_voice_note: '',
                             digi_card_keywords: tags
                         }}
                         validationSchema={Yup.object().shape({
-                            // digicardname: Yup.string()
-                            //     .trim()
-                            //     .min(2, Constants.AddDigiCard.DigiCardNameTooShort)
-                            //     .max(50, Constants.AddDigiCard.DigiCardNameTooLong)
-                            //     .matches(Constants.AddDigiCard.DigiCardNameRegex, Constants.AddDigiCard.DigiCardNameValidation)
-                            //     .required(Constants.AddDigiCard.DigiCardNameRequired),
                             digicardtitle: Yup.string()
                                 .trim()
                                 .min(2, Constants.AddDigiCard.DigiCardtitleTooShort)
