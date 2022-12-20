@@ -317,6 +317,13 @@ const menuItems = {
         //   ]
         // },
         {
+          id: 'main-dashboard',
+          title: 'Dashboard',
+          icon: 'feather icon-home',
+          type: 'item',
+          url: '/admin-portal/admin-dashboard'
+        },
+        {
           id: 'sch-addSchool',
           title: 'School',
           icon: 'feather icon-book',
