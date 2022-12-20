@@ -120,7 +120,7 @@ const FormsSelect = () => {
           </Card>
         </Col>
         <Col md={6} xl={4}>
-          <Card>
+          <Card>ulti select
             <Card.Header>
               <Card.Title as="h5">Multi Select</Card.Title>
             </Card.Header>

@@ -149,7 +149,7 @@ const EditDigiCard = (
 
 
                 resultData.forEach((item, index) => {
-                    item.digicard_status === 'Active' ? colourOptions.push({ value: item.digi_card_name, label: item.digi_card_name }) : colourOptions.push({ value: item.digi_card_name, label: item.digi_card_name, isDisabled: true })
+                    item.digicard_status === 'Active' ? colourOptions.push({ value: item.digi_card_title, label: item.digi_card_title }) : colourOptions.push({ value: item.digi_card_title, label: item.digi_card_title, isDisabled: true })
                     // console.log("item",item)
                 }
                 );
@@ -235,7 +235,7 @@ const EditDigiCard = (
 
     }, []);
 
-    return isEmptyObject(individualDigiCardData) || defaultOptions=='' ? null : (
+    return isEmptyObject(individualDigiCardData) || digiCardTitles=='' ? null : (
         <div>
             <Card>
                 <Card.Body>
@@ -279,11 +279,10 @@ const EditDigiCard = (
                                 console.log("if condition");
                                 formData = {
                                     digi_card_id: individualDigiCardData.digi_card_id,
-                                    digi_card_name: values.digicardname,
                                     digi_card_title: values.digicardtitle,
                                     digi_card_files: [values.digicard_image],
                                     digicard_image: imgFile,
-                                    digicard_voice_note: voiceNote,
+                                    digicard_voice_note: voiceNote === undefined ? '' : voiceNote,
                                     digi_card_excerpt: articleDataTitle,
                                     digi_card_content: articleData,
                                     digi_card_keywords: tags,
@@ -293,7 +292,6 @@ const EditDigiCard = (
                                 console.log("else condition");
                                 formData = {
                                     digi_card_id: individualDigiCardData.digi_card_id,
-                                    digi_card_name: values.digicardname,
                                     digi_card_title: values.digicardtitle,
                                     digi_card_files: [values.digicard_image],
                                     digicard_image: values.digicard_image,

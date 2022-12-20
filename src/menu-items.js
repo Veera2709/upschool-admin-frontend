@@ -317,6 +317,13 @@ const menuItems = {
         //   ]
         // },
         {
+          id: 'main-dashboard',
+          title: 'Dashboard',
+          icon: 'feather icon-home',
+          type: 'item',
+          url: '/admin-portal/admin-dashboard'
+        },
+        {
           id: 'sch-addSchool',
           title: 'School',
           icon: 'feather icon-book',
@@ -378,50 +385,57 @@ const menuItems = {
           //   }
           // ]
         },
-        // {
-        //   id: 'sis',
-        //   title: 'SIS',
-        //   type: 'collapse',
-        //   icon: 'feather icon-book',
-        //   children: [
-        //     {
-        //       id: 'sis-dashboard',
-        //       title: 'Dashboard',
-        //       type: 'item',
-        //       url: '/sis/sis-dashboard'
-        //     },
-        //     {
-        //       id: 'sis-leave',
-        //       title: 'Leave',
-        //       type: 'item',
-        //       url: '/sis/sis-leave'
-        //     },
-        //     {
-        //       id: 'sis-evaluation',
-        //       title: 'Evaluation',
-        //       type: 'item',
-        //       url: '/sis/sis-evaluation'
-        //     },
-        //     {
-        //       id: 'sis-event',
-        //       title: 'Event',
-        //       type: 'item',
-        //       url: '/sis/sis-event'
-        //     },
-        //     {
-        //       id: 'sis-circular',
-        //       title: 'Circular',
-        //       type: 'item',
-        //       url: '/sis/sis-circular'
-        //     },
-        //     {
-        //       id: 'sis-course',
-        //       title: 'Course',
-        //       type: 'item',
-        //       url: '/sis/sis-course'
-        //     }
-        //   ]
-        // },
+        {
+          id: 'chapters',
+          title: 'Chapters',
+          type: 'item',
+          icon: 'fas fa-book',
+          url: '/admin-portal/chapters/CaptersList',
+        },
+        {
+          id: 'sis',
+          title: 'SIS',
+          type: 'collapse',
+          icon: 'feather icon-book',
+          children: [
+            {
+              id: 'sis-dashboard',
+              title: 'Dashboard',
+              type: 'item',
+              url: '/sis/sis-dashboard'
+            },
+            {
+              id: 'sis-leave',
+              title: 'Leave',
+              type: 'item',
+              url: '/sis/sis-leave'
+            },
+            {
+              id: 'sis-evaluation',
+              title: 'Evaluation',
+              type: 'item',
+              url: '/sis/sis-evaluation'
+            },
+            {
+              id: 'sis-event',
+              title: 'Event',
+              type: 'item',
+              url: '/sis/sis-event'
+            },
+            {
+              id: 'sis-circular',
+              title: 'Circular',
+              type: 'item',
+              url: '/sis/sis-circular'
+            },
+            {
+              id: 'sis-course',
+              title: 'Course',
+              type: 'item',
+              url: '/sis/sis-course'
+            }
+          ]
+        },
         {
           id: 'crypto',
           title: 'Crypto',
