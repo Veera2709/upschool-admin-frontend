@@ -136,13 +136,31 @@ const routes = [
       },
       {
         exact: true,
-        path: '/admin-portal/users',
-        component: lazy(() => import('./views/panels/admin-portal/users/ListUsers'))
+        path: '/admin-portal/active-users',
+        component: lazy(() =>
+          import('./views/panels/admin-portal/users/ListUsers')
+
+        )
+      },
+      {
+        exact: true,
+        path: '/admin-portal/archived-users',
+        component: lazy(() =>
+
+          import('./views/panels/admin-portal/users/ListUsers')
+
+        )
       },
       {
         exact: true,
         path: '/admin-portal/add-users',
         component: lazy(() => import('./views/panels/admin-portal/users/UsersBulkUpload'))
+      },
+
+      {
+        exact: true,
+        path: '/admin-portal/concepts',
+        component: lazy(() => import('./views/panels/admin-portal/concepts/ListConcepts'))
       },
 
       //TOPICS

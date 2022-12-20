@@ -326,9 +326,22 @@ const menuItems = {
         {
           id: 'users',
           title: 'Users',
-          type: 'item',
+          type: 'collapse',
           icon: 'feather icon-users',
-          url: '/admin-portal/users'
+          children: [
+            {
+              id: 'active-users',
+              title: 'Active Users',
+              type: 'item',
+              url: '/admin-portal/active-users'
+            },
+            {
+              id: 'archived-users',
+              title: 'Archived Users',
+              type: 'item',
+              url: '/admin-portal/archived-users'
+            }
+          ]
         },
         {
           id: 'layout',
@@ -336,6 +349,13 @@ const menuItems = {
           type: 'item',
           icon: 'feather icon-layout',
           url: '/admin-portal/digicard'
+        },
+        {
+          id: 'concepts',
+          title: 'Concepts',
+          type: 'item',
+          icon: 'feather icon-book',
+          url: '/admin-portal/concepts'
         },
         {
           id: 'topics',
@@ -358,50 +378,50 @@ const menuItems = {
           //   }
           // ]
         },
-        {
-          id: 'sis',
-          title: 'SIS',
-          type: 'collapse',
-          icon: 'feather icon-book',
-          children: [
-            {
-              id: 'sis-dashboard',
-              title: 'Dashboard',
-              type: 'item',
-              url: '/sis/sis-dashboard'
-            },
-            {
-              id: 'sis-leave',
-              title: 'Leave',
-              type: 'item',
-              url: '/sis/sis-leave'
-            },
-            {
-              id: 'sis-evaluation',
-              title: 'Evaluation',
-              type: 'item',
-              url: '/sis/sis-evaluation'
-            },
-            {
-              id: 'sis-event',
-              title: 'Event',
-              type: 'item',
-              url: '/sis/sis-event'
-            },
-            {
-              id: 'sis-circular',
-              title: 'Circular',
-              type: 'item',
-              url: '/sis/sis-circular'
-            },
-            {
-              id: 'sis-course',
-              title: 'Course',
-              type: 'item',
-              url: '/sis/sis-course'
-            }
-          ]
-        },
+        // {
+        //   id: 'sis',
+        //   title: 'SIS',
+        //   type: 'collapse',
+        //   icon: 'feather icon-book',
+        //   children: [
+        //     {
+        //       id: 'sis-dashboard',
+        //       title: 'Dashboard',
+        //       type: 'item',
+        //       url: '/sis/sis-dashboard'
+        //     },
+        //     {
+        //       id: 'sis-leave',
+        //       title: 'Leave',
+        //       type: 'item',
+        //       url: '/sis/sis-leave'
+        //     },
+        //     {
+        //       id: 'sis-evaluation',
+        //       title: 'Evaluation',
+        //       type: 'item',
+        //       url: '/sis/sis-evaluation'
+        //     },
+        //     {
+        //       id: 'sis-event',
+        //       title: 'Event',
+        //       type: 'item',
+        //       url: '/sis/sis-event'
+        //     },
+        //     {
+        //       id: 'sis-circular',
+        //       title: 'Circular',
+        //       type: 'item',
+        //       url: '/sis/sis-circular'
+        //     },
+        //     {
+        //       id: 'sis-course',
+        //       title: 'Course',
+        //       type: 'item',
+        //       url: '/sis/sis-course'
+        //     }
+        //   ]
+        // },
         {
           id: 'crypto',
           title: 'Crypto',

@@ -45,7 +45,7 @@ const UploadCase = ({ className, ...rest }) => {
         }
       )
       .then((response) => {
-        
+
         console.log({ response });
         console.log(response.status);
         console.log(response.data);
@@ -142,12 +142,24 @@ const UploadCase = ({ className, ...rest }) => {
 
           const uploadResponse2 = await defaultPostApi(dynamicUrl.bulkUsersUpload, bulkUploadPayload);
 
+          console.log(uploadResponse2.status);
+          console.log(uploadResponse2.data);
+
           if (uploadResponse2.status === 200) {
 
-          
-            sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.FilesUploaded });
-            hideLoader();
-            setDisableButton(false);
+            if (uploadResponse2.data.length === 0) {
+
+              sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.FilesUploaded });
+              hideLoader();
+              setDisableButton(false);
+
+            } else {
+
+              sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.WARNINGS.PleaseCheckYourEmailForErrorRecords });
+              hideLoader();
+              setDisableButton(false);
+            }
+
           } else {
             hideLoader();
             setDisableButton(false);
