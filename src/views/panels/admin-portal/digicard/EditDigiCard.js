@@ -246,7 +246,7 @@ const EditDigiCard = (
                             digicardtitle: individualDigiCardData.digi_card_title,
                             digicard_image: '',
                             digicard_voice_note: '',
-                            digi_card_keywords: tags
+                            digi_card_keywords: tags 
                         }}
                         validationSchema={Yup.object().shape({
                             // digicardname: Yup.string()
