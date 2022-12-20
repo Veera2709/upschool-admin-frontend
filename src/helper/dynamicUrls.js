@@ -12,7 +12,7 @@ const dynamicUrl = {
     fetchAllDigiCards: baseUrl + '/fetchAllDigiCards',
     fetchIndividualDigiCard: baseUrl + '/fetchIndividualDigiCard',
     editDigiCard: baseUrl + '/editDigiCard',
-    deleteDigiCard: baseUrl + '/deleteDigiCard',
+    toggleDigiCardStatus: baseUrl + '/toggleDigiCardStatus',
     //
     insertSchool: baseUrl + '/insertSchool',
     fetchAllSchool: baseUrl + '/fetchAllSchool',
@@ -22,13 +22,27 @@ const dynamicUrl = {
     fetchUpschoolAndClientClasses: baseUrl + '/fetchUpschoolAndClientClasses',
     classSubscribe: baseUrl + '/classSubscribe',
 
+
     fetchSchoolIdNames: baseUrl + '/fetchSchoolIdNames',
     fetchAllUsersData: baseUrl + '/fetchAllUsersData',
+    fetchInactiveUsersData: baseUrl + '/fetchInactiveUsersData',
     getUserBulkuploadUrl: baseUrl + '/getUserBulkuploadUrl',
     bulkUsersUpload: baseUrl + '/bulkUsersUpload',
+    fetchIndividualUser: baseUrl + '/fetchIndividualUser',
+    updateUser: baseUrl + '/updateUser',
+    deleteUser: baseUrl + '/deleteUser',
+
+    //chapters
+    fetchAllChapters: baseUrl + '/fetchAllChapters',
+    fetchAllTopics: baseUrl + '/fetchAllTopics',
+    addChapter: baseUrl + '/addChapter',
+    toggleChapterStatus: baseUrl + '/toggleChapterStatus',
+    fetchIndividualChapter: baseUrl + '/fetchIndividualChapter',
+    editChapter: baseUrl + '/editChapter',
+
     fetchIndividualUserByRole: baseUrl + '/fetchIndividualUserByRole',
     updateUsersByRole: baseUrl + '/updateUsersByRole',
-    deleteUsersByRole: baseUrl + '/deleteUsersByRole',
+    toggleUserStatus: baseUrl + '/toggleUserStatus',
     fetchClassBasedOnSchool: baseUrl + '/fetchClassBasedOnSchool'
 
 }

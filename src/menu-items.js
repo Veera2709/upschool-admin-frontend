@@ -317,6 +317,13 @@ const menuItems = {
         //   ]
         // },
         {
+          id: 'main-dashboard',
+          title: 'Dashboard',
+          icon: 'feather icon-home',
+          type: 'item',
+          url: '/admin-portal/admin-dashboard'
+        },
+        {
           id: 'sch-addSchool',
           title: 'School',
           icon: 'feather icon-book',
@@ -326,9 +333,22 @@ const menuItems = {
         {
           id: 'users',
           title: 'Users',
-          type: 'item',
+          type: 'collapse',
           icon: 'feather icon-users',
-          url: '/admin-portal/users'
+          children: [
+            {
+              id: 'active-users',
+              title: 'Active Users',
+              type: 'item',
+              url: '/admin-portal/active-users'
+            },
+            {
+              id: 'archived-users',
+              title: 'Archived Users',
+              type: 'item',
+              url: '/admin-portal/archived-users'
+            }
+          ]
         },
         {
           id: 'layout',
@@ -336,6 +356,13 @@ const menuItems = {
           type: 'item',
           icon: 'feather icon-layout',
           url: '/admin-portal/digicard'
+        },
+        {
+          id: 'concepts',
+          title: 'Concepts',
+          type: 'item',
+          icon: 'feather icon-book',
+          url: '/admin-portal/concepts'
         },
         {
           id: 'topics',
@@ -357,6 +384,13 @@ const menuItems = {
           //     url: '/admin-portal/editTopic/:topic_id'
           //   }
           // ]
+        },
+        {
+          id: 'chapters',
+          title: 'Chapters',
+          type: 'item',
+          icon: 'fas fa-book',
+          url: '/admin-portal/chapters/CaptersList',
         },
         {
           id: 'sis',

@@ -136,13 +136,31 @@ const routes = [
       },
       {
         exact: true,
-        path: '/admin-portal/users',
-        component: lazy(() => import('./views/panels/admin-portal/users/ListUsers'))
+        path: '/admin-portal/active-users',
+        component: lazy(() =>
+          import('./views/panels/admin-portal/users/ListUsers')
+
+        )
+      },
+      {
+        exact: true,
+        path: '/admin-portal/archived-users',
+        component: lazy(() =>
+
+          import('./views/panels/admin-portal/users/ListUsers')
+
+        )
       },
       {
         exact: true,
         path: '/admin-portal/add-users',
         component: lazy(() => import('./views/panels/admin-portal/users/UsersBulkUpload'))
+      },
+
+      {
+        exact: true,
+        path: '/admin-portal/concepts',
+        component: lazy(() => import('./views/panels/admin-portal/concepts/ListConcepts'))
       },
 
       //TOPICS
@@ -184,9 +202,25 @@ const routes = [
         path: '/admin-portal/editDigiCard/:digi_card_id',
         component: lazy(() => import('./views/panels/admin-portal/digicard/EditDigiCard'))
       },
-      //preview
-
-
+      //chapters
+      {
+        exact: true,
+        path: '/admin-portal/chapters/CaptersList',
+        component: lazy(() => import('./views/panels/admin-portal/chapters/ChaptersList'))
+      },
+      //add chapter
+      {
+        exact: true,
+        path: '/admin-portal/addChapters',
+        component: lazy(() => import('./views/panels/admin-portal/chapters/AddChapters'))
+      },
+      //edit chapter
+      {
+        exact: true,
+        path: '/admin-portal/editChapter/:chapter_id',
+        component: lazy(() => import('./views/panels/admin-portal/chapters/EditChapter'))
+      },
+      
       {
         exact: true,
         path: '/app/dashboard/analytics',

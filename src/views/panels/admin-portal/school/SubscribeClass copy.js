@@ -324,12 +324,8 @@ const SubscribeClass = ({ className, rest, id, setIsOpenSubscribeClass }) => {
                                                                                 onChange={event => handleFormChange(event, index)}
                                                                                 placeholder="Enter Class Name"
                                                                             />
-                                                                           
 
                                                                         </Col>
-
-
-
                                                                         {previousData.upschoolClassItems && previousData.ClientClassItems && dropDownValues && (
                                                                             <Col>
 

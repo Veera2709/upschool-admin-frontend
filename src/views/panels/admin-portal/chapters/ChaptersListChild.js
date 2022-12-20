@@ -53,8 +53,8 @@ function Table({ columns, data, modalOpen }) {
   const [isOpen, setIsOpen] = useState(false);
   let history = useHistory();
 
-    const adddigicard = () => {
-        history.push('/admin-portal/add-digicard');
+    const addingChapter = () => {
+        history.push('/admin-portal/addChapters');
         setIsOpen(true);
       }
 
@@ -81,8 +81,8 @@ function Table({ columns, data, modalOpen }) {
 
                 <Col className="d-flex justify-content-end">
                     <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
-                    <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={() => { adddigicard() }}>
-                        <i className="feather icon-plus" /> Add DigiCard
+                    <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={() => { addingChapter() }}>
+                        <i className="feather icon-plus" /> Add Chapter
                     </Button>
                 </Col>
             </Row>
@@ -161,19 +161,20 @@ function Table({ columns, data, modalOpen }) {
     );
 }
 
-const DigiCardChild = (props) => {
+const ChaptersListChild = (props) => {
     const { _data } = props
 
+    var i=1;
     console.log('_data: ', _data);
     const columns = React.useMemo(
         () => [
             {
                 Header: '#',
-                accessor: 'digicard_image'
+                accessor:"index_no"
             },
             {
                 Header: ' DigiCard Title',
-                accessor: 'digi_card_title'
+                accessor: 'chapter_title'
             },
             {
                 Header: 'Options',
@@ -192,33 +193,32 @@ const DigiCardChild = (props) => {
 
     let history = useHistory();
 
-    function deleteDigicard(digi_card_id, digi_card_name) {
-      console.log("digi_card_id", digi_card_id);
+    function deleteChapter(chapter_id, chapter_title) {
+      console.log("chapter_id", chapter_id);
       var data = {
-        "digi_card_id": digi_card_id,
-        "digicard_status":'Archived'
+        "chapter_id": chapter_id,
+        "chapter_status":"Archived"
       }
   
       const sweetConfirmHandler = () => {
         const MySwal = withReactContent(Swal);
         MySwal.fire({
           title: 'Are you sure?',
-          text: 'Confirm deleting ' + digi_card_name + ' DigiCard',
+          text: 'Confirm deleting ' + chapter_title + ' Chapter',
           type: 'warning',
           showCloseButton: true,
           showCancelButton: true
         }).then((willDelete) => {
           if (willDelete.value) {
-            console.log("api calling");
             axios
-              .post(dynamicUrl.toggleDigiCardStatus, { data: data }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
+              .post(dynamicUrl.toggleChapterStatus, { data: data }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
               .then((response) => {
                 if (response.Error) {
                   hideLoader();
                   sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
                 } else {
                     setReloadAllData("Deleted");
-                    return MySwal.fire('', 'The ' + digi_card_name + ' is Deleted', 'success');
+                    return MySwal.fire('', 'The ' + chapter_title + ' is Deleted', 'success');
                     // window. location. reload() 
                   //  MySwal.fire('', MESSAGES.INFO.CLIENT_DELETED, 'success');
                   
@@ -243,7 +243,7 @@ const DigiCardChild = (props) => {
                 }
               });
           } else {
-            return MySwal.fire('', 'DigiCard is safe!', 'error');
+            return MySwal.fire('', 'Chapter is safe!', 'error');
           }
         });
       };
@@ -251,33 +251,33 @@ const DigiCardChild = (props) => {
   
     }
 
-    function digicardRestore(digi_card_id, digi_card_name) {
-        console.log("digi_card_id", digi_card_id);
+
+    function restoreChapter(chapter_id,chapter_title){
+        console.log("chapter_id", chapter_id);
         var data = {
-          "digi_card_id": digi_card_id,
-          "digicard_status":'Active'
+          "chapter_id": chapter_id,
+          "chapter_status":'Active'
         }
     
         const sweetConfirmHandler = () => {
           const MySwal = withReactContent(Swal);
           MySwal.fire({
             title: 'Are you sure?',
-            text: 'Confirm to Restore ' + digi_card_name + ' DigiCard',
+            text: 'Confirm to Restore ' + chapter_title + ' Chapter',
             type: 'warning',
             showCloseButton: true,
             showCancelButton: true
           }).then((willDelete) => {
             if (willDelete.value) {
-                console.log("api calling");
               axios
-                .post(dynamicUrl.toggleDigiCardStatus, { data: data }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
+                .post(dynamicUrl.toggleChapterStatus, { data: data }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
                 .then((response) => {
                   if (response.Error) {
                     hideLoader();
                     sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
                   } else {
                       setReloadAllData("Deleted");
-                      return MySwal.fire('', 'The ' + digi_card_name + ' is Restored', 'success');
+                      return MySwal.fire('', 'The ' + chapter_title + ' is Restored', 'success');
                       // window. location. reload() 
                     //  MySwal.fire('', MESSAGES.INFO.CLIENT_DELETED, 'success');
                     
@@ -302,56 +302,58 @@ const DigiCardChild = (props) => {
                   }
                 });
             } else {
-              return MySwal.fire('', 'DigiCard is Restore!', 'error');
+              return MySwal.fire('', 'Chapter is Restore!', 'error');
             }
           });
         };
         sweetConfirmHandler();
-    
-      }
+    }
 
 
-    const allDigicardData = () => {
+    const allChaptersList = () => {
         console.log("School data func called");
         let resultData = _data && _data;
         console.log('resultData', resultData);
         let finalDataArray = [];
         for (let index = 0; index < resultData.length; index++) {
-            if(resultData[index].digicard_status === 'Active'){
-                resultData[index]['digicard_image'] = <img className='img-fluid img-radius wid-50 circle-image' src={resultData[index].digicard_imageURL} alt="school_image" />
+            if(resultData[index].chapter_status ==='Active'){
+                resultData[index].index_no = index + 1;
                 resultData[index]['actions'] = (
                     <>
                         <>
                             <Button
                                 size="sm"
                                 className="btn btn-icon btn-rounded btn-primary"
-                                onClick={(e) => history.push(`/admin-portal/editDigiCard/${resultData[index].digi_card_id}`)}
+                                onClick={(e) => history.push(`/admin-portal/editChapter/${resultData[index].chapter_id}`)}
                             >
                                 <i className="feather icon-edit" /> &nbsp; Edit
                             </Button>
                             &nbsp;
+                            {/* if(resultData[index].chapter_status=='Active') */}
                             <Button
                                 size="sm"
                                 className="btn btn-icon btn-rounded btn-danger"
-                                onClick={(e) => deleteDigicard(resultData[index].digi_card_id, resultData[index].digi_card_title)}
+                                onClick={(e) => deleteChapter(resultData[index].chapter_id , resultData[index].chapter_title)}
                             >
                                 <i className="feather icon-trash-2 " /> &nbsp; Delete
                             </Button>
+                            &nbsp;
                         </>
                     </>
                 );
             }else{
-                resultData[index]['digicard_image'] = <img className='img-fluid img-radius wid-50 circle-image' src={resultData[index].digicard_imageURL} alt="school_image" />
+                resultData[index].index_no = index + 1;
                 resultData[index]['actions'] = (
                     <>
                         <>
                             <Button
                                 size="sm"
                                 className="btn btn-icon btn-rounded btn-primary"
-                                onClick={(e) => digicardRestore(resultData[index].digi_card_id ,resultData[index].digi_card_title)}
+                                onClick={(e) => restoreChapter(resultData[index].chapter_id ,resultData[index].chapter_title)}
                             >
                                 <i className="feather icon-edit" /> &nbsp; Restore
                             </Button>
+                            &nbsp;
                         </>
                     </>
                 );
@@ -365,7 +367,7 @@ const DigiCardChild = (props) => {
     }
 
     useEffect(() => {
-        allDigicardData();
+        allChaptersList();
     }, [_data])
 
     useEffect(()=>{
@@ -391,4 +393,4 @@ const DigiCardChild = (props) => {
         </React.Fragment>
     );
 };
-export default DigiCardChild;
+export default ChaptersListChild;
