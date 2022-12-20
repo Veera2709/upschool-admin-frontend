@@ -10,8 +10,8 @@ import * as Constants from '../../../../config/constant'
 import withReactContent from 'sweetalert2-react-content';
 import Swal from 'sweetalert2';
 import dynamicUrl from '../../../../helper/dynamicUrls';
+import { bgvAlerts } from '../../../common-ui-components/sow/bgv-api/bgvAlerts';
 
-// import { areFilesInvalid } from '../../../../util/utils';
 // import { bgvAlerts } from '../bgv-api/bgvAlerts';
 
 function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
@@ -20,6 +20,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
     const [_radio, _setRadio] = useState(false);
     const [scbscription_active, setScbscription_active] = useState('No');
     const [copy, setCopy] = useState(false);
+    const [disableButton, setDisableButton] = useState(false);
     const [loader, showLoader, hideLoader] = useFullPageLoader();
 
     const schoolNameRef = useRef('');
@@ -79,6 +80,20 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
         _radio === true ? setScbscription_active('No') : setScbscription_active('Yes');
     }
 
+
+    // const [schoolBoardState, setSchoolBoardState] = useState([]);
+    // const [schoolBoardCbse, setSchoolBoardCbse] = useState([]);
+    // const [schoolBoardIcse, setSchoolBoardIcse] = useState([]);
+    // const [schoolBoardCisce, setSchoolBoardCisce] = useState([]);
+    // const [schoolBoardNios, setSchoolBoardNios] = useState([]);
+    // const [schoolBoardIb, setSchoolBoardIb] = useState([]);
+
+    // const handleOnSelectItem = ((selectedBoardList, selectedBoardItem) => {
+    //     setSchoolBoardState(selectedList.map(selectedBoardList => selectedBoardList.id))
+    //     setSchoolBoardIb(selectedList.map(selectedBoardItem => selectedBoardItem.name))
+    // })
+    // const handleOnRemoveItem = (selectedList, selectedItem) => (selectedList.map(skillId => skillId.id))
+
     return (
         <>
             <Formik
@@ -104,23 +119,23 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                     phone_no2: data === {} ? '' : data.phoneNumber,
                     GST_no: data === {} ? '' : data.GST_no,
                 }}
-                validationSchema={Yup.object().shape({
-                    school_name: Yup.string().matches(Constants.Common.alphabetsWithSpaceRegex, 'School Name must contain only alphabets!').max(255).required('School Name is required'),
-                    school_board: Yup.string().required('School Board is required'),
-                    contact_name: Yup.string().matches(Constants.Common.alphabetsWithSpaceRegex, 'Contact Name must contain only alphabets!').max(255).required('Contact Name is required'),
-                    address_line1: Yup.string().max(255).required('Address Line 1 is required'),
-                    address_line2: Yup.string().max(255).required('Address Line 2 is required'),
-                    city: Yup.string().matches(Constants.Common.alphabetsWithSpaceRegex, 'city Name must contain only alphabets!').max(100).required('City is required'),
-                    pincode: Yup.string().matches(Constants.Common.positiveNumber, 'pincode required').max(6, 'pincode must be 6 charactor').required('Pincode is required'),
-                    phone_no: Yup.string().matches(Constants.Common.positiveNumber, 'Phone Number required').max(10, 'phone number must be 10 charactar').required('Phone Number is required'),
-                    contact_name2: Yup.string().matches(Constants.Common.alphabetsWithSpaceRegex, 'Contact Name must contain only alphabets!').max(255).required('Contact Name is required'),
-                    addres_line1_2: Yup.string().max(255).required('Address Line 1 is required'),
-                    address_line2_2: Yup.string().max(255).required('Address Line 2 is required'),
-                    city2: Yup.string().matches(Constants.Common.alphabetsWithSpaceRegex, 'City Name must contain only alphabets!').max(100).required('City is required'),
-                    pincode2: Yup.string().matches(Constants.Common.positiveNumber, 'pincode required').max(6, 'pincode must be 6 charactor').required('Pincode is required'),
-                    phone_no2: Yup.string().matches(Constants.Common.positiveNumber, 'Phone Number required').max(10, 'phone Number must be 10 charactor').required('Phone Number is required'),
-                    GST_no: Yup.string().matches(Constants.Common.GSTRegex, 'GST number must be 22AAAAA0000A1Z5 format').required('GST Number is required'),
-                })}
+                validationSchema={
+                    Yup.object().shape({
+                        school_name: Yup.string().matches(Constants.Common.alphabetsWithSpaceRegex, 'School Name must contain only alphabets!').max(255).required('School Name is required'), school_board: Yup.string().required('School Board is required'),
+                        contact_name: Yup.string().matches(Constants.Common.alphabetsWithSpaceRegex, 'Contact Name must contain only alphabets!').max(255).required('Contact Name is required'),
+                        address_line1: Yup.string().max(255).required('Address Line 1 is required'),
+                        address_line2: Yup.string().max(255).required('Address Line 2 is required'),
+                        city: Yup.string().matches(Constants.Common.alphabetsWithSpaceRegex, 'city Name must contain only alphabets!').max(100).required('City is required'),
+                        pincode: Yup.string().matches(Constants.Common.positiveNumber, 'pincode required').max(6, 'pincode must be 6 charactor').required('Pincode is required'),
+                        phone_no: Yup.string().matches(Constants.Common.positiveNumber, 'Phone Number required').max(10, 'phone number must be 10 charactar').required('Phone Number is required'),
+                        contact_name2: Yup.string().matches(Constants.Common.alphabetsWithSpaceRegex, 'Contact Name must contain only alphabets!').max(255).required('Contact Name is required'),
+                        addres_line1_2: Yup.string().max(255).required('Address Line 1 is required'),
+                        address_line2_2: Yup.string().max(255).required('Address Line 2 is required'),
+                        city2: Yup.string().matches(Constants.Common.alphabetsWithSpaceRegex, 'City Name must contain only alphabets!').max(100).required('City is required'),
+                        pincode2: Yup.string().matches(Constants.Common.positiveNumber, 'pincode required').max(6, 'pincode must be 6 charactor').required('Pincode is required'),
+                        phone_no2: Yup.string().matches(Constants.Common.positiveNumber, 'Phone Number required').max(10, 'phone Number must be 10 charactor').required('Phone Number is required'),
+                        GST_no: Yup.string().matches(Constants.Common.GSTRegex, 'GST number must be 22AAAAA0000A1Z5 format').required('GST Number is required'),
+                    })}
                 onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
                     setSubmitting(true);
                     const formData = {
@@ -137,6 +152,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                                 pincode: Number(values.pincode),
                                 phone_no: Number(values.phone_no),
                             },
+                            ///////
                             billing_address: {
                                 contact_name: copy === true ? values.contact_name : values.contact_name2,
                                 address_line1: copy === true ? values.address_line1 : values.addres_line1_2,
@@ -148,107 +164,132 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                             },
                         }
                     }
-                    // console.log('formData: ', JSON.stringify(formData))
-                    console.log('formData: ', JSON.stringify({ data: formData }))
 
-                    axios.post(dynamicUrl.insertSchool, { data: formData }, {
-                        headers: { Authorization: sessionStorage.getItem('user_jwt') }
-                    })
-                        .then((response) => {
-                            console.log({ response });
-                            console.log(response.status);
-                            console.log(response.status === 200);
-                            let result = response.status === 200;
+                    let imageFile = document.getElementById('school_logo').files[0];
+
+                    let sendData = {
+                        ImageFile: ''
+                    }
+                    if (imageFile) {
+
+                        sendData.ImageFile = imageFile.name;
+
+                        console.log('Submitting', sendData);
+
+                        if (areFilesInvalid([imageFile]) !== 0) {
+                            setIsOpen(false);
+                            sweetAlertHandler({ title: 'Sorry', type: 'error', text: 'Invalid File!' });
                             hideLoader();
-                            if (result) {
-                                console.log('inside res');
+                        } else {
+                            // console.log('formData: ', JSON.stringify(formData))
+                            console.log('formData: ', JSON.stringify({ data: formData }))
 
-                                let uploadParams = response.data;
-                                // setDisableButton(false);
-                                hideLoader();
-                                console.log('Proceeding with file upload');
+                            axios.post(dynamicUrl.insertSchool, { data: formData }, {
+                                headers: { Authorization: sessionStorage.getItem('user_jwt') }
+                            })
+                                .then((response) => {
+                                    console.log({ response });
+                                    console.log(response.status);
+                                    console.log(response.status === 200);
+                                    let result = response.status === 200;
+                                    hideLoader();
+                                    if (result) {
+                                        console.log('inside res');
 
-                                if (Array.isArray(uploadParams)) {
-                                    for (let index = 0; index < uploadParams.length; index++) {
-                                        let keyNameArr = Object.keys(uploadParams[index]);
-                                        let keyName = keyNameArr[0];
-                                        console.log('KeyName', keyName);
+                                        let uploadParams = response.data;
+                                        // setDisableButton(false);
+                                        hideLoader();
+                                        console.log('Proceeding with file upload');
 
-                                        let blobField = document.getElementById("school_logo").files[0];
-                                        console.log({
-                                            blobField
-                                        });
+                                        if (Array.isArray(uploadParams)) {
+                                            for (let index = 0; index < uploadParams.length; index++) {
+                                                let keyNameArr = Object.keys(uploadParams[index]);
+                                                let keyName = keyNameArr[0];
+                                                console.log('KeyName', keyName);
 
-                                        let tempObj = uploadParams[index];
+                                                let blobField = document.getElementById("school_logo").files[0];
+                                                console.log({
+                                                    blobField
+                                                });
 
-                                        let result = fetch(tempObj[keyName], {
-                                            method: 'PUT',
-                                            body: blobField
-                                        });
+                                                let tempObj = uploadParams[index];
 
-                                        console.log({
-                                            result
-                                        });
+                                                let result = fetch(tempObj[keyName], {
+                                                    method: 'PUT',
+                                                    body: blobField
+                                                });
 
-                                        const timeOutFunction = () => {
-                                            setIsOpen(false);
-                                            const MySwal = withReactContent(Swal);
+                                                console.log({
+                                                    result
+                                                });
 
-                                            MySwal.fire('', 'Your school has been added!', 'success');
+                                                const timeOutFunction = () => {
+                                                    setIsOpen(false);
+                                                    const MySwal = withReactContent(Swal);
 
-                                            fetchSchoolData();
+                                                    MySwal.fire('', 'Your school has been added!', 'success');
+
+                                                    fetchSchoolData();
+                                                }
+                                                setTimeout(timeOutFunction, 1000);
+                                            }
+
+                                            // setIsOpen(false);
+                                        } else {
+                                            console.log('No files uploaded');
+                                            // sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingClient });
+                                            // hideLoader();
+                                            // setDisableButton(false);
+                                            // fetchClientData();
+                                            // setIsOpen(false);
                                         }
-                                        setTimeout(timeOutFunction, 1000);
+                                        // SessionStorage.setItem('user_jwt', response.data[0].jwt);
+                                    } else {
+                                        console.log('else res');
+                                        hideLoader();
+                                        // Request made and server responded
+                                        setStatus({ success: false });
+                                        setErrors({ submit: 'Error in generating OTP' });
+                                        // window.location.reload();
                                     }
+                                })
+                                .catch((error) => {
+                                    if (error.response) {
+                                        hideLoader();
 
-                                    // setIsOpen(false);
-                                } else {
-                                    console.log('No files uploaded');
-                                    // sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingClient });
-                                    // hideLoader();
-                                    // setDisableButton(false);
-                                    // fetchClientData();
-                                    // setIsOpen(false);
-                                }
-                                // SessionStorage.setItem('user_jwt', response.data[0].jwt);
-                            } else {
-                                console.log('else res');
-                                hideLoader();
-                                // Request made and server responded
-                                setStatus({ success: false });
-                                setErrors({ submit: 'Error in generating OTP' });
-                                // window.location.reload();
-                            }
-                        })
-                        .catch((error) => {
-                            if (error.response) {
-                                hideLoader();
+                                        setIsOpen(false);
 
-                                console.log("------------------------------");
-                                const MySwal = withReactContent(Swal);
+                                        console.log("------------------------------");
+                                        const MySwal = withReactContent(Swal);
 
-                                MySwal.fire('', error.response.data, 'error');
+                                        MySwal.fire('', error.response.data, 'error');
 
-                                fetchSchoolData();
-                                // Request made and server responded
-                                console.log(error.response.data);
-                                setStatus({ success: false });
-                                setErrors({ submit: error.response.data });
+                                        fetchSchoolData();
+                                        // Request made and server responded
+                                        console.log(error.response.data);
+                                        setStatus({ success: false });
+                                        setErrors({ submit: error.response.data });
 
 
-                                // window.location.reload();
-                            } else if (error.request) {
-                                // The request was made but no response was received
-                                console.log(error.request);
-                                hideLoader();
-                                // window.location.reload();
-                            } else {
-                                // Something happened in setting up the request that triggered an Error
-                                console.log('Error', error.message);
-                                hideLoader();
-                                // window.location.reload();
-                            }
-                        });
+                                        // window.location.reload();
+                                    } else if (error.request) {
+                                        // The request was made but no response was received
+                                        console.log(error.request);
+                                        hideLoader();
+                                        // window.location.reload();
+                                    } else {
+                                        // Something happened in setting up the request that triggered an Error
+                                        console.log('Error', error.message);
+                                        hideLoader();
+                                        // window.location.reload();
+                                    }
+                                });
+
+                        }
+                    } else {
+                        sweetAlertHandler(bgvAlerts.noFilesPresentBulkUpload);
+                        hideLoader();
+                    }
 
                     let allFilesData = [];
                     const fileNameArray = ['school_logo'];
@@ -261,19 +302,6 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                             allFilesData.push(selectedFile);
                         }
                     });
-
-                    if (allFilesData.length === 0) {
-                        showLoader();
-                        console.log('formData: ', formData)
-                    } else {
-                        if (areFilesInvalid(allFilesData) !== 0) {
-                            sweetAlertHandler("Invalid File!");
-                            hideLoader();
-                        } else {
-                            showLoader();
-                            console.log('formData: ', formData)
-                        }
-                    }
                 }}
             >
                 {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
@@ -300,10 +328,30 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                                         )}
                                     </div>
 
+
+                                    {/* <Col sm={6}>
+                                        <Form.Group>
+                                            <FormLabel className="floating-label" htmlFor="pre_post"><small className="text-danger">* </small>Related Topics</FormLabel>
+                                            <Multiselect
+                                                options={topicDigiCardId}
+                                                displayValue="name"
+                                                selectionLimit="25"
+                                                onSelect={handleOnSelectItem}
+                                                onRemove={handleOnRemoveItem}
+                                            />
+                                            {touched.pre_post && errors.pre_post && <small className="text-danger form-text">{errors.pre_post}</small>}
+                                        </Form.Group>
+                                    </Col> */}
+
+
+
+
                                     <div class="form-group fill">
                                         <label class="floating-label" for="school_board">
                                             <small class="text-danger">* </small>
                                             School Board</label>
+
+
                                         <select
                                             as='select'
                                             name="school_board"
@@ -342,7 +390,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                                 </div>
                             </div>
                             <div className="col-md-6">
-                                <div class="form-group fill"><label class="floating-label" for="slaAggrement">School Logo</label>
+                                <div class="form-group fill"><label class="floating-label" for="school_logo">School Logo</label>
                                     <input
                                         class="form-control"
                                         name="school_logo"
@@ -553,7 +601,6 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                                                     )}
                                                 </Col>
                                             </Row>
-
 
                                             <Row className="my-3">
                                                 <Col sm={5}>

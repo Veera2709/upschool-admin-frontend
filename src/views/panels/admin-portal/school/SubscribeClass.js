@@ -19,7 +19,6 @@ import Select from 'react-select';
 const SubscribeClass = ({ className, rest, id, setIsOpenSubscribeClass }) => {
 
     const [errorMessage, setErrorMessage] = React.useState("");
-
     const [formFields, setFormFields] = useState([
         {
             client_class_name: '',
