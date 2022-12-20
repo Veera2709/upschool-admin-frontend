@@ -91,8 +91,8 @@ const AddDigiCard = (
   const [digitalTitles, setDigitalTitles] = useState(0);
 
   const [isShown, setIsShown] = useState(false);
-  
-  
+
+
 
   let history = useHistory();
 
@@ -131,6 +131,7 @@ const AddDigiCard = (
     });
   };
 
+
   const previewImage = (e) => {
     setImgFile(URL.createObjectURL(e.target.files[0]));
   }
@@ -159,13 +160,13 @@ const AddDigiCard = (
         console.log(response.data.Items);
         let resultData = response.data.Items;
 
-          
-          resultData.forEach((item, index) => {
-            item.digicard_status === 'Active' ? colourOptions.push({ value: item.digi_card_title, label: item.digi_card_title ,digi_card_id:item.digi_card_id}) : colourOptions.push({ value: item.digi_card_title, label: item.digi_card_title,digi_card_id:item.digi_card_id, isDisabled: true })
-          }
-          );
-          console.log("colourOptions",colourOptions);
-          setDigitalTitles(colourOptions)
+
+        resultData.forEach((item, index) => {
+          item.digicard_status === 'Active' ? colourOptions.push({ value: item.digi_card_title, label: item.digi_card_title, digi_card_id: item.digi_card_id }) : colourOptions.push({ value: item.digi_card_title, label: item.digi_card_title, digi_card_id: item.digi_card_id, isDisabled: true })
+        }
+        );
+        console.log("colourOptions", colourOptions);
+        setDigitalTitles(colourOptions)
       })
       .catch((err) => {
         console.log(err)
@@ -183,9 +184,9 @@ const AddDigiCard = (
               digicardtitle: '',
               digicard_image: '',
               digicardcontent: '',
-              digicardtitleExcerpt:'',
+              digicardtitleExcerpt: '',
               digicard_voice_note: '',
-              clientComponents:multiOptions
+              clientComponents: multiOptions
             }}
             validationSchema={Yup.object().shape({
               // digicardname: Yup.string()
@@ -214,7 +215,7 @@ const AddDigiCard = (
 
 
             onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-             
+
 
               console.log("multiOptions", multiOptions);
               console.log("on submit");
@@ -228,7 +229,7 @@ const AddDigiCard = (
                 digi_card_keywords: tags,
                 digicard_voice_note: values.digicard_voice_note === undefined ? "" : values.digicard_voice_note,
                 related_digi_cards: multiOptions,
-                digicard_status:{value: "Active", label: "Active"}
+                digicard_status: { value: "Active", label: "Active" }
               };
 
 
@@ -312,7 +313,7 @@ const AddDigiCard = (
                     hideLoader();
                   }
                 });
-          
+
               console.log(formData);
               console.log('Submitting');
 
@@ -348,7 +349,7 @@ const AddDigiCard = (
                 <Row>
                   {/* {edit1Toggle && <Loader />} */}
                   <Col sm={6}>
-                  <div className="form-group fill">
+                    <div className="form-group fill">
                       <label className="floating-label" htmlFor="digicardtitle">
                         <small className="text-danger">* </small>DigiCard Title
                       </label>
@@ -425,35 +426,35 @@ const AddDigiCard = (
                         name='digicardKeywords'
                       />
                       {/* {touched.digicardKeywords && errors.digicardKeywords && (<small className="text-danger form-text">{errors.digicardKeywords}</small>)} */}
-                    </div><br/>
-                    <div className="form-group fill"  style={{ position: "relative",zIndex: 10}}>
-                    <label className="floating-label" htmlFor="clientComponents">
-                      <small className="text-danger">* </small>Related DigiCard Titles
-                    </label>
-                    <Select
-                      className="basic-single"
-                      classNamePrefix="select"
-                      // name="digiCardTitle"
-                      isMulti
-                      closeMenuOnSelect={false}
-                      onChange={getMultiOptions} 
-                      options={digitalTitles}
-                      placeholder="Which is your favourite colour?" 
-                    /><br/>
+                    </div><br />
+                    <div className="form-group fill" style={{ position: "relative", zIndex: 10 }}>
+                      <label className="floating-label" htmlFor="clientComponents">
+                        <small className="text-danger">* </small>Related DigiCard Titles
+                      </label>
+                      <Select
+                        className="basic-single"
+                        classNamePrefix="select"
+                        // name="digiCardTitle"
+                        isMulti
+                        closeMenuOnSelect={false}
+                        onChange={getMultiOptions}
+                        options={digitalTitles}
+                        placeholder="Which is your favourite colour?"
+                      /><br />
                       {touched.clientComponents && errors.clientComponents && (
-                            <small className="text-danger form-text">{errors.clientComponents}</small>
-                          )}
+                        <small className="text-danger form-text">{errors.clientComponents}</small>
+                      )}
                     </div>
                   </Col>
-                  <Col sm={6}><br/>
-                    
+                  <Col sm={6}><br />
+
                     <div className="form-group fill">
                       <label className="floating-label" htmlFor="digicardtitle">
                         <small className="text-danger">* </small>Logo preview
                       </label><br />
                       <img width={150} src={imgFile} alt="" className="img-fluid mb-3" />
                     </div>
-                  
+
                   </Col>
                 </Row>
                 <Row>
@@ -470,7 +471,7 @@ const AddDigiCard = (
 
                     />
                   </Col>
-                  <br/>
+                  <br />
                 </Row><br></br>
                 <Row>
                   <Col sm='12'>
@@ -485,13 +486,13 @@ const AddDigiCard = (
                       setArticleData={setArticleData}
                       onChange={handleChange}
                       name="digicardcontent"
-                      
+
                     />
                   </Col>
                   {/* {touched.digicardcontent && errors.digicardcontent && <small className="text-danger form-text">{errors.digicardcontent}</small>} */}
 
-                  <br/>
-                    {/* <small className="text-danger form-text" >Select DigiCard Titles</small> */}
+                  <br />
+                  {/* <small className="text-danger form-text" >Select DigiCard Titles</small> */}
                 </Row><br></br>
                 <Row>
                   <Col sm={10}>

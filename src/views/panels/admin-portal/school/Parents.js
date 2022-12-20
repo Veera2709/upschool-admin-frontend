@@ -59,7 +59,9 @@ function Table({ columns, data, modalOpen }) {
           entries
         </Col>
         <Col className="d-flex justify-content-end">
-          <  filter={globalFilter} setFilter={setGlobalFilter} />
+
+
+          <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
           <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={modalOpen}>
             <i className="feather icon-plus" /> Add Parents
           </Button>
