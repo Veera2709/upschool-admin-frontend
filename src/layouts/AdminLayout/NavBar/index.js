@@ -43,7 +43,7 @@ const NavBar = () => {
         </Link>
         <Link to="#" className="b-brand">
           {/* <img id="main-logo" src={logo} alt="" className="logo" /> */}
-          <h3 style={{ color: 'white' }}>UpSchool</h3>
+          <h3 style={{ color: 'white', margin: '0px' }}>UpSchool</h3>
         </Link>
         <Link to="#" className={moreClass.join(' ')} onClick={() => setMoreToggle(!moreToggle)}>
           <i className="feather icon-more-vertical" />

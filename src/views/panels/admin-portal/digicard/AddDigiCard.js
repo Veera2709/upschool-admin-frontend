@@ -161,7 +161,7 @@ const AddDigiCard = (
 
 
         resultData.forEach((item, index) => {
-          item.digicard_status === 'Active' ? colourOptions.push({ value: item.digi_card_name, label: item.digi_card_name }) : colourOptions.push({ value: item.digi_card_name, label: item.digi_card_name, isDisabled: true })
+          item.digicard_status === 'Active' ? colourOptions.push({ value: item.digi_card_title, label: item.digi_card_title }) : colourOptions.push({ value: item.digi_card_title, label: item.digi_card_title, isDisabled: true })
         }
         );
         console.log("colourOptions", colourOptions);
@@ -226,8 +226,9 @@ const AddDigiCard = (
                 digi_card_excerpt: articleDataTitle,
                 digi_card_content: articleData,
                 digi_card_keywords: tags,
-                digicard_voice_note: values.digicard_voice_note,
-                related_digi_cards: multiOptions
+                digicard_voice_note: values.digicard_voice_note === undefined ? "" : values.digicard_voice_note,
+                related_digi_cards: multiOptions,
+                digicard_status: { value: "Active", label: "Active" }
               };
 
 

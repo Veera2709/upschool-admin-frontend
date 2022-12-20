@@ -1,24 +1,22 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Row, Col, Card, Pagination, Button, Modal, ModalBody, Form, Alert } from 'react-bootstrap';
+import Select from 'react-select';
+import { Col, Form, Alert } from 'react-bootstrap';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
 import { areFilesInvalid } from '../../../../util/utils';
-import * as Constants from '../../../../config/constant'
 import withReactContent from 'sweetalert2-react-content';
 import Swal from 'sweetalert2';
 import axios from 'axios';
 import dynamicUrl from "../../../../helper/dynamicUrls";
-import { useHistory } from 'react-router-dom';
-
 
 const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool, fetchSchoolData }) => {
-
-    let history = useHistory();
 
     const [imgFile, setImgFile] = useState([]);
     const [subscription_active, setSubscription_active] = useState('');
     const [previousData, setPreviousData] = useState([]);
+    const [previousBoards, setPreviousBoards] = useState([]);
+    const [selectedBoards, setSelectedBoards] = useState([]);
     const [copy, setCopy] = useState(false);
     const [loader, showLoader, hideLoader] = useFullPageLoader();
     const [updatedImage, setUpdatedImage] = useState('');
@@ -34,6 +32,15 @@ const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool, fetchSchoolD
 
     const phoneRegExp = /^(\+91[\-\s]?)?[0]?(91)?[789]\d{9}$/;
 
+    const schoolBoardOptions = [
+        { value: 'ICSE', label: 'ICSE' },
+        { value: 'CBSE', label: 'CBSE' },
+        { value: 'STATE', label: 'STATE' },
+        { value: 'CISCE', label: 'CISCE', isFixed: true },
+        { value: 'NIOS', label: 'NIOS' },
+        { value: 'IB', label: 'IB' }
+    ];
+
     const sweetAlertHandler = (alert) => {
         const MySwal = withReactContent(Swal);
         MySwal.fire({
@@ -42,6 +49,19 @@ const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool, fetchSchoolD
             icon: alert.type
         });
     };
+
+    const handleSelectChange = (event) => {
+
+        console.log(event);
+
+        let valuesArr = [];
+        for (let i = 0; i < event.length; i++) {
+            valuesArr.push(event[i].value)
+        }
+
+        console.log(valuesArr);
+        setSelectedBoards(valuesArr);
+    }
 
     const previewImage = (e) => {
         console.log("File Updated!")
@@ -89,17 +109,32 @@ const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool, fetchSchoolD
                     { console.log(response.data.Items[0].subscription_active) }
                     { console.log(response.data.Items[0].school_logoURL) }
 
+                    response.data.Items[0].school_board = ["ICSE", "CBSE", "IB"];
+
                     let individual_client_data = response.data.Items[0];
+                    console.log(individual_client_data);
 
                     let previousSubscription = response.data.Items[0].subscription_active;
                     let previousImage = response.data.Items[0].school_logoURL;
+                    const radioValue = response.data.Items[0].subscription_active === 'Yes' ? true : false;
+
+                    let valuesArr = [];
+                    let boardArr = [];
+                    for (let index = 0; index < individual_client_data.school_board.length; index++) {
+                        if (individual_client_data.school_board[index]) {
+                            boardArr.push({ value: individual_client_data.school_board[index], label: individual_client_data.school_board[index] })
+                            valuesArr.push(individual_client_data.school_board[index])
+                        }
+                    }
+
+                    console.log(boardArr);
 
                     setSubscription_active(previousSubscription);
-
-                    const radioValue = response.data.Items[0].subscription_active === 'Yes' ? true : false;
                     _setRadio(radioValue);
                     setImgFile(previousImage);
                     setPreviousData(individual_client_data);
+                    setPreviousBoards(boardArr);
+                    setSelectedBoards(valuesArr);
                 } else {
                     console.log('else res');
                     hideLoader();
@@ -131,7 +166,7 @@ const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool, fetchSchoolD
 
     return (
         <>
-            {previousData.length === 0 || previousData.length === "0" ? <></> : (
+            {previousData.length === 0 || previousData.length === "0" || previousBoards.length === 0 ? <></> : (
                 <>
                     {console.log(subscription_active)}
                     {console.log(imgFile)}
@@ -192,6 +227,7 @@ const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool, fetchSchoolD
                                 data: {
                                     school_id: id,
                                     school_name: values.schoolName,
+                                    school_board: selectedBoards,
                                     school_logo: updatedImage === "" ? previousData.school_logo : updatedImage,
                                     subscription_active: subscription_active,
                                     school_contact_info: {
@@ -368,7 +404,28 @@ const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool, fetchSchoolD
                                         </div>
                                     </div>
                                     <div className="col-md-6">
+                                        <div className="form-group fill">
 
+                                            <label className="floating-label">
+                                                <small className="text-danger">* </small>
+                                                School Board
+                                            </label>
+                                            {console.log(previousBoards)}
+                                            <Select
+                                                defaultValue={previousBoards}
+                                                isMulti
+                                                name="colors"
+                                                options={schoolBoardOptions}
+                                                className="basic-multi-select"
+                                                classNamePrefix="Select"
+                                                onChange={event => handleSelectChange(event)}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="row">
+                                    <div className="col-md-6">
                                         <div className="form-group fill">
 
                                             <div className="row">
@@ -395,9 +452,7 @@ const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool, fetchSchoolD
                                                         // className='ml-3 col-md-6'
                                                         />
 
-                                                        {/* <Form.Label className="profile-view-question" id={`radio-fresher`}>
-                                                            {subscription_active === true ? 'Yes' : 'No'}
-                                                        </Form.Label> */}
+
                                                     </div>
                                                 </div>
                                             </div>
@@ -405,6 +460,7 @@ const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool, fetchSchoolD
                                         </div>
                                     </div>
                                 </div>
+
                                 <div className="row">
 
                                     {/* <div className="col-md-3"></div> */}
