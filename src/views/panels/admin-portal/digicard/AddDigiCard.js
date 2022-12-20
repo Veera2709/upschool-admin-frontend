@@ -161,7 +161,7 @@ const AddDigiCard = (
 
           
           resultData.forEach((item, index) => {
-            item.digicard_status === 'Active' ? colourOptions.push({ value: item.digi_card_title, label: item.digi_card_title }) : colourOptions.push({ value: item.digi_card_title, label: item.digi_card_title, isDisabled: true })
+            item.digicard_status === 'Active' ? colourOptions.push({ value: item.digi_card_title, label: item.digi_card_title ,digi_card_id:item.digi_card_id}) : colourOptions.push({ value: item.digi_card_title, label: item.digi_card_title,digi_card_id:item.digi_card_id, isDisabled: true })
           }
           );
           console.log("colourOptions",colourOptions);
