@@ -16,6 +16,7 @@ import { useTable, useSortBy, usePagination, useGlobalFilter } from 'react-table
 import dynamicUrl from '../../../helper/dynamicUrls';
 import useFullPageLoader from '../../../helper/useFullPageLoader';
 
+
 export const colourOptions = [
   { value: 'Education', label: 'Education', color: 'black' },
   { value: 'Address', label: 'Address', color: 'black' },

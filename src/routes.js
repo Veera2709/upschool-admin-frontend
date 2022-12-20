@@ -136,6 +136,17 @@ const routes = [
       },
       {
         exact: true,
+        path: '/admin-portal/school/ActiveSchools',
+        component: lazy(() => import('./views/panels/admin-portal/school/ActiveSchools'))
+      },
+      {
+        exact: true,
+        path: '/admin-portal/school/ArchiveSchools',
+        component: lazy(() => import('./views/panels/admin-portal/school/ArchiveSchools'))
+      },
+
+      {
+        exact: true,
         path: '/admin-portal/active-users',
         component: lazy(() =>
           import('./views/panels/admin-portal/users/ListUsers')
@@ -220,7 +231,7 @@ const routes = [
         path: '/admin-portal/editChapter/:chapter_id',
         component: lazy(() => import('./views/panels/admin-portal/chapters/EditChapter'))
       },
-      
+
       {
         exact: true,
         path: '/app/dashboard/analytics',

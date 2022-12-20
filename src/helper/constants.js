@@ -38,10 +38,10 @@ export const AddDigiCard = {
 
   ChaptertitleRequired: 'Chapter title is required!',
   ChaptertitleTooShort: 'chapter title is too short!',
-  ChaptertitleTooLong:"chapter title is too long!",
+  ChaptertitleTooLong: "chapter title is too long!",
 
-  
-  
+
+
   DigiCardImageNotNull: 'Digicard Image should not be null!',
   DigiCardImageRequired: 'Digicard Image is required!',
 
@@ -523,6 +523,7 @@ export const CompanyCheckForm = {
   validCompanyWebsite: 'Please enter the valid company website',
   companyWebsiteTooShort: 'Company name is too short!',
   companyWebsiteTooLong: 'Company name is too long!'
+
 };
 
 export const Common = {

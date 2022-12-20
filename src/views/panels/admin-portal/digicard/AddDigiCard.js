@@ -95,8 +95,8 @@ const AddDigiCard = (
 
 
   const [isShown, setIsShown] = useState(false);
-  
-  
+
+
 
   let history = useHistory();
 
@@ -135,6 +135,7 @@ const AddDigiCard = (
     });
   };
 
+
   const previewImage = (e) => {
     setImgFile(URL.createObjectURL(e.target.files[0]));
   }
@@ -163,13 +164,13 @@ const AddDigiCard = (
         console.log(response.data.Items);
         let resultData = response.data.Items;
 
-          
-          resultData.forEach((item, index) => {
-            item.digicard_status === 'Active' ? colourOptions.push({ value: item.digi_card_title, label: item.digi_card_title ,digi_card_id:item.digi_card_id}) : colourOptions.push({ value: item.digi_card_title, label: item.digi_card_title,digi_card_id:item.digi_card_id, isDisabled: true })
-          }
-          );
-          console.log("colourOptions",colourOptions);
-          setDigitalTitles(colourOptions)
+
+        resultData.forEach((item, index) => {
+          item.digicard_status === 'Active' ? colourOptions.push({ value: item.digi_card_title, label: item.digi_card_title, digi_card_id: item.digi_card_id }) : colourOptions.push({ value: item.digi_card_title, label: item.digi_card_title, digi_card_id: item.digi_card_id, isDisabled: true })
+        }
+        );
+        console.log("colourOptions", colourOptions);
+        setDigitalTitles(colourOptions)
       })
       .catch((err) => {
         console.log(err)
@@ -187,9 +188,9 @@ const AddDigiCard = (
               digicardtitle: '',
               digicard_image: '',
               digicardcontent: '',
-              digicardtitleExcerpt:'',
+              digicardtitleExcerpt: '',
               digicard_voice_note: '',
-              clientComponents:multiOptions
+              clientComponents: multiOptions
             }}
             validationSchema={Yup.object().shape({
               // digicardname: Yup.string()
@@ -219,12 +220,115 @@ const AddDigiCard = (
 
             onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
 
+<<<<<<< HEAD
               
              
 
               console.log("multiOptions", multiOptions);
               console.log("on submit");
            
+=======
+
+              console.log("multiOptions", multiOptions);
+              console.log("on submit");
+              var formData = {
+                // digi_card_name: values.digicardname,
+                digi_card_title: values.digicardtitle,
+                digi_card_files: [values.digicard_image],
+                digicard_image: values.digicard_image,
+                digi_card_excerpt: articleDataTitle,
+                digi_card_content: articleData,
+                digi_card_keywords: tags,
+                digicard_voice_note: values.digicard_voice_note === undefined ? "" : values.digicard_voice_note,
+                related_digi_cards: multiOptions,
+                digicard_status: { value: "Active", label: "Active" }
+              };
+
+
+
+              axios
+                .post(dynamicUrl.insertDigicard, { data: formData }, { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
+                .then(async (response) => {
+                  console.log({ response });
+                  if (response.Error) {
+                    console.log('Error');
+                    hideLoader();
+                    setDisableButton(false);
+                  } else {
+                    let uploadParams = response.data;
+                    hideLoader();
+                    setDisableButton(false);
+                    console.log('Proceeding with file upload');
+
+                    if (Array.isArray(uploadParams)) {
+                      for (let index = 0; index < uploadParams.length; index++) {
+                        let keyNameArr = Object.keys(uploadParams[index]);
+                        let keyName = keyNameArr[0];
+                        console.log('KeyName', keyName);
+
+
+                        let blobField = document.getElementById(keyName).files[0];
+                        console.log({
+                          blobField
+                        });
+
+                        let tempObj = uploadParams[index];
+
+                        let result = await fetch(tempObj[keyName], {
+                          method: 'PUT',
+                          body: blobField
+                        });
+
+                        console.log({
+                          result
+                        });
+                      }
+                      sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingDigiCard });
+                      hideLoader();
+                      setDisableButton(false);
+                      // fetchClientData();
+                      setIsOpen(false);
+                    } else {
+                      console.log('No files uploaded');
+                      sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingDigiCard });
+                      hideLoader();
+                      setDisableButton(false);
+                      // fetchClientData();
+                      setIsOpen(false);
+                    }
+                  }
+                })
+                .catch((error) => {
+                  if (error.response) {
+                    // Request made and server responded
+                    console.log(error.response.data);
+
+                    console.log(error.response.data);
+                    if (error.response.status === 400) {
+                      console.log();
+                      hideLoader();
+                      // setIsClientExists(true);
+                      sweetAlertHandler({ title: 'Error', type: 'error', text: MESSAGES.ERROR.DigiCardNameExists });
+
+                    } else {
+                      sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+                    }
+                  } else if (error.request) {
+                    // The request was made but no response was received
+                    console.log(error.request);
+                    setDisableButton(false);
+                    hideLoader();
+                  } else {
+                    // Something happened in setting up the request that triggered an Error
+                    console.log('Error', error.message);
+                    setDisableButton(false);
+                    hideLoader();
+                  }
+                });
+
+              console.log(formData);
+              console.log('Submitting');
+>>>>>>> origin/dev
 
 
               let allFilesData = [];
@@ -344,7 +448,7 @@ const AddDigiCard = (
                 <Row>
                   {/* {edit1Toggle && <Loader />} */}
                   <Col sm={6}>
-                  <div className="form-group fill">
+                    <div className="form-group fill">
                       <label className="floating-label" htmlFor="digicardtitle">
                         <small className="text-danger">* </small>DigiCard Title
                       </label>
@@ -423,35 +527,35 @@ const AddDigiCard = (
                         name='digicardKeywords'
                       />
                       {/* {touched.digicardKeywords && errors.digicardKeywords && (<small className="text-danger form-text">{errors.digicardKeywords}</small>)} */}
-                    </div><br/>
-                    <div className="form-group fill"  style={{ position: "relative",zIndex: 10}}>
-                    <label className="floating-label" htmlFor="clientComponents">
-                      <small className="text-danger">* </small>Related DigiCard Titles
-                    </label>
-                    <Select
-                      className="basic-single"
-                      classNamePrefix="select"
-                      // name="digiCardTitle"
-                      isMulti
-                      closeMenuOnSelect={false}
-                      onChange={getMultiOptions} 
-                      options={digitalTitles}
-                      placeholder="Which is your favourite colour?" 
-                    /><br/>
+                    </div><br />
+                    <div className="form-group fill" style={{ position: "relative", zIndex: 10 }}>
+                      <label className="floating-label" htmlFor="clientComponents">
+                        <small className="text-danger">* </small>Related DigiCard Titles
+                      </label>
+                      <Select
+                        className="basic-single"
+                        classNamePrefix="select"
+                        // name="digiCardTitle"
+                        isMulti
+                        closeMenuOnSelect={false}
+                        onChange={getMultiOptions}
+                        options={digitalTitles}
+                        placeholder="Which is your favourite colour?"
+                      /><br />
                       {touched.clientComponents && errors.clientComponents && (
-                            <small className="text-danger form-text">{errors.clientComponents}</small>
-                          )}
+                        <small className="text-danger form-text">{errors.clientComponents}</small>
+                      )}
                     </div>
                   </Col>
-                  <Col sm={6}><br/>
-                    
+                  <Col sm={6}><br />
+
                     <div className="form-group fill">
                       <label className="floating-label" htmlFor="digicardtitle">
                         <small className="text-danger">* </small>Logo preview
                       </label><br />
                       <img width={150} src={imgFile} alt="" className="img-fluid mb-3" />
                     </div>
-                  
+
                   </Col>
                 </Row>
                 <Row>
@@ -468,7 +572,7 @@ const AddDigiCard = (
 
                     />
                   </Col>
-                  <br/>
+                  <br />
                 </Row><br></br>
                 <Row>
                   <Col sm='12'>
@@ -483,13 +587,13 @@ const AddDigiCard = (
                       setArticleData={setArticleData}
                       onChange={handleChange}
                       name="digicardcontent"
-                      
+
                     />
                   </Col>
                   {/* {touched.digicardcontent && errors.digicardcontent && <small className="text-danger form-text">{errors.digicardcontent}</small>} */}
 
-                  <br/>
-                    {/* <small className="text-danger form-text" >Select DigiCard Titles</small> */}
+                  <br />
+                  {/* <small className="text-danger form-text" >Select DigiCard Titles</small> */}
                 </Row><br></br>
                 <Row>
                   <Col sm={10}>

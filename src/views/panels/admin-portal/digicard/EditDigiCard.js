@@ -21,9 +21,6 @@ import { areFilesInvalid } from '../../../../util/utils';
 import { isEmptyObject } from '../../../../util/utils';
 import Select from 'react-select';
 
-
-
-
 import { Link, useHistory, useParams } from 'react-router-dom';
 
 import { SessionStorage } from '../../../../util/SessionStorage';
@@ -234,8 +231,6 @@ const EditDigiCard = (
         fetchAllDigiCards();
 
     }, []);
-
-
 
     return isEmptyObject(individualDigiCardData) || digiCardTitles === '' ? null : (
         <div>

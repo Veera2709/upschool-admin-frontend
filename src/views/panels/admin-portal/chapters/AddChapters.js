@@ -22,6 +22,7 @@ import { isEmptyArray } from '../../../../util/utils';
 
 
 
+
 // import { Button,Container,Row ,Col  } from 'react-bootstrap';
 
 const AddDigiCard = (
@@ -161,7 +162,7 @@ const AddDigiCard = (
                             } else if (prelearningOptions == '') {
                                 setIsShownPre(false)
                             }
-                            else if(description==undefined){
+                            else if (description == undefined) {
                                 setIsShownDes(false)
                             }
                             else {
@@ -258,7 +259,7 @@ const AddDigiCard = (
                                                 classNamePrefix="select"
                                                 isMulti
                                                 closeMenuOnSelect={false}
-                                                onChange={(e)=>{PostlearningOption(e);setIsShown(true)}}
+                                                onChange={(e) => { PostlearningOption(e); setIsShown(true) }}
                                                 options={digitalTitles}
                                                 placeholder="Which is your favourite colour?"
                                             /><br />
@@ -266,7 +267,7 @@ const AddDigiCard = (
                                         </div>
                                         <div className="form-group fill" htmlFor="chapter_description">
                                             <Form.Label> <small className="text-danger">* </small>Chapter Description</Form.Label>
-                                            <Form.Control as="textarea" onChange={(e)=>{ChapterDescription(e);setIsShownDes(true)}} rows="4" />
+                                            <Form.Control as="textarea" onChange={(e) => { ChapterDescription(e); setIsShownDes(true) }} rows="4" />
                                             <br />
                                             <small className="text-danger form-text" style={{ display: isShownDes ? 'none' : 'block' }}>Chapter Description Required</small>
                                         </div>
@@ -282,7 +283,7 @@ const AddDigiCard = (
                                                 // name="digiCardTitle"
                                                 isMulti
                                                 closeMenuOnSelect={false}
-                                                onChange={(e)=>{PrelearningOptions(e);setIsShownPre(true)}}
+                                                onChange={(e) => { PrelearningOptions(e); setIsShownPre(true) }}
                                                 options={digitalTitles}
                                                 placeholder="Which is your favourite colour?"
                                             /><br />
@@ -299,7 +300,7 @@ const AddDigiCard = (
                                                 defaultValue={isLocked[0]}
                                                 name="color"
                                                 options={isLocked}
-                                                onChange={(e)=>{isLockedOPtion(e)}}
+                                                onChange={(e) => { isLockedOPtion(e) }}
                                             /><br />
                                         </div>
 

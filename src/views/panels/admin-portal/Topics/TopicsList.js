@@ -163,10 +163,10 @@ function Table({ columns, data, modalOpen }) {
 const TopicsList = () => {
     const columns = React.useMemo(
         () => [
-            {
-                Header: '#',
-                accessor: 'digicard_image'
-            },
+            // {
+            //     Header: '#',
+            //     accessor: 'digicard_image'
+            // },
             {
                 Header: 'DigiCard Name',
                 accessor: 'digi_card_name'
@@ -306,7 +306,7 @@ const TopicsList = () => {
                 <Col sm={12}>
                     <Card>
                         <Card.Header>
-                            <Card.Title as="h5">DigiCard List</Card.Title>
+                            <Card.Title as="h5">Topic List</Card.Title>
                         </Card.Header>
                         <Card.Body>
                             <Table columns={columns} data={data} modalOpen={openHandler} />

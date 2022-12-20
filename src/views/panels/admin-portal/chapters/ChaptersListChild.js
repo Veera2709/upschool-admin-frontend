@@ -17,8 +17,6 @@ import { SessionStorage } from '../../../../util/SessionStorage';
 import MESSAGES from '../../../../helper/messages';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 
-
-
 function Table({ columns, data, modalOpen }) {
     const {
         getTableProps,
@@ -50,13 +48,13 @@ function Table({ columns, data, modalOpen }) {
         usePagination
     );
 
-  const [isOpen, setIsOpen] = useState(false);
-  let history = useHistory();
+    const [isOpen, setIsOpen] = useState(false);
+    let history = useHistory();
 
     const addingChapter = () => {
         history.push('/admin-portal/addChapters');
         setIsOpen(true);
-      }
+    }
 
     return (
         <>
@@ -164,13 +162,13 @@ function Table({ columns, data, modalOpen }) {
 const ChaptersListChild = (props) => {
     const { _data } = props
 
-    var i=1;
+    var i = 1;
     console.log('_data: ', _data);
     const columns = React.useMemo(
         () => [
             {
                 Header: '#',
-                accessor:"index_no"
+                accessor: "index_no"
             },
             {
                 Header: ' DigiCard Title',
@@ -186,125 +184,125 @@ const ChaptersListChild = (props) => {
 
     // const data = React.useMemo(() => makeData(80), []);
     const [digiCardData, setDigiCardData] = useState([]);
-  const [reloadAllData, setReloadAllData] = useState('Fetched');
-  const [loader, showLoader, hideLoader] = useFullPageLoader();
+    const [reloadAllData, setReloadAllData] = useState('Fetched');
+    const [loader, showLoader, hideLoader] = useFullPageLoader();
 
     // console.log('data: ', data)
 
     let history = useHistory();
 
     function deleteChapter(chapter_id, chapter_title) {
-      console.log("chapter_id", chapter_id);
-      var data = {
-        "chapter_id": chapter_id,
-        "chapter_status":"Archived"
-      }
-  
-      const sweetConfirmHandler = () => {
-        const MySwal = withReactContent(Swal);
-        MySwal.fire({
-          title: 'Are you sure?',
-          text: 'Confirm deleting ' + chapter_title + ' Chapter',
-          type: 'warning',
-          showCloseButton: true,
-          showCancelButton: true
-        }).then((willDelete) => {
-          if (willDelete.value) {
-            axios
-              .post(dynamicUrl.toggleChapterStatus, { data: data }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
-              .then((response) => {
-                if (response.Error) {
-                  hideLoader();
-                  sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
+        console.log("chapter_id", chapter_id);
+        var data = {
+            "chapter_id": chapter_id,
+            "chapter_status": "Archived"
+        }
+
+        const sweetConfirmHandler = () => {
+            const MySwal = withReactContent(Swal);
+            MySwal.fire({
+                title: 'Are you sure?',
+                text: 'Confirm deleting ' + chapter_title + ' Chapter',
+                type: 'warning',
+                showCloseButton: true,
+                showCancelButton: true
+            }).then((willDelete) => {
+                if (willDelete.value) {
+                    axios
+                        .post(dynamicUrl.toggleChapterStatus, { data: data }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
+                        .then((response) => {
+                            if (response.Error) {
+                                hideLoader();
+                                sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
+                            } else {
+                                setReloadAllData("Deleted");
+                                return MySwal.fire('', 'The ' + chapter_title + ' is Deleted', 'success');
+                                // window. location. reload() 
+                                //  MySwal.fire('', MESSAGES.INFO.CLIENT_DELETED, 'success');
+
+
+
+                            }
+                        })
+                        .catch((error) => {
+                            if (error.response) {
+                                // Request made and server responded
+                                console.log(error.response.data);
+                                hideLoader();
+                                sweetConfirmHandler({ title: 'Error', type: 'error', text: error.response.data });
+                            } else if (error.request) {
+                                // The request was made but no response was received
+                                console.log(error.request);
+                                hideLoader();
+                            } else {
+                                // Something happened in setting up the request that triggered an Error
+                                console.log('Error', error.message);
+                                hideLoader();
+                            }
+                        });
                 } else {
-                    setReloadAllData("Deleted");
-                    return MySwal.fire('', 'The ' + chapter_title + ' is Deleted', 'success');
-                    // window. location. reload() 
-                  //  MySwal.fire('', MESSAGES.INFO.CLIENT_DELETED, 'success');
-                  
-                 
-                  
+                    return MySwal.fire('', 'Chapter is safe!', 'error');
                 }
-              })
-              .catch((error) => {
-                if (error.response) {
-                  // Request made and server responded
-                  console.log(error.response.data);
-                  hideLoader();
-                  sweetConfirmHandler({ title: 'Error', type: 'error', text: error.response.data });
-                } else if (error.request) {
-                  // The request was made but no response was received
-                  console.log(error.request);
-                  hideLoader();
-                } else {
-                  // Something happened in setting up the request that triggered an Error
-                  console.log('Error', error.message);
-                  hideLoader();
-                }
-              });
-          } else {
-            return MySwal.fire('', 'Chapter is safe!', 'error');
-          }
-        });
-      };
-      sweetConfirmHandler();
-  
+            });
+        };
+        sweetConfirmHandler();
+
     }
 
 
-    function restoreChapter(chapter_id,chapter_title){
+    function restoreChapter(chapter_id, chapter_title) {
         console.log("chapter_id", chapter_id);
         var data = {
-          "chapter_id": chapter_id,
-          "chapter_status":'Active'
+            "chapter_id": chapter_id,
+            "chapter_status": 'Active'
         }
-    
+
         const sweetConfirmHandler = () => {
-          const MySwal = withReactContent(Swal);
-          MySwal.fire({
-            title: 'Are you sure?',
-            text: 'Confirm to Restore ' + chapter_title + ' Chapter',
-            type: 'warning',
-            showCloseButton: true,
-            showCancelButton: true
-          }).then((willDelete) => {
-            if (willDelete.value) {
-              axios
-                .post(dynamicUrl.toggleChapterStatus, { data: data }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
-                .then((response) => {
-                  if (response.Error) {
-                    hideLoader();
-                    sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
-                  } else {
-                      setReloadAllData("Deleted");
-                      return MySwal.fire('', 'The ' + chapter_title + ' is Restored', 'success');
-                      // window. location. reload() 
-                    //  MySwal.fire('', MESSAGES.INFO.CLIENT_DELETED, 'success');
-                    
-                   
-                    
-                  }
-                })
-                .catch((error) => {
-                  if (error.response) {
-                    // Request made and server responded
-                    console.log(error.response.data);
-                    hideLoader();
-                    sweetConfirmHandler({ title: 'Error', type: 'error', text: error.response.data });
-                  } else if (error.request) {
-                    // The request was made but no response was received
-                    console.log(error.request);
-                    hideLoader();
-                  } else {
-                    // Something happened in setting up the request that triggered an Error
-                    console.log('Error', error.message);
-                    hideLoader();
-                  }
-                });
-            } else {
-              return MySwal.fire('', 'Chapter is Restore!', 'error');
-            }
-          });
+            const MySwal = withReactContent(Swal);
+            MySwal.fire({
+                title: 'Are you sure?',
+                text: 'Confirm to Restore ' + chapter_title + ' Chapter',
+                type: 'warning',
+                showCloseButton: true,
+                showCancelButton: true
+            }).then((willDelete) => {
+                if (willDelete.value) {
+                    axios
+                        .post(dynamicUrl.toggleChapterStatus, { data: data }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
+                        .then((response) => {
+                            if (response.Error) {
+                                hideLoader();
+                                sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
+                            } else {
+                                setReloadAllData("Deleted");
+                                return MySwal.fire('', 'The ' + chapter_title + ' is Restored', 'success');
+                                // window. location. reload() 
+                                //  MySwal.fire('', MESSAGES.INFO.CLIENT_DELETED, 'success');
+
+
+
+                            }
+                        })
+                        .catch((error) => {
+                            if (error.response) {
+                                // Request made and server responded
+                                console.log(error.response.data);
+                                hideLoader();
+                                sweetConfirmHandler({ title: 'Error', type: 'error', text: error.response.data });
+                            } else if (error.request) {
+                                // The request was made but no response was received
+                                console.log(error.request);
+                                hideLoader();
+                            } else {
+                                // Something happened in setting up the request that triggered an Error
+                                console.log('Error', error.message);
+                                hideLoader();
+                            }
+                        });
+                } else {
+                    return MySwal.fire('', 'Chapter is Restore!', 'error');
+                }
+            });
         };
         sweetConfirmHandler();
     }
@@ -316,7 +314,7 @@ const ChaptersListChild = (props) => {
         console.log('resultData', resultData);
         let finalDataArray = [];
         for (let index = 0; index < resultData.length; index++) {
-            if(resultData[index].chapter_status ==='Active'){
+            if (resultData[index].chapter_status === 'Active') {
                 resultData[index].index_no = index + 1;
                 resultData[index]['actions'] = (
                     <>
@@ -333,7 +331,7 @@ const ChaptersListChild = (props) => {
                             <Button
                                 size="sm"
                                 className="btn btn-icon btn-rounded btn-danger"
-                                onClick={(e) => deleteChapter(resultData[index].chapter_id , resultData[index].chapter_title)}
+                                onClick={(e) => deleteChapter(resultData[index].chapter_id, resultData[index].chapter_title)}
                             >
                                 <i className="feather icon-trash-2 " /> &nbsp; Delete
                             </Button>
@@ -341,7 +339,7 @@ const ChaptersListChild = (props) => {
                         </>
                     </>
                 );
-            }else{
+            } else {
                 resultData[index].index_no = index + 1;
                 resultData[index]['actions'] = (
                     <>
@@ -349,7 +347,7 @@ const ChaptersListChild = (props) => {
                             <Button
                                 size="sm"
                                 className="btn btn-icon btn-rounded btn-primary"
-                                onClick={(e) => restoreChapter(resultData[index].chapter_id ,resultData[index].chapter_title)}
+                                onClick={(e) => restoreChapter(resultData[index].chapter_id, resultData[index].chapter_title)}
                             >
                                 <i className="feather icon-edit" /> &nbsp; Restore
                             </Button>
@@ -358,7 +356,7 @@ const ChaptersListChild = (props) => {
                     </>
                 );
             }
-           
+
             finalDataArray.push(resultData[index]);
 
         }
@@ -370,11 +368,11 @@ const ChaptersListChild = (props) => {
         allChaptersList();
     }, [_data])
 
-    useEffect(()=>{
+    useEffect(() => {
 
-    },[reloadAllData])
+    }, [reloadAllData])
 
-    return  (
+    return (
         <React.Fragment>
             <Row>
                 <Col sm={12}>
