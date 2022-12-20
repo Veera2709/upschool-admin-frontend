@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Card, Col, Form, FormControl, FormLabel, Row } from 'react-bootstrap';
+import { Button, Card, Col, Form, FormControl, FormLabel, Row } from 'react-bootstrap';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 // import dynamicUrl from '../../../helper/dynamicUrl';
 import * as Yup from 'yup';
@@ -36,6 +36,32 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
         { id: 1, name: 'Topics' },
         { id: 2, name: 'Topics1' },
         { id: 3, name: 'Topics2' },
+    ]
+
+    const topicQuizTemplate = { level: "", duration: "" }
+    const [topicQuiz, setTopicQuiz] = useState([topicQuizTemplate])
+    const addTopic = () => {
+        setTopicQuiz([...topicQuiz, topicQuizTemplate])
+    }
+    const onDynamicFormChange = (e, index, fieldType) => {
+        console.log("e", e)
+        console.log("Field", fieldType)
+        const updatedTopics = topicQuiz.map((topic, i) =>
+            index == i
+                ? Object.assign(topic, { [e.target.name]: e.target.value })
+                : topic
+        )
+        setTopicQuiz(updatedTopics)
+    }
+    const removeTopic = (index) => {
+        const filteredProjects = [...topicQuiz]
+        filteredProjects.splice(index, 1)
+        setTopicQuiz(filteredProjects)
+    }
+    const levels = [
+        { label: 'Level-1', value: 'Level-1' },
+        { label: 'Level-2', value: 'Level-2' },
+        { label: 'Level-3', value: 'Level-3' },
     ]
 
     useEffect(() => {
@@ -96,7 +122,7 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
 
                                 <Col sm={6}>
                                     <Form.Group>
-                                        <FormLabel className="floating-label" htmlFor="topic_digi_card_id"><small className="text-danger">* </small>Topic Digi Card Id</FormLabel>
+                                        <FormLabel className="floating-label" htmlFor="topic_digi_card_id"><small className="text-danger">* </small>Topic concept Id</FormLabel>
                                         <Multiselect
                                             options={topicDigiCardId}
                                             displayValue="name"
@@ -155,7 +181,39 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
                                     </Form.Group>
                                 </Col>
 
-                                <Col sm={6}>
+
+                                {topicQuiz.map((topic, index) => (
+                                    <div className='row ml-1 mb-2'>
+                                        <div className='col-md-4'>
+                                            <select className='form-control' name="level" id="level" onChange={(e) => onDynamicFormChange(e, index, 'level')} value={topic.level} >
+                                                {levels.map((ele, i) => {
+                                                    return <option id="level" keys={i} value={ele.value} >{ele.label}</option>
+                                                })}
+                                            </select>
+                                        </div>
+                                        <p></p>
+                                        <div className='col-md-4'>
+                                            <div className='row'>
+                                                <div className='col-md-6'>
+                                                    <Form.Control
+                                                        type='number'
+                                                        name='duration'
+                                                        value={topic.duration}
+                                                        onChange={(e) => onDynamicFormChange(e, index, 'duration')}
+                                                        autoComplete='off'
+                                                    />
+                                                </div>
+                                                <div className='col-md-6'>
+                                                    <Button variant='danger' onClick={() => removeTopic(index)}>Remove</Button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                                <p></p>
+                                <p className='ml-3' onClick={addTopic} style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer' }}>Add another topic quiz config</p>
+
+                                {/* <Col sm={6}>
                                     <Form.Group>
                                         <FormLabel className="floating-label" htmlFor="topic_quiz_config"><small className="text-danger">* </small>Related Topics</FormLabel>
                                         <FormControl
@@ -170,7 +228,16 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
                                         />
                                         {touched.topic_quiz_config && errors.topic_quiz_config && <small className="text-danger form-text">{errors.topic_quiz_config}</small>}
                                     </Form.Group>
-                                </Col>
+                                </Col>  */}
+
+
+                                <div class="row d-flex justify-content-end">
+                                    <div class="form-group fill">
+                                        <div class="center col-sm-12">
+                                            <button color="success" type="submit" class="btn-block btn btn-success btn-large">Submit</button>
+                                        </div>
+                                    </div>
+                                </div>
 
                             </Form>
                         )}

@@ -7,7 +7,6 @@ import Swal from 'sweetalert2';
 import { GlobalFilter } from './GlobalFilter';
 
 import { useTable, useSortBy, usePagination, useGlobalFilter } from 'react-table';
-// import makeData from '../../../data/schoolData';
 
 import AddSchoolForm from './AddSchoolForm';
 import dynamicUrl from '../../../../helper/dynamicUrls';
@@ -150,9 +149,7 @@ function Table({ columns, data, modalOpen }) {
 }
 
 const SchoolChild = (props) => {
-    const { _data, fetchSchoolData } = props
-    console.log('_data: ', _data);
-
+    const { _data, fetchSchoolData, inactive } = props
 
     const columns = React.useMemo(
         () => [
@@ -173,10 +170,6 @@ const SchoolChild = (props) => {
                 accessor: 'city'
             },
             {
-                Header: 'Subscription Active',
-                accessor: 'subscription_active'
-            },
-            {
                 Header: 'Options',
                 accessor: 'actions'
             }
@@ -184,16 +177,13 @@ const SchoolChild = (props) => {
         []
     );
 
-    // const data = React.useMemo(() => makeData(80), []);
     const [schoolData, setSchoolData] = useState([]);
-    // console.log('data: ', data)
-    const [isOpen, setIsOpen] = useState(false); 
+    const [isOpen, setIsOpen] = useState(false);
 
     const [isOpenEditSchool, setIsOpenEditSchool] = useState(false);
     const [isOpenSubscribeClass, setIsOpenSubscribeClass] = useState(false);
     const [editID, setEditID] = useState('');
     const [subscribeID, setSubscribeClass] = useState('');
-    const [toggle, setToggle] = useState(true);
 
     const handleDeleteSchool = (school_id) => {
         const MySwal = withReactContent(Swal);
@@ -290,6 +280,7 @@ const SchoolChild = (props) => {
         let resultData = _data && _data;
         let finalDataArray = [];
         for (let index = 0; index < resultData.length; index++) {
+            console.log('status: ', resultData[index]['school_status'])
             resultData[index]['school_avatar'] = <img className='img-fluid img-radius wid-50 circle-image' src={resultData[index].school_logoURL} alt="school_image" />
             resultData[index]['school_name'] = <p>{resultData[index].school_name}</p>
             resultData[index]['phone_number'] = <p>{resultData[index].school_contact_info.business_address.phone_no}</p>
@@ -297,20 +288,9 @@ const SchoolChild = (props) => {
             resultData[index]['subscription_active'] = <p>{resultData[index].subscription_active}</p>
             resultData[index]['actions'] = (
                 <>
-                    {/* <Button
-                              size="sm"
-                              className="btn btn-icon btn-rounded btn-primary"
-                          // onClick={(e) => history.push(`/admin-portal/admin-casedetails/${resultData[index].client_id}/all_cases`)}
-                          >
-                              <i className="feather icon-eye" /> &nbsp; View
-                          </Button>
-                          &nbsp; */}
-
-
                     <Button onClick={(e) => {
                         handleSubscribeClass(e, resultData[index].school_id);
                     }}
-
                         size="sm"
                         className="btn btn-icon btn-rounded btn-primary">
                         <i className="feather icon-plus" />
@@ -326,15 +306,13 @@ const SchoolChild = (props) => {
                         <i className="feather icon-edit" /> &nbsp; Edit
                     </Button>
                     &nbsp;
-                    <Button onClick={() => {
-                        handleDeleteSchool(resultData[index].school_id)
+                    {inactive === false ? null :
+                        <Button onClick={() => { handleDeleteSchool(resultData[index].school_id) }}
+                            size='sm' className="btn btn-icon btn-rounded btn-danger"
+                        >
+                            <i className="feather icon-delete" /> &nbsp; Delete
+                        </Button>}
 
-                    }}
-                        size='sm' className="btn btn-icon btn-rounded btn-danger"
-                    // onClick={(e) => saveClientIdDelete(e, responseData[index].client_id)}
-                    >
-                        <i className="feather icon-delete" /> &nbsp; Delete
-                    </Button>
                 </>
             );
             finalDataArray.push(resultData[index]);

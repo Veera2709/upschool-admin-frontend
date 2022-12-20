@@ -42,6 +42,14 @@ export const AddSchool = {
   ]
 }
 
+export const AddTopic = {
+  PrePostLearning: [
+    { label: 'Pre Learning', value: 'Pre Learning' },
+    { label: 'Post Learning', value: 'Post Learning ' },
+
+  ]
+}
+
 export const Common = {
   GSTRegex: /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/,
   max200Char: 'comment should contain maximum 200 characters!',

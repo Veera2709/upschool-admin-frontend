@@ -5,14 +5,13 @@ import useFullPageLoader from '../../../../helper/useFullPageLoader';
 // import dynamicUrl from '../../../helper/dynamicUrl';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
-import { areFilesInvalid, areFilesInvalidBulkUpload } from '../../../../util/utils';
+import { areFilesInvalid } from '../../../../util/utils';
 import * as Constants from '../../../../config/constant'
 import withReactContent from 'sweetalert2-react-content';
 import Swal from 'sweetalert2';
 import dynamicUrl from '../../../../helper/dynamicUrls';
 import { bgvAlerts } from '../../../common-ui-components/sow/bgv-api/bgvAlerts';
 
-// import { areFilesInvalid } from '../../../../util/utils';
 // import { bgvAlerts } from '../bgv-api/bgvAlerts';
 
 function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
@@ -80,6 +79,20 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
         _setRadio(!_radio);
         _radio === true ? setScbscription_active('No') : setScbscription_active('Yes');
     }
+
+
+    // const [schoolBoardState, setSchoolBoardState] = useState([]);
+    // const [schoolBoardCbse, setSchoolBoardCbse] = useState([]);
+    // const [schoolBoardIcse, setSchoolBoardIcse] = useState([]);
+    // const [schoolBoardCisce, setSchoolBoardCisce] = useState([]);
+    // const [schoolBoardNios, setSchoolBoardNios] = useState([]);
+    // const [schoolBoardIb, setSchoolBoardIb] = useState([]);
+
+    // const handleOnSelectItem = ((selectedBoardList, selectedBoardItem) => {
+    //     setSchoolBoardState(selectedList.map(selectedBoardList => selectedBoardList.id))
+    //     setSchoolBoardIb(selectedList.map(selectedBoardItem => selectedBoardItem.name))
+    // })
+    // const handleOnRemoveItem = (selectedList, selectedItem) => (selectedList.map(skillId => skillId.id))
 
     return (
         <>
@@ -151,7 +164,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                         }
                     }
 
-                    let imageFile = document.getElementById('excelFileUploadUrl').files[0];
+                    let imageFile = document.getElementById('school_logo').files[0];
 
                     let sendData = {
                         ImageFile: ''
@@ -162,8 +175,9 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
 
                         console.log('Submitting', sendData);
 
-                        if (areFilesInvalidBulkUpload([imageFile]) !== 0) {
-                            sweetAlertHandler(bgvAlerts.invalidFilesPresentBulkUpload);
+                        if (areFilesInvalid([imageFile]) !== 0) {
+                            setIsOpen(false);
+                            sweetAlertHandler({ title: 'Sorry', type: 'error', text: 'Invalid File!' });
                             hideLoader();
                         } else {
                             // console.log('formData: ', JSON.stringify(formData))
@@ -287,19 +301,6 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                             allFilesData.push(selectedFile);
                         }
                     });
-
-                    if (allFilesData.length === 0) {
-                        showLoader();
-                        console.log('formData: ', formData)
-                    } else {
-                        if (areFilesInvalid(allFilesData) !== 0) {
-                            sweetAlertHandler("Invalid File!");
-                            hideLoader();
-                        } else {
-                            showLoader();
-                            console.log('formData: ', formData)
-                        }
-                    }
                 }}
             >
                 {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
@@ -326,11 +327,29 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                                         )}
                                     </div>
 
+
+                                    {/* <Col sm={6}>
+                                        <Form.Group>
+                                            <FormLabel className="floating-label" htmlFor="pre_post"><small className="text-danger">* </small>Related Topics</FormLabel>
+                                            <Multiselect
+                                                options={topicDigiCardId}
+                                                displayValue="name"
+                                                selectionLimit="25"
+                                                onSelect={handleOnSelectItem}
+                                                onRemove={handleOnRemoveItem}
+                                            />
+                                            {touched.pre_post && errors.pre_post && <small className="text-danger form-text">{errors.pre_post}</small>}
+                                        </Form.Group>
+                                    </Col> */}
+
+
+
+                                    {/* 
                                     <div class="form-group fill">
                                         <label class="floating-label" for="school_board">
                                             <small class="text-danger">* </small>
                                             School Board</label>
-                                        <select
+                                           
                                             as='select'
                                             name="school_board"
                                             onChange={handleChange}
@@ -344,7 +363,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
 
                                             })}
                                         </select>
-                                    </div>
+                                    </div> */}
 
                                     <div class="form-group fill">
                                         <label class="floating-label" for="email">
@@ -368,7 +387,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                                 </div>
                             </div>
                             <div className="col-md-6">
-                                <div class="form-group fill"><label class="floating-label" for="slaAggrement">School Logo</label>
+                                <div class="form-group fill"><label class="floating-label" for="school_logo">School Logo</label>
                                     <input
                                         class="form-control"
                                         name="school_logo"

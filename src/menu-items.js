@@ -321,8 +321,23 @@ const menuItems = {
           title: 'School',
           icon: 'feather icon-book',
           type: 'item',
-          url: '/admin-portal/school'
+          url: '/admin-portal/school',
+          children: [
+            {
+              id: 'sch-active-achool',
+              title: 'Active',
+              type: 'item',
+              url: '/admin-portal/school/ActiveSchools'
+            },
+            {
+              id: 'sch-archive-achool',
+              title: 'Archieve',
+              type: 'item',
+              url: '/admin-portal/school/ArchiveSchools'
+            },
+          ]
         },
+
         {
           id: 'users',
           title: 'Users',

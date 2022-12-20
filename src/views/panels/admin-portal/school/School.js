@@ -19,6 +19,7 @@ const School = () => {
     const [_data, _setData] = useState([]);
     const [subscriptionActive, setSubscriptionActive] = useState([]);
     const [subscriptionInActive, setSubscriptionInActive] = useState([]);
+    const [inactive, setInactive] = useState(false);
 
     const fetchSchoolData = () => {
         axios.post(dynamicUrl.fetchAllSchool, {}, {
@@ -42,9 +43,11 @@ const School = () => {
     const handleYesClick = (key) => {
         if (key === '1') {
             _setData(subscriptionActive)
+            setInactive(false);
         }
         else {
             _setData(subscriptionInActive)
+            setInactive(true);
         }
     }
 
@@ -60,7 +63,7 @@ const School = () => {
                     <SchoolChild _data={_data} fetchSchoolData={fetchSchoolData} />
                 </Tab>
                 <Tab eventKey={2} title="Subscription Inactive">
-                    <SchoolChild _data={_data} fetchSchoolData={fetchSchoolData} />
+                    <SchoolChild _data={_data} fetchSchoolData={fetchSchoolData} inactive={inactive} />
                 </Tab>
             </Tabs>
         </div>
