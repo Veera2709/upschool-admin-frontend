@@ -10,13 +10,13 @@ import Tabs from 'react-bootstrap/Tabs';
 
 const CaptersList = () => {
     const [_data, _setData] = useState([]);
-    const [subscriptionActive, setSubscriptionActive] = useState([]);
-    const [subscriptionInActive, setSubscriptionInActive] = useState([]);
+    const [chapterActive, setChapterActive] = useState([]);
+    const [chapterArchived, setChapterArchived] = useState([]);
 
-    console.log("subscriptionActive -- ", subscriptionActive);
-    console.log("subscriptionInActive -- ", subscriptionInActive);
+    console.log("chapterActive -- ", chapterActive);
+    console.log("chapterArchived -- ", chapterArchived);
 
-    const fetchDigcardData = () => {
+    const fetchChapterData = () => {
         axios.post(dynamicUrl.fetchAllChapters, {}, {
             headers: { Authorization: sessionStorage.getItem('user_jwt') }
         })
@@ -24,8 +24,8 @@ const CaptersList = () => {
                 console.log(response);
                 console.log(response.data.Items);
                 let resultData = response.data.Items;
-                setSubscriptionActive(resultData && resultData.filter(e => e.chapter_status === 'Active'));
-                setSubscriptionInActive(resultData && resultData.filter(e => e.chapter_status === 'Archived'));
+                setChapterActive(resultData && resultData.filter(e => e.chapter_status === 'Active'));
+                setChapterArchived(resultData && resultData.filter(e => e.chapter_status === 'Archived'));
                 _setData(resultData && resultData.filter(e => e.chapter_status === 'Active'))
 
             })
@@ -35,15 +35,15 @@ const CaptersList = () => {
     }
 
     useEffect(() => {
-        fetchDigcardData();
+        fetchChapterData();
     }, []);
 
     const handleYesClick = (key) => {
         if (key === '1') {
-            _setData(subscriptionActive)
+            _setData(chapterActive)
         }
         else {
-            _setData(subscriptionInActive)
+            _setData(chapterArchived)
         }
     }
 

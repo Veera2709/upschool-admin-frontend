@@ -362,7 +362,7 @@ const menuItems = {
           id: 'chapters',
           title: 'Chapters',
           type: 'item',
-          icon: 'feather icon-package',
+          icon: 'fas fa-book',
           url: '/admin-portal/chapters/CaptersList',
         },
         {

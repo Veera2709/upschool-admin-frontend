@@ -10,11 +10,11 @@ import Tabs from 'react-bootstrap/Tabs';
 
 const DigiCard = () => {
     const [_data, _setData] = useState([]);
-    const [subscriptionActive, setSubscriptionActive] = useState([]);
-    const [subscriptionInActive, setSubscriptionInActive] = useState([]);
+    const [digiCardActive, setDigiCardActive] = useState([]);
+    const [digiCardArchived, setDigiCardArchived] = useState([]);
 
-    console.log("subscriptionActive -- ", subscriptionActive);
-    console.log("subscriptionInActive -- ", subscriptionInActive);
+    console.log("digiCardActive -- ", digiCardActive);
+    console.log("digiCardArchived -- ", digiCardArchived);
 
     const fetchDigcardData = () => {
         axios.post(dynamicUrl.fetchAllDigiCards, {}, {
@@ -23,8 +23,8 @@ const DigiCard = () => {
             .then((response) => {
                 console.log(response.data.Items);
                 let resultData = response.data.Items;
-                setSubscriptionActive(resultData && resultData.filter(e => e.digicard_status === 'Active'));
-                setSubscriptionInActive(resultData && resultData.filter(e => e.digicard_status === 'Archived'));
+                setDigiCardActive(resultData && resultData.filter(e => e.digicard_status === 'Active'));
+                setDigiCardArchived(resultData && resultData.filter(e => e.digicard_status === 'Archived'));
                 _setData(resultData && resultData.filter(e => e.digicard_status === 'Active'))
 
               
@@ -41,10 +41,10 @@ const DigiCard = () => {
 
     const handleYesClick = (key) => {
         if (key === '1') {
-            _setData(subscriptionActive)
+            _setData(digiCardActive)
         }
         else {
-            _setData(subscriptionInActive)
+            _setData(digiCardArchived)
         }
     }
 
