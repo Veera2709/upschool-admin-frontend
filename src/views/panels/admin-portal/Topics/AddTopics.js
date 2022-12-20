@@ -37,7 +37,6 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
         { id: 2, name: 'Topics1' },
         { id: 3, name: 'Topics2' },
     ]
-
     const topicQuizTemplate = { level: "", duration: "" }
     const [topicQuiz, setTopicQuiz] = useState([topicQuizTemplate])
     const addTopic = () => {

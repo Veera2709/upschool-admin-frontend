@@ -599,7 +599,6 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                                                 </Col>
                                             </Row>
 
-
                                             <Row className="my-3">
                                                 <Col sm={5}>
                                                     <label>Address Line 2</label>

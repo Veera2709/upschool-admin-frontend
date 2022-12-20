@@ -21,9 +21,6 @@ import { areFilesInvalid } from '../../../../util/utils';
 import { isEmptyObject } from '../../../../util/utils';
 import Select from 'react-select';
 
-
-
-
 import { Link, useHistory, useParams } from 'react-router-dom';
 
 import { SessionStorage } from '../../../../util/SessionStorage';
@@ -235,7 +232,7 @@ const EditDigiCard = (
 
     }, []);
 
-    return isEmptyObject(individualDigiCardData) || digiCardTitles=='' ? null : (
+    return isEmptyObject(individualDigiCardData) || digiCardTitles == '' ? null : (
         <div>
             <Card>
                 <Card.Body>
@@ -265,7 +262,7 @@ const EditDigiCard = (
                             //     .trim()
                             //     .nullable(true, Constants.AddDigiCard.DigiCardFileNotNull)
                             //     .required(Constants.AddDigiCard.DigiCardfileRequired),
-                          
+
                         })}
 
 
@@ -484,7 +481,7 @@ const EditDigiCard = (
                                                 <small className="text-danger form-text">{errors.digicard_voice_note}</small>
                                             )}
                                         </div>
-                                       
+
                                         <div className='ReactTags'>
                                             <label className="floating-label" htmlFor="digicard_image">
                                                 <small className="text-danger">* </small>KeyWords

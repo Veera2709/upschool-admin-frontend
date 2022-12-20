@@ -16,6 +16,7 @@ import CloseButton from 'react-bootstrap/CloseButton';
 import { isEmptyArray } from '../../../../util/utils';
 import Select from 'react-select';
 
+
 const SubscribeClass = ({ className, rest, id, setIsOpenSubscribeClass }) => {
 
     const [errorMessage, setErrorMessage] = React.useState("");

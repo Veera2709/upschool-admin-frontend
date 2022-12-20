@@ -131,6 +131,7 @@ const AddDigiCard = (
     });
   };
 
+
   const previewImage = (e) => {
     setImgFile(URL.createObjectURL(e.target.files[0]));
   }

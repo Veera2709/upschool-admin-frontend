@@ -76,7 +76,6 @@ const ListUsers = () => {
     }
 
     useEffect(() => {
-
         console.log(pageLocation);
 
         if (pageLocation) {

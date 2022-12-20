@@ -21,10 +21,6 @@ import Select from 'react-select';
 import { isEmptyArray } from '../../../../util/utils';
 
 
-
-
-
-
 // import { Button,Container,Row ,Col  } from 'react-bootstrap';
 
 const EditChapter = (
@@ -333,7 +329,7 @@ const EditChapter = (
                                                 classNamePrefix="select"
                                                 isMulti
                                                 closeMenuOnSelect={false}
-                                                onChange={(e)=>{PostlearningOption(e);setIsShown(false)}}
+                                                onChange={(e) => { PostlearningOption(e); setIsShown(false) }}
                                                 options={digitalTitles}
                                                 placeholder="Which is your favourite colour?"
                                             />
