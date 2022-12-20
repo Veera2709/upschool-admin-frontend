@@ -68,10 +68,13 @@ const MESSAGES = {
   INFO: {
     NO_CASES_MESSAGE: 'There are no cases!',
     NOT_ABLE_TO_RECOVER: 'Once deleted, you will not be able to recover this data!',
+    ABLE_TO_RECOVER: 'You can anyway restore your data after deleting!',
+    ABLE_TO_DELETE: 'You can anyway delete your data after restoring!',
     DATA_DELETED: 'Your data has been deleted!',
     USER_DELETED: 'The user has been deleted!',
     CLIENT_DELETED: 'The client has been deleted!',
     DATA_SAFE: 'Your data is safe!',
+    FAILED_TO_RESTORE: 'Failed to restore!',
     APPROVE_DENY_REASON: 'Reason to '
   },
   VALIDATION: {
@@ -87,7 +90,8 @@ const MESSAGES = {
     UploadMandatoryFiles: 'Please upload aadhar and pan card',
     NoFilesPresent: 'Please upload the mandatory evidences!',
     NoFilesPresentBulkUpload: 'Please upload file!',
-    NoFilesPresentIdentification: 'Please upload the mandatory aadhar and pan evidence!'
+    NoFilesPresentIdentification: 'Please upload the mandatory aadhar and pan evidence!',
+    PleaseCheckYourEmailForErrorRecords: 'Wrong data inserted, please check your mail for more details!'
   }
 };
 

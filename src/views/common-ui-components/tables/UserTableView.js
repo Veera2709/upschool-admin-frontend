@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import chroma from 'chroma-js';
-import { Link, useHistory, useParams } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Row, Col, Card, Pagination, Button, Modal, Alert } from 'react-bootstrap';
 import BTable from 'react-bootstrap/Table';
 import * as Yup from 'yup';
@@ -179,7 +178,7 @@ function Table({ columns, data, modalOpen }) {
 
 const UserData = (props) => {
 
-  const { _data } = props;
+  const { _data, fetchAllUsersData, pageURL } = props;
 
   const columns = React.useMemo(
     () => [
@@ -196,8 +195,8 @@ const UserData = (props) => {
         accessor: 'user_lastname'
       },
       {
-        Header: 'Role',
-        accessor: 'user_role'
+        Header: 'DOB',
+        accessor: 'user_dob.dd_mm_yyyy'
       },
       {
         Header: 'Email',
@@ -233,6 +232,8 @@ const UserData = (props) => {
 
   const [isLoading, setIsLoading] = useState(false);
   const { user_id } = decodeJWT(sessionStorage.getItem('user_jwt'));
+  const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
+  const [selectClassErr, setSelectClassErr] = useState(false);
 
   const classNameRef = useRef('');
   const schoolNameRef = useRef('');
@@ -249,7 +250,7 @@ const UserData = (props) => {
     });
   };
 
-  const sweetConfirmHandler = (alert, user_id, user_role) => {
+  const sweetConfirmHandler = (alert, user_id, user_role, updateStatus) => {
     MySwal.fire({
       title: alert.title,
       text: alert.text,
@@ -259,9 +260,15 @@ const UserData = (props) => {
     }).then((willDelete) => {
       if (willDelete.value) {
         showLoader();
-        deleteUser(user_id, user_role);
+        deleteUser(user_id, user_role, updateStatus);
       } else {
-        return MySwal.fire('', MESSAGES.INFO.DATA_SAFE, 'error');
+
+        const returnValue = pageLocation === 'active-users' ? (
+          MySwal.fire('', MESSAGES.INFO.DATA_SAFE, 'success')
+        ) : (
+          MySwal.fire('', MESSAGES.INFO.FAILED_TO_RESTORE, 'error')
+        )
+        return returnValue;
       }
     });
   };
@@ -272,9 +279,15 @@ const UserData = (props) => {
     showLoader();
   };
 
-  const saveUserIdDelete = (e, user_id, user_role) => {
+  const saveUserIdDelete = (e, user_id, user_role, updateStatus) => {
     e.preventDefault();
-    sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: MESSAGES.INFO.NOT_ABLE_TO_RECOVER }, user_id, user_role);
+
+    pageLocation === 'active-users' ? (
+      sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: MESSAGES.INFO.ABLE_TO_RECOVER }, user_id, user_role, updateStatus)
+    ) : (
+      sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: MESSAGES.INFO.ABLE_TO_DELETE }, user_id, user_role, updateStatus)
+    )
+
   };
 
   const fetchUserData = () => {
@@ -330,17 +343,38 @@ const UserData = (props) => {
 
       responseData[index]['action'] = (
         <>
-          <Button size="sm" className="btn btn-icon btn-rounded btn-info" onClick={(e) => saveUserId(e, userId, responseData[index].user_role)}>
-            <i className="feather icon-edit" /> &nbsp; Edit
-          </Button>{' '}
-          &nbsp;
-          <Button
-            size="sm"
-            className="btn btn-icon btn-rounded btn-danger"
-            onClick={(e) => saveUserIdDelete(e, userId, responseData[index].user_role)}
-          >
-            <i className="feather icon-delete" /> &nbsp; Delete
-          </Button>
+          {console.log(pageLocation)}
+          {pageLocation === 'active-users' ? (
+
+            <>
+              <Button size="sm" className="btn btn-icon btn-rounded btn-info" onClick={(e) => saveUserId(e, userId, responseData[index].user_role)}>
+                <i className="feather icon-edit" /> &nbsp; Edit
+              </Button>{' '}
+              &nbsp;
+              <Button
+                size="sm"
+                className="btn btn-icon btn-rounded btn-danger"
+                onClick={(e) => saveUserIdDelete(e, userId, responseData[index].user_role, 'Archived')}
+              >
+                <i className="feather icon-trash-2" /> &nbsp;Delete
+              </Button>
+            </>
+
+          ) : (
+
+            <>
+
+              <Button
+                size="sm"
+                className="btn btn-icon btn-rounded btn-primary"
+                onClick={(e) => saveUserIdDelete(e, userId, responseData[index].user_role, 'Active')}
+              >
+                <i className="feather icon-plus" /> &nbsp;Restore
+              </Button>
+            </>
+
+          )}
+
         </>
       );
       finalDataArray.push(responseData[index]);
@@ -485,30 +519,41 @@ const UserData = (props) => {
 
   }
 
-  const deleteUser = (user_id, user_role) => {
+  const deleteUser = (user_id, user_role, updateStatus) => {
     const values = {
       user_id: user_id,
-      user_role: user_role
+      user_role: user_role,
+      user_status: updateStatus
     };
 
     console.log(values);
 
     axios
-      .post(dynamicUrl.deleteUsersByRole,
+      .post(dynamicUrl.toggleUserStatus,
         {
           data: {
             user_id: user_id,
-            user_role: user_role
+            user_role: user_role,
+            user_status: updateStatus
           }
         }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
-      .then((response) => {
+      .then(async (response) => {
         if (response.Error) {
           hideLoader();
           sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
+          const responseData = await fetchAllUsersData(pageURL);
+          if (responseData.status === 200) {
+            fetchUserData();
+          }
         } else {
           MySwal.fire('', MESSAGES.INFO.USER_DELETED, 'success');
           hideLoader();
-          fetchUserData();
+          const responseData = await fetchAllUsersData(pageURL);
+
+          console.log(responseData)
+          if (responseData.status === 200) {
+            fetchUserData();
+          }
         }
       })
       .catch((error) => {
@@ -539,17 +584,26 @@ const UserData = (props) => {
 
     axios
       .post(dynamicUrl.updateUsersByRole, { data }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
-      .then((response) => {
+      .then(async (response) => {
+
         console.log({ response });
         if (response.Error) {
           hideLoader();
           setIsEditModalOpen(false);
           sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.UpdatingUser });
+
+          const responseData = await fetchAllUsersData(pageURL);
+          if (responseData.status === 200) {
+            fetchUserData();
+          }
         } else {
           hideLoader();
           setIsEditModalOpen(false);
           sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.UpdatingUser });
-          fetchUserData();
+          const responseData = await fetchAllUsersData(pageURL);
+          if (responseData.status === 200) {
+            fetchUserData();
+          }
         }
       })
       .catch((error) => {
@@ -570,6 +624,8 @@ const UserData = (props) => {
         }
       });
   };
+
+
 
   useEffect(() => {
     fetchUserData();
@@ -604,11 +660,7 @@ const UserData = (props) => {
                     <Card.Title as="h5">User List</Card.Title>
                   </Card.Header>
                   <Card.Body>
-                    {userData.length > 0 ? (
-                      <Table columns={columns} data={userData} modalOpen={openHandler} />
-                    ) : (
-                      <Table columns={columns} data={userData} modalOpen={openHandler} />
-                    )}
+                    <Table columns={columns} data={userData} modalOpen={openHandler} />
                   </Card.Body>
                 </Card>
 
@@ -649,26 +701,37 @@ const UserData = (props) => {
 
                   const selectedSchoolID = schoolName_ID.find((e) => e.school_name == schoolNameRef.current.value);
 
+                  console.log(classNameRef.current.value);
+
                   if (values.userRole === 'Student') {
 
-                    const selectedClassID = isEmptyArray(className_ID) ? "N.A." : (
-                      className_ID.find((e) => e.client_class_name == classNameRef.current.value).client_class_id
-                    )
+                    if (classNameRef.current.value === 'Select Class') {
 
-                    data = {
+                      setSelectClassErr(true);
 
-                      student_id: _userID,
-                      class_id: selectedClassID,
-                      school_id: selectedSchoolID.school_id,
-                      section_id: values.section,
-                      user_dob: values.user_dob,
-                      user_firstname: values.firstName,
-                      user_lastname: values.lastName,
-                      user_email: values.userEmail,
-                      user_phone_no: values.phoneNumber,
-                      user_role: values.userRole
+                    } else {
 
-                    };
+                      const selectedClassID = isEmptyArray(className_ID) ? "N.A." : (
+
+                        className_ID.find((e) => e.client_class_name == classNameRef.current.value).client_class_id
+                      )
+
+                      data = {
+
+                        student_id: _userID,
+                        class_id: selectedClassID,
+                        school_id: selectedSchoolID.school_id,
+                        section_id: values.section,
+                        user_dob: values.user_dob,
+                        user_firstname: values.firstName,
+                        user_lastname: values.lastName,
+                        user_email: values.userEmail,
+                        user_phone_no: values.phoneNumber,
+                        user_role: values.userRole
+
+                      };
+
+                    }
 
                   } else if (values.userRole === 'Teacher') {
 
@@ -823,7 +886,9 @@ const UserData = (props) => {
                                     error={touched.class && errors.class}
                                     name="class"
                                     onBlur={handleBlur}
-                                    onChange={handleChange}
+                                    onChange={() => {
+                                      setSelectClassErr(false)
+                                    }}
                                     type="text"
                                     ref={classNameRef}
                                     // value={values.class}
@@ -847,6 +912,11 @@ const UserData = (props) => {
                                   </select>
                                   {touched.class && errors.class && (
                                     <small className="text-danger form-text">{errors.class}</small>
+                                  )}
+                                  {selectClassErr && (
+
+                                    <small className="text-danger form-text">Please select a class</small>
+
                                   )}
                                 </div>
                               </Col>
