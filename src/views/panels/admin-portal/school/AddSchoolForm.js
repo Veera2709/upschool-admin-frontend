@@ -345,12 +345,14 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
 
 
 
-                                    {/* 
+
                                     <div class="form-group fill">
                                         <label class="floating-label" for="school_board">
                                             <small class="text-danger">* </small>
                                             School Board</label>
-                                           
+
+
+                                        <select
                                             as='select'
                                             name="school_board"
                                             onChange={handleChange}
@@ -364,7 +366,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
 
                                             })}
                                         </select>
-                                    </div> */}
+                                    </div>
 
                                     <div class="form-group fill">
                                         <label class="floating-label" for="email">
