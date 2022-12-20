@@ -33,6 +33,9 @@ const MESSAGES = {
     AddingDigiCard: 'Added DigiCard Successfully',
     EditDigiCard: 'DigiCard Updated Successfully',
 
+    AddingChapter: 'Added Chapter Successfully',
+
+
 
     PleaseCheckYourEmailForTheOTP: 'please check your mail for the otp!',
     RegisteredSuccessfully: 'registered successfully!',

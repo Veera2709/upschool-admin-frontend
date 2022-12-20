@@ -317,6 +317,13 @@ const menuItems = {
         //   ]
         // },
         {
+          id: 'main-dashboard',
+          title: 'Dashboard',
+          icon: 'feather icon-home',
+          type: 'item',
+          url: '/admin-portal/admin-dashboard'
+        },
+        {
           id: 'sch-addSchool',
           title: 'School',
           icon: 'feather icon-book',
@@ -357,6 +364,13 @@ const menuItems = {
           //     url: '/admin-portal/editTopic/:topic_id'
           //   }
           // ]
+        },
+        {
+          id: 'chapters',
+          title: 'Chapters',
+          type: 'item',
+          icon: 'fas fa-book',
+          url: '/admin-portal/chapters/CaptersList',
         },
         {
           id: 'sis',
