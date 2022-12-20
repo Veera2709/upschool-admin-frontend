@@ -12,6 +12,7 @@ const CaptersList = () => {
     const [_data, _setData] = useState([]);
     const [chapterActive, setChapterActive] = useState([]);
     const [chapterArchived, setChapterArchived] = useState([]);
+    
 
     console.log("chapterActive -- ", chapterActive);
     console.log("chapterArchived -- ", chapterArchived);

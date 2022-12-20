@@ -100,7 +100,7 @@ const EditDigiCard = (
 
 
     const [individualDigiCardData, setIndividualDigiCardData] = useState([]);
-    console.log('individualDigiCardData', individualDigiCardData);
+    console.log('individualDigiCardData initial', individualDigiCardData);
     console.log("defaultOptions", defaultOptions);
 
     const { digi_card_id } = useParams();
@@ -149,7 +149,7 @@ const EditDigiCard = (
 
 
                 resultData.forEach((item, index) => {
-                    item.digicard_status === 'Active' ? colourOptions.push({ value: item.digi_card_title, label: item.digi_card_title ,digi_card_id:item.digi_card_id}) : colourOptions.push({ value: item.digi_card_title, label: item.digi_card_title,digi_card_id:item.digi_card_id, isDisabled: true })
+                    item.digicard_status === 'Active' ? colourOptions.push({ value: item.digi_card_title, label: item.digi_card_title, digi_card_id: item.digi_card_id }) : colourOptions.push({ value: item.digi_card_title, label: item.digi_card_title, digi_card_id: item.digi_card_id, isDisabled: true })
                     // console.log("item",item)
                 }
                 );
@@ -199,11 +199,11 @@ const EditDigiCard = (
                     setArticleData(individual_client_data.digi_card_content)
                     setArticleDataTtitle(individual_client_data.digi_card_excerpt)
                     setTags(individual_client_data.digi_card_keywords)
-                    setDefaultOptions(individual_client_data.related_digi_cards)
+                    setDefaultOptions(individual_client_data.related_digi_cards === undefined ? {}:individual_client_data.related_digi_cards)
                     selectedOption(individual_client_data.related_digi_cards)
                     console.log("defaultOptions", individual_client_data.related_digi_cards);
 
-                    console.log('individualDigiCardData', individualDigiCardData);
+                    console.log('individualDigiCardData after API', individualDigiCardData);
 
                 } else {
                     console.log('else res');
@@ -235,7 +235,9 @@ const EditDigiCard = (
 
     }, []);
 
-    return isEmptyObject(individualDigiCardData) || digiCardTitles=='' || (individualDigiCardData.related_digi_cards ==='' ? "" : defaultOptions ==='')? null : (
+
+
+    return isEmptyObject(individualDigiCardData) || digiCardTitles === '' ? null : (
         <div>
             <Card>
                 <Card.Body>
@@ -246,7 +248,7 @@ const EditDigiCard = (
                             digicardtitle: individualDigiCardData.digi_card_title,
                             digicard_image: '',
                             digicard_voice_note: '',
-                            digi_card_keywords: tags 
+                            digi_card_keywords: tags
                         }}
                         validationSchema={Yup.object().shape({
                             // digicardname: Yup.string()
@@ -265,7 +267,7 @@ const EditDigiCard = (
                             //     .trim()
                             //     .nullable(true, Constants.AddDigiCard.DigiCardFileNotNull)
                             //     .required(Constants.AddDigiCard.DigiCardfileRequired),
-                          
+
                         })}
 
 
@@ -484,7 +486,7 @@ const EditDigiCard = (
                                                 <small className="text-danger form-text">{errors.digicard_voice_note}</small>
                                             )}
                                         </div>
-                                       
+
                                         <div className='ReactTags'>
                                             <label className="floating-label" htmlFor="digicard_image">
                                                 <small className="text-danger">* </small>KeyWords
@@ -497,24 +499,30 @@ const EditDigiCard = (
                                                 onAddition={(e) => handleAddition(e)}
                                             />
                                         </div><br />
-                                        <div className="form-group fill" style={{ position: "relative", zIndex: 10 }}>
-                                            <label className="floating-label" htmlFor="digicardtitle">
-                                                <small className="text-danger">* </small>Related DigiCard Titles
-                                            </label>
-                                            <Select
-                                                defaultValue={defaultOptions}
-                                                className="basic-single"
-                                                classNamePrefix="select"
-                                                name="color"
-                                                isMulti
-                                                closeMenuOnSelect={false}
-                                                // onChange={handleChange}
-                                                // value={selectedOption}
-                                                onChange={getMultiOptions}
-                                                options={digiCardTitles}
-                                                placeholder="Select"
-                                            />
-                                        </div>
+                                        {console.log("---------------------------", defaultOptions)}
+
+                                        {defaultOptions && (
+                                            <div className="form-group fill" style={{ position: "relative", zIndex: 10 }}>
+                                                <label className="floating-label" htmlFor="digicardtitle">
+                                                    <small className="text-danger">* </small>Related DigiCard Titles
+                                                </label>
+                                                <Select
+                                                    defaultValue={defaultOptions && defaultOptions}
+                                                    className="basic-single"
+                                                    classNamePrefix="select"
+                                                    name="color"
+                                                    isMulti
+                                                    closeMenuOnSelect={false}
+                                                    // onChange={handleChange}
+                                                    // value={selectedOption}
+                                                    onChange={getMultiOptions}
+                                                    options={digiCardTitles}
+                                                    placeholder="Select"
+                                                />
+                                            </div>
+                                        )}
+
+
                                     </Col>
                                     <Col sm={6}>
 

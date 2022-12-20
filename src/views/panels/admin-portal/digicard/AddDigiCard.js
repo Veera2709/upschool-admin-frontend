@@ -23,6 +23,7 @@ import logo from './img/logo.png'
 import { useHistory } from 'react-router-dom';
 import Select from 'react-select';
 import { isEmptyArray } from '../../../../util/utils';
+import bgvAlerts from '../../../../views/common-ui-components/sow/bgv-api/bgvAlerts'
 
 
 
@@ -89,6 +90,9 @@ const AddDigiCard = (
   const [articleData, setArticleData] = useState("");
   const [articleDataTitle, setArticleDataTtitle] = useState("");
   const [digitalTitles, setDigitalTitles] = useState(0);
+
+  const [imgValidation, setImgValidation] = useState(true);
+
 
   const [isShown, setIsShown] = useState(false);
   
@@ -214,134 +218,126 @@ const AddDigiCard = (
 
 
             onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
+
+              
              
 
               console.log("multiOptions", multiOptions);
               console.log("on submit");
-              var formData = {
-                // digi_card_name: values.digicardname,
-                digi_card_title: values.digicardtitle,
-                digi_card_files: [values.digicard_image],
-                digicard_image: values.digicard_image,
-                digi_card_excerpt: articleDataTitle,
-                digi_card_content: articleData,
-                digi_card_keywords: tags,
-                digicard_voice_note: values.digicard_voice_note === undefined ? "" : values.digicard_voice_note,
-                related_digi_cards: multiOptions,
-                digicard_status:{value: "Active", label: "Active"}
-              };
-
-
-
-              axios
-                .post(dynamicUrl.insertDigicard, { data: formData }, { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
-                .then(async (response) => {
-                  console.log({ response });
-                  if (response.Error) {
-                    console.log('Error');
-                    hideLoader();
-                    setDisableButton(false);
-                  } else {
-                    let uploadParams = response.data;
-                    hideLoader();
-                    setDisableButton(false);
-                    console.log('Proceeding with file upload');
-
-                    if (Array.isArray(uploadParams)) {
-                      for (let index = 0; index < uploadParams.length; index++) {
-                        let keyNameArr = Object.keys(uploadParams[index]);
-                        let keyName = keyNameArr[0];
-                        console.log('KeyName', keyName);
-
-
-                        let blobField = document.getElementById(keyName).files[0];
-                        console.log({
-                          blobField
-                        });
-
-                        let tempObj = uploadParams[index];
-
-                        let result = await fetch(tempObj[keyName], {
-                          method: 'PUT',
-                          body: blobField
-                        });
-
-                        console.log({
-                          result
-                        });
-                      }
-                      sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingDigiCard });
-                      hideLoader();
-                      setDisableButton(false);
-                      // fetchClientData();
-                      setIsOpen(false);
-                    } else {
-                      console.log('No files uploaded');
-                      sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingDigiCard });
-                      hideLoader();
-                      setDisableButton(false);
-                      // fetchClientData();
-                      setIsOpen(false);
-                    }
-                  }
-                })
-                .catch((error) => {
-                  if (error.response) {
-                    // Request made and server responded
-                    console.log(error.response.data);
-
-                    console.log(error.response.data);
-                    if (error.response.status === 400) {
-                      console.log();
-                      hideLoader();
-                      // setIsClientExists(true);
-                      sweetAlertHandler({ title: 'Error', type: 'error', text: MESSAGES.ERROR.DigiCardNameExists });
-
-                    } else {
-                      sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
-                    }
-                  } else if (error.request) {
-                    // The request was made but no response was received
-                    console.log(error.request);
-                    setDisableButton(false);
-                    hideLoader();
-                  } else {
-                    // Something happened in setting up the request that triggered an Error
-                    console.log('Error', error.message);
-                    setDisableButton(false);
-                    hideLoader();
-                  }
-                });
-          
-              console.log(formData);
-              console.log('Submitting');
+           
 
 
               let allFilesData = [];
-              const fileNameArray = ['digicard_image'];
+                const fileNameArray = ['digicard_image'];
+  
+                fileNameArray.forEach((fileName) => {
+                  let selectedFile = document.getElementById(fileName).files[0];
+                  console.log('File is here!');
+                  console.log(selectedFile);
+                  if (selectedFile) {
+                    allFilesData.push(selectedFile);
+                  }
+                });
+              
+                  if (areFilesInvalid(allFilesData) !== 0) {
+                   setImgValidation(false)
+                    hideLoader();
+                  } else{
 
-              fileNameArray.forEach((fileName) => {
-                let selectedFile = document.getElementById(fileName).files[0];
-                console.log('File is here!');
-                console.log(selectedFile);
-                if (selectedFile) {
-                  allFilesData.push(selectedFile);
-                }
-              });
+                    var formData = {
+                      // digi_card_name: values.digicardname,
+                      digi_card_title: values.digicardtitle,
+                      digi_card_files: [values.digicard_image],
+                      digicard_image: values.digicard_image,
+                      digi_card_excerpt: articleDataTitle,
+                      digi_card_content: articleData,
+                      digi_card_keywords: tags,
+                      digicard_voice_note: values.digicard_voice_note === undefined ? "" : values.digicard_voice_note,
+                      related_digi_cards: multiOptions,
+                    };
 
-              console.log(allFilesData)
-              if (allFilesData.length === 0) {
-                showLoader();
-                setDisableButton(true);
-              } else {
-                if (areFilesInvalid(allFilesData) !== 0) {
-                  setInvalidFile(true);
-                } else {
-                  showLoader();
-                  setDisableButton(true);
+                    axios
+                    .post(dynamicUrl.insertDigicard, { data: formData }, { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
+                    .then(async (response) => {
+                      console.log({ response });
+                      if (response.Error) {
+                        console.log('Error');
+                        hideLoader();
+                        setDisableButton(false);
+                      } else {
+                        let uploadParams = response.data;
+                        hideLoader();
+                        setDisableButton(false);
+                        console.log('Proceeding with file upload');
+    
+                        if (Array.isArray(uploadParams)) {
+                          for (let index = 0; index < uploadParams.length; index++) {
+                            let keyNameArr = Object.keys(uploadParams[index]);
+                            let keyName = keyNameArr[0];
+                            console.log('KeyName', keyName);
+    
+    
+                            let blobField = document.getElementById(keyName).files[0];
+                            console.log({
+                              blobField
+                            });
+    
+                            let tempObj = uploadParams[index];
+    
+                            let result = await fetch(tempObj[keyName], {
+                              method: 'PUT',
+                              body: blobField
+                            });
+    
+                            console.log({
+                              result
+                            });
+                          }
+                          sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingDigiCard });
+                          hideLoader();
+                          setDisableButton(false);
+                          // fetchClientData();
+                          setIsOpen(false);
+                        } else {
+                          console.log('No files uploaded');
+                          sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingDigiCard });
+                          hideLoader();
+                          setDisableButton(false);
+                          // fetchClientData();
+                          setIsOpen(false);
+                        }
+                      }
+                    })
+                    .catch((error) => {
+                      if (error.response) {
+                        // Request made and server responded
+                        console.log(error.response.data);
+    
+                        console.log(error.response.data);
+                        if (error.response.status === 400) {
+                          console.log();
+                          hideLoader();
+                          // setIsClientExists(true);
+                          sweetAlertHandler({ title: 'Error', type: 'error', text: MESSAGES.ERROR.DigiCardNameExists });
+    
+                        } else {
+                          sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+                        }
+                      } else if (error.request) {
+                        // The request was made but no response was received
+                        console.log(error.request);
+                        setDisableButton(false);
+                        hideLoader();
+                      } else {
+                        // Something happened in setting up the request that triggered an Error
+                        console.log('Error', error.message);
+                        setDisableButton(false);
+                        hideLoader();
+                      }
+                    });
+                  }
                 }
               }
-            }}
           >
             {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
               <form noValidate onSubmit={handleSubmit}>
@@ -378,6 +374,7 @@ const AddDigiCard = (
                           handleChange(e);
                           previewImage(e);
                           encodeImageFileAsURL(e);
+                          setImgValidation(true)
                         }}
                         type="file"
                         value={values.digicard_image}
@@ -386,6 +383,7 @@ const AddDigiCard = (
                       {touched.digicard_image && errors.digicard_image && (
                         <small className="text-danger form-text">{errors.digicard_image}</small>
                       )}
+                      <small className="text-danger form-text" style={{ display: imgValidation ? 'none' : 'block' }}>Invalid File Type</small>
                     </div>
                     <div className="form-group fill">
                       <label className="floating-label" htmlFor="digicard_voice_note">
