@@ -1,6 +1,6 @@
 import MESSAGES from '../../../../helper/messages';
 
-export const bgvAlerts = {
+export  const bgvAlerts = {
   compInsertSuccess: {
     title: MESSAGES.TTTLES.Goodjob,
     type: 'success',
