@@ -21,7 +21,7 @@ const dynamicUrl = {
     deleteSchool: baseUrl + '/deleteSchool',
     fetchUpschoolAndClientClasses: baseUrl + '/fetchUpschoolAndClientClasses',
     classSubscribe: baseUrl + '/classSubscribe',
-    
+
 
     fetchSchoolIdNames: baseUrl + '/fetchSchoolIdNames',
     fetchAllUsersData: baseUrl + '/fetchAllUsersData',
