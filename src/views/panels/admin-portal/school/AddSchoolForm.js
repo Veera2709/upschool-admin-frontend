@@ -152,6 +152,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                                 pincode: Number(values.pincode),
                                 phone_no: Number(values.phone_no),
                             },
+                            ///////
                             billing_address: {
                                 contact_name: copy === true ? values.contact_name : values.contact_name2,
                                 address_line1: copy === true ? values.address_line1 : values.addres_line1_2,
