@@ -156,12 +156,12 @@ const AddDigiCard = (
       headers: { Authorization: sessionStorage.getItem('user_jwt') }
     })
       .then((response) => {
-        console.log("response.data.Items",response.data.Items);
+        console.log(response.data.Items);
         let resultData = response.data.Items;
 
           
           resultData.forEach((item, index) => {
-            item.digicard_status.value === 'Active' ? colourOptions.push({ value: item.digi_card_title, label: item.digi_card_title }) : colourOptions.push({ value: item.digi_card_title, label: item.digi_card_title, isDisabled: true })
+            item.digicard_status === 'Active' ? colourOptions.push({ value: item.digi_card_title, label: item.digi_card_title }) : colourOptions.push({ value: item.digi_card_title, label: item.digi_card_title, isDisabled: true })
           }
           );
           console.log("colourOptions",colourOptions);
@@ -225,10 +225,10 @@ const AddDigiCard = (
                 digicard_image: values.digicard_image,
                 digi_card_excerpt: articleDataTitle,
                 digi_card_content: articleData,
-                digicard_status: {value: "Active", label: "Active"},
                 digi_card_keywords: tags,
-                digicard_voice_note: values.digicard_voice_note,
-                related_digi_cards: multiOptions
+                digicard_voice_note: values.digicard_voice_note === undefined ? "" : values.digicard_voice_note,
+                related_digi_cards: multiOptions,
+                digicard_status:{value: "Active", label: "Active"}
               };
 
 

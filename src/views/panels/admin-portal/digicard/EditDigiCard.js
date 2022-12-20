@@ -94,10 +94,6 @@ const EditDigiCard = (
     const [digiCardTitles, setDigitalTitles] = useState(0);
     const [defaultOptions, setDefaultOptions] = useState(0);
     const [multiOptions, selectedOption] = useState(0);
-    const statusOptions = [{ value: "Active", label: "Active" }, { value: "Archived", label: "Archived" }];
-    const [defaultStatusOptions, setDefaultStatusOptions] = useState(0);
-
-    const [statusOption, selectedStatusOption] = useState(0);
 
 
 
@@ -112,11 +108,6 @@ const EditDigiCard = (
 
     const getMultiOptions = (e) => {
         selectedOption(e);
-    }
-
-    const getStatusOptions = (e) => {
-        console.log("---", e);
-        selectedStatusOption(e);
     }
 
     const handleDelete = (i, states) => {
@@ -158,7 +149,7 @@ const EditDigiCard = (
 
 
                 resultData.forEach((item, index) => {
-                    item.digicard_status.value === 'Active' ? colourOptions.push({ value: item.digi_card_title, label: item.digi_card_title }) : colourOptions.push({ value: item.digi_card_title, label: item.digi_card_title, isDisabled: true })
+                    item.digicard_status === 'Active' ? colourOptions.push({ value: item.digi_card_title, label: item.digi_card_title }) : colourOptions.push({ value: item.digi_card_title, label: item.digi_card_title, isDisabled: true })
                     // console.log("item",item)
                 }
                 );
@@ -210,7 +201,6 @@ const EditDigiCard = (
                     setTags(individual_client_data.digi_card_keywords)
                     setDefaultOptions(individual_client_data.related_digi_cards)
                     selectedOption(individual_client_data.related_digi_cards)
-                    setDefaultStatusOptions(individual_client_data.digicard_status);
                     console.log("defaultOptions", individual_client_data.related_digi_cards);
 
                     console.log('individualDigiCardData', individualDigiCardData);
@@ -245,19 +235,26 @@ const EditDigiCard = (
 
     }, []);
 
-    return isEmptyObject(individualDigiCardData) || defaultOptions == '' || defaultStatusOptions === 0 ? null : (
+    return isEmptyObject(individualDigiCardData) || digiCardTitles=='' ? null : (
         <div>
             <Card>
                 <Card.Body>
                     <Card.Title>Edit DigiCard</Card.Title>
                     <Formik
                         initialValues={{
+                            // digicardname: individualDigiCardData.digi_card_name,
                             digicardtitle: individualDigiCardData.digi_card_title,
                             digicard_image: '',
                             digicard_voice_note: '',
                             digi_card_keywords: tags
                         }}
                         validationSchema={Yup.object().shape({
+                            // digicardname: Yup.string()
+                            //     .trim()
+                            //     .min(2, Constants.AddDigiCard.DigiCardNameTooShort)
+                            //     .max(50, Constants.AddDigiCard.DigiCardNameTooLong)
+                            //     .matches(Constants.AddDigiCard.DigiCardNameRegex, Constants.AddDigiCard.DigiCardNameValidation)
+                            //     .required(Constants.AddDigiCard.DigiCardNameRequired),
                             digicardtitle: Yup.string()
                                 .trim()
                                 .min(2, Constants.AddDigiCard.DigiCardtitleTooShort)
@@ -268,7 +265,7 @@ const EditDigiCard = (
                             //     .trim()
                             //     .nullable(true, Constants.AddDigiCard.DigiCardFileNotNull)
                             //     .required(Constants.AddDigiCard.DigiCardfileRequired),
-
+                          
                         })}
 
 
@@ -285,12 +282,11 @@ const EditDigiCard = (
                                     digi_card_title: values.digicardtitle,
                                     digi_card_files: [values.digicard_image],
                                     digicard_image: imgFile,
-                                    digicard_voice_note: voiceNote,
+                                    digicard_voice_note: voiceNote === undefined ? '' : voiceNote,
                                     digi_card_excerpt: articleDataTitle,
                                     digi_card_content: articleData,
                                     digi_card_keywords: tags,
-                                    related_digi_cards: multiOptions,
-                                    digicard_status: statusOption
+                                    related_digi_cards: multiOptions
                                 };
                             } else {
                                 console.log("else condition");
@@ -303,8 +299,7 @@ const EditDigiCard = (
                                     digi_card_excerpt: articleDataTitle,
                                     digi_card_content: articleData,
                                     digi_card_keywords: tags,
-                                    related_digi_cards: multiOptions,
-                                    digicard_status: statusOption
+                                    related_digi_cards: multiOptions
                                 };
                             }
 
@@ -489,7 +484,7 @@ const EditDigiCard = (
                                                 <small className="text-danger form-text">{errors.digicard_voice_note}</small>
                                             )}
                                         </div>
-
+                                       
                                         <div className='ReactTags'>
                                             <label className="floating-label" htmlFor="digicard_image">
                                                 <small className="text-danger">* </small>KeyWords
@@ -537,21 +532,6 @@ const EditDigiCard = (
                                             <audio controls>
                                                 <source src={voiceNote} alt="Audio" type="audio/mp3" />
                                             </audio>
-                                        </div>
-
-                                        <div className="form-group fill">
-                                            <label className="floating-label" htmlFor="digicard">
-                                                <small className="text-danger">* </small>DigiCard Status
-                                            </label><br />
-                                            <Select
-                                                defaultValue={defaultStatusOptions}
-                                                className="basic-single"
-                                                classNamePrefix="select"
-                                                name="color"
-                                                options={statusOptions}
-                                                onChange={getStatusOptions}
-                                                placeholder="Select"
-                                            />
                                         </div>
 
 

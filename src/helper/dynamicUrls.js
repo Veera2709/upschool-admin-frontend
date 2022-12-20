@@ -12,7 +12,7 @@ const dynamicUrl = {
     fetchAllDigiCards: baseUrl + '/fetchAllDigiCards',
     fetchIndividualDigiCard: baseUrl + '/fetchIndividualDigiCard',
     editDigiCard: baseUrl + '/editDigiCard',
-    deleteDigiCard: baseUrl + '/deleteDigiCard',
+    toggleDigiCardStatus: baseUrl + '/toggleDigiCardStatus',
     //
     insertSchool: baseUrl + '/insertSchool',
     fetchAllSchool: baseUrl + '/fetchAllSchool',
@@ -34,7 +34,7 @@ const dynamicUrl = {
     fetchAllChapters: baseUrl + '/fetchAllChapters',
     fetchAllTopics: baseUrl + '/fetchAllTopics',
     addChapter: baseUrl + '/addChapter',
-    deleteChapter: baseUrl + '/deleteChapter',
+    toggleChapterStatus: baseUrl + '/toggleChapterStatus',
     fetchIndividualChapter: baseUrl + '/fetchIndividualChapter',
     editChapter: baseUrl + '/editChapter',
 

@@ -23,9 +23,9 @@ const DigiCard = () => {
             .then((response) => {
                 console.log(response.data.Items);
                 let resultData = response.data.Items;
-                setSubscriptionActive(resultData && resultData.filter(e => e.digicard_status.value === 'Active'));
-                setSubscriptionInActive(resultData && resultData.filter(e => e.digicard_status.value === 'Archived'));
-                _setData(resultData && resultData.filter(e => e.digicard_status.value === 'Active'))
+                setSubscriptionActive(resultData && resultData.filter(e => e.digicard_status === 'Active'));
+                setSubscriptionInActive(resultData && resultData.filter(e => e.digicard_status === 'Archived'));
+                _setData(resultData && resultData.filter(e => e.digicard_status === 'Active'))
 
               
                 

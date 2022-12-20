@@ -196,7 +196,8 @@ const ChaptersListChild = (props) => {
     function deleteChapter(chapter_id, chapter_title) {
       console.log("chapter_id", chapter_id);
       var data = {
-        "chapter_id": chapter_id
+        "chapter_id": chapter_id,
+        "chapter_status":"Archived"
       }
   
       const sweetConfirmHandler = () => {
@@ -210,7 +211,7 @@ const ChaptersListChild = (props) => {
         }).then((willDelete) => {
           if (willDelete.value) {
             axios
-              .post(dynamicUrl.deleteChapter, { data: data }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
+              .post(dynamicUrl.toggleChapterStatus, { data: data }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
               .then((response) => {
                 if (response.Error) {
                   hideLoader();
@@ -251,36 +252,113 @@ const ChaptersListChild = (props) => {
     }
 
 
+    function restoreChapter(chapter_id,chapter_title){
+        console.log("chapter_id", chapter_id);
+        var data = {
+          "chapter_id": chapter_id,
+          "chapter_status":'Active'
+        }
+    
+        const sweetConfirmHandler = () => {
+          const MySwal = withReactContent(Swal);
+          MySwal.fire({
+            title: 'Are you sure?',
+            text: 'Confirm to Restore ' + chapter_title + ' Chapter',
+            type: 'warning',
+            showCloseButton: true,
+            showCancelButton: true
+          }).then((willDelete) => {
+            if (willDelete.value) {
+              axios
+                .post(dynamicUrl.toggleChapterStatus, { data: data }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
+                .then((response) => {
+                  if (response.Error) {
+                    hideLoader();
+                    sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
+                  } else {
+                      setReloadAllData("Deleted");
+                      return MySwal.fire('', 'The ' + chapter_title + ' is Restored', 'success');
+                      // window. location. reload() 
+                    //  MySwal.fire('', MESSAGES.INFO.CLIENT_DELETED, 'success');
+                    
+                   
+                    
+                  }
+                })
+                .catch((error) => {
+                  if (error.response) {
+                    // Request made and server responded
+                    console.log(error.response.data);
+                    hideLoader();
+                    sweetConfirmHandler({ title: 'Error', type: 'error', text: error.response.data });
+                  } else if (error.request) {
+                    // The request was made but no response was received
+                    console.log(error.request);
+                    hideLoader();
+                  } else {
+                    // Something happened in setting up the request that triggered an Error
+                    console.log('Error', error.message);
+                    hideLoader();
+                  }
+                });
+            } else {
+              return MySwal.fire('', 'Chapter is Restore!', 'error');
+            }
+          });
+        };
+        sweetConfirmHandler();
+    }
+
+
     const allChaptersList = () => {
         console.log("School data func called");
         let resultData = _data && _data;
         console.log('resultData', resultData);
         let finalDataArray = [];
         for (let index = 0; index < resultData.length; index++) {
-            resultData[index].index_no = index + 1;
-            resultData[index]['actions'] = (
-                <>
+            if(resultData[index].chapter_status ==='Active'){
+                resultData[index].index_no = index + 1;
+                resultData[index]['actions'] = (
                     <>
-                        <Button
-                            size="sm"
-                            className="btn btn-icon btn-rounded btn-primary"
-                            onClick={(e) => history.push(`/admin-portal/editChapter/${resultData[index].chapter_id}`)}
-                        >
-                            <i className="feather icon-edit" /> &nbsp; Edit
-                        </Button>
-                        &nbsp;
-                        {/* if(resultData[index].chapter_status=='Active') */}
-                        <Button
-                            size="sm"
-                            className="btn btn-icon btn-rounded btn-danger"
-                            onClick={(e) => deleteChapter(resultData[index].chapter_id , resultData[index].chapter_title)}
-                        >
-                            <i className="feather icon-trash-2 " /> &nbsp; Delete
-                        </Button>
-                        &nbsp;
+                        <>
+                            <Button
+                                size="sm"
+                                className="btn btn-icon btn-rounded btn-primary"
+                                onClick={(e) => history.push(`/admin-portal/editChapter/${resultData[index].chapter_id}`)}
+                            >
+                                <i className="feather icon-edit" /> &nbsp; Edit
+                            </Button>
+                            &nbsp;
+                            {/* if(resultData[index].chapter_status=='Active') */}
+                            <Button
+                                size="sm"
+                                className="btn btn-icon btn-rounded btn-danger"
+                                onClick={(e) => deleteChapter(resultData[index].chapter_id , resultData[index].chapter_title)}
+                            >
+                                <i className="feather icon-trash-2 " /> &nbsp; Delete
+                            </Button>
+                            &nbsp;
+                        </>
                     </>
-                </>
-            );
+                );
+            }else{
+                resultData[index].index_no = index + 1;
+                resultData[index]['actions'] = (
+                    <>
+                        <>
+                            <Button
+                                size="sm"
+                                className="btn btn-icon btn-rounded btn-primary"
+                                onClick={(e) => restoreChapter(resultData[index].chapter_id ,resultData[index].chapter_title)}
+                            >
+                                <i className="feather icon-edit" /> &nbsp; Restore
+                            </Button>
+                            &nbsp;
+                        </>
+                    </>
+                );
+            }
+           
             finalDataArray.push(resultData[index]);
 
         }

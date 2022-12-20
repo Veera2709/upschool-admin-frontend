@@ -195,7 +195,8 @@ const DigiCardChild = (props) => {
     function deleteDigicard(digi_card_id, digi_card_name) {
       console.log("digi_card_id", digi_card_id);
       var data = {
-        "digi_card_id": digi_card_id
+        "digi_card_id": digi_card_id,
+        "digicard_status":'Archived'
       }
   
       const sweetConfirmHandler = () => {
@@ -208,8 +209,9 @@ const DigiCardChild = (props) => {
           showCancelButton: true
         }).then((willDelete) => {
           if (willDelete.value) {
+            console.log("api calling");
             axios
-              .post(dynamicUrl.deleteDigiCard, { data: data }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
+              .post(dynamicUrl.toggleDigiCardStatus, { data: data }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
               .then((response) => {
                 if (response.Error) {
                   hideLoader();
@@ -249,6 +251,65 @@ const DigiCardChild = (props) => {
   
     }
 
+    function digicardRestore(digi_card_id, digi_card_name) {
+        console.log("digi_card_id", digi_card_id);
+        var data = {
+          "digi_card_id": digi_card_id,
+          "digicard_status":'Active'
+        }
+    
+        const sweetConfirmHandler = () => {
+          const MySwal = withReactContent(Swal);
+          MySwal.fire({
+            title: 'Are you sure?',
+            text: 'Confirm to Restore ' + digi_card_name + ' DigiCard',
+            type: 'warning',
+            showCloseButton: true,
+            showCancelButton: true
+          }).then((willDelete) => {
+            if (willDelete.value) {
+                console.log("api calling");
+              axios
+                .post(dynamicUrl.toggleDigiCardStatus, { data: data }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
+                .then((response) => {
+                  if (response.Error) {
+                    hideLoader();
+                    sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
+                  } else {
+                      setReloadAllData("Deleted");
+                      return MySwal.fire('', 'The ' + digi_card_name + ' is Restored', 'success');
+                      // window. location. reload() 
+                    //  MySwal.fire('', MESSAGES.INFO.CLIENT_DELETED, 'success');
+                    
+                   
+                    
+                  }
+                })
+                .catch((error) => {
+                  if (error.response) {
+                    // Request made and server responded
+                    console.log(error.response.data);
+                    hideLoader();
+                    sweetConfirmHandler({ title: 'Error', type: 'error', text: error.response.data });
+                  } else if (error.request) {
+                    // The request was made but no response was received
+                    console.log(error.request);
+                    hideLoader();
+                  } else {
+                    // Something happened in setting up the request that triggered an Error
+                    console.log('Error', error.message);
+                    hideLoader();
+                  }
+                });
+            } else {
+              return MySwal.fire('', 'DigiCard is Restore!', 'error');
+            }
+          });
+        };
+        sweetConfirmHandler();
+    
+      }
+
 
     const allDigicardData = () => {
         console.log("School data func called");
@@ -256,34 +317,46 @@ const DigiCardChild = (props) => {
         console.log('resultData', resultData);
         let finalDataArray = [];
         for (let index = 0; index < resultData.length; index++) {
-            resultData[index]['digicard_image'] = <img className='img-fluid img-radius wid-50 circle-image' src={resultData[index].digicard_imageURL} alt="school_image" />
-            // resultData[index]['digi_card_name'] = <p>{resultData[index].digi_card_name}</p>
-            resultData[index]['actions'] = (
-                <>
+            if(resultData[index].digicard_status === 'Active'){
+                resultData[index]['digicard_image'] = <img className='img-fluid img-radius wid-50 circle-image' src={resultData[index].digicard_imageURL} alt="school_image" />
+                resultData[index]['actions'] = (
                     <>
-                        <Button
-                            size="sm"
-                            className="btn btn-icon btn-rounded btn-primary"
-                            onClick={(e) => history.push(`/admin-portal/editDigiCard/${resultData[index].digi_card_id}`)}
-                        // onClick={(e) => history.push(`/admin-portal/admin-casedetails/${resultData[index].client_id}/all_cases`)}
-                        >
-                            <i className="feather icon-edit" /> &nbsp; Edit
-                        </Button>
-                        &nbsp;
-                        <Button
-                            size="sm"
-                            className="btn btn-icon btn-rounded btn-danger"
-                            onClick={(e) => deleteDigicard(resultData[index].digi_card_id, resultData[index].digi_card_title)}
-                        >
-                            <i className="feather icon-trash-2 " /> &nbsp; Delete
-                        </Button>
-                        &nbsp;
-                        {/* <Button size='sm' className="btn btn-icon btn-rounded btn-danger" onClick={(e) => saveClientIdDelete(e, responseData[index].client_id)}>
-                            <i className="feather icon-delete" /> &nbsp; Delete
-                          </Button> */}
+                        <>
+                            <Button
+                                size="sm"
+                                className="btn btn-icon btn-rounded btn-primary"
+                                onClick={(e) => history.push(`/admin-portal/editDigiCard/${resultData[index].digi_card_id}`)}
+                            >
+                                <i className="feather icon-edit" /> &nbsp; Edit
+                            </Button>
+                            &nbsp;
+                            <Button
+                                size="sm"
+                                className="btn btn-icon btn-rounded btn-danger"
+                                onClick={(e) => deleteDigicard(resultData[index].digi_card_id, resultData[index].digi_card_title)}
+                            >
+                                <i className="feather icon-trash-2 " /> &nbsp; Delete
+                            </Button>
+                        </>
                     </>
-                </>
-            );
+                );
+            }else{
+                resultData[index]['digicard_image'] = <img className='img-fluid img-radius wid-50 circle-image' src={resultData[index].digicard_imageURL} alt="school_image" />
+                resultData[index]['actions'] = (
+                    <>
+                        <>
+                            <Button
+                                size="sm"
+                                className="btn btn-icon btn-rounded btn-primary"
+                                onClick={(e) => digicardRestore(resultData[index].digi_card_id ,resultData[index].digi_card_title)}
+                            >
+                                <i className="feather icon-edit" /> &nbsp; Restore
+                            </Button>
+                        </>
+                    </>
+                );
+            }
+           
             finalDataArray.push(resultData[index]);
 
         }
@@ -299,7 +372,7 @@ const DigiCardChild = (props) => {
 
     },[reloadAllData])
 
-    return isEmptyArray(digiCardData) ? null : (
+    return  (
         <React.Fragment>
             <Row>
                 <Col sm={12}>
