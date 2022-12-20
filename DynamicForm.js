@@ -33,6 +33,7 @@ const DynamicForm = () => {
         setTopicQuiz(filteredProjects)
     }
 
+
     const levels = [
         { label: 'Level-1', value: 'Level-1' },
         { label: 'Level-2', value: 'Level-2' },
@@ -63,7 +64,7 @@ const DynamicForm = () => {
                                 />
                             </div>
                             <div className='col-md-6'>
-                            <Button variant='danger' onClick={() => removeTopic(index)}>Remove</Button>
+                                <Button variant='danger' onClick={() => removeTopic(index)}>Remove</Button>
                             </div>
                         </div>
                     </div>
@@ -74,5 +75,4 @@ const DynamicForm = () => {
         </div>
     )
 }
-
 export default DynamicForm
