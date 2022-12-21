@@ -225,7 +225,7 @@ const AddDigiCard = (
                                                 console.log();
                                                 hideLoader();
                                                 // setIsClientExists(true);
-                                                sweetAlertHandler({ title: 'Error', type: 'error', text: MESSAGES.ERROR.DigiCardNameExists });
+                                                sweetAlertHandler({ title: 'Error', type: 'error', text: MESSAGES.ERROR.ChapterNameExists });
 
                                             } else {
                                                 sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
