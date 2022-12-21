@@ -15,7 +15,6 @@ const CaptersList = () => {
     
 
     console.log("chapterActive -- ", chapterActive);
-    console.log("chapterArchived -- ", chapterArchived);
 
     const fetchChapterData = () => {
         axios.post(dynamicUrl.fetchAllChapters, {}, {
