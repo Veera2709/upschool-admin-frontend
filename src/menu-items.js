@@ -365,12 +365,34 @@ const menuItems = {
             }
           ]
         },
+
+        // {
+        //   id: 'digicard',
+        //   title: 'DigiCard',
+        //   type: 'item',
+        //   icon: 'feather icon-layout',
+        //   url: '/admin-portal/digicard'
+        // },
         {
-          id: 'layout',
+          id: 'digicard',
           title: 'DigiCard',
-          type: 'item',
+          type: 'collapse',
           icon: 'feather icon-layout',
-          url: '/admin-portal/digicard'
+          
+          children: [
+            {
+              id: 'active-digiCard',
+              title: 'Active Digicards',
+              type: 'item',
+              url: '/admin-portal/active-digiCard',
+            },
+            {
+              id: 'archived-digiCard',
+              title: 'Archived Digicards',
+              type: 'item',
+              url: '/admin-portal/digicard-Archived',
+            }
+          ]
         },
         {
           id: 'concepts',
@@ -400,12 +422,32 @@ const menuItems = {
           //   }
           // ]
         },
+        // {
+        //   id: 'chapters',
+        //   title: 'Chapters',
+        //   type: 'item',
+        //   icon: 'fas fa-book',
+        //   url: '/admin-portal/chapters/CaptersList',
+        // },
         {
           id: 'chapters',
           title: 'Chapters',
-          type: 'item',
+          type: 'collapse',
           icon: 'fas fa-book',
-          url: '/admin-portal/chapters/CaptersList',
+          children:[
+            {
+              id: 'active-chapter',
+              title: 'Active Chapters',
+              type: 'item',
+              url: '/admin-portal/chapters/active-chapter',
+            },
+            {
+              id: 'archived-chapter',
+              title: 'Archived Chapters',
+              type: 'item',
+              url: '/admin-portal/chapters/archived-chapter',
+            }
+          ]
         },
         {
           id: 'sis',

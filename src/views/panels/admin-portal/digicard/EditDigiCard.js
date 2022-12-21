@@ -243,7 +243,7 @@ const EditDigiCard = (
     })
     const handleOnRemove = (selectedList, selectedItem) => setTopicDigiCardIds(selectedList.map(skillId => skillId.id))
 
-    return isEmptyObject(individualDigiCardData) || digiCardTitles === '' ? null : (
+    return isEmptyObject(individualDigiCardData)  ? null : (
         <div>
             <Card>
                 <Card.Body>
@@ -500,6 +500,7 @@ const EditDigiCard = (
                                             <ReactTags
                                                 classNames={{ root: 'react-tags bootstrap-tagsinput', selectedTag: 'react-tags__selected-tag btn-primary' }}
                                                 allowNew={true}
+                                                addOnBlur={true}
                                                 tags={tags}
                                                 onDelete={handleDelete}
                                                 onAddition={(e) => handleAddition(e)}

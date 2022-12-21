@@ -403,6 +403,7 @@ const AddDigiCard = (
                         // error={touched.digicardKeywords && errors.digicardKeywords}
                         classNames={{ root: 'react-tags bootstrap-tagsinput', selectedTag: 'react-tags__selected-tag btn-primary' }}
                         allowNew={true}
+                        addOnBlur={true}
                         tags={tags}
                         onDelete={handleDelete}
                         onAddition={(e) => handleAddition(e)}
