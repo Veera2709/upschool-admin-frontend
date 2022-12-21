@@ -369,11 +369,11 @@ const AddDigiCard = (
                       {touched.digicard_image && errors.digicard_image && (
                         <small className="text-danger form-text">{errors.digicard_image}</small>
                       )}
-                      <small className="text-danger form-text" style={{ display: imgValidation ? 'none' : 'block' }}>Invalid File Type</small>
+                      <small className="text-danger form-text" style={{ display: imgValidation ? 'none' : 'block' }}>Invalid File Type or File size is Exceed More Than 1MB</small>
                     </div>
                     <div className="form-group fill">
                       <label className="floating-label" htmlFor="digicard_voice_note">
-                        <small className="text-danger">* </small>Voice Note
+                        <small className="text-danger"> </small>Voice Note
                       </label>
                       <input
                         className="form-control"
@@ -397,7 +397,7 @@ const AddDigiCard = (
 
                     <div className='ReactTags'>
                       <label className="floating-label">
-                        <small className="text-danger">* </small>KeyWords
+                        <small className="text-danger"> </small>KeyWords
                       </label>
                       <ReactTags
                         // error={touched.digicardKeywords && errors.digicardKeywords}
@@ -413,7 +413,7 @@ const AddDigiCard = (
                     </div><br />
                     <div className="form-group fill" style={{ position: "relative", zIndex: 10 }}>
                       <label className="floating-label" htmlFor="clientComponents">
-                        <small className="text-danger">* </small>Related DigiCard Titles
+                        <small className="text-danger"> </small>Related DigiCard Titles
                       </label>
                       {/* <Select
                         className="basic-single"
@@ -453,7 +453,7 @@ const AddDigiCard = (
                 <Row>
                   <Col sm='12'>
                     <label className="floating-label" htmlFor="digicardtitleExcerpt">
-                      <small className="text-danger">* </small>DigiCard Excerpt
+                      <small className="text-danger"> </small>DigiCard Excerpt
                     </label>
                     <ArticleRTE
                       setArticleSize={setArticleSize}
@@ -469,7 +469,7 @@ const AddDigiCard = (
                 <Row>
                   <Col sm='12'>
                     <label className="floating-label" htmlFor="digicardtitle">
-                      <small className="text-danger">* </small>DigiCard Content
+                      <small className="text-danger"> </small>DigiCard Content
                     </label>
                     <ArticleRTE
                       setArticleSize={setArticleSize}

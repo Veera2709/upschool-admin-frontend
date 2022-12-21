@@ -471,7 +471,7 @@ const EditDigiCard = (
                                         </div>
                                         <div className="form-group fill">
                                             <label className="floating-label" htmlFor="digicard_voice_note">
-                                                <small className="text-danger">* </small>Voice Note
+                                                <small className="text-danger"> </small>Voice Note
                                             </label>
                                             <input
                                                 className="form-control"
@@ -495,7 +495,7 @@ const EditDigiCard = (
 
                                         <div className='ReactTags'>
                                             <label className="floating-label" htmlFor="digicard_image">
-                                                <small className="text-danger">* </small>KeyWords
+                                                <small className="text-danger"> </small>KeyWords
                                             </label>
                                             <ReactTags
                                                 classNames={{ root: 'react-tags bootstrap-tagsinput', selectedTag: 'react-tags__selected-tag btn-primary' }}
@@ -511,7 +511,7 @@ const EditDigiCard = (
 
                                         <div className="form-group fill" style={{ position: "relative", zIndex: 10 }}>
                                             <label className="floating-label" htmlFor="digicardtitle">
-                                                <small className="text-danger">* </small>Related DigiCard Titles
+                                                <small className="text-danger"> </small>Related DigiCard Titles
                                             </label>
                                             {/* <Select
                                                 defaultValue={defaultOptions}
@@ -564,7 +564,7 @@ const EditDigiCard = (
                                 <Row>
                                     <Col sm='12'>
                                         <label className="floating-label" htmlFor="digicardtitle">
-                                            <small className="text-danger">* </small>DigiCard Excerpt
+                                            <small className="text-danger"> </small>DigiCard Excerpt
                                         </label>
                                         <ArticleRTE
                                             setArticleSize={setArticleSize}
@@ -578,7 +578,7 @@ const EditDigiCard = (
                                 <Row>
                                     <Col sm='12'>
                                         <label className="floating-label" htmlFor="digicardtitle">
-                                            <small className="text-danger">* </small>DigiCard Content
+                                            <small className="text-danger"> </small>DigiCard Content
                                         </label>
                                         <ArticleRTE
                                             setArticleSize={setArticleSize}
