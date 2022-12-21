@@ -20,6 +20,10 @@ import ArticleRTE from './ArticleRTE'
 import { areFilesInvalid } from '../../../../util/utils';
 import { isEmptyObject } from '../../../../util/utils';
 import Select from 'react-select';
+import Multiselect from 'multiselect-react-dropdown';
+
+
+
 
 import { Link, useHistory, useParams } from 'react-router-dom';
 
@@ -88,12 +92,13 @@ const EditDigiCard = (
     const [voiceNote, setVoiceNote] = useState([]);
     const [articleData, setArticleData] = useState("");
     const [articleDataTitle, setArticleDataTtitle] = useState("");
-    const [digiCardTitles, setDigitalTitles] = useState(0);
-    const [defaultOptions, setDefaultOptions] = useState(0);
+    const [digiCardTitles, setDigitalTitles] = useState([]);
+    const [defaultOptions, setDefaultOptions] = useState([]);
     const [multiOptions, selectedOption] = useState(0);
 
 
-
+    const [topicDigiCardIds, setTopicDigiCardIds] = useState([]);
+    const [topicDigiCardNames, setTopicDigiCardNames] = useState([]);
 
 
     const [individualDigiCardData, setIndividualDigiCardData] = useState([]);
@@ -103,9 +108,7 @@ const EditDigiCard = (
     const { digi_card_id } = useParams();
 
 
-    const getMultiOptions = (e) => {
-        selectedOption(e);
-    }
+  
 
     const handleDelete = (i, states) => {
         const newTags = tags.slice(0);
@@ -146,8 +149,11 @@ const EditDigiCard = (
 
 
                 resultData.forEach((item, index) => {
-                    item.digicard_status === 'Active' ? colourOptions.push({ value: item.digi_card_title, label: item.digi_card_title, digi_card_id: item.digi_card_id }) : colourOptions.push({ value: item.digi_card_title, label: item.digi_card_title, digi_card_id: item.digi_card_id, isDisabled: true })
+                    // item.digicard_status === 'Active' ? colourOptions.push({ value: item.digi_card_title, digi_card_id: item.digi_card_id }) : {}
                     // console.log("item",item)
+                    if(item.digicard_status === 'Active'){
+                        colourOptions.push({ value: item.digi_card_title, digi_card_id: item.digi_card_id })
+                    }
                 }
                 );
                 console.log("colourOptions", colourOptions);
@@ -196,7 +202,7 @@ const EditDigiCard = (
                     setArticleData(individual_client_data.digi_card_content)
                     setArticleDataTtitle(individual_client_data.digi_card_excerpt)
                     setTags(individual_client_data.digi_card_keywords)
-                    setDefaultOptions(individual_client_data.related_digi_cards === undefined ? {}:individual_client_data.related_digi_cards)
+                    setDefaultOptions([...individual_client_data.related_digi_cards])
                     selectedOption(individual_client_data.related_digi_cards)
                     console.log("defaultOptions", individual_client_data.related_digi_cards);
 
@@ -231,6 +237,11 @@ const EditDigiCard = (
         fetchAllDigiCards();
 
     }, []);
+
+    const handleOnSelect = ((selectedList, selectedItem) => {
+        selectedOption(selectedList)
+    })
+    const handleOnRemove = (selectedList, selectedItem) => setTopicDigiCardIds(selectedList.map(skillId => skillId.id))
 
     return isEmptyObject(individualDigiCardData) || digiCardTitles === '' ? null : (
         <div>
@@ -496,26 +507,34 @@ const EditDigiCard = (
                                         </div><br />
                                         {console.log("---------------------------", defaultOptions)}
 
-                                        {defaultOptions && (
-                                            <div className="form-group fill" style={{ position: "relative", zIndex: 10 }}>
-                                                <label className="floating-label" htmlFor="digicardtitle">
-                                                    <small className="text-danger">* </small>Related DigiCard Titles
-                                                </label>
-                                                <Select
-                                                    defaultValue={defaultOptions && defaultOptions}
-                                                    className="basic-single"
-                                                    classNamePrefix="select"
-                                                    name="color"
-                                                    isMulti
-                                                    closeMenuOnSelect={false}
-                                                    // onChange={handleChange}
-                                                    // value={selectedOption}
-                                                    onChange={getMultiOptions}
-                                                    options={digiCardTitles}
-                                                    placeholder="Select"
-                                                />
-                                            </div>
-                                        )}
+
+                                        <div className="form-group fill" style={{ position: "relative", zIndex: 10 }}>
+                                            <label className="floating-label" htmlFor="digicardtitle">
+                                                <small className="text-danger">* </small>Related DigiCard Titles
+                                            </label>
+                                            {/* <Select
+                                                defaultValue={defaultOptions}
+                                                className="basic-single"
+                                                classNamePrefix="select"
+                                                name="color"
+                                                isMulti
+                                                closeMenuOnSelect={false}
+                                                // onChange={handleChange}
+                                                // value={selectedOption}
+                                                onChange={getMultiOptions}
+                                                options={digiCardTitles}
+                                                placeholder="Select"
+                                            /> */}
+                                            <Multiselect
+                                                options={digiCardTitles}
+                                                displayValue="value"
+                                                selectionLimit="25"
+                                                selectedValues={defaultOptions}
+                                                onSelect={handleOnSelect}
+                                                onRemove={handleOnRemove}
+                                            />
+                                        </div>
+
 
 
                                     </Col>

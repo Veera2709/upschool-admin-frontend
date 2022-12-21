@@ -129,7 +129,10 @@ const EditChapter = (
                 console.log("response.data.Items", response.data.Items);
 
                 resultData.forEach((item, index) => {
-                    item.topic_status === 'Active' ? colourOptions.push({ value: item.topic_title, label: item.topic_title }) : colourOptions.push({ value: item.topic_title, label: item.topic_title, isDisabled: true })
+                    // item.topic_status === 'Active' ? colourOptions.push({ value: item.topic_title, label: item.topic_title }) : colourOptions.push({ value: item.topic_title, label: item.topic_title, isDisabled: true })
+                    if(item.topic_status === 'Active'){
+                        colourOptions.push({ value: item.topic_title, label: item.topic_title })
+                    }
                 }
                 );
                 console.log("colourOptions", colourOptions);
