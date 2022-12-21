@@ -19,6 +19,8 @@ import { useEffect } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import Select from 'react-select';
 import { isEmptyArray } from '../../../../util/utils';
+import Multiselect from 'multiselect-react-dropdown';
+
 
 
 // import { Button,Container,Row ,Col  } from 'react-bootstrap';
@@ -63,6 +65,8 @@ const EditChapter = (
     const [defaultPrelearning, setDefaultPrelearning] = useState([]);
     const [prelearningOptions, setPrelearningOptions] = useState([]);
     const [defaultPostleraing, setDefaultPostleraing] = useState([]);
+    const [topicDigiCardIds, setTopicDigiCardIds] = useState([]);
+
     const [isLockedOption, setValue] = useState();
     const [defaulIslocked, setDefaulIslocked] = useState([]);
     const [description, setDescription] = useState();
@@ -82,6 +86,8 @@ const EditChapter = (
     const [articleData, setArticleData] = useState("");
     const [articleDataTitle, setArticleDataTtitle] = useState("");
     const [digitalTitles, setDigitalTitles] = useState(0);
+    const [topicTitles, setTopicTitles] = useState([]);
+
     const [isShown, setIsShown] = useState(true);
 
     const [individualChapterdata, setIndividualChapterdata] = useState([]);
@@ -129,11 +135,14 @@ const EditChapter = (
                 console.log("response.data.Items", response.data.Items);
 
                 resultData.forEach((item, index) => {
-                    item.topic_status === 'Active' ? colourOptions.push({ value: item.topic_title, label: item.topic_title }) : colourOptions.push({ value: item.topic_title, label: item.topic_title, isDisabled: true })
+                    // item.topic_status === 'Active' ? colourOptions.push({ value: item.topic_title, label: item.topic_title }) : colourOptions.push({ value: item.topic_title, label: item.topic_title, isDisabled: true })
+                    if (item.topic_status === 'Active') {
+                        colourOptions.push({ value: item.topic_title, topic_id: item.topic_id })
+                    }
                 }
                 );
                 console.log("colourOptions", colourOptions);
-                setDigitalTitles(colourOptions)
+                setTopicTitles(colourOptions)
             })
             .catch((err) => {
                 console.log(err)
@@ -202,7 +211,17 @@ const EditChapter = (
 
     }, [])
 
-    return isEmptyObject(individualChapterdata) || defaultPostleraing == '' || defaulIslocked == '' ? null : (
+    const handleOnSelect = ((selectedList, selectedItem) => {
+        setPostlearningOption(selectedList)
+    })
+
+    const handleOnSelectPre = ((selectedList, selectedItem) => {
+        setPrelearningOptions(selectedList)
+    })
+    const handleOnRemove = (selectedList, selectedItem) => setTopicDigiCardIds(selectedList.map(skillId => skillId.id))
+
+
+    return isEmptyObject(individualChapterdata) || defaulIslocked == '' ? null : (
         <div>
             <Card>
                 <Card.Body>
@@ -253,7 +272,7 @@ const EditChapter = (
                                             hideLoader();
                                             setDisableButton(false);
                                         } else {
-                                            sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingChapter });
+                                            sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.EditChapter });
                                             hideLoader();
                                             setDisableButton(false);
                                             // fetchClientData();
@@ -323,7 +342,7 @@ const EditChapter = (
                                             <label className="floating-label" htmlFor="postlearning_topic">
                                                 <small className="text-danger">* </small> Postlearning Topic
                                             </label>
-                                            <Select
+                                            {/* <Select
                                                 defaultValue={defaultPostleraing}
                                                 className="basic-single"
                                                 classNamePrefix="select"
@@ -332,6 +351,15 @@ const EditChapter = (
                                                 onChange={(e) => { PostlearningOption(e); setIsShown(false) }}
                                                 options={digitalTitles}
                                                 placeholder="Which is your favourite colour?"
+                                            /> */}
+                                            <Multiselect
+                                                options={topicTitles}
+                                                displayValue="value"
+                                                selectionLimit="25"
+                                                selectedValues={defaultPostleraing}
+                                                onSelect={handleOnSelect}
+                                                onRemove={handleOnRemove}
+                                                onChange={setIsShown(true)}
                                             />
                                             <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>required</small>
                                         </div>
@@ -352,7 +380,7 @@ const EditChapter = (
                                             <label className="floating-label" htmlFor="prelearning_topic">
                                                 <small className="text-danger">* </small>Prelearning Topic
                                             </label>
-                                            <Select
+                                            {/* <Select
                                                 defaultValue={defaultPrelearning}
                                                 className="basic-single"
                                                 classNamePrefix="select"
@@ -362,7 +390,16 @@ const EditChapter = (
                                                 onChange={PrelearningOptions}
                                                 options={digitalTitles}
                                                 placeholder="Which is your favourite colour?"
-                                            /><br />
+                                            /> */}
+                                            <Multiselect
+                                                options={topicTitles}
+                                                displayValue="value"
+                                                selectionLimit="25"
+                                                selectedValues={defaultPrelearning}
+                                                onSelect={handleOnSelectPre}
+                                                onRemove={handleOnRemove}
+                                            />
+                                            <br />
                                             {touched.prelearning_topic && errors.prelearning_topic && (
                                                 <small className="text-danger form-text">{errors.prelearning_topic}</small>
                                             )}

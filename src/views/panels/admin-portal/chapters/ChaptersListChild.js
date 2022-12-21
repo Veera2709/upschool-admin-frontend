@@ -171,7 +171,7 @@ const ChaptersListChild = (props) => {
                 accessor: "index_no"
             },
             {
-                Header: ' DigiCard Title',
+                Header: ' Chapter Title',
                 accessor: 'chapter_title'
             },
             {
@@ -183,7 +183,7 @@ const ChaptersListChild = (props) => {
     );
 
     // const data = React.useMemo(() => makeData(80), []);
-    const [digiCardData, setDigiCardData] = useState([]);
+    const [chapterData, setChapterData] = useState([]);
     const [reloadAllData, setReloadAllData] = useState('Fetched');
     const [loader, showLoader, hideLoader] = useFullPageLoader();
 
@@ -361,7 +361,7 @@ const ChaptersListChild = (props) => {
 
         }
         console.log('finalDataArray: ', finalDataArray);
-        setDigiCardData(finalDataArray)
+        setChapterData(finalDataArray)
     }
 
     useEffect(() => {
@@ -381,7 +381,7 @@ const ChaptersListChild = (props) => {
                             <Card.Title as="h5">DigiCard List</Card.Title>
                         </Card.Header>
                         <Card.Body>
-                            <Table columns={columns} data={digiCardData} />
+                            <Table columns={columns} data={chapterData} />
                         </Card.Body>
                     </Card>
                 </Col>
