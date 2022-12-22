@@ -414,7 +414,7 @@ const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool, fetchSchoolD
                                             <Select
                                                 defaultValue={previousBoards}
                                                 isMulti
-                                                name="colors"
+                                                name="boards"
                                                 options={schoolBoardOptions}
                                                 className="basic-multi-select"
                                                 classNamePrefix="Select"

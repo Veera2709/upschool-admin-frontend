@@ -15,6 +15,7 @@ const MESSAGES = {
     AddingUser: 'Error in adding User',
     UpdatingUser: 'Error in updating User',
     DeletingUser: 'Error in deleting User',
+    DeletingConcept: 'Error in deleting Concept',
     UpdatingClient: 'Error in updating Client',
     AssignUsers: 'Error in assigning users',
     VerificationFailed: 'Verification Failed',
@@ -75,11 +76,17 @@ const MESSAGES = {
     ABLE_TO_DELETE: 'You can anyway delete your data after restoring!',
     DATA_DELETED: 'Your data has been deleted!',
     USER_DELETED: 'The user has been deleted!',
+    USER_RESTORED: 'The user details have been restored!',
     CLIENT_DELETED: 'The client has been deleted!',
     DATA_SAFE: 'Your data is safe!',
     FAILED_TO_RESTORE: 'Failed to restore!',
     APPROVE_DENY_REASON: 'Reason to ',
+<<<<<<< HEAD
+    CONCEPT_DELETED: 'The concept has been deleted!',
+    CONCEPT_RESTORED: 'The concept has been restored!'
+=======
     SCHOOL_DELETED: 'school deleted successfully!'
+>>>>>>> origin/dev
   },
   VALIDATION: {
     MUST_BE_A_VALID_EMAIL_ADDRESS: 'Must be a valid email address',
