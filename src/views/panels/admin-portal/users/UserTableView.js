@@ -13,32 +13,8 @@ import { isEmptyArray, decodeJWT } from '../../../../util/utils';
 
 import { GlobalFilter } from '../../../common-ui-components/tables/GlobalFilter';
 import { useTable, useSortBy, usePagination, useGlobalFilter } from 'react-table';
-<<<<<<< HEAD:src/views/panels/admin-portal/users/UserTableView.js
 import dynamicUrl from '../../../../helper/dynamicUrls';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
-=======
-import dynamicUrl from '../../../helper/dynamicUrls';
-import useFullPageLoader from '../../../helper/useFullPageLoader';
-
-
-export const colourOptions = [
-  { value: 'Education', label: 'Education', color: 'black' },
-  { value: 'Address', label: 'Address', color: 'black' },
-  { value: 'Employment', label: 'Employment', color: 'black' },
-  { value: 'DatabaseCheck', label: 'DatabaseCheck', color: 'black', isFixed: true },
-  { value: 'DrugTest', label: 'DrugTest', color: 'black' },
-  { value: 'CreditCheck', label: 'CreditCheck', color: 'black' },
-  { value: 'Criminal', label: 'Criminal', color: 'black', isFixed: true },
-  { value: 'Identification', label: 'Identification', color: 'black' },
-  { value: 'Reference', label: 'Reference', color: 'black' },
-  { value: 'GapVerification', label: 'GapVerification', color: 'black' },
-  { value: 'SocialMedia', label: 'SocialMedia', color: 'black' },
-  { value: 'PoliceVerification', label: 'PoliceVerification', color: 'black' },
-  { value: 'CompanyCheck', label: 'CompanyCheck', color: 'black' },
-  { value: 'DirectorshipCheck', label: 'DirectorshipCheck', color: 'black' },
-  { value: 'CvValidation', label: 'CvValidation', color: 'black' }
-];
->>>>>>> origin/dev:src/views/common-ui-components/tables/UserTableView.js
 
 function Table({ columns, data, modalOpen }) {
   const {
