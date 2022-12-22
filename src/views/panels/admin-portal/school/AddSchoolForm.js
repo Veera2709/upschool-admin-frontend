@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios'
+import Select from 'react-select';
 import { Row, Col, Card, Pagination, Button, Modal, ModalBody, Form } from 'react-bootstrap';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 // import dynamicUrl from '../../../helper/dynamicUrl';
@@ -18,6 +19,8 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
     const [imgFile, setImgFile] = useState('');
     let [data, setData] = useState({});
     const [_radio, _setRadio] = useState(false);
+    const [previousBoards, setPreviousBoards] = useState([]);
+    const [selectedBoards, setSelectedBoards] = useState([]);
     const [scbscription_active, setScbscription_active] = useState('No');
     const [copy, setCopy] = useState(false);
     const [disableButton, setDisableButton] = useState(false);
@@ -81,18 +84,31 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
     }
 
 
-    // const [schoolBoardState, setSchoolBoardState] = useState([]);
-    // const [schoolBoardCbse, setSchoolBoardCbse] = useState([]);
-    // const [schoolBoardIcse, setSchoolBoardIcse] = useState([]);
-    // const [schoolBoardCisce, setSchoolBoardCisce] = useState([]);
-    // const [schoolBoardNios, setSchoolBoardNios] = useState([]);
-    // const [schoolBoardIb, setSchoolBoardIb] = useState([]);
+    const schoolBoardOptions = [
+        { value: 'ICSE', label: 'ICSE' },
+        { value: 'CBSE', label: 'CBSE' },
+        { value: 'STATE', label: 'STATE' },
+        { value: 'CISCE', label: 'CISCE', isFixed: true },
+        { value: 'NIOS', label: 'NIOS' },
+        { value: 'IB', label: 'IB' }
+    ];
 
-    // const handleOnSelectItem = ((selectedBoardList, selectedBoardItem) => {
-    //     setSchoolBoardState(selectedList.map(selectedBoardList => selectedBoardList.id))
-    //     setSchoolBoardIb(selectedList.map(selectedBoardItem => selectedBoardItem.name))
-    // })
-    // const handleOnRemoveItem = (selectedList, selectedItem) => (selectedList.map(skillId => skillId.id))
+
+    const handleSelectChange = (event) => {
+
+        console.log(event);
+
+        let valuesArr = [];
+        for (let i = 0; i < event.length; i++) {
+            valuesArr.push(event[i].value)
+        }
+
+        console.log(valuesArr);
+        setSelectedBoards(valuesArr);
+    }
+
+
+
 
     return (
         <>
@@ -346,26 +362,24 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
 
 
 
-                                    <div class="form-group fill">
-                                        <label class="floating-label" for="school_board">
-                                            <small class="text-danger">* </small>
-                                            School Board</label>
+                                    <div className="col-md-6">
+                                        <div className="form-group fill">
 
-
-                                        <select
-                                            as='select'
-                                            name="school_board"
-                                            onChange={handleChange}
-                                            onBlur={handleBlur}
-                                            value={values.school_board}
-                                            ref={schoolBoardRef}
-                                            className='form-control'
-                                        >
-                                            {Constants.AddSchool.BoardsList.map((h, i) => {
-                                                return <option id={`school_boards-${i}`} keys={i} value={h.value}>{h.label}</option>
-
-                                            })}
-                                        </select>
+                                            <label className="floating-label">
+                                                <small className="text-danger">* </small>
+                                                School Board
+                                            </label>
+                                            {console.log(previousBoards)}
+                                            <Select
+                                                defaultValue={previousBoards}
+                                                isMulti
+                                                name="colors"
+                                                options={schoolBoardOptions}
+                                                className="basic-multi-select"
+                                                classNamePrefix="Select"
+                                                onChange={event => handleSelectChange(event)}
+                                            />
+                                        </div>
                                     </div>
 
                                     <div class="form-group fill">

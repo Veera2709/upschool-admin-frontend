@@ -136,13 +136,13 @@ const routes = [
       },
       {
         exact: true,
-        path: '/admin-portal/school/ActiveSchools',
-        component: lazy(() => import('./views/panels/admin-portal/school/ActiveSchools'))
+        path: '/admin-portal/active-schools',
+        component: lazy(() => import('./views/panels/admin-portal/school/School'))
       },
       {
         exact: true,
-        path: '/admin-portal/school/ArchiveSchools',
-        component: lazy(() => import('./views/panels/admin-portal/school/ArchiveSchools'))
+        path: '/admin-porttal/archived-schools',
+        component: lazy(() => import('./views/panels/admin-portal/school/ArchivedSchools'))
       },
 
       {

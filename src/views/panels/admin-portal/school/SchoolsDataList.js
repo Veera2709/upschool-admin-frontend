@@ -1,19 +1,40 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios'
-import { Row, Col, Card, Pagination, Button, Modal } from 'react-bootstrap';
-import BTable from 'react-bootstrap/Table';
-import withReactContent from 'sweetalert2-react-content';
-import Swal from 'sweetalert2';
-import { GlobalFilter } from './GlobalFilter';
-import MESSAGES from '../../../../helper/messages';
-import { useTable, useSortBy, usePagination, useGlobalFilter } from 'react-table';
 
-import AddSchoolForm from './AddSchoolForm';
-import dynamicUrl from '../../../../helper/dynamicUrls';
-import EditSchoolForm from './EditSchoolForm';
-import SubscribeClass from './SubscribeClass';
-import { isEmptyArray } from '../../../../util/utils';
+import React, { useState, useEffect, useRef } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { Row, Col, Card, Pagination, Button, Modal, Alert } from 'react-bootstrap';
+import BTable from 'react-bootstrap/Table';
+import * as Yup from 'yup';
+import { Formik } from 'formik';
+import axios from 'axios';
+import { SessionStorage } from '../../../../util/SessionStorage';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+import MESSAGES from './../../../../helper/messages';
+import { isEmptyArray, decodeJWT } from '../../../../util/utils';
+
+import { GlobalFilter } from './GlobalFilter';
+import { useTable, useSortBy, usePagination, useGlobalFilter } from 'react-table';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
+import dynamicUrl from '../../../../helper/dynamicUrls';
+
+
+export const colourOptions = [
+    { value: 'Education', label: 'Education', color: 'black' },
+    { value: 'Address', label: 'Address', color: 'black' },
+    { value: 'Employment', label: 'Employment', color: 'black' },
+    { value: 'DatabaseCheck', label: 'DatabaseCheck', color: 'black', isFixed: true },
+    { value: 'DrugTest', label: 'DrugTest', color: 'black' },
+    { value: 'CreditCheck', label: 'CreditCheck', color: 'black' },
+    { value: 'Criminal', label: 'Criminal', color: 'black', isFixed: true },
+    { value: 'Identification', label: 'Identification', color: 'black' },
+    { value: 'Reference', label: 'Reference', color: 'black' },
+    { value: 'GapVerification', label: 'GapVerification', color: 'black' },
+    { value: 'SocialMedia', label: 'SocialMedia', color: 'black' },
+    { value: 'PoliceVerification', label: 'PoliceVerification', color: 'black' },
+    { value: 'CompanyCheck', label: 'CompanyCheck', color: 'black' },
+    { value: 'DirectorshipCheck', label: 'DirectorshipCheck', color: 'black' },
+    { value: 'CvValidation', label: 'CvValidation', color: 'black' }
+];
 
 function Table({ columns, data, modalOpen }) {
     const {
@@ -46,6 +67,16 @@ function Table({ columns, data, modalOpen }) {
         usePagination
     );
 
+    // const saveSchoolIdDelete = (e, school_id, updateStatusSch) => {
+    //     e.preventDefault();
+
+    //     pageLocation === 'active-schools' ? (
+    //         sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: MESSAGES.INFO.ABLE_TO_RECOVER }, school_id, updateStatusSch)
+    //     ) : (
+    //         sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: MESSAGES.INFO.ABLE_TO_DELETE }, school_id, updateStatusSch)
+    //     )
+
+    // };
 
 
     return (
@@ -68,12 +99,19 @@ function Table({ columns, data, modalOpen }) {
                     </select>
                     entries
                 </Col>
-
                 <Col className="d-flex justify-content-end">
                     <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
-                    <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={modalOpen}>
-                        <i className="feather icon-plus" /> Add School
-                    </Button>
+                    {/* <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={modalOpen}>
+            <i className="feather icon-plus" /> Add User
+          </Button> */}
+
+                    <Link to={'/admin-portal/active-schools'}>
+                        <Button variant="success" className="btn-sm btn-round has-ripple ml-2">
+                            {/* onClick={(e) => saveUserIdDelete(e, userId, responseData[index].user_role, 'Active')} */}
+                            <i className="feather icon-plus" /> Add School
+                        </Button>
+
+                    </Link>
                 </Col>
             </Row>
 
@@ -86,7 +124,8 @@ function Table({ columns, data, modalOpen }) {
                                 // we can add them into the header props
                                 <th {...column.getHeaderProps(column.getSortByToggleProps())}>
                                     {column.render('Header')}
-                                    {/* Add a sort direction indicator */}
+                                    {// Add a sort direction indicator //
+                                    }
                                     <span>
                                         {column.isSorted ? (
                                             column.isSortedDesc ? (
@@ -109,13 +148,15 @@ function Table({ columns, data, modalOpen }) {
                         return (
                             <tr {...row.getRowProps()}>
                                 {row.cells.map((cell) => {
-                                    return <td  {...cell.getCellProps()}>{cell.render('Cell')}</td>;
+                                    return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>;
                                 })}
                             </tr>
                         );
                     })}
                 </tbody>
             </BTable>
+
+
             <Row className="justify-content-between">
                 <Col>
                     <span className="d-flex align-items-center">
@@ -126,13 +167,14 @@ function Table({ columns, data, modalOpen }) {
                         </strong>{' '}
                         | Go to page:{' '}
                         <input
-                            type="number"
                             className="form-control ml-2"
+                            type="number"
                             defaultValue={pageIndex + 1}
                             onChange={(e) => {
                                 const page = e.target.value ? Number(e.target.value) - 1 : 0;
                                 gotoPage(page);
                             }}
+                            onWheel={(e) => e.target.blur()}
                             style={{ width: '100px' }}
                         />
                     </span>
@@ -146,13 +188,16 @@ function Table({ columns, data, modalOpen }) {
                     </Pagination>
                 </Col>
             </Row>
-
         </>
     );
 }
 
-const SchoolChild = (props) => {
-    const { _data, fetchSchoolData, inactive, pageURL } = props
+
+
+
+const SchoolsDataList = (props) => {
+
+    const { _data } = props;
 
     const columns = React.useMemo(
         () => [
@@ -161,7 +206,7 @@ const SchoolChild = (props) => {
                 accessor: 'school_avatar'
             },
             {
-                Header: ' School Name',
+                Header: 'School Name',
                 accessor: 'school_name'
             },
             {
@@ -180,26 +225,7 @@ const SchoolChild = (props) => {
         []
     );
 
-    const [schoolData, setSchoolData] = useState([]);
-    const [isOpen, setIsOpen] = useState(false);
-
-    const [loader, showLoader, hideLoader] = useFullPageLoader();
-    const [isOpenEditSchool, setIsOpenEditSchool] = useState(false);
-    const [isOpenSubscribeClass, setIsOpenSubscribeClass] = useState(false);
-    const [editID, setEditID] = useState('');
-    const [subscribeID, setSubscribeClass] = useState('');
-
-    const MySwal = withReactContent(Swal);
-
-    const sweetAlertHandler = (alert) => {
-        MySwal.fire({
-            title: alert.title,
-            text: alert.text,
-            icon: alert.type
-        });
-    };
-
-    const handleDeleteSchool = (e, school_id, Archieved) => {
+    const handleRestoreSchool = (e, school_id, Archieved) => {
         e.preventDefault();
 
         const value = {
@@ -208,15 +234,22 @@ const SchoolChild = (props) => {
         };
 
         console.log(value);
-        // const MySwal = withReactContent(Swal);
-        // MySwal.fire({
-        //     title: 'Are you sure?',
-        //     text: 'Once deleted, you will not be able to recover!',
-        //     type: 'warning',
-        //     showCloseButton: true,
-        //     showCancelButton: true
-        // }).then((willDelete) => {
-        //     if (willDelete.value) {
+        const MySwal = withReactContent(Swal);
+        //     MySwal.fire({
+        //         title: 'Are you sure?',
+        //         text: 'Once deleted, you will not be able to recover!',
+        //         type: 'warning',
+        //         showCloseButton: true,
+        //         showCancelButton: true
+        //     }).then((willDelete) => {
+        //         if (willDelete.value))
+        // }
+
+
+
+
+
+
         axios
             .post(
                 dynamicUrl.toggleSchoolStatus,
@@ -235,8 +268,11 @@ const SchoolChild = (props) => {
                 if (response.Error) {
                     hideLoader();
                     sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
+
+                    window.location.reload();
+
                 } else {
-                    sweetAlertHandler({ title: MESSAGES.INFO.SCHOOL_DELETED, type: 'success' });
+                    sweetAlertHandler({ title: '', type: 'success', text: MESSAGES.SUCCESS.RestoredSuccessfully });
                     hideLoader();
                     window.location.reload();
                 }
@@ -260,35 +296,9 @@ const SchoolChild = (props) => {
             });
     };
 
-    const handleSubscribeClass = (e, school_id) => {
-
-        e.preventDefault();
-        setSubscribeClass(school_id);
-        setIsOpenSubscribeClass(true);
-
-        console.log('edit school');
-        console.log(school_id);
-        console.log(isOpenSubscribeClass);
-    }
-
-    const handleEditSchool = (e, school_id) => {
-
-        e.preventDefault();
-        setEditID(school_id);
-        setIsOpenEditSchool(true);
-
-        console.log('edit school');
-        console.log(school_id);
-        console.log(isOpenEditSchool);
-    }
-
-    const openHandler = () => {
-        setIsOpen(true);
-    };
-
     const _fetchSchoolData = () => {
-        console.log("School data func called");
         let resultData = _data && _data;
+        console.log("RESULT DATA : ", resultData);
         let finalDataArray = [];
         for (let index = 0; index < resultData.length; index++) {
             console.log('status: ', resultData[index]['school_status'])
@@ -296,33 +306,15 @@ const SchoolChild = (props) => {
             resultData[index]['school_name'] = <p>{resultData[index].school_name}</p>
             resultData[index]['phone_number'] = <p>{resultData[index].school_contact_info.business_address.phone_no}</p>
             resultData[index]['city'] = <p>{resultData[index].school_contact_info.business_address.city}</p>
-            resultData[index]['subscription_active'] = <p>{resultData[index].subscription_active}</p>
+            // resultData[index]['subscription_active'] = <p>{resultData[index].subscription_active}</p>
             resultData[index]['actions'] = (
                 <>
-                    <Button onClick={(e) => {
-                        handleSubscribeClass(e, resultData[index].school_id);
-                    }}
-                        size="sm"
-                        className="btn btn-icon btn-rounded btn-primary">
-                        <i className="feather icon-plus" />
-                        Subscribe Class
-                    </Button>
-                    &nbsp;
-                    <Button onClick={(e) => {
-                        handleEditSchool(e, resultData[index].school_id);
-                    }}
-                        size="sm"
-                        className="btn btn-icon btn-rounded btn-info"
+                    <Button onClick={(e) => { handleRestoreSchool(e, resultData[index].school_id, 'Active') }}
+                        size="sm" className="btn btn-icon btn-rounded btn-primary"
                     >
-                        <i className="feather icon-edit" /> &nbsp; Edit
+
+                        <i className="feather icon-plus" /> &nbsp;Restore
                     </Button>
-                    &nbsp;
-                    {inactive === false ? null :
-                        <Button onClick={(e) => { handleDeleteSchool(e, resultData[index].school_id, 'Archived') }}
-                            size='sm' className="btn btn-icon btn-rounded btn-danger"
-                        >
-                            <i className="feather icon-delete" /> &nbsp; Delete
-                        </Button>}
 
                 </>
             );
@@ -337,69 +329,101 @@ const SchoolChild = (props) => {
         _fetchSchoolData();
     }, [_data])
 
-    return isEmptyArray(schoolData) ? null : (
-        <React.Fragment>
-            <Row>
-                <Col sm={12}>
-                    <Card>
-                        <Card.Header>
-                            <Card.Title as="h5">Schools List</Card.Title>
-                        </Card.Header>
-                        <Card.Body>
-                            <Table columns={columns} data={schoolData} modalOpen={openHandler} />
-                        </Card.Body>
-                    </Card>
-                    <Modal dialogClassName="my-modal" show={isOpen} onHide={() => setIsOpen(false)}>
-                        <Modal.Header closeButton>
-                            <Modal.Title as="h5">Add School</Modal.Title>
-                        </Modal.Header>
-                        <Modal.Body>
-                            <AddSchoolForm setIsOpen={setIsOpen} fetchSchoolData={fetchSchoolData} />
-                        </Modal.Body>
-                        {/* <Modal.Footer>
-                            <Button variant="danger" onClick={() => setIsOpen(false)}>
-                                Clear
-                            </Button>
-                            <Button variant="primary">Submit</Button>
-                        </Modal.Footer> */}
-                    </Modal>
-                </Col>
-            </Row>
+    // const data = React.useMemo(() => makeData(50), []);
+
+    const [userData, setUserData] = useState([]);
+    const [schoolData, setSchoolData] = useState([]);
+    const [individualUserData, setIndividualUserData] = useState([]);
+    const [userDOB, setUserDOB] = useState('');
+    const [loader, showLoader, hideLoader] = useFullPageLoader();
+    const [className_ID, setClassName_ID] = useState({});
+    const [schoolName_ID, setSchoolName_ID] = useState({});
+    const [previousSchool, setPreviousSchool] = useState('');
+    const [previousClass, setPreviousClass] = useState('');
+    const [_userID, _setUserID] = useState('');
+
+    const [isOpen, setIsOpen] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [validationObj, setValidationObj] = useState({});
+
+    const [isLoading, setIsLoading] = useState(false);
+    const { user_id } = decodeJWT(sessionStorage.getItem('user_jwt'));
+    const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
+    const [selectClassErr, setSelectClassErr] = useState(false);
+
+    const classNameRef = useRef('');
+    const schoolNameRef = useRef('');
+
+    const phoneRegExp = /^(\+91[\-\s]?)?[0]?(91)?[6789]\d{9}$/;
+
+    const MySwal = withReactContent(Swal);
+
+    const sweetAlertHandler = (alert) => {
+        MySwal.fire({
+            title: alert.title,
+            text: alert.text,
+            icon: alert.type
+        });
+    };
+
+    const sweetConfirmHandler = (alert, school_id, school_Status) => {
+        MySwal.fire({
+            title: alert.title,
+            text: alert.text,
+            type: alert.type,
+            showCloseButton: true,
+            showCancelButton: true
+        }).then((willDelete) => {
+            if (willDelete.value) {
+                showLoader();
+                // deleteUser(user_id, user_role, updateStatus);
+            } else {
+
+                const returnValue = pageLocation === 'active-users' ? (
+                    MySwal.fire('', MESSAGES.INFO.DATA_SAFE, 'success')
+                ) : (
+                    MySwal.fire('', MESSAGES.INFO.FAILED_TO_RESTORE, 'error')
+                )
+                return returnValue;
+            }
+        });
+    };
+
+    const saveSchoolId = (e, school_id) => {
+        e.preventDefault();
+        // getIndividualUser(user_id, user_role);
+        showLoader();
+    };
 
 
 
-            <Modal dialogClassName="my-modal" show={isOpenSubscribeClass} onHide={() => setIsOpenSubscribeClass(false)}>
+    return (
+        <div>
+            {schoolData.length <= 0 ? (
+                <div>
+                    <h3 style={{ textAlign: 'center' }}>No Archived Schools Found</h3>
+                </div>
+            ) : (
+                <>
+                    <Row>
+                        <Col sm={12}>
+                            <Card>
+                                <Card.Header>
+                                    <Card.Title as="h5">Archived List</Card.Title>
+                                </Card.Header>
+                                <Card.Body>
+                                    <Table columns={columns} data={schoolData} />
+                                </Card.Body>
+                            </Card>
 
-                <Modal.Header closeButton>
+                        </Col>
+                    </Row>
+                </>
+            )
+            }
 
-                    <Modal.Title as="h5">Subscribe Class</Modal.Title>
-
-                </Modal.Header>
-
-                <Modal.Body>
-
-                    <SubscribeClass id={subscribeID} setIsOpenSubscribeClass={setIsOpenSubscribeClass} />
-
-                </Modal.Body>
-
-            </Modal>
-
-            <Modal dialogClassName="my-modal" show={isOpenEditSchool} onHide={() => setIsOpenEditSchool(false)}>
-
-                <Modal.Header closeButton>
-
-                    <Modal.Title as="h5">Edit School</Modal.Title>
-
-                </Modal.Header>
-
-                <Modal.Body>
-
-                    <EditSchoolForm id={editID} setIsOpenEditSchool={setIsOpenEditSchool} fetchSchoolData={fetchSchoolData} />
-
-                </Modal.Body>
-
-            </Modal>
-        </React.Fragment>
+        </div>
     );
 };
-export default SchoolChild;
+
+export default SchoolsDataList;

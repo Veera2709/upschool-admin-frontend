@@ -327,21 +327,20 @@ const menuItems = {
           id: 'sch-addSchool',
           title: 'School',
           icon: 'feather icon-book',
-          type: 'item',
-          url: '/admin-portal/school',
+          type: 'collapse',
           children: [
             {
-              id: 'sch-active-achool',
-              title: 'Active',
+              id: 'active-schools',
+              title: 'Active Schools',
               type: 'item',
-              url: '/admin-portal/school/ActiveSchools'
+              url: '/admin-portal/active-schools'
             },
             {
-              id: 'sch-archive-achool',
-              title: 'Archieve',
+              id: 'archived-schools',
+              title: 'Archived Schools',
               type: 'item',
-              url: '/admin-portal/school/ArchiveSchools'
-            },
+              url: '/admin-porttal/archived-schools'
+            }
           ]
         },
 
