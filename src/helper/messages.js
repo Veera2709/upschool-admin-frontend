@@ -4,7 +4,6 @@ const MESSAGES = {
     DigiCardNameExists: 'DigiCard Title exists already!',
     ChapterNameExists: 'Chapter Title exists already!',
 
-
     ComponentAdding: 'Error in adding the component! Please ensure that basic details component is completed.',
     ErrorInSendingEmail: 'Error in sending email!',
     ComponentEditing: 'Error in editing the component',
@@ -37,9 +36,6 @@ const MESSAGES = {
 
     AddingChapter: 'Added Chapter Successfully',
     EditChapter: 'Chapter Updated Successfully',
-
-
-
 
     PleaseCheckYourEmailForTheOTP: 'please check your mail for the otp!',
     RegisteredSuccessfully: 'registered successfully!',
@@ -81,12 +77,9 @@ const MESSAGES = {
     DATA_SAFE: 'Your data is safe!',
     FAILED_TO_RESTORE: 'Failed to restore!',
     APPROVE_DENY_REASON: 'Reason to ',
-<<<<<<< HEAD
     CONCEPT_DELETED: 'The concept has been deleted!',
-    CONCEPT_RESTORED: 'The concept has been restored!'
-=======
+    CONCEPT_RESTORED: 'The concept has been restored!',
     SCHOOL_DELETED: 'school deleted successfully!'
->>>>>>> origin/dev
   },
   VALIDATION: {
     MUST_BE_A_VALID_EMAIL_ADDRESS: 'Must be a valid email address',
