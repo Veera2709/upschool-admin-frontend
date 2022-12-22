@@ -12,10 +12,10 @@ import { areFilesInvalidBulkUpload, isEmptyObject } from '../../../../util/utils
 import * as Yup from 'yup';
 import { Formik } from 'formik';
 
-import { bulkUpload } from './case-bulk-upload-api/bulkUpload';
+import { bulkUpload } from './user-bulk-upload-api/bulkUpload';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 
-const UploadCase = ({ className, ...rest }) => {
+const UsersBulkUpload = ({ className, ...rest }) => {
 
   const schoolNameRef = useRef('');
   const [schoolName_ID, setSchoolName_ID] = useState({});
@@ -316,4 +316,4 @@ const UploadCase = ({ className, ...rest }) => {
   );
 };
 
-export default UploadCase;
+export default UsersBulkUpload;

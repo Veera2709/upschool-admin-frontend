@@ -150,16 +150,26 @@ const routes = [
           import('./views/panels/admin-portal/users/ListUsers')
 
         )
-      },
+      }, 
       {
         exact: true,
         path: '/admin-portal/add-users',
         component: lazy(() => import('./views/panels/admin-portal/users/UsersBulkUpload'))
       },
+      {
+        exact: true,
+        path: '/admin-portal/add-concepts',
+        component: lazy(() => import('./views/panels/admin-portal/concepts/AddConcepts'))
+      },
 
       {
         exact: true,
-        path: '/admin-portal/concepts',
+        path: '/admin-portal/active-concepts',
+        component: lazy(() => import('./views/panels/admin-portal/concepts/ListConcepts'))
+      },
+      {
+        exact: true,
+        path: '/admin-portal/archived-concepts',
         component: lazy(() => import('./views/panels/admin-portal/concepts/ListConcepts'))
       },
 
