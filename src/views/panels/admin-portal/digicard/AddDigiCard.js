@@ -21,8 +21,8 @@ import { areFilesInvalid, isEmptyObject } from '../../../../util/utils';
 import { useEffect } from 'react';
 import logo from './img/logo.png'
 import { useHistory } from 'react-router-dom';
-import Select from 'react-select';
-import { isEmptyArray } from '../../../../util/utils';
+import Multiselect from 'multiselect-react-dropdown';
+
 
 
 
@@ -88,17 +88,16 @@ const AddDigiCard = (
   const [imgFile, setImgFile] = useState([]);
   const [articleData, setArticleData] = useState("");
   const [articleDataTitle, setArticleDataTtitle] = useState("");
-  const [digitalTitles, setDigitalTitles] = useState(0);
+  const [digitalTitles, setDigitalTitles] = useState([]);
 
-  const [isShown, setIsShown] = useState(false);
+  const [imgValidation, setImgValidation] = useState(true);
+  const [topicDigiCardIds, setTopicDigiCardIds] = useState([]);
 
 
 
-  let history = useHistory();
 
-  const getMultiOptions = (e) => {
-    setMultiOptions(e);
-  }
+
+  
 
 
   const handleDelete = (i, states) => {
@@ -162,7 +161,10 @@ const AddDigiCard = (
 
 
         resultData.forEach((item, index) => {
-          item.digicard_status === 'Active' ? colourOptions.push({ value: item.digi_card_title, label: item.digi_card_title, digi_card_id: item.digi_card_id }) : colourOptions.push({ value: item.digi_card_title, label: item.digi_card_title, digi_card_id: item.digi_card_id, isDisabled: true })
+          // item.digicard_status === 'Active' ? colourOptions.push({ value: item.digi_card_title, label: item.digi_card_title, digi_card_id: item.digi_card_id }) : colourOptions.push({ value: item.digi_card_title, label: item.digi_card_title, digi_card_id: item.digi_card_id, isDisabled: true })
+          if (item.digicard_status === 'Active') {
+            colourOptions.push({ value: item.digi_card_title, digi_card_id: item.digi_card_id })
+          }
         }
         );
         console.log("colourOptions", colourOptions);
@@ -172,6 +174,13 @@ const AddDigiCard = (
         console.log(err)
       })
   }, [])
+
+
+  const handleOnSelect = ((selectedList, selectedItem) => {
+    setMultiOptions(selectedList)
+  })
+  const handleOnRemove = (selectedList, selectedItem) => setTopicDigiCardIds(selectedList.map(skillId => skillId.id))
+
 
   return (
     <div>
@@ -189,12 +198,6 @@ const AddDigiCard = (
               clientComponents: multiOptions
             }}
             validationSchema={Yup.object().shape({
-              // digicardname: Yup.string()
-              //   .trim()
-              //   .min(2, Constants.AddDigiCard.DigiCardNameTooShort)
-              //   .max(50, Constants.AddDigiCard.DigiCardNameTooLong)
-              //   .matches(Constants.AddDigiCard.DigiCardNameRegex, Constants.AddDigiCard.DigiCardNameValidation)
-              //   .required(Constants.AddDigiCard.DigiCardNameRequired),
               digicardtitle: Yup.string()
                 .trim()
                 .min(2, Constants.AddDigiCard.DigiCardtitleTooShort)
@@ -205,119 +208,11 @@ const AddDigiCard = (
                 .trim()
                 .nullable(true, Constants.AddDigiCard.DigiCardImageNotNull)
                 .required(Constants.AddDigiCard.DigiCardImageRequired),
-              // digicard_voice_note: Yup.string()
-              //   .trim()
-              //   .nullable(true, Constants.AddDigiCard.DigiCardFileNotNull)
-              //   .required(Constants.AddDigiCard.DigiCardfileRequired),
-              // clientComponents: Yup.array().required("Provide at least one tag").min(1)
             })}
 
-
-
             onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-
-
               console.log("multiOptions", multiOptions);
               console.log("on submit");
-              var formData = {
-                // digi_card_name: values.digicardname,
-                digi_card_title: values.digicardtitle,
-                digi_card_files: [values.digicard_image],
-                digicard_image: values.digicard_image,
-                digi_card_excerpt: articleDataTitle,
-                digi_card_content: articleData,
-                digi_card_keywords: tags,
-                digicard_voice_note: values.digicard_voice_note === undefined ? "" : values.digicard_voice_note,
-                related_digi_cards: multiOptions,
-                digicard_status: { value: "Active", label: "Active" }
-              };
-
-
-
-              axios
-                .post(dynamicUrl.insertDigicard, { data: formData }, { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
-                .then(async (response) => {
-                  console.log({ response });
-                  if (response.Error) {
-                    console.log('Error');
-                    hideLoader();
-                    setDisableButton(false);
-                  } else {
-                    let uploadParams = response.data;
-                    hideLoader();
-                    setDisableButton(false);
-                    console.log('Proceeding with file upload');
-
-                    if (Array.isArray(uploadParams)) {
-                      for (let index = 0; index < uploadParams.length; index++) {
-                        let keyNameArr = Object.keys(uploadParams[index]);
-                        let keyName = keyNameArr[0];
-                        console.log('KeyName', keyName);
-
-
-                        let blobField = document.getElementById(keyName).files[0];
-                        console.log({
-                          blobField
-                        });
-
-                        let tempObj = uploadParams[index];
-
-                        let result = await fetch(tempObj[keyName], {
-                          method: 'PUT',
-                          body: blobField
-                        });
-
-                        console.log({
-                          result
-                        });
-                      }
-                      sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingDigiCard });
-                      hideLoader();
-                      setDisableButton(false);
-                      // fetchClientData();
-                      setIsOpen(false);
-                    } else {
-                      console.log('No files uploaded');
-                      sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingDigiCard });
-                      hideLoader();
-                      setDisableButton(false);
-                      // fetchClientData();
-                      setIsOpen(false);
-                    }
-                  }
-                })
-                .catch((error) => {
-                  if (error.response) {
-                    // Request made and server responded
-                    console.log(error.response.data);
-
-                    console.log(error.response.data);
-                    if (error.response.status === 400) {
-                      console.log();
-                      hideLoader();
-                      // setIsClientExists(true);
-                      sweetAlertHandler({ title: 'Error', type: 'error', text: MESSAGES.ERROR.DigiCardNameExists });
-
-                    } else {
-                      sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
-                    }
-                  } else if (error.request) {
-                    // The request was made but no response was received
-                    console.log(error.request);
-                    setDisableButton(false);
-                    hideLoader();
-                  } else {
-                    // Something happened in setting up the request that triggered an Error
-                    console.log('Error', error.message);
-                    setDisableButton(false);
-                    hideLoader();
-                  }
-                });
-
-              console.log(formData);
-              console.log('Submitting');
-
-
               let allFilesData = [];
               const fileNameArray = ['digicard_image'];
 
@@ -330,19 +225,105 @@ const AddDigiCard = (
                 }
               });
 
-              console.log(allFilesData)
-              if (allFilesData.length === 0) {
-                showLoader();
-                setDisableButton(true);
+              if (areFilesInvalid(allFilesData) !== 0) {
+                setImgValidation(false)
+                hideLoader();
               } else {
-                if (areFilesInvalid(allFilesData) !== 0) {
-                  setInvalidFile(true);
-                } else {
-                  showLoader();
-                  setDisableButton(true);
-                }
+
+                var formData = {
+                  // digi_card_name: values.digicardname,
+                  digi_card_title: values.digicardtitle,
+                  digi_card_files: [values.digicard_image],
+                  digicard_image: values.digicard_image,
+                  digi_card_excerpt: articleDataTitle,
+                  digi_card_content: articleData,
+                  digi_card_keywords: tags,
+                  digicard_voice_note: values.digicard_voice_note === undefined ? "" : values.digicard_voice_note,
+                  related_digi_cards: multiOptions,
+                };
+
+                axios
+                  .post(dynamicUrl.insertDigicard, { data: formData }, { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
+                  .then(async (response) => {
+                    console.log({ response });
+                    if (response.Error) {
+                      console.log('Error');
+                      hideLoader();
+                      setDisableButton(false);
+                    } else {
+                      let uploadParams = response.data;
+                      hideLoader();
+                      setDisableButton(false);
+                      console.log('Proceeding with file upload');
+
+                      if (Array.isArray(uploadParams)) {
+                        for (let index = 0; index < uploadParams.length; index++) {
+                          let keyNameArr = Object.keys(uploadParams[index]);
+                          let keyName = keyNameArr[0];
+                          console.log('KeyName', keyName);
+
+
+                          let blobField = document.getElementById(keyName).files[0];
+                          console.log({
+                            blobField
+                          });
+
+                          let tempObj = uploadParams[index];
+
+                          let result = await fetch(tempObj[keyName], {
+                            method: 'PUT',
+                            body: blobField
+                          });
+
+                          console.log({
+                            result
+                          });
+                        }
+                        sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingDigiCard });
+                        hideLoader();
+                        setDisableButton(false);
+                        // fetchClientData();
+                        setIsOpen(false);
+                      } else {
+                        console.log('No files uploaded');
+                        sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingDigiCard });
+                        hideLoader();
+                        setDisableButton(false);
+                        // fetchClientData();
+                        setIsOpen(false);
+                      }
+                    }
+                  })
+                  .catch((error) => {
+                    if (error.response) {
+                      // Request made and server responded
+                      console.log(error.response.data);
+
+                      console.log(error.response.data);
+                      if (error.response.status === 400) {
+                        console.log();
+                        hideLoader();
+                        // setIsClientExists(true);
+                        sweetAlertHandler({ title: 'Error', type: 'error', text: MESSAGES.ERROR.DigiCardNameExists });
+
+                      } else {
+                        sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+                      }
+                    } else if (error.request) {
+                      // The request was made but no response was received
+                      console.log(error.request);
+                      setDisableButton(false);
+                      hideLoader();
+                    } else {
+                      // Something happened in setting up the request that triggered an Error
+                      console.log('Error', error.message);
+                      setDisableButton(false);
+                      hideLoader();
+                    }
+                  });
               }
-            }}
+            }
+            }
           >
             {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
               <form noValidate onSubmit={handleSubmit}>
@@ -379,6 +360,7 @@ const AddDigiCard = (
                           handleChange(e);
                           previewImage(e);
                           encodeImageFileAsURL(e);
+                          setImgValidation(true)
                         }}
                         type="file"
                         value={values.digicard_image}
@@ -387,10 +369,11 @@ const AddDigiCard = (
                       {touched.digicard_image && errors.digicard_image && (
                         <small className="text-danger form-text">{errors.digicard_image}</small>
                       )}
+                      <small className="text-danger form-text" style={{ display: imgValidation ? 'none' : 'block' }}>Invalid File Type or File size is Exceed More Than 1MB</small>
                     </div>
                     <div className="form-group fill">
                       <label className="floating-label" htmlFor="digicard_voice_note">
-                        <small className="text-danger">* </small>Voice Note
+                        <small className="text-danger"> </small>Voice Note
                       </label>
                       <input
                         className="form-control"
@@ -414,12 +397,13 @@ const AddDigiCard = (
 
                     <div className='ReactTags'>
                       <label className="floating-label">
-                        <small className="text-danger">* </small>KeyWords
+                        <small className="text-danger"> </small>KeyWords
                       </label>
                       <ReactTags
                         // error={touched.digicardKeywords && errors.digicardKeywords}
                         classNames={{ root: 'react-tags bootstrap-tagsinput', selectedTag: 'react-tags__selected-tag btn-primary' }}
                         allowNew={true}
+                        addOnBlur={true}
                         tags={tags}
                         onDelete={handleDelete}
                         onAddition={(e) => handleAddition(e)}
@@ -429,9 +413,9 @@ const AddDigiCard = (
                     </div><br />
                     <div className="form-group fill" style={{ position: "relative", zIndex: 10 }}>
                       <label className="floating-label" htmlFor="clientComponents">
-                        <small className="text-danger">* </small>Related DigiCard Titles
+                        <small className="text-danger"> </small>Related DigiCard Titles
                       </label>
-                      <Select
+                      {/* <Select
                         className="basic-single"
                         classNamePrefix="select"
                         // name="digiCardTitle"
@@ -440,7 +424,16 @@ const AddDigiCard = (
                         onChange={getMultiOptions}
                         options={digitalTitles}
                         placeholder="Which is your favourite colour?"
-                      /><br />
+                      /> */}
+                      <Multiselect
+                        options={digitalTitles}
+                        displayValue="value"
+                        selectionLimit="25"
+                        // selectedValues={defaultOptions}
+                        onSelect={handleOnSelect}
+                        onRemove={handleOnRemove}
+                      />
+                      <br />
                       {touched.clientComponents && errors.clientComponents && (
                         <small className="text-danger form-text">{errors.clientComponents}</small>
                       )}
@@ -460,7 +453,7 @@ const AddDigiCard = (
                 <Row>
                   <Col sm='12'>
                     <label className="floating-label" htmlFor="digicardtitleExcerpt">
-                      <small className="text-danger">* </small>DigiCard Excerpt
+                      <small className="text-danger"> </small>DigiCard Excerpt
                     </label>
                     <ArticleRTE
                       setArticleSize={setArticleSize}
@@ -476,7 +469,7 @@ const AddDigiCard = (
                 <Row>
                   <Col sm='12'>
                     <label className="floating-label" htmlFor="digicardtitle">
-                      <small className="text-danger">* </small>DigiCard Content
+                      <small className="text-danger"> </small>DigiCard Content
                     </label>
                     <ArticleRTE
                       setArticleSize={setArticleSize}

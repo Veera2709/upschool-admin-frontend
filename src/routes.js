@@ -197,7 +197,13 @@ const routes = [
       //digi card
       {
         exact: true,
-        path: '/admin-portal/digicard',
+        path: '/admin-portal/active-digiCard',
+        component: lazy(() => import('./views/panels/admin-portal/digicard/DigiCard'))
+      },
+       //digi card
+       {
+        exact: true,
+        path: '/admin-portal/digicard-Archived',
         component: lazy(() => import('./views/panels/admin-portal/digicard/DigiCard'))
       },
       //add didgicard
@@ -214,12 +220,22 @@ const routes = [
         component: lazy(() => import('./views/panels/admin-portal/digicard/EditDigiCard'))
       },
       //chapters
+      // {
+      //   exact: true,
+      //   path: '/admin-portal/chapters/CaptersList',
+      //   component: lazy(() => import('./views/panels/admin-portal/chapters/ChaptersList'))
+      // },
       {
         exact: true,
-        path: '/admin-portal/chapters/CaptersList',
+        path: '/admin-portal/chapters/active-chapter',
         component: lazy(() => import('./views/panels/admin-portal/chapters/ChaptersList'))
       },
-      //add chapter
+      {
+        exact: true,
+        path: '/admin-portal/chapters/archived-chapter',
+        component: lazy(() => import('./views/panels/admin-portal/chapters/ChaptersList'))
+      },
+       //add chapter
       {
         exact: true,
         path: '/admin-portal/addChapters',
