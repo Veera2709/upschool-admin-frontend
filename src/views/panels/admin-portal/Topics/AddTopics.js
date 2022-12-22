@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Button, Card, Col, Form, FormControl, FormLabel, Row } from 'react-bootstrap';
+import { Button, Card, Col, Form, Row } from 'react-bootstrap';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 // import dynamicUrl from '../../../helper/dynamicUrl';
 import * as Yup from 'yup';
@@ -12,6 +12,7 @@ import Swal from 'sweetalert2';
 import dynamicUrl from '../../../../helper/dynamicUrls';
 import { Label } from 'recharts';
 import Multiselect from 'multiselect-react-dropdown';
+import axios from 'axios';
 
 const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
     let history = useHistory();
@@ -21,22 +22,33 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
     const [imgFile, setImgFile] = useState([]);
     const [articleData, setArticleData] = useState("");
 
-    const [topicDigiCardId, setTopicDigiCardId] = useState([]);
-    const [topicDigiCardIds, setTopicDigiCardIds] = useState([]);
-    const [topicDigiCardNames, setTopicDigiCardNames] = useState([]);
+    const [topicConceptId, setTopicConceptId] = useState([]);
+    const [topicConceptIds, setConceptIds] = useState([]);
+    const [topicConceptNames, setTopicConceptNames] = useState([]);
 
+    const [relatedTopicsId, setRelatedTopicsId] = useState([]);
+    const [relatedTopicsIds, setRelatedTopicsIds] = useState([]);
+    const [relatedTopicNames, setRelatedTopicNames] = useState([]);
 
     const handleOnSelect = ((selectedList, selectedItem) => {
-        setTopicDigiCardIds(selectedList.map(serviceId => serviceId.id))
-        setTopicDigiCardNames(selectedList.map(skillname => skillname.name))
+        setConceptIds(selectedList.map(concept => concept.id))
+        setTopicConceptNames(selectedList.map(conceptName => conceptName.name))
     })
-    const handleOnRemove = (selectedList, selectedItem) => setTopicDigiCardIds(selectedList.map(skillId => skillId.id))
+    const handleOnRemove = (selectedList, selectedItem) => setConceptIds(selectedList.map(concept => concept.id))
+
+    const handleOnSelectTopic = ((selectedList, selectedItem) => {
+        setRelatedTopicsIds(selectedList.map(topic => topic.id))
+        setRelatedTopicNames(selectedList.map(topicName => topicName.name))
+    })
+    const handleOnRemoveTopic = (selectedList, selectedItem) => setRelatedTopicsIds(selectedList.map(topic => topic.id))
 
     const data = [
         { id: 1, name: 'Topics' },
         { id: 2, name: 'Topics1' },
         { id: 3, name: 'Topics2' },
     ]
+
+
     const topicQuizTemplate = { level: "", duration: "" }
     const [topicQuiz, setTopicQuiz] = useState([topicQuizTemplate])
     const addTopic = () => {
@@ -57,6 +69,7 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
         filteredProjects.splice(index, 1)
         setTopicQuiz(filteredProjects)
     }
+
     const levels = [
         { label: 'Level-1', value: 'Level-1' },
         { label: 'Level-2', value: 'Level-2' },
@@ -64,7 +77,8 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
     ]
 
     useEffect(() => {
-        setTopicDigiCardId(data)
+        setTopicConceptId(data);
+        setRelatedTopicsId(data);
     }, [])
 
     return (
@@ -76,54 +90,71 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
                         initialValues={{
                             topic_title: '',
                             topic_description: '',
-                            topic_digi_card_id: [],
+                            topic_concept_id: [],
                             pre_post_learning: '',
                             related_topics: [],
-                            pre_post: '',
-                            topic_quiz_config: ''
+                            topic_quiz_config: []
+                        }}
+                        // validationSchema
+                        onSubmit={(values, { setErrors, setStatus, setSubmitting }) => {
+                            setSubmitting(true);
+                            const formData = {
+                                topic_title: values.topic_title,
+                                topic_description: values.topic_description,
+                                topic_concept_id: topicConceptIds,
+                                pre_post_learning: values.pre_post_learning,
+                                related_topics: relatedTopicsIds,
+                                topic_quiz_config: topicQuiz
+                            }
+                            console.log('formData: ', formData)
+                            axios.post(dynamicUrl.addTopic, { data: formData }, {
+                                headers: { Authorization: sessionStorage.getItem('user_jwt') }
+                            })
+                                .then((response) => {
+                                    const result = response;
+                                    console.log('result: ', result);
+                                })
+                                .catch((err) => {
+                                    console.log(err);
+                                })
                         }}
                     >
                         {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
-                            <Form noValidate onSubmit={handleSubmit} fill >
+                            <Form onSubmit={handleSubmit} >
                                 <Col sm={6}>
                                     <Form.Group>
-                                        <FormLabel className="floating-label" htmlFor="topic_title"><small className="text-danger">* </small>Topic Title</FormLabel>
-                                        <FormControl
+                                        <Form.Label className="floating-label" ><small className="text-danger">* </small>Topic Title</Form.Label>
+                                        <Form.Control
                                             className="form-control"
-                                            error={touched.topic_title && errors.topic_title}
                                             name="topic_title"
                                             onBlur={handleBlur}
                                             onChange={handleChange}
                                             type="text"
                                             value={values.topic_title}
-                                            id='topic_title'
                                         />
-                                        {touched.topic_title && errors.topic_title && <small className="text-danger form-text">{errors.topic_title}</small>}
+                                        {/* {touched.topic_title && errors.topic_title && <small className="text-danger form-text">{errors.topic_title}</small>} */}
                                     </Form.Group>
                                 </Col>
 
                                 <Col sm={6}>
                                     <Form.Group>
-                                        <FormLabel className="floating-label" htmlFor="topic_description"><small className="text-danger">* </small>Topic Decription</FormLabel>
-                                        <FormControl
-                                            className="form-control"
-                                            error={touched.topic_description && errors.topic_description}
+                                        <Form.Label className="floating-label" ><small className="text-danger">* </small>Topic Decription</Form.Label>
+                                        <Form.Control
                                             name="topic_description"
                                             onBlur={handleBlur}
                                             onChange={handleChange}
                                             type="text"
                                             value={values.topic_description}
-                                            id='topic_description'
                                         />
-                                        {touched.topic_description && errors.topic_description && <small className="text-danger form-text">{errors.topic_description}</small>}
+                                        {/* {touched.topic_description && errors.topic_description && <small className="text-danger form-text">{errors.topic_description}</small>} */}
                                     </Form.Group>
                                 </Col>
 
                                 <Col sm={6}>
                                     <Form.Group>
-                                        <FormLabel className="floating-label" htmlFor="topic_digi_card_id"><small className="text-danger">* </small>Topic concept Id</FormLabel>
+                                        <Form.Label className="floating-label" ><small className="text-danger">* </small>Topic concept Id</Form.Label>
                                         <Multiselect
-                                            options={topicDigiCardId}
+                                            options={topicConceptId}
                                             displayValue="name"
                                             selectionLimit="25"
                                             onSelect={handleOnSelect}
@@ -134,53 +165,33 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
 
                                 <Col sm={6}>
                                     <Form.Group>
-                                        <FormLabel className="floating-label" htmlFor="pre_post_learning"><small className="text-danger">* </small>Pre-Post Learning</FormLabel>
-                                        <FormControl
-                                            className="form-control"
-                                            error={touched.pre_post_learning && errors.pre_post_learning}
+                                        <Form.Label className="floating-label" ><small className="text-danger">* </small>Pre-Post Learning</Form.Label>
+                                        <Form.Control
                                             name="pre_post_learning"
                                             onBlur={handleBlur}
                                             onChange={handleChange}
-                                            type="text"
+                                            type="number"
                                             value={values.pre_post_learning}
-                                            id='pre_post_learning'
+                                            onWheel={(e) => e.target.blur()}
                                         />
-                                        {touched.pre_post_learning && errors.pre_post_learning && <small className="text-danger form-text">{errors.pre_post_learning}</small>}
+                                        {/* {touched.pre_post_learning && errors.pre_post_learning && <small className="text-danger form-text">{errors.pre_post_learning}</small>} */}
                                     </Form.Group>
                                 </Col>
 
                                 <Col sm={6}>
                                     <Form.Group>
-                                        <FormLabel className="floating-label" htmlFor="related_topics"><small className="text-danger">* </small>Related Topics</FormLabel>
-                                        <FormControl
-                                            className="form-control"
-                                            error={touched.related_topics && errors.related_topics}
-                                            name="related_topics"
-                                            onBlur={handleBlur}
-                                            onChange={handleChange}
-                                            type="text"
-                                            value={values.related_topics}
-                                            id='related_topics'
-                                        />
-                                        {touched.related_topics && errors.related_topics && <small className="text-danger form-text">{errors.related_topics}</small>}
-                                    </Form.Group>
-                                </Col>
-
-                                <Col sm={6}>
-                                    <Form.Group>
-                                        <FormLabel className="floating-label" htmlFor="pre_post"><small className="text-danger">* </small>Related Topics</FormLabel>
+                                        <Form.Label className="floating-label" ><small className="text-danger">* </small>Related Topics</Form.Label>
                                         <Multiselect
-                                            options={topicDigiCardId}
+                                            options={relatedTopicsId}
                                             displayValue="name"
                                             selectionLimit="25"
-                                            onSelect={handleOnSelect}
-                                            onRemove={handleOnRemove}
+                                            onSelect={handleOnSelectTopic}
+                                            onRemove={handleOnRemoveTopic}
                                         />
-                                        {touched.pre_post && errors.pre_post && <small className="text-danger form-text">{errors.pre_post}</small>}
                                     </Form.Group>
                                 </Col>
 
-
+                                <Form.Label className="floating-label" ><small className="text-danger">* </small>Topic Quiz Config</Form.Label>
                                 {topicQuiz.map((topic, index) => (
                                     <div className='row ml-1 mb-2'>
                                         <div className='col-md-4'>
@@ -211,24 +222,6 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
                                 ))}
                                 <p></p>
                                 <p className='ml-3' onClick={addTopic} style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer' }}>Add another topic quiz config</p>
-
-                                {/* <Col sm={6}>
-                                    <Form.Group>
-                                        <FormLabel className="floating-label" htmlFor="topic_quiz_config"><small className="text-danger">* </small>Related Topics</FormLabel>
-                                        <FormControl
-                                            className="form-control"
-                                            error={touched.topic_quiz_config && errors.topic_quiz_config}
-                                            name="topic_quiz_config"
-                                            onBlur={handleBlur}
-                                            onChange={handleChange}
-                                            type="text"
-                                            value={values.topic_quiz_config}
-                                            id='topic_quiz_config'
-                                        />
-                                        {touched.topic_quiz_config && errors.topic_quiz_config && <small className="text-danger form-text">{errors.topic_quiz_config}</small>}
-                                    </Form.Group>
-                                </Col>  */}
-
 
                                 <div class="row d-flex justify-content-end">
                                     <div class="form-group fill">
