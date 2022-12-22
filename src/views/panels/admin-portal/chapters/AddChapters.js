@@ -18,7 +18,9 @@ import { areFilesInvalid, isEmptyObject } from '../../../../util/utils';
 import { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import Select from 'react-select';
-import { isEmptyArray } from '../../../../util/utils';
+import Multiselect from 'multiselect-react-dropdown';   
+
+
 
 
 
@@ -66,6 +68,8 @@ const AddDigiCard = (
     const [isShownPre, setIsShownPre] = useState(true);
     const [isShownIsl, setIsShownIsl] = useState(true);
     const [isShownDes, setIsShownDes] = useState(true);
+    const [topicDigiCardIds, setTopicDigiCardIds] = useState([]);
+
 
 
 
@@ -76,7 +80,8 @@ const AddDigiCard = (
     const [imgFile, setImgFile] = useState([]);
     const [articleData, setArticleData] = useState("");
     const [articleDataTitle, setArticleDataTtitle] = useState("");
-    const [digitalTitles, setDigitalTitles] = useState(0);
+    const [topicTitles, setTopicTitles] = useState([]);
+
 
 
 
@@ -119,16 +124,32 @@ const AddDigiCard = (
 
 
                 resultData.forEach((item, index) => {
-                    item.topic_status === 'Active' ? colourOptions.push({ value: item.topic_title, label: item.topic_title }) : colourOptions.push({ value: item.topic_title, label: item.topic_title, isDisabled: true })
+                    // item.topic_status === 'Active' ? colourOptions.push({ value: item.topic_title, label: item.topic_title }) : colourOptions.push({ value: item.topic_title, label: item.topic_title, isDisabled: true })
+                    if (item.topic_status === 'Active') {
+                        colourOptions.push({ value: item.topic_title, topic_id: item.topic_id })
+                    }
                 }
                 );
                 console.log("colourOptions", colourOptions);
-                setDigitalTitles(colourOptions)
+                setTopicTitles(colourOptions)
             })
             .catch((err) => {
                 console.log(err)
             })
     }, [])
+
+    const handleOnSelect = ((selectedList, selectedItem) => {
+        setPostlearningOption(selectedList)
+    })
+
+    const handleOnSelectPre = ((selectedList, selectedItem) => {
+        setPrelearningOptions(selectedList)
+    }) 
+
+    const handleOnRemove = (selectedList, selectedItem) => setTopicDigiCardIds(selectedList.map(skillId => skillId.id))
+
+   
+    
 
     return (
         <div>
@@ -161,7 +182,7 @@ const AddDigiCard = (
                             } else if (prelearningOptions == '') {
                                 setIsShownPre(false)
                             }
-                            else if(description==undefined){
+                            else if (description == undefined) {
                                 setIsShownDes(false)
                             }
                             else {
@@ -173,7 +194,7 @@ const AddDigiCard = (
                                     chapter_description: description,
                                     prelearning_topic_id: prelearningOptions,
                                     postlearning_topic_id: postlearningOption,
-                                    is_locked: isLockedOption,
+                                    is_locked: isLockedOption === undefined ? 'Yes' : isLockedOption,
                                 };
 
                                 console.log("formdata", formData);
@@ -204,7 +225,7 @@ const AddDigiCard = (
                                                 console.log();
                                                 hideLoader();
                                                 // setIsClientExists(true);
-                                                sweetAlertHandler({ title: 'Error', type: 'error', text: MESSAGES.ERROR.DigiCardNameExists });
+                                                sweetAlertHandler({ title: 'Error', type: 'error', text: MESSAGES.ERROR.ChapterNameExists });
 
                                             } else {
                                                 sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
@@ -253,20 +274,30 @@ const AddDigiCard = (
                                             <label className="floating-label" htmlFor="postlearning_topic">
                                                 <small className="text-danger">* </small> Postlearning Topic
                                             </label>
-                                            <Select
+                                            {/* <Select
                                                 className="basic-single"
                                                 classNamePrefix="select"
                                                 isMulti
                                                 closeMenuOnSelect={false}
-                                                onChange={(e)=>{PostlearningOption(e);setIsShown(true)}}
-                                                options={digitalTitles}
+                                                onChange={(e) => { PostlearningOption(e); setIsShown(true) }}
+                                                options={topicTitles}
                                                 placeholder="Which is your favourite colour?"
-                                            /><br />
+                                            /> */}
+                                            <Multiselect
+                                                options={topicTitles}
+                                                displayValue="value"
+                                                selectionLimit="25"
+                                                // selectedValues={defaultOptions}
+                                                onSelect={handleOnSelect}
+                                                onRemove={handleOnRemove}
+                                                onChange={setIsShown(true)}
+                                            />
+                                            <br />
                                             <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>Postlearning Topic Required</small>
                                         </div>
                                         <div className="form-group fill" htmlFor="chapter_description">
                                             <Form.Label> <small className="text-danger">* </small>Chapter Description</Form.Label>
-                                            <Form.Control as="textarea" onChange={(e)=>{ChapterDescription(e);setIsShownDes(true)}} rows="4" />
+                                            <Form.Control as="textarea" onChange={(e) => { ChapterDescription(e); setIsShownDes(true) }} rows="4" />
                                             <br />
                                             <small className="text-danger form-text" style={{ display: isShownDes ? 'none' : 'block' }}>Chapter Description Required</small>
                                         </div>
@@ -276,16 +307,26 @@ const AddDigiCard = (
                                             <label className="floating-label" htmlFor="prelearning_topic">
                                                 <small className="text-danger">* </small>Prelearning Topic
                                             </label>
-                                            <Select
+                                            {/* <Select
                                                 className="basic-single"
                                                 classNamePrefix="select"
                                                 // name="digiCardTitle"
                                                 isMulti
                                                 closeMenuOnSelect={false}
-                                                onChange={(e)=>{PrelearningOptions(e);setIsShownPre(true)}}
-                                                options={digitalTitles}
+                                                onChange={(e) => { PrelearningOptions(e); setIsShownPre(true) }}
+                                                options={topicTitles}
                                                 placeholder="Which is your favourite colour?"
-                                            /><br />
+                                            /> */}
+                                            <Multiselect
+                                                options={topicTitles}
+                                                displayValue="value"
+                                                selectionLimit="25"
+                                                // selectedValues={defaultOptions}
+                                                onSelect={handleOnSelectPre}
+                                                onRemove={handleOnRemove}
+                                                onChange={setIsShownPre(true)}
+                                            />
+                                            <br />
                                             <small className="text-danger form-text" style={{ display: isShownPre ? 'none' : 'block' }}>Prelearning Topic Required</small>
                                         </div>
 
@@ -299,7 +340,7 @@ const AddDigiCard = (
                                                 defaultValue={isLocked[0]}
                                                 name="color"
                                                 options={isLocked}
-                                                onChange={(e)=>{isLockedOPtion(e)}}
+                                                onChange={(e) => { isLockedOPtion(e) }}
                                             /><br />
                                         </div>
 

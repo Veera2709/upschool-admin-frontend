@@ -11,7 +11,7 @@ import dynamicUrl from '../../../../helper/dynamicUrls';
 
 const ListUsers = () => {
 
-    const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
+    const [pageLocation,    setPageLocation] = useState(useLocation().pathname.split('/')[2]);
     const [pageURL, setPageURL] = useState('');
     const [userRole, setUserRole] = useState('Teachers');
 
@@ -77,7 +77,6 @@ const ListUsers = () => {
     }
 
     useEffect(() => {
-
         console.log(pageLocation);
 
         if (pageLocation) {

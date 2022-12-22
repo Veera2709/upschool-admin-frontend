@@ -469,7 +469,7 @@ const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool, fetchSchoolD
                                             <label className="floating-label" >
                                                 <small className="text-danger">
                                                     * </small>
-                                                School Logo
+
                                             </label>
                                             <input
                                                 className="form-control"

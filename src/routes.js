@@ -136,6 +136,17 @@ const routes = [
       },
       {
         exact: true,
+        path: '/admin-portal/active-schools',
+        component: lazy(() => import('./views/panels/admin-portal/school/School'))
+      },
+      {
+        exact: true,
+        path: '/admin-porttal/archived-schools',
+        component: lazy(() => import('./views/panels/admin-portal/school/ArchivedSchools'))
+      },
+
+      {
+        exact: true,
         path: '/admin-portal/active-users',
         component: lazy(() =>
           import('./views/panels/admin-portal/users/ListUsers')
@@ -196,7 +207,13 @@ const routes = [
       //digi card
       {
         exact: true,
-        path: '/admin-portal/digicard',
+        path: '/admin-portal/active-digiCard',
+        component: lazy(() => import('./views/panels/admin-portal/digicard/DigiCard'))
+      },
+       //digi card
+       {
+        exact: true,
+        path: '/admin-portal/digicard-Archived',
         component: lazy(() => import('./views/panels/admin-portal/digicard/DigiCard'))
       },
       //add didgicard
@@ -213,12 +230,22 @@ const routes = [
         component: lazy(() => import('./views/panels/admin-portal/digicard/EditDigiCard'))
       },
       //chapters
+      // {
+      //   exact: true,
+      //   path: '/admin-portal/chapters/CaptersList',
+      //   component: lazy(() => import('./views/panels/admin-portal/chapters/ChaptersList'))
+      // },
       {
         exact: true,
-        path: '/admin-portal/chapters/CaptersList',
+        path: '/admin-portal/chapters/active-chapter',
         component: lazy(() => import('./views/panels/admin-portal/chapters/ChaptersList'))
       },
-      //add chapter
+      {
+        exact: true,
+        path: '/admin-portal/chapters/archived-chapter',
+        component: lazy(() => import('./views/panels/admin-portal/chapters/ChaptersList'))
+      },
+       //add chapter
       {
         exact: true,
         path: '/admin-portal/addChapters',
@@ -230,7 +257,7 @@ const routes = [
         path: '/admin-portal/editChapter/:chapter_id',
         component: lazy(() => import('./views/panels/admin-portal/chapters/EditChapter'))
       },
-      
+
       {
         exact: true,
         path: '/app/dashboard/analytics',

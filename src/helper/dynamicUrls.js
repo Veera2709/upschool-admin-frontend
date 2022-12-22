@@ -21,7 +21,7 @@ const dynamicUrl = {
     deleteSchool: baseUrl + '/deleteSchool',
     fetchUpschoolAndClientClasses: baseUrl + '/fetchUpschoolAndClientClasses',
     classSubscribe: baseUrl + '/classSubscribe',
-    
+
 
     fetchSchoolIdNames: baseUrl + '/fetchSchoolIdNames',
     fetchAllUsersData: baseUrl + '/fetchAllUsersData',
@@ -50,8 +50,12 @@ const dynamicUrl = {
     addConcepts: baseUrl + '/addConcepts',
     toggleConceptStatus: baseUrl + '/toggleConceptStatus',
     fetchIndividualConcept: baseUrl + '/fetchIndividualConcept',
-    updateConcept: baseUrl + '/updateConcept'
+    updateConcept: baseUrl + '/updateConcept',
 
+    // Topics
+    addTopic: baseUrl + '/addTopic',
+    toggleSchoolStatus: baseUrl + '/toggleSchoolStatus',
+    fetchInactiveSchool: baseUrl + '/fetchInactiveSchool',
 }
 
 export default dynamicUrl;

@@ -50,13 +50,14 @@ function Table({ columns, data, modalOpen }) {
         usePagination
     );
 
-  const [isOpen, setIsOpen] = useState(false);
-  let history = useHistory();
+    const [isOpen, setIsOpen] = useState(false);
+    let history = useHistory();
 
     const adddigicard = () => {
         history.push('/admin-portal/add-digicard');
         setIsOpen(true);
-      }
+    }
+
 
     return (
         <>
@@ -185,130 +186,130 @@ const DigiCardChild = (props) => {
 
     // const data = React.useMemo(() => makeData(80), []);
     const [digiCardData, setDigiCardData] = useState([]);
-  const [reloadAllData, setReloadAllData] = useState('Fetched');
-  const [loader, showLoader, hideLoader] = useFullPageLoader();
+    const [reloadAllData, setReloadAllData] = useState('Fetched');
+    const [loader, showLoader, hideLoader] = useFullPageLoader();
 
     // console.log('data: ', data)
 
     let history = useHistory();
 
     function deleteDigicard(digi_card_id, digi_card_name) {
-      console.log("digi_card_id", digi_card_id);
-      var data = {
-        "digi_card_id": digi_card_id,
-        "digicard_status":'Archived'
-      }
-  
-      const sweetConfirmHandler = () => {
-        const MySwal = withReactContent(Swal);
-        MySwal.fire({
-          title: 'Are you sure?',
-          text: 'Confirm deleting ' + digi_card_name + ' DigiCard',
-          type: 'warning',
-          showCloseButton: true,
-          showCancelButton: true
-        }).then((willDelete) => {
-          if (willDelete.value) {
-            console.log("api calling");
-            axios
-              .post(dynamicUrl.toggleDigiCardStatus, { data: data }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
-              .then((response) => {
-                if (response.Error) {
-                  hideLoader();
-                  sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
+        console.log("digi_card_id", digi_card_id);
+        var data = {
+            "digi_card_id": digi_card_id,
+            "digicard_status": 'Archived'
+        }
+
+        const sweetConfirmHandler = () => {
+            const MySwal = withReactContent(Swal);
+            MySwal.fire({
+                title: 'Are you sure?',
+                text: 'Confirm deleting ' + digi_card_name + ' DigiCard',
+                type: 'warning',
+                showCloseButton: true,
+                showCancelButton: true
+            }).then((willDelete) => {
+                if (willDelete.value) {
+                    console.log("api calling");
+                    axios
+                        .post(dynamicUrl.toggleDigiCardStatus, { data: data }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
+                        .then((response) => {
+                            if (response.Error) {
+                                hideLoader();
+                                sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
+                            } else {
+                                setReloadAllData("Deleted");
+                                return MySwal.fire('', 'The ' + digi_card_name + ' is Deleted', 'success');
+                                // window. location. reload() 
+                                //  MySwal.fire('', MESSAGES.INFO.CLIENT_DELETED, 'success');
+
+
+
+                            }
+                        })
+                        .catch((error) => {
+                            if (error.response) {
+                                // Request made and server responded
+                                console.log(error.response.data);
+                                hideLoader();
+                                sweetConfirmHandler({ title: 'Error', type: 'error', text: error.response.data });
+                            } else if (error.request) {
+                                // The request was made but no response was received
+                                console.log(error.request);
+                                hideLoader();
+                            } else {
+                                // Something happened in setting up the request that triggered an Error
+                                console.log('Error', error.message);
+                                hideLoader();
+                            }
+                        });
                 } else {
-                    setReloadAllData("Deleted");
-                    return MySwal.fire('', 'The ' + digi_card_name + ' is Deleted', 'success');
-                    // window. location. reload() 
-                  //  MySwal.fire('', MESSAGES.INFO.CLIENT_DELETED, 'success');
-                  
-                 
-                  
+                    return MySwal.fire('', 'DigiCard is safe!', 'error');
                 }
-              })
-              .catch((error) => {
-                if (error.response) {
-                  // Request made and server responded
-                  console.log(error.response.data);
-                  hideLoader();
-                  sweetConfirmHandler({ title: 'Error', type: 'error', text: error.response.data });
-                } else if (error.request) {
-                  // The request was made but no response was received
-                  console.log(error.request);
-                  hideLoader();
-                } else {
-                  // Something happened in setting up the request that triggered an Error
-                  console.log('Error', error.message);
-                  hideLoader();
-                }
-              });
-          } else {
-            return MySwal.fire('', 'DigiCard is safe!', 'error');
-          }
-        });
-      };
-      sweetConfirmHandler();
-  
+            });
+        };
+        sweetConfirmHandler();
+
     }
 
     function digicardRestore(digi_card_id, digi_card_name) {
         console.log("digi_card_id", digi_card_id);
         var data = {
-          "digi_card_id": digi_card_id,
-          "digicard_status":'Active'
+            "digi_card_id": digi_card_id,
+            "digicard_status": 'Active'
         }
-    
+
         const sweetConfirmHandler = () => {
-          const MySwal = withReactContent(Swal);
-          MySwal.fire({
-            title: 'Are you sure?',
-            text: 'Confirm to Restore ' + digi_card_name + ' DigiCard',
-            type: 'warning',
-            showCloseButton: true,
-            showCancelButton: true
-          }).then((willDelete) => {
-            if (willDelete.value) {
-                console.log("api calling");
-              axios
-                .post(dynamicUrl.toggleDigiCardStatus, { data: data }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
-                .then((response) => {
-                  if (response.Error) {
-                    hideLoader();
-                    sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
-                  } else {
-                      setReloadAllData("Deleted");
-                      return MySwal.fire('', 'The ' + digi_card_name + ' is Restored', 'success');
-                      // window. location. reload() 
-                    //  MySwal.fire('', MESSAGES.INFO.CLIENT_DELETED, 'success');
-                    
-                   
-                    
-                  }
-                })
-                .catch((error) => {
-                  if (error.response) {
-                    // Request made and server responded
-                    console.log(error.response.data);
-                    hideLoader();
-                    sweetConfirmHandler({ title: 'Error', type: 'error', text: error.response.data });
-                  } else if (error.request) {
-                    // The request was made but no response was received
-                    console.log(error.request);
-                    hideLoader();
-                  } else {
-                    // Something happened in setting up the request that triggered an Error
-                    console.log('Error', error.message);
-                    hideLoader();
-                  }
-                });
-            } else {
-              return MySwal.fire('', 'DigiCard is Restore!', 'error');
-            }
-          });
+            const MySwal = withReactContent(Swal);
+            MySwal.fire({
+                title: 'Are you sure?',
+                text: 'Confirm to Restore ' + digi_card_name + ' DigiCard',
+                type: 'warning',
+                showCloseButton: true,
+                showCancelButton: true
+            }).then((willDelete) => {
+                if (willDelete.value) {
+                    console.log("api calling");
+                    axios
+                        .post(dynamicUrl.toggleDigiCardStatus, { data: data }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
+                        .then((response) => {
+                            if (response.Error) {
+                                hideLoader();
+                                sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
+                            } else {
+                                setReloadAllData("Deleted");
+                                return MySwal.fire('', 'The ' + digi_card_name + ' is Restored', 'success');
+                                // window. location. reload() 
+                                //  MySwal.fire('', MESSAGES.INFO.CLIENT_DELETED, 'success');
+
+
+
+                            }
+                        })
+                        .catch((error) => {
+                            if (error.response) {
+                                // Request made and server responded
+                                console.log(error.response.data);
+                                hideLoader();
+                                sweetConfirmHandler({ title: 'Error', type: 'error', text: error.response.data });
+                            } else if (error.request) {
+                                // The request was made but no response was received
+                                console.log(error.request);
+                                hideLoader();
+                            } else {
+                                // Something happened in setting up the request that triggered an Error
+                                console.log('Error', error.message);
+                                hideLoader();
+                            }
+                        });
+                } else {
+                    return MySwal.fire('', 'DigiCard is Restore!', 'error');
+                }
+            });
         };
         sweetConfirmHandler();
-    
-      }
+
+    }
 
 
     const allDigicardData = () => {
@@ -317,7 +318,7 @@ const DigiCardChild = (props) => {
         console.log('resultData', resultData);
         let finalDataArray = [];
         for (let index = 0; index < resultData.length; index++) {
-            if(resultData[index].digicard_status === 'Active'){
+            if (resultData[index].digicard_status === 'Active') {
                 resultData[index]['digicard_image'] = <img className='img-fluid img-radius wid-50 circle-image' src={resultData[index].digicard_imageURL} alt="school_image" />
                 resultData[index]['actions'] = (
                     <>
@@ -340,7 +341,7 @@ const DigiCardChild = (props) => {
                         </>
                     </>
                 );
-            }else{
+            } else {
                 resultData[index]['digicard_image'] = <img className='img-fluid img-radius wid-50 circle-image' src={resultData[index].digicard_imageURL} alt="school_image" />
                 resultData[index]['actions'] = (
                     <>
@@ -348,7 +349,7 @@ const DigiCardChild = (props) => {
                             <Button
                                 size="sm"
                                 className="btn btn-icon btn-rounded btn-primary"
-                                onClick={(e) => digicardRestore(resultData[index].digi_card_id ,resultData[index].digi_card_title)}
+                                onClick={(e) => digicardRestore(resultData[index].digi_card_id, resultData[index].digi_card_title)}
                             >
                                 <i className="feather icon-edit" /> &nbsp; Restore
                             </Button>
@@ -356,7 +357,7 @@ const DigiCardChild = (props) => {
                     </>
                 );
             }
-           
+
             finalDataArray.push(resultData[index]);
 
         }
@@ -368,11 +369,11 @@ const DigiCardChild = (props) => {
         allDigicardData();
     }, [_data])
 
-    useEffect(()=>{
+    useEffect(() => {
 
-    },[reloadAllData])
+    }, [reloadAllData])
 
-    return  (
+    return (
         <React.Fragment>
             <Row>
                 <Col sm={12}>

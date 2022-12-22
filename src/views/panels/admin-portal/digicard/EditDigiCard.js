@@ -20,6 +20,7 @@ import ArticleRTE from './ArticleRTE'
 import { areFilesInvalid } from '../../../../util/utils';
 import { isEmptyObject } from '../../../../util/utils';
 import Select from 'react-select';
+import Multiselect from 'multiselect-react-dropdown';
 
 
 
@@ -91,24 +92,23 @@ const EditDigiCard = (
     const [voiceNote, setVoiceNote] = useState([]);
     const [articleData, setArticleData] = useState("");
     const [articleDataTitle, setArticleDataTtitle] = useState("");
-    const [digiCardTitles, setDigitalTitles] = useState(0);
-    const [defaultOptions, setDefaultOptions] = useState(0);
+    const [digiCardTitles, setDigitalTitles] = useState([]);
+    const [defaultOptions, setDefaultOptions] = useState([]);
     const [multiOptions, selectedOption] = useState(0);
 
 
-
+    const [topicDigiCardIds, setTopicDigiCardIds] = useState([]);
+    const [topicDigiCardNames, setTopicDigiCardNames] = useState([]);
 
 
     const [individualDigiCardData, setIndividualDigiCardData] = useState([]);
-    console.log('individualDigiCardData', individualDigiCardData);
+    console.log('individualDigiCardData initial', individualDigiCardData);
     console.log("defaultOptions", defaultOptions);
 
     const { digi_card_id } = useParams();
 
 
-    const getMultiOptions = (e) => {
-        selectedOption(e);
-    }
+  
 
     const handleDelete = (i, states) => {
         const newTags = tags.slice(0);
@@ -149,8 +149,11 @@ const EditDigiCard = (
 
 
                 resultData.forEach((item, index) => {
-                    item.digicard_status === 'Active' ? colourOptions.push({ value: item.digi_card_title, label: item.digi_card_title }) : colourOptions.push({ value: item.digi_card_title, label: item.digi_card_title, isDisabled: true })
+                    // item.digicard_status === 'Active' ? colourOptions.push({ value: item.digi_card_title, digi_card_id: item.digi_card_id }) : {}
                     // console.log("item",item)
+                    if(item.digicard_status === 'Active'){
+                        colourOptions.push({ value: item.digi_card_title, digi_card_id: item.digi_card_id })
+                    }
                 }
                 );
                 console.log("colourOptions", colourOptions);
@@ -199,11 +202,11 @@ const EditDigiCard = (
                     setArticleData(individual_client_data.digi_card_content)
                     setArticleDataTtitle(individual_client_data.digi_card_excerpt)
                     setTags(individual_client_data.digi_card_keywords)
-                    setDefaultOptions(individual_client_data.related_digi_cards)
+                    setDefaultOptions([...individual_client_data.related_digi_cards])
                     selectedOption(individual_client_data.related_digi_cards)
                     console.log("defaultOptions", individual_client_data.related_digi_cards);
 
-                    console.log('individualDigiCardData', individualDigiCardData);
+                    console.log('individualDigiCardData after API', individualDigiCardData);
 
                 } else {
                     console.log('else res');
@@ -235,7 +238,12 @@ const EditDigiCard = (
 
     }, []);
 
-    return isEmptyObject(individualDigiCardData) || digiCardTitles=='' ? null : (
+    const handleOnSelect = ((selectedList, selectedItem) => {
+        selectedOption(selectedList)
+    })
+    const handleOnRemove = (selectedList, selectedItem) => setTopicDigiCardIds(selectedList.map(skillId => skillId.id))
+
+    return isEmptyObject(individualDigiCardData)  ? null : (
         <div>
             <Card>
                 <Card.Body>
@@ -265,7 +273,7 @@ const EditDigiCard = (
                             //     .trim()
                             //     .nullable(true, Constants.AddDigiCard.DigiCardFileNotNull)
                             //     .required(Constants.AddDigiCard.DigiCardfileRequired),
-                          
+
                         })}
 
 
@@ -463,7 +471,7 @@ const EditDigiCard = (
                                         </div>
                                         <div className="form-group fill">
                                             <label className="floating-label" htmlFor="digicard_voice_note">
-                                                <small className="text-danger">* </small>Voice Note
+                                                <small className="text-danger"> </small>Voice Note
                                             </label>
                                             <input
                                                 className="form-control"
@@ -484,24 +492,28 @@ const EditDigiCard = (
                                                 <small className="text-danger form-text">{errors.digicard_voice_note}</small>
                                             )}
                                         </div>
-                                       
+
                                         <div className='ReactTags'>
                                             <label className="floating-label" htmlFor="digicard_image">
-                                                <small className="text-danger">* </small>KeyWords
+                                                <small className="text-danger"> </small>KeyWords
                                             </label>
                                             <ReactTags
                                                 classNames={{ root: 'react-tags bootstrap-tagsinput', selectedTag: 'react-tags__selected-tag btn-primary' }}
                                                 allowNew={true}
+                                                addOnBlur={true}
                                                 tags={tags}
                                                 onDelete={handleDelete}
                                                 onAddition={(e) => handleAddition(e)}
                                             />
                                         </div><br />
+                                        {console.log("---------------------------", defaultOptions)}
+
+
                                         <div className="form-group fill" style={{ position: "relative", zIndex: 10 }}>
                                             <label className="floating-label" htmlFor="digicardtitle">
-                                                <small className="text-danger">* </small>Related DigiCard Titles
+                                                <small className="text-danger"> </small>Related DigiCard Titles
                                             </label>
-                                            <Select
+                                            {/* <Select
                                                 defaultValue={defaultOptions}
                                                 className="basic-single"
                                                 classNamePrefix="select"
@@ -513,8 +525,19 @@ const EditDigiCard = (
                                                 onChange={getMultiOptions}
                                                 options={digiCardTitles}
                                                 placeholder="Select"
+                                            /> */}
+                                            <Multiselect
+                                                options={digiCardTitles}
+                                                displayValue="value"
+                                                selectionLimit="25"
+                                                selectedValues={defaultOptions}
+                                                onSelect={handleOnSelect}
+                                                onRemove={handleOnRemove}
                                             />
                                         </div>
+
+
+
                                     </Col>
                                     <Col sm={6}>
 
@@ -541,7 +564,7 @@ const EditDigiCard = (
                                 <Row>
                                     <Col sm='12'>
                                         <label className="floating-label" htmlFor="digicardtitle">
-                                            <small className="text-danger">* </small>DigiCard Excerpt
+                                            <small className="text-danger"> </small>DigiCard Excerpt
                                         </label>
                                         <ArticleRTE
                                             setArticleSize={setArticleSize}
@@ -555,7 +578,7 @@ const EditDigiCard = (
                                 <Row>
                                     <Col sm='12'>
                                         <label className="floating-label" htmlFor="digicardtitle">
-                                            <small className="text-danger">* </small>DigiCard Content
+                                            <small className="text-danger"> </small>DigiCard Content
                                         </label>
                                         <ArticleRTE
                                             setArticleSize={setArticleSize}

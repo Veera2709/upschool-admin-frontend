@@ -104,7 +104,6 @@ const UsersBulkUpload = ({ className, ...rest }) => {
       if (Array.isArray(uploadParams)) {
 
         for (let index = 0; index < uploadParams.length; index++) {
-
           let keyNameArr = Object.keys(uploadParams[index]);
           let keyName = keyNameArr[0];
           console.log('KeyName', keyName);
