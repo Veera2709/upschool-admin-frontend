@@ -2,6 +2,7 @@ const MESSAGES = {
   ERROR: {
 
     DigiCardNameExists: 'DigiCard Title exists already!',
+    ChapterNameExists: 'Chapter Title exists already!',
 
 
     ComponentAdding: 'Error in adding the component! Please ensure that basic details component is completed.',
@@ -28,12 +29,14 @@ const MESSAGES = {
     ReportGenerationError: 'Report generation failed!'
   },
   SUCCESS: {
-
+    RestoredSuccessfully: 'Restored Successfully!',
 
     AddingDigiCard: 'Added DigiCard Successfully',
     EditDigiCard: 'DigiCard Updated Successfully',
 
     AddingChapter: 'Added Chapter Successfully',
+    EditChapter: 'Chapter Updated Successfully',
+
 
 
 
@@ -75,7 +78,8 @@ const MESSAGES = {
     CLIENT_DELETED: 'The client has been deleted!',
     DATA_SAFE: 'Your data is safe!',
     FAILED_TO_RESTORE: 'Failed to restore!',
-    APPROVE_DENY_REASON: 'Reason to '
+    APPROVE_DENY_REASON: 'Reason to ',
+    SCHOOL_DELETED: 'school deleted successfully!'
   },
   VALIDATION: {
     MUST_BE_A_VALID_EMAIL_ADDRESS: 'Must be a valid email address',
