@@ -19,7 +19,6 @@ const menuItems = {
     //           url: '/app/dashboard/analytics',
     //           breadcrumbs: false
     //         },
-
     //         {
     //           id: 'sales',
     //           title: 'Sales',
@@ -378,7 +377,7 @@ const menuItems = {
           title: 'DigiCard',
           type: 'collapse',
           icon: 'feather icon-layout',
-
+          
           children: [
             {
               id: 'active-digiCard',
@@ -397,22 +396,9 @@ const menuItems = {
         {
           id: 'concepts',
           title: 'Concepts',
-          type: 'collapse',
+          type: 'item',
           icon: 'feather icon-book',
-          children: [
-            {
-              id: 'active-concepts',
-              title: 'Active Concepts',
-              type: 'item',
-              url: '/admin-portal/active-concepts'
-            },
-            {
-              id: 'archived-concepts',
-              title: 'Archived Concepts',
-              type: 'item',
-              url: '/admin-portal/archived-concepts'
-            }
-          ]
+          url: '/admin-portal/concepts'
         },
         {
           id: 'topics',
@@ -420,20 +406,20 @@ const menuItems = {
           type: 'item',
           icon: 'feather icon-package',
           url: '/admin-portal/Topics/topicsList',
-          children: [
-            {
-              id: 'add-topics',
-              title: 'Add Topics',
-              type: 'item',
-              url: '/admin-portal/Topics/active-topics'
-            },
-            {
-              id: 'edit-topics',
-              title: 'Edit Topic',
-              type: 'item',
-              url: '/admin-portal/Topics/archived-topics'
-            }
-          ]
+          // children: [
+          //   {
+          //     id: 'add-topics',
+          //     title: 'Add Topics',
+          //     type: 'item',
+          //     url: '/admin-portal/Topics/addTopics'
+          //   },
+          //   {
+          //     id: 'edit-topics',
+          //     title: 'Edit Topic',
+          //     type: 'item',
+          //     url: '/admin-portal/editTopic/:topic_id'
+          //   }
+          // ]
         },
         // {
         //   id: 'chapters',
@@ -448,7 +434,6 @@ const menuItems = {
           type: 'collapse',
           icon: 'fas fa-book',
           children:[
-            
             {
               id: 'active-chapter',
               title: 'Active Chapters',

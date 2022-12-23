@@ -50,10 +50,10 @@ export const areFilesInvalid = (filesArray) => {
     if (
       oneFile.type === 'image/png' ||
       oneFile.type === 'image/jpg' ||
-      oneFile.type === 'image/jpeg' 
+      oneFile.type === 'image/jpeg'
     ) {
       if (oneFile.size > 2000000) {
-        console.log('File is too large', oneFile.size);
+        console.log('File is too large');
         invalidFileCount++;
       } else {
         console.log('File upload success');
