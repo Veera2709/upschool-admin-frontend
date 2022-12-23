@@ -109,7 +109,7 @@ const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool, fetchSchoolD
                     { console.log(response.data.Items[0].subscription_active) }
                     { console.log(response.data.Items[0].school_logoURL) }
 
-                    response.data.Items[0].school_board = ["ICSE", "CBSE", "IB"];
+                    // response.data.Items[0].school_board = ["ICSE", "CBSE", "IB"];
 
                     let individual_client_data = response.data.Items[0];
                     console.log(individual_client_data);
