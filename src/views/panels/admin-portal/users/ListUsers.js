@@ -6,7 +6,7 @@ import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import axios from 'axios';
 
-import UserTableView from '../../../common-ui-components/tables/UserTableView';
+import UserTableView from './UserTableView';
 import dynamicUrl from '../../../../helper/dynamicUrls';
 
 const ListUsers = () => {
@@ -36,6 +36,7 @@ const ListUsers = () => {
                     setTeachersData(resultData && resultData.filter(p => p.user_role === 'Teacher'))
                     setStudentsData(resultData && resultData.filter(p => p.user_role === 'Student'))
                     setParentsData(resultData && resultData.filter(p => p.user_role === 'Parent'))
+                    _setData(resultData && resultData.filter(p => p.user_role === 'Teacher'))
 
                     if (resultData) {
 
@@ -108,12 +109,7 @@ const ListUsers = () => {
 
 
     return (
-
-
-
         <>
-
-
             <Tabs
                 defaultActiveKey={1}
                 // id="uncontrolled-tab-example"

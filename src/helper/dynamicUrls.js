@@ -45,6 +45,13 @@ const dynamicUrl = {
     toggleUserStatus: baseUrl + '/toggleUserStatus',
     fetchClassBasedOnSchool: baseUrl + '/fetchClassBasedOnSchool',
 
+    fetchAllConcepts: baseUrl + '/fetchAllConcepts',
+    fetchDigicardAndConcept: baseUrl + '/fetchDigicardAndConcept',
+    addConcepts: baseUrl + '/addConcepts',
+    toggleConceptStatus: baseUrl + '/toggleConceptStatus',
+    fetchIndividualConcept: baseUrl + '/fetchIndividualConcept',
+    updateConcept: baseUrl + '/updateConcept',
+
     // Topics
     addTopic: baseUrl + '/addTopic',
     toggleSchoolStatus: baseUrl + '/toggleSchoolStatus',

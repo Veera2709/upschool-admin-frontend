@@ -22,6 +22,7 @@ const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool, fetchSchoolD
     const [updatedImage, setUpdatedImage] = useState('');
     const [fileValue, setFileValue] = useState('');
     const [_radio, _setRadio] = useState(false);
+    const [schoolErrMsg, setSchoolErrMsg] = useState(false);
 
     const contactNameRef = useRef('');
     const addressLine1Ref = useRef('');
@@ -67,6 +68,7 @@ const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool, fetchSchoolD
         console.log("File Updated!")
         console.log(e.target.files[0]);
         console.log(e.target.files[0].name);
+        setSchoolErrMsg(false);
         setFileValue(e.target.files[0])
         setUpdatedImage(e.target.files[0].name);
         setImgFile(URL.createObjectURL(e.target.files[0]));
@@ -109,7 +111,7 @@ const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool, fetchSchoolD
                     { console.log(response.data.Items[0].subscription_active) }
                     { console.log(response.data.Items[0].school_logoURL) }
 
-                    response.data.Items[0].school_board = ["ICSE", "CBSE", "IB"];
+                    // response.data.Items[0].school_board = ["ICSE", "CBSE", "IB"];
 
                     let individual_client_data = response.data.Items[0];
                     console.log(individual_client_data);
@@ -270,114 +272,116 @@ const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool, fetchSchoolD
 
                             if (allFilesData.length === 0) {
                                 showLoader();
+                                setSchoolErrMsg(true);
+                                hideLoader();
 
                             } else {
 
                                 if (areFilesInvalid(allFilesData) !== 0) {
 
-                                    sweetAlertHandler("Invalid File!");
+                                    setSchoolErrMsg(true);
                                     hideLoader();
 
                                 } else {
 
                                     showLoader();
                                     console.log('formData: ', formData);
+
+                                    axios
+                                        .post(
+                                            dynamicUrl.updateSchool,
+                                            formData,
+                                            {
+                                                headers: { Authorization: sessionStorage.getItem('user_jwt') }
+                                            }
+                                        )
+                                        .then((response) => {
+
+                                            console.log({ response });
+
+                                            let result = response.status === 200;
+                                            hideLoader();
+
+                                            if (result) {
+
+                                                console.log('inside res edit');
+
+                                                // Upload Image to S3
+
+                                                let uploadParams = response.data;
+                                                // setDisableButton(false);
+                                                hideLoader();
+                                                console.log('Proceeding with file upload');
+
+                                                if (Array.isArray(uploadParams)) {
+
+                                                    for (let index = 0; index < uploadParams.length; index++) {
+
+                                                        let keyNameArr = Object.keys(uploadParams[index]);
+                                                        let keyName = keyNameArr[0];
+                                                        console.log('KeyName', keyName);
+
+                                                        let blobField = fileValue;
+                                                        console.log({
+                                                            blobField
+                                                        });
+
+                                                        let tempObj = uploadParams[index];
+
+                                                        let result = fetch(tempObj[keyName], {
+                                                            method: 'PUT',
+                                                            body: blobField
+                                                        });
+
+                                                        console.log({
+                                                            result
+                                                        });
+                                                    }
+
+                                                    setIsOpenEditSchool(false);
+                                                    const MySwal = withReactContent(Swal);
+                                                    MySwal.fire('', 'Your school has been updated!', 'success');
+                                                    fetchSchoolData();
+                                                } else {
+
+                                                    console.log('No files uploaded');
+
+
+                                                }
+                                            } else {
+
+                                                console.log('else res');
+
+                                                hideLoader();
+                                                // Request made and server responded
+                                                setStatus({ success: false });
+                                                setErrors({ submit: 'Error in Editing School' });
+
+
+                                            }
+                                        })
+                                        .catch((error) => {
+                                            if (error.response) {
+                                                hideLoader();
+                                                // Request made and server responded
+                                                console.log(error.response.data);
+                                                setStatus({ success: false });
+                                                setErrors({ submit: error.response.data });
+
+                                            } else if (error.request) {
+                                                // The request was made but no response was received
+                                                console.log(error.request);
+                                                hideLoader();
+
+                                            } else {
+                                                // Something happened in setting up the request that triggered an Error
+                                                console.log('Error', error.message);
+                                                hideLoader();
+
+                                            }
+                                        })
                                 }
                             }
-
-                            axios
-                                .post(
-                                    dynamicUrl.updateSchool,
-                                    formData,
-                                    {
-                                        headers: { Authorization: sessionStorage.getItem('user_jwt') }
-                                    }
-                                )
-                                .then((response) => {
-
-                                    console.log({ response });
-
-                                    let result = response.status === 200;
-                                    hideLoader();
-
-                                    if (result) {
-
-                                        console.log('inside res edit');
-
-                                        // Upload Image to S3
-
-                                        let uploadParams = response.data;
-                                        // setDisableButton(false);
-                                        hideLoader();
-                                        console.log('Proceeding with file upload');
-
-                                        if (Array.isArray(uploadParams)) {
-
-                                            for (let index = 0; index < uploadParams.length; index++) {
-
-                                                let keyNameArr = Object.keys(uploadParams[index]);
-                                                let keyName = keyNameArr[0];
-                                                console.log('KeyName', keyName);
-
-                                                let blobField = fileValue;
-                                                console.log({
-                                                    blobField
-                                                });
-
-                                                let tempObj = uploadParams[index];
-
-                                                let result = fetch(tempObj[keyName], {
-                                                    method: 'PUT',
-                                                    body: blobField
-                                                });
-
-                                                console.log({
-                                                    result
-                                                });
-                                            }
-
-                                            setIsOpenEditSchool(false);
-                                            const MySwal = withReactContent(Swal);
-                                            MySwal.fire('', 'Your school has been updated!', 'success');
-                                            fetchSchoolData();
-                                        } else {
-
-                                            console.log('No files uploaded');
-
-
-                                        }
-                                    } else {
-
-                                        console.log('else res');
-
-                                        hideLoader();
-                                        // Request made and server responded
-                                        setStatus({ success: false });
-                                        setErrors({ submit: 'Error in Editing School' });
-
-
-                                    }
-                                })
-                                .catch((error) => {
-                                    if (error.response) {
-                                        hideLoader();
-                                        // Request made and server responded
-                                        console.log(error.response.data);
-                                        setStatus({ success: false });
-                                        setErrors({ submit: error.response.data });
-
-                                    } else if (error.request) {
-                                        // The request was made but no response was received
-                                        console.log(error.request);
-                                        hideLoader();
-
-                                    } else {
-                                        // Something happened in setting up the request that triggered an Error
-                                        console.log('Error', error.message);
-                                        hideLoader();
-
-                                    }
-                                })
 
                         }}
                     >
@@ -414,7 +418,7 @@ const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool, fetchSchoolD
                                             <Select
                                                 defaultValue={previousBoards}
                                                 isMulti
-                                                name="colors"
+                                                name="boards"
                                                 options={schoolBoardOptions}
                                                 className="basic-multi-select"
                                                 classNamePrefix="Select"
@@ -468,7 +472,7 @@ const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool, fetchSchoolD
                                         <div className="form-group fill">
                                             <label className="floating-label" >
                                                 <small className="text-danger">
-                                                    * </small>
+                                                    * </small> School Logo
 
                                             </label>
                                             <input
@@ -483,6 +487,10 @@ const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool, fetchSchoolD
                                             />
                                             {touched.school_logo && errors.school_logo && (
                                                 <small className="text-danger form-text">{errors.school_logo}</small>
+                                            )}
+
+                                            {schoolErrMsg && (
+                                                <small className="text-danger form-text">{'Invalid File!'}</small>
                                             )}
 
                                         </div>

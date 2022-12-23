@@ -19,6 +19,7 @@ const menuItems = {
     //           url: '/app/dashboard/analytics',
     //           breadcrumbs: false
     //         },
+
     //         {
     //           id: 'sales',
     //           title: 'Sales',
@@ -396,9 +397,22 @@ const menuItems = {
         {
           id: 'concepts',
           title: 'Concepts',
-          type: 'item',
+          type: 'collapse',
           icon: 'feather icon-book',
-          url: '/admin-portal/concepts'
+          children: [
+            {
+              id: 'active-concepts',
+              title: 'Active Concepts',
+              type: 'item',
+              url: '/admin-portal/active-concepts'
+            },
+            {
+              id: 'archived-concepts',
+              title: 'Archived Concepts',
+              type: 'item',
+              url: '/admin-portal/archived-concepts'
+            }
+          ]
         },
         {
           id: 'topics',

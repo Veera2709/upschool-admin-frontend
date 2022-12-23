@@ -378,7 +378,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
 
 
 
-                                    <div className="col-md-6">
+                                    <div className="col-md-12">
                                         <div className="form-group fill">
 
                                             <label className="floating-label">
@@ -405,24 +405,25 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                                             />
                                         </div>
                                     </div>
-
-                                    <div class="form-group fill">
-                                        <label class="floating-label" for="email">
-                                            <small class="text-danger">* </small>Subscription Active</label>
-                                        <div className="row profile-view-radio-button-view ml-2">
-                                            <Form.Check
-                                                id={`radio-fresher`}
-                                                error={touched.fresher && errors.fresher}
-                                                type="switch"
-                                                variant={'outline-primary'}
-                                                name="radio-fresher"
-                                                value={scbscription_active}
-                                                checked={_radio}
-                                                onChange={(e) => handleRadioChange(e)}
-                                            />
-                                            <Form.Label className="profile-view-question" id={`radio-fresher`}>
-                                                {_radio === true ? 'Yes' : 'No'}
-                                            </Form.Label>
+                                    <div className="col-md-12">
+                                        <div class="form-group fill">
+                                            <label class="floating-label" for="email">
+                                                <small class="text-danger">* </small>Subscription Active</label>
+                                            <div className="row profile-view-radio-button-view ml-2">
+                                                <Form.Check
+                                                    id={`radio-fresher`}
+                                                    error={touched.fresher && errors.fresher}
+                                                    type="switch"
+                                                    variant={'outline-primary'}
+                                                    name="radio-fresher"
+                                                    value={scbscription_active}
+                                                    checked={_radio}
+                                                    onChange={(e) => handleRadioChange(e)}
+                                                />
+                                                <Form.Label className="profile-view-question" id={`radio-fresher`}>
+                                                    {_radio === true ? 'Yes' : 'No'}
+                                                </Form.Label>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -446,6 +447,8 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                                 </div>
                                 <img width={150} src={imgFile} alt="" className="img-fluid mb-3" />
                             </div>
+
+
 
                             <div className='col-sm-12'>
                                 <div className='row'>
