@@ -377,7 +377,7 @@ const menuItems = {
           title: 'DigiCard',
           type: 'collapse',
           icon: 'feather icon-layout',
-          
+
           children: [
             {
               id: 'active-digiCard',
@@ -406,20 +406,20 @@ const menuItems = {
           type: 'item',
           icon: 'feather icon-package',
           url: '/admin-portal/Topics/topicsList',
-          // children: [
-          //   {
-          //     id: 'add-topics',
-          //     title: 'Add Topics',
-          //     type: 'item',
-          //     url: '/admin-portal/Topics/addTopics'
-          //   },
-          //   {
-          //     id: 'edit-topics',
-          //     title: 'Edit Topic',
-          //     type: 'item',
-          //     url: '/admin-portal/editTopic/:topic_id'
-          //   }
-          // ]
+          children: [
+            {
+              id: 'add-topics',
+              title: 'Add Topics',
+              type: 'item',
+              url: '/admin-portal/Topics/active-topics'
+            },
+            {
+              id: 'edit-topics',
+              title: 'Edit Topic',
+              type: 'item',
+              url: '/admin-portal/Topics/archived-topics'
+            }
+          ]
         },
         // {
         //   id: 'chapters',
@@ -433,7 +433,7 @@ const menuItems = {
           title: 'Chapters',
           type: 'collapse',
           icon: 'fas fa-book',
-          children:[
+          children: [
             {
               id: 'active-chapter',
               title: 'Active Chapters',

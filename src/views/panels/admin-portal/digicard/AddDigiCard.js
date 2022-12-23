@@ -97,7 +97,7 @@ const AddDigiCard = (
 
 
 
-  
+
 
 
   const handleDelete = (i, states) => {

@@ -2,7 +2,7 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 
 const AdminDashboard = () => {
-  
+
   let history = useHistory();
   console.log("Dashboard");
 
