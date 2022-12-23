@@ -286,10 +286,6 @@ const DigiCard = () => {
                 console.log(response);
                 let dataResponse = response.data.Items
                 let finalDataArray = [];
-
-
-
-
                 if (digiCardStatus === 'Active') {
                     let ActiveresultData = (dataResponse && dataResponse.filter(e => e.digicard_status === 'Active'))
                     console.log("ActiveresultData", ActiveresultData);
@@ -302,7 +298,6 @@ const DigiCard = () => {
                                     size="sm"
                                     className="btn btn-icon btn-rounded btn-primary"
                                     onClick={(e) => history.push(`/admin-portal/editDigiCard/${ActiveresultData[index].digi_card_id}`)}
-                                // onClick={(e) => history.push(`/admin-portal/admin-casedetails/${resultData[index].client_id}/all_cases`)}
                                 >
                                     <i className="feather icon-edit" /> &nbsp; Edit
                                 </Button>
@@ -314,10 +309,6 @@ const DigiCard = () => {
                                 >
                                     <i className="feather icon-trash-2 " /> &nbsp; Delete
                                 </Button>
-                                &nbsp;
-                                {/* <Button size='sm' className="btn btn-icon btn-rounded btn-danger" onClick={(e) => saveClientIdDelete(e, responseData[index].client_id)}>
-                                <i className="feather icon-delete" /> &nbsp; Delete
-                              </Button> */}
                             </>
                         );
                         finalDataArray.push(ActiveresultData[index]);
