@@ -194,19 +194,17 @@ const routes = [
         component: lazy(() => import('./views/panels/admin-portal/Topics/EditTopics'))
       },
 
-      //digi card
+      // digi card
       {
         exact: true,
         path: '/admin-portal/active-digiCard',
         component: lazy(() => import('./views/panels/admin-portal/digicard/DigiCard'))
       },
-       //digi card
        {
         exact: true,
         path: '/admin-portal/digicard-Archived',
         component: lazy(() => import('./views/panels/admin-portal/digicard/DigiCard'))
       },
-      //add didgicard
       {
         exact: true,
         path: '/admin-portal/add-digicard',
@@ -220,11 +218,6 @@ const routes = [
         component: lazy(() => import('./views/panels/admin-portal/digicard/EditDigiCard'))
       },
       //chapters
-      // {
-      //   exact: true,
-      //   path: '/admin-portal/chapters/CaptersList',
-      //   component: lazy(() => import('./views/panels/admin-portal/chapters/ChaptersList'))
-      // },
       {
         exact: true,
         path: '/admin-portal/chapters/active-chapter',

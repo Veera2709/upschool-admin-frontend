@@ -227,11 +227,6 @@ const DigiCard = () => {
                             } else {
                                 setReloadAllData("Deleted");
                                 return MySwal.fire('', 'The ' + digi_card_name + ' is Deleted', 'success');
-                                // window. location. reload() 
-                                //  MySwal.fire('', MESSAGES.INFO.CLIENT_DELETED, 'success');
-
-
-
                             }
                         })
                         .catch((error) => {
@@ -245,7 +240,6 @@ const DigiCard = () => {
                                 console.log(error.request);
                                 hideLoader();
                             } else {
-                                // Something happened in setting up the request that triggered an Error
                                 console.log('Error', error.message);
                                 hideLoader();
                             }
