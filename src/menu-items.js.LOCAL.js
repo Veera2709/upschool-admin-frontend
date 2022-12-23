@@ -447,8 +447,7 @@ const menuItems = {
           title: 'Chapters',
           type: 'collapse',
           icon: 'fas fa-book',
-          children:[
-            
+          children: [
             {
               id: 'active-chapter',
               title: 'Active Chapters',

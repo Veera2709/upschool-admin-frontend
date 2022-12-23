@@ -168,8 +168,8 @@ const TopicsList = () => {
             //     accessor: 'digicard_image'
             // },
             {
-                Header: 'DigiCard Name',
-                accessor: 'digi_card_name'
+                Header: 'Topic Title',
+                accessor: 'topic_title_name'
             },
             {
                 Header: 'Options',

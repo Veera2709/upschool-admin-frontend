@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import Select from 'react-select';
 import { Button, Card, Col, Form, Row } from 'react-bootstrap';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 // import dynamicUrl from '../../../helper/dynamicUrl';
@@ -18,6 +19,8 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
     let history = useHistory();
     const [tags, setTags] = useState([]);
     const [ImgURL, setImgURL] = useState([]);
+    const [prePost, setprePost] = useState([]);
+    const [prePostLearning, setprePostLearning] = useState([]);
     const [display, setDisplay] = useState('none');
     const [imgFile, setImgFile] = useState([]);
     const [articleData, setArticleData] = useState("");
@@ -80,6 +83,26 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
         setTopicConceptId(data);
         setRelatedTopicsId(data);
     }, [])
+
+    const prePostOptions = [
+        { value: 'Pre-Learning', label: 'pre-Learning' },
+        { value: 'Post-Learning', label: 'Post-Learning' },
+
+    ];
+
+
+    const handleSelectChange = (event) => {
+
+        console.log(event);
+
+        let valuesArr = [];
+        for (let i = 0; i < event.length; i++) {
+            valuesArr.push(event[i].value)
+        }
+
+        console.log(valuesArr);
+        setprePostLearning(valuesArr);
+    }
 
     return (
         <div>
@@ -163,20 +186,30 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
                                     </Form.Group>
                                 </Col>
 
-                                <Col sm={6}>
-                                    <Form.Group>
-                                        <Form.Label className="floating-label" ><small className="text-danger">* </small>Pre-Post Learning</Form.Label>
-                                        <Form.Control
-                                            name="pre_post_learning"
-                                            onBlur={handleBlur}
-                                            onChange={handleChange}
-                                            type="number"
-                                            value={values.pre_post_learning}
-                                            onWheel={(e) => e.target.blur()}
+
+
+
+
+                                <div className="col-md-6">
+                                    <div className="form-group fill">
+
+                                        <label className="floating-label">
+                                            <small className="text-danger">* </small>
+                                            pre-post learning
+                                        </label>
+                                        {console.log(prePost)}
+                                        <Select
+                                            defaultValue={prePost}
+                                            isMulti
+                                            name="colors"
+                                            options={prePostOptions}
+                                            className="basic-select"
+                                            classNamePrefix="Select"
+                                            onChange={event => handleSelectChange(event)}
                                         />
-                                        {/* {touched.pre_post_learning && errors.pre_post_learning && <small className="text-danger form-text">{errors.pre_post_learning}</small>} */}
-                                    </Form.Group>
-                                </Col>
+                                    </div>
+                                </div>
+
 
                                 <Col sm={6}>
                                     <Form.Group>
@@ -220,8 +253,9 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
                                         </div>
                                     </div>
                                 ))}
+
                                 <p></p>
-                                <p className='ml-3' onClick={addTopic} style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer' }}>Add another topic quiz config</p>
+                                <button type="button" class="btn btn-primary" onClick={addTopic} >Add another Quiz</button>
 
                                 <div class="row d-flex justify-content-end">
                                     <div class="form-group fill">
@@ -235,8 +269,8 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
                         )}
                     </Formik>
                 </Card.Body>
-            </Card>
-        </div>
+            </Card >
+        </div >
     )
 }
 

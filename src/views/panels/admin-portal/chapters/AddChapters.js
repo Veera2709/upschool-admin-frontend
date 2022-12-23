@@ -143,7 +143,7 @@ const AddDigiCard = (
     })
 
     const handleOnSelectPre = ((selectedList, selectedItem) => {
-        setPrelearningOptions(selectedList)
+        setPrelearningOptions(selectedList) 
     }) 
 
     const handleOnRemove = (selectedList, selectedItem) => setTopicDigiCardIds(selectedList.map(skillId => skillId.id))
