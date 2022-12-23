@@ -247,9 +247,13 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
                                                             error={touched.conceptTitle && errors.conceptTitle}
                                                             name="conceptTitle"
                                                             onBlur={handleBlur}
-                                                            onChange={handleChange}
+                                                            // onChange={handleChange}
                                                             type="text"
                                                             value={values.conceptTitle}
+                                                            onChange={(e) => {
+                                                                handleChange("conceptTitle")(e);
+                                                                setConceptTitleErr(false);
+                                                            }}
 
                                                         />
 

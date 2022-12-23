@@ -19,6 +19,7 @@ const menuItems = {
     //           url: '/app/dashboard/analytics',
     //           breadcrumbs: false
     //         },
+
     //         {
     //           id: 'sales',
     //           title: 'Sales',
@@ -447,6 +448,7 @@ const menuItems = {
           type: 'collapse',
           icon: 'fas fa-book',
           children:[
+            
             {
               id: 'active-chapter',
               title: 'Active Chapters',
