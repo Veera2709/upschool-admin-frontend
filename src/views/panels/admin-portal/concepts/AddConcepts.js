@@ -161,71 +161,71 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
                                 if (selectedDigicards.length > 0) {
                                     console.log("Proceed");
                                     showLoader();
+
+                                    axios
+                                        .post(
+                                            dynamicUrl.addConcepts,
+                                            formData,
+                                            {
+                                                headers: { Authorization: sessionStorage.getItem('user_jwt') }
+                                            }
+                                        )
+                                        .then((response) => {
+
+                                            console.log({ response });
+
+                                            let result = response.status === 200;
+                                            hideLoader();
+
+                                            if (result) {
+
+                                                console.log('inside res edit');
+                                                hideLoader();
+                                                setIsOpenAddConcept(false);
+                                                sweetAlertHandler({ title: 'Success', type: 'success', text: 'Concept added successfully!' });
+                                                fetchAllConceptsData();
+                                                // window.location.reload();
+
+                                            } else {
+
+                                                console.log('else res');
+                                                hideLoader();
+                                                // Request made and server responded
+                                                setConceptTitleErr(true);
+                                                setConceptTitleErrMessage("err");
+                                                // window.location.reload();
+
+
+                                            }
+                                        })
+                                        .catch((error) => {
+                                            if (error.response) {
+                                                hideLoader();
+                                                // Request made and server responded
+                                                console.log(error.response.data);
+                                                setConceptTitleErr(true);
+                                                setConceptTitleErrMessage(error.response.data);
+
+                                            } else if (error.request) {
+                                                // The request was made but no response was received
+                                                console.log(error.request);
+                                                hideLoader();
+                                                setConceptTitleErr(true);
+                                                setConceptTitleErrMessage(error.request);
+                                            } else {
+                                                // Something happened in setting up the request that triggered an Error
+                                                console.log('Error', error.message);
+                                                hideLoader();
+                                                setConceptTitleErr(true);
+                                                setConceptTitleErrMessage(error.request);
+
+                                            }
+                                        })
                                 } else {
                                     console.log("Digicard empty");
                                     setShowDigicardErr(true);
 
                                 }
-
-                                axios
-                                    .post(
-                                        dynamicUrl.addConcepts,
-                                        formData,
-                                        {
-                                            headers: { Authorization: sessionStorage.getItem('user_jwt') }
-                                        }
-                                    )
-                                    .then((response) => {
-
-                                        console.log({ response });
-
-                                        let result = response.status === 200;
-                                        hideLoader();
-
-                                        if (result) {
-
-                                            console.log('inside res edit');
-                                            hideLoader();
-                                            setIsOpenAddConcept(false);
-                                            sweetAlertHandler({ title: 'Success', type: 'success', text: 'Concept added successfully!' });
-                                            fetchAllConceptsData();
-                                            // window.location.reload();
-
-                                        } else {
-
-                                            console.log('else res');
-                                            hideLoader();
-                                            // Request made and server responded
-                                            setConceptTitleErr(true);
-                                            setConceptTitleErrMessage("err");
-                                            // window.location.reload();
-
-
-                                        }
-                                    })
-                                    .catch((error) => {
-                                        if (error.response) {
-                                            hideLoader();
-                                            // Request made and server responded
-                                            console.log(error.response.data);
-                                            setConceptTitleErr(true);
-                                            setConceptTitleErrMessage(error.response.data);
-
-                                        } else if (error.request) {
-                                            // The request was made but no response was received
-                                            console.log(error.request);
-                                            hideLoader();
-                                            setConceptTitleErr(true);
-                                            setConceptTitleErrMessage(error.request);
-                                        } else {
-                                            // Something happened in setting up the request that triggered an Error
-                                            console.log('Error', error.message);
-                                            hideLoader();
-                                            setConceptTitleErr(true);
-                                            setConceptTitleErrMessage(error.request);
-
-                                        }
-                                    })
 
                             }}>
 
