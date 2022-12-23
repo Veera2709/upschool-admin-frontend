@@ -1,18 +1,33 @@
 
 
 import React, { useState, useEffect } from 'react';
-import Tab from 'react-bootstrap/Tab';
-import Tabs from 'react-bootstrap/Tabs';
-import axios from 'axios';
+import { useLocation } from "react-router-dom";
+import ConceptTableView from './ConceptTableView';
 
-import dynamicUrl from '../../../../helper/dynamicUrls';
+const ListUsers = () => {
 
-const ListConcepts = () => {
+    const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
+    const [userStatus, setUserStatus] = useState('');
 
-    return(
-        <p>Concepts</p>
+    useEffect(() => {
+
+        console.log(pageLocation);
+
+        if (pageLocation) {
+
+            const status = pageLocation === "active-concepts" ? 'active-concepts' : 'archived-concepts';
+            setUserStatus(status);
+
+        }
+
+    }, [pageLocation]);
+
+
+    return (
+        <ConceptTableView userStatus={userStatus} />
     )
 };
 
-export default ListConcepts;
+export default ListUsers;
+
 

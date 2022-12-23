@@ -4,7 +4,6 @@ const MESSAGES = {
     DigiCardNameExists: 'DigiCard Title exists already!',
     ChapterNameExists: 'Chapter Title exists already!',
 
-
     ComponentAdding: 'Error in adding the component! Please ensure that basic details component is completed.',
     ErrorInSendingEmail: 'Error in sending email!',
     ComponentEditing: 'Error in editing the component',
@@ -15,6 +14,7 @@ const MESSAGES = {
     AddingUser: 'Error in adding User',
     UpdatingUser: 'Error in updating User',
     DeletingUser: 'Error in deleting User',
+    DeletingConcept: 'Error in deleting Concept',
     UpdatingClient: 'Error in updating Client',
     AssignUsers: 'Error in assigning users',
     VerificationFailed: 'Verification Failed',
@@ -36,9 +36,6 @@ const MESSAGES = {
 
     AddingChapter: 'Added Chapter Successfully',
     EditChapter: 'Chapter Updated Successfully',
-
-
-
 
     PleaseCheckYourEmailForTheOTP: 'please check your mail for the otp!',
     RegisteredSuccessfully: 'registered successfully!',
@@ -75,10 +72,13 @@ const MESSAGES = {
     ABLE_TO_DELETE: 'You can anyway delete your data after restoring!',
     DATA_DELETED: 'Your data has been deleted!',
     USER_DELETED: 'The user has been deleted!',
+    USER_RESTORED: 'The user details have been restored!',
     CLIENT_DELETED: 'The client has been deleted!',
     DATA_SAFE: 'Your data is safe!',
     FAILED_TO_RESTORE: 'Failed to restore!',
     APPROVE_DENY_REASON: 'Reason to ',
+    CONCEPT_DELETED: 'The concept has been deleted!',
+    CONCEPT_RESTORED: 'The concept has been restored!',
     SCHOOL_DELETED: 'school deleted successfully!'
   },
   VALIDATION: {
