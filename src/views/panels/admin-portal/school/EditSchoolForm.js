@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import Select from 'react-select';
+import * as Constants from '../../../../config/constant';
 import { Col, Form, Alert } from 'react-bootstrap';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import * as Yup from 'yup';
@@ -213,7 +214,7 @@ const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool, fetchSchoolD
                                 city2: Yup.string().max(255).required('City is required'),
                                 pincode2: Yup.string().max(255).required('Pincode is required'),
                                 phoneNumber2: Yup.string().matches(phoneRegExp, 'Phone number is not valid').max(255).required('Phone Number is required'),
-                                gst_number: Yup.string().max(255).required('GST Number is required'),
+                                gst_number: Yup.string().matches(Constants.Common.GSTRegex, 'GST number must be 22AAAAA0000A1Z5 format').required('GST Number is required'),
                             })
                         }
                         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
@@ -260,25 +261,20 @@ const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool, fetchSchoolD
 
                             let allFilesData = [];
 
-                            let selectedFile = document.getElementById("school_logo").files[0];
+                            // let selectedFile = document.getElementById("school_logo").files[0];
+                            let selectedFile = fileValue;
                             console.log('File!');
                             console.log(selectedFile);
                             if (selectedFile) {
+
                                 console.log('File if!');
                                 allFilesData.push(selectedFile);
-                            } else {
-                                console.log('File else!');
-                            }
 
-                            if (allFilesData.length === 0) {
-                                showLoader();
-                                setSchoolErrMsg(true);
-                                hideLoader();
-
-                            } else {
+                                console.log(allFilesData);
 
                                 if (areFilesInvalid(allFilesData) !== 0) {
 
+                                    showLoader();
                                     setSchoolErrMsg(true);
                                     hideLoader();
 
@@ -381,7 +377,19 @@ const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool, fetchSchoolD
                                             }
                                         })
                                 }
+                            } else {
+                                console.log('File else!');
                             }
+
+                            // if (allFilesData.length === 0) {
+                            //     showLoader();
+                            //     // setSchoolErrMsg(true);
+                            //     // hideLoader();
+
+                            // } else {
+
+
+                            // }
 
                         }}
                     >
@@ -482,7 +490,6 @@ const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool, fetchSchoolD
                                                 id="school_logo"
                                                 type="file"
                                                 onChange={previewImage}
-
                                                 value={values.school_logo}
                                             />
                                             {touched.school_logo && errors.school_logo && (
@@ -490,7 +497,7 @@ const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool, fetchSchoolD
                                             )}
 
                                             {schoolErrMsg && (
-                                                <small className="text-danger form-text">{'Invalid File!'}</small>
+                                                <small className="text-danger form-text">{'Invalid File or file size exceeds 2 MB!'}</small>
                                             )}
 
                                         </div>
