@@ -1,0 +1,34 @@
+Plugins:
+Bundled analyzers:
+  - Python Code Quality and Security 3.21.0.10628 (python)
+  - Go Code Quality and Security 1.11.0.3905 (go)
+  - JaCoCo 1.1.1.1157 (jacoco)
+  - Kotlin Code Quality and Security 2.12.0.1956 (kotlin)
+  - IaC Code Quality and Security 1.9.2.2279 (iac)
+  - JavaScript/TypeScript/CSS Code Quality and Security 9.12.0.20319 (javascript)
+  - Ruby Code Quality and Security 1.11.0.3905 (ruby)
+  - Scala Code Quality and Security 1.11.0.3905 (sonarscala)
+  - C# Code Quality and Security 8.50.0.58025 (csharp)
+  - Java Code Quality and Security 7.15.0.30507 (java)
+  - HTML Code Quality and Security 3.7.1.3306 (web)
+  - Flex Code Quality and Security 2.8.0.3166 (flex)
+  - XML Code Quality and Security 2.6.1.3686 (xml)
+  - PHP Code Quality and Security 3.25.0.9077 (php)
+  - Text file Code Quality and Security 1.2.0.510 (text)
+  - VB.NET Code Quality and Security 8.50.0.58025 (vbnet)
+  - Configuration detection fot Code Quality and Security 1.2.0.267 (config)
+Global server settings:
+  - sonar.core.id=147B411E-AYU0k4vUTHYdhedIW2Hi
+  - sonar.core.startTime=2022-12-23T11:41:16+0530
+  - sonar.forceAuthentication=true
+Project server settings:
+Project scanner properties:
+  - sonar.host.url=http://localhost:9000
+  - sonar.login=******
+  - sonar.projectBaseDir=C:\Users\DELL\Desktop\Dev UP\upschool-admin-frontend
+  - sonar.projectKey=upschool-admin-frontend
+  - sonar.scanner.app=ScannerCLI
+  - sonar.scanner.appVersion=4.7.0.2747
+  - sonar.sourceEncoding=windows-1252
+  - sonar.sources=.
+  - sonar.working.directory=C:\Users\DELL\Desktop\Dev UP\upschool-admin-frontend\.scannerwork

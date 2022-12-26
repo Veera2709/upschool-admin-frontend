@@ -12,10 +12,12 @@ import dynamicUrl from '../../../../helper/dynamicUrls';
 
 import { isEmptyArray } from '../../../../util/utils';
 
-import { useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { SessionStorage } from '../../../../util/SessionStorage';
 import MESSAGES from '../../../../helper/messages';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
+import { useLocation } from "react-router-dom";
+import { fetchAllUnits } from '../../../api/CommonApi'
 
 
 
@@ -53,11 +55,10 @@ function Table({ columns, data, modalOpen }) {
     const [isOpen, setIsOpen] = useState(false);
     let history = useHistory();
 
-    const adddigicard = () => {
-        history.push('/admin-portal/add-digicard');
+    const addingChapter = () => {
+        history.push('/admin-portal/addUnits');
         setIsOpen(true);
     }
-
 
     return (
         <>
@@ -82,8 +83,8 @@ function Table({ columns, data, modalOpen }) {
 
                 <Col className="d-flex justify-content-end">
                     <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
-                    <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={() => { adddigicard() }}>
-                        <i className="feather icon-plus" /> Add DigiCard
+                    <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={() => { addingChapter() }}>
+                        <i className="feather icon-plus" /> Add Unit
                     </Button>
                 </Col>
             </Row>
@@ -162,19 +163,16 @@ function Table({ columns, data, modalOpen }) {
     );
 }
 
-const DigiCardChild = (props) => {
-    const { _data } = props
-
-    console.log('_data: ', _data);
+const UnitList = (props) => {
     const columns = React.useMemo(
         () => [
             {
                 Header: '#',
-                accessor: 'digicard_image'
+                accessor: "index_no"
             },
             {
-                Header: ' DigiCard Title',
-                accessor: 'digi_card_title'
+                Header: ' Unit Title',
+                accessor: 'unit_title'
             },
             {
                 Header: 'Options',
@@ -185,46 +183,42 @@ const DigiCardChild = (props) => {
     );
 
     // const data = React.useMemo(() => makeData(80), []);
-    const [digiCardData, setDigiCardData] = useState([]);
+    const [chapterData, setChapterData] = useState([]);
     const [reloadAllData, setReloadAllData] = useState('Fetched');
     const [loader, showLoader, hideLoader] = useFullPageLoader();
+    const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[3]);
+
 
     // console.log('data: ', data)
 
     let history = useHistory();
 
-    function deleteDigicard(digi_card_id, digi_card_name) {
-        console.log("digi_card_id", digi_card_id);
+    function deleteChapter(unit_id, unit_title) {
+        console.log("unit_id", unit_id);
         var data = {
-            "digi_card_id": digi_card_id,
-            "digicard_status": 'Archived'
+            "unit_id": unit_id,
+            "unit_status": "Archived"
         }
 
         const sweetConfirmHandler = () => {
             const MySwal = withReactContent(Swal);
             MySwal.fire({
                 title: 'Are you sure?',
-                text: 'Confirm deleting ' + digi_card_name + ' DigiCard',
+                text: 'Confirm deleting ' + unit_title + ' Chapter',
                 type: 'warning',
                 showCloseButton: true,
                 showCancelButton: true
             }).then((willDelete) => {
                 if (willDelete.value) {
-                    console.log("api calling");
                     axios
-                        .post(dynamicUrl.toggleDigiCardStatus, { data: data }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
+                        .post(dynamicUrl.toggleUnitStatus, { data: data }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
                         .then((response) => {
                             if (response.Error) {
                                 hideLoader();
                                 sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
                             } else {
                                 setReloadAllData("Deleted");
-                                return MySwal.fire('', 'The ' + digi_card_name + ' is Deleted', 'success');
-                                // window. location. reload() 
-                                //  MySwal.fire('', MESSAGES.INFO.CLIENT_DELETED, 'success');
-
-
-
+                                return MySwal.fire('', 'The ' + unit_title + ' is Deleted', 'success');
                             }
                         })
                         .catch((error) => {
@@ -244,7 +238,7 @@ const DigiCardChild = (props) => {
                             }
                         });
                 } else {
-                    return MySwal.fire('', 'DigiCard is safe!', 'error');
+                    return MySwal.fire('', 'Unit is safe!', 'error');
                 }
             });
         };
@@ -252,38 +246,33 @@ const DigiCardChild = (props) => {
 
     }
 
-    function digicardRestore(digi_card_id, digi_card_name) {
-        console.log("digi_card_id", digi_card_id);
+
+    function restoreChapter(unit_id, unit_title) {
+        console.log("unit_id", unit_id);
         var data = {
-            "digi_card_id": digi_card_id,
-            "digicard_status": 'Active'
+            "unit_id": unit_id,
+            "unit_status": 'Active'
         }
 
         const sweetConfirmHandler = () => {
             const MySwal = withReactContent(Swal);
             MySwal.fire({
                 title: 'Are you sure?',
-                text: 'Confirm to Restore ' + digi_card_name + ' DigiCard',
+                text: 'Confirm to Restore ' + unit_title + ' Chapter',
                 type: 'warning',
                 showCloseButton: true,
                 showCancelButton: true
             }).then((willDelete) => {
                 if (willDelete.value) {
-                    console.log("api calling");
                     axios
-                        .post(dynamicUrl.toggleDigiCardStatus, { data: data }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
+                        .post(dynamicUrl.toggleUnitStatus, { data: data }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
                         .then((response) => {
                             if (response.Error) {
                                 hideLoader();
                                 sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
                             } else {
                                 setReloadAllData("Deleted");
-                                return MySwal.fire('', 'The ' + digi_card_name + ' is Restored', 'success');
-                                // window. location. reload() 
-                                //  MySwal.fire('', MESSAGES.INFO.CLIENT_DELETED, 'success');
-
-
-
+                                return MySwal.fire('', 'The ' + unit_title + ' is Restored', 'success')
                             }
                         })
                         .catch((error) => {
@@ -303,93 +292,130 @@ const DigiCardChild = (props) => {
                             }
                         });
                 } else {
-                    return MySwal.fire('', 'DigiCard is Restore!', 'error');
+                    return MySwal.fire('', 'Chapter is Restore!', 'error');
                 }
             });
         };
         sweetConfirmHandler();
-
     }
 
 
-    const allDigicardData = () => {
-        console.log("School data func called");
-        let resultData = _data && _data;
-        console.log('resultData', resultData);
-        let finalDataArray = [];
-        for (let index = 0; index < resultData.length; index++) {
-            if (resultData[index].digicard_status === 'Active') {
-                resultData[index]['digicard_image'] = <img className='img-fluid img-radius wid-50 circle-image' src={resultData[index].digicard_imageURL} alt="school_image" />
-                resultData[index]['actions'] = (
-                    <>
+    const allUnitsList = async (UnitStatus) => {
+
+        const allUnitsData = await fetchAllUnits();
+        if (allUnitsData.ERROR) {
+            console.log("allUnitsData.ERROR", allUnitsData.ERROR);
+        } else {
+            let dataResponse = allUnitsData.Items
+            console.log("dataResponse", dataResponse);
+            let finalDataArray = [];
+            if (UnitStatus === 'Active') {
+                let ActiveresultData = (dataResponse && dataResponse.filter(e => e.unit_status === 'Active'))
+                console.log("ActiveresultData", ActiveresultData);
+
+                for (let index = 0; index < ActiveresultData.length; index++) {
+                    ActiveresultData[index].index_no = index + 1;
+                    ActiveresultData[index]['actions'] = (
                         <>
-                            <Button
-                                size="sm"
-                                className="btn btn-icon btn-rounded btn-primary"
-                                onClick={(e) => history.push(`/admin-portal/editDigiCard/${resultData[index].digi_card_id}`)}
-                            >
-                                <i className="feather icon-edit" /> &nbsp; Edit
-                            </Button>
-                            &nbsp;
-                            <Button
-                                size="sm"
-                                className="btn btn-icon btn-rounded btn-danger"
-                                onClick={(e) => deleteDigicard(resultData[index].digi_card_id, resultData[index].digi_card_title)}
-                            >
-                                <i className="feather icon-trash-2 " /> &nbsp; Delete
-                            </Button>
+                            <>
+                                <Button
+                                    size="sm"
+                                    className="btn btn-icon btn-rounded btn-primary"
+                                    onClick={(e) => history.push(`/admin-portal/editunit/${ActiveresultData[index].unit_id}`)}
+                                >
+                                    <i className="feather icon-edit" /> &nbsp; Edit
+                                </Button>
+                                &nbsp;
+                                {/* if(resultData[index].chapter_status=='Active') */}
+                                <Button
+                                    size="sm"
+                                    className="btn btn-icon btn-rounded btn-danger"
+                                    onClick={(e) => deleteChapter(ActiveresultData[index].unit_id, ActiveresultData[index].unit_title)}
+                                >
+                                    <i className="feather icon-trash-2 " /> &nbsp; Delete
+                                </Button>
+                                &nbsp;
+                            </>
                         </>
-                    </>
-                );
+                    );
+                    finalDataArray.push(ActiveresultData[index]);
+                    console.log('finalDataArray: ', finalDataArray)
+                }
             } else {
-                resultData[index]['digicard_image'] = <img className='img-fluid img-radius wid-50 circle-image' src={resultData[index].digicard_imageURL} alt="school_image" />
-                resultData[index]['actions'] = (
-                    <>
+                let resultData = (dataResponse && dataResponse.filter(e => e.unit_status === 'Archived'))
+                for (let index = 0; index < resultData.length; index++) {
+                    resultData[index].index_no = index + 1;
+                    resultData[index]['actions'] = (
                         <>
-                            <Button
-                                size="sm"
-                                className="btn btn-icon btn-rounded btn-primary"
-                                onClick={(e) => digicardRestore(resultData[index].digi_card_id, resultData[index].digi_card_title)}
-                            >
-                                <i className="feather icon-edit" /> &nbsp; Restore
-                            </Button>
+                            <>
+                                <Button
+                                    size="sm"
+                                    className="btn btn-icon btn-rounded btn-primary"
+                                    onClick={(e) => restoreChapter(resultData[index].unit_id, resultData[index].unit_title)}
+                                >
+                                    <i className="feather icon-plus" /> &nbsp; Restore
+                                </Button>
+                                &nbsp;
+                            </>
                         </>
-                    </>
-                );
+                    );
+                    finalDataArray.push(resultData[index]);
+                    console.log('finalDataArray: ', finalDataArray)
+                }
             }
-
-            finalDataArray.push(resultData[index]);
-
+            setChapterData(finalDataArray);
+            console.log('resultData: ', finalDataArray);
         }
-        console.log('finalDataArray: ', finalDataArray);
-        setDigiCardData(finalDataArray)
+
+
     }
 
     useEffect(() => {
-        allDigicardData();
-    }, [_data])
 
-    useEffect(() => {
+        if (pageLocation) {
+            console.log("--", pageLocation);
+            const url = pageLocation === "active-units" ? 'Active' : 'Archived';
+            allUnitsList(url);
+        }
 
     }, [reloadAllData])
 
     return (
-        <React.Fragment>
-            <Row>
-                <Col sm={12}>
-                    <Card>
-                        <Card.Header>
-                            <Card.Title as="h5">DigiCard List</Card.Title>
-                        </Card.Header>
-                        <Card.Body>
-                            <Table columns={columns} data={digiCardData} />
-                        </Card.Body>
-                    </Card>
-                </Col>
-            </Row>
+        <div>
+            {chapterData.length >= 0 ? (
+                <React.Fragment>
+                    <Row>
+                        <Col sm={12}>
+                            <Card>
+                                <Card.Header>
+                                    <Card.Title as="h5">Units List</Card.Title>
+                                </Card.Header>
+                                <Card.Body>
+                                    <Table columns={columns} data={chapterData} />
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                    </Row>
+                </React.Fragment>
+            ) : (
+                <div>
 
+                    <h3 style={{ textAlign: 'center' }}>No DigiCard Found</h3>
+                    <div className="form-group fill text-center">
+                        <br></br>
 
-        </React.Fragment>
+                        <Link to={'/admin-portal/addChapters'}>
+                            <Button variant="success" className="btn-sm btn-round has-ripple ml-2">
+                                <i className="feather icon-plus" /> Add DigiCard
+                            </Button>
+                        </Link>
+                    </div>
+
+                </div>
+            )}
+
+        </div>
+
     );
 };
-export default DigiCardChild;
+export default UnitList;
