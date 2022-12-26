@@ -14,28 +14,10 @@ import EditSchoolForm from './EditSchoolForm';
 import SubscribeClass from './SubscribeClass';
 import { isEmptyArray } from '../../../../util/utils';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
+import { Link } from 'react-router-dom';
 
 function Table({ columns, data, modalOpen }) {
-    const {
-        getTableProps,
-        getTableBodyProps,
-        headerGroups,
-        prepareRow,
-
-        globalFilter,
-        setGlobalFilter,
-
-        page,
-        canPreviousPage,
-        canNextPage,
-        pageOptions,
-        pageCount,
-        gotoPage,
-        nextPage,
-        previousPage,
-        setPageSize,
-        state: { pageIndex, pageSize }
-    } = useTable(
+    const { getTableProps, getTableBodyProps, headerGroups, prepareRow, globalFilter, setGlobalFilter, page, canPreviousPage, canNextPage, pageOptions, pageCount, gotoPage, nextPage, previousPage, setPageSize, state: { pageIndex, pageSize } } = useTable(
         {
             columns,
             data,
@@ -182,6 +164,7 @@ const SchoolChild = (props) => {
 
     const [schoolData, setSchoolData] = useState([]);
     const [isOpen, setIsOpen] = useState(false);
+    const [_isOpen, _setIsOpen] = useState(false);
 
     const [loader, showLoader, hideLoader] = useFullPageLoader();
     const [isOpenEditSchool, setIsOpenEditSchool] = useState(false);
@@ -285,6 +268,9 @@ const SchoolChild = (props) => {
     const openHandler = () => {
         setIsOpen(true);
     };
+    const _openHandler = () => {
+        _setIsOpen(true);
+    };
 
     const _fetchSchoolData = () => {
         console.log("School data func called");
@@ -340,30 +326,57 @@ const SchoolChild = (props) => {
     return isEmptyArray(schoolData) ? null : (
         <React.Fragment>
             <Row>
-                <Col sm={12}>
-                    <Card>
-                        <Card.Header>
-                            <Card.Title as="h5">Schools List</Card.Title>
-                        </Card.Header>
-                        <Card.Body>
-                            <Table columns={columns} data={schoolData} modalOpen={openHandler} />
-                        </Card.Body>
-                    </Card>
-                    <Modal dialogClassName="my-modal" show={isOpen} onHide={() => setIsOpen(false)}>
+                {isEmptyArray(_data) ?
+                    <div className="d-flex justify-content-md-center">
+                        <h3 style={{ marginLeft: '450px' }} >No School's to be displayed!</h3>
+                        <br></br>
+                        <div className="d-flex justify-content-md-center">
+                            <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={_openHandler}>
+                                <i className="feather icon-plus" /> Add Schools
+                            </Button>
+                        </div>
+                    </div> :
+                    <Col sm={12}>
+                        <Card>
+                            <Card.Header>
+                                <Card.Title as="h5">Schools List</Card.Title>
+                            </Card.Header>
+                            <Card.Body>
+                                <Table columns={columns} data={schoolData} modalOpen={openHandler} />
+                            </Card.Body>
+                        </Card>
+                        <Modal dialogClassName="my-modal" show={isOpen} onHide={() => setIsOpen(false)}>
+                            <Modal.Header closeButton>
+                                <Modal.Title as="h5">Add School</Modal.Title>
+                            </Modal.Header>
+                            <Modal.Body>
+                                <AddSchoolForm setIsOpen={setIsOpen} fetchSchoolData={fetchSchoolData} />
+                            </Modal.Body>
+                            {/* <Modal.Footer>
+                            <Button variant="danger" onClick={() => setIsOpen(false)}>
+                                Clear
+                            </Button>
+                            <Button variant="primary">Submit</Button>
+                        </Modal.Footer> */}
+                        </Modal>
+                    </Col>
+                }
+                {_isOpen &&
+                    <Modal dialogClassName="my-modal" show={_isOpen} onHide={() => _setIsOpen(false)}>
                         <Modal.Header closeButton>
                             <Modal.Title as="h5">Add School</Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
-                            <AddSchoolForm setIsOpen={setIsOpen} fetchSchoolData={fetchSchoolData} />
+                            <AddSchoolForm _setIsOpen={_setIsOpen} fetchSchoolData={fetchSchoolData} />
                         </Modal.Body>
-                        {/* <Modal.Footer>
+                        {/* <Modal.Footer>s
                             <Button variant="danger" onClick={() => setIsOpen(false)}>
                                 Clear
                             </Button>
                             <Button variant="primary">Submit</Button>
                         </Modal.Footer> */}
                     </Modal>
-                </Col>
+                }
             </Row>
 
 

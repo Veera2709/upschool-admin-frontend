@@ -160,7 +160,7 @@ function Table({ columns, data, modalOpen }) {
 
 
 
-const TopicsList = () => {
+const ActiveTopics = () => {
     const columns = React.useMemo(
         () => [
             // {
@@ -170,6 +170,11 @@ const TopicsList = () => {
             {
                 Header: 'Topic Title',
                 accessor: 'topic_title_name'
+            },
+
+            {
+                Header: 'Type of Learning',
+                accessor: 'pre_post_learning'
             },
             {
                 Header: 'Options',
@@ -181,50 +186,48 @@ const TopicsList = () => {
 
     // const data = React.useMemo(() => makeData(80), []);
     const [data, setData] = useState([]);
-    console.log('data: ', data)
+    const [viewTopic, setViewTopic] = useState({});
+    console.log('viewTopic: ', viewTopic);
     const [isOpen, setIsOpen] = useState(false);
     const [loader, showLoader, hideLoader] = useFullPageLoader();
-    const [reloadAllData, setReloadAllData] = useState('Fetched');
     const MySwal = withReactContent(Swal);
 
 
-    const openHandler = () => {
-        setIsOpen(true);
-    };
-
-
+    const openHandler = () => setIsOpen(true);
 
     let history = useHistory();
 
-    function deleteDigicard(digi_card_id, digi_card_name) {
-        console.log("digi_card_id", digi_card_id);
-        var data = {
-            "digi_card_id": digi_card_id
-        }
+    function deleteTopic(e, topic_id, topic_title) {
+        e.preventDefault();
+        // var data = { "topic_id": topic_id, topic_status: 'Active/Archived' }
+        var data = { topic_id: topic_id, topic_status: 'Archived' }
 
         const sweetConfirmHandler = () => {
             const MySwal = withReactContent(Swal);
             MySwal.fire({
                 title: 'Are you sure?',
-                text: 'Confirm deleting this DigiCard',
+                text: 'Confirm deleting this Topic',
                 type: 'warning',
                 showCloseButton: true,
                 showCancelButton: true
             }).then((willDelete) => {
                 if (willDelete.value) {
-                    axios
-
-                        .post(dynamicUrl.deleteDigiCard, { data: data }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
+                    axios.post(dynamicUrl.deleteTopic, { data: data }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
                         .then((response) => {
                             if (response.Error) {
                                 hideLoader();
-                                sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
+                                sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingTopic });
                             } else {
-                                setReloadAllData("Deleted");
-                                //  MySwal.fire('', MESSAGES.INFO.CLIENT_DELETED, 'success');
-                                return MySwal.fire('', 'The ' + digi_card_name + ' is Deleted', 'success');
-                                // fetchAllDigiCards();
-
+                                // sweetConfirmHandler({ type: 'success', title: 'Success', text: `The ${topic_title} is Deleted` });
+                                // window.location.reload();
+                                MySwal.fire({
+                                    title: '',
+                                    text: `The ${topic_title} is Deleted`,
+                                    type: 'warning',
+                                    showCloseButton: true,
+                                    showCancelButton: true
+                                })
+                                // window.location.reload();
                             }
                         })
                         .catch((error) => {
@@ -244,7 +247,7 @@ const TopicsList = () => {
                             }
                         });
                 } else {
-                    return MySwal.fire('', 'DigiCard is safe!', 'error');
+                    return MySwal.fire('', 'Topic is safe!', 'error');
                 }
             });
         };
@@ -252,22 +255,25 @@ const TopicsList = () => {
 
     }
 
-    const fetchAllDigiCards = () => {
-        axios.post(dynamicUrl.fetchAllDigiCards, {}, {
+    const fetchAllTopics = () => {
+        axios.post(dynamicUrl.getTopics, {}, {
             headers: { Authorization: sessionStorage.getItem('user_jwt') }
         })
             .then((response) => {
                 let resultData = response.data.Items;
+                console.log('resultData: ', resultData);
                 let finalDataArray = [];
+
                 for (let index = 0; index < resultData.length; index++) {
-                    resultData[index]['digicard_image'] = <img class="img-fluid img-radius wid-40" alt="Poison regulate" src={resultData[index].digicard_imageURL} />
+                    resultData[index]['topic_title_name'] = resultData[index].topic_title;
+                    // resultData[index]['pre_post_learning'] = resultData[index].pre_post_learning;
                     resultData[index]['actions'] = (
                         <>
+                            &nbsp;
                             <Button
                                 size="sm"
                                 className="btn btn-icon btn-rounded btn-primary"
-                                onClick={(e) => history.push(`/admin-portal/editDigiCard/${resultData[index].digi_card_id}`)}
-                            // onClick={(e) => history.push(`/admin-portal/admin-casedetails/${resultData[index].client_id}/all_cases`)}
+                                onClick={(e) => history.push(`/admin-portal/Topics/editTopic/${resultData[index].topic_id}`)}
                             >
                                 <i className="feather icon-edit" /> &nbsp; Edit
                             </Button>
@@ -275,14 +281,11 @@ const TopicsList = () => {
                             <Button
                                 size="sm"
                                 className="btn btn-icon btn-rounded btn-danger"
-                                onClick={(e) => deleteDigicard(resultData[index].digi_card_id, resultData[index].digi_card_name)}
+                                onClick={(e) => deleteTopic(e, resultData[index].topic_id, resultData[index].topic_title)}
                             >
                                 <i className="feather icon-trash-2 " /> &nbsp; Delete
                             </Button>
                             &nbsp;
-                            {/* <Button size='sm' className="btn btn-icon btn-rounded btn-danger" onClick={(e) => saveClientIdDelete(e, responseData[index].client_id)}>
-                                <i className="feather icon-delete" /> &nbsp; Delete
-                              </Button> */}
                         </>
                     );
                     finalDataArray.push(resultData[index]);
@@ -297,8 +300,8 @@ const TopicsList = () => {
     }
 
     useEffect(() => {
-        fetchAllDigiCards();
-    }, [reloadAllData])
+        fetchAllTopics();
+    }, [])
 
     return (
         <React.Fragment>
@@ -332,4 +335,4 @@ const TopicsList = () => {
     );
 }
 
-export default TopicsList
+export default ActiveTopics

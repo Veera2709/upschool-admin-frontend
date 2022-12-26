@@ -417,22 +417,28 @@ const menuItems = {
         {
           id: 'topics',
           title: 'Topics',
-          type: 'item',
+          type: 'collapse',
           icon: 'feather icon-package',
           url: '/admin-portal/Topics/topicsList',
           children: [
             {
-              id: 'add-topics',
-              title: 'Add Topics',
+              id: 'active-topics',
+              title: 'Active Topics',
               type: 'item',
-              url: '/admin-portal/Topics/active-topics'
+              url: '/admin-portal/Topics/activeTopics'
             },
             {
-              id: 'edit-topics',
-              title: 'Edit Topic',
+              id: 'add-topics',
+              title: 'Archieve Topics',
               type: 'item',
-              url: '/admin-portal/Topics/archived-topics'
-            }
+              url: '/admin-portal/Topics/archievedTopics'
+            },
+            // {
+            //   id: 'edit-topics',
+            //   title: 'Edit Topic',
+            //   type: 'item',
+            //   url: '/admin-portal/Topics/editTopic/:topic_id'
+            // }
           ]
         },
         // {
@@ -447,8 +453,8 @@ const menuItems = {
           title: 'Chapters',
           type: 'collapse',
           icon: 'fas fa-book',
-          children:[
-            
+          children: [
+
             {
               id: 'active-chapter',
               title: 'Active Chapters',

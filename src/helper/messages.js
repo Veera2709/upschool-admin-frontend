@@ -26,7 +26,8 @@ const MESSAGES = {
     QcVerificationError: 'Error in verifying the component',
     QcApproveError: 'Error in approving the case!',
     QcRejectError: 'Error in rejecting the case!',
-    ReportGenerationError: 'Report generation failed!'
+    ReportGenerationError: 'Report generation failed!',
+    DeletingTopic: 'Error in deleting Topic',
   },
   SUCCESS: {
     RestoredSuccessfully: 'Restored Successfully!',

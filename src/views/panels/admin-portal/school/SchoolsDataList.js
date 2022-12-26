@@ -18,24 +18,6 @@ import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import dynamicUrl from '../../../../helper/dynamicUrls';
 
 
-export const colourOptions = [
-    { value: 'Education', label: 'Education', color: 'black' },
-    { value: 'Address', label: 'Address', color: 'black' },
-    { value: 'Employment', label: 'Employment', color: 'black' },
-    { value: 'DatabaseCheck', label: 'DatabaseCheck', color: 'black', isFixed: true },
-    { value: 'DrugTest', label: 'DrugTest', color: 'black' },
-    { value: 'CreditCheck', label: 'CreditCheck', color: 'black' },
-    { value: 'Criminal', label: 'Criminal', color: 'black', isFixed: true },
-    { value: 'Identification', label: 'Identification', color: 'black' },
-    { value: 'Reference', label: 'Reference', color: 'black' },
-    { value: 'GapVerification', label: 'GapVerification', color: 'black' },
-    { value: 'SocialMedia', label: 'SocialMedia', color: 'black' },
-    { value: 'PoliceVerification', label: 'PoliceVerification', color: 'black' },
-    { value: 'CompanyCheck', label: 'CompanyCheck', color: 'black' },
-    { value: 'DirectorshipCheck', label: 'DirectorshipCheck', color: 'black' },
-    { value: 'CvValidation', label: 'CvValidation', color: 'black' }
-];
-
 function Table({ columns, data, modalOpen }) {
     const {
         getTableProps,
@@ -365,6 +347,9 @@ const SchoolsDataList = (props) => {
             icon: alert.type
         });
     };
+    const openHandler = () => {
+        setIsOpen(true);
+    };
 
     const sweetConfirmHandler = (alert, school_id, school_Status) => {
         MySwal.fire({
@@ -412,7 +397,7 @@ const SchoolsDataList = (props) => {
                                     <Card.Title as="h5">Archived List</Card.Title>
                                 </Card.Header>
                                 <Card.Body>
-                                    <Table columns={columns} data={schoolData} />
+                                    <Table columns={columns} data={schoolData} modalOpen={openHandler} />
                                 </Card.Body>
                             </Card>
 
