@@ -417,22 +417,28 @@ const menuItems = {
         {
           id: 'topics',
           title: 'Topics',
-          type: 'item',
+          type: 'collapse',
           icon: 'feather icon-package',
           url: '/admin-portal/Topics/topicsList',
           children: [
             {
-              id: 'add-topics',
-              title: 'Add Topics',
+              id: 'active-topics',
+              title: 'Active Topics',
               type: 'item',
-              url: '/admin-portal/Topics/active-topics'
+              url: '/admin-portal/Topics/activeTopics'
             },
             {
-              id: 'edit-topics',
-              title: 'Edit Topic',
+              id: 'add-topics',
+              title: 'Archieve Topics',
               type: 'item',
-              url: '/admin-portal/Topics/archived-topics'
-            }
+              url: '/admin-portal/Topics/archievedTopics'
+            },
+            // {
+            //   id: 'edit-topics',
+            //   title: 'Edit Topic',
+            //   type: 'item',
+            //   url: '/admin-portal/Topics/editTopic/:topic_id'
+            // }
           ]
         },
         // {
@@ -460,6 +466,26 @@ const menuItems = {
               title: 'Archived Chapters',
               type: 'item',
               url: '/admin-portal/chapters/archived-chapter',
+            }
+          ]
+        },
+        {
+          id: 'units',
+          title: 'Units',
+          type: 'collapse',
+          icon: 'fas fa-book',
+          children:[
+            {
+              id: 'active-units',
+              title: 'Active Units',
+              type: 'item',
+              url: '/admin-portal/units/active-units',
+            },
+            {
+              id: 'archived-units',
+              title: 'Archived Units',
+              type: 'item',
+              url: '/admin-portal/units/archived-units',
             }
           ]
         },
