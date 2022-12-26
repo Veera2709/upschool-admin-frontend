@@ -19,6 +19,7 @@ const menuItems = {
     //           url: '/app/dashboard/analytics',
     //           breadcrumbs: false
     //         },
+
     //         {
     //           id: 'sales',
     //           title: 'Sales',
@@ -327,21 +328,20 @@ const menuItems = {
           id: 'sch-addSchool',
           title: 'School',
           icon: 'feather icon-book',
-          type: 'item',
-          url: '/admin-portal/school',
+          type: 'collapse',
           children: [
             {
-              id: 'sch-active-achool',
-              title: 'Active',
+              id: 'active-schools',
+              title: 'Active Schools',
               type: 'item',
-              url: '/admin-portal/school/ActiveSchools'
+              url: '/admin-portal/active-schools'
             },
             {
-              id: 'sch-archive-achool',
-              title: 'Archieve',
+              id: 'archived-schools',
+              title: 'Archived Schools',
               type: 'item',
-              url: '/admin-portal/school/ArchiveSchools'
-            },
+              url: '/admin-porttal/archived-schools'
+            }
           ]
         },
 
@@ -378,7 +378,7 @@ const menuItems = {
           title: 'DigiCard',
           type: 'collapse',
           icon: 'feather icon-layout',
-          
+
           children: [
             {
               id: 'active-digiCard',
@@ -397,30 +397,49 @@ const menuItems = {
         {
           id: 'concepts',
           title: 'Concepts',
-          type: 'item',
+          type: 'collapse',
           icon: 'feather icon-book',
-          url: '/admin-portal/concepts'
+          children: [
+            {
+              id: 'active-concepts',
+              title: 'Active Concepts',
+              type: 'item',
+              url: '/admin-portal/active-concepts'
+            },
+            {
+              id: 'archived-concepts',
+              title: 'Archived Concepts',
+              type: 'item',
+              url: '/admin-portal/archived-concepts'
+            }
+          ]
         },
         {
           id: 'topics',
           title: 'Topics',
-          type: 'item',
+          type: 'collapse',
           icon: 'feather icon-package',
           url: '/admin-portal/Topics/topicsList',
-          // children: [
-          //   {
-          //     id: 'add-topics',
-          //     title: 'Add Topics',
-          //     type: 'item',
-          //     url: '/admin-portal/Topics/addTopics'
-          //   },
-          //   {
-          //     id: 'edit-topics',
-          //     title: 'Edit Topic',
-          //     type: 'item',
-          //     url: '/admin-portal/editTopic/:topic_id'
-          //   }
-          // ]
+          children: [
+            {
+              id: 'active-topics',
+              title: 'Active Topics',
+              type: 'item',
+              url: '/admin-portal/Topics/activeTopics'
+            },
+            {
+              id: 'add-topics',
+              title: 'Archieve Topics',
+              type: 'item',
+              url: '/admin-portal/Topics/archievedTopics'
+            },
+            // {
+            //   id: 'edit-topics',
+            //   title: 'Edit Topic',
+            //   type: 'item',
+            //   url: '/admin-portal/Topics/editTopic/:topic_id'
+            // }
+          ]
         },
         // {
         //   id: 'chapters',
@@ -434,7 +453,8 @@ const menuItems = {
           title: 'Chapters',
           type: 'collapse',
           icon: 'fas fa-book',
-          children:[
+          children: [
+
             {
               id: 'active-chapter',
               title: 'Active Chapters',
@@ -466,6 +486,26 @@ const menuItems = {
               title: 'Archived Units',
               type: 'item',
               url: '/admin-portal/units/archived-units',
+            }
+          ]
+        },
+        {
+          id: 'subjects',
+          title: 'Subjects',
+          type: 'collapse',
+          icon: 'feather icon-box',
+          children: [
+            {
+              id: 'active-subjects',
+              title: 'Active Subjects',
+              type: 'item',
+              url: '/admin-portal/active-subjects'
+            },
+            {
+              id: 'archived-subjects',
+              title: 'Archived Subjects',
+              type: 'item',
+              url: '/admin-portal/archived-subjects'
             }
           ]
         },

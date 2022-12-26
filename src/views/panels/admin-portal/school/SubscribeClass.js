@@ -72,7 +72,7 @@ const SubscribeClass = ({ className, rest, id, setIsOpenSubscribeClass }) => {
 
         console.log(sendData);
 
-        let emptyFieldValidation = formFields.find(o => o.client_class_name === "" || o.upschool_class_id === "")
+        let emptyFieldValidation = formFields.find(o => o.client_class_name === "" || o.upschool_class_id === "" || o.upschool_class_id === "Select Class")
 
         console.log(emptyFieldValidation);
 
@@ -296,14 +296,20 @@ const SubscribeClass = ({ className, rest, id, setIsOpenSubscribeClass }) => {
 
                                                                 <>
                                                                     < br />
-                                                                    <Row>
-                                                                        <Col></Col>
-                                                                        <Col>
-                                                                            <CloseButton onClick={() => {
-                                                                                removeFields(index)
-                                                                            }} variant="white" />
-                                                                        </Col>
-                                                                    </Row>
+
+                                                                    {console.log(formFields)}
+                                                                    
+                                                                    {formFields.length >1 && (
+                                                                        <Row>
+                                                                            <Col></Col>
+                                                                            <Col>
+                                                                                <CloseButton onClick={() => {
+                                                                                    removeFields(index)
+                                                                                }} variant="white" />
+                                                                            </Col>
+                                                                        </Row>
+                                                                    )}
+
                                                                     <Row key={index}>
 
                                                                         <Col>
@@ -323,7 +329,7 @@ const SubscribeClass = ({ className, rest, id, setIsOpenSubscribeClass }) => {
                                                                                 onChange={event => handleFormChange(event, index)}
                                                                                 placeholder="Enter Class Name"
                                                                             />
-                                                                           
+
 
                                                                         </Col>
 

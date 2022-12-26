@@ -2,12 +2,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { useLocation } from "react-router-dom";
-import ConceptTableView from './ConceptTableView';
+import SubjectTableView from './SubjectTableView';
 
-const ListUsers = () => {
+const ListSubjects = () => {
 
     const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
-    const [userStatus, setUserStatus] = useState('');
+    const [subjectStatus, setUserStatus] = useState('');
 
     useEffect(() => {
 
@@ -15,7 +15,7 @@ const ListUsers = () => {
 
         if (pageLocation) {
 
-            const status = pageLocation === "active-concepts" ? 'active-concepts' : 'archived-concepts';
+            const status = pageLocation === "active-subjects" ? 'active-subjects' : 'archived-subjects';
             setUserStatus(status);
 
         }
@@ -24,10 +24,10 @@ const ListUsers = () => {
 
 
     return (
-        <ConceptTableView userStatus={userStatus} />
+        <SubjectTableView subjectStatus={subjectStatus} />
     )
 };
 
-export default ListUsers;
+export default ListSubjects;
 
 

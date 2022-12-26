@@ -5,7 +5,7 @@ import BTable from 'react-bootstrap/Table';
 import withReactContent from 'sweetalert2-react-content';
 import Swal from 'sweetalert2';
 import { GlobalFilter } from './GlobalFilter';
-
+import MESSAGES from '../../../../helper/messages';
 import { useTable, useSortBy, usePagination, useGlobalFilter } from 'react-table';
 
 import AddSchoolForm from './AddSchoolForm';
@@ -13,28 +13,11 @@ import dynamicUrl from '../../../../helper/dynamicUrls';
 import EditSchoolForm from './EditSchoolForm';
 import SubscribeClass from './SubscribeClass';
 import { isEmptyArray } from '../../../../util/utils';
+import useFullPageLoader from '../../../../helper/useFullPageLoader';
+import { Link } from 'react-router-dom';
 
 function Table({ columns, data, modalOpen }) {
-    const {
-        getTableProps,
-        getTableBodyProps,
-        headerGroups,
-        prepareRow,
-
-        globalFilter,
-        setGlobalFilter,
-
-        page,
-        canPreviousPage,
-        canNextPage,
-        pageOptions,
-        pageCount,
-        gotoPage,
-        nextPage,
-        previousPage,
-        setPageSize,
-        state: { pageIndex, pageSize }
-    } = useTable(
+    const { getTableProps, getTableBodyProps, headerGroups, prepareRow, globalFilter, setGlobalFilter, page, canPreviousPage, canNextPage, pageOptions, pageCount, gotoPage, nextPage, previousPage, setPageSize, state: { pageIndex, pageSize } } = useTable(
         {
             columns,
             data,
@@ -44,6 +27,8 @@ function Table({ columns, data, modalOpen }) {
         useSortBy,
         usePagination
     );
+
+
 
     return (
         <>
@@ -149,7 +134,7 @@ function Table({ columns, data, modalOpen }) {
 }
 
 const SchoolChild = (props) => {
-    const { _data, fetchSchoolData, inactive } = props
+    const { _data, fetchSchoolData, inactive, pageURL } = props
 
     const columns = React.useMemo(
         () => [
@@ -179,74 +164,84 @@ const SchoolChild = (props) => {
 
     const [schoolData, setSchoolData] = useState([]);
     const [isOpen, setIsOpen] = useState(false);
+    const [_isOpen, _setIsOpen] = useState(false);
 
+    const [loader, showLoader, hideLoader] = useFullPageLoader();
     const [isOpenEditSchool, setIsOpenEditSchool] = useState(false);
     const [isOpenSubscribeClass, setIsOpenSubscribeClass] = useState(false);
     const [editID, setEditID] = useState('');
     const [subscribeID, setSubscribeClass] = useState('');
 
-    const handleDeleteSchool = (school_id) => {
-        const MySwal = withReactContent(Swal);
+    const MySwal = withReactContent(Swal);
+
+    const sweetAlertHandler = (alert) => {
         MySwal.fire({
-            title: 'Are you sure?',
-            text: 'Once deleted, you will not be able to recover!',
-            type: 'warning',
-            showCloseButton: true,
-            showCancelButton: true
-        }).then((willDelete) => {
-            if (willDelete.value) {
-                axios
-                    .post(
-                        dynamicUrl.deleteSchool,
-                        {
-                            data: {
-                                school_id: school_id,
-                            }
-                        },
-                        {
-                            headers: { Authorization: sessionStorage.getItem('user_jwt') }
-                        }
-                    )
-                    .then((response) => {
-                        console.log({ response });
-                        console.log(response.status);
-                        console.log(response.status === 200);
-                        let result = response.status === 200;
-                        if (result) {
-                            console.log('inside res');
-                            return MySwal.fire('', 'Your school has been deleted!', 'success');
-
-                            fetchSchoolData();
-                        } else {
-                            console.log('else res');
-                            // Request made and server responded
-                            return MySwal.fire('', 'Failed to delete your School!', 'error');
-                            fetchSchoolData();
-
-                        }
-                    })
-                    .catch((error) => {
-                        if (error.response) {
-                            // Request made and server responded
-                            console.log(error.response.data);
-                            return MySwal.fire('', 'Failed to delete your School!', 'error');
-                            fetchSchoolData();
-                        } else if (error.request) {
-                            // The request was made but no response was received
-                            console.log(error.request);
-                            return MySwal.fire('', 'Failed to delete your School!', 'error');
-                            fetchSchoolData();
-                        } else {
-                            // Something happened in setting up the request that triggered an Error
-                            console.log('Error', error.message);
-                            return MySwal.fire('', 'Failed to delete your School!', 'error');
-                            fetchSchoolData();
-                        }
-                    });
-            } else {
-                return MySwal.fire('', 'Your School is safe!', 'error');
-            }
+            title: alert.title,
+            text: alert.text,
+            icon: alert.type
         });
+    };
+
+    const handleDeleteSchool = (e, school_id, Archieved) => {
+        e.preventDefault();
+
+        const value = {
+            school_id: school_id,
+            school_status: Archieved
+        };
+
+        console.log(value);
+        // const MySwal = withReactContent(Swal);
+        // MySwal.fire({
+        //     title: 'Are you sure?',
+        //     text: 'Once deleted, you will not be able to recover!',
+        //     type: 'warning',
+        //     showCloseButton: true,
+        //     showCancelButton: true
+        // }).then((willDelete) => {
+        //     if (willDelete.value) {
+        axios
+            .post(
+                dynamicUrl.toggleSchoolStatus,
+                {
+                    data: {
+                        school_id: school_id,
+                        school_status: Archieved
+                    }
+                },
+                {
+                    headers: { Authorization: sessionStorage.getItem('user_jwt') }
+                }
+            )
+            .then(async (response) => {
+                let responseData = response.status === 200;
+                if (response.Error) {
+                    hideLoader();
+                    sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
+                    fetchSchoolData();
+                } else {
+                    sweetAlertHandler({ title: MESSAGES.INFO.SCHOOL_DELETED, type: 'success' });
+                    hideLoader();
+                    fetchSchoolData();
+                }
+            })
+
+            .catch((error) => {
+                if (error.response) {
+                    // Request made and server responded
+                    hideLoader();
+                    console.log(error.response.data);
+                    sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+                } else if (error.request) {
+                    // The request was made but no response was received
+                    hideLoader();
+                    console.log(error.request);
+                } else {
+                    // Something happened in setting up the request that triggered an Error
+                    hideLoader();
+                    console.log('Error', error.message);
+                }
+            });
     };
 
     const handleSubscribeClass = (e, school_id) => {
@@ -273,6 +268,9 @@ const SchoolChild = (props) => {
 
     const openHandler = () => {
         setIsOpen(true);
+    };
+    const _openHandler = () => {
+        _setIsOpen(true);
     };
 
     const _fetchSchoolData = () => {
@@ -307,7 +305,7 @@ const SchoolChild = (props) => {
                     </Button>
                     &nbsp;
                     {inactive === false ? null :
-                        <Button onClick={() => { handleDeleteSchool(resultData[index].school_id) }}
+                        <Button onClick={(e) => { handleDeleteSchool(e, resultData[index].school_id, 'Archived') }}
                             size='sm' className="btn btn-icon btn-rounded btn-danger"
                         >
                             <i className="feather icon-delete" /> &nbsp; Delete
@@ -329,30 +327,57 @@ const SchoolChild = (props) => {
     return isEmptyArray(schoolData) ? null : (
         <React.Fragment>
             <Row>
-                <Col sm={12}>
-                    <Card>
-                        <Card.Header>
-                            <Card.Title as="h5">Schools List</Card.Title>
-                        </Card.Header>
-                        <Card.Body>
-                            <Table columns={columns} data={schoolData} modalOpen={openHandler} />
-                        </Card.Body>
-                    </Card>
-                    <Modal dialogClassName="my-modal" show={isOpen} onHide={() => setIsOpen(false)}>
+                {isEmptyArray(_data) ?
+                    <div className="d-flex justify-content-md-center">
+                        <h3 style={{ marginLeft: '450px' }} >No School's to be displayed!</h3>
+                        <br></br>
+                        <div className="d-flex justify-content-md-center">
+                            <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={_openHandler}>
+                                <i className="feather icon-plus" /> Add Schools
+                            </Button>
+                        </div>
+                    </div> :
+                    <Col sm={12}>
+                        <Card>
+                            <Card.Header>
+                                <Card.Title as="h5">Schools List</Card.Title>
+                            </Card.Header>
+                            <Card.Body>
+                                <Table columns={columns} data={schoolData} modalOpen={openHandler} />
+                            </Card.Body>
+                        </Card>
+                        <Modal dialogClassName="my-modal" show={isOpen} onHide={() => setIsOpen(false)}>
+                            <Modal.Header closeButton>
+                                <Modal.Title as="h5">Add School</Modal.Title>
+                            </Modal.Header>
+                            <Modal.Body>
+                                <AddSchoolForm setIsOpen={setIsOpen} fetchSchoolData={fetchSchoolData} />
+                            </Modal.Body>
+                            {/* <Modal.Footer>
+                            <Button variant="danger" onClick={() => setIsOpen(false)}>
+                                Clear
+                            </Button>
+                            <Button variant="primary">Submit</Button>
+                        </Modal.Footer> */}
+                        </Modal>
+                    </Col>
+                }
+                {_isOpen &&
+                    <Modal dialogClassName="my-modal" show={_isOpen} onHide={() => _setIsOpen(false)}>
                         <Modal.Header closeButton>
                             <Modal.Title as="h5">Add School</Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
-                            <AddSchoolForm setIsOpen={setIsOpen} fetchSchoolData={fetchSchoolData} />
+                            <AddSchoolForm _setIsOpen={_setIsOpen} fetchSchoolData={fetchSchoolData} />
                         </Modal.Body>
-                        {/* <Modal.Footer>
+                        {/* <Modal.Footer>s
                             <Button variant="danger" onClick={() => setIsOpen(false)}>
                                 Clear
                             </Button>
                             <Button variant="primary">Submit</Button>
                         </Modal.Footer> */}
                     </Modal>
-                </Col>
+                }
             </Row>
 
 

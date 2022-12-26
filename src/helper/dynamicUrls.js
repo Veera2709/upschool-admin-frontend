@@ -52,6 +52,29 @@ const dynamicUrl = {
     editUnit: baseUrl + '/editUnit',
     toggleUnitStatus: baseUrl + '/toggleUnitStatus',
 
+    fetchAllConcepts: baseUrl + '/fetchAllConcepts',
+    fetchDigicardAndConcept: baseUrl + '/fetchDigicardAndConcept',
+    addConcepts: baseUrl + '/addConcepts',
+    toggleConceptStatus: baseUrl + '/toggleConceptStatus',
+    fetchIndividualConcept: baseUrl + '/fetchIndividualConcept',
+    updateConcept: baseUrl + '/updateConcept',
+
+    // Topics
+    addTopic: baseUrl + '/addTopic',
+    getTopics: baseUrl + '/fetchAllTopics',
+    getIndividualTopic: baseUrl + '/fetchIndividualTopic',
+    editTopic: baseUrl + '/editTopic',
+    deleteTopic: baseUrl + '/toggleTopicStatus',
+    getConcepts: baseUrl + '/fetchAllConcepts',
+    toggleSchoolStatus: baseUrl + '/toggleSchoolStatus',
+    fetchInactiveSchool: baseUrl + '/fetchInactiveSchool',
+
+    fetchUnitAndSubject: baseUrl + '/fetchUnitAndSubject',
+    fetchAllSubjects: baseUrl + '/fetchAllSubjects',
+    toggleSubjectStatus : baseUrl + '/toggleSubjectStatus',
+    addSubject: baseUrl + '/addSubject',
+    fetchIndividualSubject : baseUrl + '/fetchIndividualSubject',
+    updateSubject: baseUrl + '/updateSubject'
 }
 
 export default dynamicUrl;

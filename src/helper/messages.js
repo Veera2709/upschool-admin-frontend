@@ -5,7 +5,6 @@ const MESSAGES = {
     ChapterNameExists: 'Chapter Title exists already!',
     UnitNameExists: 'Unit Title exists already!',
 
-
     ComponentAdding: 'Error in adding the component! Please ensure that basic details component is completed.',
     ErrorInSendingEmail: 'Error in sending email!',
     ComponentEditing: 'Error in editing the component',
@@ -16,6 +15,8 @@ const MESSAGES = {
     AddingUser: 'Error in adding User',
     UpdatingUser: 'Error in updating User',
     DeletingUser: 'Error in deleting User',
+    DeletingConcept: 'Error in deleting Concept',
+    DeletingSubject: 'Error in deleting Subject',
     UpdatingClient: 'Error in updating Client',
     AssignUsers: 'Error in assigning users',
     VerificationFailed: 'Verification Failed',
@@ -27,10 +28,11 @@ const MESSAGES = {
     QcVerificationError: 'Error in verifying the component',
     QcApproveError: 'Error in approving the case!',
     QcRejectError: 'Error in rejecting the case!',
-    ReportGenerationError: 'Report generation failed!'
+    ReportGenerationError: 'Report generation failed!',
+    DeletingTopic: 'Error in deleting Topic',
   },
   SUCCESS: {
-
+    RestoredSuccessfully: 'Restored Successfully!',
 
     AddingDigiCard: 'Added DigiCard Successfully',
     EditDigiCard: 'DigiCard Updated Successfully',
@@ -39,9 +41,6 @@ const MESSAGES = {
     AddingUnit: 'Added Unit Successfully',
     EditChapter: 'Chapter Updated Successfully',
     EditUnit: 'Unit Updated Successfully',
-
-
-
 
     PleaseCheckYourEmailForTheOTP: 'please check your mail for the otp!',
     RegisteredSuccessfully: 'registered successfully!',
@@ -78,10 +77,16 @@ const MESSAGES = {
     ABLE_TO_DELETE: 'You can anyway delete your data after restoring!',
     DATA_DELETED: 'Your data has been deleted!',
     USER_DELETED: 'The user has been deleted!',
+    USER_RESTORED: 'The user details have been restored!',
     CLIENT_DELETED: 'The client has been deleted!',
     DATA_SAFE: 'Your data is safe!',
     FAILED_TO_RESTORE: 'Failed to restore!',
-    APPROVE_DENY_REASON: 'Reason to '
+    APPROVE_DENY_REASON: 'Reason to ',
+    CONCEPT_DELETED: 'The concept has been deleted!',
+    CONCEPT_RESTORED: 'The concept has been restored!',
+    SCHOOL_DELETED: 'school deleted successfully!',
+    SUBJECT_RESTORED: 'The subject has been restored!',
+    SUBJECT_DELETED: 'The subject has been deleted!',
   },
   VALIDATION: {
     MUST_BE_A_VALID_EMAIL_ADDRESS: 'Must be a valid email address',

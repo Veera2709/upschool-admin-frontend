@@ -136,7 +136,6 @@ const AddChapter = (
     }, [])
 
 
-
     const handleOnSelect = (event) => {
         let valuesArr = [];
         for (let i = 0; i < event.length; i++) {

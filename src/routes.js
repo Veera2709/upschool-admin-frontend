@@ -136,13 +136,13 @@ const routes = [
       },
       {
         exact: true,
-        path: '/admin-portal/school/ActiveSchools',
-        component: lazy(() => import('./views/panels/admin-portal/school/ActiveSchools'))
+        path: '/admin-portal/active-schools',
+        component: lazy(() => import('./views/panels/admin-portal/school/School'))
       },
       {
         exact: true,
-        path: '/admin-portal/school/ArchiveSchools',
-        component: lazy(() => import('./views/panels/admin-portal/school/ArchiveSchools'))
+        path: '/admin-porttal/archived-schools',
+        component: lazy(() => import('./views/panels/admin-portal/school/ArchivedSchools'))
       },
 
       {
@@ -167,19 +167,39 @@ const routes = [
         path: '/admin-portal/add-users',
         component: lazy(() => import('./views/panels/admin-portal/users/UsersBulkUpload'))
       },
+      {
+        exact: true,
+        path: '/admin-portal/add-concepts',
+        component: lazy(() => import('./views/panels/admin-portal/concepts/AddConcepts'))
+      },
 
       {
         exact: true,
-        path: '/admin-portal/concepts',
+        path: '/admin-portal/active-concepts',
         component: lazy(() => import('./views/panels/admin-portal/concepts/ListConcepts'))
       },
+      {
+        exact: true,
+        path: '/admin-portal/archived-concepts',
+        component: lazy(() => import('./views/panels/admin-portal/concepts/ListConcepts'))
+      }, 
 
+      {
+        exact: true,
+        path: '/admin-portal/active-subjects',
+        component: lazy(() => import('./views/panels/admin-portal/subjects/ListSubjects'))
+      },
+      {
+        exact: true,
+        path: '/admin-portal/archived-subjects',
+        component: lazy(() => import('./views/panels/admin-portal/subjects/ListSubjects'))
+      },
       //TOPICS
       //Get Topics
       {
         exact: true,
-        path: '/admin-portal/Topics/topicsList',
-        component: lazy(() => import('./views/panels/admin-portal/Topics/TopicsList'))
+        path: '/admin-portal/Topics/activeTopics',
+        component: lazy(() => import('./views/panels/admin-portal/Topics/ActiveTopics'))
       },
       // Add Topics
       {
@@ -228,7 +248,7 @@ const routes = [
         path: '/admin-portal/chapters/archived-chapter',
         component: lazy(() => import('./views/panels/admin-portal/chapters/ChaptersList'))
       },
-       //add chapter
+      //add chapter
       {
         exact: true,
         path: '/admin-portal/addChapters',
