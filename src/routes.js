@@ -161,7 +161,7 @@ const routes = [
           import('./views/panels/admin-portal/users/ListUsers')
 
         )
-      }, 
+      },
       {
         exact: true,
         path: '/admin-portal/add-users',
@@ -198,8 +198,8 @@ const routes = [
       //Get Topics
       {
         exact: true,
-        path: '/admin-portal/Topics/topicsList',
-        component: lazy(() => import('./views/panels/admin-portal/Topics/TopicsList'))
+        path: '/admin-portal/Topics/activeTopics',
+        component: lazy(() => import('./views/panels/admin-portal/Topics/ActiveTopics'))
       },
       // Add Topics
       {
@@ -220,8 +220,8 @@ const routes = [
         path: '/admin-portal/active-digiCard',
         component: lazy(() => import('./views/panels/admin-portal/digicard/DigiCard'))
       },
-       //digi card
-       {
+      //digi card
+      {
         exact: true,
         path: '/admin-portal/digicard-Archived',
         component: lazy(() => import('./views/panels/admin-portal/digicard/DigiCard'))
@@ -255,7 +255,7 @@ const routes = [
         path: '/admin-portal/chapters/archived-chapter',
         component: lazy(() => import('./views/panels/admin-portal/chapters/ChaptersList'))
       },
-       //add chapter
+      //add chapter
       {
         exact: true,
         path: '/admin-portal/addChapters',

@@ -17,13 +17,7 @@ import axios from 'axios';
 
 const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
     let history = useHistory();
-    const [tags, setTags] = useState([]);
-    const [ImgURL, setImgURL] = useState([]);
-    const [prePost, setprePost] = useState([]);
-    const [prePostLearning, setprePostLearning] = useState([]);
-    const [display, setDisplay] = useState('none');
-    const [imgFile, setImgFile] = useState([]);
-    const [articleData, setArticleData] = useState("");
+    const [prePostLearning, setprePostLearning] = useState('pre-Learning');
 
     const [topicConceptId, setTopicConceptId] = useState([]);
     const [topicConceptIds, setConceptIds] = useState([]);
@@ -32,6 +26,17 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
     const [relatedTopicsId, setRelatedTopicsId] = useState([]);
     const [relatedTopicsIds, setRelatedTopicsIds] = useState([]);
     const [relatedTopicNames, setRelatedTopicNames] = useState([]);
+
+
+    const sweetAlertHandler = (alert) => {
+        const MySwal = withReactContent(Swal);
+        MySwal.fire({
+            title: alert.title,
+            text: alert.text,
+            icon: alert.type
+        });
+    };
+
 
     const handleOnSelect = ((selectedList, selectedItem) => {
         setConceptIds(selectedList.map(concept => concept.id))
@@ -44,13 +49,6 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
         setRelatedTopicNames(selectedList.map(topicName => topicName.name))
     })
     const handleOnRemoveTopic = (selectedList, selectedItem) => setRelatedTopicsIds(selectedList.map(topic => topic.id))
-
-    const data = [
-        { id: 1, name: 'Topics' },
-        { id: 2, name: 'Topics1' },
-        { id: 3, name: 'Topics2' },
-    ]
-
 
     const topicQuizTemplate = { level: "", duration: "" }
     const [topicQuiz, setTopicQuiz] = useState([topicQuizTemplate])
@@ -73,36 +71,53 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
         setTopicQuiz(filteredProjects)
     }
 
+    const data = [{ id: 'ac05006b-2351-59e1-a5bf-aa88e249ad05', name: 'ac05006b-2351-59e1-a5bf-aa88e249ad05' }]
+
     const levels = [
         { label: 'Level-1', value: 'Level-1' },
         { label: 'Level-2', value: 'Level-2' },
         { label: 'Level-3', value: 'Level-3' },
     ]
 
+    const getConcepts = () => {
+        axios.post(dynamicUrl.getConcepts, {}, { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
+            .then((response) => {
+                const result = response
+                console.log('result: ', result)
+            })
+            .catch((err) => {
+                console.log('err: ', err);
+            })
+    }
+
+    const postTopic = (formData) => {
+        axios.post(dynamicUrl.addTopic, { data: formData }, {
+            headers: { Authorization: sessionStorage.getItem('user_jwt') }
+        })
+            .then((response) => {
+                const result = response;
+                console.log('result: ', result);
+            })
+            .catch((err) => {
+                console.log(err.response.data);
+                if (err.response.data === 'Topic Name Already Exists') {
+                    sweetAlertHandler({ title: 'Sorry', type: 'error', text: 'Topic Name Already Exists!' })
+                }
+            })
+    }
+
     useEffect(() => {
         setTopicConceptId(data);
         setRelatedTopicsId(data);
+        // getConcepts();
     }, [])
 
     const prePostOptions = [
         { value: 'Pre-Learning', label: 'pre-Learning' },
         { value: 'Post-Learning', label: 'Post-Learning' },
-
     ];
 
-
-    const handleSelectChange = (event) => {
-
-        console.log(event);
-
-        let valuesArr = [];
-        for (let i = 0; i < event.length; i++) {
-            valuesArr.push(event[i].value)
-        }
-
-        console.log(valuesArr);
-        setprePostLearning(valuesArr);
-    }
+    const handlePrePostChange = (e) => setprePostLearning(e.target.value)
 
     return (
         <div>
@@ -125,21 +140,12 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
                                 topic_title: values.topic_title,
                                 topic_description: values.topic_description,
                                 topic_concept_id: topicConceptIds,
-                                pre_post_learning: values.pre_post_learning,
+                                pre_post_learning: prePostLearning,
                                 related_topics: relatedTopicsIds,
                                 topic_quiz_config: topicQuiz
                             }
                             console.log('formData: ', formData)
-                            axios.post(dynamicUrl.addTopic, { data: formData }, {
-                                headers: { Authorization: sessionStorage.getItem('user_jwt') }
-                            })
-                                .then((response) => {
-                                    const result = response;
-                                    console.log('result: ', result);
-                                })
-                                .catch((err) => {
-                                    console.log(err);
-                                })
+                            postTopic(formData)
                         }}
                     >
                         {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
@@ -186,30 +192,19 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
                                     </Form.Group>
                                 </Col>
 
-
-
-
-
                                 <div className="col-md-6">
                                     <div className="form-group fill">
-
                                         <label className="floating-label">
                                             <small className="text-danger">* </small>
                                             pre-post learning
                                         </label>
-                                        {console.log(prePost)}
-                                        <Select
-                                            defaultValue={prePost}
-                                            isMulti
-                                            name="colors"
-                                            options={prePostOptions}
-                                            className="basic-select"
-                                            classNamePrefix="Select"
-                                            onChange={event => handleSelectChange(event)}
-                                        />
+                                        <select className='form-control' onChange={handlePrePostChange}>
+                                            {prePostOptions.map((ele, i) => {
+                                                return <option key={i} >{ele.value}</option>
+                                            })}
+                                        </select>
                                     </div>
                                 </div>
-
 
                                 <Col sm={6}>
                                     <Form.Group>
@@ -226,8 +221,8 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
 
                                 <Form.Label className="floating-label" ><small className="text-danger">* </small>Topic Quiz Config</Form.Label>
                                 {topicQuiz.map((topic, index) => (
-                                    <div className='row ml-1 mb-2'>
-                                        <div className='col-md-4'>
+                                    <div className='row ml-1 mb-2' key={index + 1000} >
+                                        <div className='col-md-4' key={index + 10} >
                                             <select className='form-control' name="level" id="level" onChange={(e) => onDynamicFormChange(e, index, 'level')} value={topic.level} >
                                                 {levels.map((ele, i) => {
                                                     return <option id="level" keys={i} value={ele.value} >{ele.label}</option>
@@ -255,12 +250,12 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
                                 ))}
 
                                 <p></p>
-                                <button type="button" class="btn btn-primary" onClick={addTopic} >Add another Quiz</button>
+                                <button type="button" className="btn btn-primary" onClick={addTopic} >Add another Quiz</button>
 
-                                <div class="row d-flex justify-content-end">
-                                    <div class="form-group fill">
-                                        <div class="center col-sm-12">
-                                            <button color="success" type="submit" class="btn-block btn btn-success btn-large">Submit</button>
+                                <div className="row d-flex justify-content-end">
+                                    <div className="form-group fill">
+                                        <div className="center col-sm-12">
+                                            <button color="success" type="submit" className="btn-block btn btn-success btn-large">Submit</button>
                                         </div>
                                     </div>
                                 </div>
