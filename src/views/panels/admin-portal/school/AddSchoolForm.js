@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios'
 import Select from 'react-select';
+import Multiselect from 'multiselect-react-dropdown';
 import { Row, Col, Card, Pagination, Button, Modal, ModalBody, Form } from 'react-bootstrap';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 // import dynamicUrl from '../../../helper/dynamicUrl';
@@ -55,7 +56,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
         setCopy(!copy);
         setData({
             school_name: schoolNameRef.current.value,
-            school_board: schoolBoardRef.current.value,
+            // school_board: schoolBoardRef.current.value,
             school_logo: schoolLogoRef.current.value,
             contact_name: contactNameRef.current.value,
             address_line1: addressLine1Ref.current.value,
@@ -75,6 +76,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
     }
 
     const previewImage = (e) => {
+        console.log('imageURL: ', e.target.files[0]);
         setImgFile(URL.createObjectURL(e.target.files[0]));
     }
 
@@ -94,20 +96,22 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
     ];
 
 
-    const handleSelectChange = (event) => {
+    // const handleSelectChange = (event) => {
 
-        console.log(event);
+    //     console.log(event);
 
-        let valuesArr = [];
-        for (let i = 0; i < event.length; i++) {
-            valuesArr.push(event[i].value)
-        }
+    //     let valuesArr = [];
+    //     for (let i = 0; i < event.length; i++) {
+    //         valuesArr.push(event[i].value)
+    //     }
 
-        console.log(valuesArr);
-        setSelectedBoards(valuesArr);
-    }
+    //     console.log(valuesArr);
+    //     setSelectedBoards(valuesArr);
+    // }
 
+    const handleSelectBoard = (selectedList, selectedItem) => setSelectedBoards(selectedList.map((ele) => ele.value))
 
+    const handleOnRemove = (selectedList, selectedItem) => setSelectedBoards(selectedList.map(skillId => skillId.id))
 
 
     return (
@@ -116,7 +120,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                 enableReinitialize={true}
                 initialValues={{
                     school_name: data === {} ? '' : data.school_name,
-                    school_board: data === {} ? '' : data.school_board,
+                    // school_board: data === {} ? '' : data.school_board,
                     school_logo: data === {} ? '' : data.school_logo,
                     subscription_active: scbscription_active,
 
@@ -137,7 +141,10 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                 }}
                 validationSchema={
                     Yup.object().shape({
-                        school_name: Yup.string().matches(Constants.Common.alphabetsWithSpaceRegex, 'School Name must contain only alphabets!').max(255).required('School Name is required'), school_board: Yup.string().required('School Board is required'),
+                        school_name: Yup.string().matches(Constants.Common.alphabetsWithSpaceRegex, 'School Name must contain only alphabets!').max(255).required('School Name is required'),
+
+                        // school_board: Yup.string().required('School Board is required'),
+
                         contact_name: Yup.string().matches(Constants.Common.alphabetsWithSpaceRegex, 'Contact Name must contain only alphabets!').max(255).required('Contact Name is required'),
                         address_line1: Yup.string().max(255).required('Address Line 1 is required'),
                         address_line2: Yup.string().max(255).required('Address Line 2 is required'),
@@ -154,10 +161,16 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                     })}
                 onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
                     setSubmitting(true);
+
+                    console.log("SUBMIT");
+
+                    console.log("school_logo", values.school_logo);
+
                     const formData = {
                         school_name: values.school_name,
-                        school_board: values.school_board,
-                        school_logo: "testImg.png",
+                        school_board: selectedBoards,
+                        // school_logo: "testImg.png",
+                        school_logo: values.school_logo,
                         subscription_active: scbscription_active,
                         school_contact_info: {
                             business_address: {
@@ -181,6 +194,8 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                         }
                     }
 
+                    console.log("form data initial", formData);
+
                     let imageFile = document.getElementById('school_logo').files[0];
 
                     let sendData = {
@@ -194,7 +209,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
 
                         if (areFilesInvalid([imageFile]) !== 0) {
                             setIsOpen(false);
-                            sweetAlertHandler({ title: 'Sorry', type: 'error', text: 'Invalid File!' });
+                            sweetAlertHandler({ title: 'Sorry', type: 'error', text: 'Invalid File or File size exceeds 2 MB!' });
                             hideLoader();
                         } else {
                             // console.log('formData: ', JSON.stringify(formData))
@@ -216,6 +231,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                                         // setDisableButton(false);
                                         hideLoader();
                                         console.log('Proceeding with file upload');
+                                        console.log("uploadParams", uploadParams)
 
                                         if (Array.isArray(uploadParams)) {
                                             for (let index = 0; index < uploadParams.length; index++) {
@@ -362,15 +378,15 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
 
 
 
-                                    <div className="col-md-6">
+                                    <div className="col-md-12">
                                         <div className="form-group fill">
 
                                             <label className="floating-label">
                                                 <small className="text-danger">* </small>
                                                 School Board
                                             </label>
-                                            {console.log(previousBoards)}
-                                            <Select
+                                            {console.log("HERE : ", previousBoards)}
+                                            {/* <Select
                                                 defaultValue={previousBoards}
                                                 isMulti
                                                 name="colors"
@@ -378,27 +394,36 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                                                 className="basic-multi-select"
                                                 classNamePrefix="Select"
                                                 onChange={event => handleSelectChange(event)}
+                                            /> */}
+                                            <Multiselect
+                                                options={schoolBoardOptions}
+                                                displayValue="value"
+                                                selectionLimit="25"
+                                                // selectedValues={defaultOptions}
+                                                onSelect={handleSelectBoard}
+                                                onRemove={handleOnRemove}
                                             />
                                         </div>
                                     </div>
-
-                                    <div class="form-group fill">
-                                        <label class="floating-label" for="email">
-                                            <small class="text-danger">* </small>Subscription Active</label>
-                                        <div className="row profile-view-radio-button-view ml-2">
-                                            <Form.Check
-                                                id={`radio-fresher`}
-                                                error={touched.fresher && errors.fresher}
-                                                type="switch"
-                                                variant={'outline-primary'}
-                                                name="radio-fresher"
-                                                value={scbscription_active}
-                                                checked={_radio}
-                                                onChange={(e) => handleRadioChange(e)}
-                                            />
-                                            <Form.Label className="profile-view-question" id={`radio-fresher`}>
-                                                {_radio === true ? 'Yes' : 'No'}
-                                            </Form.Label>
+                                    <div className="col-md-12">
+                                        <div class="form-group fill">
+                                            <label class="floating-label" for="email">
+                                                <small class="text-danger">* </small>Subscription Active</label>
+                                            <div className="row profile-view-radio-button-view ml-2">
+                                                <Form.Check
+                                                    id={`radio-fresher`}
+                                                    error={touched.fresher && errors.fresher}
+                                                    type="switch"
+                                                    variant={'outline-primary'}
+                                                    name="radio-fresher"
+                                                    value={scbscription_active}
+                                                    checked={_radio}
+                                                    onChange={(e) => handleRadioChange(e)}
+                                                />
+                                                <Form.Label className="profile-view-question" id={`radio-fresher`}>
+                                                    {_radio === true ? 'Yes' : 'No'}
+                                                </Form.Label>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -411,8 +436,9 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                                         id="school_logo"
                                         type="file"
                                         accept="image/png, image/jpeg, image/jpg"
-                                        onChange={previewImage}
+                                        onChange={(e) => { previewImage(e); handleChange(e); }}
                                         value={values.school_logo}
+                                        onBlur={handleBlur}
                                     // ref={schoolLogoRef}
                                     />
                                     {touched.school_logo && errors.school_logo && (
@@ -421,6 +447,8 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                                 </div>
                                 <img width={150} src={imgFile} alt="" className="img-fluid mb-3" />
                             </div>
+
+
 
                             <div className='col-sm-12'>
                                 <div className='row'>

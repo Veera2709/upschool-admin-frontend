@@ -200,7 +200,7 @@ const DigiCard = () => {
 
     let history = useHistory();
 
-    function deleteDigicard(digi_card_id, digi_card_name) {
+    function deleteDigicard(digi_card_id, digi_card_title) {
         console.log("digi_card_id", digi_card_id);
         var data = {
             "digi_card_id": digi_card_id,
@@ -211,7 +211,7 @@ const DigiCard = () => {
             const MySwal = withReactContent(Swal);
             MySwal.fire({
                 title: 'Are you sure?',
-                text: 'Confirm deleting ' + digi_card_name + ' DigiCard',
+                text: 'Confirm deleting ' + digi_card_title + ' DigiCard',
                 type: 'warning',
                 showCloseButton: true,
                 showCancelButton: true
@@ -226,7 +226,7 @@ const DigiCard = () => {
                                 sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
                             } else {
                                 setReloadAllData("Deleted");
-                                return MySwal.fire('', 'The ' + digi_card_name + ' is Deleted', 'success');
+                                return MySwal.fire('', 'The ' + digi_card_title + ' is Deleted', 'success');
                                 // window. location. reload() 
                                 //  MySwal.fire('', MESSAGES.INFO.CLIENT_DELETED, 'success');
 
@@ -259,7 +259,7 @@ const DigiCard = () => {
 
     }
 
-    function digicardRestore(digi_card_id, digi_card_name) {
+    function digicardRestore(digi_card_id, digi_card_title) {
         console.log("digi_card_id", digi_card_id);
         var data = {
             "digi_card_id": digi_card_id,
@@ -270,7 +270,7 @@ const DigiCard = () => {
             const MySwal = withReactContent(Swal);
             MySwal.fire({
                 title: 'Are you sure?',
-                text: 'Confirm to Restore ' + digi_card_name + ' DigiCard',
+                text: 'Confirm to Restore ' + digi_card_title + ' DigiCard',
                 type: 'warning',
                 showCloseButton: true,
                 showCancelButton: true
@@ -285,7 +285,7 @@ const DigiCard = () => {
                                 sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
                             } else {
                                 setReloadAllData("Deleted");
-                                return MySwal.fire('', 'The ' + digi_card_name + ' is Restored', 'success');
+                                return MySwal.fire('', 'The ' + digi_card_title + ' is Restored', 'success');
                                 // window. location. reload() 
                                 //  MySwal.fire('', MESSAGES.INFO.CLIENT_DELETED, 'success');
 
@@ -351,7 +351,7 @@ const DigiCard = () => {
                                 <Button
                                     size="sm"
                                     className="btn btn-icon btn-rounded btn-danger"
-                                    onClick={(e) => deleteDigicard(ActiveresultData[index].digi_card_id, ActiveresultData[index].digi_card_name)}
+                                    onClick={(e) => deleteDigicard(ActiveresultData[index].digi_card_id, ActiveresultData[index].digi_card_title)}
                                 >
                                     <i className="feather icon-trash-2 " /> &nbsp; Delete
                                 </Button>

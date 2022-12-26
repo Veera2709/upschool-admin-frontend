@@ -448,7 +448,6 @@ const menuItems = {
           type: 'collapse',
           icon: 'fas fa-book',
           children: [
-
             {
               id: 'active-chapter',
               title: 'Active Chapters',
@@ -460,26 +459,6 @@ const menuItems = {
               title: 'Archived Chapters',
               type: 'item',
               url: '/admin-portal/chapters/archived-chapter',
-            }
-          ]
-        },
-        {
-          id: 'subjects',
-          title: 'Subjects',
-          type: 'collapse',
-          icon: 'feather icon-box',
-          children: [
-            {
-              id: 'active-subjects',
-              title: 'Active Subjects',
-              type: 'item',
-              url: '/admin-portal/active-subjects'
-            },
-            {
-              id: 'archived-subjects',
-              title: 'Archived Subjects',
-              type: 'item',
-              url: '/admin-portal/archived-subjects'
             }
           ]
         },

@@ -378,7 +378,7 @@ const menuItems = {
           title: 'DigiCard',
           type: 'collapse',
           icon: 'feather icon-layout',
-
+          
           children: [
             {
               id: 'active-digiCard',
@@ -420,20 +420,20 @@ const menuItems = {
           type: 'item',
           icon: 'feather icon-package',
           url: '/admin-portal/Topics/topicsList',
-          children: [
-            {
-              id: 'add-topics',
-              title: 'Add Topics',
-              type: 'item',
-              url: '/admin-portal/Topics/active-topics'
-            },
-            {
-              id: 'edit-topics',
-              title: 'Edit Topic',
-              type: 'item',
-              url: '/admin-portal/Topics/archived-topics'
-            }
-          ]
+          // children: [
+          //   {
+          //     id: 'add-topics',
+          //     title: 'Add Topics',
+          //     type: 'item',
+          //     url: '/admin-portal/Topics/addTopics'
+          //   },
+          //   {
+          //     id: 'edit-topics',
+          //     title: 'Edit Topic',
+          //     type: 'item',
+          //     url: '/admin-portal/editTopic/:topic_id'
+          //   }
+          // ]
         },
         // {
         //   id: 'chapters',
@@ -447,8 +447,8 @@ const menuItems = {
           title: 'Chapters',
           type: 'collapse',
           icon: 'fas fa-book',
-          children: [
-
+          children:[
+            
             {
               id: 'active-chapter',
               title: 'Active Chapters',
@@ -460,26 +460,6 @@ const menuItems = {
               title: 'Archived Chapters',
               type: 'item',
               url: '/admin-portal/chapters/archived-chapter',
-            }
-          ]
-        },
-        {
-          id: 'subjects',
-          title: 'Subjects',
-          type: 'collapse',
-          icon: 'feather icon-box',
-          children: [
-            {
-              id: 'active-subjects',
-              title: 'Active Subjects',
-              type: 'item',
-              url: '/admin-portal/active-subjects'
-            },
-            {
-              id: 'archived-subjects',
-              title: 'Archived Subjects',
-              type: 'item',
-              url: '/admin-portal/archived-subjects'
             }
           ]
         },
