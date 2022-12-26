@@ -218,10 +218,11 @@ const SchoolChild = (props) => {
                 if (response.Error) {
                     hideLoader();
                     sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
+                    fetchSchoolData();
                 } else {
                     sweetAlertHandler({ title: MESSAGES.INFO.SCHOOL_DELETED, type: 'success' });
                     hideLoader();
-                    window.location.reload();
+                    fetchSchoolData();
                 }
             })
 

@@ -11,10 +11,10 @@ import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import dynamicUrl from '../../../../helper/dynamicUrls';
 
 
-const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchAllConceptsData }) => {
+const AddSubjects = ({ _units, _relatedSubjects, setIsOpenAddSubject, fetchAllSubjectsData }) => {
 
-    console.log(_digicards);
-    console.log(_relatedConcepts);
+    console.log(_units);
+    console.log(_relatedSubjects);
 
     const MySwal = withReactContent(Swal);
 
@@ -27,44 +27,44 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
     };
 
     const [loader, showLoader, hideLoader] = useFullPageLoader();
-    const [selectedDigicards, setSelectedDigicards] = useState([]);
-    const [selectedRelatedConcepts, setSelectedRelatedConcepts] = useState([]);
+    const [selectedUnits, setSelectedUnits] = useState([]);
+    const [selectedRelatedSubjects, setSelectedRelatedSubjects] = useState([]);
     const [selectedKeywords, setSelectedKeywords] = useState([]);
-    const [dropdownDigicards, setDropdownDigicards] = useState([]);
-    const [dropdownRelatedConcepts, setDropdownRelatedConcepts] = useState([]);
-    const [showDigicardErr, setShowDigicardErr] = useState(false);
-    const [conceptTitleErr, setConceptTitleErr] = useState(false);
-    const [conceptTitleErrMessage, setConceptTitleErrMessage] = useState('');
+    const [dropdownUnits, setDropdownUnits] = useState([]);
+    const [dropdownRelatedSubjects, setDropdownRelatedSubjects] = useState([]);
+    const [showUnitsErr, setShowUnitsErr] = useState(false);
+    const [subjectTitleErr, setsubjectTitleErr] = useState(false);
+    const [subjectTitleErrMessage, setsubjectTitleErrMessage] = useState('');
 
     useEffect(() => {
 
-        if (_digicards) {
+        if (_units) {
 
             let valuesArr = [];
 
-            for (let index = 0; index < _digicards.length; index++) {
+            for (let index = 0; index < _units.length; index++) {
 
-                if (_digicards[index]) {
-                    valuesArr.push({ value: _digicards[index].digi_card_id, label: _digicards[index].digi_card_title })
+                if (_units[index]) {
+                    valuesArr.push({ value: _units[index].unit_id, label: _units[index].unit_title })
                 }
             }
-            setDropdownDigicards(valuesArr);
+            setDropdownUnits(valuesArr);
         }
 
-        if (_relatedConcepts) {
+        if (_relatedSubjects) {
 
             let valuesArr = [];
 
-            for (let index = 0; index < _relatedConcepts.length; index++) {
+            for (let index = 0; index < _relatedSubjects.length; index++) {
 
-                if (_relatedConcepts[index]) {
-                    valuesArr.push({ value: _relatedConcepts[index].concept_id, label: _relatedConcepts[index].concept_title })
+                if (_relatedSubjects[index]) {
+                    valuesArr.push({ value: _relatedSubjects[index].subject_id, label: _relatedSubjects[index].subject_title })
                 }
             }
-            setDropdownRelatedConcepts(valuesArr)
+            setDropdownRelatedSubjects(valuesArr)
         }
 
-        // setIsOpenAddConcept(false);
+        // setIsOpenAddSubject(false);
     }, []);
 
     const [tags, setTags] = useState([]);
@@ -89,9 +89,9 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
         setSelectedKeywords(valuesArr);
     };
 
-    const handleDigicardChange = (event) => {
+    const handleUnitsChange = (event) => {
 
-        setShowDigicardErr(false);
+        setShowUnitsErr(false);
         console.log(event);
 
         let valuesArr = [];
@@ -100,10 +100,10 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
         }
 
         console.log(valuesArr);
-        setSelectedDigicards(valuesArr);
+        setSelectedUnits(valuesArr);
     }
 
-    const handleRelatedConcepts = (event) => {
+    const handleRelatedSubjects = (event) => {
 
         console.log(event);
 
@@ -113,14 +113,14 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
         }
 
         console.log(valuesArr);
-        setSelectedRelatedConcepts(valuesArr);
+        setSelectedRelatedSubjects(valuesArr);
     }
 
 
     return (
 
         <>
-            {_digicards && _relatedConcepts && (
+            {_units && _relatedSubjects && (
 
                 <>
                     <React.Fragment>
@@ -129,13 +129,15 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
 
                             initialValues={
                                 {
-                                    conceptTitle: "",
+                                    subjectTitle: "",
+                                    description: "",
                                     submit: null
                                 }
                             }
                             validationSchema={
                                 Yup.object().shape({
-                                    conceptTitle: Yup.string().max(255).required('Concept Title is required')
+                                    subjectTitle: Yup.string().max(255).required('Subject Title is required'),
+                                    description: Yup.string().max(255).required('Subject Description is required')
 
                                 })
                             }
@@ -148,26 +150,25 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
 
                                 const formData = {
                                     data: {
-                                        concept_title: values.conceptTitle,
-                                        concept_digicard_id: selectedDigicards,
-                                        concept_keywords: selectedKeywords,
-                                        related_concept: selectedRelatedConcepts
+                                        subject_title: values.subjectTitle,
+                                        subject_unit_id: selectedUnits,
+                                        subject_keyword: selectedKeywords,
+                                        related_subject: selectedRelatedSubjects,
+                                        subject_description: values.description
 
                                     }
                                 };
 
                                 console.log('form Data: ', formData);
 
-                                if (selectedDigicards.length > 0) {
+                                if (selectedUnits.length > 0) {
                                     console.log("Proceed");
                                     showLoader();
 
                                     axios
                                         .post(
-                                            dynamicUrl.addConcepts, {
-                                            data:
-                                                formData
-                                        },
+                                            dynamicUrl.addSubject,
+                                            formData,
                                             {
                                                 headers: { Authorization: sessionStorage.getItem('user_jwt') }
                                             }
@@ -183,9 +184,9 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
 
                                                 console.log('inside res edit');
                                                 hideLoader();
-                                                setIsOpenAddConcept(false);
-                                                sweetAlertHandler({ title: 'Success', type: 'success', text: 'Concept added successfully!' });
-                                                fetchAllConceptsData();
+                                                setIsOpenAddSubject(false);
+                                                sweetAlertHandler({ title: 'Success', type: 'success', text: 'Subject added successfully!' });
+                                                fetchAllSubjectsData();
                                                 // window.location.reload();
 
                                             } else {
@@ -193,8 +194,8 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
                                                 console.log('else res');
                                                 hideLoader();
                                                 // Request made and server responded
-                                                setConceptTitleErr(true);
-                                                setConceptTitleErrMessage("err");
+                                                setsubjectTitleErr(true);
+                                                setsubjectTitleErrMessage("err");
                                                 // window.location.reload();
 
 
@@ -205,27 +206,27 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
                                                 hideLoader();
                                                 // Request made and server responded
                                                 console.log(error.response.data);
-                                                setConceptTitleErr(true);
-                                                setConceptTitleErrMessage(error.response.data);
+                                                setsubjectTitleErr(true);
+                                                setsubjectTitleErrMessage(error.response.data);
 
                                             } else if (error.request) {
                                                 // The request was made but no response was received
                                                 console.log(error.request);
                                                 hideLoader();
-                                                setConceptTitleErr(true);
-                                                setConceptTitleErrMessage(error.request);
+                                                setsubjectTitleErr(true);
+                                                setsubjectTitleErrMessage(error.request);
                                             } else {
                                                 // Something happened in setting up the request that triggered an Error
                                                 console.log('Error', error.message);
                                                 hideLoader();
-                                                setConceptTitleErr(true);
-                                                setConceptTitleErrMessage(error.request);
+                                                setsubjectTitleErr(true);
+                                                setsubjectTitleErrMessage(error.request);
 
                                             }
                                         })
                                 } else {
-                                    console.log("Digicard empty");
-                                    setShowDigicardErr(true);
+                                    console.log("Units empty");
+                                    setShowUnitsErr(true);
 
                                 }
 
@@ -241,28 +242,28 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
                                                 <Col>
 
                                                     <div className="form-group fill">
-                                                        <label className="floating-label" htmlFor="conceptTitle">
-                                                            <small className="text-danger">* </small>Concept Title
+                                                        <label className="floating-label" htmlFor="subjectTitle">
+                                                            <small className="text-danger">* </small>Subject Title
                                                         </label>
                                                         <input
                                                             className="form-control"
-                                                            error={touched.conceptTitle && errors.conceptTitle}
-                                                            name="conceptTitle"
+                                                            error={touched.subjectTitle && errors.subjectTitle}
+                                                            name="subjectTitle"
                                                             onBlur={handleBlur}
                                                             // onChange={handleChange}
                                                             type="text"
-                                                            value={values.conceptTitle}
+                                                            value={values.subjectTitle}
                                                             onChange={(e) => {
-                                                                handleChange("conceptTitle")(e);
-                                                                setConceptTitleErr(false);
+                                                                handleChange("subjectTitle")(e);
+                                                                setsubjectTitleErr(false);
                                                             }}
 
                                                         />
 
-                                                        {touched.conceptTitle && errors.conceptTitle && <small className="text-danger form-text">{errors.conceptTitle}</small>}
+                                                        {touched.subjectTitle && errors.subjectTitle && <small className="text-danger form-text">{errors.subjectTitle}</small>}
 
-                                                        {conceptTitleErr && conceptTitleErrMessage &&
-                                                            <small className="text-danger form-text">{conceptTitleErrMessage}</small>
+                                                        {subjectTitleErr && subjectTitleErrMessage &&
+                                                            <small className="text-danger form-text">{subjectTitleErrMessage}</small>
                                                         }
 
                                                     </div>
@@ -286,25 +287,58 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
                                                 </Col>
                                             </Row>
                                             <br />
+
+                                            <Row>
+                                                <Col>
+
+                                                    <div className="form-group fill">
+
+                                                        <label className="floating-label">
+                                                            <small className="text-danger">* </small>
+                                                            Description
+                                                        </label>
+
+                                                        <textarea
+                                                            className="form-control"
+                                                            error={touched.description && errors.description}
+                                                            label="description"
+                                                            name="description"
+                                                            id="description"
+                                                            onBlur={handleBlur}
+                                                            onChange={handleChange}
+                                                            value={values.description}
+                                                            placeholder="Enter description"
+                                                            rows="6"
+                                                        />
+                                                        {touched.description && errors.description && (
+                                                            <small className="text-danger form-text">{errors.description}</small>
+                                                        )}
+
+                                                    </div>
+
+                                                </Col>
+                                            </Row>
+
+                                            <br />
                                             <Row>
                                                 <Col>
                                                     <div className="form-group fill">
 
                                                         <label className="floating-label">
                                                             <small className="text-danger">* </small>
-                                                            Digicards
+                                                            Units
                                                         </label>
                                                         {/* {console.log(previousBoards)} */}
                                                         <Select
                                                             // defaultValue={previousBoards}
                                                             isMulti
-                                                            name="digicards"
-                                                            options={dropdownDigicards}
+                                                            name="units"
+                                                            options={dropdownUnits}
                                                             className="basic-multi-select"
                                                             classNamePrefix="Select"
-                                                            onChange={event => handleDigicardChange(event)}
+                                                            onChange={event => handleUnitsChange(event)}
                                                         />
-                                                        {showDigicardErr && <small className="text-danger form-text">{'Please select a digicard'}</small>}
+                                                        {showUnitsErr && <small className="text-danger form-text">{'Please select Units'}</small>}
                                                     </div>
                                                 </Col>
                                                 <Col>
@@ -312,21 +346,23 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
 
                                                         <label className="floating-label">
                                                             <small className="text-danger"></small>
-                                                            Related Concepts
+                                                            Related Subjects
                                                         </label>
                                                         {/* {console.log(previousBoards)} */}
                                                         <Select
                                                             // defaultValue={previousBoards}
                                                             isMulti
-                                                            name="relatedConcepts"
-                                                            options={dropdownRelatedConcepts}
+                                                            name="relatedSubjects"
+                                                            options={dropdownRelatedSubjects}
                                                             className="basic-multi-select"
                                                             classNamePrefix="Select"
-                                                            onChange={event => handleRelatedConcepts(event)}
+                                                            onChange={event => handleRelatedSubjects(event)}
                                                         />
                                                     </div>
                                                 </Col>
                                             </Row>
+
+
                                             {loader}
                                             <br />
                                             <hr />
@@ -349,7 +385,8 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
                                     </Row>
 
                                 </form>
-                            )}
+                            )
+                            }
                         </Formik>
 
                     </React.Fragment>
@@ -361,4 +398,4 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
 
 }
 
-export default AddConcepts
+export default AddSubjects

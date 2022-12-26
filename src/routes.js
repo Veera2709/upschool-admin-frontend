@@ -182,8 +182,18 @@ const routes = [
         exact: true,
         path: '/admin-portal/archived-concepts',
         component: lazy(() => import('./views/panels/admin-portal/concepts/ListConcepts'))
-      },
+      }, 
 
+      {
+        exact: true,
+        path: '/admin-portal/active-subjects',
+        component: lazy(() => import('./views/panels/admin-portal/subjects/ListSubjects'))
+      },
+      {
+        exact: true,
+        path: '/admin-portal/archived-subjects',
+        component: lazy(() => import('./views/panels/admin-portal/subjects/ListSubjects'))
+      },
       //TOPICS
       //Get Topics
       {

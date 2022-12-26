@@ -15,6 +15,7 @@ const MESSAGES = {
     UpdatingUser: 'Error in updating User',
     DeletingUser: 'Error in deleting User',
     DeletingConcept: 'Error in deleting Concept',
+    DeletingSubject: 'Error in deleting Subject',
     UpdatingClient: 'Error in updating Client',
     AssignUsers: 'Error in assigning users',
     VerificationFailed: 'Verification Failed',
@@ -80,7 +81,9 @@ const MESSAGES = {
     APPROVE_DENY_REASON: 'Reason to ',
     CONCEPT_DELETED: 'The concept has been deleted!',
     CONCEPT_RESTORED: 'The concept has been restored!',
-    SCHOOL_DELETED: 'school deleted successfully!'
+    SCHOOL_DELETED: 'school deleted successfully!',
+    SUBJECT_RESTORED: 'The subject has been restored!',
+    SUBJECT_DELETED: 'The subject has been deleted!',
   },
   VALIDATION: {
     MUST_BE_A_VALID_EMAIL_ADDRESS: 'Must be a valid email address',
