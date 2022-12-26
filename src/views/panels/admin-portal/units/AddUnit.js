@@ -16,10 +16,10 @@ import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import withReactContent from 'sweetalert2-react-content';
 import { areFilesInvalid, isEmptyObject } from '../../../../util/utils';
 import { useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
-import Select from 'react-select';
 import Multiselect from 'multiselect-react-dropdown';
-import { fetchAllTopics } from '../../../api/CommonApi'
+import { fetchAllChapters } from '../../../api/CommonApi'
+import Select from 'react-select';
+
 
 
 
@@ -28,68 +28,26 @@ import { fetchAllTopics } from '../../../api/CommonApi'
 
 // import { Button,Container,Row ,Col  } from 'react-bootstrap';
 
-const AddChapter = (
-    setTabChange,
-    categoryAPI,
-    added,
-    setAdded,
-    articlesList,
-    currentArticle,
-    setEditArticle,
-    editMode,
-    currentSubCategory,
-    terminal,
-    setCurrentSubCategory
-) => {
+const AddUnit = () => {
 
 
     const colourOptions = [];
-    const isLocked = [
-        { value: 'Yes', label: 'Yes' },
-        { value: 'No', label: 'No' },
-    ]
 
 
 
-    const [content, setContent] = useState('');
+
     const [loader, showLoader, hideLoader] = useFullPageLoader();
     const [disableButton, setDisableButton] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
     const MySwal = withReactContent(Swal);
-    const [isClientExists, setIsClientExists] = useState(false);
-    const [invalidFile, setInvalidFile] = useState(false);
-    const [currentFeature, setCurrentFeature] = useState("");
-    const [title, setTitle] = useState("");
-
-
-    const [postlearningOption, setPostlearningOption] = useState([]);
-    const [prelearningOptions, setPrelearningOptions] = useState([]);
-    const [isLockedOption, setValue] = useState();
+    const [chapterOption, setChapterOption] = useState([]);
     const [description, setDescription] = useState();
     const [isShown, setIsShown] = useState(true);
     const [isShownPre, setIsShownPre] = useState(true);
     const [isShownIsl, setIsShownIsl] = useState(true);
     const [isShownDes, setIsShownDes] = useState(true);
     const [topicDigiCardIds, setTopicDigiCardIds] = useState([]);
-
-
-
-
-
-    const [tags, setTags] = useState([]);
-    const [ImgURL, setImgURL] = useState([]);
-    const [display, setDisplay] = useState('none');
-    const [imgFile, setImgFile] = useState([]);
-    const [articleData, setArticleData] = useState("");
-    const [articleDataTitle, setArticleDataTtitle] = useState("");
     const [topicTitles, setTopicTitles] = useState([]);
-
-
-
-
-    let history = useHistory();
-
-    console.log("colourOptions", colourOptions);
 
 
 
@@ -101,27 +59,34 @@ const AddChapter = (
         });
     };
 
+    const getMultiOptions = (event) => {
+        let valuesArr = [];
+        for (let i = 0; i < event.length; i++) {
+            valuesArr.push({"chapter_id":event[i].value})
+        }
+        setChapterOption(valuesArr);
+      }
 
-    const isLockedOPtion = (e) => {
-        setValue(e.value);
-    };
 
-    const ChapterDescription = (text) => {
+
+
+    const UnitDescription = (text) => {
         setDescription(text.target.value)
     }
 
-    const fetchAllTopicsList = async () => {
-        const allTopicdData = await fetchAllTopics();
-        console.log("allTopicdData", allTopicdData.Items);
-        if (allTopicdData.Error) {
-            console.log("allTopicdData", allTopicdData.Error);
+    const fetchAllChapterList = async () => {
+        const allChapterData = await fetchAllChapters();
+        console.log("allTopicdData", allChapterData.Items);
+        if (allChapterData.Error) {
+            console.log("allChapterData", allChapterData.Error);
         } else {
-            let resultData = allTopicdData.Items
+            console.log("allChapterData.Items", allChapterData.Items);
+            let resultData = allChapterData.Items
             console.log("resultData", resultData);
             resultData.forEach((item, index) => {
-                if (item.topic_status === 'Active') {
+                if (item.chapter_status === 'Active') {
                     console.log();
-                    colourOptions.push({ value: item.topic_title, label: item.topic_title })
+                    colourOptions.push({ value: item.chapter_id,label: item.chapter_title })
                 }
             }
             );
@@ -132,26 +97,18 @@ const AddChapter = (
 
 
     useEffect(() => {
-        fetchAllTopicsList();
+        fetchAllChapterList();
     }, [])
 
+    const handleOnSelect = ((selectedList, selectedItem) => {
+        console.log("selectedList", selectedList);
+        chapterOption.push({ 'chapter_id': selectedList[selectedList.length - 1].chapter_id })
+
+    })
 
 
-    const handleOnSelect = (event) => {
-        let valuesArr = [];
-        for (let i = 0; i < event.length; i++) {
-            valuesArr.push({ "topic_id": event[i].value })
-        }
-        setPostlearningOption(valuesArr);
-    }
 
-    const handleOnSelectPre = (event) => {
-        let valuesArr = [];
-        for (let i = 0; i < event.length; i++) {
-            valuesArr.push({ "topic_id": event[i].value })
-        }
-        setPrelearningOptions(valuesArr);
-    }
+    const handleOnRemove = (selectedList, selectedItem) => setTopicDigiCardIds(selectedList.map(skillId => skillId.id))
 
 
 
@@ -160,21 +117,19 @@ const AddChapter = (
         <div>
             <Card>
                 <Card.Body>
-                    <Card.Title>Add Chapter</Card.Title>
+                    <Card.Title>Add Unit</Card.Title>
                     <Formik
                         initialValues={{
-                            chaptertitle: '',
-                            postlearning_topic: '',
-                            prelearning_topic: '',
-                            isLocked: '',
-                            chapter_description: '',
+                            unittitle: '',
+                            chapter: '',
+                            unit_description: '',
                         }}
                         validationSchema={Yup.object().shape({
-                            chaptertitle: Yup.string()
+                            unittitle: Yup.string()
                                 .trim()
-                                .min(2, Constants.AddDigiCard.ChaptertitleTooShort)
-                                .max(30, Constants.AddDigiCard.ChaptertitleTooLong)
-                                .required(Constants.AddDigiCard.ChaptertitleRequired),
+                                .min(2, Constants.AddUnit.UnittitleRequired)
+                                .max(30, Constants.AddUnit.UnittitleTooShort)
+                                .required(Constants.AddUnit.UnittitleTooLongs),
                         })}
 
 
@@ -182,30 +137,24 @@ const AddChapter = (
                         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
 
 
-                            if (postlearningOption == '') {
-                                setIsShown(false)
-                            } else if (prelearningOptions == '') {
-                                setIsShownPre(false)
-                            }
-                            else if (description == undefined) {
-                                setIsShownDes(false)
+                            if (description == undefined) {
+                                alert("description Required")
+                            } else if (chapterOption == '') {
+                                alert("chapter Required")
                             }
                             else {
-                                setIsShown(true)
 
                                 console.log("on submit");
                                 var formData = {
-                                    chapter_title: values.chaptertitle,
-                                    chapter_description: description,
-                                    prelearning_topic_id: prelearningOptions,
-                                    postlearning_topic_id: postlearningOption,
-                                    is_locked: isLockedOption === undefined ? 'Yes' : isLockedOption,
+                                    unit_title: values.unittitle,
+                                    unit_description: description,
+                                    unit_chapter_id: chapterOption,
                                 };
 
                                 console.log("formdata", formData);
 
                                 axios
-                                    .post(dynamicUrl.addChapter, { data: formData }, { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
+                                    .post(dynamicUrl.addUnit, { data: formData }, { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
                                     .then(async (response) => {
                                         console.log({ response });
                                         if (response.Error) {
@@ -213,7 +162,7 @@ const AddChapter = (
                                             hideLoader();
                                             setDisableButton(false);
                                         } else {
-                                            sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingChapter });
+                                            sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingUnit });
                                             hideLoader();
                                             setDisableButton(false);
                                             // fetchClientData();
@@ -226,11 +175,11 @@ const AddChapter = (
                                             console.log(error.response.data);
 
                                             console.log(error.response.data);
-                                            if (error.response.status === 400) {
+                                            if (error.response.status === 401) {
                                                 console.log();
                                                 hideLoader();
                                                 // setIsClientExists(true);
-                                                sweetAlertHandler({ title: 'Error', type: 'error', text: MESSAGES.ERROR.ChapterNameExists });
+                                                sweetAlertHandler({ title: 'Error', type: 'error', text: MESSAGES.ERROR.UnitNameExists });
 
                                             } else {
                                                 sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
@@ -257,60 +206,35 @@ const AddChapter = (
                         {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
                             <form noValidate onSubmit={handleSubmit}>
                                 <Row>
+                                    {/* {edit1Toggle && <Loader />} */}
                                     <Col sm={6}>
                                         <div className="form-group fill">
-                                            <label className="floating-label" htmlFor="chaptertitle">
-                                                <small className="text-danger">* </small>Chapter Title
+                                            <label className="floating-label" htmlFor="unittitle">
+                                                <small className="text-danger">* </small>Unit Title
                                             </label>
                                             <input
                                                 className="form-control"
                                                 error={touched.chaptertitle && errors.chaptertitle}
-                                                name="chaptertitle"
+                                                name="unittitle"
                                                 onBlur={handleBlur}
                                                 onChange={handleChange}
                                                 type="text"
-                                                value={values.chaptertitle}
+                                                value={values.unittitle}
                                                 id='title'
                                             />
-                                            {touched.chaptertitle && errors.chaptertitle && <small className="text-danger form-text">{errors.chaptertitle}</small>}
+                                            {touched.unittitle && errors.unittitle && <small className="text-danger form-text">{errors.unittitle}</small>}
                                         </div><br />
                                         <div className="form-group fill" style={{ position: "relative", zIndex: 20 }}>
-                                            <label className="floating-label" htmlFor="postlearning_topic">
-                                                <small className="text-danger">* </small> Postlearning Topic
-                                            </label>
-                                            <Select
-                                                className="basic-single"
-                                                classNamePrefix="select"
-                                                name="color"
-                                                isMulti
-                                                closeMenuOnSelect={false}
-                                                onChange={handleOnSelect}
-                                                options={topicTitles}
-                                                placeholder="Which is your favourite colour?"
-                                            />
-                                            <br />
-                                            <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>Postlearning Topic Required</small>
-                                        </div>
-                                        <div className="form-group fill" htmlFor="chapter_description">
-                                            <Form.Label> <small className="text-danger">* </small>Chapter Description</Form.Label>
-                                            <Form.Control as="textarea" onChange={(e) => { ChapterDescription(e); setIsShownDes(true) }} rows="4" />
-                                            <br />
-                                            <small className="text-danger form-text" style={{ display: isShownDes ? 'none' : 'block' }}>Chapter Description Required</small>
-                                        </div>
-                                    </Col>
-                                    <Col sm={6}>
-                                        <div className="form-group fill" style={{ position: "relative", zIndex: 20 }}>
-                                            <label className="floating-label" htmlFor="prelearning_topic">
-                                                <small className="text-danger">* </small>Prelearning Topic
+                                            <label className="floating-label" htmlFor="chapter">
+                                                <small className="text-danger">* </small> Chapters
                                             </label>
                                             {/* <Multiselect
                                                 options={topicTitles}
                                                 displayValue="value"
                                                 selectionLimit="25"
-                                                // selectedValues={defaultOptions}
-                                                onSelect={handleOnSelectPre}
+                                                onSelect={handleOnSelect}
                                                 onRemove={handleOnRemove}
-                                                onChange={setIsShownPre(true)}
+                                                onChange={setIsShown(true)}
                                             /> */}
                                             <Select
                                                 className="basic-single"
@@ -318,28 +242,21 @@ const AddChapter = (
                                                 name="color"
                                                 isMulti
                                                 closeMenuOnSelect={false}
-                                                onChange={handleOnSelectPre}
+                                                // onChange={handleChange}
+                                                // value={selectedOption}
+                                                onChange={getMultiOptions}
                                                 options={topicTitles}
                                                 placeholder="Which is your favourite colour?"
                                             />
                                             <br />
-                                            <small className="text-danger form-text" style={{ display: isShownPre ? 'none' : 'block' }}>Prelearning Topic Required</small>
+                                            <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>Required</small>
                                         </div>
-
-                                        <div className="form-group fill" style={{ position: "relative", zIndex: 10 }}>
-                                            <label className="floating-label" htmlFor="isLocked">
-                                                <small className="text-danger">* </small> Is Locked
-                                            </label>
-                                            <Select
-                                                className="basic-single"
-                                                classNamePrefix="select"
-                                                defaultValue={isLocked[0]}
-                                                name="color"
-                                                options={isLocked}
-                                                onChange={(e) => { isLockedOPtion(e) }}
-                                            /><br />
+                                        <div className="form-group fill" htmlFor="unit_description">
+                                            <Form.Label> <small className="text-danger">* </small>Unit Description</Form.Label>
+                                            <Form.Control as="textarea" onChange={(e) => { UnitDescription(e); setIsShownDes(true) }} rows="4" />
+                                            <br />
+                                            <small className="text-danger form-text" style={{ display: isShownDes ? 'none' : 'block' }}>Unit Description Required</small>
                                         </div>
-
                                     </Col>
                                 </Row>
                                 <br></br>
@@ -362,17 +279,12 @@ const AddChapter = (
                                 </Row>
                             </form>
                         )}
-
                     </Formik>
                 </Card.Body>
-
             </Card>
-
         </div>
-
-
     )
 
 };
 
-export default AddChapter;
+export default AddUnit;

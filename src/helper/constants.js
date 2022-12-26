@@ -77,6 +77,12 @@ export const AddDigiCard = {
   PricingRegex: /^\d+$/,
   PricingOnlyNumber: 'Pricing should contain only numbers!'
 };
+export const AddUnit = {
+  
+  UnittitleRequired: 'Unit title is required!',
+  UnittitleTooShort: 'Unit title is too short!',
+  UnittitleTooLong: "Unit title is too long!",
+};
 
 export const AddressForm = {
   curAddressRequired: 'Address is required!',

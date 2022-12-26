@@ -450,6 +450,26 @@ const menuItems = {
           ]
         },
         {
+          id: 'units',
+          title: 'Units',
+          type: 'collapse',
+          icon: 'fas fa-book',
+          children:[
+            {
+              id: 'active-units',
+              title: 'Active Units',
+              type: 'item',
+              url: '/admin-portal/units/active-units',
+            },
+            {
+              id: 'archived-units',
+              title: 'Archived Units',
+              type: 'item',
+              url: '/admin-portal/units/archived-units',
+            }
+          ]
+        },
+        {
           id: 'sis',
           title: 'SIS',
           type: 'collapse',

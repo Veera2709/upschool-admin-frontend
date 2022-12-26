@@ -43,7 +43,14 @@ const dynamicUrl = {
     fetchIndividualUserByRole: baseUrl + '/fetchIndividualUserByRole',
     updateUsersByRole: baseUrl + '/updateUsersByRole',
     toggleUserStatus: baseUrl + '/toggleUserStatus',
-    fetchClassBasedOnSchool: baseUrl + '/fetchClassBasedOnSchool'
+    fetchClassBasedOnSchool: baseUrl + '/fetchClassBasedOnSchool',
+
+    //units
+    fetchAllUnits: baseUrl + '/fetchAllUnits',
+    addUnit: baseUrl + '/addUnit',
+    fetchIndividualUnit: baseUrl + '/fetchIndividualUnit',
+    editUnit: baseUrl + '/editUnit',
+    toggleUnitStatus: baseUrl + '/toggleUnitStatus',
 
 }
 

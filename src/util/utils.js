@@ -45,13 +45,14 @@ export const GetYearDifference = (startDate, endDate) => {
 };
 
 export const areFilesInvalid = (filesArray) => {
+  console.log("filesArray ",filesArray);
+
   let invalidFileCount = 0;
   filesArray.forEach((oneFile) => {
     if (
       oneFile.type === 'image/png' ||
       oneFile.type === 'image/jpg' ||
-      oneFile.type === 'image/jpeg' ||
-      oneFile.type === 'application/pdf'
+      oneFile.type === 'image/jpeg' 
     ) {
       if (oneFile.size > 1000000) {
         console.log('File is too large');
@@ -66,6 +67,34 @@ export const areFilesInvalid = (filesArray) => {
   });
   console.log('invalidCount', invalidFileCount);
   return invalidFileCount;
+};
+
+export const voiceInvalid = (filesArray) => {
+  console.log("filesArray in voice note",filesArray);
+  let invalidFileCount = 0;
+  if (filesArray[0].values=='false') {
+    return invalidFileCount
+  }else{
+    filesArray.forEach((oneFile) => {
+      if (
+        oneFile.type === 'audio/mp3' ||
+        oneFile.type === 'audio/mpeg'||
+        oneFile.type === 'audio/wav' 
+      ) {
+        if (oneFile.size > 100000000) {
+          console.log('File is too large');
+          invalidFileCount++;
+        } else {
+          console.log('File upload success voice note');
+        }
+      } else {
+        console.log('Invalid file type');
+        invalidFileCount++;
+      }
+    });
+    console.log('invalidCount', invalidFileCount);
+    return invalidFileCount;
+  }
 };
 
 export const areFilesInvalidBulkUpload = (filesArray) => {

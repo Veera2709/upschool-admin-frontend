@@ -240,7 +240,29 @@ const routes = [
         path: '/admin-portal/editChapter/:chapter_id',
         component: lazy(() => import('./views/panels/admin-portal/chapters/EditChapter'))
       },
-
+      //units
+      {
+        exact: true,
+        path: '/admin-portal/units/active-units',
+        component: lazy(() => import('./views/panels/admin-portal/units/UnitList'))
+      },
+       {
+        exact: true,
+        path: '/admin-portal/units/archived-units',
+        component: lazy(() => import('./views/panels/admin-portal/units/UnitList'))
+      },
+      //addUnits
+      {
+        exact: true,
+        path: '/admin-portal/addUnits',
+        component: lazy(() => import('./views/panels/admin-portal/units/AddUnit'))
+      },
+      //editUnit
+      {
+        exact: true,
+        path: '/admin-portal/editunit/:unit_id',
+        component: lazy(() => import('./views/panels/admin-portal/units/EditUnit'))
+      },
       {
         exact: true,
         path: '/app/dashboard/analytics',

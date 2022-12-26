@@ -16,7 +16,7 @@ import { SessionStorage } from '../../../../util/SessionStorage';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import withReactContent from 'sweetalert2-react-content';
 import { useLocation } from "react-router-dom";
-import { fetchIndividualDigiCard, changeStatusID } from '../../../api/DigiCardApi'
+import { fetchIndividualDigiCard, changeStatusID } from '../../../api/CommonApi'
 
 
 

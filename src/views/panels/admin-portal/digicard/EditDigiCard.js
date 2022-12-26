@@ -13,10 +13,12 @@ import Swal from 'sweetalert2';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import withReactContent from 'sweetalert2-react-content';
 import ArticleRTE from './ArticleRTE'
-import { areFilesInvalid } from '../../../../util/utils';
+import { areFilesInvalid, isEmptyArray } from '../../../../util/utils';
 import Multiselect from 'multiselect-react-dropdown';
-import { fetchIndividualDigiCard, fetchAllDigiCards } from '../../../api/DigiCardApi'
+import { fetchIndividualDigiCard, fetchAllDigiCards } from '../../../api/CommonApi'
 import { Link, useHistory, useParams } from 'react-router-dom';
+import Select from 'react-select';
+
 
 
 
@@ -26,11 +28,7 @@ import { Link, useHistory, useParams } from 'react-router-dom';
 ;
 
 
-const EditDigiCard = (
- 
-    terminal,
-  
-) => {
+const EditDigiCard = () => {
 
 
     const colourOptions = [];
@@ -91,7 +89,7 @@ const EditDigiCard = (
     const previewVoiceNote = (e) => {
         setVoiceNote(URL.createObjectURL(e.target.files[0]));
     }
-    
+
     const fetchAllData = async () => {
         const allDigicardData = await fetchAllDigiCards(dynamicUrl.fetchAllDigiCards);
         if (allDigicardData.error) {
@@ -101,7 +99,7 @@ const EditDigiCard = (
             let resultData = allDigicardData.Items;
             resultData.forEach((item, index) => {
                 if (item.digicard_status === 'Active') {
-                    colourOptions.push({ value: item.digi_card_title, digi_card_id: item.digi_card_id })
+                    colourOptions.push({ value: item.digi_card_id, label: item.digi_card_title })
                 }
             })
             setDigitalTitles(colourOptions);
@@ -130,7 +128,8 @@ const EditDigiCard = (
                 let tempArr = [];
                 indidvidualDigicard.Items[0].related_digi_cards.forEach(function (entry) {
                     colourOptions.forEach(function (childrenEntry) {
-                        if (entry.digi_card_id === childrenEntry.digi_card_id) {
+                        if (entry.digi_card_id === childrenEntry.value) {
+                            console.log("childrenEntry", childrenEntry);
                             tempArr.push(childrenEntry)
                         }
 
@@ -150,13 +149,13 @@ const EditDigiCard = (
 
     console.log('digiCardDataTitel', digiCardDataTitel);
 
-    const handleOnSelect = ((selectedList, selectedItem) => {
-        // selectedOption(selectedList)
-        multiOptions.push({ 'digi_card_id': selectedList[selectedList.length - 1].digi_card_id })
-    })
-    const handleOnRemove = (selectedList, selectedItem) => setTopicDigiCardIds(selectedList.map(skillId => skillId.id))
-
-    // 
+    const getMultiOptions = (event) => {
+        let valuesArr = [];
+        for (let i = 0; i < event.length; i++) {
+            valuesArr.push({ "digi_card_id": event[i].value })
+        }
+        selectedOption(valuesArr);
+    }
 
     return (
         <div>
@@ -188,14 +187,14 @@ const EditDigiCard = (
 
                             var formData;
 
-                            if (values.digicard_image === '') {
+                            if (values.digicard_image === '' || voiceNote!==undefined) {
                                 console.log("if condition");
                                 formData = {
                                     digi_card_id: individualDigiCardData[0].digi_card_id,
                                     digi_card_title: values.digicardtitle,
                                     digi_card_files: [values.digicard_image],
                                     digicard_image: imgFile,
-                                    digicard_voice_note: voiceNote === undefined ? '' : voiceNote,
+                                    digicard_voice_note: voiceNote === undefined ? values.digicard_voice_note : values.digicard_voice_note,
                                     digi_card_excerpt: articleDataTitle,
                                     digi_card_content: articleData,
                                     digi_card_keywords: tags,
@@ -418,14 +417,42 @@ const EditDigiCard = (
                                             <label className="floating-label" htmlFor="digicardtitle">
                                                 <small className="text-danger"> </small>Related DigiCard Titles
                                             </label>
-                                            <Multiselect
-                                                options={digiCardTitles}
-                                                displayValue="value"
-                                                selectionLimit="25"
-                                                selectedValues={defaultOptions}
-                                                onSelect={handleOnSelect}
-                                                onRemove={handleOnRemove}
-                                            />
+                                            {defaultOptions.length === 0 ? (
+
+                                                <Select
+
+                                                    className="basic-single"
+                                                    classNamePrefix="select"
+                                                    name="color"
+                                                    isMulti
+                                                    closeMenuOnSelect={false}
+                                                    onChange={getMultiOptions}
+                                                    options={digiCardTitles}
+                                                    placeholder="Select"
+                                                />
+
+                                            ) : (
+                                                <>
+                                                    {defaultOptions && (
+
+                                                        <Select
+                                                            defaultValue={defaultOptions}
+                                                            className="basic-single"
+                                                            classNamePrefix="select"
+                                                            name="color"
+                                                            isMulti
+                                                            closeMenuOnSelect={false}
+                                                            onChange={getMultiOptions}
+                                                            options={digiCardTitles}
+                                                            placeholder="Select"
+                                                        />
+
+                                                    )}
+                                                </>
+
+                                            )}
+
+
                                         </div>
                                     </Col>
                                     <Col sm={6}>

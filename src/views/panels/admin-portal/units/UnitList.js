@@ -12,10 +12,14 @@ import dynamicUrl from '../../../../helper/dynamicUrls';
 
 import { isEmptyArray } from '../../../../util/utils';
 
-import { useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { SessionStorage } from '../../../../util/SessionStorage';
 import MESSAGES from '../../../../helper/messages';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
+import { useLocation } from "react-router-dom";
+import { fetchAllUnits } from '../../../api/CommonApi'
+
+
 
 function Table({ columns, data, modalOpen }) {
     const {
@@ -52,7 +56,7 @@ function Table({ columns, data, modalOpen }) {
     let history = useHistory();
 
     const addingChapter = () => {
-        history.push('/admin-portal/addChapters');
+        history.push('/admin-portal/addUnits');
         setIsOpen(true);
     }
 
@@ -80,7 +84,7 @@ function Table({ columns, data, modalOpen }) {
                 <Col className="d-flex justify-content-end">
                     <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
                     <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={() => { addingChapter() }}>
-                        <i className="feather icon-plus" /> Add Chapter
+                        <i className="feather icon-plus" /> Add Unit
                     </Button>
                 </Col>
             </Row>
@@ -159,11 +163,7 @@ function Table({ columns, data, modalOpen }) {
     );
 }
 
-const ChaptersListChild = (props) => {
-    const { _data } = props
-
-    var i = 1;
-    console.log('_data: ', _data);
+const UnitList = (props) => {
     const columns = React.useMemo(
         () => [
             {
@@ -171,8 +171,8 @@ const ChaptersListChild = (props) => {
                 accessor: "index_no"
             },
             {
-                Header: ' Chapter Title',
-                accessor: 'chapter_title'
+                Header: ' Unit Title',
+                accessor: 'unit_title'
             },
             {
                 Header: 'Options',
@@ -186,42 +186,39 @@ const ChaptersListChild = (props) => {
     const [chapterData, setChapterData] = useState([]);
     const [reloadAllData, setReloadAllData] = useState('Fetched');
     const [loader, showLoader, hideLoader] = useFullPageLoader();
+    const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[3]);
+
 
     // console.log('data: ', data)
 
     let history = useHistory();
 
-    function deleteChapter(chapter_id, chapter_title) {
-        console.log("chapter_id", chapter_id);
+    function deleteChapter(unit_id, unit_title) {
+        console.log("unit_id", unit_id);
         var data = {
-            "chapter_id": chapter_id,
-            "chapter_status": "Archived"
+            "unit_id": unit_id,
+            "unit_status": "Archived"
         }
 
         const sweetConfirmHandler = () => {
             const MySwal = withReactContent(Swal);
             MySwal.fire({
                 title: 'Are you sure?',
-                text: 'Confirm deleting ' + chapter_title + ' Chapter',
+                text: 'Confirm deleting ' + unit_title + ' Chapter',
                 type: 'warning',
                 showCloseButton: true,
                 showCancelButton: true
             }).then((willDelete) => {
                 if (willDelete.value) {
                     axios
-                        .post(dynamicUrl.toggleChapterStatus, { data: data }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
+                        .post(dynamicUrl.toggleUnitStatus, { data: data }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
                         .then((response) => {
                             if (response.Error) {
                                 hideLoader();
                                 sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
                             } else {
                                 setReloadAllData("Deleted");
-                                return MySwal.fire('', 'The ' + chapter_title + ' is Deleted', 'success');
-                                // window. location. reload() 
-                                //  MySwal.fire('', MESSAGES.INFO.CLIENT_DELETED, 'success');
-
-
-
+                                return MySwal.fire('', 'The ' + unit_title + ' is Deleted', 'success');
                             }
                         })
                         .catch((error) => {
@@ -241,7 +238,7 @@ const ChaptersListChild = (props) => {
                             }
                         });
                 } else {
-                    return MySwal.fire('', 'Chapter is safe!', 'error');
+                    return MySwal.fire('', 'Unit is safe!', 'error');
                 }
             });
         };
@@ -250,37 +247,32 @@ const ChaptersListChild = (props) => {
     }
 
 
-    function restoreChapter(chapter_id, chapter_title) {
-        console.log("chapter_id", chapter_id);
+    function restoreChapter(unit_id, unit_title) {
+        console.log("unit_id", unit_id);
         var data = {
-            "chapter_id": chapter_id,
-            "chapter_status": 'Active'
+            "unit_id": unit_id,
+            "unit_status": 'Active'
         }
 
         const sweetConfirmHandler = () => {
             const MySwal = withReactContent(Swal);
             MySwal.fire({
                 title: 'Are you sure?',
-                text: 'Confirm to Restore ' + chapter_title + ' Chapter',
+                text: 'Confirm to Restore ' + unit_title + ' Chapter',
                 type: 'warning',
                 showCloseButton: true,
                 showCancelButton: true
             }).then((willDelete) => {
                 if (willDelete.value) {
                     axios
-                        .post(dynamicUrl.toggleChapterStatus, { data: data }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
+                        .post(dynamicUrl.toggleUnitStatus, { data: data }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
                         .then((response) => {
                             if (response.Error) {
                                 hideLoader();
                                 sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
                             } else {
                                 setReloadAllData("Deleted");
-                                return MySwal.fire('', 'The ' + chapter_title + ' is Restored', 'success');
-                                // window. location. reload() 
-                                //  MySwal.fire('', MESSAGES.INFO.CLIENT_DELETED, 'success');
-
-
-
+                                return MySwal.fire('', 'The ' + unit_title + ' is Restored', 'success')
                             }
                         })
                         .catch((error) => {
@@ -308,87 +300,122 @@ const ChaptersListChild = (props) => {
     }
 
 
-    const allChaptersList = () => {
-        console.log("School data func called");
-        let resultData = _data && _data;
-        console.log('resultData', resultData);
-        let finalDataArray = [];
-        for (let index = 0; index < resultData.length; index++) {
-            if (resultData[index].chapter_status === 'Active') {
-                resultData[index].index_no = index + 1;
-                resultData[index]['actions'] = (
-                    <>
+    const allUnitsList = async (UnitStatus) => {
+
+        const allUnitsData = await fetchAllUnits();
+        if (allUnitsData.ERROR) {
+            console.log("allUnitsData.ERROR", allUnitsData.ERROR);
+        } else {
+            let dataResponse = allUnitsData.Items
+            console.log("dataResponse", dataResponse);
+            let finalDataArray = [];
+            if (UnitStatus === 'Active') {
+                let ActiveresultData = (dataResponse && dataResponse.filter(e => e.unit_status === 'Active'))
+                console.log("ActiveresultData", ActiveresultData);
+
+                for (let index = 0; index < ActiveresultData.length; index++) {
+                    ActiveresultData[index].index_no = index + 1;
+                    ActiveresultData[index]['actions'] = (
                         <>
-                            <Button
-                                size="sm"
-                                className="btn btn-icon btn-rounded btn-primary"
-                                onClick={(e) => history.push(`/admin-portal/editChapter/${resultData[index].chapter_id}`)}
-                            >
-                                <i className="feather icon-edit" /> &nbsp; Edit
-                            </Button>
-                            &nbsp;
-                            {/* if(resultData[index].chapter_status=='Active') */}
-                            <Button
-                                size="sm"
-                                className="btn btn-icon btn-rounded btn-danger"
-                                onClick={(e) => deleteChapter(resultData[index].chapter_id, resultData[index].chapter_title)}
-                            >
-                                <i className="feather icon-trash-2 " /> &nbsp; Delete
-                            </Button>
-                            &nbsp;
+                            <>
+                                <Button
+                                    size="sm"
+                                    className="btn btn-icon btn-rounded btn-primary"
+                                    onClick={(e) => history.push(`/admin-portal/editunit/${ActiveresultData[index].unit_id}`)}
+                                >
+                                    <i className="feather icon-edit" /> &nbsp; Edit
+                                </Button>
+                                &nbsp;
+                                {/* if(resultData[index].chapter_status=='Active') */}
+                                <Button
+                                    size="sm"
+                                    className="btn btn-icon btn-rounded btn-danger"
+                                    onClick={(e) => deleteChapter(ActiveresultData[index].unit_id, ActiveresultData[index].unit_title)}
+                                >
+                                    <i className="feather icon-trash-2 " /> &nbsp; Delete
+                                </Button>
+                                &nbsp;
+                            </>
                         </>
-                    </>
-                );
+                    );
+                    finalDataArray.push(ActiveresultData[index]);
+                    console.log('finalDataArray: ', finalDataArray)
+                }
             } else {
-                resultData[index].index_no = index + 1;
-                resultData[index]['actions'] = (
-                    <>
+                let resultData = (dataResponse && dataResponse.filter(e => e.unit_status === 'Archived'))
+                for (let index = 0; index < resultData.length; index++) {
+                    resultData[index].index_no = index + 1;
+                    resultData[index]['actions'] = (
                         <>
-                            <Button
-                                size="sm"
-                                className="btn btn-icon btn-rounded btn-primary"
-                                onClick={(e) => restoreChapter(resultData[index].chapter_id, resultData[index].chapter_title)}
-                            >
-                                <i className="feather icon-edit" /> &nbsp; Restore
-                            </Button>
-                            &nbsp;
+                            <>
+                                <Button
+                                    size="sm"
+                                    className="btn btn-icon btn-rounded btn-primary"
+                                    onClick={(e) => restoreChapter(resultData[index].unit_id, resultData[index].unit_title)}
+                                >
+                                    <i className="feather icon-plus" /> &nbsp; Restore
+                                </Button>
+                                &nbsp;
+                            </>
                         </>
-                    </>
-                );
+                    );
+                    finalDataArray.push(resultData[index]);
+                    console.log('finalDataArray: ', finalDataArray)
+                }
             }
-
-            finalDataArray.push(resultData[index]);
-
+            setChapterData(finalDataArray);
+            console.log('resultData: ', finalDataArray);
         }
-        console.log('finalDataArray: ', finalDataArray);
-        setChapterData(finalDataArray)
+
+
     }
 
     useEffect(() => {
-        allChaptersList();
-    }, [_data])
 
-    useEffect(() => {
+        if (pageLocation) {
+            console.log("--", pageLocation);
+            const url = pageLocation === "active-units" ? 'Active' : 'Archived';
+            allUnitsList(url);
+        }
 
     }, [reloadAllData])
 
     return (
-        <React.Fragment>
-            <Row>
-                <Col sm={12}>
-                    <Card>
-                        <Card.Header>
-                            <Card.Title as="h5">DigiCard List</Card.Title>
-                        </Card.Header>
-                        <Card.Body>
-                            <Table columns={columns} data={chapterData} />
-                        </Card.Body>
-                    </Card>
-                </Col>
-            </Row>
+        <div>
+            {chapterData.length >= 0 ? (
+                <React.Fragment>
+                    <Row>
+                        <Col sm={12}>
+                            <Card>
+                                <Card.Header>
+                                    <Card.Title as="h5">Units List</Card.Title>
+                                </Card.Header>
+                                <Card.Body>
+                                    <Table columns={columns} data={chapterData} />
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                    </Row>
+                </React.Fragment>
+            ) : (
+                <div>
 
+                    <h3 style={{ textAlign: 'center' }}>No DigiCard Found</h3>
+                    <div className="form-group fill text-center">
+                        <br></br>
 
-        </React.Fragment>
+                        <Link to={'/admin-portal/addChapters'}>
+                            <Button variant="success" className="btn-sm btn-round has-ripple ml-2">
+                                <i className="feather icon-plus" /> Add DigiCard
+                            </Button>
+                        </Link>
+                    </div>
+
+                </div>
+            )}
+
+        </div>
+
     );
 };
-export default ChaptersListChild;
+export default UnitList;

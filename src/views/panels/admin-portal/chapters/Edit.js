@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback } from 'react';
 // import './style.css'
 import { Row, Col, Card, Button, Modal, Dropdown, Form } from 'react-bootstrap';
@@ -16,19 +17,16 @@ import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import withReactContent from 'sweetalert2-react-content';
 import { areFilesInvalid, isEmptyObject } from '../../../../util/utils';
 import { useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import Select from 'react-select';
+import { isEmptyArray } from '../../../../util/utils';
 import Multiselect from 'multiselect-react-dropdown';
-import { fetchAllTopics } from '../../../api/CommonApi'
-
-
-
 
 
 
 // import { Button,Container,Row ,Col  } from 'react-bootstrap';
 
-const AddChapter = (
+const EditChapter = (
     setTabChange,
     categoryAPI,
     added,
@@ -44,6 +42,8 @@ const AddChapter = (
 
 
     const colourOptions = [];
+    const DefaultisLockedOption = [];
+
     const isLocked = [
         { value: 'Yes', label: 'Yes' },
         { value: 'No', label: 'No' },
@@ -63,14 +63,18 @@ const AddChapter = (
 
 
     const [postlearningOption, setPostlearningOption] = useState([]);
+    const [defaultPrelearning, setDefaultPrelearning] = useState([]);
     const [prelearningOptions, setPrelearningOptions] = useState([]);
-    const [isLockedOption, setValue] = useState();
-    const [description, setDescription] = useState();
-    const [isShown, setIsShown] = useState(true);
-    const [isShownPre, setIsShownPre] = useState(true);
-    const [isShownIsl, setIsShownIsl] = useState(true);
-    const [isShownDes, setIsShownDes] = useState(true);
+    const [defaultPostleraing, setDefaultPostleraing] = useState([]);
     const [topicDigiCardIds, setTopicDigiCardIds] = useState([]);
+
+    const [isLockedOption, setValue] = useState();
+    const [defaulIslocked, setDefaulIslocked] = useState([]);
+    const [description, setDescription] = useState();
+    const [defauleDescription, setDefauleDescription] = useState();
+
+    console.log('defaulIslocked', defaulIslocked);
+    console.log("description", description);
 
 
 
@@ -82,16 +86,26 @@ const AddChapter = (
     const [imgFile, setImgFile] = useState([]);
     const [articleData, setArticleData] = useState("");
     const [articleDataTitle, setArticleDataTtitle] = useState("");
+    const [digitalTitles, setDigitalTitles] = useState(0);
     const [topicTitles, setTopicTitles] = useState([]);
 
+    const [isShown, setIsShown] = useState(true);
+
+    const [individualChapterdata, setIndividualChapterdata] = useState([]);
 
 
 
-    let history = useHistory();
 
-    console.log("colourOptions", colourOptions);
+    const { chapter_id } = useParams();
 
 
+    const PostlearningOption = (e) => {
+        setPostlearningOption(e);
+    }
+
+    const PrelearningOptions = (e) => {
+        setPrelearningOptions(e);
+    }
 
     const sweetAlertHandler = (alert) => {
         MySwal.fire({
@@ -110,60 +124,112 @@ const AddChapter = (
         setDescription(text.target.value)
     }
 
-    const fetchAllTopicsList = async () => {
-        const allTopicdData = await fetchAllTopics();
-        console.log("allTopicdData", allTopicdData.Items);
-        if (allTopicdData.Error) {
-            console.log("allTopicdData", allTopicdData.Error);
-        } else {
-            let resultData = allTopicdData.Items
-            console.log("resultData", resultData);
-            resultData.forEach((item, index) => {
-                if (item.topic_status === 'Active') {
-                    console.log();
-                    colourOptions.push({ value: item.topic_title, label: item.topic_title })
+
+
+    const fetchAllChapters = () => {
+        axios.post(dynamicUrl.fetchAllTopics, {}, {
+            headers: { Authorization: sessionStorage.getItem('user_jwt') }
+        })
+            .then((response) => {
+                console.log(response.data.Items);
+                let resultData = response.data.Items;
+                console.log("response.data.Items", response.data.Items);
+
+                resultData.forEach((item, index) => {
+                    // item.topic_status === 'Active' ? colourOptions.push({ value: item.topic_title, label: item.topic_title }) : colourOptions.push({ value: item.topic_title, label: item.topic_title, isDisabled: true })
+                    if (item.topic_status === 'Active') {
+                        colourOptions.push({ value: item.topic_title, topic_id: item.topic_id })
+                    }
                 }
-            }
-            );
-            console.log("colourOptions", colourOptions);
-            setTopicTitles(colourOptions)
-        }
+                );
+                console.log("colourOptions", colourOptions);
+                setTopicTitles(colourOptions)
+            })
+            .catch((err) => {
+                console.log(err)
+            })
     }
 
 
     useEffect(() => {
-        fetchAllTopicsList();
+        axios
+            .post(
+                dynamicUrl.fetchIndividualChapter,
+                {
+                    data: {
+                        "chapter_id": chapter_id,
+                    }
+                },
+                {
+                    headers: { Authorization: sessionStorage.getItem('user_jwt') }
+                }
+            )
+            .then((response) => {
+                console.log({ response });
+                console.log(response.data.Items[0]);
+                console.log(response.status === 200);
+                let result = response.status === 200;
+                hideLoader();
+                if (result) {
+
+                    console.log('inside res initial data');
+
+                    let individual_Chapter_data = response.data.Items[0];
+                    console.log("individual_Chapter_data", individual_Chapter_data);
+                    setIndividualChapterdata(individual_Chapter_data)
+                    setDefaultPrelearning(individual_Chapter_data.prelearning_topic_id);
+                    setDefaultPostleraing(individual_Chapter_data.postlearning_topic_id);
+                    setPostlearningOption(individual_Chapter_data.postlearning_topic_id);
+                    setPrelearningOptions(individual_Chapter_data.prelearning_topic_id);
+                    setDefauleDescription(individual_Chapter_data.chapter_description);
+                    setDescription(individual_Chapter_data.chapter_description)
+                    individual_Chapter_data.is_locked === 'Yes' ? DefaultisLockedOption.push({ value: individual_Chapter_data.is_locked, label: individual_Chapter_data.is_locked }) : DefaultisLockedOption.push({ value: 'No', label: 'No' })
+                    setDefaulIslocked(DefaultisLockedOption)
+                    setValue(DefaultisLockedOption)
+                    console.log("DefaultisLockedOption", DefaultisLockedOption);
+
+
+                } else {
+                    console.log('else res');
+                    hideLoader();
+                }
+            })
+            .catch((error) => {
+                if (error.response) {
+                    hideLoader();
+                    console.log(error.response.data);
+                } else if (error.request) {
+                    // The request was made but no response was received
+                    console.log(error.request);
+                    hideLoader();
+                } else {
+                    // Something happened in setting up the request that triggered an Error
+                    console.log('Error', error.message);
+                    hideLoader();
+                }
+            });
+        fetchAllChapters();
     }, [])
 
+    const handleOnSelect = ((selectedList, selectedItem) => {
+        setPostlearningOption(selectedList)
+    })
+
+    const handleOnSelectPre = ((selectedList, selectedItem) => {
+        setPrelearningOptions(selectedList)
+    })
+    const handleOnRemove = (selectedList, selectedItem) => setTopicDigiCardIds(selectedList.map(skillId => skillId.id))
 
 
-    const handleOnSelect = (event) => {
-        let valuesArr = [];
-        for (let i = 0; i < event.length; i++) {
-            valuesArr.push({ "topic_id": event[i].value })
-        }
-        setPostlearningOption(valuesArr);
-    }
-
-    const handleOnSelectPre = (event) => {
-        let valuesArr = [];
-        for (let i = 0; i < event.length; i++) {
-            valuesArr.push({ "topic_id": event[i].value })
-        }
-        setPrelearningOptions(valuesArr);
-    }
-
-
-
-
-    return (
+    return isEmptyObject(individualChapterdata) || defaulIslocked == '' ? null : (
         <div>
             <Card>
                 <Card.Body>
-                    <Card.Title>Add Chapter</Card.Title>
+                    <Card.Title>Edit Chapter</Card.Title>
                     <Formik
+                        enableReinitialize
                         initialValues={{
-                            chaptertitle: '',
+                            chaptertitle: individualChapterdata.chapter_title,
                             postlearning_topic: '',
                             prelearning_topic: '',
                             isLocked: '',
@@ -184,28 +250,22 @@ const AddChapter = (
 
                             if (postlearningOption == '') {
                                 setIsShown(false)
-                            } else if (prelearningOptions == '') {
-                                setIsShownPre(false)
-                            }
-                            else if (description == undefined) {
-                                setIsShownDes(false)
-                            }
-                            else {
-                                setIsShown(true)
+                            } else {
 
                                 console.log("on submit");
                                 var formData = {
+                                    chapter_id: chapter_id,
                                     chapter_title: values.chaptertitle,
                                     chapter_description: description,
                                     prelearning_topic_id: prelearningOptions,
                                     postlearning_topic_id: postlearningOption,
-                                    is_locked: isLockedOption === undefined ? 'Yes' : isLockedOption,
+                                    is_locked: isLockedOption,
                                 };
 
                                 console.log("formdata", formData);
 
                                 axios
-                                    .post(dynamicUrl.addChapter, { data: formData }, { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
+                                    .post(dynamicUrl.editChapter, { data: formData }, { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
                                     .then(async (response) => {
                                         console.log({ response });
                                         if (response.Error) {
@@ -213,7 +273,7 @@ const AddChapter = (
                                             hideLoader();
                                             setDisableButton(false);
                                         } else {
-                                            sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingChapter });
+                                            sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.EditChapter });
                                             hideLoader();
                                             setDisableButton(false);
                                             // fetchClientData();
@@ -230,7 +290,7 @@ const AddChapter = (
                                                 console.log();
                                                 hideLoader();
                                                 // setIsClientExists(true);
-                                                sweetAlertHandler({ title: 'Error', type: 'error', text: MESSAGES.ERROR.ChapterNameExists });
+                                                sweetAlertHandler({ title: 'Error', type: 'error', text: MESSAGES.ERROR.DigiCardNameExists });
 
                                             } else {
                                                 sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
@@ -249,14 +309,12 @@ const AddChapter = (
                                     });
 
                             }
-
-
-                        }
-                        }
+                        }}
                     >
                         {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
                             <form noValidate onSubmit={handleSubmit}>
                                 <Row>
+                                    {/* {edit1Toggle && <Loader />} */}
                                     <Col sm={6}>
                                         <div className="form-group fill">
                                             <label className="floating-label" htmlFor="chaptertitle">
@@ -278,24 +336,27 @@ const AddChapter = (
                                             <label className="floating-label" htmlFor="postlearning_topic">
                                                 <small className="text-danger">* </small> Postlearning Topic
                                             </label>
-                                            <Select
-                                                className="basic-single"
-                                                classNamePrefix="select"
-                                                name="color"
-                                                isMulti
-                                                closeMenuOnSelect={false}
-                                                onChange={handleOnSelect}
+                                            <Multiselect
                                                 options={topicTitles}
-                                                placeholder="Which is your favourite colour?"
+                                                displayValue="value"
+                                                selectionLimit="25"
+                                                selectedValues={defaultPostleraing}
+                                                onSelect={handleOnSelect}
+                                                onRemove={handleOnRemove}
+                                                onChange={setIsShown(true)}
+                                            />
+                                            <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>required</small>
+                                        </div>
+                                        <div className="form-group fill" >
+                                            <Form.Label htmlFor="chapter_description"> <small className="text-danger">* </small>Chapter Description</Form.Label>
+                                            <Form.Control as="textarea"
+                                                onChange={ChapterDescription} rows="4"
+                                                defaultValue={description}
                                             />
                                             <br />
-                                            <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>Postlearning Topic Required</small>
-                                        </div>
-                                        <div className="form-group fill" htmlFor="chapter_description">
-                                            <Form.Label> <small className="text-danger">* </small>Chapter Description</Form.Label>
-                                            <Form.Control as="textarea" onChange={(e) => { ChapterDescription(e); setIsShownDes(true) }} rows="4" />
-                                            <br />
-                                            <small className="text-danger form-text" style={{ display: isShownDes ? 'none' : 'block' }}>Chapter Description Required</small>
+                                            {touched.prelearning_topic && errors.prelearning_topic && (
+                                                <small className="text-danger form-text">{errors.prelearning_topic}</small>
+                                            )}
                                         </div>
                                     </Col>
                                     <Col sm={6}>
@@ -303,27 +364,18 @@ const AddChapter = (
                                             <label className="floating-label" htmlFor="prelearning_topic">
                                                 <small className="text-danger">* </small>Prelearning Topic
                                             </label>
-                                            {/* <Multiselect
+                                            <Multiselect
                                                 options={topicTitles}
                                                 displayValue="value"
                                                 selectionLimit="25"
-                                                // selectedValues={defaultOptions}
+                                                selectedValues={defaultPrelearning}
                                                 onSelect={handleOnSelectPre}
                                                 onRemove={handleOnRemove}
-                                                onChange={setIsShownPre(true)}
-                                            /> */}
-                                            <Select
-                                                className="basic-single"
-                                                classNamePrefix="select"
-                                                name="color"
-                                                isMulti
-                                                closeMenuOnSelect={false}
-                                                onChange={handleOnSelectPre}
-                                                options={topicTitles}
-                                                placeholder="Which is your favourite colour?"
                                             />
                                             <br />
-                                            <small className="text-danger form-text" style={{ display: isShownPre ? 'none' : 'block' }}>Prelearning Topic Required</small>
+                                            {touched.prelearning_topic && errors.prelearning_topic && (
+                                                <small className="text-danger form-text">{errors.prelearning_topic}</small>
+                                            )}
                                         </div>
 
                                         <div className="form-group fill" style={{ position: "relative", zIndex: 10 }}>
@@ -333,11 +385,14 @@ const AddChapter = (
                                             <Select
                                                 className="basic-single"
                                                 classNamePrefix="select"
-                                                defaultValue={isLocked[0]}
+                                                defaultValue={defaulIslocked}
                                                 name="color"
                                                 options={isLocked}
-                                                onChange={(e) => { isLockedOPtion(e) }}
+                                                onChange={isLockedOPtion}
                                             /><br />
+                                            {touched.isLocked && errors.isLocked && (
+                                                <small className="text-danger form-text">{errors.isLocked}</small>
+                                            )}
                                         </div>
 
                                     </Col>
@@ -375,4 +430,5 @@ const AddChapter = (
 
 };
 
-export default AddChapter;
+export default EditChapter;
+
