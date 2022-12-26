@@ -72,7 +72,7 @@ const SubscribeClass = ({ className, rest, id, setIsOpenSubscribeClass }) => {
 
         console.log(sendData);
 
-        let emptyFieldValidation = formFields.find(o => o.client_class_name === "" || o.upschool_class_id === "")
+        let emptyFieldValidation = formFields.find(o => o.client_class_name === "" || o.upschool_class_id === "" || o.upschool_class_id === "Select Class")
 
         console.log(emptyFieldValidation);
 

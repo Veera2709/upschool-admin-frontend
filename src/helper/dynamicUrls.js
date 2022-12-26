@@ -56,6 +56,13 @@ const dynamicUrl = {
     addTopic: baseUrl + '/addTopic',
     toggleSchoolStatus: baseUrl + '/toggleSchoolStatus',
     fetchInactiveSchool: baseUrl + '/fetchInactiveSchool',
+
+    fetchUnitAndSubject: baseUrl + '/fetchUnitAndSubject',
+    fetchAllSubjects: baseUrl + '/fetchAllSubjects',
+    toggleSubjectStatus : baseUrl + '/toggleSubjectStatus',
+    addSubject: baseUrl + '/addSubject',
+    fetchIndividualSubject : baseUrl + '/fetchIndividualSubject',
+    updateSubject: baseUrl + '/updateSubject'
 }
 
 export default dynamicUrl;

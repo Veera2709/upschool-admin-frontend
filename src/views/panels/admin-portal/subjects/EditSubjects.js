@@ -6,25 +6,28 @@ import withReactContent from 'sweetalert2-react-content';
 import Select from 'react-select';
 import ReactTags from 'react-tag-autocomplete';
 import * as Yup from 'yup';
-import { Row, Col, Card, Pagination, Button, Modal, Alert } from 'react-bootstrap';
+import { Row, Col } from 'react-bootstrap';
 
 import dynamicUrl from '../../../../helper/dynamicUrls';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import { SessionStorage } from '../../../../util/SessionStorage';
 
-const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEditConcept, fetchAllConceptsData }) => {
+const EditSubjects = ({ _units, _relatedSubjects, editSubjectID, setIsOpenEditSubject, fetchAllSubjectsData }) => {
+
+    console.log(_units);
+    console.log(_relatedSubjects);
 
     const [loader, showLoader, hideLoader] = useFullPageLoader();
-    const [selectedDigicards, setSelectedDigicards] = useState([]);
-    const [selectedRelatedConcepts, setSelectedRelatedConcepts] = useState([]);
+    const [selectedUnits, setSelectedUnits] = useState([]);
+    const [selectedRelatedSubjects, setSelectedRelatedSubjects] = useState([]);
     const [selectedKeywords, setSelectedKeywords] = useState([]);
-    const [dropdownDigicards, setDropdownDigicards] = useState([]);
-    const [previousDigicards, setPreviousDigicards] = useState([]);
-    const [previousConcepts, setPreviousConcepts] = useState([]);
-    const [dropdownRelatedConcepts, setDropdownRelatedConcepts] = useState([]);
-    const [showDigicardErr, setShowDigicardErr] = useState(false);
-    const [conceptTitleErr, setConceptTitleErr] = useState(false);
-    const [conceptTitleErrMessage, setConceptTitleErrMessage] = useState('');
+    const [dropdownUnits, setDropdownUnits] = useState([]);
+    const [previousUnits, setPreviousUnits] = useState([]);
+    const [previousSubjects, setPreviousSubjects] = useState([]);
+    const [dropdownRelatedSubjects, setDropdownRelatedSubjects] = useState([]);
+    const [showUnitErr, setShowUnitErr] = useState(false);
+    const [subjectTitleErr, setSubjectTitleErr] = useState(false);
+    const [subjectTitleErrMessage, setSubjectTitleErrMessage] = useState('');
     const [previousData, setPreviousData] = useState([]);
     const [tags, setTags] = useState([]);
 
@@ -43,38 +46,38 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
         showLoader();
 
         const payload = {
-            concept_id: editConceptID
+            subject_id: editSubjectID
         };
 
-        if (_digicards) {
+        if (_units) {
 
             let valuesArr = [];
 
-            for (let index = 0; index < _digicards.length; index++) {
+            for (let index = 0; index < _units.length; index++) {
 
-                if (_digicards[index]) {
-                    valuesArr.push({ value: _digicards[index].digi_card_id, label: _digicards[index].digi_card_title })
+                if (_units[index]) {
+                    valuesArr.push({ value: _units[index].unit_id, label: _units[index].unit_title })
                 }
             }
-            setDropdownDigicards(valuesArr);
+            setDropdownUnits(valuesArr);
         }
 
-        if (_relatedConcepts) {
+        if (_relatedSubjects) {
 
             let valuesArr = [];
 
-            for (let index = 0; index < _relatedConcepts.length; index++) {
+            for (let index = 0; index < _relatedSubjects.length; index++) {
 
-                if (_relatedConcepts[index]) {
-                    valuesArr.push({ value: _relatedConcepts[index].concept_id, label: _relatedConcepts[index].concept_title })
+                if (_relatedSubjects[index]) {
+                    valuesArr.push({ value: _relatedSubjects[index].subject_id, label: _relatedSubjects[index].subject_title })
                 }
             }
-            setDropdownRelatedConcepts(valuesArr)
+            setDropdownRelatedSubjects(valuesArr)
         }
 
         axios
             .post(
-                dynamicUrl.fetchIndividualConcept,
+                dynamicUrl.fetchIndividualSubject,
                 { data: payload },
                 {
                     headers: { Authorization: SessionStorage.getItem('user_jwt') }
@@ -94,9 +97,9 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
                     let previousTagsArr = [];
                     let keywordsTempArr = [];
 
-                    for (let i = 0; i < response.data.Items[0].concept_keywords.length; i++) {
-                        previousTagsArr.push({ name: response.data.Items[0].concept_keywords[i] })
-                        keywordsTempArr.push(response.data.Items[0].concept_keywords[i])
+                    for (let i = 0; i < response.data.Items[0].subject_keyword.length; i++) {
+                        previousTagsArr.push({ name: response.data.Items[0].subject_keyword[i] })
+                        keywordsTempArr.push(response.data.Items[0].subject_keyword[i])
                     }
 
                     setTags(previousTagsArr);
@@ -104,21 +107,21 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
 
                     // ------------------------------
 
-                    let previousDigicardsArr = [];
+                    let previousUnitsArr = [];
                     let getData;
 
-                    function getPreviousDigicards(i) {
+                    function getPreviousUnits(i) {
 
-                        if (i < response.data.Items[0].concept_digicard_id.length) {
+                        if (i < response.data.Items[0].subject_unit_id.length) {
 
-                            console.log(_digicards.filter(p => p.digi_card_id === response.data.Items[0].concept_digicard_id[i])[0]);
+                            console.log(_units.filter(p => p.unit_id === response.data.Items[0].subject_unit_id[i])[0]);
 
-                            getData = _digicards.filter(p => p.digi_card_id === response.data.Items[0].concept_digicard_id[i]);
+                            getData = _units.filter(p => p.unit_id === response.data.Items[0].subject_unit_id[i]);
 
-                            previousDigicardsArr.push(getData[0]);
-                            console.log(previousDigicardsArr);
+                            previousUnitsArr.push(getData[0]);
+                            console.log(previousUnitsArr);
                             i++;
-                            getPreviousDigicards(i);
+                            getPreviousUnits(i);
 
                         } else {
 
@@ -126,44 +129,44 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
                             let setTempArr;
                             let selectedArr = [];
 
-                            console.log(previousDigicardsArr);
+                            console.log(previousUnitsArr);
 
-                            for (let j = 0; j < previousDigicardsArr.length; j++) {
+                            for (let j = 0; j < previousUnitsArr.length; j++) {
 
-                                setTempArr = [{ label: previousDigicardsArr[j].digi_card_title, value: previousDigicardsArr[j].digi_card_id }];
+                                setTempArr = [{ label: previousUnitsArr[j].unit_title, value: previousUnitsArr[j].unit_id }];
 
                                 console.log(setTempArr);
                                 setArr.push(setTempArr[0]);
-                                selectedArr.push(previousDigicardsArr[j].digi_card_id);
+                                selectedArr.push(previousUnitsArr[j].unit_id);
                             }
                             console.log(setArr);
-                            setPreviousDigicards(setArr);
-                            setSelectedDigicards(selectedArr);
+                            setPreviousUnits(setArr);
+                            setSelectedUnits(selectedArr);
                         }
 
-                    } getPreviousDigicards(0)
+                    } getPreviousUnits(0)
 
                     // ------------------------------
 
-                    let previousConceptsArr = [];
-                    let getDataConcepts;
+                    let previousSubjectsArr = [];
+                    let getDataSubjects;
 
-                    console.log(_relatedConcepts);
-                    console.log(response.data.Items[0].related_concept);
-                    console.log(response.data.Items[0].related_concept.length);
+                    console.log(_relatedSubjects);
+                    console.log(response.data.Items[0].related_subject);
+                    console.log(response.data.Items[0].related_subject.length);
 
-                    function getPreviousConcepts(i) {
+                    function getPreviousSubjects(i) {
 
-                        if (i < response.data.Items[0].related_concept.length) {
+                        if (i < response.data.Items[0].related_subject.length) {
 
-                            console.log(_relatedConcepts.filter(p => p.concept_id === response.data.Items[0].related_concept[i])[0]);
+                            console.log(_relatedSubjects.filter(p => p.subject_id === response.data.Items[0].related_subject[i])[0]);
 
-                            getDataConcepts = _relatedConcepts.filter(p => p.concept_id === response.data.Items[0].related_concept[i]);
+                            getDataSubjects = _relatedSubjects.filter(p => p.subject_id === response.data.Items[0].related_subject[i]);
 
-                            previousConceptsArr.push(getDataConcepts[0]);
-                            console.log(previousConceptsArr);
+                            previousSubjectsArr.push(getDataSubjects[0]);
+                            console.log(previousSubjectsArr);
                             i++;
-                            getPreviousConcepts(i);
+                            getPreviousSubjects(i);
 
                         } else {
 
@@ -171,26 +174,26 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
                             let setTempArr;
                             let selectedArr = [];
 
-                            console.log(previousConceptsArr);
+                            console.log(previousSubjectsArr);
 
-                            for (let j = 0; j < previousConceptsArr.length; j++) {
+                            for (let j = 0; j < previousSubjectsArr.length; j++) {
 
-                                setTempArr = [{ label: previousConceptsArr[j].concept_title, value: previousConceptsArr[j].concept_id }];
+                                setTempArr = [{ label: previousSubjectsArr[j].subject_title, value: previousSubjectsArr[j].subject_id }];
 
                                 console.log(setTempArr);
                                 setArr.push(setTempArr[0]);
-                                selectedArr.push(previousConceptsArr[j].concept_id);
+                                selectedArr.push(previousSubjectsArr[j].subject_id);
                             }
                             console.log(setArr);
-                            setPreviousConcepts(setArr);
-                            setSelectedRelatedConcepts(selectedArr);
+                            setPreviousSubjects(setArr);
+                            setSelectedRelatedSubjects(selectedArr);
                         }
 
-                    } getPreviousConcepts(0)
+                    } getPreviousSubjects(0)
 
                 } else {
 
-                    setIsOpenEditConcept(true);
+                    setIsOpenEditSubject(true);
                 }
 
             })
@@ -198,7 +201,7 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
                 if (error.response) {
                     // Request made and server responded
                     console.log(error.response.data);
-                    setIsOpenEditConcept(false);
+                    setIsOpenEditSubject(false);
                     hideLoader();
                     sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
                 } else if (error.request) {
@@ -238,9 +241,9 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
         setSelectedKeywords(valuesArr);
     };
 
-    const handleDigicardChange = (event) => {
+    const handleUnitChange = (event) => {
 
-        setShowDigicardErr(false);
+        setShowUnitErr(false);
         console.log(event);
 
         let valuesArr = [];
@@ -249,10 +252,10 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
         }
 
         console.log(valuesArr);
-        setSelectedDigicards(valuesArr);
+        setSelectedUnits(valuesArr);
     }
 
-    const handleRelatedConcepts = (event) => {
+    const handleRelatedSubjects = (event) => {
 
         console.log(event);
 
@@ -262,30 +265,32 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
         }
 
         console.log(valuesArr);
-        setSelectedRelatedConcepts(valuesArr);
+        setSelectedRelatedSubjects(valuesArr);
     }
 
     return (
 
         <>
-            {previousData.length === 0 || previousDigicards.length === 0 ? (<></>) : (
+            {previousData.length === 0 || previousUnits.length === 0 ? (<></>) : (
                 <>
-                    {_digicards && _relatedConcepts && (
+                    {_units && _relatedSubjects && (
 
                         <>
-                            {console.log(previousData.concept_title)}
+                            {console.log(previousData.subject_title)}
                             <React.Fragment>
                                 < Formik
 
                                     initialValues={
                                         {
-                                            conceptTitle: previousData.concept_title,
+                                            subjectTitle: previousData.subject_title,
+                                            description: previousData.subject_description,
                                             // submit: null
                                         }
                                     }
                                     validationSchema={
                                         Yup.object().shape({
-                                            conceptTitle: Yup.string().max(255).required('Concept Title is required')
+                                            subjectTitle: Yup.string().max(255).required('Subject Title is required'),
+                                            description: Yup.string().max(255).required('Subject Description is required')
 
                                         })
                                     }
@@ -298,24 +303,25 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
 
                                         const formData = {
                                             data: {
-                                                concept_id: editConceptID,
-                                                concept_title: values.conceptTitle,
-                                                concept_digicard_id: selectedDigicards,
-                                                concept_keywords: selectedKeywords,
-                                                related_concept: selectedRelatedConcepts
+                                                subject_id: editSubjectID,
+                                                subject_title: values.subjectTitle,
+                                                subject_unit_id: selectedUnits,
+                                                subject_keyword: selectedKeywords,
+                                                related_subject: selectedRelatedSubjects,
+                                                subject_description: values.description
 
                                             }
                                         };
 
                                         console.log('form Data: ', formData);
 
-                                        if (selectedDigicards.length > 0) {
+                                        if (selectedUnits.length > 0) {
                                             console.log("Proceed");
                                             showLoader();
 
                                             axios
                                                 .post(
-                                                    dynamicUrl.updateConcept,
+                                                    dynamicUrl.updateSubject,
                                                     formData,
                                                     {
                                                         headers: { Authorization: sessionStorage.getItem('user_jwt') }
@@ -332,9 +338,9 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
 
                                                         console.log('inside res edit');
                                                         hideLoader();
-                                                        setIsOpenEditConcept(false);
-                                                        sweetAlertHandler({ title: 'Success', type: 'success', text: 'Concept updated successfully!' });
-                                                        fetchAllConceptsData();
+                                                        setIsOpenEditSubject(false);
+                                                        sweetAlertHandler({ title: 'Success', type: 'success', text: 'Subject updated successfully!' });
+                                                        fetchAllSubjectsData();
                                                         // window.location.reload();
 
                                                     } else {
@@ -342,8 +348,8 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
                                                         console.log('else res');
                                                         hideLoader();
                                                         // Request made and server responded
-                                                        setConceptTitleErr(true);
-                                                        setConceptTitleErrMessage("err");
+                                                        setSubjectTitleErr(true);
+                                                        setSubjectTitleErrMessage("err");
                                                         // window.location.reload();
 
 
@@ -354,31 +360,31 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
                                                         hideLoader();
                                                         // Request made and server responded
                                                         console.log(error.response.data);
-                                                        setConceptTitleErr(true);
-                                                        setConceptTitleErrMessage(error.response.data);
+                                                        setSubjectTitleErr(true);
+                                                        setSubjectTitleErrMessage(error.response.data);
 
                                                     } else if (error.request) {
                                                         // The request was made but no response was received
                                                         console.log(error.request);
                                                         hideLoader();
-                                                        setConceptTitleErr(true);
-                                                        setConceptTitleErrMessage(error.request);
+                                                        setSubjectTitleErr(true);
+                                                        setSubjectTitleErrMessage(error.request);
                                                     } else {
                                                         // Something happened in setting up the request that triggered an Error
                                                         console.log('Error', error.message);
                                                         hideLoader();
-                                                        setConceptTitleErr(true);
-                                                        setConceptTitleErrMessage(error.request);
+                                                        setSubjectTitleErr(true);
+                                                        setSubjectTitleErrMessage(error.request);
 
                                                     }
                                                 })
-
                                         } else {
-
-                                            console.log("Digicard empty");
-                                            setShowDigicardErr(true);
+                                            console.log("Unit empty");
+                                            setShowUnitErr(true);
 
                                         }
+
+
 
                                     }}>
 
@@ -392,27 +398,28 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
                                                         <Col>
 
                                                             <div className="form-group fill">
-                                                                <label className="floating-label" htmlFor="conceptTitle">
-                                                                    <small className="text-danger">* </small>Concept Title
+                                                                <label className="floating-label" htmlFor="subjectTitle">
+                                                                    <small className="text-danger">* </small>Subject Title
                                                                 </label>
                                                                 <input
                                                                     className="form-control"
-                                                                    error={touched.conceptTitle && errors.conceptTitle}
-                                                                    name="conceptTitle"
+                                                                    error={touched.subjectTitle && errors.subjectTitle}
+                                                                    name="subjectTitle"
                                                                     onBlur={handleBlur}
-                                                                    onChange={(e) => {
-                                                                        handleChange("conceptTitle")(e);
-                                                                        setConceptTitleErr(false);
-                                                                    }}
+                                                                    // onChange={handleChange}
                                                                     type="text"
-                                                                    value={values.conceptTitle}
+                                                                    value={values.subjectTitle}
+                                                                    onChange={(e) => {
+                                                                        handleChange("subjectTitle")(e);
+                                                                        setSubjectTitleErr(false);
+                                                                    }}
 
                                                                 />
 
-                                                                {touched.conceptTitle && errors.conceptTitle && <small className="text-danger form-text">{errors.conceptTitle}</small>}
+                                                                {touched.subjectTitle && errors.subjectTitle && <small className="text-danger form-text">{errors.subjectTitle}</small>}
 
-                                                                {conceptTitleErr && conceptTitleErrMessage &&
-                                                                    <small className="text-danger form-text">{conceptTitleErrMessage}</small>
+                                                                {subjectTitleErr && subjectTitleErrMessage &&
+                                                                    <small className="text-danger form-text">{subjectTitleErrMessage}</small>
                                                                 }
 
                                                             </div>
@@ -436,25 +443,59 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
                                                         </Col>
                                                     </Row>
                                                     <br />
+
+                                                    <Row>
+                                                        <Col>
+
+                                                            <div className="form-group fill">
+
+                                                                <label className="floating-label">
+                                                                    <small className="text-danger">* </small>
+                                                                    Description
+                                                                </label>
+
+                                                                <textarea
+                                                                    className="form-control"
+                                                                    error={touched.description && errors.description}
+                                                                    label="description"
+                                                                    name="description"
+                                                                    id="description"
+                                                                    onBlur={handleBlur}
+                                                                    onChange={handleChange}
+                                                                    value={values.description}
+                                                                    placeholder="Enter description"
+                                                                    rows="6"
+                                                                />
+                                                                {touched.description && errors.description && (
+                                                                    <small className="text-danger form-text">{errors.description}</small>
+                                                                )}
+
+                                                            </div>
+
+                                                        </Col>
+                                                    </Row>
+
+                                                    <br />
+
                                                     <Row>
                                                         <Col>
                                                             <div className="form-group fill">
 
                                                                 <label className="floating-label">
                                                                     <small className="text-danger">* </small>
-                                                                    Digicards
+                                                                    Units
                                                                 </label>
-                                                                {console.log(previousDigicards)}
+                                                                {console.log(previousUnits)}
                                                                 <Select
-                                                                    defaultValue={previousDigicards}
+                                                                    defaultValue={previousUnits}
                                                                     isMulti
-                                                                    name="digicards"
-                                                                    options={dropdownDigicards}
+                                                                    name="units"
+                                                                    options={dropdownUnits}
                                                                     className="basic-multi-select"
                                                                     classNamePrefix="Select"
-                                                                    onChange={event => handleDigicardChange(event)}
+                                                                    onChange={event => handleUnitChange(event)}
                                                                 />
-                                                                {showDigicardErr && <small className="text-danger form-text">{'Please select a digicard'}</small>}
+                                                                {showUnitErr && <small className="text-danger form-text">{'Please select a unit'}</small>}
                                                             </div>
                                                         </Col>
                                                         <Col>
@@ -462,32 +503,32 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
 
                                                                 <label className="floating-label">
                                                                     <small className="text-danger"></small>
-                                                                    Related Concepts
+                                                                    Related Subjects
                                                                 </label>
-                                                                {console.log(previousConcepts)}
+                                                                {console.log(previousSubjects)}
 
                                                                 {
-                                                                    previousConcepts.length === 0 ? (
+                                                                    previousSubjects.length === 0 ? (
                                                                         <Select
 
                                                                             isMulti
-                                                                            name="relatedConcepts"
-                                                                            options={dropdownRelatedConcepts}
+                                                                            name="relatedSubjects"
+                                                                            options={dropdownRelatedSubjects}
                                                                             className="basic-multi-select"
                                                                             classNamePrefix="Select"
-                                                                            onChange={event => handleRelatedConcepts(event)}
+                                                                            onChange={event => handleRelatedSubjects(event)}
                                                                         />
                                                                     ) : (
                                                                         <>
-                                                                            {previousConcepts && (
+                                                                            {previousSubjects && (
                                                                                 < Select
-                                                                                    defaultValue={previousConcepts}
+                                                                                    defaultValue={previousSubjects}
                                                                                     isMulti
-                                                                                    name="relatedConcepts"
-                                                                                    options={dropdownRelatedConcepts}
+                                                                                    name="relatedSubjects"
+                                                                                    options={dropdownRelatedSubjects}
                                                                                     className="basic-multi-select"
                                                                                     classNamePrefix="Select"
-                                                                                    onChange={event => handleRelatedConcepts(event)}
+                                                                                    onChange={event => handleRelatedSubjects(event)}
                                                                                 />
                                                                             )
 
@@ -536,4 +577,4 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
     )
 }
 
-export default EditConcepts
+export default EditSubjects
