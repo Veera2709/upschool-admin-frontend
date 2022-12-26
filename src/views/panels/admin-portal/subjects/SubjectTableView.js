@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { Row, Col, Card, Pagination, Button, Modal } from 'react-bootstrap';
 import BTable from 'react-bootstrap/Table';
 import axios from 'axios';
@@ -12,23 +12,23 @@ import { GlobalFilter } from '../../../common-ui-components/tables/GlobalFilter'
 import { useTable, useSortBy, usePagination, useGlobalFilter } from 'react-table';
 import dynamicUrl from '../../../../helper/dynamicUrls';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
-import AddConcepts from './AddConcepts';
-import EditConcepts from './EditConcepts';
+import AddSubjects from './AddSubjects';
+import EditSubjects from './EditSubjects';
 
 function Table({ columns, data }) {
 
     const [isLoading, setIsLoading] = useState(false);
-    const [conceptData, setConceptData] = useState([]);
-    const [_conceptID, _setConceptID] = useState('');
+    const [subjectData, setSubjectData] = useState([]);
+    const [_subjectID, _setSubjectID] = useState('');
     const [loader, showLoader, hideLoader] = useFullPageLoader();
     const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
-    const [digicardsAndConcepts, setDigicardsAndConcepts] = useState(false);
-    const [_relatedConcepts, _setRelatedConcepts] = useState([]);
-    const [_digicards, _setDigicards] = useState([]);
-    const [editConceptID, setEditConceptID] = useState('');
+    const [unitsAndSubjects, setUnitsAndSubjects] = useState(false);
+    const [_relatedSubjects, _setRelatedSubjects] = useState([]);
+    const [_units, _setUnits] = useState([]);
+    const [editSubjectID, setEditSubjectID] = useState('');
 
-    const [isOpenAddConcept, setIsOpenAddConcept] = useState(false);
-    const [isEditAddConcept, setIsOpenEditConcept] = useState(false);
+    const [isOpenAddSubject, setIsOpenAddSubject] = useState(false);
+    const [isEditAddSubject, setIsOpenEditSubject] = useState(false);
 
     const MySwal = withReactContent(Swal);
 
@@ -41,14 +41,14 @@ function Table({ columns, data }) {
     };
 
     useEffect(() => {
-        fetchAllConceptsData();
+        fetchAllSubjectsData();
     }, []);
 
     useEffect(() => {
 
         axios
             .post(
-                dynamicUrl.fetchDigicardAndConcept,
+                dynamicUrl.fetchUnitAndSubject,
                 {},
                 {
                     headers: { Authorization: sessionStorage.getItem('user_jwt') }
@@ -61,14 +61,14 @@ function Table({ columns, data }) {
 
                 if (result) {
 
-                    console.log('inside res fetchDigicardAndConcept');
+                    console.log('inside res fetchUnitAndSubject');
 
                     let responseData = response.data;
                     console.log(responseData);
                     // setDisableButton(false);
                     hideLoader();
-                    _setRelatedConcepts(responseData.conceptList);
-                    _setDigicards(responseData.digicardList);
+                    _setRelatedSubjects(responseData.subjectList);
+                    _setUnits(responseData.unitList);
 
                 } else {
 
@@ -99,9 +99,9 @@ function Table({ columns, data }) {
                 }
             })
 
-    }, [digicardsAndConcepts])
+    }, [unitsAndSubjects])
 
-    const sweetConfirmHandler = (alert, concept_id, updateStatus) => {
+    const sweetConfirmHandler = (alert, subject_id, updateStatus) => {
         MySwal.fire({
             title: alert.title,
             text: alert.text,
@@ -111,10 +111,10 @@ function Table({ columns, data }) {
         }).then((willDelete) => {
             if (willDelete.value) {
                 showLoader();
-                deleteConcept(concept_id, updateStatus);
+                deleteSubject(subject_id, updateStatus);
             } else {
 
-                const returnValue = pageLocation === 'active-concepts' ? (
+                const returnValue = pageLocation === 'active-subjects' ? (
                     MySwal.fire('', MESSAGES.INFO.DATA_SAFE, 'success')
                 ) : (
                     MySwal.fire('', MESSAGES.INFO.FAILED_TO_RESTORE, 'error')
@@ -124,29 +124,29 @@ function Table({ columns, data }) {
         });
     };
 
-    const saveConceptIdDelete = (e, concept_id, updateStatus) => {
+    const saveSubjectIdDelete = (e, subject_id, updateStatus) => {
         e.preventDefault();
 
-        pageLocation === 'active-concepts' ? (
-            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: MESSAGES.INFO.ABLE_TO_RECOVER }, concept_id, updateStatus)
+        pageLocation === 'active-subjects' ? (
+            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: MESSAGES.INFO.ABLE_TO_RECOVER }, subject_id, updateStatus)
         ) : (
-            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: MESSAGES.INFO.ABLE_TO_DELETE }, concept_id, updateStatus)
+            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: MESSAGES.INFO.ABLE_TO_DELETE }, subject_id, updateStatus)
         )
 
     };
 
-    const fetchAllConceptsData = () => {
+    const fetchAllSubjectsData = () => {
 
         showLoader();
         console.log(pageLocation);
 
-        const conceptStatus = pageLocation === 'active-concepts' ? 'Active' : 'Archived';
+        const subjectStatus = pageLocation === 'active-subjects' ? 'Active' : 'Archived';
 
         axios
-            .post(dynamicUrl.fetchAllConcepts,
+            .post(dynamicUrl.fetchAllSubjects,
                 {
                     data: {
-                        concept_status: conceptStatus
+                        subject_status: subjectStatus
                     }
                 }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
 
@@ -156,7 +156,7 @@ function Table({ columns, data }) {
                 console.log(response.data.Items);
                 hideLoader();
 
-                setDigicardsAndConcepts(true);
+                setUnitsAndSubjects(true);
 
                 if (response.data.Items) {
 
@@ -172,15 +172,15 @@ function Table({ columns, data }) {
                         responseData[index]['action'] = (
                             <>
                                 {console.log(pageLocation)}
-                                {pageLocation === 'active-concepts' ? (
+                                {pageLocation === 'active-subjects' ? (
 
                                     <>
                                         <Button
                                             size="sm"
                                             className="btn btn-icon btn-rounded btn-info"
                                             onClick={(e) => {
-                                                setEditConceptID(responseData[index].concept_id);
-                                                setIsOpenEditConcept(true);
+                                                setEditSubjectID(responseData[index].subject_id);
+                                                setIsOpenEditSubject(true);
                                             }}>
                                             <i className="feather icon-edit" /> &nbsp; Edit
                                         </Button>{' '}
@@ -188,7 +188,7 @@ function Table({ columns, data }) {
                                         <Button
                                             size="sm"
                                             className="btn btn-icon btn-rounded btn-danger"
-                                            onClick={(e) => saveConceptIdDelete(e, responseData[index].concept_id, 'Archived')}
+                                            onClick={(e) => saveSubjectIdDelete(e, responseData[index].subject_id, 'Archived')}
                                         >
                                             <i className="feather icon-trash-2" /> &nbsp;Delete
                                         </Button>
@@ -201,7 +201,7 @@ function Table({ columns, data }) {
                                         <Button
                                             size="sm"
                                             className="btn btn-icon btn-rounded btn-primary"
-                                            onClick={(e) => saveConceptIdDelete(e, responseData[index].concept_id, 'Active')}
+                                            onClick={(e) => saveSubjectIdDelete(e, responseData[index].subject_id, 'Active')}
                                         >
                                             <i className="feather icon-plus" /> &nbsp;Restore
                                         </Button>
@@ -215,7 +215,7 @@ function Table({ columns, data }) {
                     }
 
                     console.log(finalDataArray);
-                    setConceptData(finalDataArray);
+                    setSubjectData(finalDataArray);
                     setIsLoading(true);
 
                 }
@@ -238,43 +238,43 @@ function Table({ columns, data }) {
             });
     };
 
-    const handleAddConcepts = (e) => {
+    const handleAddSubjects = (e) => {
 
-        console.log("No concepts, add concepts")
+        console.log("No subjects, add subjects")
         e.preventDefault();
-        setIsOpenAddConcept(true);
+        setIsOpenAddSubject(true);
     }
 
-    const deleteConcept = (concept_id, updateStatus) => {
+    const deleteSubject = (subject_id, updateStatus) => {
         const values = {
-            concept_id: concept_id,
-            concept_status: updateStatus
+            subject_id: subject_id,
+            subject_status: updateStatus
         };
 
         console.log(values);
 
         axios
-            .post(dynamicUrl.toggleConceptStatus,
+            .post(dynamicUrl.toggleSubjectStatus,
                 {
                     data: {
-                        concept_id: concept_id,
-                        concept_status: updateStatus
+                        subject_id: subject_id,
+                        subject_status: updateStatus
                     }
                 }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
             .then(async (response) => {
 
                 if (response.Error) {
                     hideLoader();
-                    sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingConcept });
+                    sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingSubject });
 
                 } else {
 
                     hideLoader()
                     updateStatus === 'Active' ? (
-                        MySwal.fire('', MESSAGES.INFO.CONCEPT_RESTORED, 'success')
+                        MySwal.fire('', MESSAGES.INFO.SUBJECT_RESTORED, 'success')
 
                     ) : (
-                        MySwal.fire('', MESSAGES.INFO.CONCEPT_DELETED, 'success')
+                        MySwal.fire('', MESSAGES.INFO.SUBJECT_DELETED, 'success')
                     )
 
 
@@ -355,10 +355,10 @@ function Table({ columns, data }) {
                         variant="success"
                         className="btn-sm btn-round has-ripple ml-2"
                         onClick={(e) => {
-                            handleAddConcepts(e);
+                            handleAddSubjects(e);
                         }}
                     >
-                        <i className="feather icon-plus" /> Add Concepts
+                        <i className="feather icon-plus" /> Add Subjects
                     </Button>
 
                 </Col>
@@ -438,33 +438,33 @@ function Table({ columns, data }) {
                 </Col>
             </Row>
 
-            <Modal dialogClassName="my-modal" show={isOpenAddConcept} onHide={() => setIsOpenAddConcept(false)}>
+            <Modal dialogClassName="my-modal" show={isOpenAddSubject} onHide={() => setIsOpenAddSubject(false)}>
 
                 <Modal.Header closeButton>
 
-                    <Modal.Title as="h5">Add Concept</Modal.Title>
+                    <Modal.Title as="h5">Add Subject</Modal.Title>
 
                 </Modal.Header>
 
                 <Modal.Body>
 
-                    <AddConcepts _digicards={_digicards} _relatedConcepts={_relatedConcepts} setIsOpenAddConcept={setIsOpenAddConcept} fetchAllConceptsData={fetchAllConceptsData} />
+                    <AddSubjects _units={_units} _relatedSubjects={_relatedSubjects} setIsOpenAddSubject={setIsOpenAddSubject} fetchAllSubjectsData={fetchAllSubjectsData} />
 
                 </Modal.Body>
 
             </Modal>
 
-            <Modal dialogClassName="my-modal" show={isEditAddConcept} onHide={() => setIsOpenEditConcept(false)}>
+            <Modal dialogClassName="my-modal" show={isEditAddSubject} onHide={() => setIsOpenEditSubject(false)}>
 
                 <Modal.Header closeButton>
 
-                    <Modal.Title as="h5">Edit Concept</Modal.Title>
+                    <Modal.Title as="h5">Edit Subject</Modal.Title>
 
                 </Modal.Header>
 
                 <Modal.Body>
 
-                    <EditConcepts _digicards={_digicards} _relatedConcepts={_relatedConcepts} editConceptID={editConceptID} setIsOpenEditConcept={setIsOpenEditConcept} fetchAllConceptsData={fetchAllConceptsData} />
+                    <EditSubjects _units={_units} _relatedSubjects={_relatedSubjects} editSubjectID={editSubjectID} setIsOpenEditSubject={setIsOpenEditSubject} fetchAllSubjectsData={fetchAllSubjectsData} />
 
                 </Modal.Body>
 
@@ -473,7 +473,7 @@ function Table({ columns, data }) {
     );
 }
 
-const ConceptTableView = ({ userStatus }) => {
+const SubjectTableView = ({ userStatus }) => {
 
     const columns = React.useMemo(
         () => [
@@ -482,8 +482,8 @@ const ConceptTableView = ({ userStatus }) => {
                 accessor: 'id'
             },
             {
-                Header: 'Concept Name',
-                accessor: 'concept_title'
+                Header: 'Subject Name',
+                accessor: 'subject_title'
             },
             {
                 Header: 'Options',
@@ -496,17 +496,17 @@ const ConceptTableView = ({ userStatus }) => {
     // const data = React.useMemo(() => makeData(50), []);
 
     const [isLoading, setIsLoading] = useState(false);
-    const [conceptData, setConceptData] = useState([]);
-    const [_conceptID, _setConceptID] = useState('');
+    const [subjectData, setSubjectData] = useState([]);
+    const [_subjectID, _setSubjectID] = useState('');
     const [loader, showLoader, hideLoader] = useFullPageLoader();
     const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
-    const [digicardsAndConcepts, setDigicardsAndConcepts] = useState(false);
-    const [_relatedConcepts, _setRelatedConcepts] = useState([]);
-    const [_digicards, _setDigicards] = useState([]);
+    const [unitsAndSubjects, setUnitsAndSubjects] = useState(false);
+    const [_relatedSubjects, _setRelatedSubjects] = useState([]);
+    const [_units, _setUnits] = useState([]);
 
-    const [isOpenAddConcept, setIsOpenAddConcept] = useState(false);
-    const [isEditAddConcept, setIsOpenEditConcept] = useState(false);
-    const [editConceptID, setEditConceptID] = useState('');
+    const [isOpenAddSubject, setIsOpenAddSubject] = useState(false);
+    const [isEditAddSubject, setIsOpenEditSubject] = useState(false);
+    const [editSubjectID, setEditSubjectID] = useState('');
 
     const MySwal = withReactContent(Swal);
 
@@ -519,14 +519,14 @@ const ConceptTableView = ({ userStatus }) => {
     };
 
     useEffect(() => {
-        fetchAllConceptsData();
+        fetchAllSubjectsData();
     }, []);
 
     useEffect(() => {
 
         axios
             .post(
-                dynamicUrl.fetchDigicardAndConcept,
+                dynamicUrl.fetchUnitAndSubject,
                 {},
                 {
                     headers: { Authorization: sessionStorage.getItem('user_jwt') }
@@ -539,14 +539,14 @@ const ConceptTableView = ({ userStatus }) => {
 
                 if (result) {
 
-                    console.log('inside res fetchDigicardAndConcept');
+                    console.log('inside res fetchUnitAndSubject');
 
                     let responseData = response.data;
                     console.log(responseData);
                     // setDisableButton(false);
                     hideLoader();
-                    _setRelatedConcepts(responseData.conceptList);
-                    _setDigicards(responseData.digicardList);
+                    _setRelatedSubjects(responseData.subjectList);
+                    _setUnits(responseData.unitList);
 
                 } else {
 
@@ -577,9 +577,9 @@ const ConceptTableView = ({ userStatus }) => {
                 }
             })
 
-    }, [digicardsAndConcepts])
+    }, [unitsAndSubjects])
 
-    const sweetConfirmHandler = (alert, concept_id, updateStatus) => {
+    const sweetConfirmHandler = (alert, subject_id, updateStatus) => {
         MySwal.fire({
             title: alert.title,
             text: alert.text,
@@ -589,10 +589,10 @@ const ConceptTableView = ({ userStatus }) => {
         }).then((willDelete) => {
             if (willDelete.value) {
                 showLoader();
-                deleteConcept(concept_id, updateStatus);
+                deleteSubject(subject_id, updateStatus);
             } else {
 
-                const returnValue = pageLocation === 'active-concepts' ? (
+                const returnValue = pageLocation === 'active-subjects' ? (
                     MySwal.fire('', MESSAGES.INFO.DATA_SAFE, 'success')
                 ) : (
                     MySwal.fire('', MESSAGES.INFO.FAILED_TO_RESTORE, 'error')
@@ -603,29 +603,29 @@ const ConceptTableView = ({ userStatus }) => {
     };
 
 
-    const saveConceptIdDelete = (e, concept_id, updateStatus) => {
+    const saveSubjectIdDelete = (e, subject_id, updateStatus) => {
         e.preventDefault();
 
-        pageLocation === 'active-concepts' ? (
-            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: MESSAGES.INFO.ABLE_TO_RECOVER }, concept_id, updateStatus)
+        pageLocation === 'active-subjects' ? (
+            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: MESSAGES.INFO.ABLE_TO_RECOVER }, subject_id, updateStatus)
         ) : (
-            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: MESSAGES.INFO.ABLE_TO_DELETE }, concept_id, updateStatus)
+            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: MESSAGES.INFO.ABLE_TO_DELETE }, subject_id, updateStatus)
         )
 
     };
 
-    const fetchAllConceptsData = () => {
+    const fetchAllSubjectsData = () => {
 
         showLoader();
         console.log(pageLocation);
 
-        const conceptStatus = pageLocation === 'active-concepts' ? 'Active' : 'Archived';
+        const subjectStatus = pageLocation === 'active-subjects' ? 'Active' : 'Archived';
 
         axios
-            .post(dynamicUrl.fetchAllConcepts,
+            .post(dynamicUrl.fetchAllSubjects,
                 {
                     data: {
-                        concept_status: conceptStatus
+                        subject_status: subjectStatus
                     }
                 }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
 
@@ -635,7 +635,7 @@ const ConceptTableView = ({ userStatus }) => {
                 console.log(response.data.Items);
                 hideLoader();
 
-                setDigicardsAndConcepts(true);
+                setUnitsAndSubjects(true);
 
                 if (response.data.Items) {
 
@@ -651,15 +651,15 @@ const ConceptTableView = ({ userStatus }) => {
                         responseData[index]['action'] = (
                             <>
                                 {console.log(pageLocation)}
-                                {pageLocation === 'active-concepts' ? (
+                                {pageLocation === 'active-subjects' ? (
 
                                     <>
                                         <Button
                                             size="sm"
                                             className="btn btn-icon btn-rounded btn-info"
                                             onClick={(e) => {
-                                                setEditConceptID(responseData[index].concept_id);
-                                                setIsOpenEditConcept(true);
+                                                setEditSubjectID(responseData[index].subject_id);
+                                                setIsOpenEditSubject(true);
                                             }}>
                                             <i className="feather icon-edit" /> &nbsp; Edit
                                         </Button>{' '}
@@ -667,7 +667,7 @@ const ConceptTableView = ({ userStatus }) => {
                                         <Button
                                             size="sm"
                                             className="btn btn-icon btn-rounded btn-danger"
-                                            onClick={(e) => saveConceptIdDelete(e, responseData[index].concept_id, 'Archived')}
+                                            onClick={(e) => saveSubjectIdDelete(e, responseData[index].subject_id, 'Archived')}
                                         >
                                             <i className="feather icon-trash-2" /> &nbsp;Delete
                                         </Button>
@@ -680,7 +680,7 @@ const ConceptTableView = ({ userStatus }) => {
                                         <Button
                                             size="sm"
                                             className="btn btn-icon btn-rounded btn-primary"
-                                            onClick={(e) => saveConceptIdDelete(e, responseData[index].concept_id, 'Active')}
+                                            onClick={(e) => saveSubjectIdDelete(e, responseData[index].subject_id, 'Active')}
                                         >
                                             <i className="feather icon-plus" /> &nbsp;Restore
                                         </Button>
@@ -694,7 +694,7 @@ const ConceptTableView = ({ userStatus }) => {
                     }
 
                     console.log(finalDataArray);
-                    setConceptData(finalDataArray);
+                    setSubjectData(finalDataArray);
                     setIsLoading(true);
 
                 }
@@ -717,27 +717,27 @@ const ConceptTableView = ({ userStatus }) => {
             });
     };
 
-    const handleAddConcepts = (e) => {
+    const handleAddSubjects = (e) => {
 
-        console.log("No concepts, add concepts")
+        console.log("No subjects, add subjects")
         e.preventDefault();
-        setIsOpenAddConcept(true);
+        setIsOpenAddSubject(true);
     }
 
-    const deleteConcept = (concept_id, updateStatus) => {
+    const deleteSubject = (subject_id, updateStatus) => {
         const values = {
-            concept_id: concept_id,
-            concept_status: updateStatus
+            subject_id: subject_id,
+            subject_status: updateStatus
         };
 
         console.log(values);
 
         axios
-            .post(dynamicUrl.toggleConceptStatus,
+            .post(dynamicUrl.toggleSubjectStatus,
                 {
                     data: {
-                        concept_id: concept_id,
-                        concept_status: updateStatus
+                        subject_id: subject_id,
+                        subject_status: updateStatus
                     }
                 }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
             .then(async (response) => {
@@ -749,10 +749,10 @@ const ConceptTableView = ({ userStatus }) => {
 
                     hideLoader()
                     updateStatus === 'Active' ? (
-                        MySwal.fire('', MESSAGES.INFO.CONCEPT_RESTORED, 'success')
+                        MySwal.fire('', MESSAGES.INFO.SUBJECT_RESTORED, 'success')
 
                     ) : (
-                        MySwal.fire('', MESSAGES.INFO.CONCEPT_DELETED, 'success')
+                        MySwal.fire('', MESSAGES.INFO.SUBJECT_DELETED, 'success')
                     )
 
                 }
@@ -777,12 +777,12 @@ const ConceptTableView = ({ userStatus }) => {
 
     return (
         <div>
-            {conceptData.length <= 0 ? (
+            {subjectData.length <= 0 ? (
                 <>
                     < React.Fragment >
                         <div>
 
-                            <h3 style={{ textAlign: 'center' }}>No Concepts Found</h3>
+                            <h3 style={{ textAlign: 'center' }}>No Subjects Found</h3>
                             <div className="form-group fill text-center">
                                 <br></br>
 
@@ -790,10 +790,10 @@ const ConceptTableView = ({ userStatus }) => {
                                     variant="success"
                                     className="btn-sm btn-round has-ripple ml-2"
                                     onClick={(e) => {
-                                        handleAddConcepts(e);
+                                        handleAddSubjects(e);
                                     }}
                                 >
-                                    <i className="feather icon-plus" /> Add Concepts
+                                    <i className="feather icon-plus" /> Add Subjects
                                 </Button>
 
 
@@ -801,17 +801,17 @@ const ConceptTableView = ({ userStatus }) => {
 
                         </div>
 
-                        <Modal dialogClassName="my-modal" show={isOpenAddConcept} onHide={() => setIsOpenAddConcept(false)}>
+                        <Modal dialogClassName="my-modal" show={isOpenAddSubject} onHide={() => setIsOpenAddSubject(false)}>
 
                             <Modal.Header closeButton>
 
-                                <Modal.Title as="h5">Add Concept</Modal.Title>
+                                <Modal.Title as="h5">Add Subject</Modal.Title>
 
                             </Modal.Header>
 
                             <Modal.Body>
 
-                                <AddConcepts _digicards={_digicards} _relatedConcepts={_relatedConcepts} setIsOpenAddConcept={setIsOpenAddConcept} fetchAllConceptsData={fetchAllConceptsData} />
+                                <AddSubjects _units={_units} _relatedSubjects={_relatedSubjects} setIsOpenAddSubject={setIsOpenAddSubject} fetchAllSubjectsData={fetchAllSubjectsData} />
 
                             </Modal.Body>
 
@@ -828,10 +828,10 @@ const ConceptTableView = ({ userStatus }) => {
                             <Col sm={12}>
                                 <Card>
                                     <Card.Header>
-                                        <Card.Title as="h5">Concept List</Card.Title>
+                                        <Card.Title as="h5">Subject List</Card.Title>
                                     </Card.Header>
                                     <Card.Body>
-                                        <Table columns={columns} data={conceptData} />
+                                        <Table columns={columns} data={subjectData} />
                                     </Card.Body>
                                 </Card>
 
@@ -839,33 +839,33 @@ const ConceptTableView = ({ userStatus }) => {
                         </Row>
                     </React.Fragment>
 
-                    <Modal dialogClassName="my-modal" show={isOpenAddConcept} onHide={() => setIsOpenAddConcept(false)}>
+                    <Modal dialogClassName="my-modal" show={isOpenAddSubject} onHide={() => setIsOpenAddSubject(false)}>
 
                         <Modal.Header closeButton>
 
-                            <Modal.Title as="h5">Add Concept</Modal.Title>
+                            <Modal.Title as="h5">Add Subject</Modal.Title>
 
                         </Modal.Header>
 
                         <Modal.Body>
 
-                            <AddConcepts _digicards={_digicards} _relatedConcepts={_relatedConcepts} setIsOpenAddConcept={setIsOpenAddConcept} fetchAllConceptsData={fetchAllConceptsData} />
+                            <AddSubjects _units={_units} _relatedSubjects={_relatedSubjects} setIsOpenAddSubject={setIsOpenAddSubject} fetchAllSubjectsData={fetchAllSubjectsData} />
 
                         </Modal.Body>
 
                     </Modal>
 
-                    <Modal dialogClassName="my-modal" show={isEditAddConcept} onHide={() => setIsOpenEditConcept(false)}>
+                    <Modal dialogClassName="my-modal" show={isEditAddSubject} onHide={() => setIsOpenEditSubject(false)}>
 
                         <Modal.Header closeButton>
 
-                            <Modal.Title as="h5">Edit Concept</Modal.Title>
+                            <Modal.Title as="h5">Edit Subject</Modal.Title>
 
                         </Modal.Header>
 
                         <Modal.Body>
 
-                            <EditConcepts _digicards={_digicards} _relatedConcepts={_relatedConcepts} editConceptID={editConceptID} setIsOpenEditConcept={setIsOpenEditConcept} fetchAllConceptsData={fetchAllConceptsData} />
+                            <EditSubjects _units={_units} _relatedSubjects={_relatedSubjects} editSubjectID={editSubjectID} setIsOpenEditSubject={setIsOpenEditSubject} fetchAllSubjectsData={fetchAllSubjectsData} />
 
                         </Modal.Body>
 
@@ -879,4 +879,4 @@ const ConceptTableView = ({ userStatus }) => {
     );
 };
 
-export default ConceptTableView;
+export default SubjectTableView;
