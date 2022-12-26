@@ -378,7 +378,7 @@ const menuItems = {
           title: 'DigiCard',
           type: 'collapse',
           icon: 'feather icon-layout',
-
+          
           children: [
             {
               id: 'active-digiCard',
@@ -420,20 +420,20 @@ const menuItems = {
           type: 'item',
           icon: 'feather icon-package',
           url: '/admin-portal/Topics/topicsList',
-          children: [
-            {
-              id: 'add-topics',
-              title: 'Add Topics',
-              type: 'item',
-              url: '/admin-portal/Topics/active-topics'
-            },
-            {
-              id: 'edit-topics',
-              title: 'Edit Topic',
-              type: 'item',
-              url: '/admin-portal/Topics/archived-topics'
-            }
-          ]
+          // children: [
+          //   {
+          //     id: 'add-topics',
+          //     title: 'Add Topics',
+          //     type: 'item',
+          //     url: '/admin-portal/Topics/addTopics'
+          //   },
+          //   {
+          //     id: 'edit-topics',
+          //     title: 'Edit Topic',
+          //     type: 'item',
+          //     url: '/admin-portal/editTopic/:topic_id'
+          //   }
+          // ]
         },
         // {
         //   id: 'chapters',
