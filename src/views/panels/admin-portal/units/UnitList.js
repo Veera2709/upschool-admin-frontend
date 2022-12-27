@@ -204,7 +204,7 @@ const UnitList = (props) => {
             const MySwal = withReactContent(Swal);
             MySwal.fire({
                 title: 'Are you sure?',
-                text: 'Confirm deleting ' + unit_title + ' Chapter',
+                text: 'Confirm deleting ' + unit_title + 'Unit',
                 type: 'warning',
                 showCloseButton: true,
                 showCancelButton: true
@@ -258,7 +258,7 @@ const UnitList = (props) => {
             const MySwal = withReactContent(Swal);
             MySwal.fire({
                 title: 'Are you sure?',
-                text: 'Confirm to Restore ' + unit_title + ' Chapter',
+                text: 'Confirm to Restore ' + unit_title + 'unit',
                 type: 'warning',
                 showCloseButton: true,
                 showCancelButton: true

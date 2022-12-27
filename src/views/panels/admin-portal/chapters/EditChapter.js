@@ -295,37 +295,37 @@ const EditChapter = () => {
                                             </label>
                                             {defaultPostleraing.length === 0 ? (
 
-                                                <Select
-                                                    className="basic-single"
-                                                    classNamePrefix="select"
-                                                    name="color"
-                                                    isMulti
-                                                    closeMenuOnSelect={false}
-                                                    onChange={postlerningOtions}
-                                                    options={topicTitles}
-                                                    placeholder="Select"
-                                                />
+<Select
+    className="basic-single"
+    classNamePrefix="select"
+    name="color"
+    isMulti
+    closeMenuOnSelect={false}
+    onChange={postlerningOtions}
+    options={topicTitles}
+    placeholder="Select"
+/>
 
-                                            ) : (
-                                                <>
-                                                    {defaultPostleraing && (
+) : (
+<>
+    {defaultPostleraing && (
 
-                                                        <Select
-                                                            defaultValue={defaultPostleraing}
-                                                            className="basic-single"
-                                                            classNamePrefix="select"
-                                                            name="color"
-                                                            isMulti
-                                                            closeMenuOnSelect={false}
-                                                            onChange={postlerningOtions}
-                                                            options={topicTitles}
-                                                            placeholder="Select"
-                                                        />
+        <Select
+            defaultValue={defaultPostleraing}
+            className="basic-single"
+            classNamePrefix="select"
+            name="color"
+            isMulti
+            closeMenuOnSelect={false}
+            onChange={postlerningOtions}
+            options={topicTitles}
+            placeholder="Select"
+        />
 
-                                                    )}
-                                                </>
+    )}
+</>
 
-                                            )}
+)}
                                             <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>required</small>
                                         </div>
                                         <div className="form-group fill" >

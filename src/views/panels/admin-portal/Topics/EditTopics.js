@@ -6,7 +6,7 @@ import useFullPageLoader from '../../../../helper/useFullPageLoader';
 // import dynamicUrl from '../../../helper/dynamicUrl';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
-import { areFilesInvalid, isEmptyObject } from '../../../../util/utils';
+import { areFilesInvalid, isEmptyArray, isEmptyObject } from '../../../../util/utils';
 import * as Constants from '../../../../config/constant'
 import withReactContent from 'sweetalert2-react-content';
 import Swal from 'sweetalert2';
@@ -14,11 +14,20 @@ import dynamicUrl from '../../../../helper/dynamicUrls';
 import { Label } from 'recharts';
 import Multiselect from 'multiselect-react-dropdown';
 import axios from 'axios';
+import { fetchAllConcepts, fetchAllTopics, getIndividualTopic } from '../../../api/CommonApi'
+import MESSAGES from '../../../../helper/messages';
+
+
 
 const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
     let history = useHistory();
     let params = useParams();
     const id = params.topic_id;
+
+    let conceptArr = [];
+    let topicArr = [];
+    const DefaultisLockedOption = [];
+
 
     const [editTopicData, setEditTopicData] = useState({});
     const [prePostLearning, setprePostLearning] = useState('pre-Learning');
@@ -34,6 +43,16 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
     const [editRelatedTopicsIds, setEditRelatedTopicsIds] = useState([]);
     const [editTopicConceptIds, setEditTopicConceptIds] = useState([]);
 
+    const [conceptTitles, setConceptTitles] = useState([]);
+    const [topicTitles, setTopicTitles] = useState([]);
+    const [isShown, setIsShown] = useState(true);
+    const [defaultConceptOption, setDefaultConceptOption] = useState([]);
+    const [defaultTopicOption, setDefaultTopicOption] = useState([]);
+    const [defaultOption, setDefaultOption] = useState([]);
+
+    console.log("defaultConceptOption", defaultConceptOption);
+    console.log("defaultTopicOption", defaultTopicOption);
+    console.log("defaultOption", defaultOption);
     const sweetAlertHandler = (alert) => {
         const MySwal = withReactContent(Swal);
         MySwal.fire({
@@ -44,17 +63,7 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
     };
 
 
-    const handleOnSelect = ((selectedList, selectedItem) => {
-        setConceptIds(selectedList.map(concept => concept.id))
-        setTopicConceptNames(selectedList.map(conceptName => conceptName.name))
-    })
-    const handleOnRemove = (selectedList, selectedItem) => setConceptIds(selectedList.map(concept => concept.id))
 
-    const handleOnSelectTopic = ((selectedList, selectedItem) => {
-        setRelatedTopicsIds(selectedList.map(topic => topic.id))
-        setRelatedTopicNames(selectedList.map(topicName => topicName.name))
-    })
-    const handleOnRemoveTopic = (selectedList, selectedItem) => setRelatedTopicsIds(selectedList.map(topic => topic.id))
 
     const topicQuizTemplate = { level: "", duration: "" }
     const [topicQuiz, setTopicQuiz] = useState([topicQuizTemplate])
@@ -85,45 +94,19 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
         { label: 'Level-3', value: 'Level-3' },
     ]
 
-    const getConcepts = () => {
-        axios.post(dynamicUrl.getConcepts, {}, { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
-            .then((response) => {
-                const result = response
-                console.log('result: ', result)
-            })
-            .catch((err) => {
-                console.log('err: ', err);
-            })
-    }
 
-    const _getEditTopic = () => {
-        axios.post(dynamicUrl.getIndividualTopic, { data: { topic_id: id } }, {
-            headers: { Authorization: sessionStorage.getItem('user_jwt') }
-        })
-            .then((response) => {
-                const result = response.data.Items[0];
-                !isEmptyObject(result) && setEditTopicData(result);
-                !isEmptyObject(result) && setEditTopicConceptIds(result.topic_concept_id);
-                !isEmptyObject(result) && setEditRelatedTopicsIds(result.related_topics);
-                !isEmptyObject(result) && setConceptIds(result.topic_concept_id);
-                !isEmptyObject(result) && setRelatedTopicsIds(result.related_topics);
-                !isEmptyObject(result) && setTopicQuiz(result.topic_quiz_config);
-            })
-            .catch((err) => {
-                console.log('err: ', err);
-                if (err.response.data === 'Topic Name Already Exists') {
-                    sweetAlertHandler({ title: 'Sorry', type: 'error', text: 'Topic Name Already Exists!' })
-                }
-            })
-    }
 
     const submitEditTopic = (formData) => {
         axios.post(dynamicUrl.editTopic, { data: formData }, {
             headers: { Authorization: sessionStorage.getItem('user_jwt') }
         })
             .then((response) => {
-                const result = response;
+                const result = response.data;
                 console.log('result: ', result);
+                if(result == 200){
+                    sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.EditTopic });
+
+                }
             })
             .catch((err) => {
                 console.log(err.response.data);
@@ -133,10 +116,90 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
             })
     }
 
+    const fetchAllConceptsData = async () => {
+        const allConceptsData = await fetchAllConcepts();
+        if (allConceptsData.Error) {
+            console.log("allConceptsData.ERROR", allConceptsData.Error);
+        } else {
+            console.log('allConceptsData', allConceptsData.Items);
+            let resultConceptData = allConceptsData.Items
+
+            resultConceptData.forEach((item, index) => {
+                if (item.concept_status === 'Active') {
+                    console.log();
+                    conceptArr.push({ value: item.concept_id, label: item.concept_title })
+                }
+            }
+            );
+            console.log("conceptArr", conceptArr);
+            setConceptTitles(conceptArr)
+
+
+        }
+
+        const allTopicsData = await fetchAllTopics();
+        if (allTopicsData.Error) {
+            console.log("allTopicsData,Error", allTopicsData, Error);
+        } else {
+            console.log("allTopicsData", allTopicsData.Items);
+            let resultTopicData = allTopicsData.Items
+            resultTopicData.forEach((item, index) => {
+                if (item.topic_status === 'Active') {
+                    console.log();
+                    topicArr.push({ value: item.topic_id, label: item.topic_title })
+                }
+            }
+            );
+            console.log("topicArr", topicArr);
+            setTopicTitles(topicArr)
+        }
+
+        const topicData = await getIndividualTopic(id);
+        if (topicData.Error) {
+            console.log("topicData.Error", topicData.Error);
+        } else {
+            const result = topicData.Items[0];
+            console.log("result", result);
+            setEditTopicData(result);
+            setTopicQuiz(result.topic_quiz_config)
+
+
+            topicData.Items[0].pre_post_learning === 'Pre-Learning' ? DefaultisLockedOption.push({ value: result.pre_post_learning, label: result.pre_post_learning }) : DefaultisLockedOption.push({ value: 'Post-Learning', label: 'Post-Learning' })
+            console.log("DefaultisLockedOption", DefaultisLockedOption);
+            setprePostLearning(DefaultisLockedOption[0].value)
+            setDefaultOption(DefaultisLockedOption)
+
+            let tempArr = [];
+            let tempTopic = [];
+
+            topicData.Items[0].topic_concept_id.forEach(function (entry_concept) {
+                conceptArr.forEach(function (childrenEntry_concept) {
+                    if (entry_concept.concept_id === childrenEntry_concept.value) {
+                        tempArr.push(childrenEntry_concept)
+                    }
+
+                });
+                console.log('tempArr', tempArr);
+                setDefaultConceptOption(tempArr)
+                setTopicConceptId(topicData.Items[0].topic_concept_id)
+            });
+
+            topicData.Items[0].related_topics.forEach(function (entry) {
+                topicArr.forEach(function (childrenEntry) {
+                    if (entry.topic_id === childrenEntry.value) {
+                        tempTopic.push(childrenEntry)
+                    }
+                });
+                console.log("tempTopic", tempTopic);
+                setDefaultTopicOption(tempTopic)
+                setRelatedTopicsId(topicData.Items[0].related_topics)
+            });
+        }
+
+    }
+
     useEffect(() => {
-        setTopicConceptId(data);
-        setRelatedTopicsId(data);
-        _getEditTopic();
+        fetchAllConceptsData()
     }, [])
 
     const prePostOptions = [
@@ -144,32 +207,53 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
         { value: 'Post-Learning', label: 'Post-Learning' },
     ];
 
-    const handlePrePostChange = (e) => setprePostLearning(e.target.value)
+    // const handlePrePostChange = (e) => setprePostLearning(e.target.value)
+    const postPreOption = (e) => {
+        setprePostLearning(e.value);
+    };
+
+    const getconceptId = (event) => {
+        let valuesArr = [];
+        for (let i = 0; i < event.length; i++) {
+            valuesArr.push({ "concept_id": event[i].value })
+        }
+        setTopicConceptId(valuesArr);
+    }
+
+    const gettopicId = (event) => {
+        let topicArr = [];
+        for (let i = 0; i < event.length; i++) {
+            topicArr.push({ "topic_id": event[i].value })
+        }
+        setRelatedTopicsId(topicArr);
+    }
 
     return (
         <div>
             {!isEmptyObject(editTopicData) ?
                 <Card>
                     <Card.Body>
-                        <Card.Title>Add Topic</Card.Title>
+                        <Card.Title>Edit Topic</Card.Title>
                         <Formik
+                            enableReinitialize
                             initialValues={{
-                                topic_title: editTopicData.topic_title === "N.A." ? '' : editTopicData.topic_title,
-                                topic_description: editTopicData.topic_description === "N.A." ? '' : editTopicData.topic_description,
-                                topic_concept_id: editTopicData.topic_concept_id === "N.A." ? [] : editTopicData.topic_concept_id,
-                                pre_post_learning: editTopicData.pre_post_learning === "N.A." ? '' : editTopicData.pre_post_learning,
-                                related_topics: editTopicData.related_topics === "N.A." ? [] : editTopicData.related_topics,
-                                topic_quiz_config: editTopicData.topic_quiz_config === "N.A." ? [] : editTopicData.topic_quiz_config
+                                topic_title: editTopicData.topic_title,
+                                topic_description: editTopicData.topic_description,
+                                topic_concept_id: '',
+                                pre_post_learning: '',
+                                related_topics: '',
+                                topic_quiz_config: ''
                             }}
                             // validationSchema
                             onSubmit={(values, { setErrors, setStatus, setSubmitting }) => {
                                 setSubmitting(true);
                                 const formData = {
+                                    topic_id:id,
                                     topic_title: values.topic_title,
                                     topic_description: values.topic_description,
-                                    topic_concept_id: topicConceptIds,
+                                    topic_concept_id:topicConceptId ,
                                     pre_post_learning: prePostLearning,
-                                    related_topics: relatedTopicsIds,
+                                    related_topics: relatedTopicsId,
                                     topic_quiz_config: topicQuiz
                                 }
                                 console.log('formData: ', formData)
@@ -194,9 +278,124 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
                                     </Col>
 
                                     <Col sm={6}>
+                                        {defaultOption && (<div className="form-group fill" style={{ position: "relative", zIndex: 100 }}>
+                                            <label className="floating-label">
+                                                <small className="text-danger">* </small>
+                                                pre-post learning
+                                            </label>
+                                            {defaultOption.length === 0 ? (
+
+                                                <Select
+                                                    className="basic-single"
+                                                    classNamePrefix="select"
+                                                    defaultValue={prePostOptions[0]}
+                                                    name="color"
+                                                    options={prePostOptions}
+                                                    onChange={(e) => { postPreOption(e) }}
+                                                />
+
+                                            ) : (
+                                                <>
+                                                    {defaultOption && (
+
+                                                        <Select
+                                                            className="basic-single"
+                                                            classNamePrefix="select"
+                                                            defaultValue={defaultOption[0]}
+                                                            name="color"
+                                                            options={prePostOptions}
+                                                            onChange={(e) => { postPreOption(e) }}
+                                                        />
+
+                                                    )}
+                                                </>
+
+                                            )}
+                                            <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>required</small>
+                                        </div>)}
+                                    </Col>
+
+                                    <Col sm={6}>
+
+                                        {defaultConceptOption && (<div className="form-group fill" style={{ position: "relative", zIndex: 50 }}>
+                                            <label className="floating-label" htmlFor="concept">
+                                                <small className="text-danger">* </small> concept
+                                            </label>
+                                            {defaultConceptOption.length === 0 ? (
+
+                                                <Select
+                                                    className="basic-multi-select"
+                                                    isMulti
+                                                    closeMenuOnSelect={false}
+                                                    onChange={(e) => { gettopicId(e); setIsShown(true) }}
+                                                    options={topicTitles}
+                                                    placeholder="Select the Topic Title"
+                                                />
+
+                                            ) : (
+                                                <>
+                                                    {defaultConceptOption && (
+
+                                                        <Select
+                                                            defaultValue={defaultConceptOption}
+                                                            className="basic-multi-select"
+                                                            isMulti
+                                                            closeMenuOnSelect={false}
+                                                            onChange={(e) => { getconceptId(e); setIsShown(true) }}
+                                                            options={conceptTitles}
+                                                            placeholder="Select the Concept Title"
+                                                        />
+
+                                                    )}
+                                                </>
+
+                                            )}
+                                            <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>required</small>
+                                        </div>)}
+
+                                        {defaultTopicOption && (<div className="form-group fill" style={{ position: "relative", zIndex: 20 }}>
+                                            <label className="floating-label" htmlFor="related_topic">
+                                                <small className="text-danger">* </small> Related Topics
+                                            </label>
+                                            {defaultTopicOption.length === 0 ? (
+
+                                                <Select
+                                                    className="basic-multi-select"
+                                                    isMulti
+                                                    closeMenuOnSelect={false}
+                                                    onChange={(e) => { gettopicId(e); setIsShown(true) }}
+                                                    options={topicTitles}
+                                                    placeholder="Select the Topic Title"
+                                                />
+
+                                            ) : (
+                                                <>
+                                                    {defaultTopicOption && (
+
+                                                        <Select
+                                                            defaultValue={defaultTopicOption}
+                                                            className="basic-multi-select"
+                                                            isMulti
+                                                            closeMenuOnSelect={false}
+                                                            onChange={(e) => { gettopicId(e); setIsShown(true) }}
+                                                            options={topicTitles}
+                                                            placeholder="Select the Topic Title"
+                                                        />
+
+                                                    )}
+                                                </>
+
+                                            )}
+                                            <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>required</small>
+                                        </div>)}
+                                    </Col>
+
+                                    <Col sm={6}>
                                         <Form.Group>
                                             <Form.Label className="floating-label" ><small className="text-danger">* </small>Topic Decription</Form.Label>
                                             <Form.Control
+                                                as="textarea"
+                                                rows="4"
                                                 name="topic_description"
                                                 onBlur={handleBlur}
                                                 onChange={handleChange}
@@ -204,48 +403,6 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
                                                 value={values.topic_description}
                                             />
                                             {/* {touched.topic_description && errors.topic_description && <small className="text-danger form-text">{errors.topic_description}</small>} */}
-                                        </Form.Group>
-                                    </Col>
-
-                                    <Col sm={6}>
-                                        <Form.Group>
-                                            <Form.Label className="floating-label" ><small className="text-danger">* </small>Topic concept Id</Form.Label>
-                                            <Multiselect
-                                                options={topicConceptId}
-                                                displayValue="name"
-                                                selectionLimit="25"
-                                                onSelect={handleOnSelect}
-                                                onRemove={handleOnRemove}
-                                                selectedValues={editTopicConceptIds}
-                                            />
-                                        </Form.Group>
-                                    </Col>
-
-                                    <div className="col-md-6">
-                                        <div className="form-group fill">
-                                            <label className="floating-label">
-                                                <small className="text-danger">* </small>
-                                                pre-post learning
-                                            </label>
-                                            <select className='form-control' onChange={handlePrePostChange}>
-                                                {prePostOptions.map((ele, i) => {
-                                                    return <option key={i} >{ele.value}</option>
-                                                })}
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <Col sm={6}>
-                                        <Form.Group>
-                                            <Form.Label className="floating-label" ><small className="text-danger">* </small>Related Topics</Form.Label>
-                                            <Multiselect
-                                                options={relatedTopicsId}
-                                                displayValue="name"
-                                                selectionLimit="25"
-                                                onSelect={handleOnSelectTopic}
-                                                onRemove={handleOnRemoveTopic}
-                                                selectedValues={editRelatedTopicsIds}
-                                            />
                                         </Form.Group>
                                     </Col>
 

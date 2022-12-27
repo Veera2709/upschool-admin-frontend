@@ -39,8 +39,10 @@ const MESSAGES = {
 
     AddingChapter: 'Added Chapter Successfully',
     AddingUnit: 'Added Unit Successfully',
+    AddingTopic: 'Added Topic Successfully',
     EditChapter: 'Chapter Updated Successfully',
     EditUnit: 'Unit Updated Successfully',
+    EditTopic: 'Topic Updated Successfully',
 
     PleaseCheckYourEmailForTheOTP: 'please check your mail for the otp!',
     RegisteredSuccessfully: 'registered successfully!',
