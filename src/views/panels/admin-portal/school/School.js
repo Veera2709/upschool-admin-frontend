@@ -5,6 +5,7 @@ import SchoolChild from './SchoolChild'
 import { useState } from 'react';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
+import { useHistory } from 'react-router-dom';
 
 // // import React, { useState } from 'react';
 // import { Row, Col, Card, Pagination, Button, Modal } from 'react-bootstrap';
@@ -16,6 +17,7 @@ import Tabs from 'react-bootstrap/Tabs';
 // // import makeData from '../../../data/schoolData';
 
 const School = () => {
+    const history = useHistory();
     const [_data, _setData] = useState([]);
     const [subscriptionActive, setSubscriptionActive] = useState([]);
     const [subscriptionInActive, setSubscriptionInActive] = useState([]);
@@ -32,7 +34,17 @@ const School = () => {
                 _setData(resultData && resultData.filter(p => p.subscription_active === 'Yes'))
             })
             .catch((err) => {
-                console.log(err)
+                console.log(err.response.data);
+
+                if (err.response.data === "Invalid Token") {
+
+                    sessionStorage.clear();
+                    localStorage.clear();
+
+                    history.push('/auth/signin-1');
+                    window.location.reload();
+                }
+
             })
     }
 
