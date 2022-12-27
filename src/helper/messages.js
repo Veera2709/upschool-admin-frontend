@@ -3,6 +3,7 @@ const MESSAGES = {
 
     DigiCardNameExists: 'DigiCard Title exists already!',
     ChapterNameExists: 'Chapter Title exists already!',
+    UnitNameExists: 'Unit Title exists already!',
 
     ComponentAdding: 'Error in adding the component! Please ensure that basic details component is completed.',
     ErrorInSendingEmail: 'Error in sending email!',
@@ -37,7 +38,9 @@ const MESSAGES = {
     EditDigiCard: 'DigiCard Updated Successfully',
 
     AddingChapter: 'Added Chapter Successfully',
+    AddingUnit: 'Added Unit Successfully',
     EditChapter: 'Chapter Updated Successfully',
+    EditUnit: 'Unit Updated Successfully',
 
     PleaseCheckYourEmailForTheOTP: 'please check your mail for the otp!',
     RegisteredSuccessfully: 'registered successfully!',

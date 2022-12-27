@@ -10,18 +10,19 @@ import dynamicUrl from '../../../../helper/dynamicUrls';
 import ReactTags from 'react-tag-autocomplete';
 import 'jodit';
 import 'jodit/build/jodit.min.css';
-import JoditEditor from 'jodit-react';
 import MESSAGES from '../../../../helper/messages';
 import Swal from 'sweetalert2';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import withReactContent from 'sweetalert2-react-content';
-import AddArticles from '../digicard/AddArticles'
 import ArticleRTE from './ArticleRTE'
-import { areFilesInvalid, isEmptyObject } from '../../../../util/utils';
+import { areFilesInvalid, voiceInvalid } from '../../../../util/utils';
 import { useEffect } from 'react';
 import logo from './img/logo.png'
-import { useHistory } from 'react-router-dom';
 import Multiselect from 'multiselect-react-dropdown';
+import Select from 'react-select';
+
+import { fetchAllDigiCards } from '../../../api/CommonApi'
+
 
 
 
@@ -45,52 +46,24 @@ const AddDigiCard = (
 
   const colourOptions = [];
 
-  const [content, setContent] = useState('');
+
   const [loader, showLoader, hideLoader] = useFullPageLoader();
   const [disableButton, setDisableButton] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const MySwal = withReactContent(Swal);
-  const [isClientExists, setIsClientExists] = useState(false);
-  const [invalidFile, setInvalidFile] = useState(false);
-  const [currentFeature, setCurrentFeature] = useState("");
-  const [title, setTitle] = useState("");
-
-  const [category, setCategory] = useState("");
-  const [categoryNameEdit, setCategoryNameEdit] = useState("");
-  const [categoryName, setCategoryName] = useState("");
-  const [subCategory, setSubCategory] = useState("");
-  const [subCategoryName, setSubCategoryName] = useState("");
-  const [device, setDevice] = useState(terminal);
-  const [featured, setFeatured] = useState("No");
-  const [categoryCollection, setCategoryCollection] = useState("");
-  const [subCollection, setSubCollection] = useState("");
-  const [currentStatus, setCurrentStatus] = useState("Draft");
-  const [createdAt, setCreatedAt] = useState("");
-  const [createdBy, setCreatedBy] = useState("");
-  const [modifiedAt, setModifiedAt] = useState("");
-  const [modifiedBy, setModifiedBy] = useState("");
-  const [uniqueArticle, setUniqueArtricle] = useState("");
-  const [terminalOption, setTerminalOption] = useState([]);
-  const [subCategories, setSubCategories] = useState([]);
-  const [views, setViews] = useState([]);
-  const [upvotes, setUpvotes] = useState([]);
-  const [downvotes, setDownvotes] = useState([]);
-  const [submitAnchor, setSubmitAnchor] = useState(false);
-  const [finalSequenceNo, setFinalSequenceNo] = useState("");
   const [articleSize, setArticleSize] = useState(20);
   const [imageCount, setImageCount] = useState(0);
   const [multiOptions, setMultiOptions] = useState([]);
-
-
   const [tags, setTags] = useState([]);
+  const [index, setIndex] = useState(0);
   const [ImgURL, setImgURL] = useState([]);
   const [display, setDisplay] = useState('none');
   const [imgFile, setImgFile] = useState([]);
   const [articleData, setArticleData] = useState("");
   const [articleDataTitle, setArticleDataTtitle] = useState("");
   const [digitalTitles, setDigitalTitles] = useState([]);
-
   const [imgValidation, setImgValidation] = useState(true);
+  const [voiceError, setVoiceError] = useState(true);
   const [topicDigiCardIds, setTopicDigiCardIds] = useState([]);
 
 
@@ -149,37 +122,46 @@ const AddDigiCard = (
   //   history.push(`/admin-portal/preview`)
   // }
 
+
+  const fetchAllData = async () => {
+    const allDigicardData = await fetchAllDigiCards(dynamicUrl.fetchAllDigiCards);
+    if (allDigicardData.error) {
+      console.log(allDigicardData.error);
+    } else {
+      console.log("allDigicardData", allDigicardData.Items);
+      let resultData = allDigicardData.Items;
+      resultData.forEach((item, index) => {
+        if (item.digicard_status === 'Active') {
+          colourOptions.push({ value: item.digi_card_id, label: item.digi_card_title })
+        }
+      })
+      setDigitalTitles(colourOptions);
+    }
+  }
+
   useEffect(() => {
     setImgFile(logo)
-
-    axios.post(dynamicUrl.fetchAllDigiCards, {}, {
-      headers: { Authorization: sessionStorage.getItem('user_jwt') }
-    })
-      .then((response) => {
-        console.log(response.data.Items);
-        let resultData = response.data.Items;
-
-
-        resultData.forEach((item, index) => {
-          // item.digicard_status === 'Active' ? colourOptions.push({ value: item.digi_card_title, label: item.digi_card_title, digi_card_id: item.digi_card_id }) : colourOptions.push({ value: item.digi_card_title, label: item.digi_card_title, digi_card_id: item.digi_card_id, isDisabled: true })
-          if (item.digicard_status === 'Active') {
-            colourOptions.push({ value: item.digi_card_title, digi_card_id: item.digi_card_id })
-          }
-        }
-        );
-        console.log("colourOptions", colourOptions);
-        setDigitalTitles(colourOptions)
-      })
-      .catch((err) => {
-        console.log(err)
-      })
+    fetchAllData();
   }, [])
 
 
-  const handleOnSelect = ((selectedList, selectedItem) => {
-    setMultiOptions(selectedList)
-  })
-  const handleOnRemove = (selectedList, selectedItem) => setTopicDigiCardIds(selectedList.map(skillId => skillId.id))
+  // const handleOnSelect = ((selectedList) => {
+  //   console.log("selectedList", selectedList, index);
+
+
+  //   multiOptions.push({ 'digi_card_id': selectedList[selectedList.length - 1].digi_card_id })
+
+
+  // })
+  // const handleOnRemove = (selectedList, selectedItem) => setTopicDigiCardIds(selectedList.map(skillId => skillId.id))
+
+  const getMultiOptions = (event) => {
+    let valuesArr = [];
+    for (let i = 0; i < event.length; i++) {
+        valuesArr.push({"digi_card_id":event[i].value})
+    }
+    setMultiOptions(valuesArr);
+  }
 
 
   return (
@@ -214,7 +196,18 @@ const AddDigiCard = (
               console.log("multiOptions", multiOptions);
               console.log("on submit");
               let allFilesData = [];
+              let voiceData = [];
               const fileNameArray = ['digicard_image'];
+              let voiceNote = document.getElementById('digicard_voice_note').files[0];
+              // voiceData.push(voiceNote)
+              console.log("voicenote", voiceNote);
+
+              if (voiceNote == undefined) {
+                voiceData.push({ values: 'false' })
+              } else {
+                voiceData.push(voiceNote)
+              }
+
 
               fileNameArray.forEach((fileName) => {
                 let selectedFile = document.getElementById(fileName).files[0];
@@ -228,6 +221,9 @@ const AddDigiCard = (
               if (areFilesInvalid(allFilesData) !== 0) {
                 setImgValidation(false)
                 hideLoader();
+              } else if (voiceInvalid(voiceData) !== 0) {
+                setVoiceError(false)
+                console.log("voice note not a mp3");
               } else {
 
                 var formData = {
@@ -241,6 +237,7 @@ const AddDigiCard = (
                   digicard_voice_note: values.digicard_voice_note === undefined ? "" : values.digicard_voice_note,
                   related_digi_cards: multiOptions,
                 };
+                console.log("formData", formData);
 
                 axios
                   .post(dynamicUrl.insertDigicard, { data: formData }, { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
@@ -300,7 +297,7 @@ const AddDigiCard = (
                       console.log(error.response.data);
 
                       console.log(error.response.data);
-                      if (error.response.status === 400) {
+                      if (error.response.status === 401) {
                         console.log();
                         hideLoader();
                         // setIsClientExists(true);
@@ -381,18 +378,19 @@ const AddDigiCard = (
                         name="digicard_voice_note"
                         id="digicard_voice_note"
                         onBlur={handleBlur}
-                        onChange={
-                          handleChange
-                          // previewImage(e);
+                        onChange={(e) => {
+                          handleChange(e);
+                          setVoiceError(true)
+                        }
                         }
                         type="file"
                         value={values.digicard_voice_note}
                         accept=".mp3,audio/*"
-                      // accept="image/*"
                       />
                       {touched.digicard_voice_note && errors.digicard_voice_note && (
                         <small className="text-danger form-text">{errors.digicard_voice_note}</small>
                       )}
+                      <small className="text-danger form-text" style={{ display: voiceError ? 'none' : 'block' }}>Invalid File Type or File size is Exceed More Than 10MB</small>
                     </div>
 
                     <div className='ReactTags'>
@@ -415,23 +413,23 @@ const AddDigiCard = (
                       <label className="floating-label" htmlFor="clientComponents">
                         <small className="text-danger"> </small>Related DigiCard Titles
                       </label>
-                      {/* <Select
+                      {/* <Multiselect
+                        options={digitalTitles}
+                        displayValue="value"
+                        selectionLimit="25"
+                        // selectedValues={defaultOptions}
+                        onSelect={(e) => { handleOnSelect(e) }}
+                        onRemove={handleOnRemove}
+                      /> */}
+                      <Select
                         className="basic-single"
                         classNamePrefix="select"
-                        // name="digiCardTitle"
+                        name="color"
                         isMulti
                         closeMenuOnSelect={false}
                         onChange={getMultiOptions}
                         options={digitalTitles}
                         placeholder="Which is your favourite colour?"
-                      /> */}
-                      <Multiselect
-                        options={digitalTitles}
-                        displayValue="value"
-                        selectionLimit="25"
-                        // selectedValues={defaultOptions}
-                        onSelect={handleOnSelect}
-                        onRemove={handleOnRemove}
                       />
                       <br />
                       {touched.clientComponents && errors.clientComponents && (
