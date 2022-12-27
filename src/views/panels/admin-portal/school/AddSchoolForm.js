@@ -175,10 +175,10 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
 
                         city: Yup.string().matches(Constants.Common.alphabetsWithSpaceRegex, 'city Name must contain only alphabets!').max(100).required('City is required'),
 
-                        pincode: Yup.string().matches(Constants.Common.pincodeNumberRegex, "pincode must contain 6 digits should not start with 0").required('Pincode is required'),
+                        pincode: Yup.string().matches(Constants.Common.pincodeNumberRegex, "pincode must contain 6 digits ,should not begin with 0").required('Pincode is required'),
                         // .min(6, 'pincode must be 6 digit').max(6, 'pincode must be 6 charactor')
 
-                        phone_no: Yup.string().matches(Constants.Common.phoneNumberValidRegex, 'Phone Number must').required('Phone Number is required'),
+                        phone_no: Yup.string().matches(Constants.Common.phoneNumberValidRegex, 'Phone Number must contain 10 digits!').required('Phone Number is required'),
 
                         contact_name2: Yup.string().matches(Constants.Common.alphabetsWithSpaceRegex, 'Contact Name must contain only alphabets!').max(255).required('Contact Name is required'),
 
@@ -188,7 +188,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
 
                         city2: Yup.string().matches(Constants.Common.alphabetsWithSpaceRegex, 'City Name must contain only alphabets!').max(100).required('City is required'),
 
-                        pincode2: Yup.string().matches(Constants.Common.pincodeNumberRegex, "pincode must contain 6 digits should not start with 0").required('Pincode is required'),
+                        pincode2: Yup.string().matches(Constants.Common.pincodeNumberRegex, "pincode must contain 6 digits,should not begin with 0").required('Pincode is required'),
                         // .min(6, 'pincode must be 6 digit').max(6, 'pincode must be 6 charactor')
 
                         phone_no2: Yup.string().matches(Constants.Common.phoneNumberValidRegex, 'Phone Number must contain 10 digits').required('Phone Number is required'),
