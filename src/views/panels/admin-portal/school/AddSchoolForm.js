@@ -13,6 +13,7 @@ import withReactContent from 'sweetalert2-react-content';
 import Swal from 'sweetalert2';
 import dynamicUrl from '../../../../helper/dynamicUrls';
 import { bgvAlerts } from '../../../common-ui-components/sow/bgv-api/bgvAlerts';
+import { Link, useHistory } from 'react-router-dom';
 
 // import { bgvAlerts } from '../bgv-api/bgvAlerts';
 
@@ -30,6 +31,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
     const [loader, showLoader, hideLoader] = useFullPageLoader();
     const [imgEmptyErr, setImgEmptyErr] = useState(false);
     const [schoolBoardErrMsg, setSchoolBoardErrMsg] = useState(false);
+    const history = useHistory();
 
     const schoolNameRef = useRef('');
     const schoolBoardRef = useRef('');
@@ -334,12 +336,20 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
 
                                             MySwal.fire('', error.response.data, 'error');
 
-                                            fetchSchoolData();
-                                            // Request made and server responded
-                                            console.log(error.response.data);
-                                            setStatus({ success: false });
-                                            setErrors({ submit: error.response.data });
+                                            if (error.response.data === "Invalid Token") {
 
+                                                sessionStorage.clear();
+                                                localStorage.clear();
+
+                                                history.push('/auth/signin-1');
+                                                window.location.reload();
+                                            } else {
+                                                fetchSchoolData();
+                                                // Request made and server responded
+                                                console.log(error.response.data);
+                                                setStatus({ success: false });
+                                                setErrors({ submit: error.response.data });
+                                            }
 
                                             // window.location.reload();
                                         } else if (error.request) {

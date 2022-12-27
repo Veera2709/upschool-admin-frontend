@@ -14,7 +14,7 @@ import EditSchoolForm from './EditSchoolForm';
 import SubscribeClass from './SubscribeClass';
 import { isEmptyArray } from '../../../../util/utils';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 
 function Table({ columns, data, modalOpen }) {
     const { getTableProps, getTableBodyProps, headerGroups, prepareRow, globalFilter, setGlobalFilter, page, canPreviousPage, canNextPage, pageOptions, pageCount, gotoPage, nextPage, previousPage, setPageSize, state: { pageIndex, pageSize } } = useTable(
@@ -165,6 +165,7 @@ const SchoolChild = (props) => {
     const [schoolData, setSchoolData] = useState([]);
     const [isOpen, setIsOpen] = useState(false);
     const [_isOpen, _setIsOpen] = useState(false);
+    const history = useHistory();
 
     const [loader, showLoader, hideLoader] = useFullPageLoader();
     const [isOpenEditSchool, setIsOpenEditSchool] = useState(false);
@@ -231,7 +232,19 @@ const SchoolChild = (props) => {
                     // Request made and server responded
                     hideLoader();
                     console.log(error.response.data);
-                    sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+
+                    if (error.response.data === "Invalid Token") {
+
+                        sessionStorage.clear();
+                        localStorage.clear();
+
+                        history.push('/auth/signin-1');
+                        window.location.reload();
+                    } else {
+                        sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+                    }
+
+
                 } else if (error.request) {
                     // The request was made but no response was received
                     hideLoader();
