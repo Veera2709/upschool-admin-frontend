@@ -80,7 +80,7 @@ const MESSAGES = {
     APPROVE_DENY_REASON: 'Reason to ',
     CONCEPT_DELETED: 'The concept has been deleted!',
     CONCEPT_RESTORED: 'The concept has been restored!',
-    SCHOOL_DELETED: 'school deleted successfully!',
+    SCHOOL_DELETED: 'School deleted successfully!',
     SUBJECT_RESTORED: 'The subject has been restored!',
     SUBJECT_DELETED: 'The subject has been deleted!',
   },

@@ -9,6 +9,7 @@ import withReactContent from 'sweetalert2-react-content';
 import { Row, Col } from 'react-bootstrap';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import dynamicUrl from '../../../../helper/dynamicUrls';
+import { useHistory } from 'react-router-dom';
 
 
 const AddSubjects = ({ _units, _relatedSubjects, setIsOpenAddSubject, fetchAllSubjectsData }) => {
@@ -26,6 +27,7 @@ const AddSubjects = ({ _units, _relatedSubjects, setIsOpenAddSubject, fetchAllSu
         });
     };
 
+    const history = useHistory();
     const [loader, showLoader, hideLoader] = useFullPageLoader();
     const [selectedUnits, setSelectedUnits] = useState([]);
     const [selectedRelatedSubjects, setSelectedRelatedSubjects] = useState([]);
@@ -206,8 +208,21 @@ const AddSubjects = ({ _units, _relatedSubjects, setIsOpenAddSubject, fetchAllSu
                                                 hideLoader();
                                                 // Request made and server responded
                                                 console.log(error.response.data);
-                                                setsubjectTitleErr(true);
-                                                setsubjectTitleErrMessage(error.response.data);
+
+                                                if (error.response.data === 'Invalid Token') {
+
+                                                    sessionStorage.clear();
+                                                    localStorage.clear();
+
+                                                    history.push('/auth/signin-1');
+                                                    window.location.reload();
+
+                                                } else {
+
+                                                    setsubjectTitleErr(true);
+                                                    setsubjectTitleErrMessage(error.response.data);
+                                                }
+
 
                                             } else if (error.request) {
                                                 // The request was made but no response was received
