@@ -83,6 +83,13 @@ export const AddUnit = {
   UnittitleTooShort: 'Unit title is too short!',
   UnittitleTooLong: "Unit title is too long!",
 };
+export const AddTopic = {
+  
+  TopictitleRequired: 'Topic title is required!',
+  TopictitleTooShort: 'Topic title is too short!',
+  TopictitleTooLong: "Topic title is too long!",
+  DescriptionRequired:" Topic Description is required!"
+};
 
 export const AddressForm = {
   curAddressRequired: 'Address is required!',
