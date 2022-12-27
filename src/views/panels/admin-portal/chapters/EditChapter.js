@@ -54,6 +54,9 @@ const EditChapter = () => {
     const [topicTitles, setTopicTitles] = useState([]);
     const [isShown, setIsShown] = useState(true);
     const [individualChapterdata, setIndividualChapterdata] = useState([]);
+    const [isShownPre, setIsShownPre] = useState(true);
+    const [isShownDes, setIsShownDes] = useState(true);
+
 
 
 
@@ -107,8 +110,8 @@ const EditChapter = () => {
         } else {
             let individual_Chapter_data = chapterData.Items[0];
             setIndividualChapterdata(individual_Chapter_data)
-         
-            
+
+
             setDefauleDescription(individual_Chapter_data.chapter_description);
             setDescription(individual_Chapter_data.chapter_description)
 
@@ -151,7 +154,7 @@ const EditChapter = () => {
 
     }, [])
 
-    
+
 
     const prelerningOtions = (event_pre) => {
         let values_pre = [];
@@ -201,6 +204,15 @@ const EditChapter = () => {
                             // if (postlearningOption == '') {
                             //     setIsShown(false)
                             // } else {
+
+                            if (postlearningOption == '') {
+                                setIsShown(false)
+                            } else if (prelearningOptions == '') {
+                                setIsShownPre(false)
+                            }
+                            else if (description == undefined || description == '') {
+                                setIsShownDes(false)
+                            } else {
 
                                 console.log("on submit");
                                 var formData = {
@@ -257,15 +269,7 @@ const EditChapter = () => {
                                             hideLoader();
                                         }
                                     });
-
-                            // }
-
-
-
-
-
-
-
+                            }
                         }}
                     >
                         {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
@@ -295,49 +299,47 @@ const EditChapter = () => {
                                             </label>
                                             {defaultPostleraing.length === 0 ? (
 
-<Select
-    className="basic-single"
-    classNamePrefix="select"
-    name="color"
-    isMulti
-    closeMenuOnSelect={false}
-    onChange={postlerningOtions}
-    options={topicTitles}
-    placeholder="Select"
-/>
+                                                <Select
+                                                    className="basic-single"
+                                                    classNamePrefix="select"
+                                                    name="color"
+                                                    isMulti
+                                                    closeMenuOnSelect={false}
+                                                    onChange={postlerningOtions}
+                                                    options={topicTitles}
+                                                    placeholder="Select"
+                                                />
 
-) : (
-<>
-    {defaultPostleraing && (
+                                            ) : (
+                                                <>
+                                                    {defaultPostleraing && (
 
-        <Select
-            defaultValue={defaultPostleraing}
-            className="basic-single"
-            classNamePrefix="select"
-            name="color"
-            isMulti
-            closeMenuOnSelect={false}
-            onChange={postlerningOtions}
-            options={topicTitles}
-            placeholder="Select"
-        />
+                                                        <Select
+                                                            defaultValue={defaultPostleraing}
+                                                            className="basic-single"
+                                                            classNamePrefix="select"
+                                                            name="color"
+                                                            isMulti
+                                                            closeMenuOnSelect={false}
+                                                            onChange={(e)=>{postlerningOtions(e);setIsShown(true)}}
+                                                            options={topicTitles}
+                                                            placeholder="Select"
+                                                        />
 
-    )}
-</>
+                                                    )}
+                                                </>
 
-)}
-                                            <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>required</small>
+                                            )}
+                                            <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>Postlearning Topic Required</small>
                                         </div>
                                         <div className="form-group fill" >
                                             <Form.Label htmlFor="chapter_description"> <small className="text-danger">* </small>Chapter Description</Form.Label>
                                             <Form.Control as="textarea"
-                                                onChange={ChapterDescription} rows="4"
+                                                onChange={(e)=>{ChapterDescription(e);setIsShownDes(true)}} rows="4"
                                                 defaultValue={description}
                                             />
                                             <br />
-                                            {touched.prelearning_topic && errors.prelearning_topic && (
-                                                <small className="text-danger form-text">{errors.prelearning_topic}</small>
-                                            )}
+                                            <small className="text-danger form-text" style={{ display: isShownDes ? 'none' : 'block' }}>Chapter Description Required</small>
                                         </div>
                                     </Col>
                                     <Col sm={6}>
@@ -369,7 +371,7 @@ const EditChapter = () => {
                                                             name="color"
                                                             isMulti
                                                             closeMenuOnSelect={false}
-                                                            onChange={prelerningOtions}
+                                                            onChange={(e)=>{prelerningOtions(e);setIsShownPre(true)}}
                                                             options={topicTitles}
                                                             placeholder="Select"
                                                         />
@@ -379,9 +381,7 @@ const EditChapter = () => {
 
                                             )}
                                             <br />
-                                            {touched.prelearning_topic && errors.prelearning_topic && (
-                                                <small className="text-danger form-text">{errors.prelearning_topic}</small>
-                                            )}
+                                            <small className="text-danger form-text" style={{ display: isShownPre ? 'none' : 'block' }}>Prelearning Topic Required</small>
                                         </div>
                                         <div className="form-group fill" style={{ position: "relative", zIndex: 10 }}>
                                             <label className="floating-label" htmlFor="isLocked">
