@@ -56,6 +56,7 @@ services.onPost('/api/account/login').reply(async (config) => {
 
 services.onGet('/api/account/me').reply((config) => {
   try {
+
     const { Authorization } = config.headers;
 
     if (!Authorization) {

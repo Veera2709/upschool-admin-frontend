@@ -7,6 +7,7 @@ import { SessionStorage } from '../../../../util/SessionStorage';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import MESSAGES from '../../../../helper/messages';
+import { useHistory } from 'react-router-dom';
 
 import { GlobalFilter } from '../../../common-ui-components/tables/GlobalFilter';
 import { useTable, useSortBy, usePagination, useGlobalFilter } from 'react-table';
@@ -14,9 +15,11 @@ import dynamicUrl from '../../../../helper/dynamicUrls';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import AddConcepts from './AddConcepts';
 import EditConcepts from './EditConcepts';
+import BasicSpinner from '../../../../helper/BasicSpinner';
 
 function Table({ columns, data }) {
 
+    const history = useHistory();
     const [isLoading, setIsLoading] = useState(false);
     const [conceptData, setConceptData] = useState([]);
     const [_conceptID, _setConceptID] = useState('');
@@ -85,21 +88,36 @@ function Table({ columns, data }) {
                     // Request made and server responded
                     console.log(error.response.data);
 
+                    if (error.response.data === 'Invalid Token') {
+
+                        sessionStorage.clear();
+                        localStorage.clear();
+
+                        history.push('/auth/signin-1');
+                        window.location.reload();
+
+                    } else {
+
+                        sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+                        fetchAllConceptsData();
+                    }
+
 
                 } else if (error.request) {
                     // The request was made but no response was received
                     console.log(error.request);
                     hideLoader();
-
+                    fetchAllConceptsData();
                 } else {
                     // Something happened in setting up the request that triggered an Error
                     console.log('Error', error.message);
                     hideLoader();
-
+                    fetchAllConceptsData();
                 }
             })
 
     }, [digicardsAndConcepts])
+
 
     const sweetConfirmHandler = (alert, concept_id, updateStatus) => {
         MySwal.fire({
@@ -109,17 +127,20 @@ function Table({ columns, data }) {
             showCloseButton: true,
             showCancelButton: true
         }).then((willDelete) => {
+
             if (willDelete.value) {
+
                 showLoader();
                 deleteConcept(concept_id, updateStatus);
+
             } else {
 
-                const returnValue = pageLocation === 'active-concepts' ? (
-                    MySwal.fire('', MESSAGES.INFO.DATA_SAFE, 'success')
-                ) : (
-                    MySwal.fire('', MESSAGES.INFO.FAILED_TO_RESTORE, 'error')
-                )
-                return returnValue;
+                // const returnValue = pageLocation === 'active-concepts' ? (
+                //     MySwal.fire('', MESSAGES.INFO.DATA_SAFE, 'success')
+                // ) : (
+                //     MySwal.fire('', MESSAGES.INFO.FAILED_TO_RESTORE, 'error')
+                // )
+                // return returnValue;
             }
         });
     };
@@ -130,13 +151,14 @@ function Table({ columns, data }) {
         pageLocation === 'active-concepts' ? (
             sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: MESSAGES.INFO.ABLE_TO_RECOVER }, concept_id, updateStatus)
         ) : (
-            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: MESSAGES.INFO.ABLE_TO_DELETE }, concept_id, updateStatus)
+            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: 'This will restore the concept!' }, concept_id, updateStatus)
         )
 
     };
 
     const fetchAllConceptsData = () => {
 
+        setIsLoading(true);
         showLoader();
         console.log(pageLocation);
 
@@ -215,9 +237,8 @@ function Table({ columns, data }) {
                     }
 
                     console.log(finalDataArray);
-                    setConceptData(finalDataArray);
-                    setIsLoading(true);
-
+                    setConceptData([...finalDataArray]);
+                    setIsLoading(false);
                 }
             })
             .catch((error) => {
@@ -225,15 +246,31 @@ function Table({ columns, data }) {
                     // Request made and server responded
                     hideLoader();
                     console.log(error.response.data);
-                    sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+
+                    if (error.response.data === 'Invalid Token') {
+
+                        sessionStorage.clear();
+                        localStorage.clear();
+
+                        history.push('/auth/signin-1');
+                        window.location.reload();
+
+                    } else {
+
+                        sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+                        fetchAllConceptsData();
+                    }
+
                 } else if (error.request) {
                     // The request was made but no response was received
                     hideLoader();
                     console.log(error.request);
+                    fetchAllConceptsData();
                 } else {
                     // Something happened in setting up the request that triggered an Error
                     hideLoader();
                     console.log('Error', error.message);
+                    fetchAllConceptsData();
                 }
             });
     };
@@ -265,7 +302,21 @@ function Table({ columns, data }) {
 
                 if (response.Error) {
                     hideLoader();
-                    sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingConcept });
+
+                    if (response.Error.data === 'Invalid Token') {
+
+                        sessionStorage.clear();
+                        localStorage.clear();
+
+                        history.push('/auth/signin-1');
+                        window.location.reload();
+
+                    } else {
+
+                        sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingConcept });
+                        fetchAllConceptsData();
+                    }
+
 
                 } else {
 
@@ -276,7 +327,7 @@ function Table({ columns, data }) {
                     ) : (
                         MySwal.fire('', MESSAGES.INFO.CONCEPT_DELETED, 'success')
                     )
-
+                    fetchAllConceptsData();
 
                 }
             })
@@ -285,15 +336,32 @@ function Table({ columns, data }) {
                     // Request made and server responded
                     hideLoader();
                     console.log(error.response.data);
-                    sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+
+                    if (error.response.data === 'Invalid Token') {
+
+                        sessionStorage.clear();
+                        localStorage.clear();
+
+                        history.push('/auth/signin-1');
+                        window.location.reload();
+
+                    } else {
+
+                        sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+                        fetchAllConceptsData();
+                    }
+
+
                 } else if (error.request) {
                     // The request was made but no response was received
                     hideLoader();
                     console.log(error.request);
+                    fetchAllConceptsData();
                 } else {
                     // Something happened in setting up the request that triggered an Error
                     hideLoader();
                     console.log('Error', error.message);
+                    fetchAllConceptsData();
                 }
             });
     };
@@ -330,145 +398,154 @@ function Table({ columns, data }) {
 
     return (
         <>
-            <Row className="mb-3">
-                <Col className="d-flex align-items-center">
-                    Show
-                    <select
-                        className="form-control w-auto mx-2"
-                        value={pageSize}
-                        onChange={(e) => {
-                            setPageSize(Number(e.target.value));
-                        }}
-                    >
-                        {[5, 10, 20, 30, 40, 50].map((pageSize) => (
-                            <option key={pageSize} value={pageSize}>
-                                {pageSize}
-                            </option>
-                        ))}
-                    </select>
-                    entries
-                </Col>
-                <Col className="d-flex justify-content-end">
-                    <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
 
-                    <Button
-                        variant="success"
-                        className="btn-sm btn-round has-ripple ml-2"
-                        onClick={(e) => {
-                            handleAddConcepts(e);
-                        }}
-                    >
-                        <i className="feather icon-plus" /> Add Concepts
-                    </Button>
+            {conceptData && data && (
 
-                </Col>
-            </Row>
+                <>
+                    <Row className="mb-3">
+                        <Col className="d-flex align-items-center">
+                            Show
+                            <select
+                                className="form-control w-auto mx-2"
+                                value={pageSize}
+                                onChange={(e) => {
+                                    setPageSize(Number(e.target.value));
+                                }}
+                            >
+                                {[5, 10, 20, 30, 40, 50].map((pageSize) => (
+                                    <option key={pageSize} value={pageSize}>
+                                        {pageSize}
+                                    </option>
+                                ))}
+                            </select>
+                            entries
+                        </Col>
+                        <Col className="d-flex justify-content-end">
+                            <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
 
-            <BTable striped bordered hover responsive {...getTableProps()}>
-                <thead>
-                    {headerGroups.map((headerGroup) => (
-                        <tr {...headerGroup.getHeaderGroupProps()}>
-                            {headerGroup.headers.map((column) => (
-                                // Add the sorting props to control sorting. For this example
-                                // we can add them into the header props
-                                <th {...column.getHeaderProps(column.getSortByToggleProps())}>
-                                    {column.render('Header')}
-                                    {// Add a sort direction indicator //
-                                    }
-                                    <span>
-                                        {column.isSorted ? (
-                                            column.isSortedDesc ? (
-                                                <span className="feather icon-arrow-down text-muted float-right" />
-                                            ) : (
-                                                <span className="feather icon-arrow-up text-muted float-right" />
-                                            )
-                                        ) : (
-                                            ''
-                                        )}
-                                    </span>
-                                </th>
+                            <Button
+                                variant="success"
+                                className="btn-sm btn-round has-ripple ml-2"
+                                onClick={(e) => {
+                                    handleAddConcepts(e);
+                                }}
+                            >
+                                <i className="feather icon-plus" /> Add Concepts
+                            </Button>
+
+                        </Col>
+                    </Row>
+
+                    <BTable striped bordered hover responsive {...getTableProps()}>
+                        <thead>
+                            {headerGroups.map((headerGroup) => (
+                                <tr {...headerGroup.getHeaderGroupProps()}>
+                                    {headerGroup.headers.map((column) => (
+                                        // Add the sorting props to control sorting. For this example
+                                        // we can add them into the header props
+                                        <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                                            {column.render('Header')}
+                                            {// Add a sort direction indicator //
+                                            }
+                                            <span>
+                                                {column.isSorted ? (
+                                                    column.isSortedDesc ? (
+                                                        <span className="feather icon-arrow-down text-muted float-right" />
+                                                    ) : (
+                                                        <span className="feather icon-arrow-up text-muted float-right" />
+                                                    )
+                                                ) : (
+                                                    ''
+                                                )}
+                                            </span>
+                                        </th>
+                                    ))}
+                                </tr>
                             ))}
-                        </tr>
-                    ))}
-                </thead>
-                <tbody {...getTableBodyProps()}>
-                    {page.map((row, i) => {
-                        prepareRow(row);
-                        return (
-                            <tr {...row.getRowProps()}>
-                                {row.cells.map((cell) => {
-                                    return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>;
-                                })}
-                            </tr>
-                        );
-                    })}
-                </tbody>
-            </BTable>
+                        </thead>
+                        <tbody {...getTableBodyProps()}>
+                            {page.map((row, i) => {
+                                prepareRow(row);
+                                return (
+                                    <tr {...row.getRowProps()}>
+                                        {row.cells.map((cell) => {
+                                            return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>;
+                                        })}
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </BTable>
 
 
-            <Row className="justify-content-between">
-                <Col>
-                    <span className="d-flex align-items-center">
-                        Page{' '}
-                        <strong>
-                            {' '}
-                            {pageIndex + 1} of {pageOptions.length}{' '}
-                        </strong>{' '}
-                        | Go to page:{' '}
-                        <input
-                            className="form-control ml-2"
-                            type="number"
-                            defaultValue={pageIndex + 1}
-                            onChange={(e) => {
-                                const page = e.target.value ? Number(e.target.value) - 1 : 0;
-                                gotoPage(page);
-                            }}
-                            onWheel={(e) => e.target.blur()}
-                            style={{ width: '100px' }}
-                        />
-                    </span>
-                </Col>
-                <Col>
-                    <Pagination className="justify-content-end">
-                        <Pagination.First onClick={() => gotoPage(0)} disabled={!canPreviousPage} />
-                        <Pagination.Prev onClick={() => previousPage()} disabled={!canPreviousPage} />
-                        <Pagination.Next onClick={() => nextPage()} disabled={!canNextPage} />
-                        <Pagination.Last onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage} />
-                    </Pagination>
-                </Col>
-            </Row>
+                    <Row className="justify-content-between">
+                        <Col>
+                            <span className="d-flex align-items-center">
+                                Page{' '}
+                                <strong>
+                                    {' '}
+                                    {pageIndex + 1} of {pageOptions.length}{' '}
+                                </strong>{' '}
+                                | Go to page:{' '}
+                                <input
+                                    className="form-control ml-2"
+                                    type="number"
+                                    defaultValue={pageIndex + 1}
+                                    onChange={(e) => {
+                                        const page = e.target.value ? Number(e.target.value) - 1 : 0;
+                                        gotoPage(page);
+                                    }}
+                                    onWheel={(e) => e.target.blur()}
+                                    style={{ width: '100px' }}
+                                />
+                            </span>
+                        </Col>
+                        <Col>
+                            <Pagination className="justify-content-end">
+                                <Pagination.First onClick={() => gotoPage(0)} disabled={!canPreviousPage} />
+                                <Pagination.Prev onClick={() => previousPage()} disabled={!canPreviousPage} />
+                                <Pagination.Next onClick={() => nextPage()} disabled={!canNextPage} />
+                                <Pagination.Last onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage} />
+                            </Pagination>
+                        </Col>
+                    </Row>
 
-            <Modal dialogClassName="my-modal" show={isOpenAddConcept} onHide={() => setIsOpenAddConcept(false)}>
+                    <Modal dialogClassName="my-modal" show={isOpenAddConcept} onHide={() => setIsOpenAddConcept(false)}>
 
-                <Modal.Header closeButton>
+                        <Modal.Header closeButton>
 
-                    <Modal.Title as="h5">Add Concept</Modal.Title>
+                            <Modal.Title as="h5">Add Concept</Modal.Title>
 
-                </Modal.Header>
+                        </Modal.Header>
 
-                <Modal.Body>
+                        <Modal.Body>
 
-                    <AddConcepts _digicards={_digicards} _relatedConcepts={_relatedConcepts} setIsOpenAddConcept={setIsOpenAddConcept} fetchAllConceptsData={fetchAllConceptsData} />
+                            <AddConcepts _digicards={_digicards} _relatedConcepts={_relatedConcepts} setIsOpenAddConcept={setIsOpenAddConcept} fetchAllConceptsData={fetchAllConceptsData} setDigicardsAndConcepts={setDigicardsAndConcepts} />
 
-                </Modal.Body>
+                        </Modal.Body>
 
-            </Modal>
+                    </Modal>
 
-            <Modal dialogClassName="my-modal" show={isEditAddConcept} onHide={() => setIsOpenEditConcept(false)}>
+                    <Modal dialogClassName="my-modal" show={isEditAddConcept} onHide={() => setIsOpenEditConcept(false)}>
 
-                <Modal.Header closeButton>
+                        <Modal.Header closeButton>
 
-                    <Modal.Title as="h5">Edit Concept</Modal.Title>
+                            <Modal.Title as="h5">Edit Concept</Modal.Title>
 
-                </Modal.Header>
+                        </Modal.Header>
 
-                <Modal.Body>
+                        <Modal.Body>
 
-                    <EditConcepts _digicards={_digicards} _relatedConcepts={_relatedConcepts} editConceptID={editConceptID} setIsOpenEditConcept={setIsOpenEditConcept} fetchAllConceptsData={fetchAllConceptsData} />
+                            <EditConcepts _digicards={_digicards} _relatedConcepts={_relatedConcepts} editConceptID={editConceptID} setIsOpenEditConcept={setIsOpenEditConcept} fetchAllConceptsData={fetchAllConceptsData} />
 
-                </Modal.Body>
+                        </Modal.Body>
 
-            </Modal>
+                    </Modal>
+                </>
+
+            )}
+
+
         </>
     );
 }
@@ -495,6 +572,7 @@ const ConceptTableView = ({ userStatus }) => {
 
     // const data = React.useMemo(() => makeData(50), []);
 
+    const history = useHistory();
     const [isLoading, setIsLoading] = useState(false);
     const [conceptData, setConceptData] = useState([]);
     const [_conceptID, _setConceptID] = useState('');
@@ -563,6 +641,18 @@ const ConceptTableView = ({ userStatus }) => {
                     // Request made and server responded
                     console.log(error.response.data);
 
+                    if (error.response.data === 'Invalid Token') {
+
+                        sessionStorage.clear();
+                        localStorage.clear();
+
+                        history.push('/auth/signin-1');
+                        window.location.reload();
+
+                    } else {
+
+                        sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+                    }
 
                 } else if (error.request) {
                     // The request was made but no response was received
@@ -592,12 +682,12 @@ const ConceptTableView = ({ userStatus }) => {
                 deleteConcept(concept_id, updateStatus);
             } else {
 
-                const returnValue = pageLocation === 'active-concepts' ? (
-                    MySwal.fire('', MESSAGES.INFO.DATA_SAFE, 'success')
-                ) : (
-                    MySwal.fire('', MESSAGES.INFO.FAILED_TO_RESTORE, 'error')
-                )
-                return returnValue;
+                // const returnValue = pageLocation === 'active-concepts' ? (
+                //     MySwal.fire('', MESSAGES.INFO.DATA_SAFE, 'success')
+                // ) : (
+                //     MySwal.fire('', MESSAGES.INFO.FAILED_TO_RESTORE, 'error')
+                // )
+                // return returnValue;
             }
         });
     };
@@ -609,13 +699,14 @@ const ConceptTableView = ({ userStatus }) => {
         pageLocation === 'active-concepts' ? (
             sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: MESSAGES.INFO.ABLE_TO_RECOVER }, concept_id, updateStatus)
         ) : (
-            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: MESSAGES.INFO.ABLE_TO_DELETE }, concept_id, updateStatus)
+            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: 'This will restore the concept!' }, concept_id, updateStatus)
         )
 
     };
 
     const fetchAllConceptsData = () => {
 
+        setIsLoading(true);
         showLoader();
         console.log(pageLocation);
 
@@ -695,8 +786,7 @@ const ConceptTableView = ({ userStatus }) => {
 
                     console.log(finalDataArray);
                     setConceptData(finalDataArray);
-                    setIsLoading(true);
-
+                    setIsLoading(false);
                 }
             })
             .catch((error) => {
@@ -704,15 +794,31 @@ const ConceptTableView = ({ userStatus }) => {
                     // Request made and server responded
                     hideLoader();
                     console.log(error.response.data);
-                    sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+
+                    if (error.response.data === 'Invalid Token') {
+
+                        sessionStorage.clear();
+                        localStorage.clear();
+
+                        history.push('/auth/signin-1');
+                        window.location.reload();
+
+                    } else {
+                        sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+                        fetchAllConceptsData();
+                    }
+
+
                 } else if (error.request) {
                     // The request was made but no response was received
                     hideLoader();
                     console.log(error.request);
+                    fetchAllConceptsData();
                 } else {
                     // Something happened in setting up the request that triggered an Error
                     hideLoader();
                     console.log('Error', error.message);
+                    fetchAllConceptsData();
                 }
             });
     };
@@ -743,7 +849,19 @@ const ConceptTableView = ({ userStatus }) => {
             .then(async (response) => {
                 if (response.Error) {
                     hideLoader();
-                    sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
+
+                    if (response.Error.data === 'Invalid Token') {
+
+                        sessionStorage.clear();
+                        localStorage.clear();
+
+                        history.push('/auth/signin-1');
+                        window.location.reload();
+
+                    } else {
+                        sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
+                        fetchAllConceptsData();
+                    }
 
                 } else {
 
@@ -755,6 +873,8 @@ const ConceptTableView = ({ userStatus }) => {
                         MySwal.fire('', MESSAGES.INFO.CONCEPT_DELETED, 'success')
                     )
 
+                    fetchAllConceptsData();
+
                 }
             })
             .catch((error) => {
@@ -762,117 +882,144 @@ const ConceptTableView = ({ userStatus }) => {
                     // Request made and server responded
                     hideLoader();
                     console.log(error.response.data);
-                    sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+
+                    if (error.response.data === 'Invalid Token') {
+
+                        sessionStorage.clear();
+                        localStorage.clear();
+
+                        history.push('/auth/signin-1');
+                        window.location.reload();
+
+                    } else {
+
+                        sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+                        fetchAllConceptsData();
+                    }
+
+
                 } else if (error.request) {
                     // The request was made but no response was received
                     hideLoader();
                     console.log(error.request);
+                    fetchAllConceptsData();
                 } else {
                     // Something happened in setting up the request that triggered an Error
                     hideLoader();
                     console.log('Error', error.message);
+                    fetchAllConceptsData();
                 }
             });
     };
 
     return (
         <div>
-            {conceptData.length <= 0 ? (
-                <>
-                    < React.Fragment >
-                        <div>
 
-                            <h3 style={{ textAlign: 'center' }}>No Concepts Found</h3>
-                            <div className="form-group fill text-center">
-                                <br></br>
-
-                                <Button
-                                    variant="success"
-                                    className="btn-sm btn-round has-ripple ml-2"
-                                    onClick={(e) => {
-                                        handleAddConcepts(e);
-                                    }}
-                                >
-                                    <i className="feather icon-plus" /> Add Concepts
-                                </Button>
-
-
-                            </div>
-
-                        </div>
-
-                        <Modal dialogClassName="my-modal" show={isOpenAddConcept} onHide={() => setIsOpenAddConcept(false)}>
-
-                            <Modal.Header closeButton>
-
-                                <Modal.Title as="h5">Add Concept</Modal.Title>
-
-                            </Modal.Header>
-
-                            <Modal.Body>
-
-                                <AddConcepts _digicards={_digicards} _relatedConcepts={_relatedConcepts} setIsOpenAddConcept={setIsOpenAddConcept} fetchAllConceptsData={fetchAllConceptsData} />
-
-                            </Modal.Body>
-
-                        </Modal>
-
-                    </React.Fragment>
-                </>
+            {isLoading ? (
+                <BasicSpinner />
             ) : (
-
                 <>
 
-                    < React.Fragment >
-                        <Row>
-                            <Col sm={12}>
-                                <Card>
-                                    <Card.Header>
-                                        <Card.Title as="h5">Concept List</Card.Title>
-                                    </Card.Header>
-                                    <Card.Body>
-                                        <Table columns={columns} data={conceptData} />
-                                    </Card.Body>
-                                </Card>
+                    {conceptData.length <= 0 ? (
+                        <>
+                            < React.Fragment >
+                                <div>
 
-                            </Col>
-                        </Row>
-                    </React.Fragment>
+                                    <h3 style={{ textAlign: 'center' }}>No Concepts Found</h3>
+                                    <div className="form-group fill text-center">
+                                        <br></br>
 
-                    <Modal dialogClassName="my-modal" show={isOpenAddConcept} onHide={() => setIsOpenAddConcept(false)}>
+                                        <Button
+                                            variant="success"
+                                            className="btn-sm btn-round has-ripple ml-2"
+                                            onClick={(e) => {
+                                                handleAddConcepts(e);
+                                            }}
+                                        >
+                                            <i className="feather icon-plus" /> Add Concepts
+                                        </Button>
 
-                        <Modal.Header closeButton>
 
-                            <Modal.Title as="h5">Add Concept</Modal.Title>
+                                    </div>
 
-                        </Modal.Header>
+                                </div>
 
-                        <Modal.Body>
+                                <Modal dialogClassName="my-modal" show={isOpenAddConcept} onHide={() => setIsOpenAddConcept(false)}>
 
-                            <AddConcepts _digicards={_digicards} _relatedConcepts={_relatedConcepts} setIsOpenAddConcept={setIsOpenAddConcept} fetchAllConceptsData={fetchAllConceptsData} />
+                                    <Modal.Header closeButton>
 
-                        </Modal.Body>
+                                        <Modal.Title as="h5">Add Concept</Modal.Title>
 
-                    </Modal>
+                                    </Modal.Header>
 
-                    <Modal dialogClassName="my-modal" show={isEditAddConcept} onHide={() => setIsOpenEditConcept(false)}>
+                                    <Modal.Body>
 
-                        <Modal.Header closeButton>
+                                        <AddConcepts _digicards={_digicards} _relatedConcepts={_relatedConcepts} setIsOpenAddConcept={setIsOpenAddConcept} fetchAllConceptsData={fetchAllConceptsData} setDigicardsAndConcepts={setDigicardsAndConcepts} />
 
-                            <Modal.Title as="h5">Edit Concept</Modal.Title>
+                                    </Modal.Body>
 
-                        </Modal.Header>
+                                </Modal>
 
-                        <Modal.Body>
+                            </React.Fragment>
+                        </>
+                    ) : (
 
-                            <EditConcepts _digicards={_digicards} _relatedConcepts={_relatedConcepts} editConceptID={editConceptID} setIsOpenEditConcept={setIsOpenEditConcept} fetchAllConceptsData={fetchAllConceptsData} />
+                        <>
 
-                        </Modal.Body>
+                            < React.Fragment >
+                                <Row>
+                                    <Col sm={12}>
+                                        <Card>
+                                            <Card.Header>
+                                                <Card.Title as="h5">Concept List</Card.Title>
+                                            </Card.Header>
+                                            <Card.Body>
+                                                <Table columns={columns} data={conceptData} />
+                                            </Card.Body>
+                                        </Card>
 
-                    </Modal>
+                                    </Col>
+                                </Row>
+                            </React.Fragment>
 
+                            <Modal dialogClassName="my-modal" show={isOpenAddConcept} onHide={() => setIsOpenAddConcept(false)}>
+
+                                <Modal.Header closeButton>
+
+                                    <Modal.Title as="h5">Add Concept</Modal.Title>
+
+                                </Modal.Header>
+
+                                <Modal.Body>
+
+                                    <AddConcepts _digicards={_digicards} _relatedConcepts={_relatedConcepts} setIsOpenAddConcept={setIsOpenAddConcept} fetchAllConceptsData={fetchAllConceptsData} setDigicardsAndConcepts={setDigicardsAndConcepts} />
+
+                                </Modal.Body>
+
+                            </Modal>
+
+                            <Modal dialogClassName="my-modal" show={isEditAddConcept} onHide={() => setIsOpenEditConcept(false)}>
+
+                                <Modal.Header closeButton>
+
+                                    <Modal.Title as="h5">Edit Concept</Modal.Title>
+
+                                </Modal.Header>
+
+                                <Modal.Body>
+
+                                    <EditConcepts _digicards={_digicards} _relatedConcepts={_relatedConcepts} editConceptID={editConceptID} setIsOpenEditConcept={setIsOpenEditConcept} fetchAllConceptsData={fetchAllConceptsData} />
+
+                                </Modal.Body>
+
+                            </Modal>
+
+                        </>
+                    )
+                    }
                 </>
             )
+
             }
 
         </div >

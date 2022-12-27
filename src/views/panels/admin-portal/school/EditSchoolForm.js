@@ -10,6 +10,7 @@ import withReactContent from 'sweetalert2-react-content';
 import Swal from 'sweetalert2';
 import axios from 'axios';
 import dynamicUrl from "../../../../helper/dynamicUrls";
+import { Link, useHistory } from 'react-router-dom';
 
 const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool, fetchSchoolData }) => {
 
@@ -25,6 +26,7 @@ const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool, fetchSchoolD
     const [_radio, _setRadio] = useState(false);
     const [schoolLogoErrMsg, setSchoolLogoErrMsg] = useState(false);
     const [schoolBoardErrMsg, setSchoolBoardErrMsg] = useState(false);
+    const history = useHistory();
 
     const contactNameRef = useRef('');
     const addressLine1Ref = useRef('');
@@ -33,7 +35,7 @@ const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool, fetchSchoolD
     const pincodeRef = useRef('');
     const phoneNumberRef = useRef('');
 
-    const phoneRegExp = /^(\+91[\-\s]?)?[0]?(91)?[789]\d{9}$/;
+    // const phoneRegExp = /^(\+91[\-\s]?)?[0]?(91)?[789]\d{9}$/;
 
     const schoolBoardOptions = [
         { value: 'ICSE', label: 'ICSE' },
@@ -208,14 +210,15 @@ const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool, fetchSchoolD
                                 address_line1: Yup.string().max(255).required('Address Line 1 is required'),
                                 address_line2: Yup.string().max(255).required('Address Line 2 is required'),
                                 city: Yup.string().max(255).required('City is required'),
-                                pincode: Yup.string().max(255).required('Pincode is required'),
-                                phoneNumber: Yup.string().matches(phoneRegExp, 'Phone number is not valid').max(255).required('Phone Number is required'),
+                                pincode: Yup.string().matches(Constants.Common.pincodeNumberRegex, "pincode must contain 6 digits,should not begin with 0").required('Pincode is required'),
+                                phoneNumber: Yup.string().matches(Constants.Common.phoneNumberValidRegex, 'Phone Number must contain 10 digits').required('Phone Number is required'),
                                 contact_name2: Yup.string().max(255).required('Contact Name is required'),
                                 address_line1_2: Yup.string().max(255).required('Address Line 1 is required'),
                                 address_line2_2: Yup.string().max(255).required('Address Line 2 is required'),
                                 city2: Yup.string().max(255).required('City is required'),
-                                pincode2: Yup.string().max(255).required('Pincode is required'),
-                                phoneNumber2: Yup.string().matches(phoneRegExp, 'Phone number is not valid').max(255).required('Phone Number is required'),
+                                pincode2: Yup.string().matches(Constants.Common.pincodeNumberRegex, "pincode must contain 6 digits, should not begin with 0").required('Pincode is required'),
+                                phoneNumber2: Yup.string().matches(Constants.Common.phoneNumberValidRegex, 'Phone Number must contain 10 digits').required('Phone Number is required'),
+
                                 gst_number: Yup.string().matches(Constants.Common.GSTRegex, 'GST number must be 22AAAAA0000A1Z5 format').required('GST Number is required'),
                             })
                         }
@@ -362,8 +365,20 @@ const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool, fetchSchoolD
                                                     hideLoader();
                                                     // Request made and server responded
                                                     console.log(error.response.data);
-                                                    setStatus({ success: false });
-                                                    setErrors({ submit: error.response.data });
+
+                                                    if (error.response.data === "Invalid Token") {
+
+                                                        sessionStorage.clear();
+                                                        localStorage.clear();
+
+                                                        history.push('/auth/signin-1');
+                                                        window.location.reload();
+                                                    } else {
+                                                        setStatus({ success: false });
+                                                        setErrors({ submit: error.response.data });
+                                                    }
+
+
 
                                                 } else if (error.request) {
                                                     // The request was made but no response was received
