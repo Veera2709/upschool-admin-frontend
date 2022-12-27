@@ -97,7 +97,6 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
         _radio === true ? setScbscription_active('No') : setScbscription_active('Yes');
     }
 
-
     const schoolBoardOptions = [
         { value: 'ICSE', label: 'ICSE' },
         { value: 'CBSE', label: 'CBSE' },
@@ -160,6 +159,8 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                     GST_no: data === {} ? '' : data.GST_no,
                 }}
 
+
+
                 validationSchema={
                     Yup.object().shape({
                         school_name: Yup.string().matches(Constants.Common.alphabetsWithSpaceRegex, 'School Name must contain only alphabets!').max(255).required('School Name is required'),
@@ -167,17 +168,31 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                         // school_board: Yup.string().matches.required('School Board is required'),
 
                         contact_name: Yup.string().matches(Constants.Common.alphabetsWithSpaceRegex, 'Contact Name must contain only alphabets!').max(255).required('Contact Name is required'),
+
                         address_line1: Yup.string().max(255).required('Address Line 1 is required'),
+
                         address_line2: Yup.string().max(255).required('Address Line 2 is required'),
+
                         city: Yup.string().matches(Constants.Common.alphabetsWithSpaceRegex, 'city Name must contain only alphabets!').max(100).required('City is required'),
-                        pincode: Yup.string().matches(Constants.Common.positiveNumber, 'pincode required').max(6, 'pincode must be 6 charactor').required('Pincode is required'),
-                        phone_no: Yup.string().matches(Constants.Common.positiveNumber, 'Phone Number required').max(10, 'phone number must be 10 charactar').required('Phone Number is required'),
+
+                        pincode: Yup.string().matches(Constants.Common.pincodeNumberRegex, "pincode must contain 6 digits should not start with 0").required('Pincode is required'),
+                        // .min(6, 'pincode must be 6 digit').max(6, 'pincode must be 6 charactor')
+
+                        phone_no: Yup.string().matches(Constants.Common.phoneNumberValidRegex, 'Phone Number must').required('Phone Number is required'),
+
                         contact_name2: Yup.string().matches(Constants.Common.alphabetsWithSpaceRegex, 'Contact Name must contain only alphabets!').max(255).required('Contact Name is required'),
+
                         addres_line1_2: Yup.string().max(255).required('Address Line 1 is required'),
+
                         address_line2_2: Yup.string().max(255).required('Address Line 2 is required'),
+
                         city2: Yup.string().matches(Constants.Common.alphabetsWithSpaceRegex, 'City Name must contain only alphabets!').max(100).required('City is required'),
-                        pincode2: Yup.string().matches(Constants.Common.positiveNumber, 'pincode required').max(6, 'pincode must be 6 charactor').required('Pincode is required'),
-                        phone_no2: Yup.string().matches(Constants.Common.positiveNumber, 'Phone Number required').max(10, 'phone Number must be 10 charactor').required('Phone Number is required'),
+
+                        pincode2: Yup.string().matches(Constants.Common.pincodeNumberRegex, "pincode must contain 6 digits should not start with 0").required('Pincode is required'),
+                        // .min(6, 'pincode must be 6 digit').max(6, 'pincode must be 6 charactor')
+
+                        phone_no2: Yup.string().matches(Constants.Common.phoneNumberValidRegex, 'Phone Number must contain 10 digits').required('Phone Number is required'),
+
                         GST_no: Yup.string().matches(Constants.Common.GSTRegex, 'GST number must be 22AAAAA0000A1Z5 format').required('GST Number is required'),
                         // school_logo: Yup.object().shape({
                         //     file: Yup.mixed().required("School Logo required!")
@@ -834,7 +849,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                         </div>
                     </form>
                 )}
-            </Formik>
+            </Formik >
             {loader}
         </>
     )
