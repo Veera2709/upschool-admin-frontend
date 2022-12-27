@@ -121,7 +121,7 @@ const AddChapter = (
             resultData.forEach((item, index) => {
                 if (item.topic_status === 'Active') {
                     console.log();
-                    colourOptions.push({ value: item.topic_title, label: item.topic_title })
+                    colourOptions.push({ value: item.topic_id, label: item.topic_title })
                 }
             }
             );
@@ -143,7 +143,7 @@ const AddChapter = (
         }
         setPostlearningOption(valuesArr);
     }
-
+    
     const handleOnSelectPre = (event) => {
         let valuesArr = [];
         for (let i = 0; i < event.length; i++) {
@@ -283,7 +283,7 @@ const AddChapter = (
                                                 name="color"
                                                 isMulti
                                                 closeMenuOnSelect={false}
-                                                onChange={handleOnSelect}
+                                                onChange={(e)=>{handleOnSelect(e);setIsShown(true)}}
                                                 options={topicTitles}
                                                 placeholder="Which is your favourite colour?"
                                             />
@@ -302,22 +302,13 @@ const AddChapter = (
                                             <label className="floating-label" htmlFor="prelearning_topic">
                                                 <small className="text-danger">* </small>Prelearning Topic
                                             </label>
-                                            {/* <Multiselect
-                                                options={topicTitles}
-                                                displayValue="value"
-                                                selectionLimit="25"
-                                                // selectedValues={defaultOptions}
-                                                onSelect={handleOnSelectPre}
-                                                onRemove={handleOnRemove}
-                                                onChange={setIsShownPre(true)}
-                                            /> */}
                                             <Select
                                                 className="basic-single"
                                                 classNamePrefix="select"
                                                 name="color"
                                                 isMulti
                                                 closeMenuOnSelect={false}
-                                                onChange={handleOnSelectPre}
+                                                onChange={(e)=>{handleOnSelectPre(e);setIsShownPre(true)}}
                                                 options={topicTitles}
                                                 placeholder="Which is your favourite colour?"
                                             />
