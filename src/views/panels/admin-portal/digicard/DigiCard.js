@@ -245,7 +245,6 @@ const DigiCard = () => {
                                 console.log(error.request);
                                 hideLoader();
                             } else {
-                                // Something happened in setting up the request that triggered an Error
                                 console.log('Error', error.message);
                                 hideLoader();
                             }

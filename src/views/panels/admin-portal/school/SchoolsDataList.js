@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useHistory } from 'react-router-dom';
 import { Row, Col, Card, Pagination, Button, Modal, Alert } from 'react-bootstrap';
 import BTable from 'react-bootstrap/Table';
 import * as Yup from 'yup';
@@ -18,23 +18,6 @@ import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import dynamicUrl from '../../../../helper/dynamicUrls';
 
 
-export const colourOptions = [
-    { value: 'Education', label: 'Education', color: 'black' },
-    { value: 'Address', label: 'Address', color: 'black' },
-    { value: 'Employment', label: 'Employment', color: 'black' },
-    { value: 'DatabaseCheck', label: 'DatabaseCheck', color: 'black', isFixed: true },
-    { value: 'DrugTest', label: 'DrugTest', color: 'black' },
-    { value: 'CreditCheck', label: 'CreditCheck', color: 'black' },
-    { value: 'Criminal', label: 'Criminal', color: 'black', isFixed: true },
-    { value: 'Identification', label: 'Identification', color: 'black' },
-    { value: 'Reference', label: 'Reference', color: 'black' },
-    { value: 'GapVerification', label: 'GapVerification', color: 'black' },
-    { value: 'SocialMedia', label: 'SocialMedia', color: 'black' },
-    { value: 'PoliceVerification', label: 'PoliceVerification', color: 'black' },
-    { value: 'CompanyCheck', label: 'CompanyCheck', color: 'black' },
-    { value: 'DirectorshipCheck', label: 'DirectorshipCheck', color: 'black' },
-    { value: 'CvValidation', label: 'CvValidation', color: 'black' }
-];
 
 function Table({ columns, data, modalOpen }) {
     const {
@@ -77,6 +60,7 @@ function Table({ columns, data, modalOpen }) {
     //     )
 
     // };
+
 
 
     return (
@@ -225,6 +209,10 @@ const SchoolsDataList = (props) => {
         []
     );
 
+
+    const history = useHistory();
+
+
     const handleRestoreSchool = (e, school_id, Archieved) => {
         e.preventDefault();
 
@@ -283,7 +271,21 @@ const SchoolsDataList = (props) => {
                     // Request made and server responded
                     hideLoader();
                     console.log(error.response.data);
-                    sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+
+
+                    if (error.response.data === "Invalid Token") {
+
+                        sessionStorage.clear();
+                        localStorage.clear();
+
+                        history.push('/auth/signin-1');
+                        window.location.reload();
+                    } else {
+
+                        sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+                    }
+
+
                 } else if (error.request) {
                     // The request was made but no response was received
                     hideLoader();
@@ -365,6 +367,9 @@ const SchoolsDataList = (props) => {
             icon: alert.type
         });
     };
+    const openHandler = () => {
+        setIsOpen(true);
+    };
 
     const sweetConfirmHandler = (alert, school_id, school_Status) => {
         MySwal.fire({
@@ -412,7 +417,7 @@ const SchoolsDataList = (props) => {
                                     <Card.Title as="h5">Archived List</Card.Title>
                                 </Card.Header>
                                 <Card.Body>
-                                    <Table columns={columns} data={schoolData} />
+                                    <Table columns={columns} data={schoolData} modalOpen={openHandler} />
                                 </Card.Body>
                             </Card>
 

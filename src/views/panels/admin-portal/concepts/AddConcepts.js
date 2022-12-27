@@ -167,8 +167,10 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
 
                                     axios
                                         .post(
-                                            dynamicUrl.addConcepts,
-                                            formData,
+                                            dynamicUrl.addConcepts, {
+                                            data:
+                                                formData
+                                        },
                                             {
                                                 headers: { Authorization: sessionStorage.getItem('user_jwt') }
                                             }
@@ -359,8 +361,7 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
                                     </Row>
 
                                 </form>
-                            )
-                            }
+                            )}
                         </Formik>
 
                     </React.Fragment>

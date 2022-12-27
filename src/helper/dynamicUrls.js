@@ -2,6 +2,7 @@
 
 const baseUrl = process.env.REACT_APP_LAMBDA_URL;
 
+
 const dynamicUrl = {
     login: baseUrl + '/login',
     loginWithOTP: baseUrl + '/loginWithOTP',
@@ -44,6 +45,13 @@ const dynamicUrl = {
     toggleUserStatus: baseUrl + '/toggleUserStatus',
     fetchClassBasedOnSchool: baseUrl + '/fetchClassBasedOnSchool',
 
+    //units
+    fetchAllUnits: baseUrl + '/fetchAllUnits',
+    addUnit: baseUrl + '/addUnit',
+    fetchIndividualUnit: baseUrl + '/fetchIndividualUnit',
+    editUnit: baseUrl + '/editUnit',
+    toggleUnitStatus: baseUrl + '/toggleUnitStatus',
+
     fetchAllConcepts: baseUrl + '/fetchAllConcepts',
     fetchDigicardAndConcept: baseUrl + '/fetchDigicardAndConcept',
     addConcepts: baseUrl + '/addConcepts',
@@ -53,14 +61,19 @@ const dynamicUrl = {
 
     // Topics
     addTopic: baseUrl + '/addTopic',
+    getTopics: baseUrl + '/fetchAllTopics',
+    getIndividualTopic: baseUrl + '/fetchIndividualTopic',
+    editTopic: baseUrl + '/editTopic',
+    deleteTopic: baseUrl + '/toggleTopicStatus',
+    getConcepts: baseUrl + '/fetchAllConcepts',
     toggleSchoolStatus: baseUrl + '/toggleSchoolStatus',
     fetchInactiveSchool: baseUrl + '/fetchInactiveSchool',
 
     fetchUnitAndSubject: baseUrl + '/fetchUnitAndSubject',
     fetchAllSubjects: baseUrl + '/fetchAllSubjects',
-    toggleSubjectStatus : baseUrl + '/toggleSubjectStatus',
+    toggleSubjectStatus: baseUrl + '/toggleSubjectStatus',
     addSubject: baseUrl + '/addSubject',
-    fetchIndividualSubject : baseUrl + '/fetchIndividualSubject',
+    fetchIndividualSubject: baseUrl + '/fetchIndividualSubject',
     updateSubject: baseUrl + '/updateSubject'
 }
 

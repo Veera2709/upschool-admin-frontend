@@ -7,12 +7,13 @@ import useFullPageLoader from '../../../../helper/useFullPageLoader';
 // import dynamicUrl from '../../../helper/dynamicUrl';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
-import { areFilesInvalid } from '../../../../util/utils';
+import { areFilesInvalid, isEmptyArray } from '../../../../util/utils';
 import * as Constants from '../../../../config/constant'
 import withReactContent from 'sweetalert2-react-content';
 import Swal from 'sweetalert2';
 import dynamicUrl from '../../../../helper/dynamicUrls';
 import { bgvAlerts } from '../../../common-ui-components/sow/bgv-api/bgvAlerts';
+import { Link, useHistory } from 'react-router-dom';
 
 // import { bgvAlerts } from '../bgv-api/bgvAlerts';
 
@@ -22,10 +23,15 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
     const [_radio, _setRadio] = useState(false);
     const [previousBoards, setPreviousBoards] = useState([]);
     const [selectedBoards, setSelectedBoards] = useState([]);
+    const [showBoardErr, setShowBoardErr] = useState(false);
     const [scbscription_active, setScbscription_active] = useState('No');
     const [copy, setCopy] = useState(false);
+    const [imageStatus, setImageStatus] = useState(false);
     const [disableButton, setDisableButton] = useState(false);
     const [loader, showLoader, hideLoader] = useFullPageLoader();
+    const [imgEmptyErr, setImgEmptyErr] = useState(false);
+    const [schoolBoardErrMsg, setSchoolBoardErrMsg] = useState(false);
+    const history = useHistory();
 
     const schoolNameRef = useRef('');
     const schoolBoardRef = useRef('');
@@ -56,7 +62,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
         setCopy(!copy);
         setData({
             school_name: schoolNameRef.current.value,
-            // school_board: schoolBoardRef.current.value,
+            school_board: schoolBoardRef.current.value,
             school_logo: schoolLogoRef.current.value,
             contact_name: contactNameRef.current.value,
             address_line1: addressLine1Ref.current.value,
@@ -78,13 +84,20 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
     const previewImage = (e) => {
         console.log('imageURL: ', e.target.files[0]);
         setImgFile(URL.createObjectURL(e.target.files[0]));
+        let imageFile = e.target.files[0];
+        setImgEmptyErr(false);
+        if (areFilesInvalid([imageFile]) !== 0) {
+            setIsOpen(false);
+            setImageStatus(true);
+            sweetAlertHandler({ title: 'Sorry', type: 'error', text: 'Invalid File or File size exceeds 2 MB!' });
+            hideLoader();
+        }
     }
 
     const handleRadioChange = (e) => {
         _setRadio(!_radio);
         _radio === true ? setScbscription_active('No') : setScbscription_active('Yes');
     }
-
 
     const schoolBoardOptions = [
         { value: 'ICSE', label: 'ICSE' },
@@ -96,23 +109,31 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
     ];
 
 
-    // const handleSelectChange = (event) => {
+    const handleSelectChange = (event) => {
+        // setSelectedBoards(false);
+        // setSchoolBoardErrMsg(false);
+        console.log(event);
+        console.log("======================================");
 
-    //     console.log(event);
+        let valuesArr = [];
+        for (let i = 0; i < event.length; i++) {
+            valuesArr.push(event[i].value)
+        }
+        console.log(valuesArr);
+        setSelectedBoards(valuesArr);
+    }
 
-    //     let valuesArr = [];
-    //     for (let i = 0; i < event.length; i++) {
-    //         valuesArr.push(event[i].value)
-    //     }
+    const handleSelectBoard = (selectedList, selectedItem) => {
+        console.log('selectedList: ', selectedList);
+        setSchoolBoardErrMsg(false);
+        setSelectedBoards(selectedList.map((ele) => ele.value));
+    }
 
-    //     console.log(valuesArr);
-    //     setSelectedBoards(valuesArr);
-    // }
-
-    const handleSelectBoard = (selectedList, selectedItem) => setSelectedBoards(selectedList.map((ele) => ele.value))
-
-    const handleOnRemove = (selectedList, selectedItem) => setSelectedBoards(selectedList.map(skillId => skillId.id))
-
+    const handleOnRemove = (selectedList, selectedItem) => {
+        console.log('remove selectedList: ', selectedList);
+        setSchoolBoardErrMsg(false);
+        setSelectedBoards(selectedList.map(skillId => skillId.id));
+    }
 
     return (
         <>
@@ -139,26 +160,47 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                     phone_no2: data === {} ? '' : data.phoneNumber,
                     GST_no: data === {} ? '' : data.GST_no,
                 }}
+
+
+
                 validationSchema={
                     Yup.object().shape({
                         school_name: Yup.string().matches(Constants.Common.alphabetsWithSpaceRegex, 'School Name must contain only alphabets!').max(255).required('School Name is required'),
 
-                        // school_board: Yup.string().required('School Board is required'),
+                        // school_board: Yup.string().matches.required('School Board is required'),
 
                         contact_name: Yup.string().matches(Constants.Common.alphabetsWithSpaceRegex, 'Contact Name must contain only alphabets!').max(255).required('Contact Name is required'),
+
                         address_line1: Yup.string().max(255).required('Address Line 1 is required'),
+
                         address_line2: Yup.string().max(255).required('Address Line 2 is required'),
+
                         city: Yup.string().matches(Constants.Common.alphabetsWithSpaceRegex, 'city Name must contain only alphabets!').max(100).required('City is required'),
-                        pincode: Yup.string().matches(Constants.Common.positiveNumber, 'pincode required').max(6, 'pincode must be 6 charactor').required('Pincode is required'),
-                        phone_no: Yup.string().matches(Constants.Common.positiveNumber, 'Phone Number required').max(10, 'phone number must be 10 charactar').required('Phone Number is required'),
+
+                        pincode: Yup.string().matches(Constants.Common.pincodeNumberRegex, "pincode must contain 6 digits ,should not begin with 0").required('Pincode is required'),
+                        // .min(6, 'pincode must be 6 digit').max(6, 'pincode must be 6 charactor')
+
+                        phone_no: Yup.string().matches(Constants.Common.phoneNumberValidRegex, 'Phone Number must contain 10 digits!').required('Phone Number is required'),
+
                         contact_name2: Yup.string().matches(Constants.Common.alphabetsWithSpaceRegex, 'Contact Name must contain only alphabets!').max(255).required('Contact Name is required'),
+
                         addres_line1_2: Yup.string().max(255).required('Address Line 1 is required'),
+
                         address_line2_2: Yup.string().max(255).required('Address Line 2 is required'),
+
                         city2: Yup.string().matches(Constants.Common.alphabetsWithSpaceRegex, 'City Name must contain only alphabets!').max(100).required('City is required'),
-                        pincode2: Yup.string().matches(Constants.Common.positiveNumber, 'pincode required').max(6, 'pincode must be 6 charactor').required('Pincode is required'),
-                        phone_no2: Yup.string().matches(Constants.Common.positiveNumber, 'Phone Number required').max(10, 'phone Number must be 10 charactor').required('Phone Number is required'),
+
+                        pincode2: Yup.string().matches(Constants.Common.pincodeNumberRegex, "pincode must contain 6 digits,should not begin with 0").required('Pincode is required'),
+                        // .min(6, 'pincode must be 6 digit').max(6, 'pincode must be 6 charactor')
+
+                        phone_no2: Yup.string().matches(Constants.Common.phoneNumberValidRegex, 'Phone Number must contain 10 digits').required('Phone Number is required'),
+
                         GST_no: Yup.string().matches(Constants.Common.GSTRegex, 'GST number must be 22AAAAA0000A1Z5 format').required('GST Number is required'),
-                    })}
+                        // school_logo: Yup.object().shape({
+                        //     file: Yup.mixed().required("School Logo required!")
+                        // })
+                    })
+                }
                 onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
                     setSubmitting(true);
 
@@ -195,147 +237,170 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                     }
 
                     console.log("form data initial", formData);
-
                     let imageFile = document.getElementById('school_logo').files[0];
 
                     let sendData = {
                         ImageFile: ''
                     }
-                    if (imageFile) {
 
-                        sendData.ImageFile = imageFile.name;
+                    if (selectedBoards.length >= 1) {
 
-                        console.log('Submitting', sendData);
+                        if (imageFile) {
+                            sendData.ImageFile = imageFile.name;
+                            console.log('Submitting', sendData);
 
-                        if (areFilesInvalid([imageFile]) !== 0) {
-                            setIsOpen(false);
-                            sweetAlertHandler({ title: 'Sorry', type: 'error', text: 'Invalid File or File size exceeds 2 MB!' });
-                            hideLoader();
-                        } else {
-                            // console.log('formData: ', JSON.stringify(formData))
-                            console.log('formData: ', JSON.stringify({ data: formData }))
+                            if (areFilesInvalid([imageFile]) !== 0) {
+                                setIsOpen(false);
+                                sweetAlertHandler({ title: 'Sorry', type: 'error', text: 'Invalid File or File size exceeds 2 MB!' });
+                                hideLoader();
+                            } else {
+                                // console.log('formData: ', JSON.stringify(formData))
+                                console.log('formData: ', JSON.stringify({ data: formData }))
+                                formData.school_logo = imageFile.name;
 
-                            axios.post(dynamicUrl.insertSchool, { data: formData }, {
-                                headers: { Authorization: sessionStorage.getItem('user_jwt') }
-                            })
-                                .then((response) => {
-                                    console.log({ response });
-                                    console.log(response.status);
-                                    console.log(response.status === 200);
-                                    let result = response.status === 200;
-                                    hideLoader();
-                                    if (result) {
-                                        console.log('inside res');
+                                console.log("Proceed");
+                                showLoader();
 
-                                        let uploadParams = response.data;
-                                        // setDisableButton(false);
+                                axios.post(dynamicUrl.insertSchool, { data: formData }, {
+                                    headers: { Authorization: sessionStorage.getItem('user_jwt') }
+                                })
+                                    .then((response) => {
+                                        console.log({ response });
+                                        console.log(response.status);
+                                        console.log(response.status === 200);
+                                        let result = response.status === 200;
                                         hideLoader();
-                                        console.log('Proceeding with file upload');
-                                        console.log("uploadParams", uploadParams)
+                                        if (result) {
+                                            console.log('inside res');
 
-                                        if (Array.isArray(uploadParams)) {
-                                            for (let index = 0; index < uploadParams.length; index++) {
-                                                let keyNameArr = Object.keys(uploadParams[index]);
-                                                let keyName = keyNameArr[0];
-                                                console.log('KeyName', keyName);
+                                            let uploadParams = response.data;
+                                            // setDisableButton(false);
+                                            hideLoader();
+                                            console.log('Proceeding with file upload');
+                                            console.log("uploadParams", uploadParams)
 
-                                                let blobField = document.getElementById("school_logo").files[0];
-                                                console.log({
-                                                    blobField
-                                                });
+                                            if (Array.isArray(uploadParams)) {
+                                                for (let index = 0; index < uploadParams.length; index++) {
+                                                    let keyNameArr = Object.keys(uploadParams[index]);
+                                                    let keyName = keyNameArr[0];
+                                                    console.log('KeyName', keyName);
 
-                                                let tempObj = uploadParams[index];
+                                                    let blobField = document.getElementById("school_logo").files[0];
+                                                    console.log({
+                                                        blobField
+                                                    });
 
-                                                let result = fetch(tempObj[keyName], {
-                                                    method: 'PUT',
-                                                    body: blobField
-                                                });
+                                                    let tempObj = uploadParams[index];
 
-                                                console.log({
-                                                    result
-                                                });
+                                                    let result = fetch(tempObj[keyName], {
+                                                        method: 'PUT',
+                                                        body: blobField
+                                                    });
 
-                                                const timeOutFunction = () => {
-                                                    setIsOpen(false);
-                                                    const MySwal = withReactContent(Swal);
+                                                    console.log({
+                                                        result
+                                                    });
 
-                                                    MySwal.fire('', 'Your school has been added!', 'success');
+                                                    const timeOutFunction = () => {
+                                                        setIsOpen(false);
+                                                        const MySwal = withReactContent(Swal);
 
-                                                    fetchSchoolData();
+                                                        MySwal.fire('', 'Your school has been added!', 'success');
+
+                                                        fetchSchoolData();
+                                                    }
+                                                    setTimeout(timeOutFunction, 1000);
                                                 }
-                                                setTimeout(timeOutFunction, 1000);
+
+                                                // setIsOpen(false);
                                             }
 
-                                            // setIsOpen(false);
-                                        } else {
-                                            console.log('No files uploaded');
-                                            // sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingClient });
-                                            // hideLoader();
-                                            // setDisableButton(false);
-                                            // fetchClientData();
-                                            // setIsOpen(false);
+                                            else {
+                                                console.log('else res');
+                                                hideLoader();
+                                                // Request made and server responded
+                                                setStatus({ success: false });
+                                                setErrors({ submit: 'Error in generating OTP' });
+                                                // window.location.reload();
+                                            }
                                         }
-                                        // SessionStorage.setItem('user_jwt', response.data[0].jwt);
-                                    } else {
-                                        console.log('else res');
-                                        hideLoader();
-                                        // Request made and server responded
-                                        setStatus({ success: false });
-                                        setErrors({ submit: 'Error in generating OTP' });
-                                        // window.location.reload();
+                                    })
+                                    .catch((error) => {
+                                        if (error.response) {
+                                            hideLoader();
+
+                                            setIsOpen(false);
+
+                                            console.log("------------------------------");
+                                            const MySwal = withReactContent(Swal);
+
+                                            MySwal.fire('', error.response.data, 'error');
+
+                                            if (error.response.data === "Invalid Token") {
+
+                                                sessionStorage.clear();
+                                                localStorage.clear();
+
+                                                history.push('/auth/signin-1');
+                                                window.location.reload();
+                                            } else {
+                                                fetchSchoolData();
+                                                // Request made and server responded
+                                                console.log(error.response.data);
+                                                setStatus({ success: false });
+                                                setErrors({ submit: error.response.data });
+                                            }
+
+                                            // window.location.reload();
+                                        } else if (error.request) {
+                                            // The request was made but no response was received
+                                            console.log(error.request);
+                                            hideLoader();
+                                            // window.location.reload();
+                                        } else if (error.message) {
+                                            // Something happened in setting up the request that triggered an Error
+                                            console.log('Error', error.message);
+                                            hideLoader();
+                                            // window.location.reload();
+                                        }
+                                        else {
+                                            console.log("School board empty");
+                                            setShowBoardErr(true);
+                                        }
                                     }
-                                })
-                                .catch((error) => {
-                                    if (error.response) {
-                                        hideLoader();
-
-                                        setIsOpen(false);
-
-                                        console.log("------------------------------");
-                                        const MySwal = withReactContent(Swal);
-
-                                        MySwal.fire('', error.response.data, 'error');
-
-                                        fetchSchoolData();
-                                        // Request made and server responded
-                                        console.log(error.response.data);
-                                        setStatus({ success: false });
-                                        setErrors({ submit: error.response.data });
+                                    );
 
 
-                                        // window.location.reload();
-                                    } else if (error.request) {
-                                        // The request was made but no response was received
-                                        console.log(error.request);
-                                        hideLoader();
-                                        // window.location.reload();
-                                    } else {
-                                        // Something happened in setting up the request that triggered an Error
-                                        console.log('Error', error.message);
-                                        hideLoader();
-                                        // window.location.reload();
-                                    }
-                                });
 
+                            }
+                        } else {
+                            console.log("No IMG!");
+                            setImgEmptyErr(true);
                         }
-                    } else {
-                        sweetAlertHandler(bgvAlerts.noFilesPresentBulkUpload);
-                        hideLoader();
+
+                        let allFilesData = [];
+                        const fileNameArray = ['school_logo'];
+
+                        fileNameArray.forEach((fileName) => {
+                            let selectedFile = document.getElementById(fileName).files[0];
+                            console.log('File is here!');
+                            console.log(selectedFile);
+                            if (selectedFile) {
+                                allFilesData.push(selectedFile);
+                            }
+                        });
                     }
-
-                    let allFilesData = [];
-                    const fileNameArray = ['school_logo'];
-
-                    fileNameArray.forEach((fileName) => {
-                        let selectedFile = document.getElementById(fileName).files[0];
-                        console.log('File is here!');
-                        console.log(selectedFile);
-                        if (selectedFile) {
-                            allFilesData.push(selectedFile);
+                    else {
+                        console.log("CHOOSE SCHOOL BOARD");
+                        setSchoolBoardErrMsg(true);
+                        if (!imageFile) {
+                            setImgEmptyErr(true);
                         }
-                    });
-                }}
+                    }
+                }
+                }
             >
+
                 {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
                     <form noValidate onSubmit={handleSubmit} className={className} {...rest}>
                         <div class="row">
@@ -378,7 +443,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
 
 
 
-                                    <div className="col-md-12">
+                                    <div className="col-md-12" style={{ paddingLeft: "0px" }}>
                                         <div className="form-group fill">
 
                                             <label className="floating-label">
@@ -393,19 +458,38 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                                                 options={schoolBoardOptions}
                                                 className="basic-multi-select"
                                                 classNamePrefix="Select"
+                                                onChange={event => handleDigicardChange(event)}
+                                            /> */}
+
+                                            {/* <Select
+                                                isMulti
+                                                name="school_board"
+                                                options={schoolBoardOptions}
                                                 onChange={event => handleSelectChange(event)}
                                             /> */}
+
                                             <Multiselect
                                                 options={schoolBoardOptions}
                                                 displayValue="value"
                                                 selectionLimit="25"
+                                                name="school_board"
                                                 // selectedValues={defaultOptions}
                                                 onSelect={handleSelectBoard}
                                                 onRemove={handleOnRemove}
                                             />
+
+                                            {/* {selectedBoards === true && <small className="text-danger form-text">{'Please select a Board'}</small>} */}
+
+                                            {schoolBoardErrMsg && (
+                                                <small className="text-danger form-text">{'Please select School Board'}</small>
+                                            )}
+
                                         </div>
                                     </div>
-                                    <div className="col-md-12">
+
+
+
+                                    <div className="col-md-12" style={{ paddingLeft: "0px" }}>
                                         <div class="form-group fill">
                                             <label class="floating-label" for="email">
                                                 <small class="text-danger">* </small>Subscription Active</label>
@@ -439,13 +523,17 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                                         onChange={(e) => { previewImage(e); handleChange(e); }}
                                         value={values.school_logo}
                                         onBlur={handleBlur}
-                                    // ref={schoolLogoRef}
+                                        ref={schoolLogoRef}
                                     />
-                                    {touched.school_logo && errors.school_logo && (
-                                        <small className="text-danger form-text">{errors.school_logo}</small>
+                                    {touched.school_logo && errors.school_logo && imageStatus && (
+                                        <small className="text-danger form-text">'upload a proper image!'</small>
+                                    )}
+                                    {imgEmptyErr && (
+                                        <small className="text-danger form-text">Image can not be empty!</small>
                                     )}
                                 </div>
                                 <img width={150} src={imgFile} alt="" className="img-fluid mb-3" />
+
                             </div>
 
 
@@ -771,7 +859,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                         </div>
                     </form>
                 )}
-            </Formik>
+            </Formik >
             {loader}
         </>
     )
