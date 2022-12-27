@@ -186,7 +186,7 @@ const AddChapter = (
                             } else if (prelearningOptions == '') {
                                 setIsShownPre(false)
                             }
-                            else if (description == undefined || description=='') {
+                            else if (description == undefined || description.trim()=='') {
                                 setIsShownDes(false)
                             }
                             else {
