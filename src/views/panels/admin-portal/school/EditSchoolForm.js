@@ -10,6 +10,7 @@ import withReactContent from 'sweetalert2-react-content';
 import Swal from 'sweetalert2';
 import axios from 'axios';
 import dynamicUrl from "../../../../helper/dynamicUrls";
+import { Link, useHistory } from 'react-router-dom';
 
 const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool, fetchSchoolData }) => {
 
@@ -25,6 +26,7 @@ const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool, fetchSchoolD
     const [_radio, _setRadio] = useState(false);
     const [schoolLogoErrMsg, setSchoolLogoErrMsg] = useState(false);
     const [schoolBoardErrMsg, setSchoolBoardErrMsg] = useState(false);
+    const history = useHistory();
 
     const contactNameRef = useRef('');
     const addressLine1Ref = useRef('');
@@ -363,8 +365,20 @@ const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool, fetchSchoolD
                                                     hideLoader();
                                                     // Request made and server responded
                                                     console.log(error.response.data);
-                                                    setStatus({ success: false });
-                                                    setErrors({ submit: error.response.data });
+
+                                                    if (error.response.data === "Invalid Token") {
+
+                                                        sessionStorage.clear();
+                                                        localStorage.clear();
+
+                                                        history.push('/auth/signin-1');
+                                                        window.location.reload();
+                                                    } else {
+                                                        setStatus({ success: false });
+                                                        setErrors({ submit: error.response.data });
+                                                    }
+
+
 
                                                 } else if (error.request) {
                                                     // The request was made but no response was received

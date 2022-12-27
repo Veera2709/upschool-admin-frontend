@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useHistory } from 'react-router-dom';
 import { Row, Col, Card, Pagination, Button, Modal, Alert } from 'react-bootstrap';
 import BTable from 'react-bootstrap/Table';
 import * as Yup from 'yup';
@@ -16,6 +16,7 @@ import { GlobalFilter } from './GlobalFilter';
 import { useTable, useSortBy, usePagination, useGlobalFilter } from 'react-table';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import dynamicUrl from '../../../../helper/dynamicUrls';
+
 
 
 function Table({ columns, data, modalOpen }) {
@@ -59,6 +60,7 @@ function Table({ columns, data, modalOpen }) {
     //     )
 
     // };
+
 
 
     return (
@@ -207,6 +209,10 @@ const SchoolsDataList = (props) => {
         []
     );
 
+
+    const history = useHistory();
+
+
     const handleRestoreSchool = (e, school_id, Archieved) => {
         e.preventDefault();
 
@@ -265,7 +271,21 @@ const SchoolsDataList = (props) => {
                     // Request made and server responded
                     hideLoader();
                     console.log(error.response.data);
-                    sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+
+
+                    if (error.response.data === "Invalid Token") {
+
+                        sessionStorage.clear();
+                        localStorage.clear();
+
+                        history.push('/auth/signin-1');
+                        window.location.reload();
+                    } else {
+
+                        sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+                    }
+
+
                 } else if (error.request) {
                     // The request was made but no response was received
                     hideLoader();
