@@ -6,14 +6,17 @@ import withReactContent from 'sweetalert2-react-content';
 import Select from 'react-select';
 import ReactTags from 'react-tag-autocomplete';
 import * as Yup from 'yup';
-import { Row, Col, Card, Pagination, Button, Modal, Alert } from 'react-bootstrap';
+import { Row, Col } from 'react-bootstrap';
+import { useHistory } from 'react-router-dom';
 
 import dynamicUrl from '../../../../helper/dynamicUrls';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import { SessionStorage } from '../../../../util/SessionStorage';
 
+
 const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEditConcept, fetchAllConceptsData }) => {
 
+    const history = useHistory();
     const [loader, showLoader, hideLoader] = useFullPageLoader();
     const [selectedDigicards, setSelectedDigicards] = useState([]);
     const [selectedRelatedConcepts, setSelectedRelatedConcepts] = useState([]);
@@ -198,9 +201,22 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
                 if (error.response) {
                     // Request made and server responded
                     console.log(error.response.data);
-                    setIsOpenEditConcept(false);
-                    hideLoader();
-                    sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+
+                    if (error.response.data === 'Invalid Token') {
+
+                        sessionStorage.clear();
+                        localStorage.clear();
+
+                        history.push('/auth/signin-1');
+                        window.location.reload();
+
+                    } else {
+
+                        setIsOpenEditConcept(false);
+                        hideLoader();
+                        sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+                    }
+
                 } else if (error.request) {
                     // The request was made but no response was received
                     hideLoader();

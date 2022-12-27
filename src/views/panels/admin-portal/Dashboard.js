@@ -1,16 +1,33 @@
-import React from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
 
 const AdminDashboard = () => {
 
+  const dashboardPage = useState(useLocation().pathname.split('/')[2]);
   let history = useHistory();
-  console.log("Dashboard");
+  console.log("Dashboard", dashboardPage[0]);
 
   // useEffect(() => {
   //     window.addEventListener('popstate', (e) => {
   //         window.history.go(1);
   //     });
   // }, []);
+
+  useEffect(() => {
+
+    console.log(dashboardPage[0] === "admin-dashboard");
+    if (dashboardPage[0] === "admin-dashboard") {
+
+      window.history.pushState(null, document.title, window.location.href);
+
+      window.addEventListener('popstate', function (event) {
+
+        window.history.pushState(null, document.title, window.location.href);
+
+      });
+
+    }
+  }, [dashboardPage]);
 
   const validateJWT = sessionStorage.getItem('user_jwt');
 

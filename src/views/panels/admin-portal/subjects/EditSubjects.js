@@ -11,12 +11,14 @@ import { Row, Col } from 'react-bootstrap';
 import dynamicUrl from '../../../../helper/dynamicUrls';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import { SessionStorage } from '../../../../util/SessionStorage';
+import { useHistory } from 'react-router-dom';
 
 const EditSubjects = ({ _units, _relatedSubjects, editSubjectID, setIsOpenEditSubject, fetchAllSubjectsData }) => {
 
     console.log(_units);
     console.log(_relatedSubjects);
 
+    const history = useHistory();
     const [loader, showLoader, hideLoader] = useFullPageLoader();
     const [selectedUnits, setSelectedUnits] = useState([]);
     const [selectedRelatedSubjects, setSelectedRelatedSubjects] = useState([]);
@@ -203,7 +205,22 @@ const EditSubjects = ({ _units, _relatedSubjects, editSubjectID, setIsOpenEditSu
                     console.log(error.response.data);
                     setIsOpenEditSubject(false);
                     hideLoader();
-                    sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+
+                    if (error.response.data === 'Invalid Token') {
+
+                        sessionStorage.clear();
+                        localStorage.clear();
+
+                        history.push('/auth/signin-1');
+                        window.location.reload();
+
+                    } else {
+
+                        sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+
+                    }
+
+
                 } else if (error.request) {
                     // The request was made but no response was received
                     hideLoader();
@@ -360,8 +377,21 @@ const EditSubjects = ({ _units, _relatedSubjects, editSubjectID, setIsOpenEditSu
                                                         hideLoader();
                                                         // Request made and server responded
                                                         console.log(error.response.data);
-                                                        setSubjectTitleErr(true);
-                                                        setSubjectTitleErrMessage(error.response.data);
+
+                                                        if (error.response.data === 'Invalid Token') {
+
+                                                            sessionStorage.clear();
+                                                            localStorage.clear();
+
+                                                            history.push('/auth/signin-1');
+                                                            window.location.reload();
+
+                                                        } else {
+
+                                                            setSubjectTitleErr(true);
+                                                            setSubjectTitleErrMessage(error.response.data);
+
+                                                        }
 
                                                     } else if (error.request) {
                                                         // The request was made but no response was received
