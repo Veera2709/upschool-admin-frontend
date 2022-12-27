@@ -429,7 +429,7 @@ const menuItems = {
             },
             {
               id: 'archived-topics',
-              title: 'Archieve Topics',
+              title: 'Archived Topics',
               type: 'item',
               url: '/admin-portal/Topics/archived-topics'
             },
