@@ -41,7 +41,8 @@ const Breadcrumb = () => {
   if (main && main.type === 'collapse') {
     mainContent = (
       <ListGroup.Item as="li" bsPrefix=" " className="breadcrumb-item">
-        <Link to="#">{main.title}</Link>
+        {/* <Link to="#">{main.title}</Link> */}
+        {main.title}
       </ListGroup.Item>
     );
   }
@@ -50,7 +51,8 @@ const Breadcrumb = () => {
     title = item.title;
     itemContent = (
       <ListGroup.Item as="li" bsPrefix=" " className="breadcrumb-item">
-        <Link to="#">{title}</Link>
+        {/* <Link to="#">{title}</Link> */}
+        {title}
       </ListGroup.Item>
     );
 

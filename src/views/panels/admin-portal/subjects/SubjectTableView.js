@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import { Row, Col, Card, Pagination, Button, Modal } from 'react-bootstrap';
 import BTable from 'react-bootstrap/Table';
 import axios from 'axios';
@@ -17,6 +17,7 @@ import EditSubjects from './EditSubjects';
 
 function Table({ columns, data }) {
 
+    const history = useHistory();
     const [isLoading, setIsLoading] = useState(false);
     const [subjectData, setSubjectData] = useState([]);
     const [_subjectID, _setSubjectID] = useState('');
@@ -85,6 +86,20 @@ function Table({ columns, data }) {
                     // Request made and server responded
                     console.log(error.response.data);
 
+                    if (error.response.data === 'Invalid Token') {
+
+                        sessionStorage.clear();
+                        localStorage.clear();
+
+                        history.push('/auth/signin-1');
+                        window.location.reload();
+
+                    } else {
+
+
+
+                    }
+
 
                 } else if (error.request) {
                     // The request was made but no response was received
@@ -114,12 +129,12 @@ function Table({ columns, data }) {
                 deleteSubject(subject_id, updateStatus);
             } else {
 
-                const returnValue = pageLocation === 'active-subjects' ? (
-                    MySwal.fire('', MESSAGES.INFO.DATA_SAFE, 'success')
-                ) : (
-                    MySwal.fire('', MESSAGES.INFO.FAILED_TO_RESTORE, 'error')
-                )
-                return returnValue;
+                // const returnValue = pageLocation === 'active-subjects' ? (
+                //     MySwal.fire('', MESSAGES.INFO.DATA_SAFE, 'success')
+                // ) : (
+                //     MySwal.fire('', MESSAGES.INFO.FAILED_TO_RESTORE, 'error')
+                // )
+                // return returnValue;
             }
         });
     };
@@ -130,7 +145,7 @@ function Table({ columns, data }) {
         pageLocation === 'active-subjects' ? (
             sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: MESSAGES.INFO.ABLE_TO_RECOVER }, subject_id, updateStatus)
         ) : (
-            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: MESSAGES.INFO.ABLE_TO_DELETE }, subject_id, updateStatus)
+            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: 'This will restore the subject!' }, subject_id, updateStatus)
         )
 
     };
@@ -225,7 +240,21 @@ function Table({ columns, data }) {
                     // Request made and server responded
                     hideLoader();
                     console.log(error.response.data);
-                    sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+
+                    if (error.response.data === 'Invalid Token') {
+
+                        sessionStorage.clear();
+                        localStorage.clear();
+
+                        history.push('/auth/signin-1');
+                        window.location.reload();
+
+                    } else {
+
+                        sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+
+                    }
+
                 } else if (error.request) {
                     // The request was made but no response was received
                     hideLoader();
@@ -266,7 +295,7 @@ function Table({ columns, data }) {
                 if (response.Error) {
                     hideLoader();
                     sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingSubject });
-
+                    fetchAllSubjectsData();
                 } else {
 
                     hideLoader()
@@ -276,6 +305,7 @@ function Table({ columns, data }) {
                     ) : (
                         MySwal.fire('', MESSAGES.INFO.SUBJECT_DELETED, 'success')
                     )
+                    fetchAllSubjectsData();
 
 
                 }
@@ -285,15 +315,34 @@ function Table({ columns, data }) {
                     // Request made and server responded
                     hideLoader();
                     console.log(error.response.data);
-                    sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+
+                    if (error.response.data === 'Invalid Token') {
+
+                        sessionStorage.clear();
+                        localStorage.clear();
+
+                        history.push('/auth/signin-1');
+                        window.location.reload();
+
+                    } else {
+
+                        sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+                        fetchAllSubjectsData();
+
+                    }
+
                 } else if (error.request) {
                     // The request was made but no response was received
                     hideLoader();
                     console.log(error.request);
+                    fetchAllSubjectsData();
+
                 } else {
                     // Something happened in setting up the request that triggered an Error
                     hideLoader();
                     console.log('Error', error.message);
+                    fetchAllSubjectsData();
+
                 }
             });
     };
@@ -495,6 +544,7 @@ const SubjectTableView = ({ userStatus }) => {
 
     // const data = React.useMemo(() => makeData(50), []);
 
+    const history = useHistory();
     const [isLoading, setIsLoading] = useState(false);
     const [subjectData, setSubjectData] = useState([]);
     const [_subjectID, _setSubjectID] = useState('');
@@ -563,6 +613,18 @@ const SubjectTableView = ({ userStatus }) => {
                     // Request made and server responded
                     console.log(error.response.data);
 
+                    if (error.response.data === 'Invalid Token') {
+
+                        sessionStorage.clear();
+                        localStorage.clear();
+
+                        history.push('/auth/signin-1');
+                        window.location.reload();
+
+                    } else {
+
+                    }
+
 
                 } else if (error.request) {
                     // The request was made but no response was received
@@ -592,12 +654,12 @@ const SubjectTableView = ({ userStatus }) => {
                 deleteSubject(subject_id, updateStatus);
             } else {
 
-                const returnValue = pageLocation === 'active-subjects' ? (
-                    MySwal.fire('', MESSAGES.INFO.DATA_SAFE, 'success')
-                ) : (
-                    MySwal.fire('', MESSAGES.INFO.FAILED_TO_RESTORE, 'error')
-                )
-                return returnValue;
+                // const returnValue = pageLocation === 'active-subjects' ? (
+                //     MySwal.fire('', MESSAGES.INFO.DATA_SAFE, 'success')
+                // ) : (
+                //     MySwal.fire('', MESSAGES.INFO.FAILED_TO_RESTORE, 'error')
+                // )
+                // return returnValue;
             }
         });
     };
@@ -609,7 +671,7 @@ const SubjectTableView = ({ userStatus }) => {
         pageLocation === 'active-subjects' ? (
             sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: MESSAGES.INFO.ABLE_TO_RECOVER }, subject_id, updateStatus)
         ) : (
-            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: MESSAGES.INFO.ABLE_TO_DELETE }, subject_id, updateStatus)
+            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: 'This will restore the subject!' }, subject_id, updateStatus)
         )
 
     };
@@ -700,11 +762,27 @@ const SubjectTableView = ({ userStatus }) => {
                 }
             })
             .catch((error) => {
+                
                 if (error.response) {
                     // Request made and server responded
                     hideLoader();
                     console.log(error.response.data);
-                    sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+
+                    if (error.response.data === 'Invalid Token') {
+
+                        sessionStorage.clear();
+                        localStorage.clear();
+
+                        history.push('/auth/signin-1');
+                        window.location.reload();
+
+                    } else {
+
+                        sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+
+
+                    }
+
                 } else if (error.request) {
                     // The request was made but no response was received
                     hideLoader();
@@ -744,6 +822,7 @@ const SubjectTableView = ({ userStatus }) => {
                 if (response.Error) {
                     hideLoader();
                     sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
+                    fetchAllSubjectsData();
 
                 } else {
 
@@ -754,6 +833,7 @@ const SubjectTableView = ({ userStatus }) => {
                     ) : (
                         MySwal.fire('', MESSAGES.INFO.SUBJECT_DELETED, 'success')
                     )
+                    fetchAllSubjectsData();
 
                 }
             })
@@ -762,15 +842,34 @@ const SubjectTableView = ({ userStatus }) => {
                     // Request made and server responded
                     hideLoader();
                     console.log(error.response.data);
-                    sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+
+                    if (error.response.data === 'Invalid Token') {
+
+                        sessionStorage.clear();
+                        localStorage.clear();
+
+                        history.push('/auth/signin-1');
+                        window.location.reload();
+
+                    } else {
+
+                        sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+                        fetchAllSubjectsData();
+
+                    }
+
                 } else if (error.request) {
                     // The request was made but no response was received
                     hideLoader();
                     console.log(error.request);
+                    fetchAllSubjectsData();
+
                 } else {
                     // Something happened in setting up the request that triggered an Error
                     hideLoader();
                     console.log('Error', error.message);
+                    fetchAllSubjectsData();
+
                 }
             });
     };

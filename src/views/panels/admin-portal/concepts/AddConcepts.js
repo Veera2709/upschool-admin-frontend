@@ -7,14 +7,16 @@ import ReactTags from 'react-tag-autocomplete';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import { Row, Col } from 'react-bootstrap';
+import { useHistory } from 'react-router-dom';
+
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import dynamicUrl from '../../../../helper/dynamicUrls';
 
-
-const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchAllConceptsData }) => {
+const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchAllConceptsData, setDigicardsAndConcepts }) => {
 
     console.log(_digicards);
     console.log(_relatedConcepts);
+    console.log(fetchAllConceptsData);
 
     const MySwal = withReactContent(Swal);
 
@@ -26,6 +28,7 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
         });
     };
 
+    const history = useHistory();
     const [loader, showLoader, hideLoader] = useFullPageLoader();
     const [selectedDigicards, setSelectedDigicards] = useState([]);
     const [selectedRelatedConcepts, setSelectedRelatedConcepts] = useState([]);
@@ -184,10 +187,9 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
                                                 console.log('inside res edit');
                                                 hideLoader();
                                                 setIsOpenAddConcept(false);
-                                                sweetAlertHandler({ title: 'Success', type: 'success', text: 'Concept added successfully!' });
                                                 fetchAllConceptsData();
-                                                // window.location.reload();
-
+                                                sweetAlertHandler({ title: 'Success', type: 'success', text: 'Concept added successfully!' });
+                                                setDigicardsAndConcepts(true);
                                             } else {
 
                                                 console.log('else res');
@@ -197,7 +199,6 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
                                                 setConceptTitleErrMessage("err");
                                                 // window.location.reload();
 
-
                                             }
                                         })
                                         .catch((error) => {
@@ -205,8 +206,20 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
                                                 hideLoader();
                                                 // Request made and server responded
                                                 console.log(error.response.data);
-                                                setConceptTitleErr(true);
-                                                setConceptTitleErrMessage(error.response.data);
+
+                                                if (error.response.data === 'Invalid Token') {
+
+                                                    sessionStorage.clear();
+                                                    localStorage.clear();
+
+                                                    history.push('/auth/signin-1');
+                                                    window.location.reload();
+
+                                                } else {
+
+                                                    setConceptTitleErr(true);
+                                                    setConceptTitleErrMessage(error.response.data);
+                                                }
 
                                             } else if (error.request) {
                                                 // The request was made but no response was received
@@ -220,7 +233,6 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
                                                 hideLoader();
                                                 setConceptTitleErr(true);
                                                 setConceptTitleErrMessage(error.request);
-
                                             }
                                         })
                                 } else {
