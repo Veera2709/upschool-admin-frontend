@@ -198,7 +198,12 @@ const routes = [
       //Get Topics
       {
         exact: true,
-        path: '/admin-portal/Topics/activeTopics',
+        path: '/admin-portal/Topics/active-topics',
+        component: lazy(() => import('./views/panels/admin-portal/Topics/ActiveTopics'))
+      },
+      {
+        exact: true,
+        path: '/admin-portal/Topics/archived-topics',
         component: lazy(() => import('./views/panels/admin-portal/Topics/ActiveTopics'))
       },
       // Add Topics

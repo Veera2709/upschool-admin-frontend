@@ -398,7 +398,7 @@ const ChaptersListChild = (props) => {
                         <Col sm={12}>
                             <Card>
                                 <Card.Header>
-                                    <Card.Title as="h5">DigiCard List</Card.Title>
+                                    <Card.Title as="h5">Chapters List</Card.Title>
                                 </Card.Header>
                                 <Card.Body>
                                     <Table columns={columns} data={chapterData} />
@@ -410,7 +410,7 @@ const ChaptersListChild = (props) => {
             ) : (
                 <div>
 
-                    <h3 style={{ textAlign: 'center' }}>No DigiCard Found</h3>
+                    <h3 style={{ textAlign: 'center' }}>No Chapter Found</h3>
                     <div className="form-group fill text-center">
                         <br></br>
 
