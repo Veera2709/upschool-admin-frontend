@@ -145,7 +145,7 @@ function Table({ columns, data }) {
         pageLocation === 'active-subjects' ? (
             sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: MESSAGES.INFO.ABLE_TO_RECOVER }, subject_id, updateStatus)
         ) : (
-            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: 'This will restore the Subject!' }, subject_id, updateStatus)
+            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: 'This will restore the subject!' }, subject_id, updateStatus)
         )
 
     };
@@ -671,7 +671,7 @@ const SubjectTableView = ({ userStatus }) => {
         pageLocation === 'active-subjects' ? (
             sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: MESSAGES.INFO.ABLE_TO_RECOVER }, subject_id, updateStatus)
         ) : (
-            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: 'This will restore the Subject!' }, subject_id, updateStatus)
+            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: 'This will restore the subject!' }, subject_id, updateStatus)
         )
 
     };

@@ -265,7 +265,7 @@ const UserTableView = ({ _userRole }) => {
     pageLocation === 'active-users' ? (
       sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: MESSAGES.INFO.ABLE_TO_RECOVER }, user_id, user_role, updateStatus)
     ) : (
-      sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: 'This will restore the Subject!' }, user_id, user_role, updateStatus)
+      sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: 'This will restore the user!' }, user_id, user_role, updateStatus)
     )
 
   };

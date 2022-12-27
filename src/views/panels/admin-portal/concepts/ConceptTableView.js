@@ -151,7 +151,7 @@ function Table({ columns, data }) {
         pageLocation === 'active-concepts' ? (
             sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: MESSAGES.INFO.ABLE_TO_RECOVER }, concept_id, updateStatus)
         ) : (
-            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: 'This will restore your concept!' }, concept_id, updateStatus)
+            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: 'This will restore the concept!' }, concept_id, updateStatus)
         )
 
     };
@@ -699,7 +699,7 @@ const ConceptTableView = ({ userStatus }) => {
         pageLocation === 'active-concepts' ? (
             sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: MESSAGES.INFO.ABLE_TO_RECOVER }, concept_id, updateStatus)
         ) : (
-            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: 'This will restore your concept!' }, concept_id, updateStatus)
+            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: 'This will restore the concept!' }, concept_id, updateStatus)
         )
 
     };
