@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import { Row, Col, Card, Pagination, Button, Modal } from 'react-bootstrap';
 import BTable from 'react-bootstrap/Table';
 import axios from 'axios';
@@ -14,9 +14,11 @@ import dynamicUrl from '../../../../helper/dynamicUrls';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import AddSubjects from './AddSubjects';
 import EditSubjects from './EditSubjects';
+import BasicSpinner from '../../../../helper/BasicSpinner';
 
 function Table({ columns, data }) {
 
+    const history = useHistory();
     const [isLoading, setIsLoading] = useState(false);
     const [subjectData, setSubjectData] = useState([]);
     const [_subjectID, _setSubjectID] = useState('');
@@ -85,6 +87,20 @@ function Table({ columns, data }) {
                     // Request made and server responded
                     console.log(error.response.data);
 
+                    if (error.response.data === 'Invalid Token') {
+
+                        sessionStorage.clear();
+                        localStorage.clear();
+
+                        history.push('/auth/signin-1');
+                        window.location.reload();
+
+                    } else {
+
+
+
+                    }
+
 
                 } else if (error.request) {
                     // The request was made but no response was received
@@ -114,12 +130,12 @@ function Table({ columns, data }) {
                 deleteSubject(subject_id, updateStatus);
             } else {
 
-                const returnValue = pageLocation === 'active-subjects' ? (
-                    MySwal.fire('', MESSAGES.INFO.DATA_SAFE, 'success')
-                ) : (
-                    MySwal.fire('', MESSAGES.INFO.FAILED_TO_RESTORE, 'error')
-                )
-                return returnValue;
+                // const returnValue = pageLocation === 'active-subjects' ? (
+                //     MySwal.fire('', MESSAGES.INFO.DATA_SAFE, 'success')
+                // ) : (
+                //     MySwal.fire('', MESSAGES.INFO.FAILED_TO_RESTORE, 'error')
+                // )
+                // return returnValue;
             }
         });
     };
@@ -130,13 +146,14 @@ function Table({ columns, data }) {
         pageLocation === 'active-subjects' ? (
             sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: MESSAGES.INFO.ABLE_TO_RECOVER }, subject_id, updateStatus)
         ) : (
-            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: MESSAGES.INFO.ABLE_TO_DELETE }, subject_id, updateStatus)
+            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: 'This will restore the subject!' }, subject_id, updateStatus)
         )
 
     };
 
     const fetchAllSubjectsData = () => {
 
+        setIsLoading(true);
         showLoader();
         console.log(pageLocation);
 
@@ -216,7 +233,7 @@ function Table({ columns, data }) {
 
                     console.log(finalDataArray);
                     setSubjectData(finalDataArray);
-                    setIsLoading(true);
+                    setIsLoading(false);
 
                 }
             })
@@ -225,7 +242,21 @@ function Table({ columns, data }) {
                     // Request made and server responded
                     hideLoader();
                     console.log(error.response.data);
-                    sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+
+                    if (error.response.data === 'Invalid Token') {
+
+                        sessionStorage.clear();
+                        localStorage.clear();
+
+                        history.push('/auth/signin-1');
+                        window.location.reload();
+
+                    } else {
+
+                        sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+
+                    }
+
                 } else if (error.request) {
                     // The request was made but no response was received
                     hideLoader();
@@ -266,7 +297,7 @@ function Table({ columns, data }) {
                 if (response.Error) {
                     hideLoader();
                     sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingSubject });
-
+                    fetchAllSubjectsData();
                 } else {
 
                     hideLoader()
@@ -276,6 +307,7 @@ function Table({ columns, data }) {
                     ) : (
                         MySwal.fire('', MESSAGES.INFO.SUBJECT_DELETED, 'success')
                     )
+                    fetchAllSubjectsData();
 
 
                 }
@@ -285,15 +317,34 @@ function Table({ columns, data }) {
                     // Request made and server responded
                     hideLoader();
                     console.log(error.response.data);
-                    sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+
+                    if (error.response.data === 'Invalid Token') {
+
+                        sessionStorage.clear();
+                        localStorage.clear();
+
+                        history.push('/auth/signin-1');
+                        window.location.reload();
+
+                    } else {
+
+                        sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+                        fetchAllSubjectsData();
+
+                    }
+
                 } else if (error.request) {
                     // The request was made but no response was received
                     hideLoader();
                     console.log(error.request);
+                    fetchAllSubjectsData();
+
                 } else {
                     // Something happened in setting up the request that triggered an Error
                     hideLoader();
                     console.log('Error', error.message);
+                    fetchAllSubjectsData();
+
                 }
             });
     };
@@ -495,6 +546,7 @@ const SubjectTableView = ({ userStatus }) => {
 
     // const data = React.useMemo(() => makeData(50), []);
 
+    const history = useHistory();
     const [isLoading, setIsLoading] = useState(false);
     const [subjectData, setSubjectData] = useState([]);
     const [_subjectID, _setSubjectID] = useState('');
@@ -563,6 +615,18 @@ const SubjectTableView = ({ userStatus }) => {
                     // Request made and server responded
                     console.log(error.response.data);
 
+                    if (error.response.data === 'Invalid Token') {
+
+                        sessionStorage.clear();
+                        localStorage.clear();
+
+                        history.push('/auth/signin-1');
+                        window.location.reload();
+
+                    } else {
+
+                    }
+
 
                 } else if (error.request) {
                     // The request was made but no response was received
@@ -592,12 +656,12 @@ const SubjectTableView = ({ userStatus }) => {
                 deleteSubject(subject_id, updateStatus);
             } else {
 
-                const returnValue = pageLocation === 'active-subjects' ? (
-                    MySwal.fire('', MESSAGES.INFO.DATA_SAFE, 'success')
-                ) : (
-                    MySwal.fire('', MESSAGES.INFO.FAILED_TO_RESTORE, 'error')
-                )
-                return returnValue;
+                // const returnValue = pageLocation === 'active-subjects' ? (
+                //     MySwal.fire('', MESSAGES.INFO.DATA_SAFE, 'success')
+                // ) : (
+                //     MySwal.fire('', MESSAGES.INFO.FAILED_TO_RESTORE, 'error')
+                // )
+                // return returnValue;
             }
         });
     };
@@ -609,13 +673,14 @@ const SubjectTableView = ({ userStatus }) => {
         pageLocation === 'active-subjects' ? (
             sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: MESSAGES.INFO.ABLE_TO_RECOVER }, subject_id, updateStatus)
         ) : (
-            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: MESSAGES.INFO.ABLE_TO_DELETE }, subject_id, updateStatus)
+            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: 'This will restore the subject!' }, subject_id, updateStatus)
         )
 
     };
 
     const fetchAllSubjectsData = () => {
 
+        setIsLoading(true);
         showLoader();
         console.log(pageLocation);
 
@@ -695,16 +760,32 @@ const SubjectTableView = ({ userStatus }) => {
 
                     console.log(finalDataArray);
                     setSubjectData(finalDataArray);
-                    setIsLoading(true);
+                    setIsLoading(false);
 
                 }
             })
             .catch((error) => {
+
                 if (error.response) {
                     // Request made and server responded
                     hideLoader();
                     console.log(error.response.data);
-                    sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+
+                    if (error.response.data === 'Invalid Token') {
+
+                        sessionStorage.clear();
+                        localStorage.clear();
+
+                        history.push('/auth/signin-1');
+                        window.location.reload();
+
+                    } else {
+
+                        sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+
+
+                    }
+
                 } else if (error.request) {
                     // The request was made but no response was received
                     hideLoader();
@@ -744,6 +825,7 @@ const SubjectTableView = ({ userStatus }) => {
                 if (response.Error) {
                     hideLoader();
                     sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
+                    fetchAllSubjectsData();
 
                 } else {
 
@@ -754,6 +836,7 @@ const SubjectTableView = ({ userStatus }) => {
                     ) : (
                         MySwal.fire('', MESSAGES.INFO.SUBJECT_DELETED, 'success')
                     )
+                    fetchAllSubjectsData();
 
                 }
             })
@@ -762,119 +845,149 @@ const SubjectTableView = ({ userStatus }) => {
                     // Request made and server responded
                     hideLoader();
                     console.log(error.response.data);
-                    sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+
+                    if (error.response.data === 'Invalid Token') {
+
+                        sessionStorage.clear();
+                        localStorage.clear();
+
+                        history.push('/auth/signin-1');
+                        window.location.reload();
+
+                    } else {
+
+                        sweetAlertHandler({ title: 'Sorry', type: 'warning', text: error.response.data });
+                        fetchAllSubjectsData();
+
+                    }
+
                 } else if (error.request) {
                     // The request was made but no response was received
                     hideLoader();
                     console.log(error.request);
+                    fetchAllSubjectsData();
+
                 } else {
                     // Something happened in setting up the request that triggered an Error
                     hideLoader();
                     console.log('Error', error.message);
+                    fetchAllSubjectsData();
+
                 }
             });
     };
 
     return (
+
         <div>
-            {subjectData.length <= 0 ? (
-                <>
-                    < React.Fragment >
-                        <div>
 
-                            <h3 style={{ textAlign: 'center' }}>No Subjects Found</h3>
-                            <div className="form-group fill text-center">
-                                <br></br>
+            {
+                isLoading ? (
+                    <BasicSpinner />
+                ) : (
 
-                                <Button
-                                    variant="success"
-                                    className="btn-sm btn-round has-ripple ml-2"
-                                    onClick={(e) => {
-                                        handleAddSubjects(e);
-                                    }}
-                                >
-                                    <i className="feather icon-plus" /> Add Subjects
-                                </Button>
+                    <>
+                        {
+                            subjectData.length <= 0 ? (
+                                <>
+                                    < React.Fragment >
+                                        <div>
+
+                                            <h3 style={{ textAlign: 'center' }}>No Subjects Found</h3>
+                                            <div className="form-group fill text-center">
+                                                <br></br>
+
+                                                <Button
+                                                    variant="success"
+                                                    className="btn-sm btn-round has-ripple ml-2"
+                                                    onClick={(e) => {
+                                                        handleAddSubjects(e);
+                                                    }}
+                                                >
+                                                    <i className="feather icon-plus" /> Add Subjects
+                                                </Button>
 
 
-                            </div>
+                                            </div>
 
-                        </div>
+                                        </div>
 
-                        <Modal dialogClassName="my-modal" show={isOpenAddSubject} onHide={() => setIsOpenAddSubject(false)}>
+                                        <Modal dialogClassName="my-modal" show={isOpenAddSubject} onHide={() => setIsOpenAddSubject(false)}>
 
-                            <Modal.Header closeButton>
+                                            <Modal.Header closeButton>
 
-                                <Modal.Title as="h5">Add Subject</Modal.Title>
+                                                <Modal.Title as="h5">Add Subject</Modal.Title>
 
-                            </Modal.Header>
+                                            </Modal.Header>
 
-                            <Modal.Body>
+                                            <Modal.Body>
 
-                                <AddSubjects _units={_units} _relatedSubjects={_relatedSubjects} setIsOpenAddSubject={setIsOpenAddSubject} fetchAllSubjectsData={fetchAllSubjectsData} />
+                                                <AddSubjects _units={_units} _relatedSubjects={_relatedSubjects} setIsOpenAddSubject={setIsOpenAddSubject} fetchAllSubjectsData={fetchAllSubjectsData} />
 
-                            </Modal.Body>
+                                            </Modal.Body>
 
-                        </Modal>
+                                        </Modal>
 
-                    </React.Fragment>
-                </>
-            ) : (
+                                    </React.Fragment>
+                                </>
+                            ) : (
 
-                <>
+                                <>
 
-                    < React.Fragment >
-                        <Row>
-                            <Col sm={12}>
-                                <Card>
-                                    <Card.Header>
-                                        <Card.Title as="h5">Subject List</Card.Title>
-                                    </Card.Header>
-                                    <Card.Body>
-                                        <Table columns={columns} data={subjectData} />
-                                    </Card.Body>
-                                </Card>
+                                    < React.Fragment >
+                                        <Row>
+                                            <Col sm={12}>
+                                                <Card>
+                                                    <Card.Header>
+                                                        <Card.Title as="h5">Subject List</Card.Title>
+                                                    </Card.Header>
+                                                    <Card.Body>
+                                                        <Table columns={columns} data={subjectData} />
+                                                    </Card.Body>
+                                                </Card>
 
-                            </Col>
-                        </Row>
-                    </React.Fragment>
+                                            </Col>
+                                        </Row>
+                                    </React.Fragment>
 
-                    <Modal dialogClassName="my-modal" show={isOpenAddSubject} onHide={() => setIsOpenAddSubject(false)}>
+                                    <Modal dialogClassName="my-modal" show={isOpenAddSubject} onHide={() => setIsOpenAddSubject(false)}>
 
-                        <Modal.Header closeButton>
+                                        <Modal.Header closeButton>
 
-                            <Modal.Title as="h5">Add Subject</Modal.Title>
+                                            <Modal.Title as="h5">Add Subject</Modal.Title>
 
-                        </Modal.Header>
+                                        </Modal.Header>
 
-                        <Modal.Body>
+                                        <Modal.Body>
 
-                            <AddSubjects _units={_units} _relatedSubjects={_relatedSubjects} setIsOpenAddSubject={setIsOpenAddSubject} fetchAllSubjectsData={fetchAllSubjectsData} />
+                                            <AddSubjects _units={_units} _relatedSubjects={_relatedSubjects} setIsOpenAddSubject={setIsOpenAddSubject} fetchAllSubjectsData={fetchAllSubjectsData} />
 
-                        </Modal.Body>
+                                        </Modal.Body>
 
-                    </Modal>
+                                    </Modal>
 
-                    <Modal dialogClassName="my-modal" show={isEditAddSubject} onHide={() => setIsOpenEditSubject(false)}>
+                                    <Modal dialogClassName="my-modal" show={isEditAddSubject} onHide={() => setIsOpenEditSubject(false)}>
 
-                        <Modal.Header closeButton>
+                                        <Modal.Header closeButton>
 
-                            <Modal.Title as="h5">Edit Subject</Modal.Title>
+                                            <Modal.Title as="h5">Edit Subject</Modal.Title>
 
-                        </Modal.Header>
+                                        </Modal.Header>
 
-                        <Modal.Body>
+                                        <Modal.Body>
 
-                            <EditSubjects _units={_units} _relatedSubjects={_relatedSubjects} editSubjectID={editSubjectID} setIsOpenEditSubject={setIsOpenEditSubject} fetchAllSubjectsData={fetchAllSubjectsData} />
+                                            <EditSubjects _units={_units} _relatedSubjects={_relatedSubjects} editSubjectID={editSubjectID} setIsOpenEditSubject={setIsOpenEditSubject} fetchAllSubjectsData={fetchAllSubjectsData} />
 
-                        </Modal.Body>
+                                        </Modal.Body>
 
-                    </Modal>
+                                    </Modal>
 
-                </>
-            )
+                                </>
+                            )
+                        }
+                    </>
+                )
             }
-
         </div >
     );
 };

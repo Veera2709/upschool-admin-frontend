@@ -54,6 +54,9 @@ const EditChapter = () => {
     const [topicTitles, setTopicTitles] = useState([]);
     const [isShown, setIsShown] = useState(true);
     const [individualChapterdata, setIndividualChapterdata] = useState([]);
+    const [isShownPre, setIsShownPre] = useState(true);
+    const [isShownDes, setIsShownDes] = useState(true);
+
 
 
 
@@ -107,8 +110,8 @@ const EditChapter = () => {
         } else {
             let individual_Chapter_data = chapterData.Items[0];
             setIndividualChapterdata(individual_Chapter_data)
-         
-            
+
+
             setDefauleDescription(individual_Chapter_data.chapter_description);
             setDescription(individual_Chapter_data.chapter_description)
 
@@ -116,7 +119,7 @@ const EditChapter = () => {
             let tempArr2 = [];
             individual_Chapter_data.prelearning_topic_id.forEach(function (entry_pre) {
                 colourOptions.forEach(function (childrenEntry_pre) {
-                    if (entry_pre.topic_id === childrenEntry_pre.value) {
+                    if (entry_pre === childrenEntry_pre.value) {
                         console.log("childrenEntry", childrenEntry_pre);
                         tempArr_pre.push(childrenEntry_pre)
                     }
@@ -128,7 +131,7 @@ const EditChapter = () => {
 
             individual_Chapter_data.postlearning_topic_id.forEach(function (entry) {
                 colourOptions.forEach(function (childrenEntry2) {
-                    if (entry.topic_id === childrenEntry2.value) {
+                    if (entry === childrenEntry2.value) {
                         console.log("childrenEntry", childrenEntry2);
                         tempArr2.push(childrenEntry2)
                     }
@@ -151,12 +154,12 @@ const EditChapter = () => {
 
     }, [])
 
-    
+
 
     const prelerningOtions = (event_pre) => {
         let values_pre = [];
         for (let i = 0; i < event_pre.length; i++) {
-            values_pre.push({ "topic_id": event_pre[i].value })
+            values_pre.push( event_pre[i].value )
         }
         setPrelearningOptions(values_pre);
     }
@@ -164,7 +167,7 @@ const EditChapter = () => {
     const postlerningOtions = (event) => {
         let valuesArr = [];
         for (let i = 0; i < event.length; i++) {
-            valuesArr.push({ "topic_id": event[i].value })
+            valuesArr.push( event[i].value )
         }
         setPostlearningOption(valuesArr);
     }
@@ -201,6 +204,15 @@ const EditChapter = () => {
                             // if (postlearningOption == '') {
                             //     setIsShown(false)
                             // } else {
+
+                            if (postlearningOption == '') {
+                                setIsShown(false)
+                            } else if (prelearningOptions == '') {
+                                setIsShownPre(false)
+                            }
+                            else if (description == undefined || description.trim()=='') {
+                                setIsShownDes(false)
+                            } else {
 
                                 console.log("on submit");
                                 var formData = {
@@ -257,15 +269,7 @@ const EditChapter = () => {
                                             hideLoader();
                                         }
                                     });
-
-                            // }
-
-
-
-
-
-
-
+                            }
                         }}
                     >
                         {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
@@ -317,7 +321,7 @@ const EditChapter = () => {
                                                             name="color"
                                                             isMulti
                                                             closeMenuOnSelect={false}
-                                                            onChange={postlerningOtions}
+                                                            onChange={(e)=>{postlerningOtions(e);setIsShown(true)}}
                                                             options={topicTitles}
                                                             placeholder="Select"
                                                         />
@@ -326,18 +330,16 @@ const EditChapter = () => {
                                                 </>
 
                                             )}
-                                            <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>required</small>
+                                            <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>Postlearning Topic Required</small>
                                         </div>
                                         <div className="form-group fill" >
                                             <Form.Label htmlFor="chapter_description"> <small className="text-danger">* </small>Chapter Description</Form.Label>
                                             <Form.Control as="textarea"
-                                                onChange={ChapterDescription} rows="4"
+                                                onChange={(e)=>{ChapterDescription(e);setIsShownDes(true)}} rows="4"
                                                 defaultValue={description}
                                             />
                                             <br />
-                                            {touched.prelearning_topic && errors.prelearning_topic && (
-                                                <small className="text-danger form-text">{errors.prelearning_topic}</small>
-                                            )}
+                                            <small className="text-danger form-text" style={{ display: isShownDes ? 'none' : 'block' }}>Chapter Description Required</small>
                                         </div>
                                     </Col>
                                     <Col sm={6}>
@@ -369,7 +371,7 @@ const EditChapter = () => {
                                                             name="color"
                                                             isMulti
                                                             closeMenuOnSelect={false}
-                                                            onChange={prelerningOtions}
+                                                            onChange={(e)=>{prelerningOtions(e);setIsShownPre(true)}}
                                                             options={topicTitles}
                                                             placeholder="Select"
                                                         />
@@ -379,9 +381,7 @@ const EditChapter = () => {
 
                                             )}
                                             <br />
-                                            {touched.prelearning_topic && errors.prelearning_topic && (
-                                                <small className="text-danger form-text">{errors.prelearning_topic}</small>
-                                            )}
+                                            <small className="text-danger form-text" style={{ display: isShownPre ? 'none' : 'block' }}>Prelearning Topic Required</small>
                                         </div>
                                         <div className="form-group fill" style={{ position: "relative", zIndex: 10 }}>
                                             <label className="floating-label" htmlFor="isLocked">

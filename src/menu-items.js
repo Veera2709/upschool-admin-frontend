@@ -425,20 +425,14 @@ const menuItems = {
               id: 'active-topics',
               title: 'Active Topics',
               type: 'item',
-              url: '/admin-portal/Topics/activeTopics'
+              url: '/admin-portal/Topics/active-topics'
             },
             {
-              id: 'add-topics',
-              title: 'Archieve Topics',
+              id: 'archived-topics',
+              title: 'Archived Topics',
               type: 'item',
-              url: '/admin-portal/Topics/archievedTopics'
+              url: '/admin-portal/Topics/archived-topics'
             },
-            // {
-            //   id: 'edit-topics',
-            //   title: 'Edit Topic',
-            //   type: 'item',
-            //   url: '/admin-portal/Topics/editTopic/:topic_id'
-            // }
           ]
         },
         // {

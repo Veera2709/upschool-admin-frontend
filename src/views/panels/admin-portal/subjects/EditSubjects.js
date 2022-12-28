@@ -11,12 +11,16 @@ import { Row, Col } from 'react-bootstrap';
 import dynamicUrl from '../../../../helper/dynamicUrls';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import { SessionStorage } from '../../../../util/SessionStorage';
+import { useHistory } from 'react-router-dom';
+import BasicSpinner from '../../../../helper/BasicSpinner';
 
 const EditSubjects = ({ _units, _relatedSubjects, editSubjectID, setIsOpenEditSubject, fetchAllSubjectsData }) => {
 
     console.log(_units);
     console.log(_relatedSubjects);
 
+    const history = useHistory();
+    const [isLoading, setIsLoading] = useState(false);
     const [loader, showLoader, hideLoader] = useFullPageLoader();
     const [selectedUnits, setSelectedUnits] = useState([]);
     const [selectedRelatedSubjects, setSelectedRelatedSubjects] = useState([]);
@@ -43,6 +47,7 @@ const EditSubjects = ({ _units, _relatedSubjects, editSubjectID, setIsOpenEditSu
 
     useEffect(() => {
 
+        setIsLoading(true);
         showLoader();
 
         const payload = {
@@ -187,6 +192,7 @@ const EditSubjects = ({ _units, _relatedSubjects, editSubjectID, setIsOpenEditSu
                             console.log(setArr);
                             setPreviousSubjects(setArr);
                             setSelectedRelatedSubjects(selectedArr);
+                            setIsLoading(false);
                         }
 
                     } getPreviousSubjects(0)
@@ -203,15 +209,33 @@ const EditSubjects = ({ _units, _relatedSubjects, editSubjectID, setIsOpenEditSu
                     console.log(error.response.data);
                     setIsOpenEditSubject(false);
                     hideLoader();
-                    sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+
+                    if (error.response.data === 'Invalid Token') {
+
+                        sessionStorage.clear();
+                        localStorage.clear();
+
+                        history.push('/auth/signin-1');
+                        window.location.reload();
+
+                    } else {
+
+                        setIsLoading(false);
+                        sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+                        
+                    }
+
+
                 } else if (error.request) {
                     // The request was made but no response was received
                     hideLoader();
                     console.log(error.request);
+                    setIsLoading(false);
                 } else {
                     // Something happened in setting up the request that triggered an Error
                     hideLoader();
                     console.log('Error', error.message);
+                    setIsLoading(false);
                 }
             });
 
@@ -223,6 +247,14 @@ const EditSubjects = ({ _units, _relatedSubjects, editSubjectID, setIsOpenEditSu
         const newTags = tags.slice(0);
         newTags.splice(i, 1);
         setTags(newTags);
+
+        let valuesArr = [];
+        for (let i = 0; i < newTags.length; i++) {
+            valuesArr.push(newTags[i].name)
+        }
+
+        console.log(valuesArr);
+        setSelectedKeywords(valuesArr);
     };
 
     const handleAddKeywords = (tag, state) => {
@@ -270,259 +302,266 @@ const EditSubjects = ({ _units, _relatedSubjects, editSubjectID, setIsOpenEditSu
 
     return (
 
-        <>
-            {previousData.length === 0 || previousUnits.length === 0 ? (<></>) : (
+        <div>
+
+            {isLoading ? (
+                <BasicSpinner />
+            ) : (
+
                 <>
-                    {_units && _relatedSubjects && (
-
+                    {previousData.length === 0 || previousUnits.length === 0 ? (<></>) : (
                         <>
-                            {console.log(previousData.subject_title)}
-                            <React.Fragment>
-                                < Formik
+                            {_units && _relatedSubjects && (
 
-                                    initialValues={
-                                        {
-                                            subjectTitle: previousData.subject_title,
-                                            description: previousData.subject_description,
-                                            // submit: null
-                                        }
-                                    }
-                                    validationSchema={
-                                        Yup.object().shape({
-                                            subjectTitle: Yup.string().max(255).required('Subject Title is required'),
-                                            description: Yup.string().max(255).required('Subject Description is required')
+                                <>
+                                    {console.log(previousData.subject_title)}
+                                    <React.Fragment>
+                                        < Formik
 
-                                        })
-                                    }
-                                    onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-
-                                        setStatus({ success: true });
-                                        setSubmitting(true);
-
-                                        console.log("Submit clicked")
-
-                                        const formData = {
-                                            data: {
-                                                subject_id: editSubjectID,
-                                                subject_title: values.subjectTitle,
-                                                subject_unit_id: selectedUnits,
-                                                subject_keyword: selectedKeywords,
-                                                related_subject: selectedRelatedSubjects,
-                                                subject_description: values.description
-
+                                            initialValues={
+                                                {
+                                                    subjectTitle: previousData.subject_title,
+                                                    description: previousData.subject_description,
+                                                    // submit: null
+                                                }
                                             }
-                                        };
+                                            validationSchema={
+                                                Yup.object().shape({
+                                                    subjectTitle: Yup.string().max(255).required('Subject Title is required'),
+                                                    description: Yup.string().max(255).required('Subject Description is required')
 
-                                        console.log('form Data: ', formData);
-
-                                        if (selectedUnits.length > 0) {
-                                            console.log("Proceed");
-                                            showLoader();
-
-                                            axios
-                                                .post(
-                                                    dynamicUrl.updateSubject,
-                                                    formData,
-                                                    {
-                                                        headers: { Authorization: sessionStorage.getItem('user_jwt') }
-                                                    }
-                                                )
-                                                .then((response) => {
-
-                                                    console.log({ response });
-
-                                                    let result = response.status === 200;
-                                                    hideLoader();
-
-                                                    if (result) {
-
-                                                        console.log('inside res edit');
-                                                        hideLoader();
-                                                        setIsOpenEditSubject(false);
-                                                        sweetAlertHandler({ title: 'Success', type: 'success', text: 'Subject updated successfully!' });
-                                                        fetchAllSubjectsData();
-                                                        // window.location.reload();
-
-                                                    } else {
-
-                                                        console.log('else res');
-                                                        hideLoader();
-                                                        // Request made and server responded
-                                                        setSubjectTitleErr(true);
-                                                        setSubjectTitleErrMessage("err");
-                                                        // window.location.reload();
-
-
-                                                    }
                                                 })
-                                                .catch((error) => {
-                                                    if (error.response) {
-                                                        hideLoader();
-                                                        // Request made and server responded
-                                                        console.log(error.response.data);
-                                                        setSubjectTitleErr(true);
-                                                        setSubjectTitleErrMessage(error.response.data);
+                                            }
+                                            onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
 
-                                                    } else if (error.request) {
-                                                        // The request was made but no response was received
-                                                        console.log(error.request);
-                                                        hideLoader();
-                                                        setSubjectTitleErr(true);
-                                                        setSubjectTitleErrMessage(error.request);
-                                                    } else {
-                                                        // Something happened in setting up the request that triggered an Error
-                                                        console.log('Error', error.message);
-                                                        hideLoader();
-                                                        setSubjectTitleErr(true);
-                                                        setSubjectTitleErrMessage(error.request);
+                                                setStatus({ success: true });
+                                                setSubmitting(true);
+
+                                                console.log("Submit clicked")
+
+                                                const formData = {
+                                                    data: {
+                                                        subject_id: editSubjectID,
+                                                        subject_title: values.subjectTitle,
+                                                        subject_unit_id: selectedUnits,
+                                                        subject_keyword: selectedKeywords,
+                                                        related_subject: selectedRelatedSubjects,
+                                                        subject_description: values.description
 
                                                     }
-                                                })
-                                        } else {
-                                            console.log("Unit empty");
-                                            setShowUnitErr(true);
+                                                };
 
-                                        }
+                                                console.log('form Data: ', formData);
+
+                                                if (selectedUnits.length > 0) {
+                                                    console.log("Proceed");
+                                                    showLoader();
+
+                                                    axios
+                                                        .post(
+                                                            dynamicUrl.updateSubject,
+                                                            formData,
+                                                            {
+                                                                headers: { Authorization: sessionStorage.getItem('user_jwt') }
+                                                            }
+                                                        )
+                                                        .then((response) => {
+
+                                                            console.log({ response });
+
+                                                            let result = response.status === 200;
+                                                            hideLoader();
+
+                                                            if (result) {
+
+                                                                console.log('inside res edit');
+                                                                hideLoader();
+                                                                setIsOpenEditSubject(false);
+                                                                sweetAlertHandler({ title: 'Success', type: 'success', text: 'Subject updated successfully!' });
+                                                                fetchAllSubjectsData();
+                                                                // window.location.reload();
+
+                                                            } else {
+
+                                                                console.log('else res');
+                                                                hideLoader();
+                                                                // Request made and server responded
+                                                                setSubjectTitleErr(true);
+                                                                setSubjectTitleErrMessage("err");
+                                                                // window.location.reload();
 
 
+                                                            }
+                                                        })
+                                                        .catch((error) => {
+                                                            if (error.response) {
+                                                                hideLoader();
+                                                                // Request made and server responded
+                                                                console.log(error.response.data);
 
-                                    }}>
+                                                                if (error.response.data === 'Invalid Token') {
 
-                                    {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, setFieldValue }) => (
-                                        <form noValidate onSubmit={handleSubmit} >
+                                                                    sessionStorage.clear();
+                                                                    localStorage.clear();
 
-                                            <Row>
+                                                                    history.push('/auth/signin-1');
+                                                                    window.location.reload();
 
-                                                <Col>
-                                                    <Row>
-                                                        <Col>
+                                                                } else {
 
-                                                            <div className="form-group fill">
-                                                                <label className="floating-label" htmlFor="subjectTitle">
-                                                                    <small className="text-danger">* </small>Subject Title
-                                                                </label>
-                                                                <input
-                                                                    className="form-control"
-                                                                    error={touched.subjectTitle && errors.subjectTitle}
-                                                                    name="subjectTitle"
-                                                                    onBlur={handleBlur}
-                                                                    // onChange={handleChange}
-                                                                    type="text"
-                                                                    value={values.subjectTitle}
-                                                                    onChange={(e) => {
-                                                                        handleChange("subjectTitle")(e);
-                                                                        setSubjectTitleErr(false);
-                                                                    }}
+                                                                    setSubjectTitleErr(true);
+                                                                    setSubjectTitleErrMessage(error.response.data);
 
-                                                                />
-
-                                                                {touched.subjectTitle && errors.subjectTitle && <small className="text-danger form-text">{errors.subjectTitle}</small>}
-
-                                                                {subjectTitleErr && subjectTitleErrMessage &&
-                                                                    <small className="text-danger form-text">{subjectTitleErrMessage}</small>
                                                                 }
 
-                                                            </div>
+                                                            } else if (error.request) {
+                                                                // The request was made but no response was received
+                                                                console.log(error.request);
+                                                                hideLoader();
+                                                                setSubjectTitleErr(true);
+                                                                setSubjectTitleErrMessage(error.request);
+                                                            } else {
+                                                                // Something happened in setting up the request that triggered an Error
+                                                                console.log('Error', error.message);
+                                                                hideLoader();
+                                                                setSubjectTitleErr(true);
+                                                                setSubjectTitleErrMessage(error.request);
 
-                                                        </Col>
-                                                        <Col>
+                                                            }
+                                                        })
+                                                } else {
+                                                    console.log("Unit empty");
+                                                    setShowUnitErr(true);
 
-                                                            <label className="floating-label" htmlFor="keywords">
-                                                                <small className="text-danger"></small>Keywords
-                                                            </label>
+                                                }
 
-                                                            <ReactTags
-                                                                classNames={{ root: 'react-tags bootstrap-tagsinput', selectedTag: 'react-tags__selected-tag btn-primary' }}
-                                                                allowNew={true}
-                                                                addOnBlur={true}
-                                                                tags={tags}
-                                                                onDelete={handleDeleteKeywords}
-                                                                onAddition={(e) => handleAddKeywords(e)}
-                                                            />
 
-                                                        </Col>
-                                                    </Row>
-                                                    <br />
 
-                                                    <Row>
-                                                        <Col>
+                                            }}>
 
-                                                            <div className="form-group fill">
-
-                                                                <label className="floating-label">
-                                                                    <small className="text-danger">* </small>
-                                                                    Description
-                                                                </label>
-
-                                                                <textarea
-                                                                    className="form-control"
-                                                                    error={touched.description && errors.description}
-                                                                    label="description"
-                                                                    name="description"
-                                                                    id="description"
-                                                                    onBlur={handleBlur}
-                                                                    onChange={handleChange}
-                                                                    value={values.description}
-                                                                    placeholder="Enter description"
-                                                                    rows="6"
-                                                                />
-                                                                {touched.description && errors.description && (
-                                                                    <small className="text-danger form-text">{errors.description}</small>
-                                                                )}
-
-                                                            </div>
-
-                                                        </Col>
-                                                    </Row>
-
-                                                    <br />
+                                            {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, setFieldValue }) => (
+                                                <form noValidate onSubmit={handleSubmit} >
 
                                                     <Row>
+
                                                         <Col>
-                                                            <div className="form-group fill">
+                                                            <Row>
+                                                                <Col>
 
-                                                                <label className="floating-label">
-                                                                    <small className="text-danger">* </small>
-                                                                    Units
-                                                                </label>
-                                                                {console.log(previousUnits)}
-                                                                <Select
-                                                                    defaultValue={previousUnits}
-                                                                    isMulti
-                                                                    name="units"
-                                                                    options={dropdownUnits}
-                                                                    className="basic-multi-select"
-                                                                    classNamePrefix="Select"
-                                                                    onChange={event => handleUnitChange(event)}
-                                                                />
-                                                                {showUnitErr && <small className="text-danger form-text">{'Please select a unit'}</small>}
-                                                            </div>
-                                                        </Col>
-                                                        <Col>
-                                                            <div className="form-group fill">
+                                                                    <div className="form-group fill">
+                                                                        <label className="floating-label" htmlFor="subjectTitle">
+                                                                            <small className="text-danger">* </small>Subject Title
+                                                                        </label>
+                                                                        <input
+                                                                            className="form-control"
+                                                                            error={touched.subjectTitle && errors.subjectTitle}
+                                                                            name="subjectTitle"
+                                                                            onBlur={handleBlur}
+                                                                            // onChange={handleChange}
+                                                                            type="text"
+                                                                            value={values.subjectTitle}
+                                                                            onChange={(e) => {
+                                                                                handleChange("subjectTitle")(e);
+                                                                                setSubjectTitleErr(false);
+                                                                            }}
 
-                                                                <label className="floating-label">
-                                                                    <small className="text-danger"></small>
-                                                                    Related Subjects
-                                                                </label>
-                                                                {console.log(previousSubjects)}
+                                                                        />
 
-                                                                {
-                                                                    previousSubjects.length === 0 ? (
+                                                                        {touched.subjectTitle && errors.subjectTitle && <small className="text-danger form-text">{errors.subjectTitle}</small>}
+
+                                                                        {subjectTitleErr && subjectTitleErrMessage &&
+                                                                            <small className="text-danger form-text">{subjectTitleErrMessage}</small>
+                                                                        }
+
+                                                                    </div>
+
+                                                                </Col>
+                                                                <Col>
+
+                                                                    <label className="floating-label" htmlFor="keywords">
+                                                                        <small className="text-danger"></small>Keywords
+                                                                    </label>
+
+                                                                    <ReactTags
+                                                                        classNames={{ root: 'react-tags bootstrap-tagsinput', selectedTag: 'react-tags__selected-tag btn-primary' }}
+                                                                        allowNew={true}
+                                                                        addOnBlur={true}
+                                                                        tags={tags}
+                                                                        onDelete={handleDeleteKeywords}
+                                                                        onAddition={(e) => handleAddKeywords(e)}
+                                                                    />
+
+                                                                </Col>
+                                                            </Row>
+                                                            <br />
+
+                                                            <Row>
+                                                                <Col>
+
+                                                                    <div className="form-group fill">
+
+                                                                        <label className="floating-label">
+                                                                            <small className="text-danger">* </small>
+                                                                            Description
+                                                                        </label>
+
+                                                                        <textarea
+                                                                            className="form-control"
+                                                                            error={touched.description && errors.description}
+                                                                            label="description"
+                                                                            name="description"
+                                                                            id="description"
+                                                                            onBlur={handleBlur}
+                                                                            onChange={handleChange}
+                                                                            value={values.description}
+                                                                            placeholder="Enter description"
+                                                                            rows="6"
+                                                                        />
+                                                                        {touched.description && errors.description && (
+                                                                            <small className="text-danger form-text">{errors.description}</small>
+                                                                        )}
+
+                                                                    </div>
+
+                                                                </Col>
+                                                            </Row>
+
+                                                            <br />
+
+                                                            <Row>
+                                                                <Col>
+                                                                    <div className="form-group fill">
+
+                                                                        <label className="floating-label">
+                                                                            <small className="text-danger">* </small>
+                                                                            Units
+                                                                        </label>
+                                                                        {console.log(previousUnits)}
                                                                         <Select
-
+                                                                            defaultValue={previousUnits}
                                                                             isMulti
-                                                                            name="relatedSubjects"
-                                                                            options={dropdownRelatedSubjects}
+                                                                            name="units"
+                                                                            options={dropdownUnits}
                                                                             className="basic-multi-select"
                                                                             classNamePrefix="Select"
-                                                                            onChange={event => handleRelatedSubjects(event)}
+                                                                            onChange={event => handleUnitChange(event)}
                                                                         />
-                                                                    ) : (
-                                                                        <>
-                                                                            {previousSubjects && (
-                                                                                < Select
-                                                                                    defaultValue={previousSubjects}
+                                                                        {showUnitErr && <small className="text-danger form-text">{'Please select a unit'}</small>}
+                                                                    </div>
+                                                                </Col>
+                                                                <Col>
+                                                                    <div className="form-group fill">
+
+                                                                        <label className="floating-label">
+                                                                            <small className="text-danger"></small>
+                                                                            Related Subjects
+                                                                        </label>
+                                                                        {console.log(previousSubjects)}
+
+                                                                        {
+                                                                            previousSubjects.length === 0 ? (
+                                                                                <Select
+
                                                                                     isMulti
                                                                                     name="relatedSubjects"
                                                                                     options={dropdownRelatedSubjects}
@@ -530,50 +569,67 @@ const EditSubjects = ({ _units, _relatedSubjects, editSubjectID, setIsOpenEditSu
                                                                                     classNamePrefix="Select"
                                                                                     onChange={event => handleRelatedSubjects(event)}
                                                                                 />
+                                                                            ) : (
+                                                                                <>
+                                                                                    {previousSubjects && (
+                                                                                        < Select
+                                                                                            defaultValue={previousSubjects}
+                                                                                            isMulti
+                                                                                            name="relatedSubjects"
+                                                                                            options={dropdownRelatedSubjects}
+                                                                                            className="basic-multi-select"
+                                                                                            classNamePrefix="Select"
+                                                                                            onChange={event => handleRelatedSubjects(event)}
+                                                                                        />
+                                                                                    )
+
+                                                                                    }
+                                                                                </>
+
                                                                             )
-
-                                                                            }
-                                                                        </>
-
-                                                                    )
-                                                                }
+                                                                        }
 
 
-                                                            </div>
+                                                                    </div>
+                                                                </Col>
+                                                            </Row>
+                                                            {loader}
+                                                            <br />
+                                                            <hr />
+                                                            <Row>
+                                                                <Col>
+
+                                                                </Col>
+                                                                <Col>
+
+                                                                    <div className="row">
+                                                                        <div className="col-md-8"></div>
+                                                                        <div className="col-md-4">
+                                                                            <button color="success" disabled={isSubmitting} type="submit" className="btn-block btn btn-success btn-large">Save</button>
+                                                                        </div>
+                                                                    </div>
+                                                                </Col>
+                                                            </Row>
                                                         </Col>
+
                                                     </Row>
-                                                    {loader}
-                                                    <br />
-                                                    <hr />
-                                                    <Row>
-                                                        <Col>
 
-                                                        </Col>
-                                                        <Col>
+                                                </form>
+                                            )
+                                            }
+                                        </Formik>
 
-                                                            <div className="row">
-                                                                <div className="col-md-8"></div>
-                                                                <div className="col-md-4">
-                                                                    <button color="success" disabled={isSubmitting} type="submit" className="btn-block btn btn-success btn-large">Save</button>
-                                                                </div>
-                                                            </div>
-                                                        </Col>
-                                                    </Row>
-                                                </Col>
-
-                                            </Row>
-
-                                        </form>
-                                    )
-                                    }
-                                </Formik>
-
-                            </React.Fragment>
+                                    </React.Fragment>
+                                </>
+                            )}
                         </>
                     )}
                 </>
             )}
-        </>
+
+        </div>
+
+
     )
 }
 

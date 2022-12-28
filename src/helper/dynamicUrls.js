@@ -3,6 +3,8 @@
 const baseUrl = process.env.REACT_APP_LAMBDA_URL;
 
 
+
+
 const dynamicUrl = {
     login: baseUrl + '/login',
     loginWithOTP: baseUrl + '/loginWithOTP',
@@ -65,8 +67,7 @@ const dynamicUrl = {
     getTopics: baseUrl + '/fetchAllTopics',
     getIndividualTopic: baseUrl + '/fetchIndividualTopic',
     editTopic: baseUrl + '/editTopic',
-    deleteTopic: baseUrl + '/toggleTopicStatus',
-    getConcepts: baseUrl + '/fetchAllConcepts',
+    toggleTopicStatus: baseUrl + '/toggleTopicStatus',
     toggleSchoolStatus: baseUrl + '/toggleSchoolStatus',
     fetchInactiveSchool: baseUrl + '/fetchInactiveSchool',
 

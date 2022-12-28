@@ -78,7 +78,7 @@ export const fetchAllTopics = () => {
 export const fetchIndividualChapter = (chapter_id) => {
     return new Promise((resolve, reject) => {
         axios.post(url.fetchIndividualChapter, {
-            data:{chapter_id:chapter_id}
+            data: { chapter_id: chapter_id }
         }, {
             headers: { Authorization: sessionStorage.getItem('user_jwt') }
         })
@@ -122,11 +122,49 @@ export const fetchAllChapters = () => {
     });
 }
 
+export const fetchAllConcepts = () => {
+    return new Promise((resolve, reject) => {
+        axios.post(url.fetchAllConcepts, {
+            data: {
+
+                concept_status: "Active"
+
+            }
+        }, {
+            headers: { Authorization: sessionStorage.getItem('user_jwt') }
+        })
+            .then((response) => {
+                console.log(response);
+                resolve(response.data);
+            })
+            .catch((error) => {
+                resolve({ Error: error });
+            })
+    });
+}
+
 
 export const fetchIndividualUnit = (unit_id) => {
     return new Promise((resolve, reject) => {
         axios.post(url.fetchIndividualUnit, {
-            data:{unit_id:unit_id}
+            data: { unit_id: unit_id }
+        }, {
+            headers: { Authorization: sessionStorage.getItem('user_jwt') }
+        })
+            .then((response) => {
+                console.log(response);
+                resolve(response.data);
+            })
+            .catch((error) => {
+                resolve({ Error: error });
+            })
+    });
+}
+
+export const getIndividualTopic = (topic_id) => {
+    return new Promise((resolve, reject) => {
+        axios.post(url.getIndividualTopic, {
+            data: { topic_id: topic_id }
         }, {
             headers: { Authorization: sessionStorage.getItem('user_jwt') }
         })

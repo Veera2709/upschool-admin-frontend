@@ -121,7 +121,7 @@ const AddChapter = (
             resultData.forEach((item, index) => {
                 if (item.topic_status === 'Active') {
                     console.log();
-                    colourOptions.push({ value: item.topic_title, label: item.topic_title })
+                    colourOptions.push({ value: item.topic_id, label: item.topic_title })
                 }
             }
             );
@@ -139,15 +139,15 @@ const AddChapter = (
     const handleOnSelect = (event) => {
         let valuesArr = [];
         for (let i = 0; i < event.length; i++) {
-            valuesArr.push({ "topic_id": event[i].value })
+            valuesArr.push(  event[i].value )
         }
         setPostlearningOption(valuesArr);
     }
-
+    
     const handleOnSelectPre = (event) => {
         let valuesArr = [];
         for (let i = 0; i < event.length; i++) {
-            valuesArr.push({ "topic_id": event[i].value })
+            valuesArr.push( event[i].value )
         }
         setPrelearningOptions(valuesArr);
     }
@@ -186,7 +186,7 @@ const AddChapter = (
                             } else if (prelearningOptions == '') {
                                 setIsShownPre(false)
                             }
-                            else if (description == undefined) {
+                            else if (description == undefined || description.trim()=='') {
                                 setIsShownDes(false)
                             }
                             else {
@@ -283,9 +283,9 @@ const AddChapter = (
                                                 name="color"
                                                 isMulti
                                                 closeMenuOnSelect={false}
-                                                onChange={handleOnSelect}
+                                                onChange={(e)=>{handleOnSelect(e);setIsShown(true)}}
                                                 options={topicTitles}
-                                                placeholder="Which is your favourite colour?"
+                                                placeholder="Select"
                                             />
                                             <br />
                                             <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>Postlearning Topic Required</small>
@@ -302,24 +302,15 @@ const AddChapter = (
                                             <label className="floating-label" htmlFor="prelearning_topic">
                                                 <small className="text-danger">* </small>Prelearning Topic
                                             </label>
-                                            {/* <Multiselect
-                                                options={topicTitles}
-                                                displayValue="value"
-                                                selectionLimit="25"
-                                                // selectedValues={defaultOptions}
-                                                onSelect={handleOnSelectPre}
-                                                onRemove={handleOnRemove}
-                                                onChange={setIsShownPre(true)}
-                                            /> */}
                                             <Select
                                                 className="basic-single"
                                                 classNamePrefix="select"
                                                 name="color"
                                                 isMulti
                                                 closeMenuOnSelect={false}
-                                                onChange={handleOnSelectPre}
+                                                onChange={(e)=>{handleOnSelectPre(e);setIsShownPre(true)}}
                                                 options={topicTitles}
-                                                placeholder="Which is your favourite colour?"
+                                                placeholder="Select"
                                             />
                                             <br />
                                             <small className="text-danger form-text" style={{ display: isShownPre ? 'none' : 'block' }}>Prelearning Topic Required</small>

@@ -7,6 +7,8 @@ const AuthGuard = ({ children }) => {
   const { isLoggedIn } = useAuth();
 
   if (!isLoggedIn) {
+    sessionStorage.clear();
+    localStorage.clear();
     return <Redirect to="/auth/signin-1" />;
   }
 
