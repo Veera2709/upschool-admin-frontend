@@ -49,6 +49,8 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
 
     const topicQuizTemplate = { level: "", duration: "" }
     const [topicQuiz, setTopicQuiz] = useState([topicQuizTemplate])
+    console.log("topicQuiz : ", topicQuiz);
+
     const addTopic = () => {
         setTopicQuiz([...topicQuiz, topicQuizTemplate])
     }
@@ -187,6 +189,8 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
                     <Formik
                         initialValues={{
                             topic_title: '',
+                            level: "",
+                            duration: "",
                             topic_description: '',
                             topic_concept_id: [],
                             pre_post_learning: '',
@@ -198,9 +202,13 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
                             topic_title: Yup.string()
                                 .trim()
                                 .required(Constants.AddTopic.TopictitleRequired),
+                            duration: Yup.string()
+                                .trim()
+                                .required(Constants.AddTopic.QuizMinutesRequired),
                             topic_description: Yup.string()
                                 .trim()
                                 .required(Constants.AddTopic.DescriptionRequired),
+
                         })}
                         // validationSchema
                         onSubmit={(values, { setErrors, setStatus, setSubmitting }) => {
@@ -208,9 +216,7 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
 
                             if (topicConceptId == '') {
                                 setIsShownConcept(false)
-                            } else if (relatedTopicsId == '') {
-                                setIsShownTopic(false)
-                            }
+                            } 
 
                             else {
                                 const formData = {
@@ -264,7 +270,7 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
 
                                 <Col sm={6}>
                                     <Form.Group>
-                                        <Form.Label className="floating-label" ><small className="text-danger">* </small>Topic concept Id</Form.Label>
+                                        <Form.Label className="floating-label" ><small className="text-danger">* </small>Concept</Form.Label>
                                         <Select
                                             className="basic-single"
                                             classNamePrefix="select"
@@ -281,7 +287,7 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
 
                                 <div className="col-md-6">
                                     <Form.Group>
-                                        <Form.Label className="floating-label" ><small className="text-danger">* </small>Related Topics</Form.Label>
+                                        <Form.Label className="floating-label" ><small className="text-danger"> </small>Related Topics</Form.Label>
                                         <Select
                                             className="basic-single"
                                             classNamePrefix="select"
@@ -322,6 +328,7 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
                                                     return <option id="level" keys={i} value={ele.value} >{ele.label}</option>
                                                 })}
                                             </select>
+
                                         </div>
                                         <p></p>
                                         <div className='col-md-4'>
@@ -330,14 +337,24 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
                                                     <Form.Control
                                                         type='number'
                                                         name='duration'
+                                                        placeholder='Minutes'
                                                         value={topic.duration}
-                                                        onChange={(e) => onDynamicFormChange(e, index, 'duration')}
+                                                        onChange={(e) => {onDynamicFormChange(e, index, 'duration'); handleChange(e)}}
                                                         autoComplete='off'
+                                                        onBlur={handleBlur}
                                                     />
+                                                     {touched.duration && errors.duration && <small className="text-danger form-text">{errors.duration}</small>}
+
                                                 </div>
+                                                {topicQuiz.length === 1 ? "" : 
+                                                (
                                                 <div className='col-md-6'>
-                                                    <Button variant='danger' onClick={() => removeTopic(index)}>Remove</Button>
-                                                </div>
+                                                <Button variant='danger' onClick={() => removeTopic(index)}>Remove</Button>
+                                               </div>
+                                               )
+                                                  
+                                                }
+                                              
                                             </div>
                                         </div>
                                     </div>

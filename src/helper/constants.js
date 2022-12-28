@@ -87,6 +87,7 @@ export const AddUnit = {
 export const AddTopic = {
   
   TopictitleRequired: 'Topic title is required!',
+  QuizMinutesRequired: 'Quiz Minutes are required!',
   TopictitleTooShort: 'Topic title is too short!',
   TopictitleTooLong: "Topic title is too long!",
   DescriptionRequired:" Topic Description is required!"

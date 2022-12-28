@@ -67,6 +67,7 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
 
     const topicQuizTemplate = { level: "", duration: "" }
     const [topicQuiz, setTopicQuiz] = useState([topicQuizTemplate])
+
     const addTopic = () => {
         setTopicQuiz([...topicQuiz, topicQuizTemplate])
     }
@@ -158,6 +159,7 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
         if (topicData.Error) {
             console.log("topicData.Error", topicData.Error);
         } else {
+
             const result = topicData.Items[0];
             console.log("result", result);
             setEditTopicData(result);
@@ -227,7 +229,6 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
         }
         setRelatedTopicsId(topicArr);
     }
-
     return (
         <div>
             {!isEmptyObject(editTopicData) ?
@@ -319,7 +320,7 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
 
                                         {defaultConceptOption && (<div className="form-group fill" style={{ position: "relative", zIndex: 50 }}>
                                             <label className="floating-label" htmlFor="concept">
-                                                <small className="text-danger">* </small> concept
+                                                <small className="text-danger">* </small>concepts
                                             </label>
                                             {defaultConceptOption.length === 0 ? (
 
@@ -329,7 +330,7 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
                                                     closeMenuOnSelect={false}
                                                     onChange={(e) => { gettopicId(e); setIsShown(true) }}
                                                     options={topicTitles}
-                                                    placeholder="Select the Topic Title"
+                                                    placeholder="Select the concept Title"
                                                 />
 
                                             ) : (
@@ -408,6 +409,7 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
 
                                     <Form.Label className="floating-label" ><small className="text-danger">* </small>Topic Quiz Config</Form.Label>
                                     {topicQuiz.map((topic, index) => (
+                                        
                                         <div className='row ml-1 mb-2' key={index + 1000} >
                                             <div className='col-md-4' key={index + 10} >
                                                 <select className='form-control' name="level" id="level" onChange={(e) => onDynamicFormChange(e, index, 'level')} value={topic.level} >
@@ -423,14 +425,17 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
                                                         <Form.Control
                                                             type='number'
                                                             name='duration'
+                                                            placeholder='Minutes'
                                                             value={topic.duration}
                                                             onChange={(e) => onDynamicFormChange(e, index, 'duration')}
                                                             autoComplete='off'
                                                         />
                                                     </div>
+                                                    {topicQuiz.length == 1 ? "" :  
                                                     <div className='col-md-6'>
                                                         <Button variant='danger' onClick={() => removeTopic(index)}>Remove</Button>
-                                                    </div>
+                                                    </div>}
+                                                   
                                                 </div>
                                             </div>
                                         </div>
