@@ -613,28 +613,28 @@ const UserTableView = (props) => {
   }, [_data]);
 
   return (
-    <div>
-      {userData.length <= 0 ? (
-        <div>
+      <div>
+        {userData.length <= 0 ? (
+          <div>
 
-          <h3 style={{ textAlign: 'center' }}>No Users Found</h3>
-          <div className="form-group fill text-center">
-            <br></br>
+            <h3 style={{ textAlign: 'center' }}>No Users Found</h3>
+            <div className="form-group fill text-center">
+              <br></br>
 
-            <Link to={'/admin-portal/add-users'}>
-              <Button variant="success" className="btn-sm btn-round has-ripple ml-2">
-                <i className="feather icon-plus" /> Add Users
-              </Button>
-            </Link>
+              <Link to={'/admin-portal/add-users'}>
+                <Button variant="success" className="btn-sm btn-round has-ripple ml-2">
+                  <i className="feather icon-plus" /> Add Users
+                </Button>
+              </Link>
+            </div>
+
           </div>
+        ) : (
 
-        </div>
-      ) : (
+          <>
+            {_data && (
 
-        <>
-          {_data && (
-
-            <>
+              <>
 
               < React.Fragment >
                 <Row>
