@@ -155,7 +155,7 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
     }, [])
 
     const prePostOptions = [
-        { value: 'Pre-Learning', label: 'pre-Learning' },
+        { value: 'Pre-Learning', label: 'Pre-Learning' },
         { value: 'Post-Learning', label: 'Post-Learning' },
     ];
 
@@ -168,7 +168,7 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
     const getconceptId = (event) => {
         let valuesArr = [];
         for (let i = 0; i < event.length; i++) {
-            valuesArr.push({ "concept_id": event[i].value })
+            valuesArr.push( event[i].value )
         }
         setTopicConceptId(valuesArr);
     }
@@ -176,7 +176,7 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
     const gettopicId = (event) => {
         let topicArr = [];
         for (let i = 0; i < event.length; i++) {
-            topicArr.push({ "topic_id": event[i].value })
+            topicArr.push( event[i].value )
         }
         setRelatedTopicsId(topicArr);
     }
