@@ -25,9 +25,6 @@ import Select from 'react-select';
 
 
 
-
-// import { Button,Container,Row ,Col  } from 'react-bootstrap';
-
 const AddUnit = () => {
 
 
@@ -62,10 +59,10 @@ const AddUnit = () => {
     const getMultiOptions = (event) => {
         let valuesArr = [];
         for (let i = 0; i < event.length; i++) {
-            valuesArr.push({"chapter_id":event[i].value})
+            valuesArr.push({ "chapter_id": event[i].value })
         }
         setChapterOption(valuesArr);
-      }
+    }
 
 
 
@@ -86,7 +83,7 @@ const AddUnit = () => {
             resultData.forEach((item, index) => {
                 if (item.chapter_status === 'Active') {
                     console.log();
-                    colourOptions.push({ value: item.chapter_id,label: item.chapter_title })
+                    colourOptions.push({ value: item.chapter_id, label: item.chapter_title })
                 }
             }
             );
@@ -99,19 +96,6 @@ const AddUnit = () => {
     useEffect(() => {
         fetchAllChapterList();
     }, [])
-
-    const handleOnSelect = ((selectedList, selectedItem) => {
-        console.log("selectedList", selectedList);
-        chapterOption.push({ 'chapter_id': selectedList[selectedList.length - 1].chapter_id })
-
-    })
-
-
-
-    const handleOnRemove = (selectedList, selectedItem) => setTopicDigiCardIds(selectedList.map(skillId => skillId.id))
-
-
-
 
     return (
         <div>
@@ -130,6 +114,10 @@ const AddUnit = () => {
                                 .min(2, Constants.AddUnit.UnittitleRequired)
                                 .max(30, Constants.AddUnit.UnittitleTooShort)
                                 .required(Constants.AddUnit.UnittitleTooLongs),
+
+                            unit_description: Yup.string()
+                                .trim()
+                                .required(Constants.AddUnit.DescriptionRequired),
                         })}
 
 
@@ -137,12 +125,9 @@ const AddUnit = () => {
                         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
 
 
-                            if (description == undefined) {
-                                alert("description Required")
-                            } else if (chapterOption == '') {
-                                alert("chapter Required")
-                            }
-                            else {
+                            if (chapterOption == '') {
+                                setIsShownDes(false)
+                            }else {
 
                                 console.log("on submit");
                                 var formData = {
@@ -228,34 +213,24 @@ const AddUnit = () => {
                                             <label className="floating-label" htmlFor="chapter">
                                                 <small className="text-danger">* </small> Chapters
                                             </label>
-                                            {/* <Multiselect
-                                                options={topicTitles}
-                                                displayValue="value"
-                                                selectionLimit="25"
-                                                onSelect={handleOnSelect}
-                                                onRemove={handleOnRemove}
-                                                onChange={setIsShown(true)}
-                                            /> */}
                                             <Select
                                                 className="basic-single"
                                                 classNamePrefix="select"
                                                 name="color"
                                                 isMulti
                                                 closeMenuOnSelect={false}
-                                                // onChange={handleChange}
-                                                // value={selectedOption}
-                                                onChange={getMultiOptions}
+                                                onChange={(e) => { getMultiOptions(e); setIsShown(true) }}
                                                 options={topicTitles}
-                                                placeholder="Which is your favourite colour?"
+                                                placeholder="Select"
                                             />
                                             <br />
-                                            <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>Required</small>
+                                            <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>Field Required</small>
                                         </div>
                                         <div className="form-group fill" htmlFor="unit_description">
                                             <Form.Label> <small className="text-danger">* </small>Unit Description</Form.Label>
                                             <Form.Control as="textarea" onChange={(e) => { UnitDescription(e); setIsShownDes(true) }} rows="4" />
                                             <br />
-                                            <small className="text-danger form-text" style={{ display: isShownDes ? 'none' : 'block' }}>Unit Description Required</small>
+                                            {touched.unit_description && errors.unit_description && <small className="text-danger form-text">{errors.unit_description}</small>}
                                         </div>
                                     </Col>
                                 </Row>
