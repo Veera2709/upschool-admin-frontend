@@ -3,8 +3,6 @@
 const baseUrl = process.env.REACT_APP_LAMBDA_URL;
 
 
-
-
 const dynamicUrl = {
     login: baseUrl + '/login',
     loginWithOTP: baseUrl + '/loginWithOTP',

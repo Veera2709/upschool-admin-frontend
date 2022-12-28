@@ -59,7 +59,7 @@ const AddUnit = () => {
     const getMultiOptions = (event) => {
         let valuesArr = [];
         for (let i = 0; i < event.length; i++) {
-            valuesArr.push({ "chapter_id": event[i].value })
+            valuesArr.push( event[i].value )
         }
         setChapterOption(valuesArr);
     }
@@ -114,10 +114,6 @@ const AddUnit = () => {
                                 .min(2, Constants.AddUnit.UnittitleRequired)
                                 .max(30, Constants.AddUnit.UnittitleTooShort)
                                 .required(Constants.AddUnit.UnittitleTooLongs),
-
-                            unit_description: Yup.string()
-                                .trim()
-                                .required(Constants.AddUnit.DescriptionRequired),
                         })}
 
 
@@ -126,8 +122,11 @@ const AddUnit = () => {
 
 
                             if (chapterOption == '') {
+                                 setIsShown(false)
+                            } else if ( description == undefined || description.trim()==='') {
                                 setIsShownDes(false)
-                            }else {
+                            }
+                            else {
 
                                 console.log("on submit");
                                 var formData = {
@@ -219,7 +218,7 @@ const AddUnit = () => {
                                                 name="color"
                                                 isMulti
                                                 closeMenuOnSelect={false}
-                                                onChange={(e) => { getMultiOptions(e); setIsShown(true) }}
+                                                onChange={(e)=>{getMultiOptions(e);setIsShown(true)}}
                                                 options={topicTitles}
                                                 placeholder="Select"
                                             />
@@ -230,7 +229,7 @@ const AddUnit = () => {
                                             <Form.Label> <small className="text-danger">* </small>Unit Description</Form.Label>
                                             <Form.Control as="textarea" onChange={(e) => { UnitDescription(e); setIsShownDes(true) }} rows="4" />
                                             <br />
-                                            {touched.unit_description && errors.unit_description && <small className="text-danger form-text">{errors.unit_description}</small>}
+                                            <small className="text-danger form-text" style={{ display: isShownDes ? 'none' : 'block' }}>Unit Description Required</small>
                                         </div>
                                     </Col>
                                 </Row>
