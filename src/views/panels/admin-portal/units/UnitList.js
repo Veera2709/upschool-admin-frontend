@@ -17,7 +17,9 @@ import { SessionStorage } from '../../../../util/SessionStorage';
 import MESSAGES from '../../../../helper/messages';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import { useLocation } from "react-router-dom";
-import { fetchAllUnits } from '../../../api/CommonApi'
+import { fetchAllUnits } from '../../../api/CommonApi';
+import BasicSpinner from '../../../../helper/BasicSpinner';
+
 
 
 
@@ -183,68 +185,82 @@ const UnitList = (props) => {
     );
 
     // const data = React.useMemo(() => makeData(80), []);
-    const [chapterData, setChapterData] = useState([]);
+    const [unitData, setUnitData] = useState([]);
     const [reloadAllData, setReloadAllData] = useState('Fetched');
     const [loader, showLoader, hideLoader] = useFullPageLoader();
     const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[3]);
+    const [isLoading, setIsLoading] = useState(false);
+
 
 
     // console.log('data: ', data)
 
+    const MySwal = withReactContent(Swal);
+    const sweetConfirmHandler = (alert) => {
+        MySwal.fire({
+            title: alert.title,
+            text: alert.text,
+            icon: alert.type
+        });
+    }
     let history = useHistory();
 
-    function deleteChapter(unit_id, unit_title) {
-        console.log("unit_id", unit_id);
+   
+
+    const deleteUnit = (unit_id, unit_title) => {
         var data = {
             "unit_id": unit_id,
             "unit_status": "Archived"
         }
-
-        const sweetConfirmHandler = () => {
-            const MySwal = withReactContent(Swal);
-            MySwal.fire({
-                title: 'Are you sure?',
-                text: 'Confirm deleting ' + unit_title + 'Unit',
-                type: 'warning',
-                showCloseButton: true,
-                showCancelButton: true
-            }).then((willDelete) => {
-                if (willDelete.value) {
-                    axios
-                        .post(dynamicUrl.toggleUnitStatus, { data: data }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
-                        .then((response) => {
-                            if (response.Error) {
-                                hideLoader();
-                                sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
+        MySwal.fire({
+            title: 'Are you sure?',
+            text: 'Confirm deleting ' + unit_title + 'Unit',
+            type: 'warning',
+            showCloseButton: true,
+            showCancelButton: true
+        }).then((willDelete) => {
+            if (willDelete.value) {
+                axios
+                    .post(dynamicUrl.toggleUnitStatus, { data: data }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
+                    .then((response) => {
+                        if (response.Error) {
+                            hideLoader();
+                            sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
+                        } else {
+                            setReloadAllData("Deleted");
+                            return MySwal.fire('', 'The ' + unit_title + ' is Deleted', 'success');
+                        }
+                    })
+                    .catch((error) => {
+                        if (error.response) {
+                            // Request made and server responded
+                            console.log(error.response.data);
+                            hideLoader();
+                            if (error.response.data === 'Invalid Token') {
+                                sessionStorage.clear();
+                                localStorage.clear();
+                                history.push('/auth/signin-1');
+                                window.location.reload();
                             } else {
-                                setReloadAllData("Deleted");
-                                return MySwal.fire('', 'The ' + unit_title + ' is Deleted', 'success');
+                                sweetConfirmHandler({ title: 'Sorry', type: 'warning', text: error.response.data });
                             }
-                        })
-                        .catch((error) => {
-                            if (error.response) {
-                                // Request made and server responded
-                                console.log(error.response.data);
-                                hideLoader();
-                                sweetConfirmHandler({ title: 'Error', type: 'error', text: error.response.data });
-                            } else if (error.request) {
-                                // The request was made but no response was received
-                                console.log(error.request);
-                                hideLoader();
-                            } else {
-                                // Something happened in setting up the request that triggered an Error
-                                console.log('Error', error.message);
-                                hideLoader();
-                            }
-                        });
-                } else {
-                    return MySwal.fire('', 'Unit is safe!', 'error');
-                }
-            });
-        };
-        sweetConfirmHandler();
+                        } else if (error.request) {
+                            // The request was made but no response was received
+                            console.log(error.request);
+                            hideLoader();
+                        } else {
+                            // Something happened in setting up the request that triggered an Error
+                            console.log('Error', error.message);
+                            hideLoader();
+                        }
+                    });
+            } else {
+            }
+        });
+    };
 
-    }
+
+
 
 
     function restoreChapter(unit_id, unit_title) {
@@ -258,7 +274,7 @@ const UnitList = (props) => {
             const MySwal = withReactContent(Swal);
             MySwal.fire({
                 title: 'Are you sure?',
-                text: 'Confirm to Restore ' + unit_title + 'unit',
+                text: 'Confirm to Restore ' + unit_title + ' unit',
                 type: 'warning',
                 showCloseButton: true,
                 showCancelButton: true
@@ -330,7 +346,7 @@ const UnitList = (props) => {
                                 <Button
                                     size="sm"
                                     className="btn btn-icon btn-rounded btn-danger"
-                                    onClick={(e) => deleteChapter(ActiveresultData[index].unit_id, ActiveresultData[index].unit_title)}
+                                    onClick={(e) => deleteUnit(ActiveresultData[index].unit_id, ActiveresultData[index].unit_title)}
                                 >
                                     <i className="feather icon-trash-2 " /> &nbsp; Delete
                                 </Button>
@@ -363,7 +379,7 @@ const UnitList = (props) => {
                     console.log('finalDataArray: ', finalDataArray)
                 }
             }
-            setChapterData(finalDataArray);
+            setUnitData(finalDataArray);
             console.log('resultData: ', finalDataArray);
         }
 
@@ -382,39 +398,53 @@ const UnitList = (props) => {
 
     return (
         <div>
-            {chapterData.length >= 0 ? (
-                <React.Fragment>
-                    <Row>
-                        <Col sm={12}>
-                            <Card>
-                                <Card.Header>
-                                    <Card.Title as="h5">Units List</Card.Title>
-                                </Card.Header>
-                                <Card.Body>
-                                    <Table columns={columns} data={chapterData} />
-                                </Card.Body>
-                            </Card>
-                        </Col>
-                    </Row>
-                </React.Fragment>
-            ) : (
-                <div>
+            {
+                isLoading ? (
+                    <BasicSpinner />
+                ) : (
+                    <>
+                        {
+                            unitData.length <= 0 ? (
+                                <>
+                                    < React.Fragment >
+                                        <div>
+                                            <h3 style={{ textAlign: 'center' }}>No Units Found</h3>
+                                            <div className="form-group fill text-center">
+                                                <br></br>
 
-                    <h3 style={{ textAlign: 'center' }}>No DigiCard Found</h3>
-                    <div className="form-group fill text-center">
-                        <br></br>
+                                                <Link to={'/admin-portal/addUnits'}>
+                                                    <Button variant="success" className="btn-sm btn-round has-ripple ml-2">
+                                                        <i className="feather icon-plus" /> Add Units
+                                                    </Button>
+                                                </Link>
+                                            </div>
 
-                        <Link to={'/admin-portal/addChapters'}>
-                            <Button variant="success" className="btn-sm btn-round has-ripple ml-2">
-                                <i className="feather icon-plus" /> Add DigiCard
-                            </Button>
-                        </Link>
-                    </div>
-
-                </div>
-            )}
-
-        </div>
+                                        </div>
+                                    </React.Fragment>
+                                </>
+                            ) : (
+                                <>
+                                    <React.Fragment>
+                                        <Row>
+                                            <Col sm={12}>
+                                                <Card>
+                                                    <Card.Header>
+                                                        <Card.Title as="h5">Unit List</Card.Title>
+                                                    </Card.Header>
+                                                    <Card.Body>
+                                                        <Table columns={columns} data={unitData} />
+                                                    </Card.Body>
+                                                </Card>
+                                            </Col>
+                                        </Row>
+                                    </React.Fragment>
+                                </>
+                            )
+                        }
+                    </>
+                )
+            }
+        </div >
 
     );
 };

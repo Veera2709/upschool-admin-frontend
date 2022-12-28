@@ -78,16 +78,7 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
         { label: 'Level-3', value: 'Level-3' },
     ]
 
-    const getConcepts = () => {
-        axios.post(dynamicUrl.getConcepts, {}, { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
-            .then((response) => {
-                const result = response
-                console.log('result: ', result)
-            })
-            .catch((err) => {
-                console.log('err: ', err);
-            })
-    }
+    
 
     const postTopic = (formData) => {
         axios.post(dynamicUrl.addTopic, { data: formData }, {
@@ -115,6 +106,7 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
         const allConceptsData = await fetchAllConcepts();
         if (allConceptsData.Error) {
             console.log("allConceptsData.ERROR", allConceptsData.Error);
+
         } else {
             console.log('allConceptsData', allConceptsData.Items);
             let resultConceptData = allConceptsData.Items
@@ -162,6 +154,7 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
     // const handlePrePostChange = (e) => setprePostLearning(e.target.value)
 
     const postPreOption = (e) => {
+        console.log("postPreOption",e);
         setprePostLearning(e.value);
     };
 
