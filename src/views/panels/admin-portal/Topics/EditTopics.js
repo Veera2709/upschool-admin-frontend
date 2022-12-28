@@ -135,67 +135,66 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
             console.log("conceptArr", conceptArr);
             setConceptTitles(conceptArr)
 
-
-        }
-
-        const allTopicsData = await fetchAllTopics();
-        if (allTopicsData.Error) {
-            console.log("allTopicsData,Error", allTopicsData, Error);
-        } else {
-            console.log("allTopicsData", allTopicsData.Items);
-            let resultTopicData = allTopicsData.Items
-            resultTopicData.forEach((item, index) => {
-                if (item.topic_status === 'Active') {
-                    console.log();
-                    topicArr.push({ value: item.topic_id, label: item.topic_title })
+            const allTopicsData = await fetchAllTopics();
+            if (allTopicsData.Error) {
+                console.log("allTopicsData,Error", allTopicsData, Error);
+            } else {
+                console.log("allTopicsData", allTopicsData.Items);
+                let resultTopicData = allTopicsData.Items
+                resultTopicData.forEach((item, index) => {
+                    if (item.topic_status === 'Active') {
+                        console.log();
+                        topicArr.push({ value: item.topic_id, label: item.topic_title })
+                    }
                 }
+                );
+                console.log("topicArr", topicArr);
+                setTopicTitles(topicArr)
             }
-            );
-            console.log("topicArr", topicArr);
-            setTopicTitles(topicArr)
-        }
 
-        const topicData = await getIndividualTopic(id);
-        if (topicData.Error) {
-            console.log("topicData.Error", topicData.Error);
-        } else {
-
-            const result = topicData.Items[0];
-            console.log("result", result);
-            setEditTopicData(result);
-            setTopicQuiz(result.topic_quiz_config)
-
-
-            topicData.Items[0].pre_post_learning === 'Pre-Learning' ? DefaultisLockedOption.push({ value: result.pre_post_learning, label: result.pre_post_learning }) : DefaultisLockedOption.push({ value: 'Post-Learning', label: 'Post-Learning' })
-            console.log("DefaultisLockedOption", DefaultisLockedOption);
-            setprePostLearning(DefaultisLockedOption[0].value)
-            setDefaultOption(DefaultisLockedOption)
-
-            let tempArr = [];
-            let tempTopic = [];
-
-            topicData.Items[0].topic_concept_id.forEach(function (entry_concept) {
-                conceptArr.forEach(function (childrenEntry_concept) {
-                    if (entry_concept.concept_id === childrenEntry_concept.value) {
-                        tempArr.push(childrenEntry_concept)
-                    }
-
+            const topicData = await getIndividualTopic(id);
+            if (topicData.Error) {
+                console.log("topicData.Error", topicData.Error);
+            } else {
+    
+                const result = topicData.Items[0];
+                console.log("result", result);
+                setEditTopicData(result);
+                setTopicQuiz(result.topic_quiz_config)
+    
+    
+                topicData.Items[0].pre_post_learning === 'Pre-Learning' ? DefaultisLockedOption.push({ value: result.pre_post_learning, label: result.pre_post_learning }) : DefaultisLockedOption.push({ value: 'Post-Learning', label: 'Post-Learning' })
+                console.log("DefaultisLockedOption", DefaultisLockedOption);
+                setprePostLearning(DefaultisLockedOption[0].value)
+                setDefaultOption(DefaultisLockedOption)
+    
+                let tempArr = [];
+                let tempTopic = [];
+    
+                topicData.Items[0].topic_concept_id.forEach(function (entry_concept) {
+                    conceptArr.forEach(function (childrenEntry_concept) {
+                        if (entry_concept === childrenEntry_concept.value) {
+                            tempArr.push(childrenEntry_concept)
+                        }
+    
+                    });
+                    console.log('tempArr', tempArr);
+                    setDefaultConceptOption(tempArr)
+                    setTopicConceptId(topicData.Items[0].topic_concept_id)
                 });
-                console.log('tempArr', tempArr);
-                setDefaultConceptOption(tempArr)
-                setTopicConceptId(topicData.Items[0].topic_concept_id)
-            });
-
-            topicData.Items[0].related_topics.forEach(function (entry) {
-                topicArr.forEach(function (childrenEntry) {
-                    if (entry.topic_id === childrenEntry.value) {
-                        tempTopic.push(childrenEntry)
-                    }
+    
+                topicData.Items[0].related_topics.forEach(function (entry) {
+                    topicArr.forEach(function (childrenEntry) {
+                        if (entry === childrenEntry.value) {
+                            tempTopic.push(childrenEntry)
+                        }
+                    });
+                    console.log("tempTopic", tempTopic);
+                    setDefaultTopicOption(tempTopic)
+                    setRelatedTopicsId(topicData.Items[0].related_topics)
                 });
-                console.log("tempTopic", tempTopic);
-                setDefaultTopicOption(tempTopic)
-                setRelatedTopicsId(topicData.Items[0].related_topics)
-            });
+            }
+
         }
 
     }
@@ -217,7 +216,7 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
     const getconceptId = (event) => {
         let valuesArr = [];
         for (let i = 0; i < event.length; i++) {
-            valuesArr.push({ "concept_id": event[i].value })
+            valuesArr.push( event[i].value )
         }
         setTopicConceptId(valuesArr);
     }
@@ -225,7 +224,7 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
     const gettopicId = (event) => {
         let topicArr = [];
         for (let i = 0; i < event.length; i++) {
-            topicArr.push({ "topic_id": event[i].value })
+            topicArr.push( event[i].value )
         }
         setRelatedTopicsId(topicArr);
     }
@@ -331,7 +330,7 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
                                                     isMulti
                                                     closeMenuOnSelect={false}
                                                     onChange={(e) => { gettopicId(e); setIsShown(true) }}
-                                                    options={topicTitles}
+                                                    options={conceptTitles}
                                                     placeholder="Select the concept Title"
                                                 />
 
