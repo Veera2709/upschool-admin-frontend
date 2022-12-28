@@ -139,7 +139,7 @@ const AddChapter = (
     const handleOnSelect = (event) => {
         let valuesArr = [];
         for (let i = 0; i < event.length; i++) {
-            valuesArr.push({ "topic_id": event[i].value })
+            valuesArr.push(  event[i].value )
         }
         setPostlearningOption(valuesArr);
     }
@@ -147,7 +147,7 @@ const AddChapter = (
     const handleOnSelectPre = (event) => {
         let valuesArr = [];
         for (let i = 0; i < event.length; i++) {
-            valuesArr.push({ "topic_id": event[i].value })
+            valuesArr.push( event[i].value )
         }
         setPrelearningOptions(valuesArr);
     }

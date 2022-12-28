@@ -119,7 +119,7 @@ const EditChapter = () => {
             let tempArr2 = [];
             individual_Chapter_data.prelearning_topic_id.forEach(function (entry_pre) {
                 colourOptions.forEach(function (childrenEntry_pre) {
-                    if (entry_pre.topic_id === childrenEntry_pre.value) {
+                    if (entry_pre === childrenEntry_pre.value) {
                         console.log("childrenEntry", childrenEntry_pre);
                         tempArr_pre.push(childrenEntry_pre)
                     }
@@ -131,7 +131,7 @@ const EditChapter = () => {
 
             individual_Chapter_data.postlearning_topic_id.forEach(function (entry) {
                 colourOptions.forEach(function (childrenEntry2) {
-                    if (entry.topic_id === childrenEntry2.value) {
+                    if (entry === childrenEntry2.value) {
                         console.log("childrenEntry", childrenEntry2);
                         tempArr2.push(childrenEntry2)
                     }
@@ -159,7 +159,7 @@ const EditChapter = () => {
     const prelerningOtions = (event_pre) => {
         let values_pre = [];
         for (let i = 0; i < event_pre.length; i++) {
-            values_pre.push({ "topic_id": event_pre[i].value })
+            values_pre.push( event_pre[i].value )
         }
         setPrelearningOptions(values_pre);
     }
@@ -167,7 +167,7 @@ const EditChapter = () => {
     const postlerningOtions = (event) => {
         let valuesArr = [];
         for (let i = 0; i < event.length; i++) {
-            valuesArr.push({ "topic_id": event[i].value })
+            valuesArr.push( event[i].value )
         }
         setPostlearningOption(valuesArr);
     }
