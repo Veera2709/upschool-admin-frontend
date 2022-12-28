@@ -4,18 +4,25 @@ import dynamicUrl from '../../../../helper/dynamicUrls';
 import { isEmptyArray } from '../../../../util/utils';
 import SchoolsDataList from './SchoolsDataList';
 import { Link, useHistory } from 'react-router-dom';
+import BasicSpinner from '../../../../helper/BasicSpinner';
 
 const ArchivedSchools = () => {
+    const [isLoading, setIsLoading] = useState(false);
     const [_data, setData] = useState([]);
     console.log('_data: ', _data);
     const history = useHistory();
 
     useEffect(() => {
+        setIsLoading(true);
         axios.post(dynamicUrl.fetchInactiveSchool, {}, { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
             .then((response) => {
                 const result = response.data.Items;
                 if (!isEmptyArray(result)) {
+                    setIsLoading(false);
                     result && setData([...result]);
+
+                } else {
+                    setIsLoading(false);
                 }
             })
             .catch((err) => {
@@ -33,7 +40,11 @@ const ArchivedSchools = () => {
 
     return (
         <div>
-            <SchoolsDataList _data={_data} />
+
+            {isLoading ? <BasicSpinner /> : (
+                <SchoolsDataList _data={_data} />
+
+            )}
         </div>
     )
 }
