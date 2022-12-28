@@ -291,7 +291,7 @@ const EditUnit = () => {
                                                             name="color"
                                                             isMulti
                                                             closeMenuOnSelect={false}
-                                                            onChange={getMultiOptions}
+                                                            onChange={(e)=>{getMultiOptions(e);setIsShown(true)}}
                                                             options={topicTitles}
                                                             placeholder="Select"
                                                         />
@@ -300,7 +300,7 @@ const EditUnit = () => {
                                                 </>
 
                                             )}
-                                            <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>Required</small>
+                                            <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>Chapter Required</small>
                                         </div>)}
                                         <div className="form-group fill" >
                                             <Form.Label htmlFor="unit_description"> <small className="text-danger">* </small>Unit Description</Form.Label>

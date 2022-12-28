@@ -18,6 +18,8 @@ import MESSAGES from '../../../../helper/messages';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import { useLocation } from "react-router-dom";
 import { fetchAllTopics } from '../../../api/CommonApi'
+import BasicSpinner from '../../../../helper/BasicSpinner';
+
 
 
 
@@ -191,6 +193,8 @@ const ActiveTopics = (props) => {
     const [reloadAllData, setReloadAllData] = useState('Fetched');
     const [loader, showLoader, hideLoader] = useFullPageLoader();
     const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[3]);
+    const [isLoading, setIsLoading] = useState(false);
+
 
 
     // console.log('data: ', data)
@@ -206,18 +210,13 @@ const ActiveTopics = (props) => {
         });
     }
 
-    const deleteChapter = (topic_id, topic_title) => {
-        console.log("topic_id", topic_id);
-        confirmHandler(topic_id, topic_title);
-    }
+  
 
     const confirmHandler = (topic_id, topic_title) => {
         var data = {
             "topic_id": topic_id,
             "topic_status": "Archived"
         }
-
-        const MySwal = withReactContent(Swal);
         MySwal.fire({
             title: 'Are you sure?',
             text: 'Confirm deleting ' + topic_title + 'Topic',
@@ -256,8 +255,8 @@ const ActiveTopics = (props) => {
                             hideLoader();
                         } else {
                             // Something happened in setting up the request that triggered an Error
-                            console.log('Error', error.message);
-                            hideLoader();
+                            // console.log('Error', error.message);
+                            // hideLoader();
                         }
                     });
             } else {
@@ -323,7 +322,7 @@ const ActiveTopics = (props) => {
 
 
     const allUnitsList = async (TopicStatus) => {
-
+        setIsLoading(true)
         const allUnitsData = await fetchAllTopics();
         if (allUnitsData.ERROR) {
             console.log("allUnitsData.ERROR", allUnitsData.ERROR);
@@ -352,7 +351,7 @@ const ActiveTopics = (props) => {
                                 <Button
                                     size="sm"
                                     className="btn btn-icon btn-rounded btn-danger"
-                                    onClick={(e) => deleteChapter(ActiveresultData[index].topic_id, ActiveresultData[index].topic_title)}
+                                    onClick={(e) => confirmHandler(ActiveresultData[index].topic_id, ActiveresultData[index].topic_title)}
                                 >
                                     <i className="feather icon-trash-2 " /> &nbsp; Delete
                                 </Button>
@@ -387,6 +386,7 @@ const ActiveTopics = (props) => {
             }
             setTopicData(finalDataArray);
             console.log('resultData: ', finalDataArray);
+            setIsLoading(false)
         }
 
 
@@ -404,39 +404,54 @@ const ActiveTopics = (props) => {
 
     return (
         <div>
-            {topicData.length <= 0 ? (
-                <div>
+            {
+                isLoading ? (
+                    <BasicSpinner />
+                ) : (
+                    <>
+                        {
+                            topicData.length <= 0 ? (
+                                <>
+                                    < React.Fragment >
+                                        <div>
 
-                    <h3 style={{ textAlign: 'center' }}>No Topics Found</h3>
-                    <div className="form-group fill text-center">
-                        <br></br>
+                                            <h3 style={{ textAlign: 'center' }}>No Topics Found</h3>
+                                            <div className="form-group fill text-center">
+                                                <br></br>
 
-                        <Link to={'/admin-portal/Topics/addTopics'}>
-                            <Button variant="success" className="btn-sm btn-round has-ripple ml-2">
-                                <i className="feather icon-plus" /> Add Topic
-                            </Button>
-                        </Link>
-                    </div>
+                                                <Link to={'/admin-portal/Topics/addTopics'}>
+                                                    <Button variant="success" className="btn-sm btn-round has-ripple ml-2">
+                                                        <i className="feather icon-plus" /> Add Topic
+                                                    </Button>
+                                                </Link>
+                                            </div>
 
-                </div>
-            ) : (
-                <React.Fragment>
-                    <Row>
-                        <Col sm={12}>
-                            <Card>
-                                <Card.Header>
-                                    <Card.Title as="h5">Topics List</Card.Title>
-                                </Card.Header>
-                                <Card.Body>
-                                    <Table columns={columns} data={topicData} />
-                                </Card.Body>
-                            </Card>
-                        </Col>
-                    </Row>
-                </React.Fragment>
-            )}
-
-        </div>
+                                        </div>
+                                    </React.Fragment>
+                                </>
+                            ) : (
+                                <>
+                                    <React.Fragment>
+                                        <Row>
+                                            <Col sm={12}>
+                                                <Card>
+                                                    <Card.Header>
+                                                        <Card.Title as="h5">Topics List</Card.Title>
+                                                    </Card.Header>
+                                                    <Card.Body>
+                                                        <Table columns={columns} data={topicData} />
+                                                    </Card.Body>
+                                                </Card>
+                                            </Col>
+                                        </Row>
+                                    </React.Fragment>
+                                </>
+                            )
+                        }
+                    </>
+                )
+            }
+        </div >
 
     );
 };

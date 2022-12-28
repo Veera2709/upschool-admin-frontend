@@ -67,7 +67,7 @@ const dynamicUrl = {
     getTopics: baseUrl + '/fetchAllTopics',
     getIndividualTopic: baseUrl + '/fetchIndividualTopic',
     editTopic: baseUrl + '/editTopic',
-    deleteTopic: baseUrl + '/toggleTopicStatus',
+    toggleTopicStatus: baseUrl + '/toggleTopicStatus',
     getConcepts: baseUrl + '/fetchAllConcepts',
     toggleSchoolStatus: baseUrl + '/toggleSchoolStatus',
     fetchInactiveSchool: baseUrl + '/fetchInactiveSchool',

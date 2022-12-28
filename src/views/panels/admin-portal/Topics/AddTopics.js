@@ -106,7 +106,7 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
         const allConceptsData = await fetchAllConcepts();
         if (allConceptsData.Error) {
             console.log("allConceptsData.ERROR", allConceptsData.Error);
-            
+
         } else {
             console.log('allConceptsData', allConceptsData.Items);
             let resultConceptData = allConceptsData.Items
@@ -154,6 +154,7 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
     // const handlePrePostChange = (e) => setprePostLearning(e.target.value)
 
     const postPreOption = (e) => {
+        console.log("postPreOption",e);
         setprePostLearning(e.value);
     };
 

@@ -17,6 +17,8 @@ import { SessionStorage } from '../../../../util/SessionStorage';
 import MESSAGES from '../../../../helper/messages';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import { useLocation } from "react-router-dom";
+import BasicSpinner from '../../../../helper/BasicSpinner';
+
 
 
 function Table({ columns, data, modalOpen }) {
@@ -185,6 +187,8 @@ const ChaptersListChild = (props) => {
     const [reloadAllData, setReloadAllData] = useState('Fetched');
     const [loader, showLoader, hideLoader] = useFullPageLoader();
     const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[3]);
+    const [isLoading, setIsLoading] = useState(false);
+
 
 
     // console.log('data: ', data)
@@ -323,7 +327,7 @@ const ChaptersListChild = (props) => {
 
 
     const allChaptersList = (chapterStatus) => {
-
+        setIsLoading(true);
         axios.post(dynamicUrl.fetchAllChapters, {}, {
             headers: { Authorization: sessionStorage.getItem('user_jwt') }
         })
@@ -388,6 +392,8 @@ const ChaptersListChild = (props) => {
                 }
                 setChapterData(finalDataArray);
                 console.log('resultData: ', finalDataArray);
+                setIsLoading(false);
+
             })
             .catch((err) => {
                 console.log(err)
@@ -406,40 +412,53 @@ const ChaptersListChild = (props) => {
 
     return (
         <div>
-            {chapterData.length <= 0 ? (
-                <div>
+            {
+                isLoading ? (
+                    <BasicSpinner />
+                ) : (
+                    <>
+                        {
+                            chapterData.length <= 0 ? (
+                                <>
+                                    < React.Fragment >
+                                        <div>
 
-                    <h3 style={{ textAlign: 'center' }}>No Chapter Found</h3>
-                    <div className="form-group fill text-center">
-                        <br></br>
+                                            <h3 style={{ textAlign: 'center' }}>No Chapter Found</h3>
+                                            <div className="form-group fill text-center">
+                                                <br></br>
 
-                        <Link to={'/admin-portal/addChapters'}>
-                            <Button variant="success" className="btn-sm btn-round has-ripple ml-2">
-                                <i className="feather icon-plus" /> Add Chapter
-                            </Button>
-                        </Link>
-                    </div>
-
-                </div>
-            ) : (
-                <React.Fragment>
-                    <Row>
-                        <Col sm={12}>
-                            <Card>
-                                <Card.Header>
-                                    <Card.Title as="h5">Chapters List</Card.Title>
-                                </Card.Header>
-                                <Card.Body>
-                                    <Table columns={columns} data={chapterData} />
-                                </Card.Body>
-                            </Card>
-                        </Col>
-                    </Row>
-                </React.Fragment>
-            )}
-
-        </div>
-
+                                                <Link to={'/admin-portal/addChapters'}>
+                                                    <Button variant="success" className="btn-sm btn-round has-ripple ml-2">
+                                                        <i className="feather icon-plus" /> Add Chapter
+                                                    </Button>
+                                                </Link>
+                                            </div>
+                                        </div>
+                                    </React.Fragment>
+                                </>
+                            ) : (
+                                <>
+                                    <React.Fragment>
+                                        <Row>
+                                            <Col sm={12}>
+                                                <Card>
+                                                    <Card.Header>
+                                                        <Card.Title as="h5">Chapters List</Card.Title>
+                                                    </Card.Header>
+                                                    <Card.Body>
+                                                        <Table columns={columns} data={chapterData} />
+                                                    </Card.Body>
+                                                </Card>
+                                            </Col>
+                                        </Row>
+                                    </React.Fragment>
+                                </>
+                            )
+                        }
+                    </>
+                )
+            }
+        </div >
     );
 };
 export default ChaptersListChild;

@@ -17,7 +17,9 @@ import { SessionStorage } from '../../../../util/SessionStorage';
 import MESSAGES from '../../../../helper/messages';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import { useLocation } from "react-router-dom";
-import { fetchAllUnits } from '../../../api/CommonApi'
+import { fetchAllUnits } from '../../../api/CommonApi';
+import BasicSpinner from '../../../../helper/BasicSpinner';
+
 
 
 
@@ -183,10 +185,12 @@ const UnitList = (props) => {
     );
 
     // const data = React.useMemo(() => makeData(80), []);
-    const [chapterData, setChapterData] = useState([]);
+    const [unitData, setUnitData] = useState([]);
     const [reloadAllData, setReloadAllData] = useState('Fetched');
     const [loader, showLoader, hideLoader] = useFullPageLoader();
     const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[3]);
+    const [isLoading, setIsLoading] = useState(false);
+
 
 
     // console.log('data: ', data)
@@ -201,12 +205,9 @@ const UnitList = (props) => {
     }
     let history = useHistory();
 
-    function deleteChapter(unit_id, unit_title) {
-        console.log("unit_id", unit_id);
-        confirmHandler(unit_id, unit_title)
-    }
+   
 
-    const confirmHandler = (unit_id, unit_title) => {
+    const deleteUnit = (unit_id, unit_title) => {
         var data = {
             "unit_id": unit_id,
             "unit_status": "Archived"
@@ -345,7 +346,7 @@ const UnitList = (props) => {
                                 <Button
                                     size="sm"
                                     className="btn btn-icon btn-rounded btn-danger"
-                                    onClick={(e) => deleteChapter(ActiveresultData[index].unit_id, ActiveresultData[index].unit_title)}
+                                    onClick={(e) => deleteUnit(ActiveresultData[index].unit_id, ActiveresultData[index].unit_title)}
                                 >
                                     <i className="feather icon-trash-2 " /> &nbsp; Delete
                                 </Button>
@@ -378,7 +379,7 @@ const UnitList = (props) => {
                     console.log('finalDataArray: ', finalDataArray)
                 }
             }
-            setChapterData(finalDataArray);
+            setUnitData(finalDataArray);
             console.log('resultData: ', finalDataArray);
         }
 
@@ -397,38 +398,53 @@ const UnitList = (props) => {
 
     return (
         <div>
-            {chapterData.length <= 0 ? (
-                <div>
-                    <h3 style={{ textAlign: 'center' }}>No Units Found</h3>
-                    <div className="form-group fill text-center">
-                        <br></br>
+            {
+                isLoading ? (
+                    <BasicSpinner />
+                ) : (
+                    <>
+                        {
+                            unitData.length <= 0 ? (
+                                <>
+                                    < React.Fragment >
+                                        <div>
+                                            <h3 style={{ textAlign: 'center' }}>No Units Found</h3>
+                                            <div className="form-group fill text-center">
+                                                <br></br>
 
-                        <Link to={'/admin-portal/addUnits'}>
-                            <Button variant="success" className="btn-sm btn-round has-ripple ml-2">
-                                <i className="feather icon-plus" /> Add Units
-                            </Button>
-                        </Link>
-                    </div>
+                                                <Link to={'/admin-portal/addUnits'}>
+                                                    <Button variant="success" className="btn-sm btn-round has-ripple ml-2">
+                                                        <i className="feather icon-plus" /> Add Units
+                                                    </Button>
+                                                </Link>
+                                            </div>
 
-                </div>
-            ) : (
-                <React.Fragment>
-                    <Row>
-                        <Col sm={12}>
-                            <Card>
-                                <Card.Header>
-                                    <Card.Title as="h5">Units List</Card.Title>
-                                </Card.Header>
-                                <Card.Body>
-                                    <Table columns={columns} data={chapterData} />
-                                </Card.Body>
-                            </Card>
-                        </Col>
-                    </Row>
-                </React.Fragment>
-            )}
-
-        </div>
+                                        </div>
+                                    </React.Fragment>
+                                </>
+                            ) : (
+                                <>
+                                    <React.Fragment>
+                                        <Row>
+                                            <Col sm={12}>
+                                                <Card>
+                                                    <Card.Header>
+                                                        <Card.Title as="h5">Unit List</Card.Title>
+                                                    </Card.Header>
+                                                    <Card.Body>
+                                                        <Table columns={columns} data={unitData} />
+                                                    </Card.Body>
+                                                </Card>
+                                            </Col>
+                                        </Row>
+                                    </React.Fragment>
+                                </>
+                            )
+                        }
+                    </>
+                )
+            }
+        </div >
 
     );
 };
