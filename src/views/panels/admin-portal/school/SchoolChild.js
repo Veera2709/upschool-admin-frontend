@@ -323,7 +323,7 @@ const SchoolChild = (props) => {
         }
         console.log('finalDataArray: ', finalDataArray);
         setSchoolData(finalDataArray);
-        // setIsLoading(false);
+        setIsLoading(false);
         // hideLoader();
     }
 
