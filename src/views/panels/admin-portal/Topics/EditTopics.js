@@ -246,6 +246,8 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
                                 topic_quiz_config: ''
                             }}
                             // validationSchema
+
+                            
                             onSubmit={(values, { setErrors, setStatus, setSubmitting }) => {
                                 setSubmitting(true);
                                 const formData = {
