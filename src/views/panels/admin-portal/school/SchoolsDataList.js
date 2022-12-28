@@ -11,6 +11,7 @@ import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import MESSAGES from './../../../../helper/messages';
 import { isEmptyArray, decodeJWT } from '../../../../util/utils';
+import BasicSpinner from './../../../../helper/BasicSpinner';
 
 import { GlobalFilter } from './GlobalFilter';
 import { useTable, useSortBy, usePagination, useGlobalFilter } from 'react-table';
@@ -85,10 +86,6 @@ function Table({ columns, data, modalOpen }) {
                 </Col>
                 <Col className="d-flex justify-content-end">
                     <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
-                    {/* <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={modalOpen}>
-            <i className="feather icon-plus" /> Add User
-          </Button> */}
-
                     <Link to={'/admin-portal/active-schools'}>
                         <Button variant="success" className="btn-sm btn-round has-ripple ml-2">
                             {/* onClick={(e) => saveUserIdDelete(e, userId, responseData[index].user_role, 'Active')} */}
@@ -181,6 +178,34 @@ function Table({ columns, data, modalOpen }) {
 
 const SchoolsDataList = (props) => {
 
+    const history = useHistory();
+    const [userData, setUserData] = useState([]);
+    const [schoolData, setSchoolData] = useState([]);
+    const [individualUserData, setIndividualUserData] = useState([]);
+    const [userDOB, setUserDOB] = useState('');
+    const [loader, showLoader, hideLoader] = useFullPageLoader();
+    const [className_ID, setClassName_ID] = useState({});
+    const [schoolName_ID, setSchoolName_ID] = useState({});
+    const [previousSchool, setPreviousSchool] = useState('');
+    const [previousClass, setPreviousClass] = useState('');
+    const [_userID, _setUserID] = useState('');
+
+    const [isOpen, setIsOpen] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [validationObj, setValidationObj] = useState({});
+
+    const [isLoading, setIsLoading] = useState(false);
+    const { user_id } = decodeJWT(sessionStorage.getItem('user_jwt'));
+    const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
+    const [selectClassErr, setSelectClassErr] = useState(false);
+
+    const classNameRef = useRef('');
+    const schoolNameRef = useRef('');
+
+    const phoneRegExp = /^(\+91[\-\s]?)?[0]?(91)?[6789]\d{9}$/;
+
+
+
     const { _data } = props;
 
     const columns = React.useMemo(
@@ -208,10 +233,6 @@ const SchoolsDataList = (props) => {
         ],
         []
     );
-
-
-    const history = useHistory();
-
 
     const handleRestoreSchool = (e, school_id, Archieved) => {
         e.preventDefault();
@@ -299,6 +320,9 @@ const SchoolsDataList = (props) => {
     };
 
     const _fetchSchoolData = () => {
+
+        setIsLoading(true);
+
         let resultData = _data && _data;
         console.log("RESULT DATA : ", resultData);
         let finalDataArray = [];
@@ -324,39 +348,16 @@ const SchoolsDataList = (props) => {
 
         }
         console.log('finalDataArray: ', finalDataArray);
-        setSchoolData(finalDataArray)
+        setSchoolData(finalDataArray);
+        setIsLoading(false);
     }
 
     useEffect(() => {
+
         _fetchSchoolData();
     }, [_data])
 
     // const data = React.useMemo(() => makeData(50), []);
-
-    const [userData, setUserData] = useState([]);
-    const [schoolData, setSchoolData] = useState([]);
-    const [individualUserData, setIndividualUserData] = useState([]);
-    const [userDOB, setUserDOB] = useState('');
-    const [loader, showLoader, hideLoader] = useFullPageLoader();
-    const [className_ID, setClassName_ID] = useState({});
-    const [schoolName_ID, setSchoolName_ID] = useState({});
-    const [previousSchool, setPreviousSchool] = useState('');
-    const [previousClass, setPreviousClass] = useState('');
-    const [_userID, _setUserID] = useState('');
-
-    const [isOpen, setIsOpen] = useState(false);
-    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-    const [validationObj, setValidationObj] = useState({});
-
-    const [isLoading, setIsLoading] = useState(false);
-    const { user_id } = decodeJWT(sessionStorage.getItem('user_jwt'));
-    const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
-    const [selectClassErr, setSelectClassErr] = useState(false);
-
-    const classNameRef = useRef('');
-    const schoolNameRef = useRef('');
-
-    const phoneRegExp = /^(\+91[\-\s]?)?[0]?(91)?[6789]\d{9}$/;
 
     const MySwal = withReactContent(Swal);
 
@@ -401,31 +402,46 @@ const SchoolsDataList = (props) => {
     };
 
 
-
     return (
         <div>
-            {schoolData.length <= 0 ? (
-                <div>
-                    <h3 style={{ textAlign: 'center' }}>No Archived Schools Found</h3>
-                </div>
-            ) : (
-                <>
-                    <Row>
-                        <Col sm={12}>
-                            <Card>
-                                <Card.Header>
-                                    <Card.Title as="h5">Archived List</Card.Title>
-                                </Card.Header>
-                                <Card.Body>
-                                    <Table columns={columns} data={schoolData} modalOpen={openHandler} />
-                                </Card.Body>
-                            </Card>
 
-                        </Col>
-                    </Row>
+            {schoolData && (
+
+                <>
+                    {console.log(isLoading)}
+                    {isLoading ? (<BasicSpinner />) : (
+                        <>
+                            {schoolData.length === 0 ? (
+                                <div>
+                                    <h3 style={{ textAlign: 'center' }}>No Archived Schools Found</h3>
+
+                                </div>
+                            ) : (
+                                <>
+                                    <Row>
+                                        <Col sm={12}>
+                                            <Card>
+                                                <Card.Header>
+                                                    <Card.Title as="h5">Archived List</Card.Title>
+                                                </Card.Header>
+                                                <Card.Body>
+                                                    <Table columns={columns} data={schoolData} modalOpen={openHandler} />
+                                                </Card.Body>
+                                            </Card>
+
+                                        </Col>
+                                    </Row>
+                                </>
+                            )
+                            }
+                        </>
+                    )}
                 </>
-            )
-            }
+
+            )}
+
+
+
 
         </div>
     );

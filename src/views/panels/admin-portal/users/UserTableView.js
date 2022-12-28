@@ -496,7 +496,7 @@ const UserTableView = ({ _userRole }) => {
             sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
             fetchUserData();
           }
-          
+
 
         } else if (error.request) {
           // The request was made but no response was received
@@ -705,7 +705,7 @@ const UserTableView = ({ _userRole }) => {
       })
       .catch((error) => {
         console.log(error.response.data);
-        
+
         if (error.response.data === 'Invalid Token') {
 
           sessionStorage.clear();
