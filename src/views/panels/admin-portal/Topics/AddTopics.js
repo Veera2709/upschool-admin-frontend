@@ -298,7 +298,7 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
                                 <Col sm={6}>
 
                                     <Form.Group>
-                                        <Form.Label className="floating-label" htmlFor="topic_description"><small className="text-danger">* </small>Topic Decription</Form.Label>
+                                        <Form.Label className="floating-label" htmlFor="topic_description"><small className="text-danger">* </small>Topic Description</Form.Label>
                                         <Form.Control
                                             as="textarea"
                                             rows="4"
