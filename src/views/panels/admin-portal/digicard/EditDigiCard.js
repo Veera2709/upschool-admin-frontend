@@ -128,7 +128,7 @@ const EditDigiCard = () => {
                 let tempArr = [];
                 indidvidualDigicard.Items[0].related_digi_cards.forEach(function (entry) {
                     colourOptions.forEach(function (childrenEntry) {
-                        if (entry.digi_card_id === childrenEntry.value) {
+                        if (entry === childrenEntry.value) {
                             console.log("childrenEntry", childrenEntry);
                             tempArr.push(childrenEntry)
                         }
@@ -152,7 +152,7 @@ const EditDigiCard = () => {
     const getMultiOptions = (event) => {
         let valuesArr = [];
         for (let i = 0; i < event.length; i++) {
-            valuesArr.push({ "digi_card_id": event[i].value })
+            valuesArr.push( event[i].value )
         }
         selectedOption(valuesArr);
     }
