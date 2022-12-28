@@ -277,9 +277,12 @@ const SchoolChild = (props) => {
 
     const _fetchSchoolData = () => {
         console.log("School data func called");
+        setIsLoading(true);
+        showLoader()
         let resultData = _data && _data;
         let finalDataArray = [];
         for (let index = 0; index < resultData.length; index++) {
+
             console.log('status: ', resultData[index]['school_status'])
             resultData[index]['school_avatar'] = <img className='img-fluid img-radius wid-50 circle-image' src={resultData[index].school_logoURL} alt="school_image" />
             resultData[index]['school_name'] = <p>{resultData[index].school_name}</p>
@@ -320,49 +323,51 @@ const SchoolChild = (props) => {
         }
         console.log('finalDataArray: ', finalDataArray);
         setSchoolData(finalDataArray);
-        setIsLoading(false);
+        // setIsLoading(false);
+        // hideLoader();
     }
 
     useEffect(() => {
-        setIsLoading(true);
         _fetchSchoolData();
     }, [_data])
 
     return (
         <div>
             {
-                isLoading ? (
+                isLoading && isEmptyArray(_data) ? (
                     <BasicSpinner />
                 ) : (
                     <>
-                        {isEmptyArray(_data) ? (
-                            <div>
-                                <br />
-                                <h3 style={{ textAlign: 'center' }} >No Active Schools found</h3>
-                                <div className="form-group fill text-center">
-                                    <br></br>
-                                    <div className="d-flex justify-content-md-center">
-                                        {/* <Link to={'/admin-portal/active-schools'}> */}
-                                        <Button
-                                            variant="success"
-                                            className="btn-sm btn-round has-ripple ml-2"
-                                            onClick={openHandler}>
-                                            <i className="feather icon-plus" /> Add Schools
-                                        </Button>
+                        {_data.length <= 0 && isEmptyArray(_data) ?
 
-                                        <Modal dialogClassName="my-modal" show={isOpen} onHide={() => setIsOpen(false)}>
-                                            <Modal.Header closeButton>
-                                                <Modal.Title as="h5">Add School</Modal.Title>
-                                            </Modal.Header>
-                                            <Modal.Body>
-                                                <AddSchoolForm setIsOpen={setIsOpen} fetchSchoolData={fetchSchoolData} />
-                                            </Modal.Body>
+                            (
+                                <div>
+                                    <br />
+                                    <h3 style={{ textAlign: 'center' }} >No Schools found</h3>
+                                    <div className="form-group fill text-center">
+                                        <br></br>
+                                        <div className="d-flex justify-content-md-center">
 
-                                        </Modal>
+                                            <Button
+                                                variant="success"
+                                                className="btn-sm btn-round has-ripple ml-2"
+                                                onClick={openHandler}>
+                                                <i className="feather icon-plus" /> Add Schools
+                                            </Button>
+
+                                            <Modal dialogClassName="my-modal" show={isOpen} onHide={() => setIsOpen(false)}>
+                                                <Modal.Header closeButton>
+                                                    <Modal.Title as="h5">Add School</Modal.Title>
+                                                </Modal.Header>
+                                                <Modal.Body>
+                                                    <AddSchoolForm setIsOpen={setIsOpen} fetchSchoolData={fetchSchoolData} />
+                                                </Modal.Body>
+
+                                            </Modal>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        )
+                            )
 
 
                             : (
