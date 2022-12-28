@@ -14,6 +14,7 @@ import dynamicUrl from '../../../../helper/dynamicUrls';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import AddSubjects from './AddSubjects';
 import EditSubjects from './EditSubjects';
+import BasicSpinner from '../../../../helper/BasicSpinner';
 
 function Table({ columns, data }) {
 
@@ -152,6 +153,7 @@ function Table({ columns, data }) {
 
     const fetchAllSubjectsData = () => {
 
+        setIsLoading(true);
         showLoader();
         console.log(pageLocation);
 
@@ -231,7 +233,7 @@ function Table({ columns, data }) {
 
                     console.log(finalDataArray);
                     setSubjectData(finalDataArray);
-                    setIsLoading(true);
+                    setIsLoading(false);
 
                 }
             })
@@ -678,6 +680,7 @@ const SubjectTableView = ({ userStatus }) => {
 
     const fetchAllSubjectsData = () => {
 
+        setIsLoading(true);
         showLoader();
         console.log(pageLocation);
 
@@ -757,12 +760,12 @@ const SubjectTableView = ({ userStatus }) => {
 
                     console.log(finalDataArray);
                     setSubjectData(finalDataArray);
-                    setIsLoading(true);
+                    setIsLoading(false);
 
                 }
             })
             .catch((error) => {
-                
+
                 if (error.response) {
                     // Request made and server responded
                     hideLoader();
@@ -853,7 +856,7 @@ const SubjectTableView = ({ userStatus }) => {
 
                     } else {
 
-                        sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+                        sweetAlertHandler({ title: 'Sorry', type: 'warning', text: error.response.data });
                         fetchAllSubjectsData();
 
                     }
@@ -875,105 +878,116 @@ const SubjectTableView = ({ userStatus }) => {
     };
 
     return (
+
         <div>
-            {subjectData.length <= 0 ? (
-                <>
-                    < React.Fragment >
-                        <div>
 
-                            <h3 style={{ textAlign: 'center' }}>No Subjects Found</h3>
-                            <div className="form-group fill text-center">
-                                <br></br>
+            {
+                isLoading ? (
+                    <BasicSpinner />
+                ) : (
 
-                                <Button
-                                    variant="success"
-                                    className="btn-sm btn-round has-ripple ml-2"
-                                    onClick={(e) => {
-                                        handleAddSubjects(e);
-                                    }}
-                                >
-                                    <i className="feather icon-plus" /> Add Subjects
-                                </Button>
+                    <>
+                        {
+                            subjectData.length <= 0 ? (
+                                <>
+                                    < React.Fragment >
+                                        <div>
+
+                                            <h3 style={{ textAlign: 'center' }}>No Subjects Found</h3>
+                                            <div className="form-group fill text-center">
+                                                <br></br>
+
+                                                <Button
+                                                    variant="success"
+                                                    className="btn-sm btn-round has-ripple ml-2"
+                                                    onClick={(e) => {
+                                                        handleAddSubjects(e);
+                                                    }}
+                                                >
+                                                    <i className="feather icon-plus" /> Add Subjects
+                                                </Button>
 
 
-                            </div>
+                                            </div>
 
-                        </div>
+                                        </div>
 
-                        <Modal dialogClassName="my-modal" show={isOpenAddSubject} onHide={() => setIsOpenAddSubject(false)}>
+                                        <Modal dialogClassName="my-modal" show={isOpenAddSubject} onHide={() => setIsOpenAddSubject(false)}>
 
-                            <Modal.Header closeButton>
+                                            <Modal.Header closeButton>
 
-                                <Modal.Title as="h5">Add Subject</Modal.Title>
+                                                <Modal.Title as="h5">Add Subject</Modal.Title>
 
-                            </Modal.Header>
+                                            </Modal.Header>
 
-                            <Modal.Body>
+                                            <Modal.Body>
 
-                                <AddSubjects _units={_units} _relatedSubjects={_relatedSubjects} setIsOpenAddSubject={setIsOpenAddSubject} fetchAllSubjectsData={fetchAllSubjectsData} />
+                                                <AddSubjects _units={_units} _relatedSubjects={_relatedSubjects} setIsOpenAddSubject={setIsOpenAddSubject} fetchAllSubjectsData={fetchAllSubjectsData} />
 
-                            </Modal.Body>
+                                            </Modal.Body>
 
-                        </Modal>
+                                        </Modal>
 
-                    </React.Fragment>
-                </>
-            ) : (
+                                    </React.Fragment>
+                                </>
+                            ) : (
 
-                <>
+                                <>
 
-                    < React.Fragment >
-                        <Row>
-                            <Col sm={12}>
-                                <Card>
-                                    <Card.Header>
-                                        <Card.Title as="h5">Subject List</Card.Title>
-                                    </Card.Header>
-                                    <Card.Body>
-                                        <Table columns={columns} data={subjectData} />
-                                    </Card.Body>
-                                </Card>
+                                    < React.Fragment >
+                                        <Row>
+                                            <Col sm={12}>
+                                                <Card>
+                                                    <Card.Header>
+                                                        <Card.Title as="h5">Subject List</Card.Title>
+                                                    </Card.Header>
+                                                    <Card.Body>
+                                                        <Table columns={columns} data={subjectData} />
+                                                    </Card.Body>
+                                                </Card>
 
-                            </Col>
-                        </Row>
-                    </React.Fragment>
+                                            </Col>
+                                        </Row>
+                                    </React.Fragment>
 
-                    <Modal dialogClassName="my-modal" show={isOpenAddSubject} onHide={() => setIsOpenAddSubject(false)}>
+                                    <Modal dialogClassName="my-modal" show={isOpenAddSubject} onHide={() => setIsOpenAddSubject(false)}>
 
-                        <Modal.Header closeButton>
+                                        <Modal.Header closeButton>
 
-                            <Modal.Title as="h5">Add Subject</Modal.Title>
+                                            <Modal.Title as="h5">Add Subject</Modal.Title>
 
-                        </Modal.Header>
+                                        </Modal.Header>
 
-                        <Modal.Body>
+                                        <Modal.Body>
 
-                            <AddSubjects _units={_units} _relatedSubjects={_relatedSubjects} setIsOpenAddSubject={setIsOpenAddSubject} fetchAllSubjectsData={fetchAllSubjectsData} />
+                                            <AddSubjects _units={_units} _relatedSubjects={_relatedSubjects} setIsOpenAddSubject={setIsOpenAddSubject} fetchAllSubjectsData={fetchAllSubjectsData} />
 
-                        </Modal.Body>
+                                        </Modal.Body>
 
-                    </Modal>
+                                    </Modal>
 
-                    <Modal dialogClassName="my-modal" show={isEditAddSubject} onHide={() => setIsOpenEditSubject(false)}>
+                                    <Modal dialogClassName="my-modal" show={isEditAddSubject} onHide={() => setIsOpenEditSubject(false)}>
 
-                        <Modal.Header closeButton>
+                                        <Modal.Header closeButton>
 
-                            <Modal.Title as="h5">Edit Subject</Modal.Title>
+                                            <Modal.Title as="h5">Edit Subject</Modal.Title>
 
-                        </Modal.Header>
+                                        </Modal.Header>
 
-                        <Modal.Body>
+                                        <Modal.Body>
 
-                            <EditSubjects _units={_units} _relatedSubjects={_relatedSubjects} editSubjectID={editSubjectID} setIsOpenEditSubject={setIsOpenEditSubject} fetchAllSubjectsData={fetchAllSubjectsData} />
+                                            <EditSubjects _units={_units} _relatedSubjects={_relatedSubjects} editSubjectID={editSubjectID} setIsOpenEditSubject={setIsOpenEditSubject} fetchAllSubjectsData={fetchAllSubjectsData} />
 
-                        </Modal.Body>
+                                        </Modal.Body>
 
-                    </Modal>
+                                    </Modal>
 
-                </>
-            )
+                                </>
+                            )
+                        }
+                    </>
+                )
             }
-
         </div >
     );
 };
