@@ -21,6 +21,8 @@ const ArchivedSchools = () => {
                     setIsLoading(false);
                     result && setData([...result]);
 
+                } else {
+                    setIsLoading(false);
                 }
             })
             .catch((err) => {
