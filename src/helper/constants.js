@@ -82,10 +82,12 @@ export const AddUnit = {
   UnittitleRequired: 'Unit title is required!',
   UnittitleTooShort: 'Unit title is too short!',
   UnittitleTooLong: "Unit title is too long!",
+  DescriptionRequired: "Unit Description is required!",
 };
 export const AddTopic = {
   
   TopictitleRequired: 'Topic title is required!',
+  QuizMinutesRequired: 'Quiz Minutes are required!',
   TopictitleTooShort: 'Topic title is too short!',
   TopictitleTooLong: "Topic title is too long!",
   DescriptionRequired:" Topic Description is required!"

@@ -7,11 +7,11 @@ const AdminDashboard = () => {
   let history = useHistory();
   console.log("Dashboard", dashboardPage[0]);
 
-  // useEffect(() => {
-  //     window.addEventListener('popstate', (e) => {
-  //         window.history.go(1);
-  //     });
-  // }, []);
+  useEffect(() => {
+      window.addEventListener('popstate', (e) => {
+          window.history.go(1);
+      });
+  }, []);
 
   useEffect(() => {
 
