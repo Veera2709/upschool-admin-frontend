@@ -494,7 +494,7 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
                                 </Formik>
                             </Card.Body>
                         </Card > :
-                        <h1>There are no datas to be displayed!</h1>
+                        <></>
                     }
                 </>
             )}
