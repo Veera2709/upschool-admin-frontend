@@ -114,6 +114,10 @@ const AddUnit = () => {
                                 .min(2, Constants.AddUnit.UnittitleRequired)
                                 .max(30, Constants.AddUnit.UnittitleTooShort)
                                 .required(Constants.AddUnit.UnittitleTooLongs),
+
+                            unit_description: Yup.string()
+                                .trim()
+                                .required(Constants.AddUnit.DescriptionRequired),
                         })}
 
 
@@ -123,10 +127,7 @@ const AddUnit = () => {
 
                             if (chapterOption == '') {
                                 setIsShownDes(false)
-                            } else if ( description == undefined) {
-                                setIsShown(false)
-                            }
-                            else {
+                            }else {
 
                                 console.log("on submit");
                                 var formData = {
@@ -218,9 +219,9 @@ const AddUnit = () => {
                                                 name="color"
                                                 isMulti
                                                 closeMenuOnSelect={false}
-                                                onChange={(e)=>{getMultiOptions(e);setIsShown(true)}}
+                                                onChange={(e) => { getMultiOptions(e); setIsShown(true) }}
                                                 options={topicTitles}
-                                                placeholder="Which is your favourite colour?"
+                                                placeholder="Select"
                                             />
                                             <br />
                                             <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>Field Required</small>
@@ -229,7 +230,7 @@ const AddUnit = () => {
                                             <Form.Label> <small className="text-danger">* </small>Unit Description</Form.Label>
                                             <Form.Control as="textarea" onChange={(e) => { UnitDescription(e); setIsShownDes(true) }} rows="4" />
                                             <br />
-                                            <small className="text-danger form-text" style={{ display: isShownDes ? 'none' : 'block' }}>Unit Description Required</small>
+                                            {touched.unit_description && errors.unit_description && <small className="text-danger form-text">{errors.unit_description}</small>}
                                         </div>
                                     </Col>
                                 </Row>

@@ -285,7 +285,7 @@ const AddChapter = (
                                                 closeMenuOnSelect={false}
                                                 onChange={(e)=>{handleOnSelect(e);setIsShown(true)}}
                                                 options={topicTitles}
-                                                placeholder="Which is your favourite colour?"
+                                                placeholder="Select"
                                             />
                                             <br />
                                             <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>Postlearning Topic Required</small>
@@ -310,7 +310,7 @@ const AddChapter = (
                                                 closeMenuOnSelect={false}
                                                 onChange={(e)=>{handleOnSelectPre(e);setIsShownPre(true)}}
                                                 options={topicTitles}
-                                                placeholder="Which is your favourite colour?"
+                                                placeholder="Select"
                                             />
                                             <br />
                                             <small className="text-danger form-text" style={{ display: isShownPre ? 'none' : 'block' }}>Prelearning Topic Required</small>
