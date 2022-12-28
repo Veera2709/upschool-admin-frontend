@@ -167,10 +167,9 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
 
                                     axios
                                         .post(
-                                            dynamicUrl.addConcepts, {
-                                            data:
-                                                formData
-                                        },
+                                            dynamicUrl.addConcepts,
+                                            formData
+                                            ,
                                             {
                                                 headers: { Authorization: sessionStorage.getItem('user_jwt') }
                                             }
