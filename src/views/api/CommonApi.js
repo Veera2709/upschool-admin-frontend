@@ -144,6 +144,48 @@ export const fetchAllConcepts = () => {
 }
 
 
+export const fetchPostLearningTopics = () => {
+    return new Promise((resolve, reject) => {
+        axios.post(url.fetchPostLearningTopics, {
+            data: {
+
+                concept_status: "Active"
+
+            }
+        }, {
+            headers: { Authorization: sessionStorage.getItem('user_jwt') }
+        })
+            .then((response) => {
+                console.log(response);
+                resolve(response.data);
+            })
+            .catch((error) => {
+                resolve({ Error: error });
+            })
+    });
+}
+
+export const fetchPreLearningTopics = () => {
+    return new Promise((resolve, reject) => {
+        axios.post(url.fetchPreLearningTopics, {
+            data: {
+
+                concept_status: "Active"
+
+            }
+        }, {
+            headers: { Authorization: sessionStorage.getItem('user_jwt') }
+        })
+            .then((response) => {
+                console.log(response);
+                resolve(response.data);
+            })
+            .catch((error) => {
+                resolve({ Error: error });
+            })
+    });
+}
+
 export const fetchIndividualUnit = (unit_id) => {
     return new Promise((resolve, reject) => {
         axios.post(url.fetchIndividualUnit, {

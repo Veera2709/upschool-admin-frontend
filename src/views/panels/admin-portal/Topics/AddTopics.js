@@ -155,7 +155,7 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
     }, [])
 
     const prePostOptions = [
-        { value: 'Pre-Learning', label: 'pre-Learning' },
+        { value: 'Pre-Learning', label: 'Pre-Learning' },
         { value: 'Post-Learning', label: 'Post-Learning' },
     ];
 

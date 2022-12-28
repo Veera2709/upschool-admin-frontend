@@ -42,6 +42,8 @@ const dynamicUrl = {
     toggleChapterStatus: baseUrl + '/toggleChapterStatus',
     fetchIndividualChapter: baseUrl + '/fetchIndividualChapter',
     editChapter: baseUrl + '/editChapter',
+    fetchPreLearningTopics: baseUrl + '/fetchPreLearningTopics',
+    fetchPostLearningTopics: baseUrl + '/fetchPostLearningTopics',
 
     fetchIndividualUserByRole: baseUrl + '/fetchIndividualUserByRole',
     updateUsersByRole: baseUrl + '/updateUsersByRole',
