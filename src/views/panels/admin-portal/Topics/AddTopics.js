@@ -78,16 +78,7 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
         { label: 'Level-3', value: 'Level-3' },
     ]
 
-    const getConcepts = () => {
-        axios.post(dynamicUrl.getConcepts, {}, { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
-            .then((response) => {
-                const result = response
-                console.log('result: ', result)
-            })
-            .catch((err) => {
-                console.log('err: ', err);
-            })
-    }
+  
 
     const postTopic = (formData) => {
         axios.post(dynamicUrl.addTopic, { data: formData }, {

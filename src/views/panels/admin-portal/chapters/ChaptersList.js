@@ -190,64 +190,78 @@ const ChaptersListChild = (props) => {
     // console.log('data: ', data)
 
     let history = useHistory();
+    const MySwal = withReactContent(Swal);
+    const sweetConfirmHandler = (alert) => {
+        MySwal.fire({
+            title: alert.title,
+            text: alert.text,
+            icon: alert.type
+        });
+    }
 
     function deleteChapter(chapter_id, chapter_title) {
         console.log("chapter_id", chapter_id);
+
+        confirmHandler(chapter_id, chapter_title)
+    }
+
+    const confirmHandler = (chapter_id, chapter_title) => {
         var data = {
             "chapter_id": chapter_id,
             "chapter_status": "Archived"
         }
+        MySwal.fire({
+            title: 'Are you sure?',
+            text: 'Confirm deleting ' + chapter_title + ' Chapter',
+            type: 'warning',
+            showCloseButton: true,
+            showCancelButton: true
+        }).then((willDelete) => {
+            if (willDelete.value) {
+                axios
+                    .post(dynamicUrl.toggleChapterStatus, { data: data }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
+                    .then((response) => {
+                        if (response.Error) {
+                            hideLoader();
+                            sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
+                        } else {
+                            setReloadAllData("Deleted");
+                            return MySwal.fire('', 'The ' + chapter_title + ' is Deleted', 'success');
+                            // window. location. reload() 
+                            //  MySwal.fire('', MESSAGES.INFO.CLIENT_DELETED, 'success');
 
-        const sweetConfirmHandler = () => {
-            const MySwal = withReactContent(Swal);
-            MySwal.fire({
-                title: 'Are you sure?',
-                text: 'Confirm deleting ' + chapter_title + ' Chapter',
-                type: 'warning',
-                showCloseButton: true,
-                showCancelButton: true
-            }).then((willDelete) => {
-                if (willDelete.value) {
-                    axios
-                        .post(dynamicUrl.toggleChapterStatus, { data: data }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
-                        .then((response) => {
-                            if (response.Error) {
-                                hideLoader();
-                                sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
+                        }
+                    })
+                    .catch((error) => {
+                        if (error.response) {
+                            // Request made and server responded
+                            console.log(error.response.data);
+                            hideLoader();
+                            if (error.response.data === 'Invalid Token') {
+                                sessionStorage.clear();
+                                localStorage.clear();
+                                history.push('/auth/signin-1');
+                                window.location.reload();
                             } else {
-                                setReloadAllData("Deleted");
-                                return MySwal.fire('', 'The ' + chapter_title + ' is Deleted', 'success');
-                                // window. location. reload() 
-                                //  MySwal.fire('', MESSAGES.INFO.CLIENT_DELETED, 'success');
-
-
-
+                                sweetConfirmHandler({ title: 'Sorry', type: 'warning', text: error.response.data });
                             }
-                        })
-                        .catch((error) => {
-                            if (error.response) {
-                                // Request made and server responded
-                                console.log(error.response.data);
-                                hideLoader();
-                                sweetConfirmHandler({ title: 'Error', type: 'error', text: error.response.data });
-                            } else if (error.request) {
-                                // The request was made but no response was received
-                                console.log(error.request);
-                                hideLoader();
-                            } else {
-                                // Something happened in setting up the request that triggered an Error
-                                console.log('Error', error.message);
-                                hideLoader();
-                            }
-                        });
-                } else {
-                    return MySwal.fire('', 'Chapter is safe!', 'error');
-                }
-            });
-        };
-        sweetConfirmHandler();
+                        } else if (error.request) {
+                            // The request was made but no response was received
+                            console.log(error.request);
+                            hideLoader();
+                        } else {
+                            // Something happened in setting up the request that triggered an Error
+                            console.log('Error', error.message);
+                            hideLoader();
+                        }
+                    });
+            } else {
+            }
+        });
+    };
 
-    }
+
+
 
 
     function restoreChapter(chapter_id, chapter_title) {
