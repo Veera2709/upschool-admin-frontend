@@ -78,7 +78,7 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
         { label: 'Level-3', value: 'Level-3' },
     ]
 
-  
+    
 
     const postTopic = (formData) => {
         axios.post(dynamicUrl.addTopic, { data: formData }, {
@@ -106,6 +106,7 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
         const allConceptsData = await fetchAllConcepts();
         if (allConceptsData.Error) {
             console.log("allConceptsData.ERROR", allConceptsData.Error);
+            
         } else {
             console.log('allConceptsData', allConceptsData.Items);
             let resultConceptData = allConceptsData.Items

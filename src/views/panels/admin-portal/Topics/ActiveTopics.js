@@ -264,7 +264,7 @@ const ActiveTopics = (props) => {
             }
         });
     };
-    
+
 
 
 
@@ -404,22 +404,7 @@ const ActiveTopics = (props) => {
 
     return (
         <div>
-            {topicData.length >= 0 ? (
-                <React.Fragment>
-                    <Row>
-                        <Col sm={12}>
-                            <Card>
-                                <Card.Header>
-                                    <Card.Title as="h5">Topics List</Card.Title>
-                                </Card.Header>
-                                <Card.Body>
-                                    <Table columns={columns} data={topicData} />
-                                </Card.Body>
-                            </Card>
-                        </Col>
-                    </Row>
-                </React.Fragment>
-            ) : (
+            {topicData.length <= 0 ? (
                 <div>
 
                     <h3 style={{ textAlign: 'center' }}>No Topics Found</h3>
@@ -434,6 +419,21 @@ const ActiveTopics = (props) => {
                     </div>
 
                 </div>
+            ) : (
+                <React.Fragment>
+                    <Row>
+                        <Col sm={12}>
+                            <Card>
+                                <Card.Header>
+                                    <Card.Title as="h5">Topics List</Card.Title>
+                                </Card.Header>
+                                <Card.Body>
+                                    <Table columns={columns} data={topicData} />
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                    </Row>
+                </React.Fragment>
             )}
 
         </div>

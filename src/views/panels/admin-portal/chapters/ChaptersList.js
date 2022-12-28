@@ -406,7 +406,22 @@ const ChaptersListChild = (props) => {
 
     return (
         <div>
-            {chapterData.length >= 0 ? (
+            {chapterData.length <= 0 ? (
+                <div>
+
+                    <h3 style={{ textAlign: 'center' }}>No Chapter Found</h3>
+                    <div className="form-group fill text-center">
+                        <br></br>
+
+                        <Link to={'/admin-portal/addChapters'}>
+                            <Button variant="success" className="btn-sm btn-round has-ripple ml-2">
+                                <i className="feather icon-plus" /> Add Chapter
+                            </Button>
+                        </Link>
+                    </div>
+
+                </div>
+            ) : (
                 <React.Fragment>
                     <Row>
                         <Col sm={12}>
@@ -421,21 +436,6 @@ const ChaptersListChild = (props) => {
                         </Col>
                     </Row>
                 </React.Fragment>
-            ) : (
-                <div>
-
-                    <h3 style={{ textAlign: 'center' }}>No Chapter Found</h3>
-                    <div className="form-group fill text-center">
-                        <br></br>
-
-                        <Link to={'/admin-portal/addChapters'}>
-                            <Button variant="success" className="btn-sm btn-round has-ripple ml-2">
-                                <i className="feather icon-plus" /> Add DigiCard
-                            </Button>
-                        </Link>
-                    </div>
-
-                </div>
             )}
 
         </div>

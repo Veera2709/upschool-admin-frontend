@@ -397,7 +397,21 @@ const UnitList = (props) => {
 
     return (
         <div>
-            {chapterData.length >= 0 ? (
+            {chapterData.length <= 0 ? (
+                <div>
+                    <h3 style={{ textAlign: 'center' }}>No Units Found</h3>
+                    <div className="form-group fill text-center">
+                        <br></br>
+
+                        <Link to={'/admin-portal/addUnits'}>
+                            <Button variant="success" className="btn-sm btn-round has-ripple ml-2">
+                                <i className="feather icon-plus" /> Add Units
+                            </Button>
+                        </Link>
+                    </div>
+
+                </div>
+            ) : (
                 <React.Fragment>
                     <Row>
                         <Col sm={12}>
@@ -412,21 +426,6 @@ const UnitList = (props) => {
                         </Col>
                     </Row>
                 </React.Fragment>
-            ) : (
-                <div>
-
-                    <h3 style={{ textAlign: 'center' }}>No Units Found</h3>
-                    <div className="form-group fill text-center">
-                        <br></br>
-
-                        <Link to={'/admin-portal/addUnits'}>
-                            <Button variant="success" className="btn-sm btn-round has-ripple ml-2">
-                                <i className="feather icon-plus" /> Add Units
-                            </Button>
-                        </Link>
-                    </div>
-
-                </div>
             )}
 
         </div>

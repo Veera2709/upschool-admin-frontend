@@ -186,6 +186,7 @@ const DigiCard = () => {
     console.log('data: ', data)
     const [isOpen, setIsOpen] = useState(false);
     const [loader, showLoader, hideLoader] = useFullPageLoader();
+    const [isLoading, setIsLoading] = useState(false);
     const [reloadAllData, setReloadAllData] = useState('Fetched');
     const MySwal = withReactContent(Swal);
     const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
@@ -407,7 +408,21 @@ const DigiCard = () => {
 
     return (
         <div>
-            {data.length >= 0 ? (
+            {data.length <= 0 ? (
+                
+                <div>
+                <h3 style={{ textAlign: 'center' }}>No DigiCard Found</h3>
+                <div className="form-group fill text-center">
+                    <br></br>
+
+                    <Link to={'/admin-portal/add-digicard'}>
+                        <Button variant="success" className="btn-sm btn-round has-ripple ml-2">
+                            <i className="feather icon-plus" /> Add DigiCard
+                        </Button>
+                    </Link>
+                </div>
+            </div>
+            ) : (
                 <React.Fragment>
                     <Row>
                         <Col sm={12}>
@@ -422,19 +437,6 @@ const DigiCard = () => {
                         </Col>
                     </Row>
                 </React.Fragment >
-            ) : (
-                <div>
-                    <h3 style={{ textAlign: 'center' }}>No DigiCard Found</h3>
-                    <div className="form-group fill text-center">
-                        <br></br>
-
-                        <Link to={'/admin-portal/add-digicard'}>
-                            <Button variant="success" className="btn-sm btn-round has-ripple ml-2">
-                                <i className="feather icon-plus" /> Add DigiCard
-                            </Button>
-                        </Link>
-                    </div>
-                </div>
             )}
         </div>
     );
