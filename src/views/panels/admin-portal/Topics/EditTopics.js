@@ -104,7 +104,7 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
             .then((response) => {
                 const result = response.data;
                 console.log('result: ', result);
-                if(result == 200){
+                if (result == 200) {
                     sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.EditTopic });
 
                 }
@@ -156,33 +156,33 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
             if (topicData.Error) {
                 console.log("topicData.Error", topicData.Error);
             } else {
-    
+
                 const result = topicData.Items[0];
                 console.log("result", result);
-                setEditTopicData(result);
-                setTopicQuiz(result.topic_quiz_config)
-    
-    
+                // setEditTopicData(result);
+                // setTopicQuiz(result.topic_quiz_config)
+
+
                 topicData.Items[0].pre_post_learning === 'Pre-Learning' ? DefaultisLockedOption.push({ value: result.pre_post_learning, label: result.pre_post_learning }) : DefaultisLockedOption.push({ value: 'Post-Learning', label: 'Post-Learning' })
                 console.log("DefaultisLockedOption", DefaultisLockedOption);
                 setprePostLearning(DefaultisLockedOption[0].value)
                 setDefaultOption(DefaultisLockedOption)
-    
+
                 let tempArr = [];
                 let tempTopic = [];
-    
+
                 topicData.Items[0].topic_concept_id.forEach(function (entry_concept) {
                     conceptArr.forEach(function (childrenEntry_concept) {
                         if (entry_concept === childrenEntry_concept.value) {
                             tempArr.push(childrenEntry_concept)
                         }
-    
+
                     });
                     console.log('tempArr', tempArr);
                     setDefaultConceptOption(tempArr)
                     setTopicConceptId(topicData.Items[0].topic_concept_id)
                 });
-    
+
                 topicData.Items[0].related_topics.forEach(function (entry) {
                     topicArr.forEach(function (childrenEntry) {
                         if (entry === childrenEntry.value) {
@@ -193,6 +193,9 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
                     setDefaultTopicOption(tempTopic)
                     setRelatedTopicsId(topicData.Items[0].related_topics)
                 });
+
+                setEditTopicData(result);
+                setTopicQuiz(result.topic_quiz_config)
             }
 
         }
@@ -216,7 +219,7 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
     const getconceptId = (event) => {
         let valuesArr = [];
         for (let i = 0; i < event.length; i++) {
-            valuesArr.push( event[i].value )
+            valuesArr.push(event[i].value)
         }
         setTopicConceptId(valuesArr);
     }
@@ -224,158 +227,148 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
     const gettopicId = (event) => {
         let topicArr = [];
         for (let i = 0; i < event.length; i++) {
-            topicArr.push( event[i].value )
+            topicArr.push(event[i].value)
         }
         setRelatedTopicsId(topicArr);
     }
     return (
         <div>
-            {!isEmptyObject(editTopicData) ?
-                <Card>
-                    <Card.Body>
-                        <Card.Title>Edit Topic</Card.Title>
-                        <Formik
-                            enableReinitialize
-                            initialValues={{
-                                topic_title: editTopicData.topic_title,
-                                topic_description: editTopicData.topic_description,
-                                topic_concept_id: '',
-                                pre_post_learning: '',
-                                related_topics: '',
-                                topic_quiz_config: ''
-                            }}
-                            // validationSchema
 
-                            
-                            onSubmit={(values, { setErrors, setStatus, setSubmitting }) => {
-                                setSubmitting(true);
-                                const formData = {
-                                    topic_id:id,
-                                    topic_title: values.topic_title,
-                                    topic_description: values.topic_description,
-                                    topic_concept_id:topicConceptId ,
-                                    pre_post_learning: prePostLearning,
-                                    related_topics: relatedTopicsId,
-                                    topic_quiz_config: topicQuiz
-                                }
-                                console.log('formData: ', formData)
-                                submitEditTopic(formData)
-                            }}
-                        >
-                            {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
-                                <Form onSubmit={handleSubmit} >
-                                    <Col sm={6}>
-                                        <Form.Group>
-                                            <Form.Label className="floating-label" ><small className="text-danger">* </small>Topic Title</Form.Label>
-                                            <Form.Control
-                                                className="form-control"
-                                                name="topic_title"
-                                                onBlur={handleBlur}
-                                                onChange={handleChange}
-                                                type="text"
-                                                value={values.topic_title}
-                                            />
-                                            {/* {touched.topic_title && errors.topic_title && <small className="text-danger form-text">{errors.topic_title}</small>} */}
-                                        </Form.Group>
-                                    </Col>
+            {editTopicData && (
+                <>
 
-                                    <Col sm={6}>
-                                        {defaultOption && (<div className="form-group fill" style={{ position: "relative", zIndex: 100 }}>
-                                            <label className="floating-label">
-                                                <small className="text-danger">* </small>
-                                                pre-post learning
-                                            </label>
-                                            {defaultOption.length === 0 ? (
+                    {!isEmptyObject(editTopicData) ?
+                        <Card>
+                            <Card.Body>
+                                <Card.Title>Edit Topic</Card.Title>
+                                <Formik
+                                    enableReinitialize
+                                    initialValues={{
+                                        topic_title: editTopicData.topic_title,
+                                        topic_description: editTopicData.topic_description,
+                                        topic_concept_id: '',
+                                        pre_post_learning: '',
+                                        related_topics: '',
+                                        topic_quiz_config: ''
+                                    }}
+                                    // validationSchema
 
-                                                <Select
-                                                    className="basic-single"
-                                                    classNamePrefix="select"
-                                                    defaultValue={prePostOptions[0]}
-                                                    name="color"
-                                                    options={prePostOptions}
-                                                    onChange={(e) => { postPreOption(e) }}
-                                                />
 
-                                            ) : (
-                                                <>
-                                                    {defaultOption && (
+                                    onSubmit={(values, { setErrors, setStatus, setSubmitting }) => {
+                                        setSubmitting(true);
+                                        const formData = {
+                                            topic_id: id,
+                                            topic_title: values.topic_title,
+                                            topic_description: values.topic_description,
+                                            topic_concept_id: topicConceptId,
+                                            pre_post_learning: prePostLearning,
+                                            related_topics: relatedTopicsId,
+                                            topic_quiz_config: topicQuiz
+                                        }
+                                        console.log('formData: ', formData)
+                                        submitEditTopic(formData)
+                                    }}
+                                >
+                                    {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
+                                        <Form onSubmit={handleSubmit} >
+                                            <Col sm={6}>
+                                                <Form.Group>
+                                                    <Form.Label className="floating-label" ><small className="text-danger">* </small>Topic Title</Form.Label>
+                                                    <Form.Control
+                                                        className="form-control"
+                                                        name="topic_title"
+                                                        onBlur={handleBlur}
+                                                        onChange={handleChange}
+                                                        type="text"
+                                                        value={values.topic_title}
+                                                    />
+                                                    {/* {touched.topic_title && errors.topic_title && <small className="text-danger form-text">{errors.topic_title}</small>} */}
+                                                </Form.Group>
+                                            </Col>
+
+                                            <Col sm={6}>
+                                                {defaultOption && (<div className="form-group fill" style={{ position: "relative", zIndex: 100 }}>
+                                                    <label className="floating-label">
+                                                        <small className="text-danger">* </small>
+                                                        pre-post learning
+                                                    </label>
+                                                    {defaultOption.length === 0 ? (
 
                                                         <Select
                                                             className="basic-single"
                                                             classNamePrefix="select"
-                                                            defaultValue={defaultOption[0]}
+                                                            defaultValue={prePostOptions[0]}
                                                             name="color"
                                                             options={prePostOptions}
                                                             onChange={(e) => { postPreOption(e) }}
                                                         />
 
+                                                    ) : (
+                                                        <>
+                                                            {defaultOption && (
+
+                                                                <Select
+                                                                    className="basic-single"
+                                                                    classNamePrefix="select"
+                                                                    defaultValue={defaultOption[0]}
+                                                                    name="color"
+                                                                    options={prePostOptions}
+                                                                    onChange={(e) => { postPreOption(e) }}
+                                                                />
+
+                                                            )}
+                                                        </>
+
                                                     )}
-                                                </>
+                                                    <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>required</small>
+                                                </div>)}
+                                            </Col>
 
-                                            )}
-                                            <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>required</small>
-                                        </div>)}
-                                    </Col>
+                                            <Col sm={6}>
 
-                                    <Col sm={6}>
-
-                                        {defaultConceptOption && (<div className="form-group fill" style={{ position: "relative", zIndex: 50 }}>
-                                            <label className="floating-label" htmlFor="concept">
-                                                <small className="text-danger">* </small>concepts
-                                            </label>
-                                            {defaultConceptOption.length === 0 ? (
-
-                                                <Select
-                                                    className="basic-multi-select"
-                                                    isMulti
-                                                    closeMenuOnSelect={false}
-                                                    onChange={(e) => { gettopicId(e); setIsShown(true) }}
-                                                    options={conceptTitles}
-                                                    placeholder="Select the concept Title"
-                                                />
-
-                                            ) : (
-                                                <>
-                                                    {defaultConceptOption && (
+                                                {defaultConceptOption && (<div className="form-group fill" style={{ position: "relative", zIndex: 50 }}>
+                                                    <label className="floating-label" htmlFor="concept">
+                                                        <small className="text-danger">* </small>concepts
+                                                    </label>
+                                                    {defaultConceptOption.length === 0 ? (
 
                                                         <Select
-                                                            defaultValue={defaultConceptOption}
                                                             className="basic-multi-select"
                                                             isMulti
                                                             closeMenuOnSelect={false}
-                                                            onChange={(e) => { getconceptId(e); setIsShown(true) }}
+                                                            onChange={(e) => { gettopicId(e); setIsShown(true) }}
                                                             options={conceptTitles}
-                                                            placeholder="Select the Concept Title"
+                                                            placeholder="Select the concept Title"
                                                         />
 
+                                                    ) : (
+                                                        <>
+                                                            {defaultConceptOption && (
+
+                                                                <Select
+                                                                    defaultValue={defaultConceptOption}
+                                                                    className="basic-multi-select"
+                                                                    isMulti
+                                                                    closeMenuOnSelect={false}
+                                                                    onChange={(e) => { getconceptId(e); setIsShown(true) }}
+                                                                    options={conceptTitles}
+                                                                    placeholder="Select the Concept Title"
+                                                                />
+
+                                                            )}
+                                                        </>
+
                                                     )}
-                                                </>
+                                                    <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>required</small>
+                                                </div>)}
 
-                                            )}
-                                            <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>required</small>
-                                        </div>)}
-
-                                        {defaultTopicOption && (<div className="form-group fill" style={{ position: "relative", zIndex: 20 }}>
-                                            <label className="floating-label" htmlFor="related_topic">
-                                                <small className="text-danger">* </small> Related Topics
-                                            </label>
-                                            {defaultTopicOption.length === 0 ? (
-
-                                                <Select
-                                                    className="basic-multi-select"
-                                                    isMulti
-                                                    closeMenuOnSelect={false}
-                                                    onChange={(e) => { gettopicId(e); setIsShown(true) }}
-                                                    options={topicTitles}
-                                                    placeholder="Select the Topic Title"
-                                                />
-
-                                            ) : (
-                                                <>
-                                                    {defaultTopicOption && (
+                                                {defaultTopicOption && (<div className="form-group fill" style={{ position: "relative", zIndex: 20 }}>
+                                                    <label className="floating-label" htmlFor="related_topic">
+                                                        <small className="text-danger">* </small> Related Topics
+                                                    </label>
+                                                    {defaultTopicOption.length === 0 ? (
 
                                                         <Select
-                                                            defaultValue={defaultTopicOption}
                                                             className="basic-multi-select"
                                                             isMulti
                                                             closeMenuOnSelect={false}
@@ -384,82 +377,106 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
                                                             placeholder="Select the Topic Title"
                                                         />
 
+                                                    ) : (
+                                                        <>
+                                                            {console.log(defaultTopicOption)}
+                                                            {defaultTopicOption && (
+
+                                                                < Select
+                                                                    defaultValue={defaultTopicOption}
+                                                                    // defaultValue={[
+                                                                    //     { value: '033d701f-b763-5db7-a594-fc3b8056e88d', label: 'food1' },
+                                                                    //     { value: '147fe6c0-3010-53ba-98b3-ee73f378b981', label: 'food' },
+                                                                    //     { value: '87482048-6ec5-53e8-8ff3-40815fd334d9', label: 'food2' }
+                                                                    // ]}
+                                                                    className="basic-multi-select"
+                                                                    isMulti
+                                                                    closeMenuOnSelect={false}
+                                                                    onChange={(e) => { gettopicId(e); setIsShown(true) }}
+                                                                    options={topicTitles}
+                                                                    placeholder="Select the Topic Title"
+                                                                />
+
+                                                            )}
+                                                        </>
+
                                                     )}
-                                                </>
+                                                    <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>required</small>
+                                                </div>)}
+                                            </Col>
 
-                                            )}
-                                            <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>required</small>
-                                        </div>)}
-                                    </Col>
+                                            <Col sm={6}>
+                                                <Form.Group>
+                                                    <Form.Label className="floating-label" ><small className="text-danger">* </small>Topic Decription</Form.Label>
+                                                    <Form.Control
+                                                        as="textarea"
+                                                        rows="4"
+                                                        name="topic_description"
+                                                        onBlur={handleBlur}
+                                                        onChange={handleChange}
+                                                        type="text"
+                                                        value={values.topic_description}
+                                                    />
+                                                    {/* {touched.topic_description && errors.topic_description && <small className="text-danger form-text">{errors.topic_description}</small>} */}
+                                                </Form.Group>
+                                            </Col>
 
-                                    <Col sm={6}>
-                                        <Form.Group>
-                                            <Form.Label className="floating-label" ><small className="text-danger">* </small>Topic Decription</Form.Label>
-                                            <Form.Control
-                                                as="textarea"
-                                                rows="4"
-                                                name="topic_description"
-                                                onBlur={handleBlur}
-                                                onChange={handleChange}
-                                                type="text"
-                                                value={values.topic_description}
-                                            />
-                                            {/* {touched.topic_description && errors.topic_description && <small className="text-danger form-text">{errors.topic_description}</small>} */}
-                                        </Form.Group>
-                                    </Col>
+                                            <Form.Label className="floating-label" ><small className="text-danger">* </small>Topic Quiz Config</Form.Label>
+                                            {topicQuiz.map((topic, index) => (
 
-                                    <Form.Label className="floating-label" ><small className="text-danger">* </small>Topic Quiz Config</Form.Label>
-                                    {topicQuiz.map((topic, index) => (
-                                        
-                                        <div className='row ml-1 mb-2' key={index + 1000} >
-                                            <div className='col-md-4' key={index + 10} >
-                                                <select className='form-control' name="level" id="level" onChange={(e) => onDynamicFormChange(e, index, 'level')} value={topic.level} >
-                                                    {levels.map((ele, i) => {
-                                                        return <option id="level" keys={i} value={ele.value} >{ele.label}</option>
-                                                    })}
-                                                </select>
-                                            </div>
-                                            <p></p>
-                                            <div className='col-md-4'>
-                                                <div className='row'>
-                                                    <div className='col-md-6'>
-                                                        <Form.Control
-                                                            type='number'
-                                                            name='duration'
-                                                            placeholder='Minutes'
-                                                            value={topic.duration}
-                                                            onChange={(e) => onDynamicFormChange(e, index, 'duration')}
-                                                            autoComplete='off'
-                                                        />
+                                                <div className='row ml-1 mb-2' key={index + 1000} >
+                                                    <div className='col-md-4' key={index + 10} >
+                                                        <select className='form-control' name="level" id="level" onChange={(e) => onDynamicFormChange(e, index, 'level')} value={topic.level} >
+                                                            {levels.map((ele, i) => {
+                                                                return <option id="level" keys={i} value={ele.value} >{ele.label}</option>
+                                                            })}
+                                                        </select>
                                                     </div>
-                                                    {topicQuiz.length == 1 ? "" :  
-                                                    <div className='col-md-6'>
-                                                        <Button variant='danger' onClick={() => removeTopic(index)}>Remove</Button>
-                                                    </div>}
-                                                   
+                                                    <p></p>
+                                                    <div className='col-md-4'>
+                                                        <div className='row'>
+                                                            <div className='col-md-6'>
+                                                                <Form.Control
+                                                                    type='number'
+                                                                    name='duration'
+                                                                    placeholder='Minutes'
+                                                                    value={topic.duration}
+                                                                    onChange={(e) => onDynamicFormChange(e, index, 'duration')}
+                                                                    autoComplete='off'
+                                                                />
+                                                            </div>
+                                                            {topicQuiz.length == 1 ? "" :
+                                                                <div className='col-md-6'>
+                                                                    <Button variant='danger' onClick={() => removeTopic(index)}>Remove</Button>
+                                                                </div>}
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
+
+                                            <p></p>
+                                            <button type="button" className="btn btn-primary" onClick={addTopic} >Add another Quiz</button>
+
+                                            <div className="row d-flex justify-content-end">
+                                                <div className="form-group fill">
+                                                    <div className="center col-sm-12">
+                                                        <button color="success" type="submit" className="btn-block btn btn-success btn-large">Submit</button>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    ))}
 
-                                    <p></p>
-                                    <button type="button" className="btn btn-primary" onClick={addTopic} >Add another Quiz</button>
+                                        </Form>
+                                    )}
+                                </Formik>
+                            </Card.Body>
+                        </Card > :
+                        <h1>There are no datas to be displayed!</h1>
+                    }
+                </>
+            )}
 
-                                    <div className="row d-flex justify-content-end">
-                                        <div className="form-group fill">
-                                            <div className="center col-sm-12">
-                                                <button color="success" type="submit" className="btn-block btn btn-success btn-large">Submit</button>
-                                            </div>
-                                        </div>
-                                    </div>
 
-                                </Form>
-                            )}
-                        </Formik>
-                    </Card.Body>
-                </Card > :
-                <h1>There are no datas to be displayed!</h1>
-            }
         </div >
     )
 }
