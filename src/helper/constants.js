@@ -82,6 +82,7 @@ export const AddUnit = {
   UnittitleRequired: 'Unit title is required!',
   UnittitleTooShort: 'Unit title is too short!',
   UnittitleTooLong: "Unit title is too long!",
+  DescriptionRequired: "Unit Description is required!",
 };
 export const AddTopic = {
   
