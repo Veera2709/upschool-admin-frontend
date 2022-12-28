@@ -276,11 +276,14 @@ const SchoolsDataList = (props) => {
                 let responseData = response.status === 200;
                 if (response.Error) {
                     hideLoader();
+                    setIsLoading(false);
                     sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
 
                     window.location.reload();
 
                 } else {
+                    setIsLoading(false);
+
                     sweetAlertHandler({ title: '', type: 'success', text: MESSAGES.SUCCESS.RestoredSuccessfully });
                     hideLoader();
                     window.location.reload();
@@ -293,6 +296,7 @@ const SchoolsDataList = (props) => {
                     hideLoader();
                     console.log(error.response.data);
 
+                    setIsLoading(false);
 
                     if (error.response.data === "Invalid Token") {
 
@@ -310,10 +314,14 @@ const SchoolsDataList = (props) => {
                 } else if (error.request) {
                     // The request was made but no response was received
                     hideLoader();
+                    setIsLoading(false);
+
                     console.log(error.request);
                 } else {
                     // Something happened in setting up the request that triggered an Error
                     hideLoader();
+                    setIsLoading(false);
+
                     console.log('Error', error.message);
                 }
             });
@@ -382,6 +390,7 @@ const SchoolsDataList = (props) => {
         }).then((willDelete) => {
             if (willDelete.value) {
                 showLoader();
+                setIsLoading(true);
                 // deleteUser(user_id, user_role, updateStatus);
             } else {
 
@@ -399,6 +408,7 @@ const SchoolsDataList = (props) => {
         e.preventDefault();
         // getIndividualUser(user_id, user_role);
         showLoader();
+        setIsLoading(true);
     };
 
 
@@ -409,7 +419,7 @@ const SchoolsDataList = (props) => {
 
                 <>
                     {console.log(isLoading)}
-                    {isLoading ? (<BasicSpinner />) : (
+                    {isLoading ? <BasicSpinner /> : (
                         <>
                             {schoolData.length === 0 ? (
                                 <div>

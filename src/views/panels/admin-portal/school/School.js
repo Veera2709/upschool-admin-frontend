@@ -32,6 +32,7 @@ const School = () => {
                 setSubscriptionActive(resultData && resultData.filter(p => p.subscription_active === 'Yes'))
                 setSubscriptionInActive(resultData && resultData.filter(p => p.subscription_active === 'No'))
                 _setData(resultData && resultData.filter(p => p.subscription_active === 'Yes'))
+
             })
             .catch((err) => {
                 console.log(err.response.data);
@@ -62,7 +63,9 @@ const School = () => {
             setInactive(true);
         }
     }
+    console.log("subscriptionActive", subscriptionActive);
 
+    console.log("subscriptionInActive", subscriptionInActive);
     return (
         <div>
             <Tabs
