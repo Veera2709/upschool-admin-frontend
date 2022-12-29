@@ -317,7 +317,7 @@ const UnitList = (props) => {
 
 
     const allUnitsList = async (UnitStatus) => {
-
+        setIsLoading(true)
         const allUnitsData = await fetchAllUnits();
         if (allUnitsData.ERROR) {
             console.log("allUnitsData.ERROR", allUnitsData.ERROR);
@@ -381,6 +381,7 @@ const UnitList = (props) => {
             }
             setUnitData(finalDataArray);
             console.log('resultData: ', finalDataArray);
+            setIsLoading(false)
         }
 
 

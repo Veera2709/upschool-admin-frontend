@@ -276,10 +276,7 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
 
                                         if (topicConceptId == '') {
                                             setIsShown(false)
-                                        } else if (values.topic_description == '' || values.topic_description.trim() == '') {
-                                            setIsShownRelatedTopic(false)
-                                        }
-                                        else {
+                                        } else {
                                             const formData = {
                                                 topic_id: id,
                                                 topic_title: values.topic_title,
@@ -428,7 +425,7 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
 
                                             <Col sm={6}>
                                                 <Form.Group>
-                                                    <Form.Label className="floating-label" ><small className="text-danger">* </small>Topic Decription</Form.Label>
+                                                    <Form.Label className="floating-label" ><small className="text-danger">* </small>Topic Description</Form.Label>
                                                     <Form.Control
                                                         as="textarea"
                                                         rows="4"
@@ -494,7 +491,7 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
                                 </Formik>
                             </Card.Body>
                         </Card > :
-                        <h1>There are no datas to be displayed!</h1>
+                        <></>
                     }
                 </>
             )}

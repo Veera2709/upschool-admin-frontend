@@ -51,7 +51,6 @@ const EditChapter = () => {
 
     const [isLockedOption, setValue] = useState();
     const [defaulIslocked, setDefaulIslocked] = useState();
-    const [description, setDescription] = useState();
     const [defauleDescription, setDefauleDescription] = useState();
     const [topicTitles, setTopicTitles] = useState([]);
     const [topicTitlesPre, setTopicTitlesPre] = useState([]);
@@ -83,9 +82,7 @@ const EditChapter = () => {
         setValue(e.value);
     };
 
-    const ChapterDescription = (text) => {
-        setDescription(text.target.value)
-    }
+  
 
     const fetchAllData = async () => {
 
@@ -125,12 +122,6 @@ const EditChapter = () => {
                 console.log("chapterData.ERROR", chapterData.ERROR);
             } else {
                 let individual_Chapter_data = chapterData.Items[0];
-                setIndividualChapterdata(individual_Chapter_data)
-
-
-                setDefauleDescription(individual_Chapter_data.chapter_description);
-                setDescription(individual_Chapter_data.chapter_description)
-
                 let tempArr_pre = [];
                 let tempArr2 = [];
                 individual_Chapter_data.prelearning_topic_id.forEach(function (entry_pre) {
@@ -161,6 +152,8 @@ const EditChapter = () => {
                 individual_Chapter_data.is_locked === 'Yes' ? DefaultisLockedOption.push({ value: individual_Chapter_data.is_locked, label: individual_Chapter_data.is_locked }) : DefaultisLockedOption.push({ value: 'No', label: 'No' })
                 setDefaulIslocked(DefaultisLockedOption)
                 setValue(DefaultisLockedOption[0].value)
+                setIndividualChapterdata(individual_Chapter_data)
+                setDefauleDescription(individual_Chapter_data.chapter_description);
             }
         }
 
@@ -206,7 +199,7 @@ const EditChapter = () => {
                             postlearning_topic: '',
                             prelearning_topic: '',
                             isLocked: '',
-                            chapter_description: '',
+                            chapter_description: individualChapterdata.chapter_description,
                         }}
                         validationSchema={Yup.object().shape({
                             chaptertitle: Yup.string()
@@ -214,6 +207,8 @@ const EditChapter = () => {
                                 .min(2, Constants.AddDigiCard.ChaptertitleTooShort)
                                 .max(30, Constants.AddDigiCard.ChaptertitleTooLong)
                                 .required(Constants.AddDigiCard.ChaptertitleRequired),
+                            chapter_description: Yup.string()
+                                .required(Constants.AddUnit.DescriptionRequired),
                         })}
 
 
@@ -230,7 +225,7 @@ const EditChapter = () => {
                             } else if (prelearningOptions == '') {
                                 setIsShownPre(false)
                             }
-                            else if (description == undefined || description.trim() == '') {
+                            else if (values.chapter_description == undefined || values.chapter_description.trim() == '') {
                                 setIsShownDes(false)
                             } else {
 
@@ -238,7 +233,7 @@ const EditChapter = () => {
                                 var formData = {
                                     chapter_id: chapter_id,
                                     chapter_title: values.chaptertitle,
-                                    chapter_description: description,
+                                    chapter_description: values.chapter_description,
                                     prelearning_topic_id: prelearningOptions,
                                     postlearning_topic_id: postlearningOption,
                                     is_locked: isLockedOption,
@@ -354,11 +349,17 @@ const EditChapter = () => {
                                         </div>
                                         <div className="form-group fill" >
                                             <Form.Label htmlFor="chapter_description"> <small className="text-danger">* </small>Chapter Description</Form.Label>
-                                            <Form.Control as="textarea"
-                                                onChange={(e) => { ChapterDescription(e); setIsShownDes(true) }} rows="4"
-                                                defaultValue={description}
+                                            <Form.Control
+                                                as="textarea"
+                                                onChange={(e)=>{handleChange(e);setIsShownDes(true)}}
+                                                rows="4"
+                                                onBlur={handleBlur}
+                                                name="chapter_description"
+                                                value={values.chapter_description}
+                                                type='text'
                                             />
                                             <br />
+                                            {touched.chapter_description && errors.chapter_description && <small className="text-danger form-text">{errors.chapter_description}</small>}
                                             <small className="text-danger form-text" style={{ display: isShownDes ? 'none' : 'block' }}>Chapter Description Required</small>
                                         </div>
                                     </Col>

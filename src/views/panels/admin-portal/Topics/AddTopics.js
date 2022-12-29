@@ -78,7 +78,7 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
         { label: 'Level-3', value: 'Level-3' },
     ]
 
-    
+
 
     const postTopic = (formData) => {
         axios.post(dynamicUrl.addTopic, { data: formData }, {
@@ -106,6 +106,12 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
         const allConceptsData = await fetchAllConcepts();
         if (allConceptsData.Error) {
             console.log("allConceptsData.ERROR", allConceptsData.Error);
+            if (allConceptsData.Error.response.data == 'Invalid Token') {
+                sessionStorage.clear();
+                localStorage.clear();
+                history.push('/auth/signin-1');
+                window.location.reload();
+            }
 
         } else {
             console.log('allConceptsData', allConceptsData.Items);
@@ -124,6 +130,12 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
             const allTopicsData = await fetchAllTopics();
             if (allTopicsData.Error) {
                 console.log("allTopicsData,Error", allTopicsData, Error);
+                if (allTopicsData.Error.response.data == 'Invalid Token') {
+                    sessionStorage.clear();
+                    localStorage.clear();
+                    history.push('/auth/signin-1');
+                    window.location.reload();
+                }
             } else {
                 console.log("allTopicsData", allTopicsData.Items);
                 let resultTopicData = allTopicsData.Items
@@ -154,14 +166,14 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
     // const handlePrePostChange = (e) => setprePostLearning(e.target.value)
 
     const postPreOption = (e) => {
-        console.log("postPreOption",e);
+        console.log("postPreOption", e);
         setprePostLearning(e.value);
     };
 
     const getconceptId = (event) => {
         let valuesArr = [];
         for (let i = 0; i < event.length; i++) {
-            valuesArr.push( event[i].value )
+            valuesArr.push(event[i].value)
         }
         setTopicConceptId(valuesArr);
     }
@@ -169,7 +181,7 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
     const gettopicId = (event) => {
         let topicArr = [];
         for (let i = 0; i < event.length; i++) {
-            topicArr.push( event[i].value )
+            topicArr.push(event[i].value)
         }
         setRelatedTopicsId(topicArr);
     }
@@ -209,7 +221,7 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
 
                             if (topicConceptId == '') {
                                 setIsShownConcept(false)
-                            } 
+                            }
 
                             else {
                                 const formData = {
@@ -298,7 +310,7 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
                                 <Col sm={6}>
 
                                     <Form.Group>
-                                        <Form.Label className="floating-label" htmlFor="topic_description"><small className="text-danger">* </small>Topic Decription</Form.Label>
+                                        <Form.Label className="floating-label" htmlFor="topic_description"><small className="text-danger">* </small>Topic Description</Form.Label>
                                         <Form.Control
                                             as="textarea"
                                             rows="4"
@@ -332,22 +344,22 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
                                                         name='duration'
                                                         placeholder='Minutes'
                                                         value={topic.duration}
-                                                        onChange={(e) => {onDynamicFormChange(e, index, 'duration'); handleChange(e)}}
+                                                        onChange={(e) => { onDynamicFormChange(e, index, 'duration'); handleChange(e) }}
                                                         autoComplete='off'
                                                         onBlur={handleBlur}
                                                     />
-                                                     {touched.duration && errors.duration && <small className="text-danger form-text">{errors.duration}</small>}
+                                                    {touched.duration && errors.duration && <small className="text-danger form-text">{errors.duration}</small>}
 
                                                 </div>
-                                                {topicQuiz.length === 1 ? "" : 
-                                                (
-                                                <div className='col-md-6'>
-                                                <Button variant='danger' onClick={() => removeTopic(index)}>Remove</Button>
-                                               </div>
-                                               )
-                                                  
+                                                {topicQuiz.length === 1 ? "" :
+                                                    (
+                                                        <div className='col-md-6'>
+                                                            <Button variant='danger' onClick={() => removeTopic(index)}>Remove</Button>
+                                                        </div>
+                                                    )
+
                                                 }
-                                              
+
                                             </div>
                                         </div>
                                     </div>
