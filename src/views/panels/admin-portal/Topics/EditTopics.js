@@ -276,10 +276,7 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
 
                                         if (topicConceptId == '') {
                                             setIsShown(false)
-                                        } else if (values.topic_description == '' || values.topic_description.trim() == '') {
-                                            setIsShownRelatedTopic(false)
-                                        }
-                                        else {
+                                        } else {
                                             const formData = {
                                                 topic_id: id,
                                                 topic_title: values.topic_title,
