@@ -111,9 +111,9 @@ const AddUnit = () => {
                         validationSchema={Yup.object().shape({
                             unittitle: Yup.string()
                                 .trim()
-                                .min(2, Constants.AddUnit.UnittitleRequired)
-                                .max(30, Constants.AddUnit.UnittitleTooShort)
-                                .required(Constants.AddUnit.UnittitleTooLongs),
+                                .min(2, Constants.AddUnit.UnittitleTooShort)
+                                .max(30, Constants.AddUnit.UnittitleTooLong)
+                                .required(Constants.AddUnit.UnittitleRequired),
                         })}
 
 
