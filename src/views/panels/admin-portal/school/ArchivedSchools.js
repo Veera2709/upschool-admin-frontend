@@ -12,7 +12,8 @@ const ArchivedSchools = () => {
     console.log('_data: ', _data);
     const history = useHistory();
 
-    useEffect(() => {
+    const fetchArchivedSchoolData = () => {
+        // useEffect(() => {
         setIsLoading(true);
         axios.post(dynamicUrl.fetchInactiveSchool, {}, { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
             .then((response) => {
@@ -23,6 +24,7 @@ const ArchivedSchools = () => {
 
                 } else {
                     setIsLoading(false);
+                    result && setData([...result]);
                 }
             })
             .catch((err) => {
@@ -36,13 +38,18 @@ const ArchivedSchools = () => {
                     window.location.reload();
                 }
             })
-    }, [])
+    }
+    // }, [])
+
+    useEffect(() => {
+        fetchArchivedSchoolData();
+    }, []);
 
     return (
         <div>
 
             {isLoading ? <BasicSpinner /> : (
-                <SchoolsDataList _data={_data} />
+                <SchoolsDataList _data={_data} fetchArchivedSchoolData={fetchArchivedSchoolData} />
 
             )}
         </div>

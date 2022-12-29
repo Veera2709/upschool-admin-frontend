@@ -135,7 +135,8 @@ function Table({ columns, data, modalOpen }) {
 }
 
 const SchoolChild = (props) => {
-    const { _data, fetchSchoolData, inactive, pageURL } = props
+    const { _data, fetchSchoolData, inactive, setInactive } = props
+
 
     const columns = React.useMemo(
         () => [
@@ -221,10 +222,14 @@ const SchoolChild = (props) => {
                     hideLoader();
                     sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
                     fetchSchoolData();
+                    setInactive(false);
+                    // _fetchSchoolData();
                 } else {
                     sweetAlertHandler({ title: MESSAGES.INFO.SCHOOL_DELETED, type: 'success' });
                     hideLoader();
                     fetchSchoolData();
+                    setInactive(false);
+                    // _fetchSchoolData();
                 }
             })
 
@@ -448,7 +453,7 @@ const SchoolChild = (props) => {
 
                                             <Modal.Body>
 
-                                                <EditSchoolForm id={editID} setIsOpenEditSchool={setIsOpenEditSchool} fetchSchoolData={fetchSchoolData} />
+                                                <EditSchoolForm id={editID} setIsOpenEditSchool={setIsOpenEditSchool} fetchSchoolData={fetchSchoolData} setInactive={setInactive} />
 
                                             </Modal.Body>
 
