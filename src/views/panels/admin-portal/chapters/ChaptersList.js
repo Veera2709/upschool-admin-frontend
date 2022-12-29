@@ -324,7 +324,6 @@ const ChaptersListChild = (props) => {
                             }
                         });
                 } else {
-                    return MySwal.fire('', 'Chapter is Restore!', 'error');
                 }
             });
         };
