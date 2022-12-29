@@ -206,7 +206,7 @@ const SchoolsDataList = (props) => {
 
 
 
-    const { _data } = props;
+    const { _data, fetchArchivedSchoolData } = props;
 
     const columns = React.useMemo(
         () => [
@@ -278,15 +278,17 @@ const SchoolsDataList = (props) => {
                     hideLoader();
                     setIsLoading(false);
                     sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
-
-                    window.location.reload();
+                    fetchArchivedSchoolData();
+                    // responseData === 200 && window.location.reload();
 
                 } else {
                     setIsLoading(false);
 
                     sweetAlertHandler({ title: '', type: 'success', text: MESSAGES.SUCCESS.RestoredSuccessfully });
+
                     hideLoader();
-                    window.location.reload();
+                    fetchArchivedSchoolData();
+                    // responseData === 200 && window.location.reload();
                 }
             })
 
@@ -419,7 +421,7 @@ const SchoolsDataList = (props) => {
 
                 <>
                     {console.log(isLoading)}
-                    {isLoading ? <BasicSpinner /> : (
+                    {isLoading ? (<BasicSpinner />) : (
                         <>
                             {schoolData.length === 0 ? (
                                 <div>
