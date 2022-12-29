@@ -305,8 +305,14 @@ const ChaptersListChild = (props) => {
                             if (error.response) {
                                 // Request made and server responded
                                 console.log(error.response.data);
-                                hideLoader();
-                                sweetConfirmHandler({ title: 'Error', type: 'error', text: error.response.data });
+                                if (error.response.data === 'Invalid Token') {
+                                    sessionStorage.clear();
+                                    localStorage.clear();
+                                    history.push('/auth/signin-1');
+                                    window.location.reload();
+                                } else {
+                                    console.log("err", error);
+                                }
                             } else if (error.request) {
                                 // The request was made but no response was received
                                 console.log(error.request);
@@ -395,8 +401,27 @@ const ChaptersListChild = (props) => {
                 setIsLoading(false);
 
             })
-            .catch((err) => {
-                console.log(err)
+            .catch((error) => {
+                if (error.response) {
+                    // Request made and server responded
+                    console.log(error.response.data);
+                    if (error.response.data === 'Invalid Token') {
+                        sessionStorage.clear();
+                        localStorage.clear();
+                        history.push('/auth/signin-1');
+                        window.location.reload();
+                    } else {
+                        console.log("err", error);
+                    }
+                } else if (error.request) {
+                    // The request was made but no response was received
+                    console.log(error.request);
+                    hideLoader();
+                } else {
+                    // Something happened in setting up the request that triggered an Error
+                    console.log('Error', error.message);
+                    hideLoader();
+                }
             })
     }
 

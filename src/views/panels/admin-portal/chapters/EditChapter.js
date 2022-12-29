@@ -16,6 +16,8 @@ import { useParams } from 'react-router-dom';
 import Select from 'react-select';
 import Multiselect from 'multiselect-react-dropdown';
 import { fetchIndividualChapter, fetchPostLearningTopics, fetchPreLearningTopics } from '../../../api/CommonApi'
+import { useHistory } from 'react-router-dom';
+
 
 
 
@@ -59,6 +61,8 @@ const EditChapter = () => {
     const [individualChapterdata, setIndividualChapterdata] = useState([]);
     const [isShownPre, setIsShownPre] = useState(true);
     const [isShownDes, setIsShownDes] = useState(true);
+    let history = useHistory();
+
 
 
 
@@ -90,6 +94,12 @@ const EditChapter = () => {
         console.log("allTopicdData", allTopicdData.Items);
         if (allTopicdData.Error) {
             console.log("allTopicdData", allTopicdData.Error);
+            if (allTopicdData.Error.response.data == 'Invalid Token') {
+                sessionStorage.clear();
+                localStorage.clear();
+                history.push('/auth/signin-1');
+                window.location.reload();
+            }
         } else {
             let resultData = allTopicdData.Items
             console.log("resultData", resultData);
@@ -106,6 +116,12 @@ const EditChapter = () => {
             const allPreLerningdData = await fetchPreLearningTopics();
             if (allPreLerningdData.Error) {
                 console.log("allPreLerningdData.Error", allPreLerningdData.Error);
+                if (allPreLerningdData.Error.response.data == 'Invalid Token') {
+                    sessionStorage.clear();
+                    localStorage.clear();
+                    history.push('/auth/signin-1');
+                    window.location.reload();
+                }
             } else {
                 let preData = allPreLerningdData.Items
                 preData.forEach((itempre, index) => {
@@ -120,6 +136,12 @@ const EditChapter = () => {
             console.log("chapterData", chapterData);
             if (chapterData.ERROR) {
                 console.log("chapterData.ERROR", chapterData.ERROR);
+                if (chapterData.Error.response.data == 'Invalid Token') {
+                    sessionStorage.clear();
+                    localStorage.clear();
+                    history.push('/auth/signin-1');
+                    window.location.reload();
+                }
             } else {
                 let individual_Chapter_data = chapterData.Items[0];
                 let tempArr_pre = [];

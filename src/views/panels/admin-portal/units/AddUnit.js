@@ -19,6 +19,8 @@ import { useEffect } from 'react';
 import Multiselect from 'multiselect-react-dropdown';
 import { fetchAllChapters } from '../../../api/CommonApi'
 import Select from 'react-select';
+import { useHistory, useParams } from 'react-router-dom';
+
 
 
 
@@ -29,6 +31,7 @@ const AddUnit = () => {
 
 
     const colourOptions = [];
+    let history = useHistory();
 
 
 
@@ -76,6 +79,12 @@ const AddUnit = () => {
         console.log("allTopicdData", allChapterData.Items);
         if (allChapterData.Error) {
             console.log("allChapterData", allChapterData.Error);
+            if (allChapterData.Error.response.data == 'Invalid Token') {
+                sessionStorage.clear();
+                localStorage.clear();
+                history.push('/auth/signin-1');
+                window.location.reload();
+            }
         } else {
             console.log("allChapterData.Items", allChapterData.Items);
             let resultData = allChapterData.Items
