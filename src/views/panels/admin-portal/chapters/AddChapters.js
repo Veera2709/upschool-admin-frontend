@@ -240,7 +240,16 @@ const AddChapter = (
                                             hideLoader();
                                             setDisableButton(false);
                                         } else {
-                                            sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingChapter });
+                                            // sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingChapter });
+                                            MySwal.fire({
+
+                                                title: 'Chapter added successfully!',
+                                                icon: 'success',
+                                            }).then((willDelete) => {
+
+                                                window.location.reload();
+
+                                            })
                                             hideLoader();
                                             setDisableButton(false);
                                             // fetchClientData();

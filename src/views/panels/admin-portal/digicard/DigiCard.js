@@ -331,7 +331,6 @@ const DigiCard = () => {
                             }
                         });
                 } else {
-                    return MySwal.fire('', 'DigiCard is Restore!', 'error');
                 }
             });
         };

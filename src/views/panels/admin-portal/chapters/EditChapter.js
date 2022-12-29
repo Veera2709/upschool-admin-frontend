@@ -272,7 +272,16 @@ const EditChapter = () => {
                                             hideLoader();
                                             setDisableButton(false);
                                         } else {
-                                            sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.EditChapter });
+                                            // sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.EditChapter });
+                                            MySwal.fire({
+
+                                                title: 'Chapter Updated successfully!',
+                                                icon: 'success',
+                                            }).then((willDelete) => {
+
+                                                window.location.reload();
+
+                                            })
                                             hideLoader();
                                             setDisableButton(false);
                                             // fetchClientData();

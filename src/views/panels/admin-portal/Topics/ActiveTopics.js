@@ -210,7 +210,7 @@ const ActiveTopics = (props) => {
         });
     }
 
-  
+
 
     const confirmHandler = (topic_id, topic_title) => {
         var data = {
@@ -306,7 +306,7 @@ const ActiveTopics = (props) => {
                                     history.push('/auth/signin-1');
                                     window.location.reload();
                                 } else {
-                                    console.log("err",error);
+                                    console.log("err", error);
                                 }
                             } else if (error.request) {
                                 // The request was made but no response was received
@@ -319,7 +319,6 @@ const ActiveTopics = (props) => {
                             }
                         });
                 } else {
-                    return MySwal.fire('', 'Chapter is Restore!', 'error');
                 }
             });
         };
