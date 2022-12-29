@@ -12,7 +12,7 @@ import axios from 'axios';
 import dynamicUrl from "../../../../helper/dynamicUrls";
 import { Link, useHistory } from 'react-router-dom';
 
-const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool, fetchSchoolData }) => {
+const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool, fetchSchoolData, setInactive }) => {
 
     const [imgFile, setImgFile] = useState([]);
     const [subscription_active, setSubscription_active] = useState('');
@@ -342,6 +342,7 @@ const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool, fetchSchoolD
                                                         const MySwal = withReactContent(Swal);
                                                         MySwal.fire('', 'Your school has been updated!', 'success');
                                                         fetchSchoolData();
+                                                        setInactive(false);
                                                     } else {
 
                                                         console.log('No files uploaded');
@@ -454,6 +455,7 @@ const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool, fetchSchoolD
                                                     const MySwal = withReactContent(Swal);
                                                     MySwal.fire('', 'Your school has been updated!', 'success');
                                                     fetchSchoolData();
+                                                    setInactive(false);
                                                 } else {
 
                                                     console.log('No files uploaded');
