@@ -25,6 +25,7 @@ import Select from 'react-select';
 
 
 
+
 ;
 
 
@@ -53,6 +54,8 @@ const EditDigiCard = () => {
     const [digiCardDataTitel, setDigiCardDataTitel] = useState([]);
     console.log('individualDigiCardData initial', individualDigiCardData);
     console.log("defaultOptions", defaultOptions);
+    let history = useHistory();
+
 
 
 
@@ -94,6 +97,12 @@ const EditDigiCard = () => {
         const allDigicardData = await fetchAllDigiCards(dynamicUrl.fetchAllDigiCards);
         if (allDigicardData.error) {
             console.log(allDigicardData.error);
+            if (allDigicardData.Error.response.data == 'Invalid Token') {
+                sessionStorage.clear();
+                localStorage.clear();
+                history.push('/auth/signin-1');
+                window.location.reload();
+            }
         } else {
             console.log("allDigicardData", allDigicardData.Items);
             let resultData = allDigicardData.Items;
@@ -107,6 +116,12 @@ const EditDigiCard = () => {
             const indidvidualDigicard = await fetchIndividualDigiCard(dynamicUrl.fetchIndividualDigiCard, digi_card_id);
             if (indidvidualDigicard.error) {
                 console.log("indidvidualDigicard.error", indidvidualDigicard.error);
+                if (indidvidualDigicard.Error.response.data == 'Invalid Token') {
+                    sessionStorage.clear();
+                    localStorage.clear();
+                    history.push('/auth/signin-1');
+                    window.location.reload();
+                }
             } else {
                 console.log(indidvidualDigicard);
                 let singleData = indidvidualDigicard.Items
@@ -152,7 +167,7 @@ const EditDigiCard = () => {
     const getMultiOptions = (event) => {
         let valuesArr = [];
         for (let i = 0; i < event.length; i++) {
-            valuesArr.push( event[i].value )
+            valuesArr.push(event[i].value)
         }
         selectedOption(valuesArr);
     }
@@ -187,7 +202,7 @@ const EditDigiCard = () => {
 
                             var formData;
 
-                            if (values.digicard_image === '' || voiceNote!==undefined) {
+                            if (values.digicard_image === '' || voiceNote !== undefined) {
                                 console.log("if condition");
                                 formData = {
                                     digi_card_id: individualDigiCardData[0].digi_card_id,
@@ -251,7 +266,16 @@ const EditDigiCard = () => {
                                                     result
                                                 });
                                             }
-                                            sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.EditDigiCard });
+                                            // sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.EditDigiCard });
+                                            MySwal.fire({
+
+                                                title: 'DigiCard Updated successfully!',
+                                                icon: 'success',
+                                            }).then((willDelete) => {
+
+                                                window.location.reload();
+
+                                            })
                                             hideLoader();
                                             setDisableButton(false);
                                             // fetchClientData();
@@ -272,14 +296,20 @@ const EditDigiCard = () => {
                                         console.log(error.response.data);
 
                                         console.log(error.response.data);
-                                        if (error.response.status === 400) {
+                                        if (error.response.status === 401) {
                                             console.log();
                                             hideLoader();
                                             // setIsClientExists(true);
                                             sweetAlertHandler({ title: 'Error', type: 'error', text: MESSAGES.ERROR.DigiCardNameExists });
 
+                                        } else if (error.response.data === 'Invalid Token') {
+
+                                            sessionStorage.clear();
+                                            localStorage.clear();
+                                            history.push('/auth/signin-1');
+                                            window.location.reload();
                                         } else {
-                                            sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+                                            console.log("err", error);
                                         }
                                     } else if (error.request) {
                                         // The request was made but no response was received

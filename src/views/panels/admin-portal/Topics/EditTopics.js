@@ -7,7 +7,7 @@ import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
 import { areFilesInvalid, isEmptyArray, isEmptyObject } from '../../../../util/utils';
-import * as Constants from '../../../../config/constant'
+import * as Constants from '../../../../helper/constants';
 import withReactContent from 'sweetalert2-react-content';
 import Swal from 'sweetalert2';
 import dynamicUrl from '../../../../helper/dynamicUrls';
@@ -33,16 +33,7 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
     const [prePostLearning, setprePostLearning] = useState('pre-Learning');
 
     const [topicConceptId, setTopicConceptId] = useState([]);
-    const [topicConceptIds, setConceptIds] = useState([]);
-    const [topicConceptNames, setTopicConceptNames] = useState([]);
-
     const [relatedTopicsId, setRelatedTopicsId] = useState([]);
-    const [relatedTopicsIds, setRelatedTopicsIds] = useState([]);
-    const [relatedTopicNames, setRelatedTopicNames] = useState([]);
-
-    const [editRelatedTopicsIds, setEditRelatedTopicsIds] = useState([]);
-    const [editTopicConceptIds, setEditTopicConceptIds] = useState([]);
-
     const [conceptTitles, setConceptTitles] = useState([]);
     const [topicTitles, setTopicTitles] = useState([]);
     const [isShown, setIsShown] = useState(true);
@@ -50,6 +41,8 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
     const [defaultTopicOption, setDefaultTopicOption] = useState([]);
     const [defaultOption, setDefaultOption] = useState([]);
     const [isShownRelatedTopic, setIsShownRelatedTopic] = useState([]);
+    const MySwal = withReactContent(Swal);
+
 
 
     console.log("defaultConceptOption", defaultConceptOption);
@@ -107,8 +100,16 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
                 const result = response.data;
                 console.log('result: ', result);
                 if (result == 200) {
-                    sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.EditTopic });
+                    // sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.EditTopic });
+                    MySwal.fire({
 
+                        title: 'Topic Updated successfully!',
+                        icon: 'success',
+                    }).then((willDelete) => {
+
+                        window.location.reload();
+
+                    })
                 }
             })
             .catch((err) => {
@@ -264,7 +265,7 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
                                         pre_post_learning: '',
                                         related_topics: '',
                                         topic_quiz_config: '',
-                                        duration:''
+                                        duration: editTopicData.topic_quiz_config.duration
 
 
                                     }}
@@ -273,9 +274,9 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
                                         topic_title: Yup.string()
                                             .trim()
                                             .required(Constants.AddTopic.TopictitleRequired),
-                                        // duration: Yup.string()
-                                        //     .trim()
-                                        //     .required(Constants.AddTopic.QuizMinutesRequired),
+                                        duration: Yup.string()
+                                            .trim()
+                                            .required(Constants.AddTopic.QuizMinutesRequired),
                                         topic_description: Yup.string()
                                             .trim()
                                             .required(Constants.AddTopic.DescriptionRequired),
@@ -471,11 +472,9 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
                                                                     name='duration'
                                                                     placeholder='Minutes'
                                                                     value={topic.duration}
-                                                                    onChange={(e) => {onDynamicFormChange(e, index, 'duration'); handleChange(e)}}
+                                                                    onChange={(e) => { onDynamicFormChange(e, index, 'duration'); handleChange(e) }}
                                                                     autoComplete='off'
                                                                 />
-                                                                {touched.duration && errors.duration && <small className="text-danger form-text">{errors.duration}</small>}
-
                                                             </div>
                                                             {topicQuiz.length == 1 ? "" :
                                                                 <div className='col-md-6'>
@@ -485,8 +484,10 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
                                                         </div>
                                                     </div>
                                                 </div>
-                                            ))}
 
+                                            ))
+                                            }
+                                               {touched.duration && errors.duration && <small className="text-danger form-text">{errors.duration}</small>}
                                             <p></p>
                                             <button type="button" className="btn btn-primary" onClick={addTopic} >Add another Quiz</button>
 

@@ -34,6 +34,8 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
     const [relatedTopicNames, setRelatedTopicNames] = useState([]);
     const [isShownConcept, setIsShownConcept] = useState(true);
     const [isShownTopic, setIsShownTopic] = useState(true);
+    const MySwal = withReactContent(Swal);
+
 
 
 
@@ -87,7 +89,16 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
             .then((response) => {
                 const result = response.data;
                 if (result == 200) {
-                    sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingTopic });
+                    // sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingTopic });
+                    MySwal.fire({
+
+                        title: 'Topic added successfully!',
+                        icon: 'success',
+                    }).then((willDelete) => {
+
+                        window.location.reload();
+
+                    })
 
                 } else {
                     console.log("error");
