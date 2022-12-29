@@ -17,6 +17,8 @@ import { SessionStorage } from '../../../../util/SessionStorage';
 import MESSAGES from '../../../../helper/messages';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import { useLocation } from "react-router-dom";
+import BasicSpinner from '../../../../helper/BasicSpinner';
+
 
 
 function Table({ columns, data, modalOpen }) {
@@ -185,69 +187,85 @@ const ChaptersListChild = (props) => {
     const [reloadAllData, setReloadAllData] = useState('Fetched');
     const [loader, showLoader, hideLoader] = useFullPageLoader();
     const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[3]);
+    const [isLoading, setIsLoading] = useState(false);
+
 
 
     // console.log('data: ', data)
 
     let history = useHistory();
+    const MySwal = withReactContent(Swal);
+    const sweetConfirmHandler = (alert) => {
+        MySwal.fire({
+            title: alert.title,
+            text: alert.text,
+            icon: alert.type
+        });
+    }
 
     function deleteChapter(chapter_id, chapter_title) {
         console.log("chapter_id", chapter_id);
+
+        confirmHandler(chapter_id, chapter_title)
+    }
+
+    const confirmHandler = (chapter_id, chapter_title) => {
         var data = {
             "chapter_id": chapter_id,
             "chapter_status": "Archived"
         }
+        MySwal.fire({
+            title: 'Are you sure?',
+            text: 'Confirm deleting ' + chapter_title + ' Chapter',
+            type: 'warning',
+            showCloseButton: true,
+            showCancelButton: true
+        }).then((willDelete) => {
+            if (willDelete.value) {
+                axios
+                    .post(dynamicUrl.toggleChapterStatus, { data: data }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
+                    .then((response) => {
+                        if (response.Error) {
+                            hideLoader();
+                            sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
+                        } else {
+                            setReloadAllData("Deleted");
+                            return MySwal.fire('', 'The ' + chapter_title + ' is Deleted', 'success');
+                            // window. location. reload() 
+                            //  MySwal.fire('', MESSAGES.INFO.CLIENT_DELETED, 'success');
 
-        const sweetConfirmHandler = () => {
-            const MySwal = withReactContent(Swal);
-            MySwal.fire({
-                title: 'Are you sure?',
-                text: 'Confirm deleting ' + chapter_title + ' Chapter',
-                type: 'warning',
-                showCloseButton: true,
-                showCancelButton: true
-            }).then((willDelete) => {
-                if (willDelete.value) {
-                    axios
-                        .post(dynamicUrl.toggleChapterStatus, { data: data }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
-                        .then((response) => {
-                            if (response.Error) {
-                                hideLoader();
-                                sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
+                        }
+                    })
+                    .catch((error) => {
+                        if (error.response) {
+                            // Request made and server responded
+                            console.log(error.response.data);
+                            hideLoader();
+                            if (error.response.data === 'Invalid Token') {
+                                sessionStorage.clear();
+                                localStorage.clear();
+                                history.push('/auth/signin-1');
+                                window.location.reload();
                             } else {
-                                setReloadAllData("Deleted");
-                                return MySwal.fire('', 'The ' + chapter_title + ' is Deleted', 'success');
-                                // window. location. reload() 
-                                //  MySwal.fire('', MESSAGES.INFO.CLIENT_DELETED, 'success');
-
-
-
+                                sweetConfirmHandler({ title: 'Sorry', type: 'warning', text: error.response.data });
                             }
-                        })
-                        .catch((error) => {
-                            if (error.response) {
-                                // Request made and server responded
-                                console.log(error.response.data);
-                                hideLoader();
-                                sweetConfirmHandler({ title: 'Error', type: 'error', text: error.response.data });
-                            } else if (error.request) {
-                                // The request was made but no response was received
-                                console.log(error.request);
-                                hideLoader();
-                            } else {
-                                // Something happened in setting up the request that triggered an Error
-                                console.log('Error', error.message);
-                                hideLoader();
-                            }
-                        });
-                } else {
-                    return MySwal.fire('', 'Chapter is safe!', 'error');
-                }
-            });
-        };
-        sweetConfirmHandler();
+                        } else if (error.request) {
+                            // The request was made but no response was received
+                            console.log(error.request);
+                            hideLoader();
+                        } else {
+                            // Something happened in setting up the request that triggered an Error
+                            console.log('Error', error.message);
+                            hideLoader();
+                        }
+                    });
+            } else {
+            }
+        });
+    };
 
-    }
+
+
 
 
     function restoreChapter(chapter_id, chapter_title) {
@@ -287,8 +305,14 @@ const ChaptersListChild = (props) => {
                             if (error.response) {
                                 // Request made and server responded
                                 console.log(error.response.data);
-                                hideLoader();
-                                sweetConfirmHandler({ title: 'Error', type: 'error', text: error.response.data });
+                                if (error.response.data === 'Invalid Token') {
+                                    sessionStorage.clear();
+                                    localStorage.clear();
+                                    history.push('/auth/signin-1');
+                                    window.location.reload();
+                                } else {
+                                    console.log("err", error);
+                                }
                             } else if (error.request) {
                                 // The request was made but no response was received
                                 console.log(error.request);
@@ -309,7 +333,7 @@ const ChaptersListChild = (props) => {
 
 
     const allChaptersList = (chapterStatus) => {
-
+        setIsLoading(true);
         axios.post(dynamicUrl.fetchAllChapters, {}, {
             headers: { Authorization: sessionStorage.getItem('user_jwt') }
         })
@@ -374,9 +398,30 @@ const ChaptersListChild = (props) => {
                 }
                 setChapterData(finalDataArray);
                 console.log('resultData: ', finalDataArray);
+                setIsLoading(false);
+
             })
-            .catch((err) => {
-                console.log(err)
+            .catch((error) => {
+                if (error.response) {
+                    // Request made and server responded
+                    console.log(error.response.data);
+                    if (error.response.data === 'Invalid Token') {
+                        sessionStorage.clear();
+                        localStorage.clear();
+                        history.push('/auth/signin-1');
+                        window.location.reload();
+                    } else {
+                        console.log("err", error);
+                    }
+                } else if (error.request) {
+                    // The request was made but no response was received
+                    console.log(error.request);
+                    hideLoader();
+                } else {
+                    // Something happened in setting up the request that triggered an Error
+                    console.log('Error', error.message);
+                    hideLoader();
+                }
             })
     }
 
@@ -392,40 +437,53 @@ const ChaptersListChild = (props) => {
 
     return (
         <div>
-            {chapterData.length >= 0 ? (
-                <React.Fragment>
-                    <Row>
-                        <Col sm={12}>
-                            <Card>
-                                <Card.Header>
-                                    <Card.Title as="h5">Chapters List</Card.Title>
-                                </Card.Header>
-                                <Card.Body>
-                                    <Table columns={columns} data={chapterData} />
-                                </Card.Body>
-                            </Card>
-                        </Col>
-                    </Row>
-                </React.Fragment>
-            ) : (
-                <div>
+            {
+                isLoading ? (
+                    <BasicSpinner />
+                ) : (
+                    <>
+                        {
+                            chapterData.length <= 0 ? (
+                                <>
+                                    < React.Fragment >
+                                        <div>
 
-                    <h3 style={{ textAlign: 'center' }}>No Chapter Found</h3>
-                    <div className="form-group fill text-center">
-                        <br></br>
+                                            <h3 style={{ textAlign: 'center' }}>No Chapter Found</h3>
+                                            <div className="form-group fill text-center">
+                                                <br></br>
 
-                        <Link to={'/admin-portal/addChapters'}>
-                            <Button variant="success" className="btn-sm btn-round has-ripple ml-2">
-                                <i className="feather icon-plus" /> Add DigiCard
-                            </Button>
-                        </Link>
-                    </div>
-
-                </div>
-            )}
-
-        </div>
-
+                                                <Link to={'/admin-portal/addChapters'}>
+                                                    <Button variant="success" className="btn-sm btn-round has-ripple ml-2">
+                                                        <i className="feather icon-plus" /> Add Chapter
+                                                    </Button>
+                                                </Link>
+                                            </div>
+                                        </div>
+                                    </React.Fragment>
+                                </>
+                            ) : (
+                                <>
+                                    <React.Fragment>
+                                        <Row>
+                                            <Col sm={12}>
+                                                <Card>
+                                                    <Card.Header>
+                                                        <Card.Title as="h5">Chapters List</Card.Title>
+                                                    </Card.Header>
+                                                    <Card.Body>
+                                                        <Table columns={columns} data={chapterData} />
+                                                    </Card.Body>
+                                                </Card>
+                                            </Col>
+                                        </Row>
+                                    </React.Fragment>
+                                </>
+                            )
+                        }
+                    </>
+                )
+            }
+        </div >
     );
 };
 export default ChaptersListChild;

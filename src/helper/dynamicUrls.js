@@ -3,6 +3,7 @@
 const baseUrl = process.env.REACT_APP_LAMBDA_URL;
 
 const dynamicUrl = {
+    
     login: baseUrl + '/login',
     loginWithOTP: baseUrl + '/loginWithOTP',
     validateOTP: baseUrl + '/validateOTP',
@@ -22,7 +23,6 @@ const dynamicUrl = {
     fetchUpschoolAndClientClasses: baseUrl + '/fetchUpschoolAndClientClasses',
     classSubscribe: baseUrl + '/classSubscribe',
 
-
     fetchSchoolIdNames: baseUrl + '/fetchSchoolIdNames',
     fetchAllUsersData: baseUrl + '/fetchAllUsersData',
     fetchInactiveUsersData: baseUrl + '/fetchInactiveUsersData',
@@ -39,6 +39,8 @@ const dynamicUrl = {
     toggleChapterStatus: baseUrl + '/toggleChapterStatus',
     fetchIndividualChapter: baseUrl + '/fetchIndividualChapter',
     editChapter: baseUrl + '/editChapter',
+    fetchPreLearningTopics: baseUrl + '/fetchPreLearningTopics',
+    fetchPostLearningTopics: baseUrl + '/fetchPostLearningTopics',
 
     fetchIndividualUserByRole: baseUrl + '/fetchIndividualUserByRole',
     updateUsersByRole: baseUrl + '/updateUsersByRole',
@@ -65,6 +67,7 @@ const dynamicUrl = {
     getIndividualTopic: baseUrl + '/fetchIndividualTopic',
     editTopic: baseUrl + '/editTopic',
     toggleTopicStatus: baseUrl + '/toggleTopicStatus',
+    getConcepts: baseUrl + '/fetchAllConcepts',
     toggleSchoolStatus: baseUrl + '/toggleSchoolStatus',
     fetchInactiveSchool: baseUrl + '/fetchInactiveSchool',
 

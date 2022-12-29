@@ -8,9 +8,6 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
 import dynamicUrl from '../../../../helper/dynamicUrls';
-import ReactTags from 'react-tag-autocomplete';
-import 'jodit';
-import 'jodit/build/jodit.min.css';
 import MESSAGES from '../../../../helper/messages';
 import Swal from 'sweetalert2';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
@@ -26,6 +23,8 @@ import { fetchAllChapters, fetchIndividualUnit } from '../../../api/CommonApi'
 
 
 
+
+
 // import { Button,Container,Row ,Col  } from 'react-bootstrap';
 
 const EditUnit = () => {
@@ -37,6 +36,8 @@ const EditUnit = () => {
     const [isOpen, setIsOpen] = useState(false);
     const MySwal = withReactContent(Swal);
     const [chapterOption, setChapterOption] = useState([]);
+    let history = useHistory();
+
 
 
 
@@ -47,10 +48,12 @@ const EditUnit = () => {
     const [topicDigiCardIds, setTopicDigiCardIds] = useState([]);
 
 
-    const [description, setDescription] = useState();
+    
     const [defaultOptions, setDefaultOptions] = useState([]);
 
     const [defauleDescription, setDefauleDescription] = useState();
+    const [isShownDes, setIsShownDes] = useState(true);
+
 
 
 
@@ -86,9 +89,7 @@ const EditUnit = () => {
 
 
 
-    const ChapterDescription = (text) => {
-        setDescription(text.target.value)
-    }
+   
 
 
 
@@ -97,6 +98,12 @@ const EditUnit = () => {
         console.log("allTopicdData", allChapterData.Items);
         if (allChapterData.Error) {
             console.log("allChapterData", allChapterData.Error);
+            if (allChapterData.Error.response.data == 'Invalid Token') {
+                sessionStorage.clear();
+                localStorage.clear();
+                history.push('/auth/signin-1');
+                window.location.reload();
+            }
         } else {
             console.log("allChapterData.Items", allChapterData.Items);
             let resultData = allChapterData.Items
@@ -114,18 +121,22 @@ const EditUnit = () => {
             const individualUnitData = await fetchIndividualUnit(unit_id);
             if (individualUnitData.Error) {
                 console.log("individualUnitData.Error", individualUnitData.Error);
+                if (individualUnitData.Error.response.data == 'Invalid Token') {
+                    sessionStorage.clear();
+                    localStorage.clear();
+                    history.push('/auth/signin-1');
+                    window.location.reload();
+                }
             } else {
                 let individual_Unit_data = individualUnitData.Items[0];
                 setIndividualUnitdata(individual_Unit_data)
                 setDefauleDescription(individual_Unit_data.unit_description)
-                setDescription(individual_Unit_data.unit_description)
                 let tempArr = [];
                 individual_Unit_data.unit_chapter_id.forEach(function (entry) {
                     colourOptions.forEach(function (childrenEntry) {
-                        if (entry.chapter_id === childrenEntry.value) {
+                        if (entry === childrenEntry.value) {
                             console.log("childrenEntry", childrenEntry);
                             tempArr.push(childrenEntry)
-                            // chapterOption.push({'chapter_id':childrenEntry.chapter_id})
                         }
 
                     });
@@ -147,13 +158,13 @@ const EditUnit = () => {
     const getMultiOptions = (event) => {
         let valuesArr = [];
         for (let i = 0; i < event.length; i++) {
-            valuesArr.push({ "chapter_id": event[i].value })
+            valuesArr.push(event[i].value)
         }
         setChapterOption(valuesArr);
     }
 
 
-    return  (
+    return (
         <div>
             <Card>
                 <Card.Body>
@@ -163,7 +174,7 @@ const EditUnit = () => {
                         initialValues={{
                             unittitle: individualUnitdata.unit_title,
                             chapter: '',
-                            unit_description: '',
+                            unit_description: individualUnitdata.unit_description,
                         }}
                         validationSchema={Yup.object().shape({
                             unittitle: Yup.string()
@@ -171,6 +182,8 @@ const EditUnit = () => {
                                 .min(2, Constants.AddUnit.UnittitleRequired)
                                 .max(30, Constants.AddUnit.UnittitleTooShort)
                                 .required(Constants.AddUnit.UnittitleTooLongs),
+                            unit_description: Yup.string()
+                                .required(Constants.AddUnit.DescriptionRequired),
                         })}
 
 
@@ -178,63 +191,68 @@ const EditUnit = () => {
                         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
 
 
-                            // if (description == undefined) {
-                            //     alert("description Required")
-                            // } else {
+                            if (chapterOption == '') {
+                                setIsShown(false)
+                            } else if (values.unit_description === undefined || values.unit_description.trim() === '') {
+                                setIsShownDes(false)
+                            }
+                            else {
+                                console.log("on submit");
+                                var formData = {
+                                    unit_id: unit_id,
+                                    unit_title: values.unittitle,
+                                    unit_description: values.unit_description,
+                                    unit_chapter_id: chapterOption
+                                };
 
-                            console.log("on submit");
-                            var formData = {
-                                unit_id: unit_id,
-                                unit_title: values.unittitle,
-                                unit_description: description,
-                                unit_chapter_id: chapterOption
-                            };
+                                console.log("formdata", formData);
 
-                            console.log("formdata", formData);
-
-                            axios
-                                .post(dynamicUrl.editUnit, { data: formData }, { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
-                                .then(async (response) => {
-                                    console.log({ response });
-                                    if (response.Error) {
-                                        console.log('Error');
-                                        hideLoader();
-                                        setDisableButton(false);
-                                    } else {
-                                        sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.EditUnit });
-                                        hideLoader();
-                                        setDisableButton(false);
-                                        // fetchClientData();
-                                        setIsOpen(false);
-                                    }
-                                })
-                                .catch((error) => {
-                                    if (error.response) {
-                                        // Request made and server responded
-                                        console.log(error.response.data);
-
-                                        console.log(error.response.data);
-                                        if (error.response.status === 401) {
-                                            console.log();
+                                axios
+                                    .post(dynamicUrl.editUnit, { data: formData }, { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
+                                    .then(async (response) => {
+                                        console.log({ response });
+                                        if (response.Error) {
+                                            console.log('Error');
                                             hideLoader();
-                                            // setIsClientExists(true);
-                                            sweetAlertHandler({ title: 'Error', type: 'error', text: MESSAGES.ERROR.DigiCardNameExists });
-
+                                            setDisableButton(false);
                                         } else {
-                                            sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+                                            sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.EditUnit });
+                                            hideLoader();
+                                            setDisableButton(false);
+                                            // fetchClientData();
+                                            setIsOpen(false);
                                         }
-                                    } else if (error.request) {
-                                        // The request was made but no response was received
-                                        console.log(error.request);
-                                        setDisableButton(false);
-                                        hideLoader();
-                                    } else {
-                                        // Something happened in setting up the request that triggered an Error
-                                        console.log('Error', error.message);
-                                        setDisableButton(false);
-                                        hideLoader();
-                                    }
-                                });
+                                    })
+                                    .catch((error) => {
+                                        if (error.response) {
+                                            // Request made and server responded
+                                            console.log(error.response.data);
+
+                                            console.log(error.response.data);
+                                            if (error.response.status === 401) {
+                                                console.log();
+                                                hideLoader();
+                                                // setIsClientExists(true);
+                                                sweetAlertHandler({ title: 'Error', type: 'error', text: MESSAGES.ERROR.DigiCardNameExists });
+
+                                            } else {
+                                                sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+                                            }
+                                        } else if (error.request) {
+                                            // The request was made but no response was received
+                                            console.log(error.request);
+                                            setDisableButton(false);
+                                            hideLoader();
+                                        } else {
+                                            // Something happened in setting up the request that triggered an Error
+                                            console.log('Error', error.message);
+                                            setDisableButton(false);
+                                            hideLoader();
+                                        }
+                                    });
+                            }
+
+
 
                             // }
 
@@ -288,7 +306,7 @@ const EditUnit = () => {
                                                             name="color"
                                                             isMulti
                                                             closeMenuOnSelect={false}
-                                                            onChange={getMultiOptions}
+                                                            onChange={(e) => { getMultiOptions(e); setIsShown(true) }}
                                                             options={topicTitles}
                                                             placeholder="Select"
                                                         />
@@ -297,18 +315,22 @@ const EditUnit = () => {
                                                 </>
 
                                             )}
-                                            <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>required</small>
+                                            <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>Chapter Required</small>
                                         </div>)}
                                         <div className="form-group fill" >
                                             <Form.Label htmlFor="unit_description"> <small className="text-danger">* </small>Unit Description</Form.Label>
-                                            <Form.Control as="textarea"
-                                                onChange={ChapterDescription} rows="4"
-                                                defaultValue={description}
+                                            <Form.Control
+                                                as="textarea"
+                                                onChange={(e)=>{handleChange(e);setIsShownDes(e)}}
+                                                rows="4"
+                                                onBlur={handleBlur}
+                                                name="unit_description"
+                                                value={values.unit_description}
+                                                type='text'
                                             />
                                             <br />
-                                            {touched.prelearning_topic && errors.prelearning_topic && (
-                                                <small className="text-danger form-text">{errors.prelearning_topic}</small>
-                                            )}
+                                            {touched.unit_description && errors.unit_description && <small className="text-danger form-text">{errors.unit_description}</small>}
+                                            <small className="text-danger form-text" style={{ display: isShownDes ? 'none' : 'block' }}>Unit Description Required</small>
                                         </div>
                                     </Col>
                                 </Row>

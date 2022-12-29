@@ -19,7 +19,7 @@ import { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import Select from 'react-select';
 import Multiselect from 'multiselect-react-dropdown';
-import { fetchAllTopics } from '../../../api/CommonApi'
+import { fetchAllTopics ,fetchPostLearningTopics,fetchPreLearningTopics} from '../../../api/CommonApi'
 
 
 
@@ -43,7 +43,8 @@ const AddChapter = (
 ) => {
 
 
-    const colourOptions = [];
+    const postLeraning = [];
+    const preLeraning = [];
     const isLocked = [
         { value: 'Yes', label: 'Yes' },
         { value: 'No', label: 'No' },
@@ -83,13 +84,14 @@ const AddChapter = (
     const [articleData, setArticleData] = useState("");
     const [articleDataTitle, setArticleDataTtitle] = useState("");
     const [topicTitles, setTopicTitles] = useState([]);
+    const [topicTitlesPre, setTopicTitlesPre] = useState([]);
 
 
 
 
     let history = useHistory();
 
-    console.log("colourOptions", colourOptions);
+    console.log("postLeraning", postLeraning);
 
 
 
@@ -111,22 +113,48 @@ const AddChapter = (
     }
 
     const fetchAllTopicsList = async () => {
-        const allTopicdData = await fetchAllTopics();
-        console.log("allTopicdData", allTopicdData.Items);
-        if (allTopicdData.Error) {
-            console.log("allTopicdData", allTopicdData.Error);
+        const allPostLeraningData = await fetchPostLearningTopics();
+        console.log("allPostLeraningData", allPostLeraningData.Items);
+        if (allPostLeraningData.Error) {
+            console.log("allPostLeraningData", allPostLeraningData.Error);
+            if (allPostLeraningData.Error.response.data == 'Invalid Token') {
+                sessionStorage.clear();
+                localStorage.clear();
+                history.push('/auth/signin-1');
+                window.location.reload();
+            }
         } else {
-            let resultData = allTopicdData.Items
+            let resultData = allPostLeraningData.Items
             console.log("resultData", resultData);
             resultData.forEach((item, index) => {
                 if (item.topic_status === 'Active') {
                     console.log();
-                    colourOptions.push({ value: item.topic_id, label: item.topic_title })
+                    postLeraning.push({ value: item.topic_id, label: item.topic_title })
                 }
             }
             );
-            console.log("colourOptions", colourOptions);
-            setTopicTitles(colourOptions)
+            console.log("postLeraning", postLeraning);
+            setTopicTitles(postLeraning)
+
+            const allPreLerningdData = await fetchPreLearningTopics();
+            if(allPreLerningdData.Error){
+                console.log("allPreLerningdData.Error",allPreLerningdData.Error);
+                if (allPreLerningdData.Error.response.data == 'Invalid Token') {
+                    sessionStorage.clear();
+                    localStorage.clear();
+                    history.push('/auth/signin-1');
+                    window.location.reload();
+                }
+            }else{
+                let preData = allPreLerningdData.Items
+                preData.forEach((itempre, index) => {
+                    if (itempre.topic_status === 'Active') {
+                        console.log();
+                        preLeraning.push({ value: itempre.topic_id, label: itempre.topic_title })
+                    }
+                });
+                setTopicTitlesPre(preLeraning)
+            }
         }
     }
 
@@ -139,7 +167,7 @@ const AddChapter = (
     const handleOnSelect = (event) => {
         let valuesArr = [];
         for (let i = 0; i < event.length; i++) {
-            valuesArr.push({ "topic_id": event[i].value })
+            valuesArr.push(  event[i].value )
         }
         setPostlearningOption(valuesArr);
     }
@@ -147,7 +175,7 @@ const AddChapter = (
     const handleOnSelectPre = (event) => {
         let valuesArr = [];
         for (let i = 0; i < event.length; i++) {
-            valuesArr.push({ "topic_id": event[i].value })
+            valuesArr.push( event[i].value )
         }
         setPrelearningOptions(valuesArr);
     }
@@ -309,7 +337,7 @@ const AddChapter = (
                                                 isMulti
                                                 closeMenuOnSelect={false}
                                                 onChange={(e)=>{handleOnSelectPre(e);setIsShownPre(true)}}
-                                                options={topicTitles}
+                                                options={topicTitlesPre}
                                                 placeholder="Select"
                                             />
                                             <br />

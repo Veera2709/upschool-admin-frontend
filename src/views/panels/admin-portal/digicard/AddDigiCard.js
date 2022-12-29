@@ -158,7 +158,7 @@ const AddDigiCard = (
   const getMultiOptions = (event) => {
     let valuesArr = [];
     for (let i = 0; i < event.length; i++) {
-        valuesArr.push({"digi_card_id":event[i].value})
+        valuesArr.push(event[i].value)
     }
     setMultiOptions(valuesArr);
   }
