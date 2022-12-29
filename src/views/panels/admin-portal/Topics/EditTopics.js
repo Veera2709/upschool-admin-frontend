@@ -49,6 +49,8 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
     const [defaultConceptOption, setDefaultConceptOption] = useState([]);
     const [defaultTopicOption, setDefaultTopicOption] = useState([]);
     const [defaultOption, setDefaultOption] = useState([]);
+    const [isShownRelatedTopic, setIsShownRelatedTopic] = useState([]);
+
 
     console.log("defaultConceptOption", defaultConceptOption);
     console.log("defaultTopicOption", defaultTopicOption);
@@ -249,24 +251,45 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
                                         topic_concept_id: '',
                                         pre_post_learning: '',
                                         related_topics: '',
-                                        topic_quiz_config: ''
+                                        topic_quiz_config: '',
+                                        duration:''
+
+
                                     }}
+
+                                    validationSchema={Yup.object().shape({
+                                        topic_title: Yup.string()
+                                            .trim()
+                                            .required(Constants.AddTopic.TopictitleRequired),
+                                        // duration: Yup.string()
+                                        //     .trim()
+                                        //     .required(Constants.AddTopic.QuizMinutesRequired),
+                                        topic_description: Yup.string()
+                                            .trim()
+                                            .required(Constants.AddTopic.DescriptionRequired),
+
+                                    })}
                                     // validationSchema
 
 
                                     onSubmit={(values, { setErrors, setStatus, setSubmitting }) => {
-                                        setSubmitting(true);
-                                        const formData = {
-                                            topic_id: id,
-                                            topic_title: values.topic_title,
-                                            topic_description: values.topic_description,
-                                            topic_concept_id: topicConceptId,
-                                            pre_post_learning: prePostLearning,
-                                            related_topics: relatedTopicsId,
-                                            topic_quiz_config: topicQuiz
+
+                                        if (topicConceptId == '') {
+                                            setIsShown(false)
+                                        } else {
+                                            const formData = {
+                                                topic_id: id,
+                                                topic_title: values.topic_title,
+                                                topic_description: values.topic_description,
+                                                topic_concept_id: topicConceptId,
+                                                pre_post_learning: prePostLearning,
+                                                related_topics: relatedTopicsId,
+                                                topic_quiz_config: topicQuiz
+                                            }
+                                            console.log('formData: ', formData)
+                                            submitEditTopic(formData)
                                         }
-                                        console.log('formData: ', formData)
-                                        submitEditTopic(formData)
+
                                     }}
                                 >
                                     {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
@@ -282,7 +305,7 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
                                                         type="text"
                                                         value={values.topic_title}
                                                     />
-                                                    {/* {touched.topic_title && errors.topic_title && <small className="text-danger form-text">{errors.topic_title}</small>} */}
+                                                    {touched.topic_title && errors.topic_title && <small className="text-danger form-text">{errors.topic_title}</small>}
                                                 </Form.Group>
                                             </Col>
 
@@ -320,7 +343,7 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
                                                         </>
 
                                                     )}
-                                                    <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>required</small>
+                                                    {/* <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>required</small> */}
                                                 </div>)}
                                             </Col>
 
@@ -359,12 +382,12 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
                                                         </>
 
                                                     )}
-                                                    <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>required</small>
+                                                    <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>concepts Required</small>
                                                 </div>)}
 
                                                 {defaultTopicOption && (<div className="form-group fill" style={{ position: "relative", zIndex: 20 }}>
                                                     <label className="floating-label" htmlFor="related_topic">
-                                                        <small className="text-danger">* </small> Related Topics
+                                                        <small className="text-danger"> </small> Related Topics
                                                     </label>
                                                     {defaultTopicOption.length === 0 ? (
 
@@ -384,15 +407,10 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
 
                                                                 < Select
                                                                     defaultValue={defaultTopicOption}
-                                                                    // defaultValue={[
-                                                                    //     { value: '033d701f-b763-5db7-a594-fc3b8056e88d', label: 'food1' },
-                                                                    //     { value: '147fe6c0-3010-53ba-98b3-ee73f378b981', label: 'food' },
-                                                                    //     { value: '87482048-6ec5-53e8-8ff3-40815fd334d9', label: 'food2' }
-                                                                    // ]}
                                                                     className="basic-multi-select"
                                                                     isMulti
                                                                     closeMenuOnSelect={false}
-                                                                    onChange={(e) => { gettopicId(e); setIsShown(true) }}
+                                                                    onChange={(e) => { gettopicId(e); setIsShownRelatedTopic(true) }}
                                                                     options={topicTitles}
                                                                     placeholder="Select the Topic Title"
                                                                 />
@@ -401,13 +419,13 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
                                                         </>
 
                                                     )}
-                                                    <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>required</small>
+                                                    {/* <small className="text-danger form-text" style={{ display: isShownRelatedTopic ? 'none' : 'block' }}>required</small> */}
                                                 </div>)}
                                             </Col>
 
                                             <Col sm={6}>
                                                 <Form.Group>
-                                                    <Form.Label className="floating-label" ><small className="text-danger">* </small>Topic Decription</Form.Label>
+                                                    <Form.Label className="floating-label" ><small className="text-danger">* </small>Topic Description</Form.Label>
                                                     <Form.Control
                                                         as="textarea"
                                                         rows="4"
@@ -417,7 +435,7 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
                                                         type="text"
                                                         value={values.topic_description}
                                                     />
-                                                    {/* {touched.topic_description && errors.topic_description && <small className="text-danger form-text">{errors.topic_description}</small>} */}
+                                                    {touched.topic_description && errors.topic_description && <small className="text-danger form-text">{errors.topic_description}</small>}
                                                 </Form.Group>
                                             </Col>
 
@@ -441,9 +459,11 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
                                                                     name='duration'
                                                                     placeholder='Minutes'
                                                                     value={topic.duration}
-                                                                    onChange={(e) => onDynamicFormChange(e, index, 'duration')}
+                                                                    onChange={(e) => {onDynamicFormChange(e, index, 'duration'); handleChange(e)}}
                                                                     autoComplete='off'
                                                                 />
+                                                                {touched.duration && errors.duration && <small className="text-danger form-text">{errors.duration}</small>}
+
                                                             </div>
                                                             {topicQuiz.length == 1 ? "" :
                                                                 <div className='col-md-6'>
@@ -471,7 +491,7 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
                                 </Formik>
                             </Card.Body>
                         </Card > :
-                        <h1>There are no datas to be displayed!</h1>
+                        <></>
                     }
                 </>
             )}

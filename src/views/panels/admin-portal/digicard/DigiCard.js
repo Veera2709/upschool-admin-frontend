@@ -16,6 +16,8 @@ import { SessionStorage } from '../../../../util/SessionStorage';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import withReactContent from 'sweetalert2-react-content';
 import { useLocation } from "react-router-dom";
+import BasicSpinner from '../../../../helper/BasicSpinner';
+
 
 
 
@@ -186,15 +188,26 @@ const DigiCard = () => {
     console.log('data: ', data)
     const [isOpen, setIsOpen] = useState(false);
     const [loader, showLoader, hideLoader] = useFullPageLoader();
+    const [isLoading, setIsLoading] = useState(false);
     const [reloadAllData, setReloadAllData] = useState('Fetched');
     const MySwal = withReactContent(Swal);
     const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
 
+    const sweetConfirmHandler = (alert) => {
+        MySwal.fire({
+            title: alert.title,
+            text: alert.text,
+            icon: alert.type
+        });
+    }   
 
 
     const openHandler = () => {
         setIsOpen(true);
     };
+
+   
+
 
 
 
@@ -202,13 +215,14 @@ const DigiCard = () => {
 
     function deleteDigicard(digi_card_id, digi_card_title) {
         console.log("digi_card_id", digi_card_id);
-        var data = {
-            "digi_card_id": digi_card_id,
-            "digicard_status": 'Archived'
-        }
+        confirmHandler(digi_card_id,digi_card_title)
+    }
 
-        const sweetConfirmHandler = () => {
-            const MySwal = withReactContent(Swal);
+        const confirmHandler = (digi_card_id,digi_card_title) => {
+            var data = {
+                "digi_card_id": digi_card_id,
+                "digicard_status": 'Archived'
+            }
             MySwal.fire({
                 title: 'Are you sure?',
                 text: 'Confirm deleting ' + digi_card_title + ' DigiCard',
@@ -229,9 +243,6 @@ const DigiCard = () => {
                                 return MySwal.fire('', 'The ' + digi_card_title + ' is Deleted', 'success');
                                 // window. location. reload() 
                                 //  MySwal.fire('', MESSAGES.INFO.CLIENT_DELETED, 'success');
-
-
-
                             }
                         })
                         .catch((error) => {
@@ -239,7 +250,14 @@ const DigiCard = () => {
                                 // Request made and server responded
                                 console.log(error.response.data);
                                 hideLoader();
-                                sweetConfirmHandler({ title: 'Error', type: 'error', text: error.response.data });
+                                if (error.response.data === 'Invalid Token') {
+                                    sessionStorage.clear();
+                                    localStorage.clear();
+                                    history.push('/auth/signin-1');
+                                    window.location.reload();
+                                } else {
+                                    sweetConfirmHandler({ title: 'Sorry', type: 'warning', text: error.response.data });
+                                }
                             } else if (error.request) {
                                 // The request was made but no response was received
                                 console.log(error.request);
@@ -250,13 +268,11 @@ const DigiCard = () => {
                             }
                         });
                 } else {
-                    return MySwal.fire('', 'DigiCard is safe!', 'error');
                 }
             });
         };
-        sweetConfirmHandler();
 
-    }
+    
 
     function digicardRestore(digi_card_id, digi_card_title) {
         console.log("digi_card_id", digi_card_id);
@@ -318,6 +334,7 @@ const DigiCard = () => {
     }
 
     const fetchAllDigiCards = (digiCardStatus) => {
+        setIsLoading(true);
         console.log("digiCardStatus", digiCardStatus);
         axios.post(dynamicUrl.fetchAllDigiCards, {}, {
             headers: { Authorization: sessionStorage.getItem('user_jwt') }
@@ -388,6 +405,8 @@ const DigiCard = () => {
 
                 setData(finalDataArray);
                 console.log('resultData: ', finalDataArray);
+                    setIsLoading(false);
+
             })
             .catch((err) => {
                 console.log(err)
@@ -406,37 +425,55 @@ const DigiCard = () => {
     }, [reloadAllData])
 
     return (
+        
         <div>
-            {data.length >= 0 ? (
-                <React.Fragment>
-                    <Row>
-                        <Col sm={12}>
-                            <Card>
-                                <Card.Header>
-                                    <Card.Title as="h5">DigiCard List</Card.Title>
-                                </Card.Header>
-                                <Card.Body>
-                                    <Table columns={columns} data={data} />
-                                </Card.Body>
-                            </Card>
-                        </Col>
-                    </Row>
-                </React.Fragment >
-            ) : (
-                <div>
-                    <h3 style={{ textAlign: 'center' }}>No DigiCard Found</h3>
-                    <div className="form-group fill text-center">
-                        <br></br>
 
-                        <Link to={'/admin-portal/add-digicard'}>
-                            <Button variant="success" className="btn-sm btn-round has-ripple ml-2">
-                                <i className="feather icon-plus" /> Add DigiCard
-                            </Button>
-                        </Link>
-                    </div>
-                </div>
-            )}
-        </div>
+            {
+                isLoading ? (
+                    <BasicSpinner />
+                ) : (
+                    <>
+                        {
+                            data.length <= 0 ? (
+                                <>
+                                    < React.Fragment >
+                                        <div>
+                                            <h3 style={{ textAlign: 'center' }}>No DigiCard Found</h3>
+                                            <div className="form-group fill text-center">
+                                                <br></br>
+
+                                                <Link to={'/admin-portal/add-digicard'}>
+                                                    <Button variant="success" className="btn-sm btn-round has-ripple ml-2">
+                                                        <i className="feather icon-plus" /> Add DigiCard
+                                                    </Button>
+                                                </Link>
+                                            </div>
+                                        </div>
+                                    </React.Fragment>
+                                </>
+                            ) : (
+                                <>
+                                    <React.Fragment>
+                                        <Row>
+                                            <Col sm={12}>
+                                                <Card>
+                                                    <Card.Header>
+                                                        <Card.Title as="h5">DigiCard List</Card.Title>
+                                                    </Card.Header>
+                                                    <Card.Body>
+                                                        <Table columns={columns} data={data} />
+                                                    </Card.Body>
+                                                </Card>
+                                            </Col>
+                                        </Row>
+                                    </React.Fragment >
+                                </>
+                            )
+                        }
+                    </>
+                )
+            }
+        </div >
     );
 };
 export default DigiCard;
