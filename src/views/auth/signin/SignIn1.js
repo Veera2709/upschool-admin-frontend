@@ -14,6 +14,9 @@ import LoginWithOTP from './LoginWithOTP';
 
 const Signin1 = () => {
 
+  sessionStorage.clear();
+  localStorage.clear();
+  
   const [toggle, setToggle] = useState(false);
 
   const handleLogin = () => {

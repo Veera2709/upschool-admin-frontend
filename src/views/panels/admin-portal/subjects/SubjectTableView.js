@@ -328,7 +328,7 @@ function Table({ columns, data }) {
 
                     } else {
 
-                        sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+                        sweetAlertHandler({ title: 'Sorry', type: 'warning', text: error.response.data });
                         fetchAllSubjectsData();
 
                     }
@@ -824,7 +824,7 @@ const SubjectTableView = ({ userStatus }) => {
             .then(async (response) => {
                 if (response.Error) {
                     hideLoader();
-                    sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
+                    sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'warning', text: MESSAGES.ERROR.DeletingUser });
                     fetchAllSubjectsData();
 
                 } else {
