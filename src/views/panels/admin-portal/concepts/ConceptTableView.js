@@ -313,7 +313,7 @@ function Table({ columns, data }) {
 
                     } else {
 
-                        sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingConcept });
+                        sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'warning', text: MESSAGES.ERROR.DeletingConcept });
                         fetchAllConceptsData();
                     }
 
@@ -347,7 +347,7 @@ function Table({ columns, data }) {
 
                     } else {
 
-                        sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+                        sweetAlertHandler({ title: 'Sorry', type: 'warning', text: error.response.data });
                         fetchAllConceptsData();
                     }
 
@@ -893,7 +893,7 @@ const ConceptTableView = ({ userStatus }) => {
 
                     } else {
 
-                        sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+                        sweetAlertHandler({ title: 'Sorry', type: 'warning', text: error.response.data });
                         fetchAllConceptsData();
                     }
 
