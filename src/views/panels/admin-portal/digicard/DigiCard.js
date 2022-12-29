@@ -199,14 +199,14 @@ const DigiCard = () => {
             text: alert.text,
             icon: alert.type
         });
-    }   
+    }
 
 
     const openHandler = () => {
         setIsOpen(true);
     };
 
-   
+
 
 
 
@@ -215,64 +215,64 @@ const DigiCard = () => {
 
     function deleteDigicard(digi_card_id, digi_card_title) {
         console.log("digi_card_id", digi_card_id);
-        confirmHandler(digi_card_id,digi_card_title)
+        confirmHandler(digi_card_id, digi_card_title)
     }
 
-        const confirmHandler = (digi_card_id,digi_card_title) => {
-            var data = {
-                "digi_card_id": digi_card_id,
-                "digicard_status": 'Archived'
+    const confirmHandler = (digi_card_id, digi_card_title) => {
+        var data = {
+            "digi_card_id": digi_card_id,
+            "digicard_status": 'Archived'
+        }
+        MySwal.fire({
+            title: 'Are you sure?',
+            text: 'Confirm deleting ' + digi_card_title + ' DigiCard',
+            type: 'warning',
+            showCloseButton: true,
+            showCancelButton: true
+        }).then((willDelete) => {
+            if (willDelete.value) {
+                console.log("api calling");
+                axios
+                    .post(dynamicUrl.toggleDigiCardStatus, { data: data }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
+                    .then((response) => {
+                        if (response.Error) {
+                            hideLoader();
+                            sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
+                        } else {
+                            setReloadAllData("Deleted");
+                            return MySwal.fire('', 'The ' + digi_card_title + ' is Deleted', 'success');
+                            // window. location. reload() 
+                            //  MySwal.fire('', MESSAGES.INFO.CLIENT_DELETED, 'success');
+                        }
+                    })
+                    .catch((error) => {
+                        if (error.response) {
+                            // Request made and server responded
+                            console.log(error.response.data);
+                            hideLoader();
+                            if (error.response.data === 'Invalid Token') {
+                                sessionStorage.clear();
+                                localStorage.clear();
+                                history.push('/auth/signin-1');
+                                window.location.reload();
+                            } else {
+                                sweetConfirmHandler({ title: 'Sorry', type: 'warning', text: error.response.data });
+                            }
+                        } else if (error.request) {
+                            // The request was made but no response was received
+                            console.log(error.request);
+                            hideLoader();
+                        } else {
+                            console.log('Error', error.message);
+                            hideLoader();
+                        }
+                    });
+            } else {
             }
-            MySwal.fire({
-                title: 'Are you sure?',
-                text: 'Confirm deleting ' + digi_card_title + ' DigiCard',
-                type: 'warning',
-                showCloseButton: true,
-                showCancelButton: true
-            }).then((willDelete) => {
-                if (willDelete.value) {
-                    console.log("api calling");
-                    axios
-                        .post(dynamicUrl.toggleDigiCardStatus, { data: data }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
-                        .then((response) => {
-                            if (response.Error) {
-                                hideLoader();
-                                sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
-                            } else {
-                                setReloadAllData("Deleted");
-                                return MySwal.fire('', 'The ' + digi_card_title + ' is Deleted', 'success');
-                                // window. location. reload() 
-                                //  MySwal.fire('', MESSAGES.INFO.CLIENT_DELETED, 'success');
-                            }
-                        })
-                        .catch((error) => {
-                            if (error.response) {
-                                // Request made and server responded
-                                console.log(error.response.data);
-                                hideLoader();
-                                if (error.response.data === 'Invalid Token') {
-                                    sessionStorage.clear();
-                                    localStorage.clear();
-                                    history.push('/auth/signin-1');
-                                    window.location.reload();
-                                } else {
-                                    sweetConfirmHandler({ title: 'Sorry', type: 'warning', text: error.response.data });
-                                }
-                            } else if (error.request) {
-                                // The request was made but no response was received
-                                console.log(error.request);
-                                hideLoader();
-                            } else {
-                                console.log('Error', error.message);
-                                hideLoader();
-                            }
-                        });
-                } else {
-                }
-            });
-        };
+        });
+    };
 
-    
+
 
     function digicardRestore(digi_card_id, digi_card_title) {
         console.log("digi_card_id", digi_card_id);
@@ -312,8 +312,14 @@ const DigiCard = () => {
                             if (error.response) {
                                 // Request made and server responded
                                 console.log(error.response.data);
-                                hideLoader();
-                                sweetConfirmHandler({ title: 'Error', type: 'error', text: error.response.data });
+                                if (error.response.data === 'Invalid Token') {
+                                    sessionStorage.clear();
+                                    localStorage.clear();
+                                    history.push('/auth/signin-1');
+                                    window.location.reload();
+                                } else {
+                                    console.log("err", error);
+                                }
                             } else if (error.request) {
                                 // The request was made but no response was received
                                 console.log(error.request);
@@ -405,11 +411,18 @@ const DigiCard = () => {
 
                 setData(finalDataArray);
                 console.log('resultData: ', finalDataArray);
-                    setIsLoading(false);
+                setIsLoading(false);
 
             })
-            .catch((err) => {
-                console.log(err)
+            .catch((error) => {
+                if (error.response.data === 'Invalid Token') {
+                    sessionStorage.clear();
+                    localStorage.clear();
+                    history.push('/auth/signin-1');
+                    window.location.reload();
+                } else {
+                    console.log("err", error);
+                }
             })
     }
 
@@ -425,7 +438,7 @@ const DigiCard = () => {
     }, [reloadAllData])
 
     return (
-        
+
         <div>
 
             {

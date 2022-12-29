@@ -123,6 +123,12 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
         const allConceptsData = await fetchAllConcepts();
         if (allConceptsData.Error) {
             console.log("allConceptsData.ERROR", allConceptsData.Error);
+            if (allConceptsData.Error.response.data == 'Invalid Token') {
+                sessionStorage.clear();
+                localStorage.clear();
+                history.push('/auth/signin-1');
+                window.location.reload();
+            }
         } else {
             console.log('allConceptsData', allConceptsData.Items);
             let resultConceptData = allConceptsData.Items
@@ -140,6 +146,12 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
             const allTopicsData = await fetchAllTopics();
             if (allTopicsData.Error) {
                 console.log("allTopicsData,Error", allTopicsData, Error);
+                if (allTopicsData.Error.response.data == 'Invalid Token') {
+                    sessionStorage.clear();
+                    localStorage.clear();
+                    history.push('/auth/signin-1');
+                    window.location.reload();
+                }
             } else {
                 console.log("allTopicsData", allTopicsData.Items);
                 let resultTopicData = allTopicsData.Items
