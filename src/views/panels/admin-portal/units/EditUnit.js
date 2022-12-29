@@ -44,7 +44,7 @@ const EditUnit = () => {
     const [topicDigiCardIds, setTopicDigiCardIds] = useState([]);
 
 
-    const [description, setDescription] = useState();
+    
     const [defaultOptions, setDefaultOptions] = useState([]);
 
     const [defauleDescription, setDefauleDescription] = useState();
@@ -85,9 +85,7 @@ const EditUnit = () => {
 
 
 
-    const UnitDescription = (text) => {
-        setDescription(text.target.value)
-    }
+   
 
 
 
@@ -117,7 +115,6 @@ const EditUnit = () => {
                 let individual_Unit_data = individualUnitData.Items[0];
                 setIndividualUnitdata(individual_Unit_data)
                 setDefauleDescription(individual_Unit_data.unit_description)
-                setDescription(individual_Unit_data.unit_description)
                 let tempArr = [];
                 individual_Unit_data.unit_chapter_id.forEach(function (entry) {
                     colourOptions.forEach(function (childrenEntry) {
@@ -145,13 +142,13 @@ const EditUnit = () => {
     const getMultiOptions = (event) => {
         let valuesArr = [];
         for (let i = 0; i < event.length; i++) {
-            valuesArr.push( event[i].value )
+            valuesArr.push(event[i].value)
         }
         setChapterOption(valuesArr);
     }
 
 
-    return  (
+    return (
         <div>
             <Card>
                 <Card.Body>
@@ -161,7 +158,7 @@ const EditUnit = () => {
                         initialValues={{
                             unittitle: individualUnitdata.unit_title,
                             chapter: '',
-                            unit_description: '',
+                            unit_description: individualUnitdata.unit_description,
                         }}
                         validationSchema={Yup.object().shape({
                             unittitle: Yup.string()
@@ -169,6 +166,8 @@ const EditUnit = () => {
                                 .min(2, Constants.AddUnit.UnittitleRequired)
                                 .max(30, Constants.AddUnit.UnittitleTooShort)
                                 .required(Constants.AddUnit.UnittitleTooLongs),
+                            unit_description: Yup.string()
+                                .required(Constants.AddUnit.DescriptionRequired),
                         })}
 
 
@@ -178,7 +177,7 @@ const EditUnit = () => {
 
                             if (chapterOption == '') {
                                 setIsShown(false)
-                            }else if(description === undefined || description.trim()===''){
+                            } else if (values.unit_description === undefined || values.unit_description.trim() === '') {
                                 setIsShownDes(false)
                             }
                             else {
@@ -186,12 +185,12 @@ const EditUnit = () => {
                                 var formData = {
                                     unit_id: unit_id,
                                     unit_title: values.unittitle,
-                                    unit_description: description,
+                                    unit_description: values.unit_description,
                                     unit_chapter_id: chapterOption
                                 };
-    
+
                                 console.log("formdata", formData);
-    
+
                                 axios
                                     .post(dynamicUrl.editUnit, { data: formData }, { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
                                     .then(async (response) => {
@@ -212,14 +211,14 @@ const EditUnit = () => {
                                         if (error.response) {
                                             // Request made and server responded
                                             console.log(error.response.data);
-    
+
                                             console.log(error.response.data);
                                             if (error.response.status === 401) {
                                                 console.log();
                                                 hideLoader();
                                                 // setIsClientExists(true);
                                                 sweetAlertHandler({ title: 'Error', type: 'error', text: MESSAGES.ERROR.DigiCardNameExists });
-    
+
                                             } else {
                                                 sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
                                             }
@@ -237,7 +236,7 @@ const EditUnit = () => {
                                     });
                             }
 
-                           
+
 
                             // }
 
@@ -291,7 +290,7 @@ const EditUnit = () => {
                                                             name="color"
                                                             isMulti
                                                             closeMenuOnSelect={false}
-                                                            onChange={(e)=>{getMultiOptions(e);setIsShown(true)}}
+                                                            onChange={(e) => { getMultiOptions(e); setIsShown(true) }}
                                                             options={topicTitles}
                                                             placeholder="Select"
                                                         />
@@ -304,11 +303,17 @@ const EditUnit = () => {
                                         </div>)}
                                         <div className="form-group fill" >
                                             <Form.Label htmlFor="unit_description"> <small className="text-danger">* </small>Unit Description</Form.Label>
-                                            <Form.Control as="textarea"
-                                                onChange={(e) => { UnitDescription(e); setIsShownDes(true) }} rows="4"
-                                                defaultValue={description}
+                                            <Form.Control
+                                                as="textarea"
+                                                onChange={handleChange}
+                                                rows="4"
+                                                onBlur={handleBlur}
+                                                name="unit_description"
+                                                value={values.unit_description}
+                                                type='text'
                                             />
                                             <br />
+                                            {touched.unit_description && errors.unit_description && <small className="text-danger form-text">{errors.unit_description}</small>}
                                             <small className="text-danger form-text" style={{ display: isShownDes ? 'none' : 'block' }}>Unit Description Required</small>
                                         </div>
                                     </Col>
