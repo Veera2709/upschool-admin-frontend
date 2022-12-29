@@ -23,6 +23,8 @@ import { fetchAllChapters, fetchIndividualUnit } from '../../../api/CommonApi'
 
 
 
+
+
 // import { Button,Container,Row ,Col  } from 'react-bootstrap';
 
 const EditUnit = () => {
@@ -34,6 +36,8 @@ const EditUnit = () => {
     const [isOpen, setIsOpen] = useState(false);
     const MySwal = withReactContent(Swal);
     const [chapterOption, setChapterOption] = useState([]);
+    let history = useHistory();
+
 
 
 
@@ -94,6 +98,12 @@ const EditUnit = () => {
         console.log("allTopicdData", allChapterData.Items);
         if (allChapterData.Error) {
             console.log("allChapterData", allChapterData.Error);
+            if (allChapterData.Error.response.data == 'Invalid Token') {
+                sessionStorage.clear();
+                localStorage.clear();
+                history.push('/auth/signin-1');
+                window.location.reload();
+            }
         } else {
             console.log("allChapterData.Items", allChapterData.Items);
             let resultData = allChapterData.Items
@@ -111,6 +121,12 @@ const EditUnit = () => {
             const individualUnitData = await fetchIndividualUnit(unit_id);
             if (individualUnitData.Error) {
                 console.log("individualUnitData.Error", individualUnitData.Error);
+                if (individualUnitData.Error.response.data == 'Invalid Token') {
+                    sessionStorage.clear();
+                    localStorage.clear();
+                    history.push('/auth/signin-1');
+                    window.location.reload();
+                }
             } else {
                 let individual_Unit_data = individualUnitData.Items[0];
                 setIndividualUnitdata(individual_Unit_data)

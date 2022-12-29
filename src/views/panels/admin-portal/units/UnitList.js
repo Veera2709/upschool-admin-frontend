@@ -205,7 +205,7 @@ const UnitList = (props) => {
     }
     let history = useHistory();
 
-   
+
 
     const deleteUnit = (unit_id, unit_title) => {
         var data = {
@@ -295,8 +295,14 @@ const UnitList = (props) => {
                             if (error.response) {
                                 // Request made and server responded
                                 console.log(error.response.data);
-                                hideLoader();
-                                sweetConfirmHandler({ title: 'Error', type: 'error', text: error.response.data });
+                                if (error.response.data === 'Invalid Token') {
+                                    sessionStorage.clear();
+                                    localStorage.clear();
+                                    history.push('/auth/signin-1');
+                                    window.location.reload();
+                                } else {
+                                    console.log("err", error);
+                                }
                             } else if (error.request) {
                                 // The request was made but no response was received
                                 console.log(error.request);

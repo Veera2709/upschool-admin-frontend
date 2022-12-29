@@ -117,6 +117,12 @@ const AddChapter = (
         console.log("allPostLeraningData", allPostLeraningData.Items);
         if (allPostLeraningData.Error) {
             console.log("allPostLeraningData", allPostLeraningData.Error);
+            if (allPostLeraningData.Error.response.data == 'Invalid Token') {
+                sessionStorage.clear();
+                localStorage.clear();
+                history.push('/auth/signin-1');
+                window.location.reload();
+            }
         } else {
             let resultData = allPostLeraningData.Items
             console.log("resultData", resultData);
@@ -133,6 +139,12 @@ const AddChapter = (
             const allPreLerningdData = await fetchPreLearningTopics();
             if(allPreLerningdData.Error){
                 console.log("allPreLerningdData.Error",allPreLerningdData.Error);
+                if (allPreLerningdData.Error.response.data == 'Invalid Token') {
+                    sessionStorage.clear();
+                    localStorage.clear();
+                    history.push('/auth/signin-1');
+                    window.location.reload();
+                }
             }else{
                 let preData = allPreLerningdData.Items
                 preData.forEach((itempre, index) => {

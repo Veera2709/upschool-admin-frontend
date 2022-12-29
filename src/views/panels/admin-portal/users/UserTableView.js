@@ -243,12 +243,12 @@ const UserTableView = ({ _userRole }) => {
         deleteUser(user_id, user_role, updateStatus);
       } else {
 
-        const returnValue = pageLocation === 'active-users' ? (
-          MySwal.fire('', MESSAGES.INFO.DATA_SAFE, 'success')
-        ) : (
-          MySwal.fire('', MESSAGES.INFO.FAILED_TO_RESTORE, 'error')
-        )
-        return returnValue;
+        // const returnValue = pageLocation === 'active-users' ? (
+        //   MySwal.fire('', MESSAGES.INFO.DATA_SAFE, 'success')
+        // ) : (
+        //   MySwal.fire('', MESSAGES.INFO.FAILED_TO_RESTORE, 'error')
+        // )
+        // return returnValue;
       }
     });
   };
@@ -493,7 +493,7 @@ const UserTableView = ({ _userRole }) => {
 
           } else {
 
-            sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+            sweetAlertHandler({ title: 'Sorry', type: 'warning', text: error.response.data });
             fetchUserData();
           }
 
@@ -723,7 +723,9 @@ const UserTableView = ({ _userRole }) => {
 
   };
 
+
   useEffect(() => {
+
     fetchUserData();
   }, [pageLocation]);
 

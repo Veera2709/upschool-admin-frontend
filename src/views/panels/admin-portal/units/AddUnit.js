@@ -19,6 +19,8 @@ import { useEffect } from 'react';
 import Multiselect from 'multiselect-react-dropdown';
 import { fetchAllChapters } from '../../../api/CommonApi'
 import Select from 'react-select';
+import { useHistory, useParams } from 'react-router-dom';
+
 
 
 
@@ -29,6 +31,7 @@ const AddUnit = () => {
 
 
     const colourOptions = [];
+    let history = useHistory();
 
 
 
@@ -76,6 +79,12 @@ const AddUnit = () => {
         console.log("allTopicdData", allChapterData.Items);
         if (allChapterData.Error) {
             console.log("allChapterData", allChapterData.Error);
+            if (allChapterData.Error.response.data == 'Invalid Token') {
+                sessionStorage.clear();
+                localStorage.clear();
+                history.push('/auth/signin-1');
+                window.location.reload();
+            }
         } else {
             console.log("allChapterData.Items", allChapterData.Items);
             let resultData = allChapterData.Items
@@ -111,9 +120,9 @@ const AddUnit = () => {
                         validationSchema={Yup.object().shape({
                             unittitle: Yup.string()
                                 .trim()
-                                .min(2, Constants.AddUnit.UnittitleRequired)
-                                .max(30, Constants.AddUnit.UnittitleTooShort)
-                                .required(Constants.AddUnit.UnittitleTooLongs),
+                                .min(2, Constants.AddUnit.UnittitleTooShort)
+                                .max(30, Constants.AddUnit.UnittitleTooLong)
+                                .required(Constants.AddUnit.UnittitleRequired),
                         })}
 
 
