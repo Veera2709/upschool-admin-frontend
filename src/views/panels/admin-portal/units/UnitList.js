@@ -276,8 +276,7 @@ const UnitList = (props) => {
                 title: 'Are you sure?',
                 text: 'Confirm to Restore ' + unit_title + ' unit',
                 type: 'warning',
-                showCloseButton: true,
-                showCancelButton: true
+                showCloseButton: true
             }).then((willDelete) => {
                 if (willDelete.value) {
                     axios
@@ -314,7 +313,6 @@ const UnitList = (props) => {
                             }
                         });
                 } else {
-                    return MySwal.fire('', 'Chapter is Restore!', 'error');
                 }
             });
         };
@@ -327,6 +325,12 @@ const UnitList = (props) => {
         const allUnitsData = await fetchAllUnits();
         if (allUnitsData.ERROR) {
             console.log("allUnitsData.ERROR", allUnitsData.ERROR);
+            if (allUnitsData.Error.response.data == 'Invalid Token') {
+                sessionStorage.clear();
+                localStorage.clear();
+                history.push('/auth/signin-1');
+                window.location.reload();
+            }
         } else {
             let dataResponse = allUnitsData.Items
             console.log("dataResponse", dataResponse);

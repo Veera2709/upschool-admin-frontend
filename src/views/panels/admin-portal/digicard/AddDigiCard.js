@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 // import './style.css'
 import { Row, Col, Card, Button, Modal } from 'react-bootstrap';
 // import CkDecoupledEditor from '../../../components/CK-Editor/CkDecoupledEditor';
@@ -16,12 +16,13 @@ import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import withReactContent from 'sweetalert2-react-content';
 import ArticleRTE from './ArticleRTE'
 import { areFilesInvalid, voiceInvalid } from '../../../../util/utils';
-import { useEffect } from 'react';
 import logo from './img/logo.png'
 import Multiselect from 'multiselect-react-dropdown';
 import Select from 'react-select';
 
 import { fetchAllDigiCards } from '../../../api/CommonApi'
+import { Link, useHistory } from 'react-router-dom';
+
 
 
 
@@ -65,6 +66,8 @@ const AddDigiCard = (
   const [imgValidation, setImgValidation] = useState(true);
   const [voiceError, setVoiceError] = useState(true);
   const [topicDigiCardIds, setTopicDigiCardIds] = useState([]);
+  let history = useHistory();
+
 
 
 
@@ -127,6 +130,12 @@ const AddDigiCard = (
     const allDigicardData = await fetchAllDigiCards(dynamicUrl.fetchAllDigiCards);
     if (allDigicardData.error) {
       console.log(allDigicardData.error);
+      if (allDigicardData.Error.response.data == 'Invalid Token') {
+        sessionStorage.clear();
+        localStorage.clear();
+        history.push('/auth/signin-1');
+        window.location.reload();
+      }
     } else {
       console.log("allDigicardData", allDigicardData.Items);
       let resultData = allDigicardData.Items;
@@ -140,8 +149,24 @@ const AddDigiCard = (
   }
 
   useEffect(() => {
-    setImgFile(logo)
-    fetchAllData();
+
+    let userJWT = sessionStorage.getItem('user_jwt');
+    console.log("jwt", userJWT);
+
+    if (userJWT === "" || userJWT === undefined || userJWT === "undefined" || userJWT === null) {
+
+      sessionStorage.clear();
+      localStorage.clear();
+      history.push('/auth/signin-1');
+      window.location.reload();
+    } else {
+
+      setImgFile(logo)
+      fetchAllData();
+
+    }
+
+
   }, [])
 
 
@@ -158,7 +183,7 @@ const AddDigiCard = (
   const getMultiOptions = (event) => {
     let valuesArr = [];
     for (let i = 0; i < event.length; i++) {
-        valuesArr.push(event[i].value)
+      valuesArr.push(event[i].value)
     }
     setMultiOptions(valuesArr);
   }
@@ -276,11 +301,21 @@ const AddDigiCard = (
                             result
                           });
                         }
-                        sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingDigiCard });
+                        // sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingDigiCard });
                         hideLoader();
                         setDisableButton(false);
                         // fetchClientData();
                         setIsOpen(false);
+
+                        MySwal.fire({
+
+                          title: 'Digicard added successfully!',
+                          icon: 'success',
+                      }).then((willDelete) => {
+
+                          window.location.reload();
+
+                      })
                       } else {
                         console.log('No files uploaded');
                         sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingDigiCard });
@@ -303,9 +338,16 @@ const AddDigiCard = (
                         // setIsClientExists(true);
                         sweetAlertHandler({ title: 'Error', type: 'error', text: MESSAGES.ERROR.DigiCardNameExists });
 
+                      } else if (error.response.data === 'Invalid Token') {
+
+                        sessionStorage.clear();
+                        localStorage.clear();
+                        history.push('/auth/signin-1');
+                        window.location.reload();
                       } else {
-                        sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+                        console.log("err", error);
                       }
+
                     } else if (error.request) {
                       // The request was made but no response was received
                       console.log(error.request);

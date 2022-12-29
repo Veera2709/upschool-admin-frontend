@@ -48,7 +48,7 @@ const EditUnit = () => {
     const [topicDigiCardIds, setTopicDigiCardIds] = useState([]);
 
 
-    
+
     const [defaultOptions, setDefaultOptions] = useState([]);
 
     const [defauleDescription, setDefauleDescription] = useState();
@@ -89,7 +89,7 @@ const EditUnit = () => {
 
 
 
-   
+
 
 
 
@@ -216,7 +216,15 @@ const EditUnit = () => {
                                             hideLoader();
                                             setDisableButton(false);
                                         } else {
-                                            sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.EditUnit });
+                                            // sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.EditUnit });
+                                            MySwal.fire({
+                                                title: 'Unit Updated successfully!',
+                                                icon: 'success',
+                                            }).then((willDelete) => {
+
+                                                window.location.reload();
+
+                                            })
                                             hideLoader();
                                             setDisableButton(false);
                                             // fetchClientData();
@@ -321,7 +329,7 @@ const EditUnit = () => {
                                             <Form.Label htmlFor="unit_description"> <small className="text-danger">* </small>Unit Description</Form.Label>
                                             <Form.Control
                                                 as="textarea"
-                                                onChange={(e)=>{handleChange(e);setIsShownDes(e)}}
+                                                onChange={(e) => { handleChange(e); setIsShownDes(e) }}
                                                 rows="4"
                                                 onBlur={handleBlur}
                                                 name="unit_description"
