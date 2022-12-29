@@ -305,7 +305,7 @@ const EditUnit = () => {
                                             <Form.Label htmlFor="unit_description"> <small className="text-danger">* </small>Unit Description</Form.Label>
                                             <Form.Control
                                                 as="textarea"
-                                                onChange={handleChange}
+                                                onChange={(e)=>{handleChange(e);setIsShownDes(e)}}
                                                 rows="4"
                                                 onBlur={handleBlur}
                                                 name="unit_description"

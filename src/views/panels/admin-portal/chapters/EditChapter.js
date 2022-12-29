@@ -351,7 +351,7 @@ const EditChapter = () => {
                                             <Form.Label htmlFor="chapter_description"> <small className="text-danger">* </small>Chapter Description</Form.Label>
                                             <Form.Control
                                                 as="textarea"
-                                                onChange={handleChange}
+                                                onChange={(e)=>{handleChange(e);setIsShownDes(true)}}
                                                 rows="4"
                                                 onBlur={handleBlur}
                                                 name="chapter_description"
