@@ -41,6 +41,7 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
     const [defaultTopicOption, setDefaultTopicOption] = useState([]);
     const [defaultOption, setDefaultOption] = useState([]);
     const [isShownRelatedTopic, setIsShownRelatedTopic] = useState([]);
+    const [topicDuration, setTopicDuration] = useState(true);
     const MySwal = withReactContent(Swal);
 
 
@@ -57,10 +58,13 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
         });
     };
 
+    const levels = [
+        { label: 'Level-1', value: 'Level-1' },
+        { label: 'Level-2', value: 'Level-2' },
+        { label: 'Level-3', value: 'Level-3' },
+    ]
 
-
-
-    const topicQuizTemplate = { level: "", duration: "" }
+    const topicQuizTemplate = { level: levels[0].value, duration: "" }
     const [topicQuiz, setTopicQuiz] = useState([topicQuizTemplate])
 
     const addTopic = () => {
@@ -83,13 +87,6 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
     }
 
     const data = [{ id: 'ac05006b-2351-59e1-a5bf-aa88e249ad05', name: 'ac05006b-2351-59e1-a5bf-aa88e249ad05' }]
-
-    const levels = [
-        { label: 'Level-1', value: 'Level-1' },
-        { label: 'Level-2', value: 'Level-2' },
-        { label: 'Level-3', value: 'Level-3' },
-    ]
-
 
 
     const submitEditTopic = (formData) => {
@@ -265,42 +262,45 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
                                         pre_post_learning: '',
                                         related_topics: '',
                                         topic_quiz_config: '',
-                                        duration: editTopicData.topic_quiz_config.duration
-
-
+                                        duration: ''
                                     }}
 
                                     validationSchema={Yup.object().shape({
                                         topic_title: Yup.string()
                                             .trim()
                                             .required(Constants.AddTopic.TopictitleRequired),
-                                        duration: Yup.string()
-                                            .trim()
-                                            .required(Constants.AddTopic.QuizMinutesRequired),
                                         topic_description: Yup.string()
                                             .trim()
                                             .required(Constants.AddTopic.DescriptionRequired),
-
                                     })}
-                                    // validationSchema
 
 
                                     onSubmit={(values, { setErrors, setStatus, setSubmitting }) => {
 
-                                        if (topicConceptId == '') {
-                                            setIsShown(false)
-                                        } else {
-                                            const formData = {
-                                                topic_id: id,
-                                                topic_title: values.topic_title,
-                                                topic_description: values.topic_description,
-                                                topic_concept_id: topicConceptId,
-                                                pre_post_learning: prePostLearning,
-                                                related_topics: relatedTopicsId,
-                                                topic_quiz_config: topicQuiz
+                                        console.log("SUBMIT SIDE QUIZ : ", topicQuiz);
+
+                                        let emptyFieldValidation = topicQuiz.find(o => o.duration === "" || o.duration === 0)
+
+
+                                        if (emptyFieldValidation) {
+                                            setTopicDuration(false)
+                                        }
+                                        else {
+                                            if (topicConceptId == '') {
+                                                setIsShown(false)
+                                            } else {
+                                                const formData = {
+                                                    topic_id: id,
+                                                    topic_title: values.topic_title,
+                                                    topic_description: values.topic_description,
+                                                    topic_concept_id: topicConceptId,
+                                                    pre_post_learning: prePostLearning,
+                                                    related_topics: relatedTopicsId,
+                                                    topic_quiz_config: topicQuiz
+                                                }
+                                                console.log('formData: ', formData)
+                                                submitEditTopic(formData)
                                             }
-                                            console.log('formData: ', formData)
-                                            submitEditTopic(formData)
                                         }
 
                                     }}
@@ -472,7 +472,7 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
                                                                     name='duration'
                                                                     placeholder='Minutes'
                                                                     value={topic.duration}
-                                                                    onChange={(e) => { onDynamicFormChange(e, index, 'duration'); handleChange(e) }}
+                                                                    onChange={(e) => { onDynamicFormChange(e, index, 'duration'); handleChange(e) ;setTopicDuration(true)}}
                                                                     autoComplete='off'
                                                                 />
                                                             </div>
@@ -487,7 +487,7 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
 
                                             ))
                                             }
-                                               {touched.duration && errors.duration && <small className="text-danger form-text">{errors.duration}</small>}
+                                            <small className="text-danger form-text" style={{ display: topicDuration ? 'none' : 'block' }}>Quiz Minutes are required!</small>
                                             <p></p>
                                             <button type="button" className="btn btn-primary" onClick={addTopic} >Add another Quiz</button>
 
