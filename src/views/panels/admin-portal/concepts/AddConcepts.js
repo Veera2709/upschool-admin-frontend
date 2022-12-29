@@ -186,9 +186,18 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
                                                 console.log('inside res edit');
                                                 hideLoader();
                                                 setIsOpenAddConcept(false);
-                                                fetchAllConceptsData();
-                                                sweetAlertHandler({ title: 'Success', type: 'success', text: 'Concept added successfully!' });
+                                                // fetchAllConceptsData();
+                                                // sweetAlertHandler({ title: 'Success', type: 'success', text: 'Concept added successfully!' });
+
+                                                MySwal.fire({
+
+                                                    title: 'Concept added successfully!',
+                                                    icon: 'success',
+                                                }).then((willDelete) => {
+                                                    window.location.reload();
+                                                });
                                                 setDigicardsAndConcepts(true);
+
                                             } else {
 
                                                 console.log('else res');

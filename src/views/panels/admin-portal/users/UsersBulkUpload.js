@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Row, Col, Button, Card } from 'react-bootstrap';
 import Swal from 'sweetalert2';
 import axios from 'axios';
+import { useHistory } from 'react-router-dom';
 import withReactContent from 'sweetalert2-react-content';
 import MESSAGES from '../../../../helper/messages';
 import dynamicUrl from '../../../../helper/dynamicUrls';
@@ -17,6 +18,7 @@ import useFullPageLoader from '../../../../helper/useFullPageLoader';
 
 const UsersBulkUpload = ({ className, ...rest }) => {
 
+  const history = useHistory();
   const schoolNameRef = useRef('');
   const [schoolName_ID, setSchoolName_ID] = useState({});
   const [schoolID, setSchoolID] = useState('');
@@ -34,60 +36,83 @@ const UsersBulkUpload = ({ className, ...rest }) => {
 
   useEffect(() => {
 
-    axios
-      .post(
-        dynamicUrl.fetchSchoolIdNames,
-        {
-          data: {}
-        },
-        {
-          headers: { Authorization: sessionStorage.getItem('user_jwt') }
-        }
-      )
-      .then((response) => {
+    const validateJWT = sessionStorage.getItem('user_jwt');
 
-        console.log({ response });
-        console.log(response.status);
-        console.log(response.data);
+    if (validateJWT === "" || validateJWT === null || validateJWT === undefined || validateJWT === "undefined") {
 
-        console.log(response.status === 200);
-        let result = response.status === 200;
+      sessionStorage.clear();
+      localStorage.clear();
 
-        if (result) {
-          console.log('inside res');
+      history.push('/auth/signin-1');
+      window.location.reload();
 
-          let responseData = response.data;
-          setSchoolName_ID(responseData);
-          hideLoader();
+    } else {
 
-        } else {
+      axios
+        .post(
+          dynamicUrl.fetchSchoolIdNames,
+          {
+            data: {}
+          },
+          {
+            headers: { Authorization: sessionStorage.getItem('user_jwt') }
+          }
+        )
+        .then((response) => {
 
-          console.log('else res');
-          hideLoader();
-          // Request made and server responded
-          // setStatus({ success: false });
-          // setErrors({ submit: 'Error in generating OTP' });
-        }
-      })
-      .catch((error) => {
-        if (error.response) {
-          hideLoader();
-          // Request made and server responded
-          console.log(error.response.data);
-          // setStatus({ success: false });
-          // setErrors({ submit: error.response.data });
-        } else if (error.request) {
-          // The request was made but no response was received
-          console.log(error.request);
-          hideLoader();
-        } else {
-          // Something happened in setting up the request that triggered an Error
-          console.log('Error', error.message);
-          hideLoader();
-        }
-      });
+          console.log({ response });
+          console.log(response.status);
+          console.log(response.data);
 
+          console.log(response.status === 200);
+          let result = response.status === 200;
 
+          if (result) {
+            console.log('inside res');
+
+            let responseData = response.data;
+            setSchoolName_ID(responseData);
+            hideLoader();
+
+          } else {
+
+            console.log('else res');
+            hideLoader();
+            // Request made and server responded
+            // setStatus({ success: false });
+            // setErrors({ submit: 'Error in generating OTP' });
+          }
+        })
+        .catch((error) => {
+          if (error.response) {
+            hideLoader();
+            // Request made and server responded
+            console.log(error.response.data);
+
+            if (error.response.data === 'Invalid Token') {
+
+              sessionStorage.clear();
+              localStorage.clear();
+
+              history.push('/auth/signin-1');
+              window.location.reload();
+
+            } else {
+              console.log(error.response.data);
+            }
+
+          } else if (error.request) {
+            // The request was made but no response was received
+            console.log(error.request);
+            hideLoader();
+          } else {
+            // Something happened in setting up the request that triggered an Error
+            console.log('Error', error.message);
+            hideLoader();
+          }
+        });
+
+    }
 
   }, []);
 

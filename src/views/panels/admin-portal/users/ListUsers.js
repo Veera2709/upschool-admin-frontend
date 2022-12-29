@@ -1,13 +1,12 @@
 
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
-
+import { useLocation } from 'react-router-dom';
 import UserTableView from './UserTableView';
-import BasicSpinner from '../../../../helper/BasicSpinner';
 
-const ListUsers = () => {
+const ListUsers = () => {   
 
     const [_userRole, _setUserRole] = useState('Teachers');
 

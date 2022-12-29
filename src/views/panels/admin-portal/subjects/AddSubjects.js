@@ -187,9 +187,20 @@ const AddSubjects = ({ _units, _relatedSubjects, setIsOpenAddSubject, fetchAllSu
                                                 console.log('inside res edit');
                                                 hideLoader();
                                                 setIsOpenAddSubject(false);
-                                                sweetAlertHandler({ title: 'Success', type: 'success', text: 'Subject added successfully!' });
-                                                fetchAllSubjectsData();
+
+                                                // sweetAlertHandler({ title: 'Success', type: 'success', text: 'Subject added successfully!' });
+                                                // fetchAllSubjectsData();
                                                 // window.location.reload();
+
+                                                MySwal.fire({
+
+                                                    title: 'Subject added successfully!',
+                                                    icon: 'success',
+                                                }).then((willDelete) => {
+                                                    window.location.reload();
+                                                });
+
+
 
                                             } else {
 

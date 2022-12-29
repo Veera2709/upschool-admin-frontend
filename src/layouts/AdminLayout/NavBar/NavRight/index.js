@@ -228,9 +228,9 @@ const NavRight = () => {
               <div className="pro-head">
                 <img src={user} className="img-radius" alt="User Profile" />
                 <span>UpSchool Admin</span>
-                <Link to="#" className="dud-logout" title="Logout">
+                {/* <Link to="#" className="dud-logout" title="Logout">
                   <i className="feather icon-log-out" />
-                </Link>
+                </Link> */}
               </div>
               <ListGroup as="ul" bsPrefix=" " variant="flush" className="pro-body">
                 {/* <ListGroup.Item as="li" bsPrefix=" ">
