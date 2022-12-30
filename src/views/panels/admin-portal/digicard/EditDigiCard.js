@@ -53,6 +53,7 @@ const EditDigiCard = () => {
     const [digiCardDataTitel, setDigiCardDataTitel] = useState([]);
     console.log('individualDigiCardData initial', individualDigiCardData);
     console.log("defaultOptions", defaultOptions);
+    let history = useHistory();
 
 
 
@@ -143,7 +144,27 @@ const EditDigiCard = () => {
 
     useEffect(() => {
 
-        fetchAllData();
+        let userJWT = sessionStorage.getItem('user_jwt');
+
+        console.log("jwt", userJWT);
+
+
+
+        if (userJWT === "" || userJWT === undefined || userJWT === "undefined" || userJWT === null) {
+
+
+
+            sessionStorage.clear();
+
+            localStorage.clear();
+
+            history.push('/auth/signin-1');
+
+            window.location.reload();
+
+        } else {
+            fetchAllData();
+        }
 
     }, []);
 
@@ -152,7 +173,7 @@ const EditDigiCard = () => {
     const getMultiOptions = (event) => {
         let valuesArr = [];
         for (let i = 0; i < event.length; i++) {
-            valuesArr.push( event[i].value )
+            valuesArr.push(event[i].value)
         }
         selectedOption(valuesArr);
     }
@@ -187,7 +208,7 @@ const EditDigiCard = () => {
 
                             var formData;
 
-                            if (values.digicard_image === '' || voiceNote!==undefined) {
+                            if (values.digicard_image === '' || voiceNote !== undefined) {
                                 console.log("if condition");
                                 formData = {
                                     digi_card_id: individualDigiCardData[0].digi_card_id,
