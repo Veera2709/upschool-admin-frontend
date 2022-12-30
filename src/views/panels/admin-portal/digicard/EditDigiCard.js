@@ -19,16 +19,6 @@ import { fetchIndividualDigiCard, fetchAllDigiCards } from '../../../api/CommonA
 import { Link, useHistory, useParams } from 'react-router-dom';
 import Select from 'react-select';
 
-
-
-
-
-
-
-
-;
-
-
 const EditDigiCard = () => {
 
 
@@ -56,14 +46,7 @@ const EditDigiCard = () => {
     console.log("defaultOptions", defaultOptions);
     let history = useHistory();
 
-
-
-
-
     const { digi_card_id } = useParams();
-
-
-
 
     const handleDelete = (i, states) => {
         const newTags = tags.slice(0);
@@ -158,7 +141,19 @@ const EditDigiCard = () => {
 
     useEffect(() => {
 
-        fetchAllData();
+
+        let userJWT = sessionStorage.getItem('user_jwt');
+        console.log("jwt", userJWT);
+
+        if (userJWT === "" || userJWT === undefined || userJWT === "undefined" || userJWT === null) {
+
+            sessionStorage.clear();
+            localStorage.clear();
+            history.push('/auth/signin-1');
+            window.location.reload();
+        } else {
+            fetchAllData();
+        }
 
     }, []);
 
