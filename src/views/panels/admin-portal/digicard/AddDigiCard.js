@@ -311,11 +311,11 @@ const AddDigiCard = (
 
                           title: 'Digicard added successfully!',
                           icon: 'success',
-                      }).then((willDelete) => {
+                        }).then((willDelete) => {
 
                           window.location.reload();
 
-                      })
+                        })
                       } else {
                         console.log('No files uploaded');
                         sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingDigiCard });
