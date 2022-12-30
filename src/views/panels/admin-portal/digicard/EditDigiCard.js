@@ -19,18 +19,7 @@ import { fetchIndividualDigiCard, fetchAllDigiCards } from '../../../api/CommonA
 import { Link, useHistory, useParams } from 'react-router-dom';
 import Select from 'react-select';
 
-
-
-
-
-
-
-
-;
-
-
 const EditDigiCard = () => {
-
 
     const colourOptions = [];
 
@@ -56,14 +45,7 @@ const EditDigiCard = () => {
     console.log("defaultOptions", defaultOptions);
     let history = useHistory();
 
-
-
-
-
     const { digi_card_id } = useParams();
-
-
-
 
     const handleDelete = (i, states) => {
         const newTags = tags.slice(0);
@@ -75,7 +57,6 @@ const EditDigiCard = () => {
         const newTags = [].concat(tags, tag);
         setTags(newTags);
     };
-
 
     const sweetAlertHandler = (alert) => {
         MySwal.fire({
@@ -138,8 +119,6 @@ const EditDigiCard = () => {
                 setTags(indidvidualDigicard.Items[0].digi_card_keywords)
                 selectedOption(indidvidualDigicard.Items[0].related_digi_cards)
 
-
-
                 let tempArr = [];
                 indidvidualDigicard.Items[0].related_digi_cards.forEach(function (entry) {
                     colourOptions.forEach(function (childrenEntry) {
@@ -157,8 +136,19 @@ const EditDigiCard = () => {
     }
 
     useEffect(() => {
+        let userJWT = sessionStorage.getItem('user_jwt');
+        console.log("jwt", userJWT);
 
-        fetchAllData();
+        if (userJWT === "" || userJWT === undefined || userJWT === "undefined" || userJWT === null) {
+
+            sessionStorage.clear();
+            localStorage.clear();
+            history.push('/auth/signin-1');
+            window.location.reload();
+
+        } else {
+            fetchAllData();
+        }
 
     }, []);
 
@@ -562,10 +552,7 @@ const EditDigiCard = () => {
             </Card>
 
         </div>
-
-
     )
-
 };
 
 export default EditDigiCard;

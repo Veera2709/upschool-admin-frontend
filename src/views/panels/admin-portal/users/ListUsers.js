@@ -3,10 +3,29 @@
 import React, { useState, useEffect } from 'react';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useHistory } from 'react-router-dom';
 import UserTableView from './UserTableView';
 
-const ListUsers = () => {   
+const ListUsers = () => {
+    const history = useHistory();
+    const [state, setState] = useState(false);
+    useEffect(() => {
+        const validateJWT = sessionStorage.getItem('user_jwt');
+
+        if (validateJWT === "" || validateJWT === null || validateJWT === undefined || validateJWT === "undefined") {
+
+            sessionStorage.clear();
+            localStorage.clear();
+
+            history.push('/auth/signin-1');
+            window.location.reload();
+
+        }
+        else {
+            setState(true);
+        }
+    }, [])
+
 
     const [_userRole, _setUserRole] = useState('Teachers');
 
@@ -26,27 +45,30 @@ const ListUsers = () => {
     }
 
     return (
-
         <>
-            <Tabs
-                defaultActiveKey={1}
-                onSelect={handleUserChange}
-                className="mb-3"
-            >
+            {state && (
+                <>
+                    <Tabs
+                        defaultActiveKey={1}
+                        onSelect={handleUserChange}
+                        className="mb-3"
+                    >
 
-                <Tab eventKey={1} title="Teachers" >
-                    {sessionStorage.setItem('user_role', _userRole)}
-                    <UserTableView _userRole={_userRole} />
-                </Tab>
-                <Tab eventKey={2} title="Students">
-                    {sessionStorage.setItem('user_role', _userRole)}
-                    <UserTableView _userRole={_userRole} />
-                </Tab>
-                <Tab eventKey={3} title="Parents">
-                    {sessionStorage.setItem('user_role', _userRole)}
-                    <UserTableView _userRole={_userRole} />
-                </Tab>
-            </Tabs>
+                        <Tab eventKey={1} title="Teachers" >
+                            {sessionStorage.setItem('user_role', _userRole)}
+                            <UserTableView _userRole={_userRole} />
+                        </Tab>
+                        <Tab eventKey={2} title="Students">
+                            {sessionStorage.setItem('user_role', _userRole)}
+                            <UserTableView _userRole={_userRole} />
+                        </Tab>
+                        <Tab eventKey={3} title="Parents">
+                            {sessionStorage.setItem('user_role', _userRole)}
+                            <UserTableView _userRole={_userRole} />
+                        </Tab>
+                    </Tabs>
+                </>
+            )}
         </>
 
     );
