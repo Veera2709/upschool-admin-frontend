@@ -240,7 +240,16 @@ const AddChapter = (
                                             hideLoader();
                                             setDisableButton(false);
                                         } else {
-                                            sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingChapter });
+                                            // sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingChapter });
+                                            MySwal.fire({
+
+                                                title: 'Chapter added successfully!',
+                                                icon: 'success',
+                                            }).then((willDelete) => {
+
+                                                window.location.reload();
+
+                                            })
                                             hideLoader();
                                             setDisableButton(false);
                                             // fetchClientData();
@@ -303,7 +312,7 @@ const AddChapter = (
                                         </div><br />
                                         <div className="form-group fill" style={{ position: "relative", zIndex: 20 }}>
                                             <label className="floating-label" htmlFor="postlearning_topic">
-                                                <small className="text-danger">* </small> Postlearning Topic
+                                                <small className="text-danger">* </small> Post-learning Topic
                                             </label>
                                             <Select
                                                 className="basic-single"
@@ -328,7 +337,7 @@ const AddChapter = (
                                     <Col sm={6}>
                                         <div className="form-group fill" style={{ position: "relative", zIndex: 20 }}>
                                             <label className="floating-label" htmlFor="prelearning_topic">
-                                                <small className="text-danger">* </small>Prelearning Topic
+                                                <small className="text-danger">* </small>Pre-learning Topic
                                             </label>
                                             <Select
                                                 className="basic-single"

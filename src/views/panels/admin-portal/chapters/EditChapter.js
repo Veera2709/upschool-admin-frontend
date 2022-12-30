@@ -86,7 +86,7 @@ const EditChapter = () => {
         setValue(e.value);
     };
 
-  
+
 
     const fetchAllData = async () => {
 
@@ -272,7 +272,16 @@ const EditChapter = () => {
                                             hideLoader();
                                             setDisableButton(false);
                                         } else {
-                                            sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.EditChapter });
+                                            // sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.EditChapter });
+                                            MySwal.fire({
+
+                                                title: 'Chapter Updated successfully!',
+                                                icon: 'success',
+                                            }).then((willDelete) => {
+                                                history.push('/admin-portal/chapters/active-chapter');
+                                                window.location.reload();
+
+                                            })
                                             hideLoader();
                                             setDisableButton(false);
                                             // fetchClientData();
@@ -332,7 +341,7 @@ const EditChapter = () => {
                                         </div><br />
                                         <div className="form-group fill" style={{ position: "relative", zIndex: 20 }}>
                                             <label className="floating-label" htmlFor="postlearning_topic">
-                                                <small className="text-danger">* </small> Postlearning Topic
+                                                <small className="text-danger">* </small> Post-learning Topic
                                             </label>
                                             {defaultPostleraing.length === 0 ? (
 
@@ -373,7 +382,7 @@ const EditChapter = () => {
                                             <Form.Label htmlFor="chapter_description"> <small className="text-danger">* </small>Chapter Description</Form.Label>
                                             <Form.Control
                                                 as="textarea"
-                                                onChange={(e)=>{handleChange(e);setIsShownDes(true)}}
+                                                onChange={(e) => { handleChange(e); setIsShownDes(true) }}
                                                 rows="4"
                                                 onBlur={handleBlur}
                                                 name="chapter_description"
@@ -388,7 +397,7 @@ const EditChapter = () => {
                                     <Col sm={6}>
                                         <div className="form-group fill" style={{ position: "relative", zIndex: 20 }}>
                                             <label className="floating-label" htmlFor="prelearning_topic">
-                                                <small className="text-danger">* </small>Prelearning Topic
+                                                <small className="text-danger">* </small>Pre-learning Topic
                                             </label>
                                             {defaultPrelearning.length === 0 ? (
 

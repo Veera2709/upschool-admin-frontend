@@ -34,6 +34,8 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
     const [relatedTopicNames, setRelatedTopicNames] = useState([]);
     const [isShownConcept, setIsShownConcept] = useState(true);
     const [isShownTopic, setIsShownTopic] = useState(true);
+    const MySwal = withReactContent(Swal);
+
 
 
 
@@ -46,8 +48,13 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
         });
     };
 
-
-    const topicQuizTemplate = { level: "", duration: "" }
+    const levels = [
+        { label: 'Level-1', value: 'Level-1' },
+        { label: 'Level-2', value: 'Level-2' },
+        { label: 'Level-3', value: 'Level-3' },
+    ]
+    
+    const topicQuizTemplate = { level: levels[0].value, duration: "" }
     const [topicQuiz, setTopicQuiz] = useState([topicQuizTemplate])
     console.log("topicQuiz : ", topicQuiz);
 
@@ -70,13 +77,7 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
         setTopicQuiz(filteredProjects)
     }
 
-    const data = [{ id: 'ac05006b-2351-59e1-a5bf-aa88e249ad05', name: 'ac05006b-2351-59e1-a5bf-aa88e249ad05' }]
-
-    const levels = [
-        { label: 'Level-1', value: 'Level-1' },
-        { label: 'Level-2', value: 'Level-2' },
-        { label: 'Level-3', value: 'Level-3' },
-    ]
+    const data = [{ id: 'ac05006b-2351-59e1-a5bf-aa88e249ad05', name: 'ac05006b-2351-59e1-a5bf-aa88e249ad05' }]  
 
 
 
@@ -87,7 +88,16 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
             .then((response) => {
                 const result = response.data;
                 if (result == 200) {
-                    sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingTopic });
+                    // sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingTopic });
+                    MySwal.fire({
+
+                        title: 'Topic added successfully!',
+                        icon: 'success',
+                    }).then((willDelete) => {
+
+                        window.location.reload();
+
+                    })
 
                 } else {
                     console.log("error");
@@ -260,7 +270,7 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
                                     <div className="form-group fill">
                                         <label className="floating-label" >
                                             <small className="text-danger">* </small>
-                                            pre-post learning
+                                            Pre-Post learning
                                         </label>
                                         <Select
                                             className="basic-single"
@@ -330,6 +340,8 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
                                         <div className='col-md-4' key={index + 10} >
                                             <select className='form-control' name="level" id="level" onChange={(e) => onDynamicFormChange(e, index, 'level')} value={topic.level} >
                                                 {levels.map((ele, i) => {
+                                                    console.log("VALUE : ", ele.value);
+                                                    console.log("LABEL : ", ele.label);
                                                     return <option id="level" keys={i} value={ele.value} >{ele.label}</option>
                                                 })}
                                             </select>

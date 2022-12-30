@@ -62,7 +62,7 @@ const AddUnit = () => {
     const getMultiOptions = (event) => {
         let valuesArr = [];
         for (let i = 0; i < event.length; i++) {
-            valuesArr.push( event[i].value )
+            valuesArr.push(event[i].value)
         }
         setChapterOption(valuesArr);
     }
@@ -131,8 +131,8 @@ const AddUnit = () => {
 
 
                             if (chapterOption == '') {
-                                 setIsShown(false)
-                            } else if ( description == undefined || description.trim()==='') {
+                                setIsShown(false)
+                            } else if (description == undefined || description.trim() === '') {
                                 setIsShownDes(false)
                             }
                             else {
@@ -155,11 +155,22 @@ const AddUnit = () => {
                                             hideLoader();
                                             setDisableButton(false);
                                         } else {
-                                            sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingUnit });
+                                            // sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingUnit });
                                             hideLoader();
                                             setDisableButton(false);
                                             // fetchClientData();
                                             setIsOpen(false);
+
+                                            MySwal.fire({
+
+                                                title: 'Unit added successfully!',
+                                                icon: 'success',
+                                            }).then((willDelete) => {
+
+                                                window.location.reload();
+
+                                            })
+
                                         }
                                     })
                                     .catch((error) => {
@@ -227,7 +238,7 @@ const AddUnit = () => {
                                                 name="color"
                                                 isMulti
                                                 closeMenuOnSelect={false}
-                                                onChange={(e)=>{getMultiOptions(e);setIsShown(true)}}
+                                                onChange={(e) => { getMultiOptions(e); setIsShown(true) }}
                                                 options={topicTitles}
                                                 placeholder="Select"
                                             />

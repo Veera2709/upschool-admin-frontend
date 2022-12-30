@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState ,useEffect} from 'react';
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
 import { Row, Col, Button, Alert, Card } from 'react-bootstrap';
@@ -34,6 +34,13 @@ const LoginWithOTP = ({ className, handleLogin, ...rest }) => {
         history.push('/auth/signin-1');
         handleLogin();
     }
+    useEffect(() => {
+
+        sessionStorage.clear();
+
+        localStorage.clear();
+
+    }, []);
 
     return (
         <>

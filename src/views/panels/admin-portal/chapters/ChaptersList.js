@@ -78,7 +78,7 @@ function Table({ columns, data, modalOpen }) {
                             </option>
                         ))}
                     </select>
-                    entries
+                    Entries
                 </Col>
 
                 <Col className="d-flex justify-content-end">
@@ -324,7 +324,6 @@ const ChaptersListChild = (props) => {
                             }
                         });
                 } else {
-                    return MySwal.fire('', 'Chapter is Restore!', 'error');
                 }
             });
         };

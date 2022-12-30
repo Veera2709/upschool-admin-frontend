@@ -80,7 +80,7 @@ function Table({ columns, data, modalOpen }) {
                             </option>
                         ))}
                     </select>
-                    entries
+                    Entries
                 </Col>
 
                 <Col className="d-flex justify-content-end">
@@ -314,7 +314,6 @@ const UnitList = (props) => {
                             }
                         });
                 } else {
-                    return MySwal.fire('', 'Chapter is Restore!', 'error');
                 }
             });
         };
@@ -323,72 +322,87 @@ const UnitList = (props) => {
 
 
     const allUnitsList = async (UnitStatus) => {
-        setIsLoading(true)
-        const allUnitsData = await fetchAllUnits();
-        if (allUnitsData.ERROR) {
-            console.log("allUnitsData.ERROR", allUnitsData.ERROR);
-        } else {
-            let dataResponse = allUnitsData.Items
-            console.log("dataResponse", dataResponse);
-            let finalDataArray = [];
-            if (UnitStatus === 'Active') {
-                let ActiveresultData = (dataResponse && dataResponse.filter(e => e.unit_status === 'Active'))
-                console.log("ActiveresultData", ActiveresultData);
 
-                for (let index = 0; index < ActiveresultData.length; index++) {
-                    ActiveresultData[index].index_no = index + 1;
-                    ActiveresultData[index]['actions'] = (
-                        <>
-                            <>
-                                <Button
-                                    size="sm"
-                                    className="btn btn-icon btn-rounded btn-primary"
-                                    onClick={(e) => history.push(`/admin-portal/editunit/${ActiveresultData[index].unit_id}`)}
-                                >
-                                    <i className="feather icon-edit" /> &nbsp; Edit
-                                </Button>
-                                &nbsp;
-                                {/* if(resultData[index].chapter_status=='Active') */}
-                                <Button
-                                    size="sm"
-                                    className="btn btn-icon btn-rounded btn-danger"
-                                    onClick={(e) => deleteUnit(ActiveresultData[index].unit_id, ActiveresultData[index].unit_title)}
-                                >
-                                    <i className="feather icon-trash-2 " /> &nbsp; Delete
-                                </Button>
-                                &nbsp;
-                            </>
-                        </>
-                    );
-                    finalDataArray.push(ActiveresultData[index]);
-                    console.log('finalDataArray: ', finalDataArray)
-                }
+        let userJWT = sessionStorage.getItem('user_jwt');
+        console.log("jwt", userJWT);
+
+        if (userJWT === "" || userJWT === undefined || userJWT === "undefined" || userJWT === null) {
+
+            sessionStorage.clear();
+            localStorage.clear();
+            history.push('/auth/signin-1');
+            window.location.reload();
+        } else {
+
+            setIsLoading(true)
+            const allUnitsData = await fetchAllUnits();
+            if (allUnitsData.ERROR) {
+                console.log("allUnitsData.ERROR", allUnitsData.ERROR);
             } else {
-                let resultData = (dataResponse && dataResponse.filter(e => e.unit_status === 'Archived'))
-                for (let index = 0; index < resultData.length; index++) {
-                    resultData[index].index_no = index + 1;
-                    resultData[index]['actions'] = (
-                        <>
+                let dataResponse = allUnitsData.Items
+                console.log("dataResponse", dataResponse);
+                let finalDataArray = [];
+                if (UnitStatus === 'Active') {
+                    let ActiveresultData = (dataResponse && dataResponse.filter(e => e.unit_status === 'Active'))
+                    console.log("ActiveresultData", ActiveresultData);
+
+                    for (let index = 0; index < ActiveresultData.length; index++) {
+                        ActiveresultData[index].index_no = index + 1;
+                        ActiveresultData[index]['actions'] = (
                             <>
-                                <Button
-                                    size="sm"
-                                    className="btn btn-icon btn-rounded btn-primary"
-                                    onClick={(e) => restoreChapter(resultData[index].unit_id, resultData[index].unit_title)}
-                                >
-                                    <i className="feather icon-plus" /> &nbsp; Restore
-                                </Button>
-                                &nbsp;
+                                <>
+                                    <Button
+                                        size="sm"
+                                        className="btn btn-icon btn-rounded btn-primary"
+                                        onClick={(e) => history.push(`/admin-portal/editunit/${ActiveresultData[index].unit_id}`)}
+                                    >
+                                        <i className="feather icon-edit" /> &nbsp; Edit
+                                    </Button>
+                                    &nbsp;
+                                    {/* if(resultData[index].chapter_status=='Active') */}
+                                    <Button
+                                        size="sm"
+                                        className="btn btn-icon btn-rounded btn-danger"
+                                        onClick={(e) => deleteUnit(ActiveresultData[index].unit_id, ActiveresultData[index].unit_title)}
+                                    >
+                                        <i className="feather icon-trash-2 " /> &nbsp; Delete
+                                    </Button>
+                                    &nbsp;
+                                </>
                             </>
-                        </>
-                    );
-                    finalDataArray.push(resultData[index]);
-                    console.log('finalDataArray: ', finalDataArray)
+                        );
+                        finalDataArray.push(ActiveresultData[index]);
+                        console.log('finalDataArray: ', finalDataArray)
+                    }
+                } else {
+                    let resultData = (dataResponse && dataResponse.filter(e => e.unit_status === 'Archived'))
+                    for (let index = 0; index < resultData.length; index++) {
+                        resultData[index].index_no = index + 1;
+                        resultData[index]['actions'] = (
+                            <>
+                                <>
+                                    <Button
+                                        size="sm"
+                                        className="btn btn-icon btn-rounded btn-primary"
+                                        onClick={(e) => restoreChapter(resultData[index].unit_id, resultData[index].unit_title)}
+                                    >
+                                        <i className="feather icon-plus" /> &nbsp; Restore
+                                    </Button>
+                                    &nbsp;
+                                </>
+                            </>
+                        );
+                        finalDataArray.push(resultData[index]);
+                        console.log('finalDataArray: ', finalDataArray)
+                    }
                 }
+                setUnitData(finalDataArray);
+                console.log('resultData: ', finalDataArray);
+                setIsLoading(false)
             }
-            setUnitData(finalDataArray);
-            console.log('resultData: ', finalDataArray);
-            setIsLoading(false)
+
         }
+
 
 
     }

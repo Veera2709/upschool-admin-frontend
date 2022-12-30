@@ -80,7 +80,7 @@ function Table({ columns, data, modalOpen }) {
                             </option>
                         ))}
                     </select>
-                    entries
+                    Entries
                 </Col>
 
                 <Col className="d-flex justify-content-end">
@@ -210,7 +210,7 @@ const ActiveTopics = (props) => {
         });
     }
 
-  
+
 
     const confirmHandler = (topic_id, topic_title) => {
         var data = {
@@ -306,7 +306,7 @@ const ActiveTopics = (props) => {
                                     history.push('/auth/signin-1');
                                     window.location.reload();
                                 } else {
-                                    console.log("err",error);
+                                    console.log("err", error);
                                 }
                             } else if (error.request) {
                                 // The request was made but no response was received
@@ -319,7 +319,6 @@ const ActiveTopics = (props) => {
                             }
                         });
                 } else {
-                    return MySwal.fire('', 'Chapter is Restore!', 'error');
                 }
             });
         };
@@ -328,78 +327,85 @@ const ActiveTopics = (props) => {
 
 
     const allUnitsList = async (TopicStatus) => {
-        setIsLoading(true)
-        const allUnitsData = await fetchAllTopics();
-        if (allUnitsData.ERROR) {
-            console.log("allUnitsData.ERROR", allUnitsData.ERROR);
-            if (allUnitsData.Error.response.data == 'Invalid Token') {
-                sessionStorage.clear();
-                localStorage.clear();
-                history.push('/auth/signin-1');
-                window.location.reload();
-            }
-        } else {
-            let dataResponse = allUnitsData.Items
-            console.log("dataResponse", dataResponse);
-            let finalDataArray = [];
-            if (TopicStatus === 'Active') {
-                let ActiveresultData = (dataResponse && dataResponse.filter(e => e.topic_status === 'Active'))
-                console.log("ActiveresultData", ActiveresultData);
+        let userJWT = sessionStorage.getItem('user_jwt');
+        console.log("jwt", userJWT);
 
-                for (let index = 0; index < ActiveresultData.length; index++) {
-                    ActiveresultData[index].index_no = index + 1;
-                    ActiveresultData[index]['actions'] = (
-                        <>
-                            <>
-                                <Button
-                                    size="sm"
-                                    className="btn btn-icon btn-rounded btn-primary"
-                                    onClick={(e) => history.push(`/admin-portal/Topics/editTopic/${ActiveresultData[index].topic_id}`)}
-                                >
-                                    <i className="feather icon-edit" /> &nbsp; Edit
-                                </Button>
-                                &nbsp;
-                                {/* if(resultData[index].chapter_status=='Active') */}
-                                <Button
-                                    size="sm"
-                                    className="btn btn-icon btn-rounded btn-danger"
-                                    onClick={(e) => confirmHandler(ActiveresultData[index].topic_id, ActiveresultData[index].topic_title)}
-                                >
-                                    <i className="feather icon-trash-2 " /> &nbsp; Delete
-                                </Button>
-                                &nbsp;
-                            </>
-                        </>
-                    );
-                    finalDataArray.push(ActiveresultData[index]);
-                    console.log('finalDataArray: ', finalDataArray)
-                }
+        if (userJWT === "" || userJWT === undefined || userJWT === "undefined" || userJWT === null) {
+
+            sessionStorage.clear();
+            localStorage.clear();
+            history.push('/auth/signin-1');
+            window.location.reload();
+        } else {
+            setIsLoading(true)
+            const allUnitsData = await fetchAllTopics();
+            if (allUnitsData.ERROR) {
+                console.log("allUnitsData.ERROR", allUnitsData.ERROR);
             } else {
-                let resultData = (dataResponse && dataResponse.filter(e => e.topic_status === 'Archived'))
-                for (let index = 0; index < resultData.length; index++) {
-                    resultData[index].index_no = index + 1;
-                    resultData[index]['actions'] = (
-                        <>
+                let dataResponse = allUnitsData.Items
+                console.log("dataResponse", dataResponse);
+                let finalDataArray = [];
+                if (TopicStatus === 'Active') {
+                    let ActiveresultData = (dataResponse && dataResponse.filter(e => e.topic_status === 'Active'))
+                    console.log("ActiveresultData", ActiveresultData);
+
+                    for (let index = 0; index < ActiveresultData.length; index++) {
+                        ActiveresultData[index].index_no = index + 1;
+                        ActiveresultData[index]['actions'] = (
                             <>
-                                <Button
-                                    size="sm"
-                                    className="btn btn-icon btn-rounded btn-primary"
-                                    onClick={(e) => restoreChapter(resultData[index].topic_id, resultData[index].topic_title)}
-                                >
-                                    <i className="feather icon-plus" /> &nbsp; Restore
-                                </Button>
-                                &nbsp;
+                                <>
+                                    <Button
+                                        size="sm"
+                                        className="btn btn-icon btn-rounded btn-primary"
+                                        onClick={(e) => history.push(`/admin-portal/Topics/editTopic/${ActiveresultData[index].topic_id}`)}
+                                    >
+                                        <i className="feather icon-edit" /> &nbsp; Edit
+                                    </Button>
+                                    &nbsp;
+                                    {/* if(resultData[index].chapter_status=='Active') */}
+                                    <Button
+                                        size="sm"
+                                        className="btn btn-icon btn-rounded btn-danger"
+                                        onClick={(e) => confirmHandler(ActiveresultData[index].topic_id, ActiveresultData[index].topic_title)}
+                                    >
+                                        <i className="feather icon-trash-2 " /> &nbsp; Delete
+                                    </Button>
+                                    &nbsp;
+                                </>
                             </>
-                        </>
-                    );
-                    finalDataArray.push(resultData[index]);
-                    console.log('finalDataArray: ', finalDataArray)
+                        );
+                        finalDataArray.push(ActiveresultData[index]);
+                        console.log('finalDataArray: ', finalDataArray)
+                    }
+                } else {
+                    let resultData = (dataResponse && dataResponse.filter(e => e.topic_status === 'Archived'))
+                    for (let index = 0; index < resultData.length; index++) {
+                        resultData[index].index_no = index + 1;
+                        resultData[index]['actions'] = (
+                            <>
+                                <>
+                                    <Button
+                                        size="sm"
+                                        className="btn btn-icon btn-rounded btn-primary"
+                                        onClick={(e) => restoreChapter(resultData[index].topic_id, resultData[index].topic_title)}
+                                    >
+                                        <i className="feather icon-plus" /> &nbsp; Restore
+                                    </Button>
+                                    &nbsp;
+                                </>
+                            </>
+                        );
+                        finalDataArray.push(resultData[index]);
+                        console.log('finalDataArray: ', finalDataArray)
+                    }
                 }
+                setTopicData(finalDataArray);
+                console.log('resultData: ', finalDataArray);
+                setIsLoading(false)
             }
-            setTopicData(finalDataArray);
-            console.log('resultData: ', finalDataArray);
-            setIsLoading(false)
+
         }
+
 
 
     }
