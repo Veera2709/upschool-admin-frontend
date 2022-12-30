@@ -21,14 +21,6 @@ import Select from 'react-select';
 
 
 
-
-
-
-
-
-;
-
-
 const EditDigiCard = () => {
 
 
