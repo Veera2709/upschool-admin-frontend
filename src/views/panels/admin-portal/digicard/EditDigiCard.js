@@ -272,7 +272,7 @@ const EditDigiCard = () => {
                                                 title: 'DigiCard Updated successfully!',
                                                 icon: 'success',
                                             }).then((willDelete) => {
-
+                                                history.push('/admin-portal/active-digiCard');
                                                 window.location.reload();
 
                                             })
