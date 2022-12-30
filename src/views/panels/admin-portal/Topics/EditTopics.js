@@ -103,7 +103,7 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
                         title: 'Topic Updated successfully!',
                         icon: 'success',
                     }).then((willDelete) => {
-
+                        history.push('/admin-portal/Topics/active-topics');
                         window.location.reload();
 
                     })

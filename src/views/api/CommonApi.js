@@ -24,7 +24,8 @@ export const fetchIndividualDigiCard = async (url, digi_card_id) => {
             })
             .catch((error) => {
                 console.log(error);
-                resolve('Error', error);
+                resolve({ Error: error });
+
             });
     });
 };
@@ -38,8 +39,10 @@ export const fetchAllDigiCards = (url) => {
                 console.log(response);
                 resolve(response.data);
             })
-            .catch((err) => {
-                console.log(err)
+            .catch((error) => {
+                console.log(error)
+                resolve({ Error: error });
+
             })
     });
 }
