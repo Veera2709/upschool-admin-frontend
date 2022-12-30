@@ -80,7 +80,7 @@ function Table({ columns, data, modalOpen }) {
                             </option>
                         ))}
                     </select>
-                    entries
+                    Entries
                 </Col>
 
                 <Col className="d-flex justify-content-end">
