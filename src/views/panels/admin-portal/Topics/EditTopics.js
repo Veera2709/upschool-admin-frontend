@@ -326,7 +326,7 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
                                                 {defaultOption && (<div className="form-group fill" style={{ position: "relative", zIndex: 100 }}>
                                                     <label className="floating-label">
                                                         <small className="text-danger">* </small>
-                                                        pre-post learning
+                                                        Pre-Post learning
                                                     </label>
                                                     {defaultOption.length === 0 ? (
 

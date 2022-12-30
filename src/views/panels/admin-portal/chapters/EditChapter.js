@@ -341,7 +341,7 @@ const EditChapter = () => {
                                         </div><br />
                                         <div className="form-group fill" style={{ position: "relative", zIndex: 20 }}>
                                             <label className="floating-label" htmlFor="postlearning_topic">
-                                                <small className="text-danger">* </small> Postlearning Topic
+                                                <small className="text-danger">* </small> Post-learning Topic
                                             </label>
                                             {defaultPostleraing.length === 0 ? (
 
@@ -397,7 +397,7 @@ const EditChapter = () => {
                                     <Col sm={6}>
                                         <div className="form-group fill" style={{ position: "relative", zIndex: 20 }}>
                                             <label className="floating-label" htmlFor="prelearning_topic">
-                                                <small className="text-danger">* </small>Prelearning Topic
+                                                <small className="text-danger">* </small>Pre-learning Topic
                                             </label>
                                             {defaultPrelearning.length === 0 ? (
 

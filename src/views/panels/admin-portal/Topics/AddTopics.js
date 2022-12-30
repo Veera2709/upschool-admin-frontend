@@ -270,7 +270,7 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
                                     <div className="form-group fill">
                                         <label className="floating-label" >
                                             <small className="text-danger">* </small>
-                                            pre-post learning
+                                            Pre-Post learning
                                         </label>
                                         <Select
                                             className="basic-single"

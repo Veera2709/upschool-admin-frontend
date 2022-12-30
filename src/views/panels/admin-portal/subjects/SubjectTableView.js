@@ -397,7 +397,7 @@ function Table({ columns, data }) {
                             </option>
                         ))}
                     </select>
-                    entries
+                    Entries
                 </Col>
                 <Col className="d-flex justify-content-end">
                     <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
