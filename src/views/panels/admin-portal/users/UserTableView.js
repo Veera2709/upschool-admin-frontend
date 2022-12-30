@@ -725,12 +725,41 @@ const UserTableView = ({ _userRole }) => {
 
 
   useEffect(() => {
+    const validateJWT = sessionStorage.getItem('user_jwt');
 
-    fetchUserData();
+    if (validateJWT === "" || validateJWT === null || validateJWT === undefined || validateJWT === "undefined") {
+
+        sessionStorage.clear();
+        localStorage.clear();
+
+        history.push('/auth/signin-1');
+        window.location.reload();
+
+      }
+      else
+      {
+        fetchUserData();
+      }
+    
   }, [pageLocation]);
 
   useEffect(() => {
-    fetchUserData();
+    const validateJWT = sessionStorage.getItem('user_jwt');
+
+    if (validateJWT === "" || validateJWT === null || validateJWT === undefined || validateJWT === "undefined") {
+
+        sessionStorage.clear();
+        localStorage.clear();
+
+        history.push('/auth/signin-1');
+        window.location.reload();
+
+      }
+      else
+      {
+        fetchUserData();
+      }
+    
   }, [_userRole]);
 
   return (
