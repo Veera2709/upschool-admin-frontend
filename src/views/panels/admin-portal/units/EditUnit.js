@@ -221,7 +221,7 @@ const EditUnit = () => {
                                                 title: 'Unit Updated successfully!',
                                                 icon: 'success',
                                             }).then((willDelete) => {
-
+                                                history.push('/admin-portal/units/active-units');
                                                 window.location.reload();
 
                                             })

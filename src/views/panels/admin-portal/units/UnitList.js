@@ -277,7 +277,7 @@ const UnitList = (props) => {
                 text: 'Confirm to Restore ' + unit_title + ' unit',
                 type: 'warning',
                 showCloseButton: true,
-            showCancelButton: true
+                showCancelButton: true
             }).then((willDelete) => {
                 if (willDelete.value) {
                     axios

@@ -86,7 +86,7 @@ const EditChapter = () => {
         setValue(e.value);
     };
 
-  
+
 
     const fetchAllData = async () => {
 
@@ -278,7 +278,7 @@ const EditChapter = () => {
                                                 title: 'Chapter Updated successfully!',
                                                 icon: 'success',
                                             }).then((willDelete) => {
-
+                                                history.push('/admin-portal/chapters/active-chapter');
                                                 window.location.reload();
 
                                             })
@@ -382,7 +382,7 @@ const EditChapter = () => {
                                             <Form.Label htmlFor="chapter_description"> <small className="text-danger">* </small>Chapter Description</Form.Label>
                                             <Form.Control
                                                 as="textarea"
-                                                onChange={(e)=>{handleChange(e);setIsShownDes(true)}}
+                                                onChange={(e) => { handleChange(e); setIsShownDes(true) }}
                                                 rows="4"
                                                 onBlur={handleBlur}
                                                 name="chapter_description"
