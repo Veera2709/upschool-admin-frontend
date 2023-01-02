@@ -290,6 +290,29 @@ const routes = [
       },
       {
         exact: true,
+        path: '/admin-portal/classes/active-classes',
+        component: lazy(() => import('./views/panels/admin-portal/class/ClassesList'))
+
+      },
+      {
+        exact: true,
+        path: '/admin-portal/classes/archived-classes',
+        component: lazy(() => import('./views/panels/admin-portal/class/ClassesList'))
+      },
+      // Add Standards
+      {
+        exact: true,
+        path: '/admin-portal/Classes/addClass',
+        component: lazy(() => import('./views/panels/admin-portal/class/AddClass'))
+      },
+      // Edit classes
+      {
+        exact: true,
+        path: '/admin-portal/Classes/editClass/:class_id',
+        component: lazy(() => import('./views/panels/admin-portal/class/EditClass'))
+      },
+      {
+        exact: true,
         path: '/app/dashboard/analytics',
         component: lazy(() => import('./views/dashboard/DashAnalytics'))
       },

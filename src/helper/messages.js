@@ -4,6 +4,9 @@ const MESSAGES = {
     DigiCardNameExists: 'DigiCard Title exists already!',
     ChapterNameExists: 'Chapter Title exists already!',
     UnitNameExists: 'Unit Title exists already!',
+    ClassNameExists: 'Class Name exists already!',
+    InvalidToken: 'Invalid Token',
+    InvalidClassName: 'Invalid Class Name!',
 
     ComponentAdding: 'Error in adding the component! Please ensure that basic details component is completed.',
     ErrorInSendingEmail: 'Error in sending email!',
