@@ -2,17 +2,16 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Row, Col, Button, Card } from 'react-bootstrap';
 import Swal from 'sweetalert2';
 import axios from 'axios';
+import * as Yup from 'yup';
+import { Formik } from 'formik';
 import { useHistory } from 'react-router-dom';
 import withReactContent from 'sweetalert2-react-content';
+
 import MESSAGES from '../../../../helper/messages';
 import dynamicUrl from '../../../../helper/dynamicUrls';
 import { defaultPostApi } from '../../../common-ui-components/sow/bgv-api/BgvApi';
 import { bgvAlerts } from '../../../common-ui-components/sow/bgv-api/bgvAlerts';
 import { areFilesInvalidBulkUpload, isEmptyObject } from '../../../../util/utils';
-
-import * as Yup from 'yup';
-import { Formik } from 'formik';
-
 import { bulkUpload } from './user-bulk-upload-api/bulkUpload';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 
@@ -24,6 +23,9 @@ const UsersBulkUpload = ({ className, ...rest }) => {
   const [schoolID, setSchoolID] = useState('');
   const [disableButton, setDisableButton] = useState(false);
   const [loader, showLoader, hideLoader] = useFullPageLoader();
+  const [displayHeader, setDisplayHeader] = useState(true);
+  const [displayHeading, setDisplayHeading] = useState(sessionStorage.getItem('user_type'));
+  const threadLinks = document.getElementsByClassName('page-header');
 
   const sweetAlertHandler = (alert) => {
     const MySwal = withReactContent(Swal);
@@ -73,6 +75,18 @@ const UsersBulkUpload = ({ className, ...rest }) => {
             let responseData = response.data;
             setSchoolName_ID(responseData);
             hideLoader();
+
+            console.log(threadLinks);
+            console.log(threadLinks.length);
+
+            if (threadLinks.length === 2) {
+
+              setDisplayHeader(false);
+
+            } else {
+
+              setDisplayHeader(true);
+            }
 
           } else {
 
@@ -205,6 +219,32 @@ const UsersBulkUpload = ({ className, ...rest }) => {
         <>
 
           <React.Fragment>
+
+            {
+              displayHeader && (
+                <div className="page-header">
+                  <div className="page-block">
+                    <div className="row align-items-center">
+                      <div className="col-md-12">
+                        <div className="page-header-title">
+                          <h5 className="m-b-10">{displayHeading}</h5>
+                        </div><ul className="breadcrumb  ">
+                          <li className="breadcrumb-item  ">
+                            <a href="/upschool/admin-portal/admin-dashboard">
+                              <i className="feather icon-home">
+                              </i>
+                            </a>
+                          </li>
+                          <li className="breadcrumb-item  ">Users</li>
+                          <li className="breadcrumb-item  ">{displayHeading}</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )
+            }
+
             <Card>
 
               <Card.Body>
@@ -332,6 +372,7 @@ const UsersBulkUpload = ({ className, ...rest }) => {
                 </Formik>
               </Card.Body>
             </Card>
+
 
           </React.Fragment>
         </>

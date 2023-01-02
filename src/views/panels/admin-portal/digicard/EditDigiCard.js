@@ -19,8 +19,8 @@ import { fetchIndividualDigiCard, fetchAllDigiCards } from '../../../api/CommonA
 import { Link, useHistory, useParams } from 'react-router-dom';
 import Select from 'react-select';
 
-const EditDigiCard = () => {
 
+const EditDigiCard = () => {
 
     const colourOptions = [];
 
@@ -58,7 +58,6 @@ const EditDigiCard = () => {
         const newTags = [].concat(tags, tag);
         setTags(newTags);
     };
-
 
     const sweetAlertHandler = (alert) => {
         MySwal.fire({
@@ -121,8 +120,6 @@ const EditDigiCard = () => {
                 setTags(indidvidualDigicard.Items[0].digi_card_keywords)
                 selectedOption(indidvidualDigicard.Items[0].related_digi_cards)
 
-
-
                 let tempArr = [];
                 indidvidualDigicard.Items[0].related_digi_cards.forEach(function (entry) {
                     colourOptions.forEach(function (childrenEntry) {
@@ -140,8 +137,6 @@ const EditDigiCard = () => {
     }
 
     useEffect(() => {
-
-
         let userJWT = sessionStorage.getItem('user_jwt');
         console.log("jwt", userJWT);
 
@@ -557,10 +552,7 @@ const EditDigiCard = () => {
             </Card>
 
         </div>
-
-
     )
-
 };
 
 export default EditDigiCard;

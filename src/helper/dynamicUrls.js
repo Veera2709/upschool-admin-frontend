@@ -2,36 +2,29 @@
 
 const baseUrl = process.env.REACT_APP_LAMBDA_URL;
 
-
 const dynamicUrl = {
     
+    // Login
     login: baseUrl + '/login',
     loginWithOTP: baseUrl + '/loginWithOTP',
     validateOTP: baseUrl + '/validateOTP',
     logout: baseUrl + '/logout',
 
+    // Digicard
     insertDigicard: baseUrl + '/addDigiCard',
     fetchAllDigiCards: baseUrl + '/fetchAllDigiCards',
     fetchIndividualDigiCard: baseUrl + '/fetchIndividualDigiCard',
     editDigiCard: baseUrl + '/editDigiCard',
     toggleDigiCardStatus: baseUrl + '/toggleDigiCardStatus',
-    //
+
+    // School
     insertSchool: baseUrl + '/insertSchool',
     fetchAllSchool: baseUrl + '/fetchAllSchool',
     updateSchool: baseUrl + '/updateSchool',
     fetchIndividualSchool: baseUrl + '/fetchIndividualSchool',
     deleteSchool: baseUrl + '/deleteSchool',
     fetchUpschoolAndClientClasses: baseUrl + '/fetchUpschoolAndClientClasses',
-    classSubscribe: baseUrl + '/classSubscribe',
-
-    fetchSchoolIdNames: baseUrl + '/fetchSchoolIdNames',
-    fetchAllUsersData: baseUrl + '/fetchAllUsersData',
-    fetchInactiveUsersData: baseUrl + '/fetchInactiveUsersData',
-    getUserBulkuploadUrl: baseUrl + '/getUserBulkuploadUrl',
-    bulkUsersUpload: baseUrl + '/bulkUsersUpload',
-    fetchIndividualUser: baseUrl + '/fetchIndividualUser',
-    updateUser: baseUrl + '/updateUser',
-    deleteUser: baseUrl + '/deleteUser',
+    classSubscribe: baseUrl + '/classSubscribe',    
 
     //chapters
     fetchAllChapters: baseUrl + '/fetchAllChapters',
@@ -43,6 +36,13 @@ const dynamicUrl = {
     fetchPreLearningTopics: baseUrl + '/fetchPreLearningTopics',
     fetchPostLearningTopics: baseUrl + '/fetchPostLearningTopics',
 
+    // Users
+    fetchSchoolIdNames: baseUrl + '/fetchSchoolIdNames',
+    fetchAllUsersData: baseUrl + '/fetchAllUsersData',
+    fetchInactiveUsersData: baseUrl + '/fetchInactiveUsersData',
+    getUserBulkuploadUrl: baseUrl + '/getUserBulkuploadUrl',
+    bulkUsersUpload: baseUrl + '/bulkUsersUpload',
+    fetchIndividualUser: baseUrl + '/fetchIndividualUser',
     fetchIndividualUserByRole: baseUrl + '/fetchIndividualUserByRole',
     updateUsersByRole: baseUrl + '/updateUsersByRole',
     toggleUserStatus: baseUrl + '/toggleUserStatus',
@@ -55,6 +55,7 @@ const dynamicUrl = {
     editUnit: baseUrl + '/editUnit',
     toggleUnitStatus: baseUrl + '/toggleUnitStatus',
 
+    // Concepts
     fetchAllConcepts: baseUrl + '/fetchAllConcepts',
     fetchDigicardAndConcept: baseUrl + '/fetchDigicardAndConcept',
     addConcepts: baseUrl + '/addConcepts',
@@ -72,6 +73,7 @@ const dynamicUrl = {
     toggleSchoolStatus: baseUrl + '/toggleSchoolStatus',
     fetchInactiveSchool: baseUrl + '/fetchInactiveSchool',
 
+    // Subjects
     fetchUnitAndSubject: baseUrl + '/fetchUnitAndSubject',
     fetchAllSubjects: baseUrl + '/fetchAllSubjects',
     toggleSubjectStatus: baseUrl + '/toggleSubjectStatus',
