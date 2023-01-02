@@ -223,3 +223,110 @@ export const getIndividualTopic = (topic_id) => {
     });
 }
 
+export const addClass = (formData) => { 
+    console.log("formData : ", formData);
+  
+    return new Promise((resolve, reject) => {
+        axios.post(url.addClass, {
+          data: formData
+        }, {
+            headers: { Authorization: sessionStorage.getItem('user_jwt') }
+        })
+            .then((response) => {
+                console.log(response);
+                resolve(response.data);
+            })
+            .catch((error) => {
+                resolve({ Error: error });
+            })
+    });
+  }
+  export const editClass = (formData) => { 
+    console.log("formData : ", formData);
+  
+    return new Promise((resolve, reject) => {
+        axios.post(url.editClass, {
+          data: formData
+        }, {
+            headers: { Authorization: sessionStorage.getItem('user_jwt') }
+        })
+            .then((response) => {
+                console.log(response);
+                resolve(response.data);
+            })
+            .catch((error) => {
+                resolve({ Error: error });
+            })
+    });
+  }
+  export const toggleClassStatus = (data) => { 
+    console.log("data : ", data);
+  
+    return new Promise((resolve, reject) => {
+        axios.post(url.toggleClassStatus, {
+          data: data
+        }, {
+            headers: { Authorization: sessionStorage.getItem('user_jwt') }
+        })
+            .then((response) => {
+                console.log(response);
+                resolve(response.data);
+            })
+            .catch((error) => {
+                resolve({ Error: error });
+            })
+    });
+  }
+  export const fetchAllClass = (class_status) => { 
+    console.log("class_status : ", class_status);
+  
+    return new Promise((resolve, reject) => {
+        axios.post(url.fetchAllClass, {
+          data:{class_status: class_status}
+        }, {
+            headers: { Authorization: sessionStorage.getItem('user_jwt') }
+        })
+            .then((response) => {
+                console.log(response);
+                resolve(response.data);
+            })
+            .catch((error) => {
+                resolve({ Error: error });
+            })
+    });
+  }
+  export const fetchSubjectIdName = () => { 
+    
+    return new Promise((resolve, reject) => {
+        axios.post(url.fetchSubjectIdName, {}, {
+            headers: { Authorization: sessionStorage.getItem('user_jwt') }
+        })
+            .then((response) => {
+                console.log(response);
+                resolve(response.data);
+            })
+            .catch((error) => {
+                resolve({ Error: error });
+            })
+    });
+  }
+  export const fetchIndividualClass = (class_id) => { 
+    console.log("class_id : ", class_id);
+    
+    return new Promise((resolve, reject) => {
+        axios.post(url.fetchIndividualClass, {
+          data:{class_id: class_id}
+        }, {
+            headers: { Authorization: sessionStorage.getItem('user_jwt') }
+        })
+            .then((response) => {
+                console.log(response);
+                resolve(response.data);
+            })
+            .catch((error) => {
+                resolve({ Error: error });
+            })
+    });
+  }
+  
+

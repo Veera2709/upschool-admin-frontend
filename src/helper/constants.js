@@ -84,6 +84,12 @@ export const AddUnit = {
   UnittitleTooLong: "Unit title is too long!",
   DescriptionRequired: "Unit Description is required!",
 };
+
+export const AddClasses = {
+  ClasstitleTooShort: 'Class Title is too short',
+  ClasstitleTooLong: 'Class Title is too Long',
+  ClasstitleRequired: 'Class Title is required!',
+};
 export const AddTopic = {
   
   TopictitleRequired: 'Topic title is required!',
