@@ -569,7 +569,7 @@ const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool, fetchSchoolD
                                                     <div className="row profile-view-radio-button-view">
                                                         <Form.Check
                                                             id={`radio-fresher`}
-                                                            label="Yes"
+                                                            // label="Yes"
                                                             error={touched.fresher && errors.fresher}
                                                             type="switch"
                                                             variant={'outline-primary'}
@@ -579,7 +579,9 @@ const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool, fetchSchoolD
                                                             onChange={(e) => handleRadioChange(e)}
                                                         // className='ml-3 col-md-6'
                                                         />
-
+                                                        <Form.Label className="profile-view-question" id={`radio-fresher`}>
+                                                            {_radio === true ? 'Yes' : 'No'}
+                                                        </Form.Label>
 
                                                     </div>
                                                 </div>

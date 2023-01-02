@@ -9,6 +9,8 @@ import UserTableView from './UserTableView';
 const ListUsers = () => {
     const history = useHistory();
     const [state, setState] = useState(false);
+    const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
+
     useEffect(() => {
         const validateJWT = sessionStorage.getItem('user_jwt');
 
@@ -22,6 +24,9 @@ const ListUsers = () => {
 
         }
         else {
+
+            let storeValue = pageLocation === 'active-users' ? 'Active Users' : 'Archived Users';
+            sessionStorage.setItem('user_type', storeValue);
             setState(true);
         }
     }, [])
