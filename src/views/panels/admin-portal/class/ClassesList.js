@@ -235,18 +235,16 @@ const StandardList = (props) => {
   const toggleCall = async (data) => {
     const toggleClassStatusRes = await toggleClassStatus(data);
     if (toggleClassStatusRes.Error) {
-      let errStatus = toggleClassStatusRes.Error.response.status;
-      errStatus === 400
-        ? sweetAlertHandler({
-          title: "Error",
-          type: "error",
-          text: data.activity == "Delete" ? MESSAGES.ERROR.DeletingClass : MESSAGES.ERROR.RestoringClass,
-        })
-        : sweetAlertHandler({
-          title: "Error",
-          type: "error",
-          text: toggleClassStatusRes.Error,
-        });
+    
+      if (toggleClassStatusRes.Error.response.data === 'Invalid Token') {
+        sessionStorage.clear();
+        localStorage.clear();
+        history.push('/auth/signin-1');
+        window.location.reload();
+      } else {
+        sweetAlertHandler({ title: 'Sorry', type: 'warning', text: toggleClassStatusRes.Error.response.data });
+      }
+
     } else {
       setReloadAllData(data.activity == "Delete" ? 'Deleted' : "Restored");
       return MySwal.fire(
@@ -287,7 +285,7 @@ const StandardList = (props) => {
       : (class_status = "Archived");
     const allClassesData = await fetchAllClass(class_status);
 
-    if (allClassesData.ERROR || allClassesData.Items === undefined) { 
+    if (allClassesData.ERROR || allClassesData.Items === undefined) {
       console.log("allClassesData.ERROR", allClassesData.ERROR);
       if (allClassesData.Error.response.data == 'Invalid Token') {
         console.log("---------------------");
@@ -382,62 +380,62 @@ const StandardList = (props) => {
   };
 
   useEffect(() => {
-      if (pageLocation) {
-        console.log("--", pageLocation);
-        const url = pageLocation === "active-classes" ? "Active" : "Archived";
-        allClassesList(url);
+    if (pageLocation) {
+      console.log("--", pageLocation);
+      const url = pageLocation === "active-classes" ? "Active" : "Archived";
+      allClassesList(url);
     }
   }, [reloadAllData]);
 
   return (
     <div>
+      {
+        isLoading ? (
+          <BasicSpinner />
+        ) : (
+          <>
             {
-                isLoading ? (
-                    <BasicSpinner />
-                ) : (
-                    <>
-                        {
-                            classData.length <= 0 ? (
-                                <>
-                                    < React.Fragment >
-                                        <div>
-                                            <h3 style={{ textAlign: 'center' }}>No Class Found</h3>
-                                            <div className="form-group fill text-center">
-                                                <br></br>
+              classData.length <= 0 ? (
+                <>
+                  < React.Fragment >
+                    <div>
+                      <h3 style={{ textAlign: 'center' }}>No Class Found</h3>
+                      <div className="form-group fill text-center">
+                        <br></br>
 
-                                                <Link to={'/admin-portal/Classes/addClass'}>
-                                                    <Button variant="success" className="btn-sm btn-round has-ripple ml-2">
-                                                        <i className="feather icon-plus" /> Add Class
-                                                    </Button>
-                                                </Link>
-                                            </div>
+                        <Link to={'/admin-portal/Classes/addClass'}>
+                          <Button variant="success" className="btn-sm btn-round has-ripple ml-2">
+                            <i className="feather icon-plus" /> Add Class
+                          </Button>
+                        </Link>
+                      </div>
 
-                                        </div>
-                                    </React.Fragment>
-                                </>
-                            ) : (
-                                <>
-                                    <React.Fragment>
-                                        <Row>
-                                            <Col sm={12}>
-                                                <Card>
-                                                    <Card.Header>
-                                                        <Card.Title as="h5">Class List</Card.Title>
-                                                    </Card.Header>
-                                                    <Card.Body>
-                                                        <Table columns={columns} data={classData} />
-                                                    </Card.Body>
-                                                </Card>
-                                            </Col>
-                                        </Row>
-                                    </React.Fragment>
-                                </>
-                            )
-                        }
-                    </>
-                )
+                    </div>
+                  </React.Fragment>
+                </>
+              ) : (
+                <>
+                  <React.Fragment>
+                    <Row>
+                      <Col sm={12}>
+                        <Card>
+                          <Card.Header>
+                            <Card.Title as="h5">Class List</Card.Title>
+                          </Card.Header>
+                          <Card.Body>
+                            <Table columns={columns} data={classData} />
+                          </Card.Body>
+                        </Card>
+                      </Col>
+                    </Row>
+                  </React.Fragment>
+                </>
+              )
             }
-        </div >
+          </>
+        )
+      }
+    </div >
   );
 };
 export default StandardList;
