@@ -403,96 +403,70 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
 
                 {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
                     <form noValidate onSubmit={handleSubmit} className={className} {...rest}>
+
                         <div class="row">
                             <div className='col-sm-6'>
-                                <div className=''>
-                                    <div class="form-group fill">
-                                        <label class="floating-label" for="school_name">
-                                            <small class="text-danger">* </small>
-                                            School Name</label>
-                                        <input
-                                            error={touched.permCrimPhoneNo && errors.permCrimPhoneNo}
-                                            class="form-control"
-                                            type="text"
-                                            name="school_name"
-                                            onBlur={handleBlur}
-                                            onChange={handleChange}
-                                            value={values.school_name}
-                                            ref={schoolNameRef}
+                                <div class="form-group fill">
+                                    <label class="floating-label" for="school_name">
+                                        <small class="text-danger">* </small>
+                                        School Name</label>
+                                    <input
+                                        error={touched.permCrimPhoneNo && errors.permCrimPhoneNo}
+                                        class="form-control"
+                                        type="text"
+                                        name="school_name"
+                                        onBlur={handleBlur}
+                                        onChange={handleChange}
+                                        value={values.school_name}
+                                        ref={schoolNameRef}
+                                    />
+                                    {touched.school_name && errors.school_name && (
+                                        <small className="text-danger form-text">{errors.school_name}</small>
+                                    )}
+                                </div>
+                            </div>
+                            <div className='col-sm-6'>
+                                <div className="col-md-12" style={{ paddingLeft: "0px" }}>
+                                    <div className="form-group fill">
+
+                                        <label className="floating-label">
+                                            <small className="text-danger">* </small>
+                                            School Board
+                                        </label>
+                                        {console.log("HERE : ", previousBoards)}
+
+                                        <Multiselect
+                                            options={schoolBoardOptions}
+                                            displayValue="value"
+                                            selectionLimit="25"
+                                            name="school_board"
+                                            // selectedValues={defaultOptions}
+                                            onSelect={handleSelectBoard}
+                                            onRemove={handleOnRemove}
                                         />
-                                        {touched.school_name && errors.school_name && (
-                                            <small className="text-danger form-text">{errors.school_name}</small>
+
+                                        {/* {selectedBoards === true && <small className="text-danger form-text">{'Please select a Board'}</small>} */}
+
+                                        {schoolBoardErrMsg && (
+                                            <small className="text-danger form-text">{'Please select School Board'}</small>
                                         )}
+
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
 
+                            <div className='col-sm-6'>
+                                <div class="form-group fill">
 
-                                    {/* <Col sm={6}>
-                                        <Form.Group>
-                                            <FormLabel className="floating-label" htmlFor="pre_post"><small className="text-danger">* </small>Related Topics</FormLabel>
-                                            <Multiselect
-                                                options={topicDigiCardId}
-                                                displayValue="name"
-                                                selectionLimit="25"
-                                                onSelect={handleOnSelectItem}
-                                                onRemove={handleOnRemoveItem}
-                                            />
-                                            {touched.pre_post && errors.pre_post && <small className="text-danger form-text">{errors.pre_post}</small>}
-                                        </Form.Group>
-                                    </Col> */}
-
-
-
-
-                                    <div className="col-md-12" style={{ paddingLeft: "0px" }}>
-                                        <div className="form-group fill">
-
-                                            <label className="floating-label">
-                                                <small className="text-danger">* </small>
-                                                School Board
+                                    <div className="row">
+                                        <div className="col">
+                                            <label class="floating-label">
+                                                <small class="text-danger">* </small>Subscription Active
                                             </label>
-                                            {console.log("HERE : ", previousBoards)}
-                                            {/* <Select
-                                                defaultValue={previousBoards}
-                                                isMulti
-                                                name="colors"
-                                                options={schoolBoardOptions}
-                                                className="basic-multi-select"
-                                                classNamePrefix="Select"
-                                                onChange={event => handleDigicardChange(event)}
-                                            /> */}
-
-                                            {/* <Select
-                                                isMulti
-                                                name="school_board"
-                                                options={schoolBoardOptions}
-                                                onChange={event => handleSelectChange(event)}
-                                            /> */}
-
-                                            <Multiselect
-                                                options={schoolBoardOptions}
-                                                displayValue="value"
-                                                selectionLimit="25"
-                                                name="school_board"
-                                                // selectedValues={defaultOptions}
-                                                onSelect={handleSelectBoard}
-                                                onRemove={handleOnRemove}
-                                            />
-
-                                            {/* {selectedBoards === true && <small className="text-danger form-text">{'Please select a Board'}</small>} */}
-
-                                            {schoolBoardErrMsg && (
-                                                <small className="text-danger form-text">{'Please select School Board'}</small>
-                                            )}
-
                                         </div>
-                                    </div>
-
-
-
-                                    <div className="col-md-12" style={{ paddingLeft: "0px" }}>
-                                        <div class="form-group fill">
-                                            <label class="floating-label" for="email">
-                                                <small class="text-danger">* </small>Subscription Active</label>
+                                        <div className="col">
                                             <div className="row profile-view-radio-button-view ml-2">
                                                 <Form.Check
                                                     id={`radio-fresher`}
@@ -508,12 +482,20 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                                                     {_radio === true ? 'Yes' : 'No'}
                                                 </Form.Label>
                                             </div>
+
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                        </div>
+
+                        <div class="row">
                             <div className="col-md-6">
-                                <div class="form-group fill"><label class="floating-label" for="school_logo">School Logo</label>
+                                <div class="form-group fill">
+                                    <label class="floating-label" for="school_logo">
+                                        <small class="text-danger">* </small>
+                                        School Logo
+                                    </label>
                                     <input
                                         class="form-control"
                                         name="school_logo"
@@ -532,323 +514,322 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                                         <small className="text-danger form-text">Image can not be empty!</small>
                                     )}
                                 </div>
+                            </div>
+                            <div className="col-md-6">
                                 <img width={150} src={imgFile} alt="" className="img-fluid mb-3" />
-
                             </div>
 
 
+                        </div>
 
-                            <div className='col-sm-12'>
-                                <div className='row'>
-                                    <div className='col-md-6'>
-                                        <div class="form-group fill">
-                                            <label class="floating-label" for="businessAddress">
-                                                <small class="text-danger">* </small>
-                                                Business Address</label>
+                        <div className="row">
+                            <div className='col-md-6'>
+                                <div class="form-group fill">
+                                    <label class="floating-label" for="businessAddress">
+                                        <small class="text-danger">* </small>
+                                        Business Address</label>
 
-                                            <Row className="my-3">
-                                                <Col sm={5}>
-                                                    <label>Contact Name</label>
-                                                </Col>
-                                                <Col sm={7}>
-                                                    <input
-                                                        className="form-control"
-                                                        // error={touched.permCrimPhoneNo && errors.permCrimPhoneNo}
-                                                        name="contact_name"
-                                                        onBlur={handleBlur}
-                                                        onChange={handleChange}
-                                                        // onWheel={(e) => e.target.blur()}
-                                                        type="text"
-                                                        ref={contactNameRef}
-                                                        // value=''
-                                                        value={values.contact_name}
-                                                    />
-                                                    {touched.contact_name && errors.contact_name && (
-                                                        <small className="text-danger form-text">{errors.contact_name}</small>
-                                                    )}
-                                                </Col>
-                                            </Row>
+                                    <Row className="my-3">
+                                        <Col sm={5}>
+                                            <label>Contact Name</label>
+                                        </Col>
+                                        <Col sm={7}>
+                                            <input
+                                                className="form-control"
+                                                // error={touched.permCrimPhoneNo && errors.permCrimPhoneNo}
+                                                name="contact_name"
+                                                onBlur={handleBlur}
+                                                onChange={handleChange}
+                                                // onWheel={(e) => e.target.blur()}
+                                                type="text"
+                                                ref={contactNameRef}
+                                                // value=''
+                                                value={values.contact_name}
+                                            />
+                                            {touched.contact_name && errors.contact_name && (
+                                                <small className="text-danger form-text">{errors.contact_name}</small>
+                                            )}
+                                        </Col>
+                                    </Row>
 
-                                            <Row className="my-3">
-                                                <Col sm={5}>
-                                                    <label>Address Line 1</label>
-                                                </Col>
-                                                <Col sm={7}>
-                                                    <input
-                                                        className="form-control"
-                                                        // error={touched.permCrimPhoneNo && errors.permCrimPhoneNo}
-                                                        name="address_line1"
-                                                        onBlur={handleBlur}
-                                                        onChange={handleChange}
-                                                        // onWheel={(e) => e.target.blur()}
-                                                        type="text"
-                                                        ref={addressLine1Ref}
-                                                        value={values.address_line1}
-                                                    />
-                                                    {touched.address_line1 && errors.address_line1 && (
-                                                        <small className="text-danger form-text">{errors.address_line1}</small>
-                                                    )}
-                                                </Col>
-                                            </Row>
+                                    <Row className="my-3">
+                                        <Col sm={5}>
+                                            <label>Address Line 1</label>
+                                        </Col>
+                                        <Col sm={7}>
+                                            <input
+                                                className="form-control"
+                                                // error={touched.permCrimPhoneNo && errors.permCrimPhoneNo}
+                                                name="address_line1"
+                                                onBlur={handleBlur}
+                                                onChange={handleChange}
+                                                // onWheel={(e) => e.target.blur()}
+                                                type="text"
+                                                ref={addressLine1Ref}
+                                                value={values.address_line1}
+                                            />
+                                            {touched.address_line1 && errors.address_line1 && (
+                                                <small className="text-danger form-text">{errors.address_line1}</small>
+                                            )}
+                                        </Col>
+                                    </Row>
 
-                                            <Row className="my-3">
-                                                <Col sm={5}>
-                                                    <label>Address Line 2</label>
-                                                </Col>
-                                                <Col sm={7}>
-                                                    <input
-                                                        className="form-control"
-                                                        // error={touched.permCrimPhoneNo && errors.permCrimPhoneNo}
-                                                        name="address_line2"
-                                                        onBlur={handleBlur}
-                                                        onChange={handleChange}
-                                                        // onWheel={(e) => e.target.blur()}
-                                                        type="text"
-                                                        ref={addressLine2Ref}
-                                                        value={values.address_line2}
-                                                    />
-                                                    {touched.address_line2 && errors.address_line2 && (
-                                                        <small className="text-danger form-text">{errors.address_line2}</small>
-                                                    )}
-                                                </Col>
-                                            </Row>
-
-
-                                            <Row className="my-3">
-                                                <Col sm={5}>
-                                                    <label>City</label>
-                                                </Col>
-                                                <Col sm={7}>
-                                                    <input
-                                                        className="form-control"
-                                                        // error={touched.permCrimPhoneNo && errors.permCrimPhoneNo}
-                                                        name="city"
-                                                        onBlur={handleBlur}
-                                                        onChange={handleChange}
-                                                        // onWheel={(e) => e.target.blur()}
-                                                        type="text"
-                                                        ref={cityRef}
-                                                        value={values.city}
-                                                    />
-                                                    {touched.city && errors.city && (
-                                                        <small className="text-danger form-text">{errors.city}</small>
-                                                    )}
-                                                </Col>
-                                            </Row>
+                                    <Row className="my-3">
+                                        <Col sm={5}>
+                                            <label>Address Line 2</label>
+                                        </Col>
+                                        <Col sm={7}>
+                                            <input
+                                                className="form-control"
+                                                // error={touched.permCrimPhoneNo && errors.permCrimPhoneNo}
+                                                name="address_line2"
+                                                onBlur={handleBlur}
+                                                onChange={handleChange}
+                                                // onWheel={(e) => e.target.blur()}
+                                                type="text"
+                                                ref={addressLine2Ref}
+                                                value={values.address_line2}
+                                            />
+                                            {touched.address_line2 && errors.address_line2 && (
+                                                <small className="text-danger form-text">{errors.address_line2}</small>
+                                            )}
+                                        </Col>
+                                    </Row>
 
 
-                                            <Row className="my-3">
-                                                <Col sm={5}>
-                                                    <label>Pincode</label>
-                                                </Col>
-                                                <Col sm={7}>
-                                                    <input
-                                                        className="form-control"
-                                                        // error={touched.permCrimPhoneNo && errors.permCrimPhoneNo}
-                                                        name="pincode"
-                                                        onBlur={handleBlur}
-                                                        onChange={handleChange}
-                                                        onWheel={(e) => e.target.blur()}
-                                                        type="number"
-                                                        ref={pincodeRef}
-                                                        value={values.pincode}
-                                                    />
-                                                    {touched.pincode && errors.pincode && (
-                                                        <small className="text-danger form-text">{errors.pincode}</small>
-                                                    )}
-                                                </Col>
-                                            </Row>
-
-                                            <Row className="my-3">
-                                                <Col sm={5}>
-                                                    <label>Phone Number</label>
-                                                </Col>
-                                                <Col sm={7}>
-                                                    <input
-                                                        className="form-control"
-                                                        // error={touched.permCrimPhoneNo && errors.permCrimPhoneNo}
-                                                        name="phone_no"
-                                                        onBlur={handleBlur}
-                                                        onChange={handleChange}
-                                                        onWheel={(e) => e.target.blur()}
-                                                        type="number"
-                                                        ref={phoneNumberRef}
-                                                        value={values.phone_no}
-                                                    />
-                                                    {touched.phone_no && errors.phone_no && (
-                                                        <small className="text-danger form-text">{errors.phone_no}</small>
-                                                    )}
-                                                </Col>
-                                            </Row>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-6">
-
-                                        <div class="form-group fill">
-                                            <label class="floating-label" for="billingAddress"><small class="text-danger">
-                                                * </small>Billing Address</label>
-                                            <Row className="my-3">
-                                                <Col sm={5}>
-                                                    <label>Contact Name</label>
-                                                </Col>
-                                                <Col sm={7}>
-                                                    <input
-                                                        className="form-control"
-                                                        // error={touched.permCrimPhoneNo && errors.permCrimPhoneNo}
-                                                        name="contact_name2"
-                                                        onBlur={handleBlur}
-                                                        onChange={handleChange}
-                                                        // onWheel={(e) => e.target.blur()}
-                                                        type="text"
-                                                        // ref={permCrimPhoneNoRef}
-                                                        value={values.contact_name2}
-                                                    />
-                                                    {touched.contact_name2 && errors.contact_name2 && (
-                                                        <small className="text-danger form-text">{errors.contact_name2}</small>
-                                                    )}
-                                                </Col>
-                                            </Row>
-
-                                            <Row className="my-3">
-                                                <Col sm={5}>
-                                                    <label>Address Line 1</label>
-                                                </Col>
-                                                <Col sm={7}>
-                                                    <input
-                                                        className="form-control"
-                                                        // error={touched.permCrimPhoneNo && errors.permCrimPhoneNo}
-                                                        name="addres_line1_2"
-                                                        onBlur={handleBlur}
-                                                        onChange={handleChange}
-                                                        // onWheel={(e) => e.target.blur()}
-                                                        type="text"
-                                                        // ref={permCrimPhoneNoRef}
-                                                        value={values.addres_line1_2}
-                                                    />
-                                                    {touched.addres_line1_2 && errors.addres_line1_2 && (
-                                                        <small className="text-danger form-text">{errors.addres_line1_2}</small>
-                                                    )}
-                                                </Col>
-                                            </Row>
-
-                                            <Row className="my-3">
-                                                <Col sm={5}>
-                                                    <label>Address Line 2</label>
-                                                </Col>
-                                                <Col sm={7}>
-                                                    <input
-                                                        className="form-control"
-                                                        // error={touched.permCrimPhoneNo && errors.permCrimPhoneNo}
-                                                        name="address_line2_2"
-                                                        onBlur={handleBlur}
-                                                        onChange={handleChange}
-                                                        // onWheel={(e) => e.target.blur()}
-                                                        type="text"
-                                                        // ref={permCrimPhoneNoRef}
-                                                        value={values.address_line2_2}
-                                                    />
-                                                    {touched.address_line2_2 && errors.address_line2_2 && (
-                                                        <small className="text-danger form-text">{errors.address_line2_2}</small>
-                                                    )}
-                                                </Col>
-                                            </Row>
+                                    <Row className="my-3">
+                                        <Col sm={5}>
+                                            <label>City</label>
+                                        </Col>
+                                        <Col sm={7}>
+                                            <input
+                                                className="form-control"
+                                                // error={touched.permCrimPhoneNo && errors.permCrimPhoneNo}
+                                                name="city"
+                                                onBlur={handleBlur}
+                                                onChange={handleChange}
+                                                // onWheel={(e) => e.target.blur()}
+                                                type="text"
+                                                ref={cityRef}
+                                                value={values.city}
+                                            />
+                                            {touched.city && errors.city && (
+                                                <small className="text-danger form-text">{errors.city}</small>
+                                            )}
+                                        </Col>
+                                    </Row>
 
 
-                                            <Row className="my-3">
-                                                <Col sm={5}>
-                                                    <label>City</label>
-                                                </Col>
-                                                <Col sm={7}>
-                                                    <input
-                                                        className="form-control"
-                                                        // error={touched.permCrimPhoneNo && errors.permCrimPhoneNo}
-                                                        name="city2"
-                                                        onBlur={handleBlur}
-                                                        onChange={handleChange}
-                                                        // onWheel={(e) => e.target.blur()}
-                                                        type="text"
-                                                        // ref={permCrimPhoneNoRef}
-                                                        value={values.city2}
-                                                    />
-                                                    {touched.city2 && errors.city2 && (
-                                                        <small className="text-danger form-text">{errors.city2}</small>
-                                                    )}
-                                                </Col>
-                                            </Row>
+                                    <Row className="my-3">
+                                        <Col sm={5}>
+                                            <label>Pincode</label>
+                                        </Col>
+                                        <Col sm={7}>
+                                            <input
+                                                className="form-control"
+                                                // error={touched.permCrimPhoneNo && errors.permCrimPhoneNo}
+                                                name="pincode"
+                                                onBlur={handleBlur}
+                                                onChange={handleChange}
+                                                onWheel={(e) => e.target.blur()}
+                                                type="number"
+                                                ref={pincodeRef}
+                                                value={values.pincode}
+                                            />
+                                            {touched.pincode && errors.pincode && (
+                                                <small className="text-danger form-text">{errors.pincode}</small>
+                                            )}
+                                        </Col>
+                                    </Row>
+
+                                    <Row className="my-3">
+                                        <Col sm={5}>
+                                            <label>Phone Number</label>
+                                        </Col>
+                                        <Col sm={7}>
+                                            <input
+                                                className="form-control"
+                                                // error={touched.permCrimPhoneNo && errors.permCrimPhoneNo}
+                                                name="phone_no"
+                                                onBlur={handleBlur}
+                                                onChange={handleChange}
+                                                onWheel={(e) => e.target.blur()}
+                                                type="number"
+                                                ref={phoneNumberRef}
+                                                value={values.phone_no}
+                                            />
+                                            {touched.phone_no && errors.phone_no && (
+                                                <small className="text-danger form-text">{errors.phone_no}</small>
+                                            )}
+                                        </Col>
+                                    </Row>
+                                </div>
+                            </div>
+                            <div className='col-md-6'>
+                                <div class="form-group fill">
+                                    <label class="floating-label" for="billingAddress"><small class="text-danger">
+                                        * </small>Billing Address</label>
+                                    <Row className="my-3">
+                                        <Col sm={5}>
+                                            <label>Contact Name</label>
+                                        </Col>
+                                        <Col sm={7}>
+                                            <input
+                                                className="form-control"
+                                                // error={touched.permCrimPhoneNo && errors.permCrimPhoneNo}
+                                                name="contact_name2"
+                                                onBlur={handleBlur}
+                                                onChange={handleChange}
+                                                // onWheel={(e) => e.target.blur()}
+                                                type="text"
+                                                // ref={permCrimPhoneNoRef}
+                                                value={values.contact_name2}
+                                            />
+                                            {touched.contact_name2 && errors.contact_name2 && (
+                                                <small className="text-danger form-text">{errors.contact_name2}</small>
+                                            )}
+                                        </Col>
+                                    </Row>
+
+                                    <Row className="my-3">
+                                        <Col sm={5}>
+                                            <label>Address Line 1</label>
+                                        </Col>
+                                        <Col sm={7}>
+                                            <input
+                                                className="form-control"
+                                                // error={touched.permCrimPhoneNo && errors.permCrimPhoneNo}
+                                                name="addres_line1_2"
+                                                onBlur={handleBlur}
+                                                onChange={handleChange}
+                                                // onWheel={(e) => e.target.blur()}
+                                                type="text"
+                                                // ref={permCrimPhoneNoRef}
+                                                value={values.addres_line1_2}
+                                            />
+                                            {touched.addres_line1_2 && errors.addres_line1_2 && (
+                                                <small className="text-danger form-text">{errors.addres_line1_2}</small>
+                                            )}
+                                        </Col>
+                                    </Row>
+
+                                    <Row className="my-3">
+                                        <Col sm={5}>
+                                            <label>Address Line 2</label>
+                                        </Col>
+                                        <Col sm={7}>
+                                            <input
+                                                className="form-control"
+                                                // error={touched.permCrimPhoneNo && errors.permCrimPhoneNo}
+                                                name="address_line2_2"
+                                                onBlur={handleBlur}
+                                                onChange={handleChange}
+                                                // onWheel={(e) => e.target.blur()}
+                                                type="text"
+                                                // ref={permCrimPhoneNoRef}
+                                                value={values.address_line2_2}
+                                            />
+                                            {touched.address_line2_2 && errors.address_line2_2 && (
+                                                <small className="text-danger form-text">{errors.address_line2_2}</small>
+                                            )}
+                                        </Col>
+                                    </Row>
 
 
-                                            <Row className="my-3">
-                                                <Col sm={5}>
-                                                    <label>Pincode</label>
-                                                </Col>
-                                                <Col sm={7}>
-                                                    <input
-                                                        className="form-control"
-                                                        // error={touched.permCrimPhoneNo && errors.permCrimPhoneNo}
-                                                        name="pincode2"
-                                                        onBlur={handleBlur}
-                                                        onChange={handleChange}
-                                                        onWheel={(e) => e.target.blur()}
-                                                        type="number"
-                                                        // ref={permCrimPhoneNoRef}
-                                                        value={values.pincode2}
-                                                    />
-                                                    {touched.pincode2 && errors.pincode2 && (
-                                                        <small className="text-danger form-text">{errors.pincode2}</small>
-                                                    )}
-                                                </Col>
-                                            </Row>
+                                    <Row className="my-3">
+                                        <Col sm={5}>
+                                            <label>City</label>
+                                        </Col>
+                                        <Col sm={7}>
+                                            <input
+                                                className="form-control"
+                                                // error={touched.permCrimPhoneNo && errors.permCrimPhoneNo}
+                                                name="city2"
+                                                onBlur={handleBlur}
+                                                onChange={handleChange}
+                                                // onWheel={(e) => e.target.blur()}
+                                                type="text"
+                                                // ref={permCrimPhoneNoRef}
+                                                value={values.city2}
+                                            />
+                                            {touched.city2 && errors.city2 && (
+                                                <small className="text-danger form-text">{errors.city2}</small>
+                                            )}
+                                        </Col>
+                                    </Row>
 
-                                            <Row className="my-3">
-                                                <Col sm={5}>
-                                                    <label>Phone Number</label>
-                                                </Col>
-                                                <Col sm={7}>
-                                                    <input
-                                                        className="form-control"
-                                                        // error={touched.permCrimPhoneNo && errors.permCrimPhoneNo}
-                                                        name="phone_no2"
-                                                        onBlur={handleBlur}
-                                                        onChange={handleChange}
-                                                        onWheel={(e) => e.target.blur()}
-                                                        type="number"
-                                                        // ref={permCrimPhoneNoRef}
-                                                        value={values.phone_no2}
-                                                    />
-                                                    {touched.phone_no2 && errors.phone_no2 && (
-                                                        <small className="text-danger form-text">{errors.phone_no2}</small>
-                                                    )}
-                                                </Col>
-                                            </Row>
 
-                                            <Row className="my-3">
-                                                <Col sm={5}>
-                                                    <label>GST Number</label>
-                                                </Col>
-                                                <Col sm={7}>
-                                                    <input
-                                                        className="form-control"
-                                                        // error={touched.permCrimPhoneNo && errors.permCrimPhoneNo}
-                                                        name="GST_no"
-                                                        onBlur={handleBlur}
-                                                        onChange={handleChange}
-                                                        onWheel={(e) => e.target.blur()}
-                                                        type="text"
-                                                        ref={gst_numberRef}
-                                                        value={values.GST_no}
-                                                    />
-                                                    {touched.GST_no && errors.GST_no && (
-                                                        <small className="text-danger form-text">{errors.GST_no}</small>
-                                                    )}
-                                                </Col>
-                                                <Form.Check className='mt-3 ml-3' type='checkbox' id={`default-checkbox`} label={`Same as Business Address`} checked={copy} onChange={handlesetCopyInputs} />
-                                            </Row>
-                                        </div>
-                                    </div>
+                                    <Row className="my-3">
+                                        <Col sm={5}>
+                                            <label>Pincode</label>
+                                        </Col>
+                                        <Col sm={7}>
+                                            <input
+                                                className="form-control"
+                                                // error={touched.permCrimPhoneNo && errors.permCrimPhoneNo}
+                                                name="pincode2"
+                                                onBlur={handleBlur}
+                                                onChange={handleChange}
+                                                onWheel={(e) => e.target.blur()}
+                                                type="number"
+                                                // ref={permCrimPhoneNoRef}
+                                                value={values.pincode2}
+                                            />
+                                            {touched.pincode2 && errors.pincode2 && (
+                                                <small className="text-danger form-text">{errors.pincode2}</small>
+                                            )}
+                                        </Col>
+                                    </Row>
+
+                                    <Row className="my-3">
+                                        <Col sm={5}>
+                                            <label>Phone Number</label>
+                                        </Col>
+                                        <Col sm={7}>
+                                            <input
+                                                className="form-control"
+                                                // error={touched.permCrimPhoneNo && errors.permCrimPhoneNo}
+                                                name="phone_no2"
+                                                onBlur={handleBlur}
+                                                onChange={handleChange}
+                                                onWheel={(e) => e.target.blur()}
+                                                type="number"
+                                                // ref={permCrimPhoneNoRef}
+                                                value={values.phone_no2}
+                                            />
+                                            {touched.phone_no2 && errors.phone_no2 && (
+                                                <small className="text-danger form-text">{errors.phone_no2}</small>
+                                            )}
+                                        </Col>
+                                    </Row>
+
+                                    <Row className="my-3">
+                                        <Col sm={5}>
+                                            <label>GST Number</label>
+                                        </Col>
+                                        <Col sm={7}>
+                                            <input
+                                                className="form-control"
+                                                // error={touched.permCrimPhoneNo && errors.permCrimPhoneNo}
+                                                name="GST_no"
+                                                onBlur={handleBlur}
+                                                onChange={handleChange}
+                                                onWheel={(e) => e.target.blur()}
+                                                type="text"
+                                                ref={gst_numberRef}
+                                                value={values.GST_no}
+                                            />
+                                            {touched.GST_no && errors.GST_no && (
+                                                <small className="text-danger form-text">{errors.GST_no}</small>
+                                            )}
+                                        </Col>
+                                        <Form.Check className='mt-3 ml-3' type='checkbox' id={`default-checkbox`} label={`Same as Business Address`} checked={copy} onChange={handlesetCopyInputs} />
+                                    </Row>
                                 </div>
                             </div>
                         </div>
+
+
                         <hr />
                         <div class="row d-flex justify-content-end">
                             <div class="form-group fill">
