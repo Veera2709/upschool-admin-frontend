@@ -86,7 +86,7 @@ function Table({ columns, data, modalOpen }) {
               </option>
             ))}
           </select>
-          entries
+          Entries
         </Col>
 
         <Col className="d-flex justify-content-end">
@@ -235,7 +235,7 @@ const StandardList = (props) => {
   const toggleCall = async (data) => {
     const toggleClassStatusRes = await toggleClassStatus(data);
     if (toggleClassStatusRes.Error) {
-    
+
       if (toggleClassStatusRes.Error.response.data === 'Invalid Token') {
         sessionStorage.clear();
         localStorage.clear();
