@@ -10,8 +10,6 @@ import { useTable, useSortBy, usePagination, useGlobalFilter } from 'react-table
 
 import dynamicUrl from '../../../../helper/dynamicUrls';
 
-import { isEmptyArray } from '../../../../util/utils';
-
 import { Link, useHistory } from 'react-router-dom';
 import { SessionStorage } from '../../../../util/SessionStorage';
 import MESSAGES from '../../../../helper/messages';
