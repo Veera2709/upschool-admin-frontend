@@ -19,6 +19,7 @@ import { fetchIndividualDigiCard, fetchAllDigiCards } from '../../../api/CommonA
 import { Link, useHistory, useParams } from 'react-router-dom';
 import Select from 'react-select';
 
+
 const EditDigiCard = () => {
 
     const colourOptions = [];
@@ -145,7 +146,6 @@ const EditDigiCard = () => {
             localStorage.clear();
             history.push('/auth/signin-1');
             window.location.reload();
-
         } else {
             fetchAllData();
         }
