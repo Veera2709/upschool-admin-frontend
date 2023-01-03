@@ -27,7 +27,7 @@ import { fetchAllChapters, fetchIndividualUnit } from '../../../api/CommonApi'
 
 // import { Button,Container,Row ,Col  } from 'react-bootstrap';
 
-const EditUnit = () => {
+const EditUnit = ({setOpenEditUnit,unitId}) => {
 
 
     const colourOptions = [];
@@ -118,7 +118,7 @@ const EditUnit = () => {
             console.log("colourOptions", colourOptions);
             setTopicTitles(colourOptions)
 
-            const individualUnitData = await fetchIndividualUnit(unit_id);
+            const individualUnitData = await fetchIndividualUnit(unitId);
             if (individualUnitData.Error) {
                 console.log("individualUnitData.Error", individualUnitData.Error);
                 if (individualUnitData.Error.response.data == 'Invalid Token') {
@@ -165,212 +165,202 @@ const EditUnit = () => {
 
 
     return (
-        <div>
-            <Card>
-                <Card.Body>
-                    <Card.Title>Edit Unit</Card.Title>
-                    <Formik
-                        enableReinitialize
-                        initialValues={{
-                            unittitle: individualUnitdata.unit_title,
-                            chapter: '',
-                            unit_description: individualUnitdata.unit_description,
-                        }}
-                        validationSchema={Yup.object().shape({
-                            unittitle: Yup.string()
-                                .trim()
-                                .min(2, Constants.AddUnit.UnittitleRequired)
-                                .max(30, Constants.AddUnit.UnittitleTooShort)
-                                .required(Constants.AddUnit.UnittitleTooLongs),
-                            unit_description: Yup.string()
-                                .required(Constants.AddUnit.DescriptionRequired),
-                        })}
+        <React.Fragment>
+            <Formik
+                enableReinitialize
+                initialValues={{
+                    unittitle: individualUnitdata.unit_title,
+                    chapter: '',
+                    unit_description: individualUnitdata.unit_description,
+                }}
+                validationSchema={Yup.object().shape({
+                    unittitle: Yup.string()
+                        .trim()
+                        .min(2, Constants.AddUnit.UnittitleRequired)
+                        .max(30, Constants.AddUnit.UnittitleTooShort)
+                        .required(Constants.AddUnit.UnittitleTooLongs),
+                    unit_description: Yup.string()
+                        .required(Constants.AddUnit.DescriptionRequired),
+                })}
 
 
 
-                        onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
+                onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
+                    setOpenEditUnit(false)
+                    if (chapterOption == '') {
+                        setIsShown(false)
+                    } else if (values.unit_description === undefined || values.unit_description.trim() === '') {
+                        setIsShownDes(false)
+                    }
+                    else {
+                        console.log("on submit");
+                        var formData = {
+                            unit_id: unitId,
+                            unit_title: values.unittitle,
+                            unit_description: values.unit_description,
+                            unit_chapter_id: chapterOption
+                        };
 
+                        console.log("formdata", formData);
 
-                            if (chapterOption == '') {
-                                setIsShown(false)
-                            } else if (values.unit_description === undefined || values.unit_description.trim() === '') {
-                                setIsShownDes(false)
-                            }
-                            else {
-                                console.log("on submit");
-                                var formData = {
-                                    unit_id: unit_id,
-                                    unit_title: values.unittitle,
-                                    unit_description: values.unit_description,
-                                    unit_chapter_id: chapterOption
-                                };
+                        axios
+                            .post(dynamicUrl.editUnit, { data: formData }, { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
+                            .then(async (response) => {
+                                console.log({ response });
+                                if (response.Error) {
+                                    console.log('Error');
+                                    hideLoader();
+                                    setDisableButton(false);
+                                } else {
+                                    // sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.EditUnit });
+                                    MySwal.fire({
+                                        title: 'Unit Updated successfully!',
+                                        icon: 'success',
+                                    }).then((willDelete) => {
+                                        history.push('/admin-portal/units/active-units');
+                                        window.location.reload();
 
-                                console.log("formdata", formData);
-
-                                axios
-                                    .post(dynamicUrl.editUnit, { data: formData }, { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
-                                    .then(async (response) => {
-                                        console.log({ response });
-                                        if (response.Error) {
-                                            console.log('Error');
-                                            hideLoader();
-                                            setDisableButton(false);
-                                        } else {
-                                            // sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.EditUnit });
-                                            MySwal.fire({
-                                                title: 'Unit Updated successfully!',
-                                                icon: 'success',
-                                            }).then((willDelete) => {
-                                                history.push('/admin-portal/units/active-units');
-                                                window.location.reload();
-
-                                            })
-                                            hideLoader();
-                                            setDisableButton(false);
-                                            // fetchClientData();
-                                            setIsOpen(false);
-                                        }
                                     })
-                                    .catch((error) => {
-                                        if (error.response) {
-                                            // Request made and server responded
-                                            console.log(error.response.data);
+                                    hideLoader();
+                                    setDisableButton(false);
+                                    // fetchClientData();
+                                    setIsOpen(false);
+                                }
+                            })
+                            .catch((error) => {
+                                if (error.response) {
+                                    // Request made and server responded
+                                    console.log(error.response.data);
 
-                                            console.log(error.response.data);
-                                            if (error.response.status === 401) {
-                                                console.log();
-                                                hideLoader();
-                                                // setIsClientExists(true);
-                                                sweetAlertHandler({ title: 'Error', type: 'error', text: MESSAGES.ERROR.DigiCardNameExists });
+                                    console.log(error.response.data);
+                                    if (error.response.status === 401) {
+                                        console.log();
+                                        hideLoader();
+                                        // setIsClientExists(true);
+                                        sweetAlertHandler({ title: 'Error', type: 'error', text: MESSAGES.ERROR.DigiCardNameExists });
 
-                                            } else {
-                                                sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
-                                            }
-                                        } else if (error.request) {
-                                            // The request was made but no response was received
-                                            console.log(error.request);
-                                            setDisableButton(false);
-                                            hideLoader();
-                                        } else {
-                                            // Something happened in setting up the request that triggered an Error
-                                            console.log('Error', error.message);
-                                            setDisableButton(false);
-                                            hideLoader();
-                                        }
-                                    });
-                            }
+                                    } else {
+                                        sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+                                    }
+                                } else if (error.request) {
+                                    // The request was made but no response was received
+                                    console.log(error.request);
+                                    setDisableButton(false);
+                                    hideLoader();
+                                } else {
+                                    // Something happened in setting up the request that triggered an Error
+                                    console.log('Error', error.message);
+                                    setDisableButton(false);
+                                    hideLoader();
+                                }
+                            });
+                    }
 
 
 
-                            // }
+                    // }
 
-                        }}
-                    >
-                        {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
-                            <form noValidate onSubmit={handleSubmit}>
-                                <Row>
-                                    <Col sm={6}>
-                                        <div className="form-group fill">
-                                            <label className="floating-label" htmlFor="unittitle">
-                                                <small className="text-danger">* </small>Unit Title
-                                            </label>
-                                            <input
-                                                className="form-control"
-                                                error={touched.unittitle && errors.unittitle}
-                                                name="unittitle"
-                                                onBlur={handleBlur}
-                                                onChange={handleChange}
-                                                type="text"
-                                                value={values.unittitle}
-                                                id='title'
-                                            />
-                                            {touched.unittitle && errors.unittitle && <small className="text-danger form-text">{errors.unittitle}</small>}
-                                        </div>
-                                        {defaultOptions && (<div className="form-group fill" style={{ position: "relative", zIndex: 20 }}>
-                                            <label className="floating-label" htmlFor="chapter">
-                                                <small className="text-danger">* </small> Chapter
-                                            </label>
-                                            {defaultOptions.length === 0 ? (
+                }}
+            >
+                {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
+                    <form noValidate onSubmit={handleSubmit}>
+                        <Row>
+                            <Col sm={6}>
+                                <div className="form-group fill">
+                                    <label className="floating-label" htmlFor="unittitle">
+                                        <small className="text-danger">* </small>Unit Title
+                                    </label>
+                                    <input
+                                        className="form-control"
+                                        error={touched.unittitle && errors.unittitle}
+                                        name="unittitle"
+                                        onBlur={handleBlur}
+                                        onChange={handleChange}
+                                        type="text"
+                                        value={values.unittitle}
+                                        id='title'
+                                    />
+                                    {touched.unittitle && errors.unittitle && <small className="text-danger form-text">{errors.unittitle}</small>}
+                                </div>
+                                {defaultOptions && (<div className="form-group fill" style={{ position: "relative", zIndex: 20 }}>
+                                    <label className="floating-label" htmlFor="chapter">
+                                        <small className="text-danger">* </small> Chapter
+                                    </label>
+                                    {defaultOptions.length === 0 ? (
+
+                                        <Select
+                                            className="basic-single"
+                                            classNamePrefix="select"
+                                            name="color"
+                                            isMulti
+                                            closeMenuOnSelect={false}
+                                            onChange={getMultiOptions}
+                                            options={topicTitles}
+                                            placeholder="Select"
+                                        />
+
+                                    ) : (
+                                        <>
+                                            {defaultOptions && (
 
                                                 <Select
+                                                    defaultValue={defaultOptions}
                                                     className="basic-single"
                                                     classNamePrefix="select"
                                                     name="color"
                                                     isMulti
                                                     closeMenuOnSelect={false}
-                                                    onChange={getMultiOptions}
+                                                    onChange={(e) => { getMultiOptions(e); setIsShown(true) }}
                                                     options={topicTitles}
                                                     placeholder="Select"
                                                 />
 
-                                            ) : (
-                                                <>
-                                                    {defaultOptions && (
-
-                                                        <Select
-                                                            defaultValue={defaultOptions}
-                                                            className="basic-single"
-                                                            classNamePrefix="select"
-                                                            name="color"
-                                                            isMulti
-                                                            closeMenuOnSelect={false}
-                                                            onChange={(e) => { getMultiOptions(e); setIsShown(true) }}
-                                                            options={topicTitles}
-                                                            placeholder="Select"
-                                                        />
-
-                                                    )}
-                                                </>
-
                                             )}
-                                            <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>Chapter Required</small>
-                                        </div>)}
-                                        <div className="form-group fill" >
-                                            <Form.Label htmlFor="unit_description"> <small className="text-danger">* </small>Unit Description</Form.Label>
-                                            <Form.Control
-                                                as="textarea"
-                                                onChange={(e) => { handleChange(e); setIsShownDes(e) }}
-                                                rows="4"
-                                                onBlur={handleBlur}
-                                                name="unit_description"
-                                                value={values.unit_description}
-                                                type='text'
-                                            />
-                                            <br />
-                                            {touched.unit_description && errors.unit_description && <small className="text-danger form-text">{errors.unit_description}</small>}
-                                            <small className="text-danger form-text" style={{ display: isShownDes ? 'none' : 'block' }}>Unit Description Required</small>
-                                        </div>
-                                    </Col>
-                                </Row>
-                                <br></br>
-                                <Row>
-                                    <Col sm={10}>
-                                    </Col>
-                                    <div className="form-group fill float-end" >
-                                        <Col sm={12} className="center">
-                                            <Button
-                                                className="btn-block"
-                                                color="success"
-                                                size="large"
-                                                type="submit"
-                                                variant="success"
-                                            >
-                                                Submit
-                                            </Button>
-                                        </Col>
-                                    </div>
-                                </Row>
-                            </form>
-                        )}
+                                        </>
 
-                    </Formik>
-                </Card.Body>
+                                    )}
+                                    <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>Chapter Required</small>
+                                </div>)}
+                                <div className="form-group fill" >
+                                    <Form.Label htmlFor="unit_description"> <small className="text-danger">* </small>Unit Description</Form.Label>
+                                    <Form.Control
+                                        as="textarea"
+                                        onChange={(e) => { handleChange(e); setIsShownDes(e) }}
+                                        rows="4"
+                                        onBlur={handleBlur}
+                                        name="unit_description"
+                                        value={values.unit_description}
+                                        type='text'
+                                    />
+                                    <br />
+                                    {touched.unit_description && errors.unit_description && <small className="text-danger form-text">{errors.unit_description}</small>}
+                                    <small className="text-danger form-text" style={{ display: isShownDes ? 'none' : 'block' }}>Unit Description Required</small>
+                                </div>
+                            </Col>
+                        </Row>
+                        <br></br>
+                        <Row>
+                            <Col sm={10}>
+                            </Col>
+                            <div className="form-group fill float-end" >
+                                <Col sm={12} className="center">
+                                    <Button
+                                        className="btn-block"
+                                        color="success"
+                                        size="large"
+                                        type="submit"
+                                        variant="success"
+                                    >
+                                        Submit
+                                    </Button>
+                                </Col>
+                            </div>
+                        </Row>
+                    </form>
+                )}
 
-            </Card>
-
-        </div>
-
-
+            </Formik>
+        </React.Fragment>
     )
 
 };

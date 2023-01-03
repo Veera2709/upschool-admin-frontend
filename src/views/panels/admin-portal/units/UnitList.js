@@ -17,6 +17,8 @@ import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import { useLocation } from "react-router-dom";
 import { fetchAllUnits } from '../../../api/CommonApi';
 import BasicSpinner from '../../../../helper/BasicSpinner';
+import AddUnit from './AddUnit';
+import EditUnit from './EditUnit';
 
 
 
@@ -53,6 +55,7 @@ function Table({ columns, data, modalOpen }) {
     );
 
     const [isOpen, setIsOpen] = useState(false);
+    const [isOpenAddUnit, setOpenAddUnit] = useState(false)
     let history = useHistory();
 
     const addingChapter = () => {
@@ -83,7 +86,7 @@ function Table({ columns, data, modalOpen }) {
 
                 <Col className="d-flex justify-content-end">
                     <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
-                    <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={() => { addingChapter() }}>
+                    <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={() => { setOpenAddUnit(true) }}>
                         <i className="feather icon-plus" /> Add Unit
                     </Button>
                 </Col>
@@ -159,6 +162,14 @@ function Table({ columns, data, modalOpen }) {
                 </Col>
             </Row>
 
+            <Modal dialogClassName="my-modal" show={isOpenAddUnit} onHide={() => setOpenAddUnit(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title as="h5">Add Unit</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <AddUnit setOpenAddUnit={setOpenAddUnit} />
+                </Modal.Body>
+            </Modal>
         </>
     );
 }
@@ -188,10 +199,21 @@ const UnitList = (props) => {
     const [loader, showLoader, hideLoader] = useFullPageLoader();
     const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[3]);
     const [isLoading, setIsLoading] = useState(false);
+    const [isOpenEditUnit, setOpenEditUnit] = useState(false);
+    const [isOpenAddUnit, setOpenAddUnit] = useState(false);
+    const [unitId, setUnitId] = useState()
+
 
 
 
     // console.log('data: ', data)
+
+    const handleAddUnit = (e) => {
+
+        console.log("No subjects, add subjects")
+        e.preventDefault();
+        setOpenAddUnit(true);
+    }
 
     const MySwal = withReactContent(Swal);
     const sweetConfirmHandler = (alert) => {
@@ -352,7 +374,11 @@ const UnitList = (props) => {
                                     <Button
                                         size="sm"
                                         className="btn btn-icon btn-rounded btn-primary"
-                                        onClick={(e) => history.push(`/admin-portal/editunit/${ActiveresultData[index].unit_id}`)}
+                                        // onClick={(e) => history.push(`/admin-portal/editunit/${ActiveresultData[index].unit_id}`)}
+                                        onClick={(e) => {
+                                            setUnitId(ActiveresultData[index].unit_id);
+                                            setOpenEditUnit(true)
+                                        }}
                                     >
                                         <i className="feather icon-edit" /> &nbsp; Edit
                                     </Button>
@@ -430,15 +456,19 @@ const UnitList = (props) => {
                                             <h3 style={{ textAlign: 'center' }}>No Units Found</h3>
                                             <div className="form-group fill text-center">
                                                 <br></br>
-
-                                                <Link to={'/admin-portal/addUnits'}>
-                                                    <Button variant="success" className="btn-sm btn-round has-ripple ml-2">
-                                                        <i className="feather icon-plus" /> Add Units
-                                                    </Button>
-                                                </Link>
+                                                <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={(e)=>{handleAddUnit(e)}}>
+                                                    <i className="feather icon-plus" /> Add Units
+                                                </Button>
                                             </div>
-
                                         </div>
+                                        <Modal dialogClassName="my-modal" show={isOpenAddUnit} onHide={() => setOpenAddUnit(false)}>
+                                            <Modal.Header closeButton>
+                                                <Modal.Title as="h5">Add Unit</Modal.Title>
+                                            </Modal.Header>
+                                            <Modal.Body>
+                                                <AddUnit setOpenAddUnit={setOpenAddUnit} />
+                                            </Modal.Body>
+                                        </Modal>
                                     </React.Fragment>
                                 </>
                             ) : (
@@ -456,6 +486,14 @@ const UnitList = (props) => {
                                                 </Card>
                                             </Col>
                                         </Row>
+                                        <Modal dialogClassName="my-modal" show={isOpenEditUnit} onHide={() => setOpenEditUnit(false)}>
+                                            <Modal.Header closeButton>
+                                                <Modal.Title as="h5">Edit Unit</Modal.Title>
+                                            </Modal.Header>
+                                            <Modal.Body>
+                                                <EditUnit setOpenEditUnit={setOpenEditUnit} unitId={unitId} />
+                                            </Modal.Body>
+                                        </Modal>
                                     </React.Fragment>
                                 </>
                             )
