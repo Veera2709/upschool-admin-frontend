@@ -207,17 +207,17 @@ const routes = [
         component: lazy(() => import('./views/panels/admin-portal/Topics/ActiveTopics'))
       },
       // Add Topics
-      {
-        exact: true,
-        path: '/admin-portal/Topics/addTopics',
-        component: lazy(() => import('./views/panels/admin-portal/Topics/AddTopics'))
-      },
+      // {
+      //   exact: true,
+      //   path: '/admin-portal/Topics/addTopics',
+      //   component: lazy(() => import('./views/panels/admin-portal/Topics/AddTopics'))
+      // },
       // Edit Topics
-      {
-        exact: true,
-        path: '/admin-portal/Topics/editTopic/:topic_id',
-        component: lazy(() => import('./views/panels/admin-portal/Topics/EditTopics'))
-      },
+      // {
+      //   exact: true,
+      //   path: '/admin-portal/Topics/editTopic/:topic_id',
+      //   component: lazy(() => import('./views/panels/admin-portal/Topics/EditTopics'))
+      // },
 
       // digi card
       {
@@ -254,17 +254,17 @@ const routes = [
         component: lazy(() => import('./views/panels/admin-portal/chapters/ChaptersList'))
       },
       //add chapter
-      {
-        exact: true,
-        path: '/admin-portal/addChapters',
-        component: lazy(() => import('./views/panels/admin-portal/chapters/AddChapters'))
-      },
+      // {
+      //   exact: true,
+      //   path: '/admin-portal/addChapters',
+      //   component: lazy(() => import('./views/panels/admin-portal/chapters/AddChapters'))
+      // },
       //edit chapter
-      {
-        exact: true,
-        path: '/admin-portal/editChapter/:chapter_id',
-        component: lazy(() => import('./views/panels/admin-portal/chapters/EditChapter'))
-      },
+      // {
+      //   exact: true,
+      //   path: '/admin-portal/editChapter/:chapter_id',
+      //   component: lazy(() => import('./views/panels/admin-portal/chapters/EditChapter'))
+      // },
       //units
       {
         exact: true,
@@ -277,17 +277,17 @@ const routes = [
         component: lazy(() => import('./views/panels/admin-portal/units/UnitList'))
       },
       //addUnits
-      {
-        exact: true,
-        path: '/admin-portal/addUnits',
-        component: lazy(() => import('./views/panels/admin-portal/units/AddUnit'))
-      },
+      // {
+      //   exact: true,
+      //   path: '/admin-portal/addUnits',
+      //   component: lazy(() => import('./views/panels/admin-portal/units/AddUnit'))
+      // },
       //editUnit
-      {
-        exact: true,
-        path: '/admin-portal/editunit/:unit_id',
-        component: lazy(() => import('./views/panels/admin-portal/units/EditUnit'))
-      },
+      // {
+      //   exact: true,
+      //   path: '/admin-portal/editunit/:unit_id',
+      //   component: lazy(() => import('./views/panels/admin-portal/units/EditUnit'))
+      // },
       {
         exact: true,
         path: '/admin-portal/classes/active-classes',
@@ -300,17 +300,17 @@ const routes = [
         component: lazy(() => import('./views/panels/admin-portal/class/ClassesList'))
       },
       // Add Standards
-      {
-        exact: true,
-        path: '/admin-portal/Classes/addClass',
-        component: lazy(() => import('./views/panels/admin-portal/class/AddClass'))
-      },
+      // {
+      //   exact: true,
+      //   path: '/admin-portal/Classes/addClass',
+      //   component: lazy(() => import('./views/panels/admin-portal/class/AddClass'))
+      // },
       // Edit classes
-      {
-        exact: true,
-        path: '/admin-portal/Classes/editClass/:class_id',
-        component: lazy(() => import('./views/panels/admin-portal/class/EditClass'))
-      },
+      // {
+      //   exact: true,
+      //   path: '/admin-portal/Classes/editClass/:class_id',
+      //   component: lazy(() => import('./views/panels/admin-portal/class/EditClass'))
+      // },
       {
         exact: true,
         path: '/app/dashboard/analytics',

@@ -155,7 +155,7 @@ const menuItems = {
               title: 'Archived Units',
               type: 'item',
               url: '/admin-portal/units/archived-units',
-            }
+            },
           ]
         },
         {
@@ -200,6 +200,7 @@ const menuItems = {
         },
       ]
     }
+
   ]
 };
 
