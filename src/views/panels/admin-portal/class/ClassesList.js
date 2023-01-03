@@ -188,7 +188,7 @@ function Table({ columns, data, modalOpen }) {
       </Row>
       <Modal dialogClassName="my-modal" show={isOpenAddClass} onHide={() => setOpenAddClass(false)}>
         <Modal.Header closeButton>
-          <Modal.Title as="h5">Add Topic</Modal.Title>
+          <Modal.Title as="h5">Add Class</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <AddClass setOpenAddClass={setOpenAddClass} />
@@ -263,7 +263,7 @@ const StandardList = (props) => {
       setReloadAllData(data.activity == "Delete" ? 'Deleted' : "Restored");
       return MySwal.fire(
         "",
-        "The " + data.class_name + " is " + (data.activity == "Delete" ? 'Deleted' : "Restored"),
+        "The is " + (data.activity == "Delete" ? 'Deleted' : "Restored"),
         "success"
       );
     }
@@ -427,7 +427,7 @@ const StandardList = (props) => {
                     </div>
                     <Modal dialogClassName="my-modal" show={isOpenAddClass} onHide={() => setOpenAddClass(false)}>
                       <Modal.Header closeButton>
-                        <Modal.Title as="h5">Add Topic</Modal.Title>
+                        <Modal.Title as="h5">Add Class</Modal.Title>
                       </Modal.Header>
                       <Modal.Body>
                         <AddClass setOpenAddClass={setOpenAddClass} />

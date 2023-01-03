@@ -192,7 +192,6 @@ const AddChapter = ({ setOpenAddChapter }) => {
 
 
                 onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-                    setOpenAddChapter(false)
                     if (postlearningOption == '') {
                         setIsShown(false)
                     } else if (prelearningOptions == '') {
@@ -203,6 +202,7 @@ const AddChapter = ({ setOpenAddChapter }) => {
                     }
                     else {
                         setIsShown(true)
+                        setOpenAddChapter(false)
                         console.log("on submit");
                         var formData = {
                             chapter_title: values.chaptertitle,

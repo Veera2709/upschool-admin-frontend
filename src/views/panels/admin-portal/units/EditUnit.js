@@ -27,7 +27,7 @@ import { fetchAllChapters, fetchIndividualUnit } from '../../../api/CommonApi'
 
 // import { Button,Container,Row ,Col  } from 'react-bootstrap';
 
-const EditUnit = ({setOpenEditUnit,unitId}) => {
+const EditUnit = ({ setOpenEditUnit, unitId }) => {
 
 
     const colourOptions = [];
@@ -65,18 +65,9 @@ const EditUnit = ({setOpenEditUnit,unitId}) => {
     const [individualUnitdata, setIndividualUnitdata] = useState([]);
     console.log("individualUnitdata", individualUnitdata);
 
-
-
-
-    const { unit_id } = useParams();
-    console.log("unit_id", unit_id);
-
-
     const PostlearningOption = (e) => {
         setPostlearningOption(e);
     }
-
-
 
     const sweetAlertHandler = (alert) => {
         MySwal.fire({
@@ -85,13 +76,6 @@ const EditUnit = ({setOpenEditUnit,unitId}) => {
             icon: alert.type
         });
     };
-
-
-
-
-
-
-
 
     const fetchAllChaptersList = async () => {
         const allChapterData = await fetchAllChapters();
@@ -186,7 +170,6 @@ const EditUnit = ({setOpenEditUnit,unitId}) => {
 
 
                 onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-                    setOpenEditUnit(false)
                     if (chapterOption == '') {
                         setIsShown(false)
                     } else if (values.unit_description === undefined || values.unit_description.trim() === '') {
@@ -194,6 +177,7 @@ const EditUnit = ({setOpenEditUnit,unitId}) => {
                     }
                     else {
                         console.log("on submit");
+                        setOpenEditUnit(false)
                         var formData = {
                             unit_id: unitId,
                             unit_title: values.unittitle,

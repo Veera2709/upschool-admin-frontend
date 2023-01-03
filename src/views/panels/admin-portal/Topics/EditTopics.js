@@ -271,7 +271,6 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
 
 
                                 onSubmit={(values, { setErrors, setStatus, setSubmitting }) => {
-                                    setOpenEditTopic(true)
 
                                     console.log("SUBMIT SIDE QUIZ : ", topicQuiz);
 
@@ -285,6 +284,7 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                                         if (topicConceptId == '') {
                                             setIsShown(false)
                                         } else {
+                                            setOpenEditTopic(true)
                                             const formData = {
                                                 topic_id: topicId,
                                                 topic_title: values.topic_title,
