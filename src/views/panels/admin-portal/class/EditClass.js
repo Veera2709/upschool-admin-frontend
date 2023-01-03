@@ -147,7 +147,7 @@ const EditClass = ({setOpenEditClass,classId}) => {
                 values,
                 { setErrors, setStatus, setSubmitting }
               ) => {
-                setOpenEditClass(false)
+                
                 if (subjectOption == "") {
                   setIsShown(false);
                 } else {
@@ -157,6 +157,7 @@ const EditClass = ({setOpenEditClass,classId}) => {
                     class_name: values.classTitle,
                     class_subject_id: subjectOption,
                   };
+                  setOpenEditClass(false)
 
                   console.log("formdata", formData);
 

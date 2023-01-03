@@ -23,8 +23,8 @@ import { useHistory, useParams } from 'react-router-dom';
 import Breadcrumb from '../../../../layouts/AdminLayout/Breadcrumb';
 
 
-const AddUnit = ({setOpenAddUnit}) => {
-    console.log('setOpenAddUnit',setOpenAddUnit);
+const AddUnit = ({ setOpenAddUnit }) => {
+    console.log('setOpenAddUnit', setOpenAddUnit);
     const colourOptions = [];
     let history = useHistory();
 
@@ -118,14 +118,13 @@ const AddUnit = ({setOpenAddUnit}) => {
 
 
                 onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-                    setOpenAddUnit(false)
                     if (chapterOption == '') {
                         setIsShown(false)
                     } else if (description == undefined || description.trim() === '') {
                         setIsShownDes(false)
                     }
                     else {
-
+                        setOpenAddUnit(false)
                         console.log("on submit");
                         var formData = {
                             unit_title: values.unittitle,

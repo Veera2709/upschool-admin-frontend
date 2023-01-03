@@ -225,13 +225,13 @@ const AddTopics = ({ setOpenAddTopic }) => {
                 // validationSchema
                 onSubmit={(values, { setErrors, setStatus, setSubmitting }) => {
                     // setSubmitting(true);
-                    setOpenAddTopic(true)
 
                     if (topicConceptId == '') {
                         setIsShownConcept(false)
                     }
 
                     else {
+                        setOpenAddTopic(true)
                         const formData = {
                             topic_title: values.topic_title,
                             topic_description: values.topic_description,

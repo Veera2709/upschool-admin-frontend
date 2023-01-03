@@ -226,7 +226,6 @@ const EditChapter = ({ setOpenEditChapter, chapterId }) => {
 
 
                 onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-                    setOpenEditChapter(false)
                     if (postlearningOption == '') {
                         setIsShown(false)
                     } else if (prelearningOptions == '') {
@@ -235,7 +234,7 @@ const EditChapter = ({ setOpenEditChapter, chapterId }) => {
                     else if (values.chapter_description == undefined || values.chapter_description.trim() == '') {
                         setIsShownDes(false)
                     } else {
-
+                        setOpenEditChapter(false)
                         console.log("on submit");
                         var formData = {
                             chapter_id: chapterId,

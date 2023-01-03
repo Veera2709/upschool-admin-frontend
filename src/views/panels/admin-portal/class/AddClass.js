@@ -26,7 +26,7 @@ import {
 
 // import { Button,Container,Row ,Col  } from 'react-bootstrap';
 
-const AddClass = ({setOpenAddClass}) => {
+const AddClass = ({ setOpenAddClass }) => {
   const colourOptions = [];
   const isLocked = [
     { value: "Yes", label: "Yes" },
@@ -137,53 +137,56 @@ const AddClass = ({setOpenAddClass}) => {
           values,
           { setErrors, setStatus, setSubmitting }
         ) => {
-          setOpenAddClass(true)
-          console.log("on submit");
-          var formData = {
-            class_name: values.classTitle,
-            class_subject_id: subjectOption,
-          };
+          if (subjectOption == '') {
+            setIsShown(false)
+          } else {
+            console.log("on submit");
+            var formData = {
+              class_name: values.classTitle,
+              class_subject_id: subjectOption,
+            };
+            setOpenAddClass(false)
+            console.log("formdata", formData);
 
-          console.log("formdata", formData);
+            const addClassRes = await addClass(formData);
+            console.log("addClassRes : ", addClassRes);
 
-          const addClassRes = await addClass(formData);
-          console.log("addClassRes : ", addClassRes);
-
-          if (addClassRes.Error) {
-            if (addClassRes.Error.response.data == "Invalid Token") {
-              sessionStorage.clear();
-              localStorage.clear();
-              history.push('/auth/signin-1');
-              window.location.reload();
-            } else {
-              let errStatus = addClassRes.Error.response.status;
-              console.log("errStatus", errStatus);
-              errStatus === 400
-                ? sweetAlertHandler({
-                  title: "Error",
-                  type: "error",
-                  text: MESSAGES.ERROR.ClassNameExists,
-                })
-                : errStatus === 502
+            if (addClassRes.Error) {
+              if (addClassRes.Error.response.data == "Invalid Token") {
+                sessionStorage.clear();
+                localStorage.clear();
+                history.push('/auth/signin-1');
+                window.location.reload();
+              } else {
+                let errStatus = addClassRes.Error.response.status;
+                console.log("errStatus", errStatus);
+                errStatus === 400
                   ? sweetAlertHandler({
                     title: "Error",
                     type: "error",
-                    text: MESSAGES.ERROR.InvalidClassName,
+                    text: MESSAGES.ERROR.ClassNameExists,
                   })
-                  : sweetAlertHandler({
-                    title: "Error",
-                    type: "error",
-                    text: addClassRes.Error,
-                  });
-            }
+                  : errStatus === 502
+                    ? sweetAlertHandler({
+                      title: "Error",
+                      type: "error",
+                      text: MESSAGES.ERROR.InvalidClassName,
+                    })
+                    : sweetAlertHandler({
+                      title: "Error",
+                      type: "error",
+                      text: addClassRes.Error,
+                    });
+              }
 
-          } else {
-            MySwal.fire({
-              title: "Class is Created",
-              icon: "success",
-            }).then((willDelete) => {
-              window.location.reload();
-            });
+            } else {
+              MySwal.fire({
+                title: "Class is Created",
+                icon: "success",
+              }).then((willDelete) => {
+                window.location.reload();
+              });
+            }
           }
         }}
       >
