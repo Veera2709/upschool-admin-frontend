@@ -4,7 +4,7 @@ import { Row, Col, Card, Pagination, Button, Modal } from "react-bootstrap";
 import BTable from "react-bootstrap/Table";
 import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
-import { GlobalFilter } from "./GlobalFilter";
+import { GlobalFilter } from '../units/GlobalFilter';
 import BasicSpinner from '../../../../helper/BasicSpinner';
 
 
@@ -28,6 +28,8 @@ import {
   fetchAllClass,
   toggleClassStatus,
 } from "../../../api/CommonApi";
+import AddClass from "./AddClass";
+import EditClass from "./EditClass";
 
 function Table({ columns, data, modalOpen }) {
   const {
@@ -61,12 +63,10 @@ function Table({ columns, data, modalOpen }) {
   );
 
   const [isOpen, setIsOpen] = useState(false);
+  const [isOpenAddClass, setOpenAddClass] = useState(false);
   let history = useHistory();
 
-  const toAddClass = () => {
-    history.push("/admin-portal/Classes/addClass");
-    setIsOpen(true);
-  };
+
 
   return (
     <>
@@ -95,7 +95,7 @@ function Table({ columns, data, modalOpen }) {
             variant="success"
             className="btn-sm btn-round has-ripple ml-2"
             onClick={() => {
-              toAddClass();
+              setOpenAddClass(true);
             }}
           >
             <i className="feather icon-plus" /> Add Class
@@ -186,6 +186,14 @@ function Table({ columns, data, modalOpen }) {
           </Pagination>
         </Col>
       </Row>
+      <Modal dialogClassName="my-modal" show={isOpenAddClass} onHide={() => setOpenAddClass(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title as="h5">Add Class</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <AddClass setOpenAddClass={setOpenAddClass} />
+        </Modal.Body>
+      </Modal>
     </>
   );
 }
@@ -214,7 +222,9 @@ const StandardList = (props) => {
   const [reloadAllData, setReloadAllData] = useState("Fetched");
   const [loader, showLoader, hideLoader] = useFullPageLoader();
   const [isLoading, setIsLoading] = useState(false);
-
+  const [isOpenEditClass, setOpenEditClass] = useState(false);
+  const [isOpenAddClass, setOpenAddClass] = useState(false);
+  const [classId, setClassId] = useState();
   const [pageLocation, setPageLocation] = useState(
     useLocation().pathname.split("/")[3]
   );
@@ -230,6 +240,10 @@ const StandardList = (props) => {
       icon: alert.type,
     });
   };
+
+  const handelAddClass = () => {
+    setOpenAddClass(true)
+  }
 
   //   function deleteClass(class_id, class_name) {
   const toggleCall = async (data) => {
@@ -249,7 +263,7 @@ const StandardList = (props) => {
       setReloadAllData(data.activity == "Delete" ? 'Deleted' : "Restored");
       return MySwal.fire(
         "",
-        "The " + data.class_name + " is " + (data.activity == "Delete" ? 'Deleted' : "Restored"),
+        "The is " + (data.activity == "Delete" ? 'Deleted' : "Restored"),
         "success"
       );
     }
@@ -311,11 +325,15 @@ const StandardList = (props) => {
                 <Button
                   size="sm"
                   className="btn btn-icon btn-rounded btn-primary"
-                  onClick={(e) =>
-                    history.push(
-                      `/admin-portal/Classes/editClass/${ActiveresultData[index].class_id}`
-                    )
-                  }
+                  // onClick={(e) =>
+                  //   history.push(
+                  //     `/admin-portal/Classes/editClass/${ActiveresultData[index].class_id}`
+                  //   )
+                  // }
+                  onClick={(e) => {
+                    setClassId(ActiveresultData[index].class_id);
+                    setOpenEditClass(true)
+                  }}
                 >
                   <i className="feather icon-edit" /> &nbsp; Edit
                 </Button>
@@ -402,15 +420,19 @@ const StandardList = (props) => {
                       <h3 style={{ textAlign: 'center' }}>No Class Found</h3>
                       <div className="form-group fill text-center">
                         <br></br>
-
-                        <Link to={'/admin-portal/Classes/addClass'}>
-                          <Button variant="success" className="btn-sm btn-round has-ripple ml-2">
-                            <i className="feather icon-plus" /> Add Class
-                          </Button>
-                        </Link>
+                        <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={handelAddClass}>
+                          <i className="feather icon-plus" /> Add Class
+                        </Button>
                       </div>
-
                     </div>
+                    <Modal dialogClassName="my-modal" show={isOpenAddClass} onHide={() => setOpenAddClass(false)}>
+                      <Modal.Header closeButton>
+                        <Modal.Title as="h5">Add Class</Modal.Title>
+                      </Modal.Header>
+                      <Modal.Body>
+                        <AddClass setOpenAddClass={setOpenAddClass} />
+                      </Modal.Body>
+                    </Modal>
                   </React.Fragment>
                 </>
               ) : (
@@ -428,6 +450,14 @@ const StandardList = (props) => {
                         </Card>
                       </Col>
                     </Row>
+                    <Modal dialogClassName="my-modal" show={isOpenEditClass} onHide={() => setOpenEditClass(false)}>
+                      <Modal.Header closeButton>
+                        <Modal.Title as="h5">Edit Class</Modal.Title>
+                      </Modal.Header>
+                      <Modal.Body>
+                        <EditClass setOpenEditClass={setOpenEditClass} classId={classId} />
+                      </Modal.Body>
+                    </Modal>
                   </React.Fragment>
                 </>
               )

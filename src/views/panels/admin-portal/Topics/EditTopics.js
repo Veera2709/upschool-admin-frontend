@@ -19,10 +19,9 @@ import MESSAGES from '../../../../helper/messages';
 
 
 
-const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
+const EditTopics = ({ setOpenEditTopic, topicId }) => {
     let history = useHistory();
-    let params = useParams();
-    const id = params.topic_id;
+
 
     let conceptArr = [];
     let topicArr = [];
@@ -164,7 +163,7 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
                 setTopicTitles(topicArr)
             }
 
-            const topicData = await getIndividualTopic(id);
+            const topicData = await getIndividualTopic(topicId);
             if (topicData.Error) {
                 console.log("topicData.Error", topicData.Error);
             } else {
@@ -245,265 +244,262 @@ const EditTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
     }
     return (
         <div>
-
             {editTopicData && (
                 <>
-
                     {!isEmptyObject(editTopicData) ?
-                        <Card>
-                            <Card.Body>
-                                <Card.Title>Edit Topic</Card.Title>
-                                <Formik
-                                    enableReinitialize
-                                    initialValues={{
-                                        topic_title: editTopicData.topic_title,
-                                        topic_description: editTopicData.topic_description,
-                                        topic_concept_id: '',
-                                        pre_post_learning: '',
-                                        related_topics: '',
-                                        topic_quiz_config: '',
-                                        duration: ''
-                                    }}
+                        <React.Fragment>
+                            <Formik
+                                enableReinitialize
+                                initialValues={{
+                                    topic_title: editTopicData.topic_title,
+                                    topic_description: editTopicData.topic_description,
+                                    topic_concept_id: '',
+                                    pre_post_learning: '',
+                                    related_topics: '',
+                                    topic_quiz_config: '',
+                                    duration: ''
+                                }}
 
-                                    validationSchema={Yup.object().shape({
-                                        topic_title: Yup.string()
-                                            .trim()
-                                            .required(Constants.AddTopic.TopictitleRequired),
-                                        topic_description: Yup.string()
-                                            .trim()
-                                            .required(Constants.AddTopic.DescriptionRequired),
-                                    })}
+                                validationSchema={Yup.object().shape({
+                                    topic_title: Yup.string()
+                                        .trim()
+                                        .required(Constants.AddTopic.TopictitleRequired),
+                                    topic_description: Yup.string()
+                                        .trim()
+                                        .required(Constants.AddTopic.DescriptionRequired),
+                                })}
 
 
-                                    onSubmit={(values, { setErrors, setStatus, setSubmitting }) => {
+                                onSubmit={(values, { setErrors, setStatus, setSubmitting }) => {
 
-                                        console.log("SUBMIT SIDE QUIZ : ", topicQuiz);
+                                    console.log("SUBMIT SIDE QUIZ : ", topicQuiz);
 
-                                        let emptyFieldValidation = topicQuiz.find(o => o.duration === "" || o.duration === 0)
+                                    let emptyFieldValidation = topicQuiz.find(o => o.duration === "" || o.duration === 0)
 
 
-                                        if (emptyFieldValidation) {
-                                            setTopicDuration(false)
-                                        }
-                                        else {
-                                            if (topicConceptId == '') {
-                                                setIsShown(false)
-                                            } else {
-                                                const formData = {
-                                                    topic_id: id,
-                                                    topic_title: values.topic_title,
-                                                    topic_description: values.topic_description,
-                                                    topic_concept_id: topicConceptId,
-                                                    pre_post_learning: prePostLearning,
-                                                    related_topics: relatedTopicsId,
-                                                    topic_quiz_config: topicQuiz
-                                                }
-                                                console.log('formData: ', formData)
-                                                submitEditTopic(formData)
+                                    if (emptyFieldValidation) {
+                                        setTopicDuration(false)
+                                    }
+                                    else {
+                                        if (topicConceptId == '') {
+                                            setIsShown(false)
+                                        } else {
+                                            setOpenEditTopic(true)
+                                            const formData = {
+                                                topic_id: topicId,
+                                                topic_title: values.topic_title,
+                                                topic_description: values.topic_description,
+                                                topic_concept_id: topicConceptId,
+                                                pre_post_learning: prePostLearning,
+                                                related_topics: relatedTopicsId,
+                                                topic_quiz_config: topicQuiz
                                             }
+                                            console.log('formData: ', formData)
+                                            submitEditTopic(formData)
                                         }
+                                    }
 
-                                    }}
-                                >
-                                    {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
-                                        <Form onSubmit={handleSubmit} >
-                                            <Col sm={6}>
-                                                <Form.Group>
-                                                    <Form.Label className="floating-label" ><small className="text-danger">* </small>Topic Title</Form.Label>
-                                                    <Form.Control
-                                                        className="form-control"
-                                                        name="topic_title"
-                                                        onBlur={handleBlur}
-                                                        onChange={handleChange}
-                                                        type="text"
-                                                        value={values.topic_title}
+                                }}
+                            >
+                                {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
+                                    <Form onSubmit={handleSubmit} >
+                                        <Col sm={6}>
+                                            <Form.Group>
+                                                <Form.Label className="floating-label" ><small className="text-danger">* </small>Topic Title</Form.Label>
+                                                <Form.Control
+                                                    className="form-control"
+                                                    name="topic_title"
+                                                    onBlur={handleBlur}
+                                                    onChange={handleChange}
+                                                    type="text"
+                                                    value={values.topic_title}
+                                                />
+                                                {touched.topic_title && errors.topic_title && <small className="text-danger form-text">{errors.topic_title}</small>}
+                                            </Form.Group>
+                                        </Col>
+
+                                        <Col sm={6}>
+                                            {defaultOption && (<div className="form-group fill" style={{ position: "relative", zIndex: 100 }}>
+                                                <label className="floating-label">
+                                                    <small className="text-danger">* </small>
+                                                    Pre-Post learning
+                                                </label>
+                                                {defaultOption.length === 0 ? (
+
+                                                    <Select
+                                                        className="basic-single"
+                                                        classNamePrefix="select"
+                                                        defaultValue={prePostOptions[0]}
+                                                        name="color"
+                                                        options={prePostOptions}
+                                                        onChange={(e) => { postPreOption(e) }}
                                                     />
-                                                    {touched.topic_title && errors.topic_title && <small className="text-danger form-text">{errors.topic_title}</small>}
-                                                </Form.Group>
-                                            </Col>
 
-                                            <Col sm={6}>
-                                                {defaultOption && (<div className="form-group fill" style={{ position: "relative", zIndex: 100 }}>
-                                                    <label className="floating-label">
-                                                        <small className="text-danger">* </small>
-                                                        Pre-Post learning
-                                                    </label>
-                                                    {defaultOption.length === 0 ? (
+                                                ) : (
+                                                    <>
+                                                        {defaultOption && (
 
-                                                        <Select
-                                                            className="basic-single"
-                                                            classNamePrefix="select"
-                                                            defaultValue={prePostOptions[0]}
-                                                            name="color"
-                                                            options={prePostOptions}
-                                                            onChange={(e) => { postPreOption(e) }}
-                                                        />
+                                                            <Select
+                                                                className="basic-single"
+                                                                classNamePrefix="select"
+                                                                defaultValue={defaultOption[0]}
+                                                                name="color"
+                                                                options={prePostOptions}
+                                                                onChange={(e) => { postPreOption(e) }}
+                                                            />
 
-                                                    ) : (
-                                                        <>
-                                                            {defaultOption && (
+                                                        )}
+                                                    </>
 
-                                                                <Select
-                                                                    className="basic-single"
-                                                                    classNamePrefix="select"
-                                                                    defaultValue={defaultOption[0]}
-                                                                    name="color"
-                                                                    options={prePostOptions}
-                                                                    onChange={(e) => { postPreOption(e) }}
-                                                                />
+                                                )}
+                                                {/* <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>required</small> */}
+                                            </div>)}
+                                        </Col>
 
-                                                            )}
-                                                        </>
+                                        <Col sm={6}>
 
-                                                    )}
-                                                    {/* <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>required</small> */}
-                                                </div>)}
-                                            </Col>
+                                            {defaultConceptOption && (<div className="form-group fill" style={{ position: "relative", zIndex: 50 }}>
+                                                <label className="floating-label" htmlFor="concept">
+                                                    <small className="text-danger">* </small>concepts
+                                                </label>
+                                                {defaultConceptOption.length === 0 ? (
 
-                                            <Col sm={6}>
-
-                                                {defaultConceptOption && (<div className="form-group fill" style={{ position: "relative", zIndex: 50 }}>
-                                                    <label className="floating-label" htmlFor="concept">
-                                                        <small className="text-danger">* </small>concepts
-                                                    </label>
-                                                    {defaultConceptOption.length === 0 ? (
-
-                                                        <Select
-                                                            className="basic-multi-select"
-                                                            isMulti
-                                                            closeMenuOnSelect={false}
-                                                            onChange={(e) => { gettopicId(e); setIsShown(true) }}
-                                                            options={conceptTitles}
-                                                            placeholder="Select the concept Title"
-                                                        />
-
-                                                    ) : (
-                                                        <>
-                                                            {defaultConceptOption && (
-
-                                                                <Select
-                                                                    defaultValue={defaultConceptOption}
-                                                                    className="basic-multi-select"
-                                                                    isMulti
-                                                                    closeMenuOnSelect={false}
-                                                                    onChange={(e) => { getconceptId(e); setIsShown(true) }}
-                                                                    options={conceptTitles}
-                                                                    placeholder="Select the Concept Title"
-                                                                />
-
-                                                            )}
-                                                        </>
-
-                                                    )}
-                                                    <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>concepts Required</small>
-                                                </div>)}
-
-                                                {defaultTopicOption && (<div className="form-group fill" style={{ position: "relative", zIndex: 20 }}>
-                                                    <label className="floating-label" htmlFor="related_topic">
-                                                        <small className="text-danger"> </small> Related Topics
-                                                    </label>
-                                                    {defaultTopicOption.length === 0 ? (
-
-                                                        <Select
-                                                            className="basic-multi-select"
-                                                            isMulti
-                                                            closeMenuOnSelect={false}
-                                                            onChange={(e) => { gettopicId(e); setIsShown(true) }}
-                                                            options={topicTitles}
-                                                            placeholder="Select the Topic Title"
-                                                        />
-
-                                                    ) : (
-                                                        <>
-                                                            {console.log(defaultTopicOption)}
-                                                            {defaultTopicOption && (
-
-                                                                < Select
-                                                                    defaultValue={defaultTopicOption}
-                                                                    className="basic-multi-select"
-                                                                    isMulti
-                                                                    closeMenuOnSelect={false}
-                                                                    onChange={(e) => { gettopicId(e); setIsShownRelatedTopic(true) }}
-                                                                    options={topicTitles}
-                                                                    placeholder="Select the Topic Title"
-                                                                />
-
-                                                            )}
-                                                        </>
-
-                                                    )}
-                                                    {/* <small className="text-danger form-text" style={{ display: isShownRelatedTopic ? 'none' : 'block' }}>required</small> */}
-                                                </div>)}
-                                            </Col>
-
-                                            <Col sm={6}>
-                                                <Form.Group>
-                                                    <Form.Label className="floating-label" ><small className="text-danger">* </small>Topic Description</Form.Label>
-                                                    <Form.Control
-                                                        as="textarea"
-                                                        rows="4"
-                                                        name="topic_description"
-                                                        onBlur={handleBlur}
-                                                        onChange={handleChange}
-                                                        type="text"
-                                                        value={values.topic_description}
+                                                    <Select
+                                                        className="basic-multi-select"
+                                                        isMulti
+                                                        closeMenuOnSelect={false}
+                                                        onChange={(e) => { gettopicId(e); setIsShown(true) }}
+                                                        options={conceptTitles}
+                                                        placeholder="Select the concept Title"
                                                     />
-                                                    {touched.topic_description && errors.topic_description && <small className="text-danger form-text">{errors.topic_description}</small>}
-                                                </Form.Group>
-                                            </Col>
 
-                                            <Form.Label className="floating-label" ><small className="text-danger">* </small>Topic Quiz Config</Form.Label>
-                                            {topicQuiz.map((topic, index) => (
+                                                ) : (
+                                                    <>
+                                                        {defaultConceptOption && (
 
-                                                <div className='row ml-1 mb-2' key={index + 1000} >
-                                                    <div className='col-md-4' key={index + 10} >
-                                                        <select className='form-control' name="level" id="level" onChange={(e) => onDynamicFormChange(e, index, 'level')} value={topic.level} >
-                                                            {levels.map((ele, i) => {
-                                                                return <option id="level" keys={i} value={ele.value} >{ele.label}</option>
-                                                            })}
-                                                        </select>
-                                                    </div>
-                                                    <p></p>
-                                                    <div className='col-md-4'>
-                                                        <div className='row'>
-                                                            <div className='col-md-6'>
-                                                                <Form.Control
-                                                                    type='number'
-                                                                    name='duration'
-                                                                    placeholder='Minutes'
-                                                                    value={topic.duration}
-                                                                    onChange={(e) => { onDynamicFormChange(e, index, 'duration'); handleChange(e) ;setTopicDuration(true)}}
-                                                                    autoComplete='off'
-                                                                />
-                                                            </div>
-                                                            {topicQuiz.length == 1 ? "" :
-                                                                <div className='col-md-6'>
-                                                                    <Button variant='danger' onClick={() => removeTopic(index)}>Remove</Button>
-                                                                </div>}
+                                                            <Select
+                                                                defaultValue={defaultConceptOption}
+                                                                className="basic-multi-select"
+                                                                isMulti
+                                                                closeMenuOnSelect={false}
+                                                                onChange={(e) => { getconceptId(e); setIsShown(true) }}
+                                                                options={conceptTitles}
+                                                                placeholder="Select the Concept Title"
+                                                            />
 
-                                                        </div>
-                                                    </div>
+                                                        )}
+                                                    </>
+
+                                                )}
+                                                <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>concepts Required</small>
+                                            </div>)}
+
+                                            {defaultTopicOption && (<div className="form-group fill" style={{ position: "relative", zIndex: 20 }}>
+                                                <label className="floating-label" htmlFor="related_topic">
+                                                    <small className="text-danger"> </small> Related Topics
+                                                </label>
+                                                {defaultTopicOption.length === 0 ? (
+
+                                                    <Select
+                                                        className="basic-multi-select"
+                                                        isMulti
+                                                        closeMenuOnSelect={false}
+                                                        onChange={(e) => { gettopicId(e); setIsShown(true) }}
+                                                        options={topicTitles}
+                                                        placeholder="Select the Topic Title"
+                                                    />
+
+                                                ) : (
+                                                    <>
+                                                        {console.log(defaultTopicOption)}
+                                                        {defaultTopicOption && (
+
+                                                            < Select
+                                                                defaultValue={defaultTopicOption}
+                                                                className="basic-multi-select"
+                                                                isMulti
+                                                                closeMenuOnSelect={false}
+                                                                onChange={(e) => { gettopicId(e); setIsShownRelatedTopic(true) }}
+                                                                options={topicTitles}
+                                                                placeholder="Select the Topic Title"
+                                                            />
+
+                                                        )}
+                                                    </>
+
+                                                )}
+                                                {/* <small className="text-danger form-text" style={{ display: isShownRelatedTopic ? 'none' : 'block' }}>required</small> */}
+                                            </div>)}
+                                        </Col>
+
+                                        <Col sm={6}>
+                                            <Form.Group>
+                                                <Form.Label className="floating-label" ><small className="text-danger">* </small>Topic Description</Form.Label>
+                                                <Form.Control
+                                                    as="textarea"
+                                                    rows="4"
+                                                    name="topic_description"
+                                                    onBlur={handleBlur}
+                                                    onChange={handleChange}
+                                                    type="text"
+                                                    value={values.topic_description}
+                                                />
+                                                {touched.topic_description && errors.topic_description && <small className="text-danger form-text">{errors.topic_description}</small>}
+                                            </Form.Group>
+                                        </Col>
+
+                                        <Form.Label className="floating-label" ><small className="text-danger">* </small>Topic Quiz Config</Form.Label>
+                                        {topicQuiz.map((topic, index) => (
+
+                                            <div className='row ml-1 mb-2' key={index + 1000} >
+                                                <div className='col-md-4' key={index + 10} >
+                                                    <select className='form-control' name="level" id="level" onChange={(e) => onDynamicFormChange(e, index, 'level')} value={topic.level} >
+                                                        {levels.map((ele, i) => {
+                                                            return <option id="level" keys={i} value={ele.value} >{ele.label}</option>
+                                                        })}
+                                                    </select>
                                                 </div>
+                                                <p></p>
+                                                <div className='col-md-4'>
+                                                    <div className='row'>
+                                                        <div className='col-md-6'>
+                                                            <Form.Control
+                                                                type='number'
+                                                                name='duration'
+                                                                placeholder='Minutes'
+                                                                value={topic.duration}
+                                                                onChange={(e) => { onDynamicFormChange(e, index, 'duration'); handleChange(e); setTopicDuration(true) }}
+                                                                autoComplete='off'
+                                                            />
+                                                        </div>
+                                                        {topicQuiz.length == 1 ? "" :
+                                                            <div className='col-md-6'>
+                                                                <Button variant='danger' onClick={() => removeTopic(index)}>Remove</Button>
+                                                            </div>}
 
-                                            ))
-                                            }
-                                            <small className="text-danger form-text" style={{ display: topicDuration ? 'none' : 'block' }}>Quiz Minutes are required!</small>
-                                            <p></p>
-                                            <button type="button" className="btn btn-primary" onClick={addTopic} >Add another Quiz</button>
-
-                                            <div className="row d-flex justify-content-end">
-                                                <div className="form-group fill">
-                                                    <div className="center col-sm-12">
-                                                        <button color="success" type="submit" className="btn-block btn btn-success btn-large">Submit</button>
                                                     </div>
                                                 </div>
                                             </div>
 
-                                        </Form>
-                                    )}
-                                </Formik>
-                            </Card.Body>
-                        </Card > :
+                                        ))
+                                        }
+                                        <small className="text-danger form-text" style={{ display: topicDuration ? 'none' : 'block' }}>Quiz Minutes are required!</small>
+                                        <p></p>
+                                        <button type="button" className="btn btn-primary" onClick={addTopic} >Add another Quiz</button>
+
+                                        <div className="row d-flex justify-content-end">
+                                            <div className="form-group fill">
+                                                <div className="center col-sm-12">
+                                                    <button color="success" type="submit" className="btn-block btn btn-success btn-large">Submit</button>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </Form>
+                                )}
+                            </Formik>
+                        </React.Fragment>
+                        :
                         <></>
                     }
                 </>

@@ -26,7 +26,7 @@ import {
 
 // import { Button,Container,Row ,Col  } from 'react-bootstrap';
 
-const AddClass = () => {
+const AddClass = ({ setOpenAddClass }) => {
   const colourOptions = [];
   const isLocked = [
     { value: "Yes", label: "Yes" },
@@ -119,168 +119,170 @@ const AddClass = () => {
   };
 
   return (
-    <div>
-      <Card>
-        <Card.Body>
-          <Card.Title>Add Class</Card.Title>
-          <Formik
-            initialValues={{
-              classTitle: "",
-              standard_subject_id: "",
-            }}
-            validationSchema={Yup.object().shape({
-              classTitle: Yup.string()
-                .trim()
-                .min(2, Constants.AddClasses.ClasstitleTooShort)
-                .max(30, Constants.AddClasses.ClasstitleTooLong)
-                .required(Constants.AddClasses.ClasstitleRequired),
-            })}
-            onSubmit={async (
-              values,
-              { setErrors, setStatus, setSubmitting }
-            ) => {
-              console.log("on submit");
-              var formData = {
-                class_name: values.classTitle,
-                class_subject_id: subjectOption,
-              };
 
-              console.log("formdata", formData);
+    <React.Fragment>
+      <Formik
+        initialValues={{
+          classTitle: "",
+          standard_subject_id: "",
+        }}
+        validationSchema={Yup.object().shape({
+          classTitle: Yup.string()
+            .trim()
+            .min(2, Constants.AddClasses.ClasstitleTooShort)
+            .max(30, Constants.AddClasses.ClasstitleTooLong)
+            .required(Constants.AddClasses.ClasstitleRequired),
+        })}
+        onSubmit={async (
+          values,
+          { setErrors, setStatus, setSubmitting }
+        ) => {
+          if (subjectOption == '') {
+            setIsShown(false)
+          } else {
+            console.log("on submit");
+            var formData = {
+              class_name: values.classTitle,
+              class_subject_id: subjectOption,
+            };
+            setOpenAddClass(false)
+            console.log("formdata", formData);
 
-              const addClassRes = await addClass(formData);
-              console.log("addClassRes : ", addClassRes);
+            const addClassRes = await addClass(formData);
+            console.log("addClassRes : ", addClassRes);
 
-              if (addClassRes.Error) {
-                if (addClassRes.Error.response.data == "Invalid Token") {
-                  sessionStorage.clear();
-                  localStorage.clear();
-                  history.push('/auth/signin-1');
-                  window.location.reload();
-                } else {
-                  let errStatus = addClassRes.Error.response.status;
-                  console.log("errStatus", errStatus);
-                  errStatus === 400
+            if (addClassRes.Error) {
+              if (addClassRes.Error.response.data == "Invalid Token") {
+                sessionStorage.clear();
+                localStorage.clear();
+                history.push('/auth/signin-1');
+                window.location.reload();
+              } else {
+                let errStatus = addClassRes.Error.response.status;
+                console.log("errStatus", errStatus);
+                errStatus === 400
+                  ? sweetAlertHandler({
+                    title: "Error",
+                    type: "error",
+                    text: MESSAGES.ERROR.ClassNameExists,
+                  })
+                  : errStatus === 502
                     ? sweetAlertHandler({
                       title: "Error",
                       type: "error",
-                      text: MESSAGES.ERROR.ClassNameExists,
+                      text: MESSAGES.ERROR.InvalidClassName,
                     })
-                    : errStatus === 502
-                      ? sweetAlertHandler({
-                        title: "Error",
-                        type: "error",
-                        text: MESSAGES.ERROR.InvalidClassName,
-                      })
-                      : sweetAlertHandler({
-                        title: "Error",
-                        type: "error",
-                        text: addClassRes.Error,
-                      });
-                }
-
-              } else {
-                MySwal.fire({
-                  title: "Class " + formData.class_name + " is Created",
-                  icon: "success",
-                }).then((willDelete) => {
-                  window.location.reload();
-                });
+                    : sweetAlertHandler({
+                      title: "Error",
+                      type: "error",
+                      text: addClassRes.Error,
+                    });
               }
-            }}
-          >
-            {({
-              errors,
-              handleBlur,
-              handleChange,
-              handleSubmit,
-              touched,
-              values,
-            }) => (
-              <form noValidate onSubmit={handleSubmit}>
-                <Row>
-                  {/* {edit1Toggle && <Loader />} */}
-                  <Col sm={6}>
-                    <div className="form-group fill">
-                      <label className="floating-label" htmlFor="classTitle">
-                        <small className="text-danger">* </small>Class Name
-                      </label>
-                      <input
-                        className="form-control"
-                        error={touched.classTitle && errors.classTitle}
-                        name="classTitle"
-                        onBlur={handleBlur}
-                        onChange={handleChange}
-                        type="text"
-                        value={values.classTitle}
-                        placeholder="Enter Class Name"
-                        id="title"
-                      />
-                      {touched.classTitle && errors.classTitle && (
-                        <small className="text-danger form-text">
-                          {errors.classTitle}
-                        </small>
-                      )}
-                    </div>
-                    <br />
-                    <div
-                      className="form-group fill"
-                      style={{ position: "relative", zIndex: 20 }}
-                    >
-                      <label
-                        className="floating-label"
-                        htmlFor="standard_subject_id"
-                      >
-                        <small className="text-danger">* </small> Subjects
-                      </label>
 
-                      <Select
-                        isMulti
-                        name="digicards"
-                        options={topicSubjects}
-                        className="basic-multi-select"
-                        classNamePrefix="Select"
-                        onChange={(event) => handleDigicardChange(event)}
-                      />
-                      {showDigicardErr && (
-                        <small className="text-danger form-text">
-                          {"Please select a Subject"}
-                        </small>
-                      )}
+            } else {
+              MySwal.fire({
+                title: "Class is Created",
+                icon: "success",
+              }).then((willDelete) => {
+                window.location.reload();
+              });
+            }
+          }
+        }}
+      >
+        {({
+          errors,
+          handleBlur,
+          handleChange,
+          handleSubmit,
+          touched,
+          values,
+        }) => (
+          <form noValidate onSubmit={handleSubmit}>
+            <Row>
+              {/* {edit1Toggle && <Loader />} */}
+              <Col sm={6}>
+                <div className="form-group fill">
+                  <label className="floating-label" htmlFor="classTitle">
+                    <small className="text-danger">* </small>Class Name
+                  </label>
+                  <input
+                    className="form-control"
+                    error={touched.classTitle && errors.classTitle}
+                    name="classTitle"
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    type="text"
+                    value={values.classTitle}
+                    placeholder="Enter Class Name"
+                    id="title"
+                  />
+                  {touched.classTitle && errors.classTitle && (
+                    <small className="text-danger form-text">
+                      {errors.classTitle}
+                    </small>
+                  )}
+                </div>
+                <br />
+                <div
+                  className="form-group fill"
+                  style={{ position: "relative", zIndex: 20 }}
+                >
+                  <label
+                    className="floating-label"
+                    htmlFor="standard_subject_id"
+                  >
+                    <small className="text-danger">* </small> Subjects
+                  </label>
 
-                      <br />
-                      <small
-                        className="text-danger form-text"
-                        style={{ display: isShown ? "none" : "block" }}
-                      >
-                        Please select a Subject
-                      </small>
-                    </div>
+                  <Select
+                    isMulti
+                    name="digicards"
+                    options={topicSubjects}
+                    className="basic-multi-select"
+                    classNamePrefix="Select"
+                    onChange={(event) => handleDigicardChange(event)}
+                  />
+                  {showDigicardErr && (
+                    <small className="text-danger form-text">
+                      {"Please select a Subject"}
+                    </small>
+                  )}
 
-                  </Col>
-                </Row>
-                <br></br>
-                <Row>
-                  <Col sm={10}></Col>
-                  <div className="form-group fill float-end">
-                    <Col sm={12} className="center">
-                      <Button
-                        className="btn-block"
-                        color="success"
-                        size="large"
-                        type="submit"
-                        variant="success"
-                      >
-                        Submit
-                      </Button>
-                    </Col>
-                  </div>
-                </Row>
-              </form>
-            )}
-          </Formik>
-        </Card.Body>
-      </Card>
-    </div>
+                  <br />
+                  <small
+                    className="text-danger form-text"
+                    style={{ display: isShown ? "none" : "block" }}
+                  >
+                    Please select a Subject
+                  </small>
+                </div>
+
+              </Col>
+            </Row>
+            <br></br>
+            <Row>
+              <Col sm={10}></Col>
+              <div className="form-group fill float-end">
+                <Col sm={12} className="center">
+                  <Button
+                    className="btn-block"
+                    color="success"
+                    size="large"
+                    type="submit"
+                    variant="success"
+                  >
+                    Submit
+                  </Button>
+                </Col>
+              </div>
+            </Row>
+          </form>
+        )}
+      </Formik>
+    </React.Fragment>
+
+
   );
 };
 

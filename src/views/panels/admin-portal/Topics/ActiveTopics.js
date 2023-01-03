@@ -19,6 +19,8 @@ import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import { useLocation } from "react-router-dom";
 import { fetchAllTopics } from '../../../api/CommonApi'
 import BasicSpinner from '../../../../helper/BasicSpinner';
+import AddTopics from './AddTopics';
+import EditTopics from './EditTopics';
 
 
 
@@ -55,12 +57,10 @@ function Table({ columns, data, modalOpen }) {
     );
 
     const [isOpen, setIsOpen] = useState(false);
+    const [isOpenAddTopic, setOpenAddTopic] = useState(false);
     let history = useHistory();
 
-    const addingTopic = () => {
-        history.push('/admin-portal/Topics/addTopics');
-        setIsOpen(true);
-    }
+
 
     return (
         <>
@@ -85,7 +85,7 @@ function Table({ columns, data, modalOpen }) {
 
                 <Col className="d-flex justify-content-end">
                     <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
-                    <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={() => { addingTopic() }}>
+                    <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={() => { setOpenAddTopic(true) }}>
                         <i className="feather icon-plus" /> Add Topic
                     </Button>
                 </Col>
@@ -160,7 +160,14 @@ function Table({ columns, data, modalOpen }) {
                     </Pagination>
                 </Col>
             </Row>
-
+            <Modal dialogClassName="my-modal" show={isOpenAddTopic} onHide={() => setOpenAddTopic(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title as="h5">Add Topic</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <AddTopics setOpenAddTopic={setOpenAddTopic} />
+                </Modal.Body>
+            </Modal>
         </>
     );
 }
@@ -194,10 +201,15 @@ const ActiveTopics = (props) => {
     const [loader, showLoader, hideLoader] = useFullPageLoader();
     const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[3]);
     const [isLoading, setIsLoading] = useState(false);
+    const [isOpenAddTopic, setOpenAddTopic] = useState(false);
+    const [isOpenEditTopic, setOpenEditTopic] = useState(false);
+    const [topicId,setTopicId] = useState();
+
 
 
 
     // console.log('data: ', data)
+    
 
     let history = useHistory();
 
@@ -211,6 +223,9 @@ const ActiveTopics = (props) => {
     }
 
 
+    const handleAddTopic = ()=>{
+        setOpenAddTopic(true)
+    }
 
     const confirmHandler = (topic_id, topic_title) => {
         var data = {
@@ -357,7 +372,8 @@ const ActiveTopics = (props) => {
                                     <Button
                                         size="sm"
                                         className="btn btn-icon btn-rounded btn-primary"
-                                        onClick={(e) => history.push(`/admin-portal/Topics/editTopic/${ActiveresultData[index].topic_id}`)}
+                                        // onClick={(e) => history.push(`/admin-portal/Topics/editTopic/${ActiveresultData[index].topic_id}`)}
+                                        onClick={(e)=>{setTopicId(ActiveresultData[index].topic_id) ; setOpenEditTopic(true)}}
                                     >
                                         <i className="feather icon-edit" /> &nbsp; Edit
                                     </Button>
@@ -436,15 +452,19 @@ const ActiveTopics = (props) => {
                                             <h3 style={{ textAlign: 'center' }}>No Topics Found</h3>
                                             <div className="form-group fill text-center">
                                                 <br></br>
-
-                                                <Link to={'/admin-portal/Topics/addTopics'}>
-                                                    <Button variant="success" className="btn-sm btn-round has-ripple ml-2">
-                                                        <i className="feather icon-plus" /> Add Topic
-                                                    </Button>
-                                                </Link>
+                                                <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={handleAddTopic}>
+                                                    <i className="feather icon-plus" /> Add Topic
+                                                </Button>
                                             </div>
-
                                         </div>
+                                        <Modal dialogClassName="my-modal" show={isOpenAddTopic} onHide={() => setOpenAddTopic(false)}>
+                                            <Modal.Header closeButton>
+                                                <Modal.Title as="h5">Add Topic</Modal.Title>
+                                            </Modal.Header>
+                                            <Modal.Body>
+                                                <AddTopics setOpenAddTopic={setOpenAddTopic} />
+                                            </Modal.Body>
+                                        </Modal>
                                     </React.Fragment>
                                 </>
                             ) : (
@@ -462,6 +482,14 @@ const ActiveTopics = (props) => {
                                                 </Card>
                                             </Col>
                                         </Row>
+                                        <Modal dialogClassName="my-modal" show={isOpenEditTopic} onHide={() => setOpenEditTopic(false)}>
+                                            <Modal.Header closeButton>
+                                                <Modal.Title as="h5">Edit Topic</Modal.Title>
+                                            </Modal.Header>
+                                            <Modal.Body>
+                                                <EditTopics setOpenEditTopic={setOpenEditTopic} topicId={topicId} />
+                                            </Modal.Body>
+                                        </Modal>
                                     </React.Fragment>
                                 </>
                             )
