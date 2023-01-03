@@ -162,7 +162,7 @@ function Table({ columns, data, modalOpen }) {
             </Row>
             <Modal dialogClassName="my-modal" show={isOpenAddChapter} onHide={() => setOpenAddChapter(false)}>
                 <Modal.Header closeButton>
-                    <Modal.Title as="h5">Add Unit</Modal.Title>
+                    <Modal.Title as="h5">Add Chapter</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <AddChapter setOpenAddChapter={setOpenAddChapter} />
@@ -478,7 +478,7 @@ const handleAddChapter =(e)=>{
                                         </div>
                                         <Modal dialogClassName="my-modal" show={isOpenAddChapter} onHide={() => setOpenAddChapter(false)}>
                                             <Modal.Header closeButton>
-                                                <Modal.Title as="h5">Add Unit</Modal.Title>
+                                                <Modal.Title as="h5">Add Chapter</Modal.Title>
                                             </Modal.Header>
                                             <Modal.Body>
                                                 <AddChapter setOpenAddChapter={setOpenAddChapter} />
@@ -503,7 +503,7 @@ const handleAddChapter =(e)=>{
                                         </Row>
                                         <Modal dialogClassName="my-modal" show={isOpenEditChapter} onHide={() => setOpenEditChapter(false)}>
                                             <Modal.Header closeButton>
-                                                <Modal.Title as="h5">Edit Unit</Modal.Title>
+                                                <Modal.Title as="h5">Edit Chapter</Modal.Title>
                                             </Modal.Header>
                                             <Modal.Body>
                                                 <EditChapter setOpenEditChapter={setOpenEditChapter} chapterId={chapterId} />
