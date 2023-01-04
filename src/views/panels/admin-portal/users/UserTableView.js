@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import Select from 'react-select';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import { Row, Col, Card, Pagination, Button, Modal, Alert } from 'react-bootstrap';
 import BTable from 'react-bootstrap/Table';
@@ -158,39 +159,38 @@ function Table({ columns, data, modalOpen }) {
 
 const UserTableView = ({ _userRole }) => {
 
-  const columns = React.useMemo(
-    () => [
-      {
-        Header: '#',
-        accessor: 'id'
-      },
-      {
-        Header: 'First Name',
-        accessor: 'user_firstname'
-      },
-      {
-        Header: 'Last Name',
-        accessor: 'user_lastname'
-      },
-      {
-        Header: 'DOB',
-        accessor: 'user_dob.dd_mm_yyyy'
-      },
-      {
-        Header: 'Email',
-        accessor: 'user_email'
-      },
-      {
-        Header: 'Phone',
-        accessor: 'user_phone_no'
-      },
-      {
-        Header: 'Options',
-        accessor: 'action'
-      }
-    ],
-    []
-  );
+  console.log(_userRole);
+
+  const columns = React.useMemo(() => [
+    {
+      Header: '#',
+      accessor: 'id'
+    },
+    {
+      Header: 'First Name',
+      accessor: 'user_firstname'
+    },
+    {
+      Header: 'Last Name',
+      accessor: 'user_lastname'
+    },
+    {
+      Header: 'DOB',
+      accessor: 'user_dob.dd_mm_yyyy'
+    },
+    {
+      Header: 'Email',
+      accessor: 'user_email'
+    },
+    {
+      Header: 'Phone',
+      accessor: 'user_phone_no'
+    },
+    {
+      Header: 'Options',
+      accessor: 'action'
+    }
+  ], []);
 
   const history = useHistory();
   const [userData, setUserData] = useState([]);
@@ -212,9 +212,6 @@ const UserTableView = ({ _userRole }) => {
   const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
   const [selectClassErr, setSelectClassErr] = useState(false);
   const [_data, _setData] = useState([]);
-  const [teachersData, setTeachersData] = useState([]);
-  const [studentsData, setStudentsData] = useState([]);
-  const [parentsData, setParentsData] = useState([]);
   const classNameRef = useRef('');
   const schoolNameRef = useRef('');
 
@@ -255,8 +252,9 @@ const UserTableView = ({ _userRole }) => {
 
   const saveUserId = (e, user_id, user_role) => {
     e.preventDefault();
-    getIndividualUser(user_id, user_role);
     showLoader();
+    getIndividualUser(user_id, user_role);
+
   };
 
   const saveUserIdDelete = (e, user_id, user_role, updateStatus) => {
@@ -307,9 +305,10 @@ const UserTableView = ({ _userRole }) => {
 
           setClassName_ID(response.data.classList);
           setSchoolName_ID(response.data.schoolList);
-          setPreviousSchool(schoolNameArr.school_name);
+          // setPreviousSchool(schoolNameArr.school_name);
+          schoolNameArr === "" || schoolNameArr === undefined || schoolNameArr === "undefined" || schoolNameArr === "N.A." ? setPreviousSchool("Select School") : setPreviousSchool(schoolNameArr.school_name);
           classNameArr === "" || classNameArr === undefined || classNameArr === "undefined" || classNameArr === "N.A." ? setPreviousClass("Select Class") : setPreviousClass(classNameArr.client_class_name);
-          setUserDOB(response.data.Items[0].user_dob)
+          setUserDOB(response.data.Items[0].user_dob);
           setIndividualUserData(individual_user_data);
           setIsEditModalOpen(true);
           _setUserID(user_id);
@@ -604,20 +603,6 @@ const UserTableView = ({ _userRole }) => {
           userRole: Yup.string().max(255).required('User Role is required'),
           school: Yup.string().max(255).required('School is required')
         })
-      } else if (responseData[index].user_role === "Student") {
-
-        userId = responseData[index].student_id;
-        setValidationObj({
-          firstName: Yup.string().max(255).required('First Name is required'),
-          lastName: Yup.string().max(255).required('Last Name is required'),
-          userEmail: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
-          phoneNumber: Yup.string().matches(phoneRegExp, 'Phone number is not valid').max(255).required('Phone Number is required'),
-          userRole: Yup.string().max(255).required('User Role is required'),
-          class: Yup.string().max(255).required('Class is required'),
-          section: Yup.string().max(255).required('Section is required'),
-          school: Yup.string().max(255).required('School is required')
-        })
-
       } else {
         userId = responseData[index].parent_id;
         setValidationObj({
@@ -636,6 +621,7 @@ const UserTableView = ({ _userRole }) => {
           {pageLocation === 'active-users' ? (
 
             <>
+
               <Button size="sm" className="btn btn-icon btn-rounded btn-info" onClick={(e) => saveUserId(e, userId, responseData[index].user_role)}>
                 <i className="feather icon-edit" /> &nbsp; Edit
               </Button>{' '}
@@ -677,7 +663,7 @@ const UserTableView = ({ _userRole }) => {
 
     console.log("fetch User Data calling");
     setIsLoading(true);
-    showLoader();
+    // showLoader();
 
     const payLoadStatus = pageLocation === "active-users" ? 'Active' : 'Archived';
 
@@ -723,24 +709,22 @@ const UserTableView = ({ _userRole }) => {
 
   };
 
-
   useEffect(() => {
     const validateJWT = sessionStorage.getItem('user_jwt');
 
     if (validateJWT === "" || validateJWT === null || validateJWT === undefined || validateJWT === "undefined") {
 
-        sessionStorage.clear();
-        localStorage.clear();
+      sessionStorage.clear();
+      localStorage.clear();
 
-        history.push('/auth/signin-1');
-        window.location.reload();
+      history.push('/auth/signin-1');
+      window.location.reload();
 
-      }
-      else
-      {
-        fetchUserData();
-      }
-    
+    }
+    else {
+      fetchUserData();
+    }
+
   }, [pageLocation]);
 
   useEffect(() => {
@@ -748,121 +732,110 @@ const UserTableView = ({ _userRole }) => {
 
     if (validateJWT === "" || validateJWT === null || validateJWT === undefined || validateJWT === "undefined") {
 
-        sessionStorage.clear();
-        localStorage.clear();
+      sessionStorage.clear();
+      localStorage.clear();
 
-        history.push('/auth/signin-1');
-        window.location.reload();
+      history.push('/auth/signin-1');
+      window.location.reload();
 
-      }
-      else
-      {
-        fetchUserData();
-      }
-    
+    }
+    else {
+      fetchUserData();
+    }
+
   }, [_userRole]);
 
   return (
-    <div>
 
-      {isLoading ? (
-        <BasicSpinner />
-      ) : (
-        <>
+    <React.Fragment>
+      <div>
 
-          {
-            userData.length <= 0 && _data ? (
-              <div>
+        {isLoading ? (
+          <BasicSpinner />
+        ) : (
+          <>
 
-                <h3 style={{ textAlign: 'center' }}>No Users Found</h3>
-                <div className="form-group fill text-center">
-                  <br></br>
+            {
+              userData.length <= 0 && _data ? (
+                <div>
 
-                  <Link to={'/admin-portal/add-users'}>
-                    <Button variant="success" className="btn-sm btn-round has-ripple ml-2">
-                      <i className="feather icon-plus" /> Add Users
-                    </Button>
-                  </Link>
+                  <h3 style={{ textAlign: 'center' }}>No Users Found</h3>
+                  <div className="form-group fill text-center">
+                    <br></br>
+
+                    <Link to={'/admin-portal/add-users'}>
+                      <Button variant="success" className="btn-sm btn-round has-ripple ml-2">
+                        <i className="feather icon-plus" /> Add Users
+                      </Button>
+                    </Link>
+                  </div>
+
                 </div>
+              ) : (
 
-              </div>
-            ) : (
+                <>
+                  {_data && (
 
-              <>
-                {_data && (
+                    <>
 
-                  <>
+                      < React.Fragment >
+                        <Row>
+                          <Col sm={12}>
+                            <Card>
+                              <Card.Header>
+                                <Card.Title as="h5">User List</Card.Title>
+                              </Card.Header>
+                              <Card.Body>
+                                <Table columns={columns} data={userData} modalOpen={openHandler} />
+                              </Card.Body>
+                            </Card>
 
-                    < React.Fragment >
-                      <Row>
-                        <Col sm={12}>
-                          <Card>
-                            <Card.Header>
-                              <Card.Title as="h5">User List</Card.Title>
-                            </Card.Header>
-                            <Card.Body>
-                              <Table columns={columns} data={userData} modalOpen={openHandler} />
-                            </Card.Body>
-                          </Card>
+                          </Col>
+                        </Row>
+                      </React.Fragment>
 
-                        </Col>
-                      </Row>
-                    </React.Fragment>
+                      <Modal dialogClassName="my-modal" show={isEditModalOpen} onHide={() => setIsEditModalOpen(false)}>
+                        <Modal.Header closeButton>
+                          <Modal.Title as="h5">Update User</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                          <Formik
+                            initialValues={{
+                              firstName: individualUserData.user_firstname,
+                              lastName: individualUserData.user_lastname,
+                              userEmail: individualUserData.user_email,
+                              phoneNumber: individualUserData.user_phone_no,
+                              userRole: individualUserData.user_role,
+                              user_dob: userDOB.yyyy_mm_dd,
+                              class: individualUserData.class_id,
+                              section: individualUserData.section_id,
+                              school: individualUserData.school_id
 
-                    <Modal dialogClassName="my-modal" show={isEditModalOpen} onHide={() => setIsEditModalOpen(false)}>
-                      <Modal.Header closeButton>
-                        <Modal.Title as="h5">Update User</Modal.Title>
-                      </Modal.Header>
-                      <Modal.Body>
-                        <Formik
-                          initialValues={{
-                            firstName: individualUserData.user_firstname,
-                            lastName: individualUserData.user_lastname,
-                            userEmail: individualUserData.user_email,
-                            phoneNumber: individualUserData.user_phone_no,
-                            userRole: individualUserData.user_role,
-                            user_dob: userDOB.yyyy_mm_dd,
-                            class: individualUserData.class_id,
-                            section: individualUserData.section_id,
-                            school: individualUserData.school_id
+                              //individualUserData.user_dob.yyyy_mm_dd
 
-                            //individualUserData.user_dob.yyyy_mm_dd
+                            }}
+                            validationSchema={
+                              Yup.object().shape(validationObj)
+                            }
+                            onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
 
-                          }}
-                          validationSchema={
-                            Yup.object().shape(validationObj)
-                          }
-                          onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
+                              console.log("Submit")
+                              setStatus({ success: true });
+                              setSubmitting(true);
 
-                            console.log("Submit")
-                            setStatus({ success: true });
-                            setSubmitting(true);
+                              let data;
 
-                            let data;
+                              const selectedSchoolID = schoolName_ID.find((e) => e.school_name == schoolNameRef.current.value);
 
-                            const selectedSchoolID = schoolName_ID.find((e) => e.school_name == schoolNameRef.current.value);
+                              console.log(selectedSchoolID);
+                              console.log(classNameRef.current.value);
 
-                            console.log(classNameRef.current.value);
-
-                            if (values.userRole === 'Student') {
-
-                              if (classNameRef.current.value === 'Select Class') {
-
-                                setSelectClassErr(true);
-
-                              } else {
-
-                                const selectedClassID = isEmptyArray(className_ID) ? "N.A." : (
-
-                                  className_ID.find((e) => e.client_class_name == classNameRef.current.value).client_class_id
-                                )
+                              if (values.userRole === 'Teacher') {
 
                                 data = {
 
-                                  student_id: _userID,
-                                  class_id: selectedClassID,
+                                  teacher_id: _userID,
                                   school_id: selectedSchoolID.school_id,
-                                  section_id: values.section,
                                   user_dob: values.user_dob,
                                   user_firstname: values.firstName,
                                   user_lastname: values.lastName,
@@ -872,325 +845,362 @@ const UserTableView = ({ _userRole }) => {
 
                                 };
 
+                                console.log(data);
+                                showLoader();
+                                _UpdateUser(data);
+
+                              } else {
+
+                                data = {
+
+                                  parent_id: _userID,
+                                  school_id: selectedSchoolID.school_id,
+                                  user_dob: values.user_dob,
+                                  user_firstname: values.firstName,
+                                  user_lastname: values.lastName,
+                                  user_email: values.userEmail,
+                                  user_phone_no: values.phoneNumber,
+                                  user_role: values.userRole
+
+                                };
+
+                                console.log(data);
+                                showLoader();
+                                _UpdateUser(data);
+
                               }
 
-                            } else if (values.userRole === 'Teacher') {
+                            }}
+                          >
+                            {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
+                              <form noValidate onSubmit={handleSubmit}>
+                                <Row>
+                                  <Col>
+                                    <Row>
+                                      <Col>
+                                        <div className="form-group fill">
+                                          <label className="floating-label" htmlFor="firstName">
+                                            <small className="text-danger">* </small>First Name
+                                          </label>
+                                          <input
+                                            className="form-control"
+                                            error={touched.firstName && errors.firstName}
+                                            name="firstName"
+                                            onBlur={handleBlur}
+                                            onChange={handleChange}
+                                            type="text"
+                                            value={values.firstName}
+                                          />
+                                          {touched.firstName && errors.firstName && <small className="text-danger form-text">{errors.firstName}</small>}
+                                        </div>
+                                      </Col>
 
-                              data = {
+                                      <Col>
+                                        <div className="form-group fill">
+                                          <label className="floating-label" htmlFor="lastName">
+                                            <small className="text-danger">* </small>Last Name
+                                          </label>
+                                          <input
+                                            className="form-control"
+                                            error={touched.lastName && errors.lastName}
+                                            name="lastName"
+                                            onBlur={handleBlur}
+                                            onChange={handleChange}
+                                            type="text"
+                                            value={values.lastName}
+                                          />
+                                          {touched.lastName && errors.lastName && <small className="text-danger form-text">{errors.lastName}</small>}
+                                        </div>
+                                      </Col>
 
-                                teacher_id: _userID,
-                                school_id: selectedSchoolID.school_id,
-                                user_dob: values.user_dob,
-                                user_firstname: values.firstName,
-                                user_lastname: values.lastName,
-                                user_email: values.userEmail,
-                                user_phone_no: values.phoneNumber,
-                                user_role: values.userRole
+                                    </Row>
 
-                              };
+                                    <Row>
 
-                            } else {
+                                      <Col>
 
-                              data = {
+                                        <div className="form-group fill">
+                                          <label className="floating-label" htmlFor="class">
+                                            <small className="text-danger">* </small>School
+                                          </label>
+                                          {console.log(previousSchool)}
+                                          <select
+                                            className="form-control"
+                                            error={touched.school && errors.school}
+                                            name="school"
+                                            onBlur={handleBlur}
+                                            // onChange={handleChange}
+                                            onChange={handleSchoolChange}
+                                            type="text"
+                                            ref={schoolNameRef}
+                                            // value={values.school}
+                                            defaultValue={previousSchool}
+                                            disabled={true}
+                                          >
 
-                                parent_id: _userID,
-                                school_id: selectedSchoolID.school_id,
-                                user_dob: values.user_dob,
-                                user_firstname: values.firstName,
-                                user_lastname: values.lastName,
-                                user_email: values.userEmail,
-                                user_phone_no: values.phoneNumber,
-                                user_role: values.userRole
+                                            <option>Select School</option>
 
-                              };
+                                            {schoolName_ID.map((schoolData) => {
 
-                            }
+                                              return <option key={schoolData.school_id}>
+                                                {schoolData.school_name}
+                                              </option>
 
-                            console.log(data);
-                            showLoader();
-                            _UpdateUser(data);
-                          }}
-                        >
-                          {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
-                            <form noValidate onSubmit={handleSubmit}>
-                              <Row>
-                                <Col>
-                                  <Row>
-                                    <Col>
-                                      <div className="form-group fill">
-                                        <label className="floating-label" htmlFor="firstName">
-                                          <small className="text-danger">* </small>First Name
-                                        </label>
-                                        <input
-                                          className="form-control"
-                                          error={touched.firstName && errors.firstName}
-                                          name="firstName"
-                                          onBlur={handleBlur}
-                                          onChange={handleChange}
-                                          type="text"
-                                          value={values.firstName}
-                                        />
-                                        {touched.firstName && errors.firstName && <small className="text-danger form-text">{errors.firstName}</small>}
-                                      </div>
-                                    </Col>
+                                            })}
 
-                                    <Col>
-                                      <div className="form-group fill">
-                                        <label className="floating-label" htmlFor="lastName">
-                                          <small className="text-danger">* </small>Last Name
-                                        </label>
-                                        <input
-                                          className="form-control"
-                                          error={touched.lastName && errors.lastName}
-                                          name="lastName"
-                                          onBlur={handleBlur}
-                                          onChange={handleChange}
-                                          type="text"
-                                          value={values.lastName}
-                                        />
-                                        {touched.lastName && errors.lastName && <small className="text-danger form-text">{errors.lastName}</small>}
-                                      </div>
-                                    </Col>
-
-                                  </Row>
-
-                                  <Row>
-
-                                    <Col>
-
-                                      <div className="form-group fill">
-                                        <label className="floating-label" htmlFor="class">
-                                          <small className="text-danger">* </small>School
-                                        </label>
-                                        <select
-                                          className="form-control"
-                                          error={touched.school && errors.school}
-                                          name="school"
-                                          onBlur={handleBlur}
-                                          // onChange={handleChange}
-                                          onChange={handleSchoolChange}
-                                          type="text"
-                                          ref={schoolNameRef}
-                                          // value={values.school}
-                                          defaultValue={previousSchool}
-                                        >
-
-                                          {schoolName_ID.map((schoolData) => {
-
-                                            return <option key={schoolData.school_id}>
-                                              {schoolData.school_name}
-                                            </option>
-
-                                          })}
-
-                                        </select>
-                                        {touched.school && errors.school && (
-                                          <small className="text-danger form-text">{errors.school}</small>
-                                        )}
-                                      </div>
-                                    </Col>
+                                          </select>
+                                          {touched.school && errors.school && (
+                                            <small className="text-danger form-text">{errors.school}</small>
+                                          )}
+                                        </div>
+                                      </Col>
 
 
-                                    <Col>
-                                      <div className="form-group fill">
-                                        <label className="floating-label" htmlFor="userRole">
-                                          <small className="text-danger">* </small>Role
-                                        </label>
-                                        <input
-                                          className="form-control"
-                                          error={touched.userRole && errors.userRole}
-                                          name="userRole"
-                                          onBlur={handleBlur}
-                                          onChange={handleChange}
-                                          type="text"
-                                          value={values.userRole}
-
-                                        />
-                                        {touched.userRole && errors.userRole && <small className="text-danger form-text">{errors.userRole}</small>}
-                                      </div>
-                                    </Col>
-
-                                  </Row>
-
-                                  {individualUserData.class_id && individualUserData.section_id && className_ID && (
-                                    <>
-                                      <Row>
-
-                                        <Col>
-
-                                          <div className="form-group fill">
-                                            <label className="floating-label" htmlFor="class">
-                                              <small className="text-danger">* </small>Class
-                                            </label>
-                                            <select
-                                              className="form-control"
-                                              error={touched.class && errors.class}
-                                              name="class"
-                                              onBlur={handleBlur}
-                                              onChange={() => {
-                                                setSelectClassErr(false)
-                                              }}
-                                              type="text"
-                                              ref={classNameRef}
-                                              // value={values.class}
-                                              defaultValue={previousClass}
-                                            >
-
-                                              {
-                                                console.log("previousClass", previousClass)
-                                              }
-                                              <option>Select Class</option>
-
-                                              {console.log("className_ID", className_ID)}
-                                              {className_ID.map((classData) => {
-
-                                                return <option key={classData.client_class_id}>
-                                                  {classData.client_class_name}
-                                                </option>
-
-                                              })}
-
-                                            </select>
-                                            {touched.class && errors.class && (
-                                              <small className="text-danger form-text">{errors.class}</small>
-                                            )}
-                                            {selectClassErr && (
-
-                                              <small className="text-danger form-text">Please select a class</small>
-
-                                            )}
-                                          </div>
-                                        </Col>
-
-                                        <Col>
-                                          <div className="form-group fill">
-                                            <label className="floating-label" htmlFor="section">
-                                              <small className="text-danger">* </small>Section
-                                            </label>
-                                            <input
-                                              className="form-control"
-                                              error={touched.section && errors.section}
-                                              name="section"
-                                              onBlur={handleBlur}
-                                              onChange={handleChange}
-                                              type="text"
-                                              value={values.section}
-
-                                            />
-                                            {touched.section && errors.section && <small className="text-danger form-text">{errors.section}</small>}
-                                          </div>
-                                        </Col>
-                                      </Row>
-                                    </>
+                                      <Col>
+                                        <div className="form-group fill">
+                                          <label className="floating-label" htmlFor="userRole">
+                                            <small className="text-danger">* </small>Role
+                                          </label>
+                                          <input
+                                            className="form-control"
+                                            error={touched.userRole && errors.userRole}
+                                            name="userRole"
+                                            onBlur={handleBlur}
+                                            onChange={handleChange}
+                                            type="text"
+                                            value={values.userRole}
+                                            readOnly={true}
+                                          />
 
 
-                                  )}
+                                        </div>
+                                      </Col>
 
-                                  <Row>
-                                    <Col>
-                                      <div className="form-group fill">
-                                        <label className="floating-label" htmlFor="userEmail">
-                                          <small className="text-danger">* </small>Email ID
-                                        </label>
-                                        <input
-                                          className="form-control"
-                                          error={touched.userEmail && errors.userEmail}
-                                          name="userEmail"
-                                          onBlur={handleBlur}
-                                          onChange={handleChange}
-                                          type="email"
-                                          value={values.userEmail}
+                                    </Row>
 
-                                        />
-                                        {touched.userEmail && errors.userEmail && <small className="text-danger form-text">{errors.userEmail}</small>}
-                                      </div>
-                                    </Col>
-                                    <Col>
-                                      <div className="form-group fill">
-                                        <label className="floating-label" htmlFor="phoneNumber">
-                                          <small className="text-danger">* </small>Phone No
-                                        </label>
-                                        <input
-                                          className="form-control"
-                                          error={touched.phoneNumber && errors.phoneNumber}
-                                          name="phoneNumber"
-                                          onBlur={handleBlur}
-                                          onChange={handleChange}
-                                          type="number"
-                                          value={values.phoneNumber}
+                                    {individualUserData.class_id && individualUserData.section_id && className_ID ? (
+                                      <>
+                                        <Row>
 
-                                        />
-                                        {touched.phoneNumber && errors.phoneNumber && <small className="text-danger form-text">{errors.phoneNumber}</small>}
-                                      </div>
-                                    </Col>
-                                  </Row>
+                                          <Col>
 
-                                  <Row>
+                                            <div className="form-group fill">
+                                              <label className="floating-label" htmlFor="class">
+                                                <small className="text-danger">* </small>Class
+                                              </label>
+                                              <select
+                                                className="form-control"
+                                                error={touched.class && errors.class}
+                                                name="class"
+                                                onBlur={handleBlur}
+                                                onChange={() => {
+                                                  setSelectClassErr(false)
+                                                }}
+                                                type="text"
+                                                ref={classNameRef}
+                                                // value={values.class}
+                                                defaultValue={previousClass}
+                                              >
 
-                                    <Col>
-                                      <div className="form-group fill">
-                                        <label className="floating-label" htmlFor="user_dob">
-                                          <small className="text-danger">* </small>DOB
-                                        </label>
-                                        <input
-                                          className="form-control"
-                                          error={touched.user_dob && errors.user_dob}
-                                          name="user_dob"
-                                          onBlur={handleBlur}
-                                          onChange={handleChange}
-                                          type="date"
-                                          value={values.user_dob}
+                                                {
+                                                  console.log("previousClass", previousClass)
+                                                }
+                                                <option>Select Class</option>
 
-                                        />
-                                        {touched.user_dob && errors.user_dob && <small className="text-danger form-text">{errors.user_dob}</small>}
-                                      </div>
-                                    </Col>
+                                                {console.log("className_ID", className_ID)}
+                                                {className_ID.map((classData) => {
 
-                                    <Col></Col>
-                                  </Row>
+                                                  return <option key={classData.client_class_id}>
+                                                    {classData.client_class_name}
+                                                  </option>
 
-                                  {errors.submit && (
-                                    <Col sm={12}>
-                                      <Alert variant="danger">{errors.submit}</Alert>
-                                    </Col>
-                                  )}
+                                                })}
 
+                                              </select>
+                                              {touched.class && errors.class && (
+                                                <small className="text-danger form-text">{errors.class}</small>
+                                              )}
+                                              {selectClassErr && (
 
-                                  <hr />
+                                                <small className="text-danger form-text">Please select a class</small>
 
-                                  <Row>
+                                              )}
+                                            </div>
+                                          </Col>
 
-                                    <Col></Col>
+                                          <Col>
+                                            <div className="form-group fill">
+                                              <label className="floating-label" htmlFor="section">
+                                                <small className="text-danger">* </small>Section
+                                              </label>
+                                              <input
+                                                className="form-control"
+                                                error={touched.section && errors.section}
+                                                name="section"
+                                                onBlur={handleBlur}
+                                                onChange={handleChange}
+                                                type="text"
+                                                value={values.section}
 
-                                    <Button type="submit" color="success" variant="success">
-                                      Update
-                                    </Button>
+                                              />
+                                              {touched.section && errors.section && <small className="text-danger form-text">{errors.section}</small>}
+                                            </div>
+                                          </Col>
+                                        </Row>
 
+                                        <Row>
+                                          <Col>
+                                            <div className="form-group fill">
+                                              <label className="floating-label" htmlFor="userEmail">
+                                                <small className="text-danger">* </small>Email ID
+                                              </label>
+                                              <input
+                                                className="form-control"
+                                                error={touched.userEmail && errors.userEmail}
+                                                name="userEmail"
+                                                onBlur={handleBlur}
+                                                onChange={handleChange}
+                                                type="email"
+                                                value={values.userEmail}
+                                                readOnly={true}
+                                              />
+                                              {touched.userEmail && errors.userEmail && <small className="text-danger form-text">{errors.userEmail}</small>}
+                                            </div>
+                                          </Col>
+                                          <Col>
+                                            <div className="form-group fill">
+                                              <label className="floating-label" htmlFor="phoneNumber">
+                                                <small className="text-danger">* </small>Phone No
+                                              </label>
+                                              <input
+                                                className="form-control"
+                                                error={touched.phoneNumber && errors.phoneNumber}
+                                                name="phoneNumber"
+                                                onBlur={handleBlur}
+                                                onChange={handleChange}
+                                                type="number"
+                                                value={values.phoneNumber}
+                                                readOnly={true}
+                                              />
+                                              {touched.phoneNumber && errors.phoneNumber && <small className="text-danger form-text">{errors.phoneNumber}</small>}
+                                            </div>
+                                          </Col>
+                                        </Row>
+                                      </>
 
-                                  </Row>
+                                    ) : (
+                                      <>
+                                        <Row>
+                                          <Col>
+                                            <div className="form-group fill">
+                                              <label className="floating-label" htmlFor="userEmail">
+                                                <small className="text-danger">* </small>Email ID
+                                              </label>
+                                              <input
+                                                className="form-control"
+                                                error={touched.userEmail && errors.userEmail}
+                                                name="userEmail"
+                                                onBlur={handleBlur}
+                                                onChange={handleChange}
+                                                type="email"
+                                                value={values.userEmail}
 
+                                              />
+                                              {touched.userEmail && errors.userEmail && <small className="text-danger form-text">{errors.userEmail}</small>}
+                                            </div>
+                                          </Col>
+                                          <Col>
+                                            <div className="form-group fill">
+                                              <label className="floating-label" htmlFor="phoneNumber">
+                                                <small className="text-danger">* </small>Phone No
+                                              </label>
+                                              <input
+                                                className="form-control"
+                                                error={touched.phoneNumber && errors.phoneNumber}
+                                                name="phoneNumber"
+                                                onBlur={handleBlur}
+                                                onChange={handleChange}
+                                                type="number"
+                                                value={values.phoneNumber}
 
-                                </Col>
-                              </Row>
-                            </form>
-                          )}
-                        </Formik>
-                      </Modal.Body>
-                    </Modal>
-                  </>
-                )}
-
-              </>
-            )
-          }
-        </>
-      )
-
-      }
+                                              />
+                                              {touched.phoneNumber && errors.phoneNumber && <small className="text-danger form-text">{errors.phoneNumber}</small>}
+                                            </div>
+                                          </Col>
+                                        </Row>
+                                      </>
+                                    )}
 
 
 
-    </div >
+                                    <Row>
+
+                                      <Col>
+                                        <div className="form-group fill">
+                                          <label className="floating-label" htmlFor="user_dob">
+                                            <small className="text-danger">* </small>DOB
+                                          </label>
+                                          <input
+                                            className="form-control"
+                                            error={touched.user_dob && errors.user_dob}
+                                            name="user_dob"
+                                            onBlur={handleBlur}
+                                            onChange={handleChange}
+                                            type="date"
+                                            value={values.user_dob}
+
+                                          />
+                                          {touched.user_dob && errors.user_dob && <small className="text-danger form-text">{errors.user_dob}</small>}
+                                        </div>
+                                      </Col>
+
+                                      <Col></Col>
+                                    </Row>
+
+                                    {errors.submit && (
+                                      <Col sm={12}>
+                                        <Alert variant="danger">{errors.submit}</Alert>
+                                      </Col>
+                                    )}
+
+
+                                    <hr />
+
+                                    <Row>
+
+                                      <Col></Col>
+
+                                      <Button type="submit" color="success" variant="success">
+                                        Update
+                                      </Button>
+
+
+                                    </Row>
+
+
+                                  </Col>
+                                </Row>
+                              </form>
+                            )}
+                          </Formik>
+                        </Modal.Body>
+                      </Modal>
+                    </>
+                  )}
+
+                </>
+              )
+            }
+          </>
+        )
+
+        }
+
+
+
+      </div >
+      {loader}
+    </React.Fragment>
   );
 };
 

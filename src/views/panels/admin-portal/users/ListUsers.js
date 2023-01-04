@@ -5,6 +5,7 @@ import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import { useLocation, useHistory } from 'react-router-dom';
 import UserTableView from './UserTableView';
+import UserTableViewStudent from './UserTableViewStudent';
 
 const ListUsers = () => {
     const history = useHistory();
@@ -65,7 +66,7 @@ const ListUsers = () => {
                         </Tab>
                         <Tab eventKey={2} title="Students">
                             {sessionStorage.setItem('user_role', _userRole)}
-                            <UserTableView _userRole={_userRole} />
+                            <UserTableViewStudent _userRole={_userRole} />
                         </Tab>
                         <Tab eventKey={3} title="Parents">
                             {sessionStorage.setItem('user_role', _userRole)}
