@@ -229,9 +229,8 @@ const AddTopics = ({ setOpenAddTopic }) => {
                     if (topicConceptId == '') {
                         setIsShownConcept(false)
                     }
-
                     else {
-                        setOpenAddTopic(true)
+                        setOpenAddTopic(false)
                         const formData = {
                             topic_title: values.topic_title,
                             topic_description: values.topic_description,
