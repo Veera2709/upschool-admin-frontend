@@ -66,6 +66,10 @@ const AddDigiCard = (
   const [imgValidation, setImgValidation] = useState(true);
   const [voiceError, setVoiceError] = useState(true);
   const [topicDigiCardIds, setTopicDigiCardIds] = useState([]);
+  const [displayHeading, setDisplayHeading] = useState(sessionStorage.getItem('digicard_type'));
+  const [displayHeader, setDisplayHeader] = useState(true);
+  const threadLinks = document.getElementsByClassName('page-header');
+
   let history = useHistory();
 
 
@@ -127,6 +131,11 @@ const AddDigiCard = (
 
 
   const fetchAllData = async () => {
+    if (threadLinks.length === 2) {
+      setDisplayHeader(false);
+    } else {
+      setDisplayHeader(true);
+    }
     const allDigicardData = await fetchAllDigiCards(dynamicUrl.fetchAllDigiCards);
     if (allDigicardData.error) {
       console.log(allDigicardData.error);
@@ -170,15 +179,7 @@ const AddDigiCard = (
   }, [])
 
 
-  // const handleOnSelect = ((selectedList) => {
-  //   console.log("selectedList", selectedList, index);
 
-
-  //   multiOptions.push({ 'digi_card_id': selectedList[selectedList.length - 1].digi_card_id })
-
-
-  // })
-  // const handleOnRemove = (selectedList, selectedItem) => setTopicDigiCardIds(selectedList.map(skillId => skillId.id))
 
   const getMultiOptions = (event) => {
     let valuesArr = [];
@@ -190,272 +191,297 @@ const AddDigiCard = (
 
 
   return (
-    <div>
-      <Card>
-        <Card.Body>
-          <Card.Title>Add DigiCard</Card.Title>
-          <Formik
-            initialValues={{
-              digicardname: '',
-              digicardtitle: '',
-              digicard_image: '',
-              digicardcontent: '',
-              digicardtitleExcerpt: '',
-              digicard_voice_note: '',
-              clientComponents: multiOptions
-            }}
-            validationSchema={Yup.object().shape({
-              digicardtitle: Yup.string()
-                .trim()
-                .min(2, Constants.AddDigiCard.DigiCardtitleTooShort)
-                .max(50, Constants.AddDigiCard.DigiCardtitleTooLong)
-                .matches(Constants.AddDigiCard.DigiCardtitleRegex, Constants.AddDigiCard.DigiCardtitleValidation)
-                .required(Constants.AddDigiCard.DigiCardtitleRequired),
-              digicard_image: Yup.string()
-                .trim()
-                .nullable(true, Constants.AddDigiCard.DigiCardImageNotNull)
-                .required(Constants.AddDigiCard.DigiCardImageRequired),
-            })}
+    <>
+      <React.Fragment>
+        {
+          displayHeader && (
+            <div className="page-header">
+              <div className="page-block">
+                <div className="row align-items-center">
+                  <div className="col-md-12">
+                    <div className="page-header-title">
+                      <h5 className="m-b-10">{displayHeading}</h5>
+                    </div><ul className="breadcrumb  ">
+                      <li className="breadcrumb-item  ">
+                        <a href="/upschool/admin-portal/admin-dashboard">
+                          <i className="feather icon-home">
+                          </i>
+                        </a>
+                      </li>
+                      <li className="breadcrumb-item  ">Digicard</li>
+                      <li className="breadcrumb-item  ">{displayHeading}</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )
+        }
+        <Card>
+          <Card.Body>
+            <Card.Title>Add DigiCard</Card.Title>
+            <Formik
+              initialValues={{
+                digicardname: '',
+                digicardtitle: '',
+                digicard_image: '',
+                digicardcontent: '',
+                digicardtitleExcerpt: '',
+                digicard_voice_note: '',
+                clientComponents: multiOptions
+              }}
+              validationSchema={Yup.object().shape({
+                digicardtitle: Yup.string()
+                  .trim()
+                  .min(2, Constants.AddDigiCard.DigiCardtitleTooShort)
+                  .max(50, Constants.AddDigiCard.DigiCardtitleTooLong)
+                  .matches(Constants.AddDigiCard.DigiCardtitleRegex, Constants.AddDigiCard.DigiCardtitleValidation)
+                  .required(Constants.AddDigiCard.DigiCardtitleRequired),
+                digicard_image: Yup.string()
+                  .trim()
+                  .nullable(true, Constants.AddDigiCard.DigiCardImageNotNull)
+                  .required(Constants.AddDigiCard.DigiCardImageRequired),
+              })}
 
-            onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-              console.log("multiOptions", multiOptions);
-              console.log("on submit");
-              let allFilesData = [];
-              let voiceData = [];
-              const fileNameArray = ['digicard_image'];
-              let voiceNote = document.getElementById('digicard_voice_note').files[0];
-              // voiceData.push(voiceNote)
-              console.log("voicenote", voiceNote);
+              onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
+                console.log("multiOptions", multiOptions);
+                console.log("on submit");
+                let allFilesData = [];
+                let voiceData = [];
+                const fileNameArray = ['digicard_image'];
+                let voiceNote = document.getElementById('digicard_voice_note').files[0];
+                // voiceData.push(voiceNote)
+                console.log("voicenote", voiceNote);
 
-              if (voiceNote == undefined) {
-                voiceData.push({ values: 'false' })
-              } else {
-                voiceData.push(voiceNote)
-              }
-
-
-              fileNameArray.forEach((fileName) => {
-                let selectedFile = document.getElementById(fileName).files[0];
-                console.log('File is here!');
-                console.log(selectedFile);
-                if (selectedFile) {
-                  allFilesData.push(selectedFile);
+                if (voiceNote == undefined) {
+                  voiceData.push({ values: 'false' })
+                } else {
+                  voiceData.push(voiceNote)
                 }
-              });
-
-              if (areFilesInvalid(allFilesData) !== 0) {
-                setImgValidation(false)
-                hideLoader();
-              } else if (voiceInvalid(voiceData) !== 0) {
-                setVoiceError(false)
-                console.log("voice note not a mp3");
-              } else {
-
-                var formData = {
-                  // digi_card_name: values.digicardname,
-                  digi_card_title: values.digicardtitle,
-                  digi_card_files: [values.digicard_image],
-                  digicard_image: values.digicard_image,
-                  digi_card_excerpt: articleDataTitle,
-                  digi_card_content: articleData,
-                  digi_card_keywords: tags,
-                  digicard_voice_note: values.digicard_voice_note === undefined ? "" : values.digicard_voice_note,
-                  related_digi_cards: multiOptions,
-                };
-                console.log("formData", formData);
-
-                axios
-                  .post(dynamicUrl.insertDigicard, { data: formData }, { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
-                  .then(async (response) => {
-                    console.log({ response });
-                    if (response.Error) {
-                      console.log('Error');
-                      hideLoader();
-                      setDisableButton(false);
-                    } else {
-                      let uploadParams = response.data;
-                      hideLoader();
-                      setDisableButton(false);
-                      console.log('Proceeding with file upload');
-
-                      if (Array.isArray(uploadParams)) {
-                        for (let index = 0; index < uploadParams.length; index++) {
-                          let keyNameArr = Object.keys(uploadParams[index]);
-                          let keyName = keyNameArr[0];
-                          console.log('KeyName', keyName);
 
 
-                          let blobField = document.getElementById(keyName).files[0];
-                          console.log({
-                            blobField
-                          });
+                fileNameArray.forEach((fileName) => {
+                  let selectedFile = document.getElementById(fileName).files[0];
+                  console.log('File is here!');
+                  console.log(selectedFile);
+                  if (selectedFile) {
+                    allFilesData.push(selectedFile);
+                  }
+                });
 
-                          let tempObj = uploadParams[index];
+                if (areFilesInvalid(allFilesData) !== 0) {
+                  setImgValidation(false)
+                  hideLoader();
+                } else if (voiceInvalid(voiceData) !== 0) {
+                  setVoiceError(false)
+                  console.log("voice note not a mp3");
+                } else {
 
-                          let result = await fetch(tempObj[keyName], {
-                            method: 'PUT',
-                            body: blobField
-                          });
+                  var formData = {
+                    // digi_card_name: values.digicardname,
+                    digi_card_title: values.digicardtitle,
+                    digi_card_files: [values.digicard_image],
+                    digicard_image: values.digicard_image,
+                    digi_card_excerpt: articleDataTitle,
+                    digi_card_content: articleData,
+                    digi_card_keywords: tags,
+                    digicard_voice_note: values.digicard_voice_note === undefined ? "" : values.digicard_voice_note,
+                    related_digi_cards: multiOptions,
+                  };
+                  console.log("formData", formData);
 
-                          console.log({
-                            result
-                          });
-                        }
-                        // sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingDigiCard });
+                  axios
+                    .post(dynamicUrl.insertDigicard, { data: formData }, { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
+                    .then(async (response) => {
+                      console.log({ response });
+                      if (response.Error) {
+                        console.log('Error');
                         hideLoader();
                         setDisableButton(false);
-                        // fetchClientData();
-                        setIsOpen(false);
+                      } else {
+                        let uploadParams = response.data;
+                        hideLoader();
+                        setDisableButton(false);
+                        console.log('Proceeding with file upload');
 
-                        MySwal.fire({
+                        if (Array.isArray(uploadParams)) {
+                          for (let index = 0; index < uploadParams.length; index++) {
+                            let keyNameArr = Object.keys(uploadParams[index]);
+                            let keyName = keyNameArr[0];
+                            console.log('KeyName', keyName);
 
-                          title: 'Digicard added successfully!',
-                          icon: 'success',
-                        }).then((willDelete) => {
 
+                            let blobField = document.getElementById(keyName).files[0];
+                            console.log({
+                              blobField
+                            });
+
+                            let tempObj = uploadParams[index];
+
+                            let result = await fetch(tempObj[keyName], {
+                              method: 'PUT',
+                              body: blobField
+                            });
+
+                            console.log({
+                              result
+                            });
+                          }
+                          // sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingDigiCard });
+                          hideLoader();
+                          setDisableButton(false);
+                          // fetchClientData();
+                          setIsOpen(false);
+
+                          MySwal.fire({
+
+                            title: 'Digicard added successfully!',
+                            icon: 'success',
+                          }).then((willDelete) => {
+
+                            window.location.reload();
+
+                          })
+                        } else {
+                          console.log('No files uploaded');
+                          sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingDigiCard });
+                          hideLoader();
+                          setDisableButton(false);
+                          // fetchClientData();
+                          setIsOpen(false);
+                        }
+                      }
+                    })
+                    .catch((error) => {
+                      if (error.response) {
+                        // Request made and server responded
+                        console.log(error.response.data);
+
+                        console.log(error.response.data);
+                        if (error.response.status === 401) {
+                          console.log();
+                          hideLoader();
+                          // setIsClientExists(true);
+                          sweetAlertHandler({ title: 'Error', type: 'error', text: MESSAGES.ERROR.DigiCardNameExists });
+
+                        } else if (error.response.data === 'Invalid Token') {
+
+                          sessionStorage.clear();
+                          localStorage.clear();
+                          history.push('/auth/signin-1');
                           window.location.reload();
+                        } else {
+                          console.log("err", error);
+                        }
 
-                        })
-                      } else {
-                        console.log('No files uploaded');
-                        sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingDigiCard });
-                        hideLoader();
+                      } else if (error.request) {
+                        // The request was made but no response was received
+                        console.log(error.request);
                         setDisableButton(false);
-                        // fetchClientData();
-                        setIsOpen(false);
-                      }
-                    }
-                  })
-                  .catch((error) => {
-                    if (error.response) {
-                      // Request made and server responded
-                      console.log(error.response.data);
-
-                      console.log(error.response.data);
-                      if (error.response.status === 401) {
-                        console.log();
                         hideLoader();
-                        // setIsClientExists(true);
-                        sweetAlertHandler({ title: 'Error', type: 'error', text: MESSAGES.ERROR.DigiCardNameExists });
-
-                      } else if (error.response.data === 'Invalid Token') {
-
-                        sessionStorage.clear();
-                        localStorage.clear();
-                        history.push('/auth/signin-1');
-                        window.location.reload();
                       } else {
-                        console.log("err", error);
+                        // Something happened in setting up the request that triggered an Error
+                        console.log('Error', error.message);
+                        setDisableButton(false);
+                        hideLoader();
                       }
-
-                    } else if (error.request) {
-                      // The request was made but no response was received
-                      console.log(error.request);
-                      setDisableButton(false);
-                      hideLoader();
-                    } else {
-                      // Something happened in setting up the request that triggered an Error
-                      console.log('Error', error.message);
-                      setDisableButton(false);
-                      hideLoader();
-                    }
-                  });
+                    });
+                }
               }
-            }
-            }
-          >
-            {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
-              <form noValidate onSubmit={handleSubmit}>
-                <Row>
-                  {/* {edit1Toggle && <Loader />} */}
-                  <Col sm={6}>
-                    <div className="form-group fill">
-                      <label className="floating-label" htmlFor="digicardtitle">
-                        <small className="text-danger">* </small>DigiCard Title
-                      </label>
-                      <input
-                        className="form-control"
-                        error={touched.digicardtitle && errors.digicardtitle}
-                        name="digicardtitle"
-                        onBlur={handleBlur}
-                        onChange={handleChange}
-                        type="text"
-                        value={values.digicardtitle}
-                        id='title'
-                      />
-                      {touched.digicardtitle && errors.digicardtitle && <small className="text-danger form-text">{errors.digicardtitle}</small>}
-                    </div>
-                    <div className="form-group fill">
-                      <label className="floating-label" htmlFor="digicard_image">
-                        <small className="text-danger">* </small>DigiCard Logo
-                      </label>
-                      <input
-                        className="form-control"
-                        error={touched.digicard_image && errors.digicard_image}
-                        name="digicard_image"
-                        id="digicard_image"
-                        onBlur={handleBlur}
-                        onChange={(e) => {
-                          handleChange(e);
-                          previewImage(e);
-                          encodeImageFileAsURL(e);
-                          setImgValidation(true)
-                        }}
-                        type="file"
-                        value={values.digicard_image}
-                        accept="image/*"
-                      />
-                      {touched.digicard_image && errors.digicard_image && (
-                        <small className="text-danger form-text">{errors.digicard_image}</small>
-                      )}
-                      <small className="text-danger form-text" style={{ display: imgValidation ? 'none' : 'block' }}>Invalid File Type or File size is Exceed More Than 1MB</small>
-                    </div>
-                    <div className="form-group fill">
-                      <label className="floating-label" htmlFor="digicard_voice_note">
-                        <small className="text-danger"> </small>Voice Note
-                      </label>
-                      <input
-                        className="form-control"
-                        error={touched.digicard_voice_note && errors.digicard_voice_note}
-                        name="digicard_voice_note"
-                        id="digicard_voice_note"
-                        onBlur={handleBlur}
-                        onChange={(e) => {
-                          handleChange(e);
-                          setVoiceError(true)
-                        }
-                        }
-                        type="file"
-                        value={values.digicard_voice_note}
-                        accept=".mp3,audio/*"
-                      />
-                      {touched.digicard_voice_note && errors.digicard_voice_note && (
-                        <small className="text-danger form-text">{errors.digicard_voice_note}</small>
-                      )}
-                      <small className="text-danger form-text" style={{ display: voiceError ? 'none' : 'block' }}>Invalid File Type or File size is Exceed More Than 10MB</small>
-                    </div>
+              }
+            >
+              {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
+                <form noValidate onSubmit={handleSubmit}>
+                  <Row>
+                    {/* {edit1Toggle && <Loader />} */}
+                    <Col sm={6}>
+                      <div className="form-group fill">
+                        <label className="floating-label" htmlFor="digicardtitle">
+                          <small className="text-danger">* </small>DigiCard Title
+                        </label>
+                        <input
+                          className="form-control"
+                          error={touched.digicardtitle && errors.digicardtitle}
+                          name="digicardtitle"
+                          onBlur={handleBlur}
+                          onChange={handleChange}
+                          type="text"
+                          value={values.digicardtitle}
+                          id='title'
+                        />
+                        {touched.digicardtitle && errors.digicardtitle && <small className="text-danger form-text">{errors.digicardtitle}</small>}
+                      </div>
+                      <div className="form-group fill">
+                        <label className="floating-label" htmlFor="digicard_image">
+                          <small className="text-danger">* </small>DigiCard Logo
+                        </label>
+                        <input
+                          className="form-control"
+                          error={touched.digicard_image && errors.digicard_image}
+                          name="digicard_image"
+                          id="digicard_image"
+                          onBlur={handleBlur}
+                          onChange={(e) => {
+                            handleChange(e);
+                            previewImage(e);
+                            encodeImageFileAsURL(e);
+                            setImgValidation(true)
+                          }}
+                          type="file"
+                          value={values.digicard_image}
+                          accept="image/*"
+                        />
+                        {touched.digicard_image && errors.digicard_image && (
+                          <small className="text-danger form-text">{errors.digicard_image}</small>
+                        )}
+                        <small className="text-danger form-text" style={{ display: imgValidation ? 'none' : 'block' }}>Invalid File Type or File size is Exceed More Than 1MB</small>
+                      </div>
+                      <div className="form-group fill">
+                        <label className="floating-label" htmlFor="digicard_voice_note">
+                          <small className="text-danger"> </small>Voice Note
+                        </label>
+                        <input
+                          className="form-control"
+                          error={touched.digicard_voice_note && errors.digicard_voice_note}
+                          name="digicard_voice_note"
+                          id="digicard_voice_note"
+                          onBlur={handleBlur}
+                          onChange={(e) => {
+                            handleChange(e);
+                            setVoiceError(true)
+                          }
+                          }
+                          type="file"
+                          value={values.digicard_voice_note}
+                          accept=".mp3,audio/*"
+                        />
+                        {touched.digicard_voice_note && errors.digicard_voice_note && (
+                          <small className="text-danger form-text">{errors.digicard_voice_note}</small>
+                        )}
+                        <small className="text-danger form-text" style={{ display: voiceError ? 'none' : 'block' }}>Invalid File Type or File size is Exceed More Than 10MB</small>
+                      </div>
 
-                    <div className='ReactTags'>
-                      <label className="floating-label">
-                        <small className="text-danger"> </small>KeyWords
-                      </label>
-                      <ReactTags
-                        // error={touched.digicardKeywords && errors.digicardKeywords}
-                        classNames={{ root: 'react-tags bootstrap-tagsinput', selectedTag: 'react-tags__selected-tag btn-primary' }}
-                        allowNew={true}
-                        addOnBlur={true}
-                        tags={tags}
-                        onDelete={handleDelete}
-                        onAddition={(e) => handleAddition(e)}
-                        name='digicardKeywords'
-                      />
-                      {/* {touched.digicardKeywords && errors.digicardKeywords && (<small className="text-danger form-text">{errors.digicardKeywords}</small>)} */}
-                    </div><br />
-                    <div className="form-group fill" style={{ position: "relative", zIndex: 10 }}>
-                      <label className="floating-label" htmlFor="clientComponents">
-                        <small className="text-danger"> </small>Related DigiCard Titles
-                      </label>
-                      {/* <Multiselect
+                      <div className='ReactTags'>
+                        <label className="floating-label">
+                          <small className="text-danger"> </small>KeyWords
+                        </label>
+                        <ReactTags
+                          // error={touched.digicardKeywords && errors.digicardKeywords}
+                          classNames={{ root: 'react-tags bootstrap-tagsinput', selectedTag: 'react-tags__selected-tag btn-primary' }}
+                          allowNew={true}
+                          addOnBlur={true}
+                          tags={tags}
+                          onDelete={handleDelete}
+                          onAddition={(e) => handleAddition(e)}
+                          name='digicardKeywords'
+                        />
+                        {/* {touched.digicardKeywords && errors.digicardKeywords && (<small className="text-danger form-text">{errors.digicardKeywords}</small>)} */}
+                      </div><br />
+                      <div className="form-group fill" style={{ position: "relative", zIndex: 10 }}>
+                        <label className="floating-label" htmlFor="clientComponents">
+                          <small className="text-danger"> </small>Related DigiCard Titles
+                        </label>
+                        {/* <Multiselect
                         options={digitalTitles}
                         displayValue="value"
                         selectionLimit="25"
@@ -463,96 +489,96 @@ const AddDigiCard = (
                         onSelect={(e) => { handleOnSelect(e) }}
                         onRemove={handleOnRemove}
                       /> */}
-                      <Select
-                        className="basic-single"
-                        classNamePrefix="select"
-                        name="color"
-                        isMulti
-                        closeMenuOnSelect={false}
-                        onChange={getMultiOptions}
-                        options={digitalTitles}
-                        placeholder="Select"
-                      />
-                      <br />
-                      {touched.clientComponents && errors.clientComponents && (
-                        <small className="text-danger form-text">{errors.clientComponents}</small>
-                      )}
-                    </div>
-                  </Col>
-                  <Col sm={6}><br />
-
-                    <div className="form-group fill">
-                      <label className="floating-label" htmlFor="digicardtitle">
-                        <small className="text-danger">* </small>Logo preview
-                      </label><br />
-                      <img width={150} src={imgFile} alt="" className="img-fluid mb-3" />
-                    </div>
-
-                  </Col>
-                </Row>
-                <Row>
-                  <Col sm='12'>
-                    <label className="floating-label" htmlFor="digicardtitleExcerpt">
-                      <small className="text-danger"> </small>DigiCard Excerpt
-                    </label>
-                    <ArticleRTE
-                      setArticleSize={setArticleSize}
-                      setImageCount={setImageCount}
-                      imageCount={imageCount}
-                      articleData={articleDataTitle}
-                      setArticleData={setArticleDataTtitle}
-
-                    />
-                  </Col>
-                  <br />
-                </Row><br></br>
-                <Row>
-                  <Col sm='12'>
-                    <label className="floating-label" htmlFor="digicardtitle">
-                      <small className="text-danger"> </small>DigiCard Content
-                    </label>
-                    <ArticleRTE
-                      setArticleSize={setArticleSize}
-                      setImageCount={setImageCount}
-                      imageCount={imageCount}
-                      articleData={articleData}
-                      setArticleData={setArticleData}
-                      onChange={handleChange}
-                      name="digicardcontent"
-
-                    />
-                  </Col>
-                  {/* {touched.digicardcontent && errors.digicardcontent && <small className="text-danger form-text">{errors.digicardcontent}</small>} */}
-
-                  <br />
-                  {/* <small className="text-danger form-text" >Select DigiCard Titles</small> */}
-                </Row><br></br>
-                <Row>
-                  <Col sm={10}>
-                  </Col>
-                  <div className="form-group fill float-end" >
-                    <Col sm={12} className="center">
-                      <Button
-                        className="btn-block"
-                        color="success"
-                        size="large"
-                        type="submit"
-                        variant="success"
-                      // disabled={disableButton === true}
-                      >
-                        Submit
-                      </Button>
+                        <Select
+                          className="basic-single"
+                          classNamePrefix="select"
+                          name="color"
+                          isMulti
+                          closeMenuOnSelect={false}
+                          onChange={getMultiOptions}
+                          options={digitalTitles}
+                          placeholder="Select"
+                        />
+                        <br />
+                        {touched.clientComponents && errors.clientComponents && (
+                          <small className="text-danger form-text">{errors.clientComponents}</small>
+                        )}
+                      </div>
                     </Col>
-                  </div>
-                </Row>
-              </form>
-            )}
+                    <Col sm={6}><br />
 
-          </Formik>
-          <Row>
-            <Col sm={10}>
-            </Col>
-            {/* <div className="form-group fill float-end" >
+                      <div className="form-group fill">
+                        <label className="floating-label" htmlFor="digicardtitle">
+                          <small className="text-danger">* </small>Logo preview
+                        </label><br />
+                        <img width={150} src={imgFile} alt="" className="img-fluid mb-3" />
+                      </div>
+
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col sm='12'>
+                      <label className="floating-label" htmlFor="digicardtitleExcerpt">
+                        <small className="text-danger"> </small>DigiCard Excerpt
+                      </label>
+                      <ArticleRTE
+                        setArticleSize={setArticleSize}
+                        setImageCount={setImageCount}
+                        imageCount={imageCount}
+                        articleData={articleDataTitle}
+                        setArticleData={setArticleDataTtitle}
+
+                      />
+                    </Col>
+                    <br />
+                  </Row><br></br>
+                  <Row>
+                    <Col sm='12'>
+                      <label className="floating-label" htmlFor="digicardtitle">
+                        <small className="text-danger"> </small>DigiCard Content
+                      </label>
+                      <ArticleRTE
+                        setArticleSize={setArticleSize}
+                        setImageCount={setImageCount}
+                        imageCount={imageCount}
+                        articleData={articleData}
+                        setArticleData={setArticleData}
+                        onChange={handleChange}
+                        name="digicardcontent"
+
+                      />
+                    </Col>
+                    {/* {touched.digicardcontent && errors.digicardcontent && <small className="text-danger form-text">{errors.digicardcontent}</small>} */}
+
+                    <br />
+                    {/* <small className="text-danger form-text" >Select DigiCard Titles</small> */}
+                  </Row><br></br>
+                  <Row>
+                    <Col sm={10}>
+                    </Col>
+                    <div className="form-group fill float-end" >
+                      <Col sm={12} className="center">
+                        <Button
+                          className="btn-block"
+                          color="success"
+                          size="large"
+                          type="submit"
+                          variant="success"
+                        // disabled={disableButton === true}
+                        >
+                          Submit
+                        </Button>
+                      </Col>
+                    </div>
+                  </Row>
+                </form>
+              )}
+
+            </Formik>
+            <Row>
+              <Col sm={10}>
+              </Col>
+              {/* <div className="form-group fill float-end" >
               <Col sm={12} className="center">
                 <Button
                   className="btn-block"
@@ -566,12 +592,15 @@ const AddDigiCard = (
                 </Button>
               </Col>
             </div> */}
-          </Row>
-        </Card.Body>
+            </Row>
+          </Card.Body>
 
-      </Card>
+        </Card>
+      </React.Fragment>
+    </>
 
-    </div>
+
+
 
 
   )

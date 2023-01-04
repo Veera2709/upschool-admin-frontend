@@ -430,6 +430,7 @@ const DigiCard = () => {
             console.log("--", pageLocation);
             const url = pageLocation === "active-digiCard" ? 'Active' : 'Archived';
             // setPageURL(url);
+            url === 'Active' ? sessionStorage.setItem('digicard_type','Active Digicards'):sessionStorage.setItem('digicard_type','Archived Digicards')
             fetchAllDigiCards(url);
 
         }
