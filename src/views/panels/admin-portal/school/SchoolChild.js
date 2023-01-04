@@ -141,7 +141,7 @@ const SchoolChild = (props) => {
     const columns = React.useMemo(
         () => [
             {
-                Header: '#',
+                Header: 'School Logo',
                 accessor: 'school_avatar'
             },
             {
@@ -313,13 +313,14 @@ const SchoolChild = (props) => {
                     >
                         <i className="feather icon-edit" /> &nbsp; Edit
                     </Button>
-                    &nbsp;
+                    {/* &nbsp;
                     {inactive === false ? null :
                         <Button onClick={(e) => { handleDeleteSchool(e, resultData[index].school_id, 'Archived') }}
                             size='sm' className="btn btn-icon btn-rounded btn-danger"
                         >
                             <i className="feather icon-delete" /> &nbsp; Delete
-                        </Button>}
+                        </Button>
+                    } */}
 
                 </>
             );
