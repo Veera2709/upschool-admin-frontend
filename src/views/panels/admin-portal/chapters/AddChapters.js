@@ -19,7 +19,7 @@ import { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import Select from 'react-select';
 import Multiselect from 'multiselect-react-dropdown';
-import { fetchAllTopics ,fetchPostLearningTopics,fetchPreLearningTopics} from '../../../api/CommonApi'
+import { fetchAllTopics, fetchPostLearningTopics, fetchPreLearningTopics } from '../../../api/CommonApi'
 
 
 
@@ -28,19 +28,7 @@ import { fetchAllTopics ,fetchPostLearningTopics,fetchPreLearningTopics} from '.
 
 // import { Button,Container,Row ,Col  } from 'react-bootstrap';
 
-const AddChapter = (
-    setTabChange,
-    categoryAPI,
-    added,
-    setAdded,
-    articlesList,
-    currentArticle,
-    setEditArticle,
-    editMode,
-    currentSubCategory,
-    terminal,
-    setCurrentSubCategory
-) => {
+const AddChapter = ({ setOpenAddChapter }) => {
 
 
     const postLeraning = [];
@@ -137,15 +125,15 @@ const AddChapter = (
             setTopicTitles(postLeraning)
 
             const allPreLerningdData = await fetchPreLearningTopics();
-            if(allPreLerningdData.Error){
-                console.log("allPreLerningdData.Error",allPreLerningdData.Error);
+            if (allPreLerningdData.Error) {
+                console.log("allPreLerningdData.Error", allPreLerningdData.Error);
                 if (allPreLerningdData.Error.response.data == 'Invalid Token') {
                     sessionStorage.clear();
                     localStorage.clear();
                     history.push('/auth/signin-1');
                     window.location.reload();
                 }
-            }else{
+            } else {
                 let preData = allPreLerningdData.Items
                 preData.forEach((itempre, index) => {
                     if (itempre.topic_status === 'Active') {
@@ -167,15 +155,15 @@ const AddChapter = (
     const handleOnSelect = (event) => {
         let valuesArr = [];
         for (let i = 0; i < event.length; i++) {
-            valuesArr.push(  event[i].value )
+            valuesArr.push(event[i].value)
         }
         setPostlearningOption(valuesArr);
     }
-    
+
     const handleOnSelectPre = (event) => {
         let valuesArr = [];
         for (let i = 0; i < event.length; i++) {
-            valuesArr.push( event[i].value )
+            valuesArr.push(event[i].value)
         }
         setPrelearningOptions(valuesArr);
     }
@@ -184,220 +172,204 @@ const AddChapter = (
 
 
     return (
-        <div>
-            <Card>
-                <Card.Body>
-                    <Card.Title>Add Chapter</Card.Title>
-                    <Formik
-                        initialValues={{
-                            chaptertitle: '',
-                            postlearning_topic: '',
-                            prelearning_topic: '',
-                            isLocked: '',
-                            chapter_description: '',
-                        }}
-                        validationSchema={Yup.object().shape({
-                            chaptertitle: Yup.string()
-                                .trim()
-                                .min(2, Constants.AddDigiCard.ChaptertitleTooShort)
-                                .max(30, Constants.AddDigiCard.ChaptertitleTooLong)
-                                .required(Constants.AddDigiCard.ChaptertitleRequired),
-                        })}
+        <React.Fragment>
+            <Formik
+                initialValues={{
+                    chaptertitle: '',
+                    postlearning_topic: '',
+                    prelearning_topic: '',
+                    isLocked: '',
+                    chapter_description: '',
+                }}
+                validationSchema={Yup.object().shape({
+                    chaptertitle: Yup.string()
+                        .trim()
+                        .min(2, Constants.AddDigiCard.ChaptertitleTooShort)
+                        .max(30, Constants.AddDigiCard.ChaptertitleTooLong)
+                        .required(Constants.AddDigiCard.ChaptertitleRequired),
+                })}
 
 
 
-                        onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-
-
-                            if (postlearningOption == '') {
-                                setIsShown(false)
-                            } else if (prelearningOptions == '') {
-                                setIsShownPre(false)
-                            }
-                            else if (description == undefined || description.trim()=='') {
-                                setIsShownDes(false)
-                            }
-                            else {
-                                setIsShown(true)
-
-                                console.log("on submit");
-                                var formData = {
-                                    chapter_title: values.chaptertitle,
-                                    chapter_description: description,
-                                    prelearning_topic_id: prelearningOptions,
-                                    postlearning_topic_id: postlearningOption,
-                                    is_locked: isLockedOption === undefined ? 'Yes' : isLockedOption,
-                                };
-
-                                console.log("formdata", formData);
-
-                                axios
-                                    .post(dynamicUrl.addChapter, { data: formData }, { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
-                                    .then(async (response) => {
-                                        console.log({ response });
-                                        if (response.Error) {
-                                            console.log('Error');
-                                            hideLoader();
-                                            setDisableButton(false);
-                                        } else {
-                                            // sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingChapter });
-                                            MySwal.fire({
-
-                                                title: 'Chapter added successfully!',
-                                                icon: 'success',
-                                            }).then((willDelete) => {
-
-                                                window.location.reload();
-
-                                            })
-                                            hideLoader();
-                                            setDisableButton(false);
-                                            // fetchClientData();
-                                            setIsOpen(false);
-                                        }
+                onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
+                    if (postlearningOption == '') {
+                        setIsShown(false)
+                    } else if (prelearningOptions == '') {
+                        setIsShownPre(false)
+                    }
+                    else if (description == undefined || description.trim() == '') {
+                        setIsShownDes(false)
+                    }
+                    else {
+                        setIsShown(true)
+                        setOpenAddChapter(false)
+                        console.log("on submit");
+                        var formData = {
+                            chapter_title: values.chaptertitle,
+                            chapter_description: description,
+                            prelearning_topic_id: prelearningOptions,
+                            postlearning_topic_id: postlearningOption,
+                            is_locked: isLockedOption === undefined ? 'Yes' : isLockedOption,
+                        };
+                        console.log("formdata", formData);
+                        axios
+                            .post(dynamicUrl.addChapter, { data: formData }, { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
+                            .then(async (response) => {
+                                console.log({ response });
+                                if (response.Error) {
+                                    console.log('Error');
+                                    hideLoader();
+                                    setDisableButton(false);
+                                } else {
+                                    // sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingChapter });
+                                    MySwal.fire({
+                                        title: 'Chapter added successfully!',
+                                        icon: 'success',
+                                    }).then((willDelete) => {
+                                        window.location.reload();
                                     })
-                                    .catch((error) => {
-                                        if (error.response) {
-                                            // Request made and server responded
-                                            console.log(error.response.data);
+                                    hideLoader();
+                                    setDisableButton(false);
+                                    // fetchClientData();
+                                    setIsOpen(false);
+                                }
+                            })
+                            .catch((error) => {
+                                if (error.response) {
+                                    // Request made and server responded
+                                    console.log(error.response.data);
 
-                                            console.log(error.response.data);
-                                            if (error.response.status === 400) {
-                                                console.log();
-                                                hideLoader();
-                                                // setIsClientExists(true);
-                                                sweetAlertHandler({ title: 'Error', type: 'error', text: MESSAGES.ERROR.ChapterNameExists });
+                                    console.log(error.response.data);
+                                    if (error.response.status === 400) {
+                                        console.log();
+                                        hideLoader();
+                                        // setIsClientExists(true);
+                                        sweetAlertHandler({ title: 'Error', type: 'error', text: MESSAGES.ERROR.ChapterNameExists });
 
-                                            } else {
-                                                sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
-                                            }
-                                        } else if (error.request) {
-                                            // The request was made but no response was received
-                                            console.log(error.request);
-                                            setDisableButton(false);
-                                            hideLoader();
-                                        } else {
-                                            // Something happened in setting up the request that triggered an Error
-                                            console.log('Error', error.message);
-                                            setDisableButton(false);
-                                            hideLoader();
-                                        }
-                                    });
+                                    } else {
+                                        sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+                                    }
+                                } else if (error.request) {
+                                    // The request was made but no response was received
+                                    console.log(error.request);
+                                    setDisableButton(false);
+                                    hideLoader();
+                                } else {
+                                    // Something happened in setting up the request that triggered an Error
+                                    console.log('Error', error.message);
+                                    setDisableButton(false);
+                                    hideLoader();
+                                }
+                            });
 
-                            }
-
-
-                        }
-                        }
-                    >
-                        {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
-                            <form noValidate onSubmit={handleSubmit}>
-                                <Row>
-                                    <Col sm={6}>
-                                        <div className="form-group fill">
-                                            <label className="floating-label" htmlFor="chaptertitle">
-                                                <small className="text-danger">* </small>Chapter Title
-                                            </label>
-                                            <input
-                                                className="form-control"
-                                                error={touched.chaptertitle && errors.chaptertitle}
-                                                name="chaptertitle"
-                                                onBlur={handleBlur}
-                                                onChange={handleChange}
-                                                type="text"
-                                                value={values.chaptertitle}
-                                                id='title'
-                                            />
-                                            {touched.chaptertitle && errors.chaptertitle && <small className="text-danger form-text">{errors.chaptertitle}</small>}
-                                        </div><br />
-                                        <div className="form-group fill" style={{ position: "relative", zIndex: 20 }}>
-                                            <label className="floating-label" htmlFor="postlearning_topic">
-                                                <small className="text-danger">* </small> Post-learning Topic
-                                            </label>
-                                            <Select
-                                                className="basic-single"
-                                                classNamePrefix="select"
-                                                name="color"
-                                                isMulti
-                                                closeMenuOnSelect={false}
-                                                onChange={(e)=>{handleOnSelect(e);setIsShown(true)}}
-                                                options={topicTitles}
-                                                placeholder="Select"
-                                            />
-                                            <br />
-                                            <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>Postlearning Topic Required</small>
-                                        </div>
-                                        <div className="form-group fill" htmlFor="chapter_description">
-                                            <Form.Label> <small className="text-danger">* </small>Chapter Description</Form.Label>
-                                            <Form.Control as="textarea" onChange={(e) => { ChapterDescription(e); setIsShownDes(true) }} rows="4" />
-                                            <br />
-                                            <small className="text-danger form-text" style={{ display: isShownDes ? 'none' : 'block' }}>Chapter Description Required</small>
-                                        </div>
-                                    </Col>
-                                    <Col sm={6}>
-                                        <div className="form-group fill" style={{ position: "relative", zIndex: 20 }}>
-                                            <label className="floating-label" htmlFor="prelearning_topic">
-                                                <small className="text-danger">* </small>Pre-learning Topic
-                                            </label>
-                                            <Select
-                                                className="basic-single"
-                                                classNamePrefix="select"
-                                                name="color"
-                                                isMulti
-                                                closeMenuOnSelect={false}
-                                                onChange={(e)=>{handleOnSelectPre(e);setIsShownPre(true)}}
-                                                options={topicTitlesPre}
-                                                placeholder="Select"
-                                            />
-                                            <br />
-                                            <small className="text-danger form-text" style={{ display: isShownPre ? 'none' : 'block' }}>Prelearning Topic Required</small>
-                                        </div>
-
-                                        <div className="form-group fill" style={{ position: "relative", zIndex: 10 }}>
-                                            <label className="floating-label" htmlFor="isLocked">
-                                                <small className="text-danger">* </small> Is Locked
-                                            </label>
-                                            <Select
-                                                className="basic-single"
-                                                classNamePrefix="select"
-                                                defaultValue={isLocked[0]}
-                                                name="color"
-                                                options={isLocked}
-                                                onChange={(e) => { isLockedOPtion(e) }}
-                                            /><br />
-                                        </div>
-
-                                    </Col>
-                                </Row>
-                                <br></br>
-                                <Row>
-                                    <Col sm={10}>
-                                    </Col>
-                                    <div className="form-group fill float-end" >
-                                        <Col sm={12} className="center">
-                                            <Button
-                                                className="btn-block"
-                                                color="success"
-                                                size="large"
-                                                type="submit"
-                                                variant="success"
-                                            >
-                                                Submit
-                                            </Button>
-                                        </Col>
-                                    </div>
-                                </Row>
-                            </form>
-                        )}
-
-                    </Formik>
-                </Card.Body>
-
-            </Card>
-
-        </div>
+                    }
 
 
+                }
+                }
+            >
+                {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
+                    <form noValidate onSubmit={handleSubmit}>
+                        <Row>
+                            <Col sm={6}>
+                                <div className="form-group fill">
+                                    <label className="floating-label" htmlFor="chaptertitle">
+                                        <small className="text-danger">* </small>Chapter Title
+                                    </label>
+                                    <input
+                                        className="form-control"
+                                        error={touched.chaptertitle && errors.chaptertitle}
+                                        name="chaptertitle"
+                                        onBlur={handleBlur}
+                                        onChange={handleChange}
+                                        type="text"
+                                        value={values.chaptertitle}
+                                        id='title'
+                                    />
+                                    {touched.chaptertitle && errors.chaptertitle && <small className="text-danger form-text">{errors.chaptertitle}</small>}
+                                </div><br />
+                                <div className="form-group fill" style={{ position: "relative", zIndex: 20 }}>
+                                    <label className="floating-label" htmlFor="postlearning_topic">
+                                        <small className="text-danger">* </small> Post-learning Topic
+                                    </label>
+                                    <Select
+                                        className="basic-single"
+                                        classNamePrefix="select"
+                                        name="color"
+                                        isMulti
+                                        closeMenuOnSelect={false}
+                                        onChange={(e) => { handleOnSelect(e); setIsShown(true) }}
+                                        options={topicTitles}
+                                        placeholder="Select"
+                                    />
+                                    <br />
+                                    <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>Postlearning Topic Required</small>
+                                </div>
+                                <div className="form-group fill" htmlFor="chapter_description">
+                                    <Form.Label> <small className="text-danger">* </small>Chapter Description</Form.Label>
+                                    <Form.Control as="textarea" onChange={(e) => { ChapterDescription(e); setIsShownDes(true) }} rows="4" />
+                                    <br />
+                                    <small className="text-danger form-text" style={{ display: isShownDes ? 'none' : 'block' }}>Chapter Description Required</small>
+                                </div>
+                            </Col>
+                            <Col sm={6}>
+                                <div className="form-group fill" style={{ position: "relative", zIndex: 20 }}>
+                                    <label className="floating-label" htmlFor="prelearning_topic">
+                                        <small className="text-danger">* </small>Pre-learning Topic
+                                    </label>
+                                    <Select
+                                        className="basic-single"
+                                        classNamePrefix="select"
+                                        name="color"
+                                        isMulti
+                                        closeMenuOnSelect={false}
+                                        onChange={(e) => { handleOnSelectPre(e); setIsShownPre(true) }}
+                                        options={topicTitlesPre}
+                                        placeholder="Select"
+                                    />
+                                    <br />
+                                    <small className="text-danger form-text" style={{ display: isShownPre ? 'none' : 'block' }}>Prelearning Topic Required</small>
+                                </div>
+
+                                <div className="form-group fill" style={{ position: "relative", zIndex: 10 }}>
+                                    <label className="floating-label" htmlFor="isLocked">
+                                        <small className="text-danger">* </small> Is Locked
+                                    </label>
+                                    <Select
+                                        className="basic-single"
+                                        classNamePrefix="select"
+                                        defaultValue={isLocked[0]}
+                                        name="color"
+                                        options={isLocked}
+                                        onChange={(e) => { isLockedOPtion(e) }}
+                                    /><br />
+                                </div>
+
+                            </Col>
+                        </Row>
+                        <br></br>
+                        <Row>
+                            <Col sm={10}>
+                            </Col>
+                            <div className="form-group fill float-end" >
+                                <Col sm={12} className="center">
+                                    <Button
+                                        className="btn-block"
+                                        color="success"
+                                        size="large"
+                                        type="submit"
+                                        variant="success"
+                                    >
+                                        Submit
+                                    </Button>
+                                </Col>
+                            </div>
+                        </Row>
+                    </form>
+                )}
+
+            </Formik>
+        </React.Fragment>
     )
 
 };
