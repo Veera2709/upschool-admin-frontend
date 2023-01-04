@@ -284,7 +284,7 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                                         if (topicConceptId == '') {
                                             setIsShown(false)
                                         } else {
-                                            setOpenEditTopic(true)
+                                            setOpenEditTopic(false)
                                             const formData = {
                                                 topic_id: topicId,
                                                 topic_title: values.topic_title,

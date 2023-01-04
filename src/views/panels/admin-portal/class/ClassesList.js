@@ -263,7 +263,7 @@ const StandardList = (props) => {
       setReloadAllData(data.activity == "Delete" ? 'Deleted' : "Restored");
       return MySwal.fire(
         "",
-        "The is " + (data.activity == "Delete" ? 'Deleted' : "Restored"),
+        "Class is " + (data.activity == "Delete" ? 'Deleted' : "Restored"),
         "success"
       );
     }
