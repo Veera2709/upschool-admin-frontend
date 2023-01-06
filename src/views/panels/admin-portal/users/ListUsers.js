@@ -5,10 +5,13 @@ import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import { useLocation, useHistory } from 'react-router-dom';
 import UserTableView from './UserTableView';
+import UserTableViewStudent from './UserTableViewStudent';
 
 const ListUsers = () => {
     const history = useHistory();
     const [state, setState] = useState(false);
+    const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
+
     useEffect(() => {
         const validateJWT = sessionStorage.getItem('user_jwt');
 
@@ -22,6 +25,9 @@ const ListUsers = () => {
 
         }
         else {
+
+            let storeValue = pageLocation === 'active-users' ? 'Active Users' : 'Archived Users';
+            sessionStorage.setItem('user_type', storeValue);
             setState(true);
         }
     }, [])
@@ -60,7 +66,7 @@ const ListUsers = () => {
                         </Tab>
                         <Tab eventKey={2} title="Students">
                             {sessionStorage.setItem('user_role', _userRole)}
-                            <UserTableView _userRole={_userRole} />
+                            <UserTableViewStudent _userRole={_userRole} />
                         </Tab>
                         <Tab eventKey={3} title="Parents">
                             {sessionStorage.setItem('user_role', _userRole)}

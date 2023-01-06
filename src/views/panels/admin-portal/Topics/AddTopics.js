@@ -19,7 +19,7 @@ import MESSAGES from '../../../../helper/messages';
 
 
 
-const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
+const AddTopics = ({ setOpenAddTopic }) => {
     let history = useHistory();
     const [prePostLearning, setprePostLearning] = useState('pre-Learning');
 
@@ -53,7 +53,7 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
         { label: 'Level-2', value: 'Level-2' },
         { label: 'Level-3', value: 'Level-3' },
     ]
-    
+
     const topicQuizTemplate = { level: levels[0].value, duration: "" }
     const [topicQuiz, setTopicQuiz] = useState([topicQuizTemplate])
     console.log("topicQuiz : ", topicQuiz);
@@ -77,7 +77,7 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
         setTopicQuiz(filteredProjects)
     }
 
-    const data = [{ id: 'ac05006b-2351-59e1-a5bf-aa88e249ad05', name: 'ac05006b-2351-59e1-a5bf-aa88e249ad05' }]  
+    const data = [{ id: 'ac05006b-2351-59e1-a5bf-aa88e249ad05', name: 'ac05006b-2351-59e1-a5bf-aa88e249ad05' }]
 
 
 
@@ -197,203 +197,198 @@ const AddTopics = ({ className, rest, setIsOpen, fetchSchoolData }) => {
     }
 
     return (
-        <div>
-            <Card>
-                <Card.Body>
-                    <Card.Title>Add Topic</Card.Title>
-                    <Formik
-                        initialValues={{
-                            topic_title: '',
-                            level: "",
-                            duration: "",
-                            topic_description: '',
-                            topic_concept_id: [],
-                            pre_post_learning: '',
-                            related_topics: [],
-                            topic_quiz_config: []
-                        }}
+        <React.Fragment>
+            <Formik
+                initialValues={{
+                    topic_title: '',
+                    level: "",
+                    duration: "",
+                    topic_description: '',
+                    topic_concept_id: [],
+                    pre_post_learning: '',
+                    related_topics: [],
+                    topic_quiz_config: []
+                }}
 
-                        validationSchema={Yup.object().shape({
-                            topic_title: Yup.string()
-                                .trim()
-                                .required(Constants.AddTopic.TopictitleRequired),
-                            duration: Yup.string()
-                                .trim()
-                                .required(Constants.AddTopic.QuizMinutesRequired),
-                            topic_description: Yup.string()
-                                .trim()
-                                .required(Constants.AddTopic.DescriptionRequired),
+                validationSchema={Yup.object().shape({
+                    topic_title: Yup.string()
+                        .trim()
+                        .required(Constants.AddTopic.TopictitleRequired),
+                    duration: Yup.string()
+                        .trim()
+                        .required(Constants.AddTopic.QuizMinutesRequired),
+                    topic_description: Yup.string()
+                        .trim()
+                        .required(Constants.AddTopic.DescriptionRequired),
 
-                        })}
-                        // validationSchema
-                        onSubmit={(values, { setErrors, setStatus, setSubmitting }) => {
-                            // setSubmitting(true);
+                })}
+                // validationSchema
+                onSubmit={(values, { setErrors, setStatus, setSubmitting }) => {
+                    // setSubmitting(true);
 
-                            if (topicConceptId == '') {
-                                setIsShownConcept(false)
-                            }
+                    if (topicConceptId == '') {
+                        setIsShownConcept(false)
+                    }
+                    else {
+                        setOpenAddTopic(false)
+                        const formData = {
+                            topic_title: values.topic_title,
+                            topic_description: values.topic_description,
+                            topic_concept_id: topicConceptId,
+                            pre_post_learning: prePostLearning,
+                            related_topics: relatedTopicsId,
+                            topic_quiz_config: topicQuiz
+                        }
+                        console.log('formData: ', formData)
+                        postTopic(formData)
+                    }
 
-                            else {
-                                const formData = {
-                                    topic_title: values.topic_title,
-                                    topic_description: values.topic_description,
-                                    topic_concept_id: topicConceptId,
-                                    pre_post_learning: prePostLearning,
-                                    related_topics: relatedTopicsId,
-                                    topic_quiz_config: topicQuiz
-                                }
-                                console.log('formData: ', formData)
-                                postTopic(formData)
-                            }
+                }}
+            >
+                {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
+                    <Form onSubmit={handleSubmit} >
+                        <Col sm={6}>
+                            <Form.Group>
+                                <Form.Label className="floating-label" htmlFor="topic_title"><small className="text-danger">* </small>Topic Title</Form.Label>
+                                <Form.Control
+                                    className="form-control"
+                                    name="topic_title"
+                                    onBlur={handleBlur}
+                                    onChange={handleChange}
+                                    type="text"
+                                    value={values.topic_title}
+                                />
+                                {touched.topic_title && errors.topic_title && <small className="text-danger form-text">{errors.topic_title}</small>}
+                            </Form.Group>
+                        </Col>
 
-                        }}
-                    >
-                        {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
-                            <Form onSubmit={handleSubmit} >
-                                <Col sm={6}>
-                                    <Form.Group>
-                                        <Form.Label className="floating-label" htmlFor="topic_title"><small className="text-danger">* </small>Topic Title</Form.Label>
-                                        <Form.Control
-                                            className="form-control"
-                                            name="topic_title"
-                                            onBlur={handleBlur}
-                                            onChange={handleChange}
-                                            type="text"
-                                            value={values.topic_title}
-                                        />
-                                        {touched.topic_title && errors.topic_title && <small className="text-danger form-text">{errors.topic_title}</small>}
-                                    </Form.Group>
-                                </Col>
+                        <Col sm={6}>
 
-                                <Col sm={6}>
+                            <div className="form-group fill">
+                                <label className="floating-label" >
+                                    <small className="text-danger">* </small>
+                                    Pre-Post learning
+                                </label>
+                                <Select
+                                    className="basic-single"
+                                    classNamePrefix="select"
+                                    defaultValue={prePostOptions[0]}
+                                    name="color"
+                                    options={prePostOptions}
+                                    onChange={(e) => { postPreOption(e) }}
+                                />
+                            </div>
+                        </Col>
 
-                                    <div className="form-group fill">
-                                        <label className="floating-label" >
-                                            <small className="text-danger">* </small>
-                                            Pre-Post learning
-                                        </label>
-                                        <Select
-                                            className="basic-single"
-                                            classNamePrefix="select"
-                                            defaultValue={prePostOptions[0]}
-                                            name="color"
-                                            options={prePostOptions}
-                                            onChange={(e) => { postPreOption(e) }}
-                                        />
-                                    </div>
-                                </Col>
+                        <Col sm={6}>
+                            <Form.Group>
+                                <Form.Label className="floating-label" ><small className="text-danger">* </small>Concept</Form.Label>
+                                <Select
+                                    className="basic-single"
+                                    classNamePrefix="select"
+                                    name="color"
+                                    isMulti
+                                    closeMenuOnSelect={false}
+                                    onChange={(e) => { getconceptId(e); setIsShownConcept(true) }}
+                                    options={conceptTitles}
+                                    placeholder="Select the Concept Title"
+                                />
+                                <small className="text-danger form-text" style={{ display: isShownConcept ? 'none' : 'block' }}>concept Id Field Required</small>
+                            </Form.Group>
+                        </Col>
 
-                                <Col sm={6}>
-                                    <Form.Group>
-                                        <Form.Label className="floating-label" ><small className="text-danger">* </small>Concept</Form.Label>
-                                        <Select
-                                            className="basic-single"
-                                            classNamePrefix="select"
-                                            name="color"
-                                            isMulti
-                                            closeMenuOnSelect={false}
-                                            onChange={(e) => { getconceptId(e); setIsShownConcept(true) }}
-                                            options={conceptTitles}
-                                            placeholder="Select the Concept Title"
-                                        />
-                                        <small className="text-danger form-text" style={{ display: isShownConcept ? 'none' : 'block' }}>concept Id Field Required</small>
-                                    </Form.Group>
-                                </Col>
+                        <div className="col-md-6">
+                            <Form.Group>
+                                <Form.Label className="floating-label" ><small className="text-danger"> </small>Related Topics</Form.Label>
+                                <Select
+                                    className="basic-single"
+                                    classNamePrefix="select"
+                                    name="color"
+                                    isMulti
+                                    closeMenuOnSelect={false}
+                                    onChange={(e) => { gettopicId(e); setIsShownTopic(true) }}
+                                    options={topicTitles}
+                                    placeholder="Select the Topic Title"
+                                />
+                                <small className="text-danger form-text" style={{ display: isShownTopic ? 'none' : 'block' }}>Related Topics Field Required</small>
+                            </Form.Group>
+                        </div>
 
-                                <div className="col-md-6">
-                                    <Form.Group>
-                                        <Form.Label className="floating-label" ><small className="text-danger"> </small>Related Topics</Form.Label>
-                                        <Select
-                                            className="basic-single"
-                                            classNamePrefix="select"
-                                            name="color"
-                                            isMulti
-                                            closeMenuOnSelect={false}
-                                            onChange={(e) => { gettopicId(e); setIsShownTopic(true) }}
-                                            options={topicTitles}
-                                            placeholder="Select the Topic Title"
-                                        />
-                                        <small className="text-danger form-text" style={{ display: isShownTopic ? 'none' : 'block' }}>Related Topics Field Required</small>
-                                    </Form.Group>
+                        <Col sm={6}>
+
+                            <Form.Group>
+                                <Form.Label className="floating-label" htmlFor="topic_description"><small className="text-danger">* </small>Topic Description</Form.Label>
+                                <Form.Control
+                                    as="textarea"
+                                    rows="4"
+                                    name="topic_description"
+                                    onBlur={handleBlur}
+                                    onChange={handleChange}
+                                    type="text"
+                                    value={values.topic_description}
+                                />
+                                {touched.topic_description && errors.topic_description && <small className="text-danger form-text">{errors.topic_description}</small>}
+                            </Form.Group>
+                        </Col>
+
+                        <Form.Label className="floating-label" ><small className="text-danger">* </small>Topic Quiz Config</Form.Label>
+                        {topicQuiz.map((topic, index) => (
+                            <div className='row ml-1 mb-2' key={index + 1000} >
+                                <div className='col-md-4' key={index + 10} >
+                                    <select className='form-control' name="level" id="level" onChange={(e) => onDynamicFormChange(e, index, 'level')} value={topic.level} >
+                                        {levels.map((ele, i) => {
+                                            console.log("VALUE : ", ele.value);
+                                            console.log("LABEL : ", ele.label);
+                                            return <option id="level" keys={i} value={ele.value} >{ele.label}</option>
+                                        })}
+                                    </select>
+
                                 </div>
-
-                                <Col sm={6}>
-
-                                    <Form.Group>
-                                        <Form.Label className="floating-label" htmlFor="topic_description"><small className="text-danger">* </small>Topic Description</Form.Label>
-                                        <Form.Control
-                                            as="textarea"
-                                            rows="4"
-                                            name="topic_description"
-                                            onBlur={handleBlur}
-                                            onChange={handleChange}
-                                            type="text"
-                                            value={values.topic_description}
-                                        />
-                                        {touched.topic_description && errors.topic_description && <small className="text-danger form-text">{errors.topic_description}</small>}
-                                    </Form.Group>
-                                </Col>
-
-                                <Form.Label className="floating-label" ><small className="text-danger">* </small>Topic Quiz Config</Form.Label>
-                                {topicQuiz.map((topic, index) => (
-                                    <div className='row ml-1 mb-2' key={index + 1000} >
-                                        <div className='col-md-4' key={index + 10} >
-                                            <select className='form-control' name="level" id="level" onChange={(e) => onDynamicFormChange(e, index, 'level')} value={topic.level} >
-                                                {levels.map((ele, i) => {
-                                                    console.log("VALUE : ", ele.value);
-                                                    console.log("LABEL : ", ele.label);
-                                                    return <option id="level" keys={i} value={ele.value} >{ele.label}</option>
-                                                })}
-                                            </select>
-
-                                        </div>
-                                        <p></p>
-                                        <div className='col-md-4'>
-                                            <div className='row'>
-                                                <div className='col-md-6'>
-                                                    <Form.Control
-                                                        type='number'
-                                                        name='duration'
-                                                        placeholder='Minutes'
-                                                        value={topic.duration}
-                                                        onChange={(e) => { onDynamicFormChange(e, index, 'duration'); handleChange(e) }}
-                                                        autoComplete='off'
-                                                        onBlur={handleBlur}
-                                                    />
-                                                    {touched.duration && errors.duration && <small className="text-danger form-text">{errors.duration}</small>}
-
-                                                </div>
-                                                {topicQuiz.length === 1 ? "" :
-                                                    (
-                                                        <div className='col-md-6'>
-                                                            <Button variant='danger' onClick={() => removeTopic(index)}>Remove</Button>
-                                                        </div>
-                                                    )
-
-                                                }
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-
                                 <p></p>
-                                <button type="button" className="btn btn-primary" onClick={addTopic} >Add another Quiz</button>
+                                <div className='col-md-4'>
+                                    <div className='row'>
+                                        <div className='col-md-6'>
+                                            <Form.Control
+                                                type='number'
+                                                name='duration'
+                                                placeholder='Minutes'
+                                                value={topic.duration}
+                                                onChange={(e) => { onDynamicFormChange(e, index, 'duration'); handleChange(e) }}
+                                                autoComplete='off'
+                                                onBlur={handleBlur}
+                                            />
+                                            {touched.duration && errors.duration && <small className="text-danger form-text">{errors.duration}</small>}
 
-                                <div className="row d-flex justify-content-end">
-                                    <div className="form-group fill">
-                                        <div className="center col-sm-12">
-                                            <button color="success" type="submit" className="btn-block btn btn-success btn-large">Submit</button>
                                         </div>
+                                        {topicQuiz.length === 1 ? "" :
+                                            (
+                                                <div className='col-md-6'>
+                                                    <Button variant='danger' onClick={() => removeTopic(index)}>Remove</Button>
+                                                </div>
+                                            )
+
+                                        }
+
                                     </div>
                                 </div>
+                            </div>
+                        ))}
 
-                            </Form>
-                        )}
-                    </Formik>
-                </Card.Body>
-            </Card >
-        </div >
+                        <p></p>
+                        <button type="button" className="btn btn-primary" onClick={addTopic} >Add another Quiz</button>
+
+                        <div className="row d-flex justify-content-end">
+                            <div className="form-group fill">
+                                <div className="center col-sm-12">
+                                    <button color="success" type="submit" className="btn-block btn btn-success btn-large">Submit</button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </Form>
+                )}
+            </Formik>
+        </React.Fragment>
     )
 }
 

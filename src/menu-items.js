@@ -155,7 +155,7 @@ const menuItems = {
               title: 'Archived Units',
               type: 'item',
               url: '/admin-portal/units/archived-units',
-            }
+            },
           ]
         },
         {
@@ -177,9 +177,30 @@ const menuItems = {
               url: '/admin-portal/archived-subjects'
             }
           ]
-        }
+        },
+        {
+          id: 'Class',
+          title: 'Class',
+          type: 'collapse',
+          icon: 'feather icon-package',
+          children: [
+            {
+              id: 'active-classes',
+              title: 'Active Classes',
+              type: 'item',
+              url: '/admin-portal/classes/active-classes'
+            },
+            {
+              id: 'archived-classes',
+              title: 'Archived Classes',
+              type: 'item',
+              url: '/admin-portal/classes/archived-classes'
+            }
+          ]
+        },
       ]
     }
+
   ]
 };
 
