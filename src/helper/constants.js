@@ -99,6 +99,15 @@ export const AddTopic = {
   DescriptionRequired:" Topic Description is required!"
 };
 
+export const AddSection = {
+  
+  SectionTitleRequired: 'Section name is required!',
+  QuizMinutesRequired: 'Quiz Minutes are required!',
+  TopictitleTooShort: 'Topic title is too short!',
+  TopictitleTooLong: "Topic title is too long!",
+  DescriptionRequired:" Topic Description is required!"
+};
+
 export const AddressForm = {
   curAddressRequired: 'Address is required!',
   curAddressTooShort: 'Address is too short!',

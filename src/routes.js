@@ -144,7 +144,11 @@ const routes = [
         path: '/admin-porttal/archived-schools',
         component: lazy(() => import('./views/panels/admin-portal/school/ArchivedSchools'))
       },
-
+      {
+        exact: true,
+        path: '/admin-porttal/addSection/:school_id',
+        component: lazy(() => import('./views/panels/admin-portal/school/SectionAdd'))
+      },
       {
         exact: true,
         path: '/admin-portal/active-users',

@@ -348,10 +348,6 @@ const DigiCard = () => {
                 console.log(response);
                 let dataResponse = response.data.Items
                 let finalDataArray = [];
-
-
-
-
                 if (digiCardStatus === 'Active') {
                     let ActiveresultData = (dataResponse && dataResponse.filter(e => e.digicard_status === 'Active'))
                     console.log("ActiveresultData", ActiveresultData);
