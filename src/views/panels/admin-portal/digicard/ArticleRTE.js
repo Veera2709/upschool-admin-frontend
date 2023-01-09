@@ -40,10 +40,10 @@ function ArticleRTE({
         onChange={handleEditorChange}
         setDefaultStyle="height: 80vh; font-size: 16px;font-family: Cerebri Sans Pro;"
         setOptions={{
-          // imageUploadSizeLimit: "250000",
+          imageUploadSizeLimit: "250000",
           katex: katex,
           plugins: plugins,
-          font : [
+          font: [
             'Arial',
             'tohoma',
             'Courier New,Courier',
@@ -59,9 +59,9 @@ function ArticleRTE({
             'Geneva',
             'Courier New',
 
-        ],
-        preview :[{pathpath : '/admin-portal/admin-dashboard'}
-        ],
+          ],
+          preview: [{ pathpath: '/admin-portal/admin-dashboard' }
+          ],
           buttonList: [
             ['undo', 'redo'],
             ['font', 'fontSize', 'formatBlock'],

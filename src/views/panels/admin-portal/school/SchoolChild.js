@@ -14,7 +14,7 @@ import EditSchoolForm from './EditSchoolForm';
 import SubscribeClass from './SubscribeClass';
 import { isEmptyArray } from '../../../../util/utils';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
-import { Link } from 'react-router-dom';
+import { Link ,useHistory   } from 'react-router-dom';
 import BasicSpinner from '../../../../helper/BasicSpinner';
 
 function Table({ columns, data, modalOpen }) {
@@ -174,6 +174,8 @@ const SchoolChild = (props) => {
     const [isOpenSubscribeClass, setIsOpenSubscribeClass] = useState(false);
     const [editID, setEditID] = useState('');
     const [subscribeID, setSubscribeClass] = useState('');
+    let history = useHistory();
+
 
     const MySwal = withReactContent(Swal);
 
@@ -296,7 +298,7 @@ const SchoolChild = (props) => {
             resultData[index]['subscription_active'] = <p>{resultData[index].subscription_active}</p>
             resultData[index]['actions'] = (
                 <>
-                    <Button onClick={(e) => {
+                    {/* <Button onClick={(e) => {
                         handleSubscribeClass(e, resultData[index].school_id);
                     }}
                         size="sm"
@@ -304,10 +306,10 @@ const SchoolChild = (props) => {
                         <i className="feather icon-plus" />
                         Subscribe Class
                     </Button>
-                    &nbsp;
-                    <Button onClick={(e) => {
-                        handleEditSchool(e, resultData[index].school_id);
-                    }}
+                    &nbsp; */}
+                    <Button
+                        // onClick={(e) => { handleEditSchool(e, resultData[index].school_id);}}
+                        onClick={(e) => history.push(`/admin-porttal/addSection/${resultData[index].school_id}`)}
                         size="sm"
                         className="btn btn-icon btn-rounded btn-info"
                     >

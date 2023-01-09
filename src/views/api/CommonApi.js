@@ -328,5 +328,25 @@ export const addClass = (formData) => {
             })
     });
   }
+
+  export const fetchClassBasedOnSchool = (school_id) => { 
+    console.log("school_id : ", school_id);
+    
+    return new Promise((resolve, reject) => {
+        axios.post(url.fetchClassBasedOnSchool, {
+          data:{school_id: school_id}
+        }, {
+            headers: { Authorization: sessionStorage.getItem('user_jwt') }
+        })
+            .then((response) => {
+                console.log(response);
+                resolve(response.data);
+            })
+            .catch((error) => {
+                resolve({ Error: error });
+            })
+    });
+  }
+
   
 
