@@ -253,6 +253,8 @@ const EditDigiCard = () => {
                                     };
                                 }
 
+                                console.log("formData",formData);
+
                                 axios
                                     .post(dynamicUrl.editDigiCard, { data: formData }, { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
                                     .then(async (response) => {

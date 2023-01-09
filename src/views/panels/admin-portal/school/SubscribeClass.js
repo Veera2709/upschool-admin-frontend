@@ -105,7 +105,7 @@ const SubscribeClass = ({ className, rest, id, setIsOpenSubscribeClass }) => {
                     if (result) {
                         console.log('inside res');
 
-                        setIsOpenSubscribeClass(false);
+                        // setIsOpenSubscribeClass(false);
                         const MySwal = withReactContent(Swal);
                         MySwal.fire('', 'School subscrption successful!', 'success');
 
