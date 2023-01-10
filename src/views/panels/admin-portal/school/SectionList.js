@@ -18,6 +18,9 @@ import withReactContent from 'sweetalert2-react-content';
 import { useLocation } from "react-router-dom";
 import BasicSpinner from '../../../../helper/BasicSpinner';
 import CreateSection from './CreateSection';
+import EditSection from './EditSection';
+import { fetchSchoolSection } from '../../../api/CommonApi'
+
 
 
 
@@ -56,14 +59,9 @@ function Table({ columns, data, modalOpen }) {
     );
 
     const [isOpen, setIsOpen] = useState(false);
-    const [isOpenAddTopic, setOpenAddTopic] = useState(false);
-
+    const [isOpenAddSection, setOpenAddSection] = useState(false);
+    const [schoolId,setSchoolId] = useState(sessionStorage.getItem('school_id'))
     let history = useHistory();
-
-    const adddigicard = () => {
-        history.push('/admin-portal/add-digicard');
-        setIsOpen(true);
-    }
 
     return (
         <>
@@ -87,8 +85,8 @@ function Table({ columns, data, modalOpen }) {
                 </Col>
                 <Col className="d-flex justify-content-end">
                     <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
-                    <Button className='btn-sm btn-round has-ripple ml-2 btn btn-success' onClick={() => { setOpenAddTopic(true) }}  >
-                        Add DigiCard
+                    <Button className='btn-sm btn-round has-ripple ml-2 btn btn-success' onClick={() => { setOpenAddSection(true) }}  >
+                        Add Section
                     </Button>
                 </Col>
             </Row>
@@ -161,12 +159,12 @@ function Table({ columns, data, modalOpen }) {
                     </Pagination>
                 </Col>
             </Row>
-            <Modal dialogClassName="my-modal" show={isOpenAddTopic} onHide={() => setOpenAddTopic(false)}>
+            <Modal dialogClassName="my-modal" show={isOpenAddSection} onHide={() => setOpenAddSection(false)}>
                 <Modal.Header closeButton>
                     <Modal.Title as="h5">Add Section</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <CreateSection setOpenAddTopic={setOpenAddTopic} />
+                    <CreateSection setOpenAddSection={setOpenAddSection} id={schoolId}/>
                 </Modal.Body>
             </Modal>
         </>
@@ -174,15 +172,20 @@ function Table({ columns, data, modalOpen }) {
 }
 
 const SectionList = ({ id }) => {
+    sessionStorage.setItem('school_id',id)
     const columns = React.useMemo(
         () => [
             {
                 Header: '#',
-                accessor: 'digicard_image'
+                accessor: 'index_no'
             },
             {
-                Header: 'DigiCard Title',
-                accessor: 'digi_card_title'
+                Header: 'Class Name',
+                accessor: 'client_class_name'
+            },
+            {
+                Header: 'Section Name',
+                accessor: 'section_name'
             },
             {
                 Header: 'Options',
@@ -202,6 +205,7 @@ const SectionList = ({ id }) => {
     const MySwal = withReactContent(Swal);
     const [isOpenAddSection, setOpenAddSection] = useState(false);
     const [isOpenEditSection, setOpenEditSection] = useState(false);
+    const [sectionId, setEditId] = useState();
 
     const sweetConfirmHandler = (alert) => {
         MySwal.fire({
@@ -215,96 +219,45 @@ const SectionList = ({ id }) => {
         setOpenAddSection(true)
     }
 
-    // const fetchAllDigiCards = (digiCardStatus) => {
-    //     setIsLoading(true);
-    //     console.log("digiCardStatus", digiCardStatus);
-    //     axios.post(dynamicUrl.fetchAllDigiCards, {}, {
-    //         headers: { Authorization: sessionStorage.getItem('user_jwt') }
-    //     })
-    //         .then((response) => {
-    //             console.log(response);
-    //             let dataResponse = response.data.Items
-    //             let finalDataArray = [];
+    const handleEditSection = (section_id) => {
+        setEditId(section_id)
+        setOpenEditSection(true)
+    }
 
+    const fetchAllDigiCards = async () => {
+        const allSectionData = await fetchSchoolSection(id);
+        console.log("allSectionData", allSectionData);
+        if (allSectionData.Error) {
+            console.log('allSectionData.Error', allSectionData.Error);
+        } else {
+            const finalDataArray = [] ;
+            const resultData = allSectionData.Items
+            for (let index = 0; index < resultData.length; index++) {
+                resultData[index].index_no = index + 1;
+                resultData[index]['actions'] = (
+                    <>
+                        <Button
+                            onClick={(e) => { handleEditSection( resultData[index].section_id);}}
+                            size="sm"
+                            className="btn btn-icon btn-rounded btn-info"
+                        >
+                            <i className="feather icon-edit" /> &nbsp; Edit
+                        </Button>
+                    </>
+                );
+                finalDataArray.push(resultData[index]);
 
+            }
+            console.log('finalDataArray: ', finalDataArray);
+            setData(finalDataArray);
+            setIsLoading(false);
+        }
 
-
-    //             if (digiCardStatus === 'Active') {
-    //                 let ActiveresultData = (dataResponse && dataResponse.filter(e => e.digicard_status === 'Active'))
-    //                 console.log("ActiveresultData", ActiveresultData);
-
-    //                 for (let index = 0; index < ActiveresultData.length; index++) {
-    //                     ActiveresultData[index]['digicard_image'] = <img class="img-fluid img-radius wid-40" alt="Poison regulate" src={ActiveresultData[index].digicard_imageURL} />
-    //                     ActiveresultData[index]['actions'] = (
-    //                         <>
-    //                             <Button
-    //                                 size="sm"
-    //                                 className="btn btn-icon btn-rounded btn-primary"
-    //                                 onClick={(e) => history.push(`/admin-portal/editDigiCard/${ActiveresultData[index].digi_card_id}`)}
-    //                             // onClick={(e) => history.push(`/admin-portal/admin-casedetails/${resultData[index].client_id}/all_cases`)}
-    //                             >
-    //                                 <i className="feather icon-edit" /> &nbsp; Edit
-    //                             </Button>
-    //                             &nbsp;
-    //                             <Button
-    //                                 size="sm"
-    //                                 className="btn btn-icon btn-rounded btn-danger"
-    //                                 onClick={(e) => deleteDigicard(ActiveresultData[index].digi_card_id, ActiveresultData[index].digi_card_title)}
-    //                             >
-    //                                 <i className="feather icon-trash-2 " /> &nbsp; Delete
-    //                             </Button>
-    //                             &nbsp;
-    //                             {/* <Button size='sm' className="btn btn-icon btn-rounded btn-danger" onClick={(e) => saveClientIdDelete(e, responseData[index].client_id)}>
-    //                             <i className="feather icon-delete" /> &nbsp; Delete
-    //                           </Button> */}
-    //                         </>
-    //                     );
-    //                     finalDataArray.push(ActiveresultData[index]);
-    //                     console.log('finalDataArray: ', finalDataArray)
-    //                 }
-    //             } else {
-    //                 let resultData = (dataResponse && dataResponse.filter(e => e.digicard_status === 'Archived'))
-    //                 for (let index = 0; index < resultData.length; index++) {
-    //                     resultData[index]['digicard_image'] = <img class="img-fluid img-radius wid-40" alt="Poison regulate" src={resultData[index].digicard_imageURL} />
-    //                     resultData[index]['actions'] = (
-    //                         <>
-    //                             <>
-    //                                 <Button
-    //                                     size="sm"
-    //                                     className="btn btn-icon btn-rounded btn-primary"
-    //                                     onClick={(e) => digicardRestore(resultData[index].digi_card_id, resultData[index].digi_card_title)}
-    //                                 >
-    //                                     <i className="feather icon-plus" /> &nbsp; Restore
-    //                                 </Button>
-    //                             </>
-    //                         </>
-    //                     );
-    //                     finalDataArray.push(resultData[index]);
-    //                     console.log('finalDataArray: ', finalDataArray)
-    //                 }
-    //             }
-
-
-    //             setData(finalDataArray);
-    //             console.log('resultData: ', finalDataArray);
-    //             setIsLoading(false);
-
-    //         })
-    //         .catch((error) => {
-    //             if (error.response.data === 'Invalid Token') {
-    //                 sessionStorage.clear();
-    //                 localStorage.clear();
-    //                 history.push('/auth/signin-1');
-    //                 window.location.reload();
-    //             } else {
-    //                 console.log("err", error);
-    //             }
-    //         })
-    // }
+    }
 
     useEffect(() => {
 
-
+        fetchAllDigiCards();
     }, [])
 
     return (
@@ -360,7 +313,7 @@ const SectionList = ({ id }) => {
                                             <Modal.Title as="h5">Edit Section</Modal.Title>
                                         </Modal.Header>
                                         <Modal.Body>
-                                            <CreateSection setOpenEditSection={setOpenEditSection} id={id} />
+                                            <EditSection setOpenEditSection={setOpenEditSection} id={id} sectionId={sectionId} />
                                         </Modal.Body>
                                     </Modal>
                                 </>

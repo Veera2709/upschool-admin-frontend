@@ -2,7 +2,6 @@
 
 const baseUrl = process.env.REACT_APP_LAMBDA_URL;
 
-
 const dynamicUrl = {
     
     // Login
@@ -88,6 +87,13 @@ const dynamicUrl = {
     fetchIndividualClass: baseUrl + '/fetchIndividualClass',
     toggleClassStatus: baseUrl + '/toggleClassStatus',
     editClass: baseUrl + '/editClass',
+
+    addSection: baseUrl + '/addSection',
+    fetchSchoolSection: baseUrl + '/fetchSchoolSection',
+    fetchSectionById: baseUrl + '/fetchSectionById',
+    editSection: baseUrl + '/editSection',
+    
+    
 }
 
 export default dynamicUrl;

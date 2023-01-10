@@ -113,7 +113,7 @@ const AddTopics = ({ setOpenAddTopic }) => {
     }
 
     const fetchAllConceptsData = async () => {
-        const allConceptsData = await fetchAllConcepts();
+        const allConceptsData = await fetchAllConcepts();   
         if (allConceptsData.Error) {
             console.log("allConceptsData.ERROR", allConceptsData.Error);
             if (allConceptsData.Error.response.data == 'Invalid Token') {
