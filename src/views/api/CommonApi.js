@@ -390,4 +390,23 @@ export const fetchSectionById = (section_id) => {
     });
 }
 
+export const fetchSectionByClientClassId = (client_class_id) => {
+    console.log("client_class_id : ", client_class_id);
+
+    return new Promise((resolve, reject) => {
+        axios.post(url.fetchSectionByClientClassId, {
+            data: { client_class_id: client_class_id }
+        }, {
+            headers: { Authorization: sessionStorage.getItem('user_jwt') }
+        })
+            .then((response) => {
+                console.log(response);
+                resolve(response.data);
+            })
+            .catch((error) => {
+                resolve({ Error: error });
+            })
+    });
+}
+
 
