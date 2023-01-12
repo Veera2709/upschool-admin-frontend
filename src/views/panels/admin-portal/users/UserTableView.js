@@ -209,6 +209,8 @@ const UserTableView = ({ _userRole }) => {
   const [validationObj, setValidationObj] = useState({});
   const [isOpenSectionAllocation, setOpenSectionAllocation] = useState(false);
   const [schoolId, setSchoolId] = useState();
+  const [teacherId, setTeacherId] = useState();
+  
 
 
   const [isLoading, setIsLoading] = useState(false);
@@ -625,7 +627,7 @@ const UserTableView = ({ _userRole }) => {
           {pageLocation === 'active-users' ? (
 
             <>
-              <Button size="sm" className="btn btn-icon btn-rounded btn-info" onClick={(e) => { setOpenSectionAllocation(true) ;setSchoolId(responseData[index].school_id)  }}>
+              <Button size="sm" className="btn btn-icon btn-rounded btn-info" onClick={(e) => { setOpenSectionAllocation(true) ;setSchoolId(responseData[index].school_id) ;setTeacherId(responseData[index].teacher_id) }}>
                 <i className="feather icon-plus" /> &nbsp; Allocate Section
               </Button>{' '}
               &nbsp;
@@ -791,7 +793,7 @@ const UserTableView = ({ _userRole }) => {
                           <Modal.Title as="h5">Section Allocation</Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
-                          <AllocateSection setOpenSectionAllocation={setOpenSectionAllocation} schoolId={schoolId} />
+                          <AllocateSection setOpenSectionAllocation={setOpenSectionAllocation} schoolId={schoolId} teacherId={teacherId} />
                         </Modal.Body>
                       </Modal>
                       < React.Fragment >

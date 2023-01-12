@@ -168,7 +168,7 @@ const DigiCard = () => {
     const columns = React.useMemo(
         () => [
             {
-                Header: '#',
+                Header: 'DigiCard Logo',
                 accessor: 'digicard_image'
             },
             {
@@ -190,6 +190,7 @@ const DigiCard = () => {
     const [loader, showLoader, hideLoader] = useFullPageLoader();
     const [isLoading, setIsLoading] = useState(false);
     const [reloadAllData, setReloadAllData] = useState('Fetched');
+    const [statusUrl, setStatusUrl] = useState('Fetched');
     const MySwal = withReactContent(Swal);
     const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
 
@@ -239,6 +240,7 @@ const DigiCard = () => {
                             hideLoader();
                             sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
                         } else {
+                            fetchAllDigiCards(statusUrl)
                             setReloadAllData("Deleted");
                             return MySwal.fire('', 'The ' + digi_card_title + ' is Deleted', 'success');
                             // window. location. reload() 
@@ -299,6 +301,7 @@ const DigiCard = () => {
                                 hideLoader();
                                 sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
                             } else {
+                                fetchAllDigiCards(statusUrl)
                                 setReloadAllData("Deleted");
                                 return MySwal.fire('', 'The ' + digi_card_title + ' is Restored', 'success');
                                 // window. location. reload() 
@@ -426,7 +429,8 @@ const DigiCard = () => {
             console.log("--", pageLocation);
             const url = pageLocation === "active-digiCard" ? 'Active' : 'Archived';
             // setPageURL(url);
-            url === 'Active' ? sessionStorage.setItem('digicard_type','Active Digicards'):sessionStorage.setItem('digicard_type','Archived Digicards')
+            url === 'Active' ? sessionStorage.setItem('digicard_type', 'Active Digicards') : sessionStorage.setItem('digicard_type', 'Archived Digicards')
+            setStatusUrl(url)
             fetchAllDigiCards(url);
 
         }

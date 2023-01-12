@@ -15,18 +15,21 @@ import { isEmptyObject } from '../../../../util/utils';
 import CloseButton from 'react-bootstrap/CloseButton';
 import { isEmptyArray } from '../../../../util/utils';
 import Select from 'react-select';
-import { fetchSectionByClientClassId } from "../../../api/CommonApi";
+import { fetchSectionByClientClassId, fetchClassBasedOnSchool, fetchSchoolSection, fetchTeacherInfoDetails } from "../../../api/CommonApi";
 
-const AllocateSection = ({ setOpenSectionAllocation, schoolId }) => {
+const AllocateSection = ({ setOpenSectionAllocation, schoolId, teacherId }) => {
+    console.log("teacherId", teacherId);
 
     const [errorMessage, setErrorMessage] = React.useState("");
     const colourOptions = [];
-    const multiDropDownValues = []
+    const multiDropDownValues = [];
+    const allSections = [];
 
     const [formFields, setFormFields] = useState([
         {
             client_class_id: '',
-            Section_id: ''
+            section_id: '',
+            client_class_name: ''
         }
     ]);
     const [classId, setClass] = useState([]);
@@ -34,9 +37,28 @@ const AllocateSection = ({ setOpenSectionAllocation, schoolId }) => {
     const [multiOptions, setMultiOptions] = useState([]);
     const [multiDropOptions, setMultiDropOptions] = useState([]);
     const [loader, showLoader, hideLoader] = useFullPageLoader();
-    console.log("multiDropDownValues", multiDropDownValues);
+    const [sectionRepeat, SetSecctionRepeat] = useState(false)
+    const [sectionValidation, setSectionValidation] = useState(false)
     const [count, setCount] = useState(0);
     const [validationIndex, setValidationIndex] = useState();
+    const [sections, setSections] = useState();
+    const [sectionData, setSectionData] = useState();
+    const [classData, setClassData] = useState();
+    const MySwal = withReactContent(Swal);
+    const sweetAlertHandler = (alert) => {
+        const MySwal = withReactContent(Swal);
+        MySwal.fire({
+            title: alert.title,
+            text: alert.text,
+            icon: alert.type
+        });
+    };
+
+    console.log("multiDropDownValues", multiDropDownValues);
+    console.log("sections", sections);
+    console.log("colourOptions", colourOptions);
+
+
 
 
     const handleFormChange = (event, index) => {
@@ -49,33 +71,21 @@ const AllocateSection = ({ setOpenSectionAllocation, schoolId }) => {
             if (event.label.length >= 1 && event.label.startsWith("Class")) {
 
                 data[index]["client_class_id"] = event.value;
+                data[index]["client_class_name"] = event.label;
                 console.log(data);
-                // setMultiDropOptions({isDisabled: true});
-
-                // data.forEach((item, i) => {
-                //     multiDropDownValues.push({ value: data[i].client_class_id, label: item.section_name, isDisables: true })
-                // })
-
                 setCount(0);
                 setFormFields(data);
             } else {
-
                 console.log(event);
-                data[index]['Section_id']=event[0].value;
+                data[index]['section_id'] = event.value;
                 console.log(data);
             }
         } else {
-
             console.log("else", event);
             console.log("index", data.length);
-
             if (event.length >= 1) {
-
-                data[index]['Section_id']=event[0].value;
-                
-             
+                data[index]['section_ids'] = event.value;
             }
-
         }
 
     }
@@ -83,7 +93,8 @@ const AllocateSection = ({ setOpenSectionAllocation, schoolId }) => {
     const addFields = () => {
         let object = {
             client_class_id: '',
-            Section_id: ''
+            section_id: '',
+            client_class_name: ''
         }
 
         setFormFields([...formFields, object])
@@ -91,10 +102,53 @@ const AllocateSection = ({ setOpenSectionAllocation, schoolId }) => {
 
     const subscribeClass = (e) => {
 
-
         let sendData = {
-            school_id: schoolId,
-            classList: formFields
+            teacher_id: teacherId,
+            allocateLists: formFields
+        }
+
+        const unique = new Set();
+        const showError = formFields.some(element => unique.size === unique.add(element.section_id).size);
+        // alert(showError)
+
+        let emptyFieldValidation = formFields.find(o => o.section_id === "" || o.section_id === 0 || o.section_id === undefined)
+        if (emptyFieldValidation) {
+            setSectionValidation(true)
+        } else if (showError === true) {
+            SetSecctionRepeat(showError)
+
+        } else {
+            console.log("sending the data", sendData);
+            axios.post(dynamicUrl.teacherSectionAllocation, { data: sendData }, {
+                headers: { Authorization: sessionStorage.getItem('user_jwt') }
+            })
+                .then((response) => {
+                    const result = response.data;
+                    if (result == 200) {
+                        setOpenSectionAllocation(false)
+                        // sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingTopic });
+                        MySwal.fire({
+
+                            title: 'Section Allocation successfully!',
+                            icon: 'success',
+                        }).then((willDelete) => {
+
+                            window.location.reload();
+
+                        })
+
+                    } else {
+                        console.log("error");
+                    }
+                    console.log('result: ', result);
+                })
+                .catch((err) => {
+                    console.log(err);
+                    if (err.response.status === 400) {
+                        setOpenSectionAllocation(false)
+                        sweetAlertHandler({ title: 'Error', type: 'error', text: err.response.data });
+                    }
+                })
         }
 
         console.log('sendData', sendData);
@@ -112,44 +166,75 @@ const AllocateSection = ({ setOpenSectionAllocation, schoolId }) => {
 
     }
 
+    const fetchClass = async () => {
+        const ClientClassId = await fetchClassBasedOnSchool(schoolId);
+        if (ClientClassId.Error) {
+            console.log("ClientClassId.Error", ClientClassId.Error);
+        } else {
+            let resultData = ClientClassId.Items
+            resultData.forEach((item, index) => {
+                colourOptions.push({ value: item.client_class_id, label: item.client_class_name })
+            })
+            setOptions(colourOptions)
+            const schoolSections = await fetchSchoolSection(schoolId);
+            if (schoolSections.Error) {
+                console.log("schoolSections.Error", schoolSections.Error);
+            } else {
+                const sectionsData = schoolSections.Items
+                console.log("sectionsData", sectionsData);
+                sectionsData.forEach((item, index) => {
+                    allSections.push({ value: item.section_id, label: item.section_name })
+                })
+                setSections(allSections)
+
+                const teacherInfo = await fetchTeacherInfoDetails(teacherId);
+                if (teacherInfo.Error) {
+                    console.log("teacherInfo.Error", teacherInfo.Error);
+                } else {
+                    console.log('teacherInfo', teacherInfo);
+                    let object;
+                    let tempArray = [];
+                    let classArray = [];
+                    let SesionArray = [];
+                    teacherInfo.forEach((Items, index) => {
+                        object = {
+                            client_class_id: Items.client_class_id,
+                            section_id: Items.section_id
+                        }
+                        tempArray.push(object);
+                        const defaultValue = colourOptions.filter(activity => (activity.value === Items.client_class_id))
+                        const sectiontValue = allSections.filter(activity => (activity.value === Items.section_id))
+
+                        classArray.push(defaultValue);
+                        SesionArray.push(sectiontValue);
+                        console.log("defaultValue", defaultValue);
+                    })
+
+                    isEmptyArray(tempArray) ? (
+
+                        tempArray.push(object = {
+                            client_class_id: "",
+                            section_id: ""
+                        })
+
+                    ) : (console.log("Not empty"))
+
+                    console.log("tempArray", tempArray);
+                    // setdropDownValues(responseData.upschoolClassItems);
+                    setFormFields(tempArray);
+                    setClassData(classArray);
+                    setSectionData(SesionArray);
+                    // setPreviousData(responseData);
+                }
+
+            }
+        }
+
+    }
+
     useEffect(() => {
 
-        axios
-            .post(
-                dynamicUrl.fetchClassBasedOnSchool,
-                {
-                    data: {
-                        school_id: schoolId
-                    }
-                },
-                {
-                    headers: { Authorization: sessionStorage.getItem('user_jwt') }
-                }
-            )
-            .then((response) => {
-
-                console.log({ response });
-                console.log(response.data);
-                let resultData = response.data.Items
-                resultData.forEach((item, index) => {
-                    colourOptions.push({ value: item.client_class_id, label: item.client_class_name })
-                })
-                setOptions(colourOptions)
-            })
-            .catch((error) => {
-                if (error.response) {
-                    hideLoader();
-
-                    console.log(error.response.data);
-
-                } else if (error.request) {
-                    console.log(error.request);
-                    hideLoader();
-                } else {
-                    console.log('Error', error.message);
-                    hideLoader();
-                }
-            });
+        fetchClass();
 
     }, [])
 
@@ -220,7 +305,8 @@ const AllocateSection = ({ setOpenSectionAllocation, schoolId }) => {
                                                                             <Col></Col>
                                                                             <Col>
                                                                                 <CloseButton onClick={() => {
-                                                                                    removeFields(index)
+                                                                                    removeFields(index);
+                                                                                    SetSecctionRepeat(false)
                                                                                 }} variant="white" />
                                                                             </Col>
                                                                         </Row>
@@ -232,21 +318,25 @@ const AllocateSection = ({ setOpenSectionAllocation, schoolId }) => {
                                                                                 <small className="text-danger">* </small>
                                                                                 Class
                                                                             </label>
-                                                                            <Select
-                                                                                className="basic-single"
-                                                                                classNamePrefix="select"
-                                                                                label="client_class_id"
-                                                                                name="client_class_id"
-                                                                                options={options}
-                                                                                // onChange={(e) => { classOption(e) }}
-                                                                                onBlur={handleBlur}
-                                                                                onChange={(event) => { handleFormChange(event, index); classOption(event, index) }}
-                                                                            />
+                                                                            {classData && (
+                                                                                <Select
+                                                                                    // classData
+                                                                                    defaultValue={classData[index]}
+                                                                                    className="basic-single"
+                                                                                    classNamePrefix="select"
+                                                                                    label="client_class_id"
+                                                                                    name="client_class_id"
+                                                                                    options={options}
+                                                                                    // onChange={(e) => { classOption(e) }}
+                                                                                    onBlur={(e) => { handleBlur(e) }}
+                                                                                    onChange={(event) => { handleFormChange(event, index); classOption(event, index) }}
+                                                                                />
+                                                                            )}
                                                                             {touched.upschool_class_id && errors.upschool_class_id && (
                                                                                 <small className="text-danger form-text">{errors.zupschool_class_id}</small>
                                                                             )}
                                                                         </Col>
-                                                                        {multiDropOptions && (
+                                                                        {multiDropOptions && sectionData && (
                                                                             <Col>
                                                                                 <label className="floating-label">
                                                                                     <small className="text-danger">* </small>
@@ -255,30 +345,31 @@ const AllocateSection = ({ setOpenSectionAllocation, schoolId }) => {
 
                                                                                 {
                                                                                     validationIndex !== index ? <>
-
                                                                                         <Select
-                                                                                            classNamePrefix="select"
+                                                                                            defaultValue={sectionData[index]}
                                                                                             className="basic-single"
-                                                                                            label="Section_id"
-                                                                                            name="Section_id"
+                                                                                            label="section_id"
+                                                                                            classNamePrefix="select"
+                                                                                            name="section_id"
                                                                                             options={multiDropOptions}
-                                                                                            placeholder="Select"
-                                                                                            onBlur={handleBlur}
-                                                                                            onChange={(event) => { handleFormChange(event, index) }}
+                                                                                            onChange={(event) => {
+                                                                                                handleFormChange(event, index); SetSecctionRepeat(false);
+                                                                                                setSectionValidation(false)
+                                                                                            }}
                                                                                             isDisabled={true}
-
                                                                                         />
                                                                                     </> : <>
                                                                                         <Select
+                                                                                            defaultValue={sectionData[index]}
+                                                                                            className="basic-single"
+                                                                                            label="section_id"
                                                                                             classNamePrefix="select"
-                                                                                            label="Section_id"
-                                                                                            name="Section_id"
-                                                                                            isMulti
+                                                                                            name="section_id"
                                                                                             options={multiDropOptions}
-                                                                                            placeholder="Select"
-                                                                                            onBlur={handleBlur}
-                                                                                            onChange={(event) => { handleFormChange(event, index) }}
-
+                                                                                            onChange={(event) => {
+                                                                                                handleFormChange(event, index); SetSecctionRepeat(false);
+                                                                                                setSectionValidation(false)
+                                                                                            }}
                                                                                         />
                                                                                     </>
                                                                                 }
@@ -287,10 +378,12 @@ const AllocateSection = ({ setOpenSectionAllocation, schoolId }) => {
                                                                             </Col>
                                                                         )}
                                                                     </Row>
+
                                                                 </>
 
                                                             )
                                                         })
+
                                                     }
                                                 </form>
 
@@ -299,8 +392,8 @@ const AllocateSection = ({ setOpenSectionAllocation, schoolId }) => {
                                                         <button onClick={addFields}>+</button>
                                                     </Col>
                                                     <Col>
-                                                        {errorMessage &&
-                                                            <div style={{ color: 'red' }} className="error"> {errorMessage} </div>}
+                                                        {sectionRepeat && (<small className="text-danger form-text">Class and Section Combination is Repeated</small>)}
+                                                        {sectionValidation && (<small className="text-danger form-text">Section is required!</small>)}
                                                     </Col>
                                                     <Col>
                                                         <Button className="btn-block" color="success" size="large" type="submit" variant="success" onClick={subscribeClass} >
