@@ -15,6 +15,7 @@ import { isEmptyObject } from '../../../../util/utils';
 import CloseButton from 'react-bootstrap/CloseButton';
 import { isEmptyArray } from '../../../../util/utils';
 import Select from 'react-select';
+import BasicSpinner from '../../../../helper/BasicSpinner';
 import { fetchSectionByClientClassId, fetchClassBasedOnSchool, fetchSchoolSection, fetchTeacherInfoDetails } from "../../../api/CommonApi";
 
 const AllocateSection = ({ setOpenSectionAllocation, schoolId, teacherId }) => {
@@ -44,6 +45,7 @@ const AllocateSection = ({ setOpenSectionAllocation, schoolId, teacherId }) => {
     const [sections, setSections] = useState();
     const [sectionData, setSectionData] = useState();
     const [classData, setClassData] = useState();
+    const [isLoading, setIsLoading] = useState(false);
     const MySwal = withReactContent(Swal);
     const sweetAlertHandler = (alert) => {
         const MySwal = withReactContent(Swal);
@@ -167,6 +169,7 @@ const AllocateSection = ({ setOpenSectionAllocation, schoolId, teacherId }) => {
     }
 
     const fetchClass = async () => {
+        setIsLoading(true)
         const ClientClassId = await fetchClassBasedOnSchool(schoolId);
         if (ClientClassId.Error) {
             console.log("ClientClassId.Error", ClientClassId.Error);
@@ -214,7 +217,8 @@ const AllocateSection = ({ setOpenSectionAllocation, schoolId, teacherId }) => {
 
                         tempArray.push(object = {
                             client_class_id: "",
-                            section_id: ""
+                            section_id: "",
+                            client_class_name: ''
                         })
 
                     ) : (console.log("Not empty"))
@@ -229,7 +233,7 @@ const AllocateSection = ({ setOpenSectionAllocation, schoolId, teacherId }) => {
 
             }
         }
-
+        setIsLoading(false)
     }
 
     useEffect(() => {
@@ -260,15 +264,14 @@ const AllocateSection = ({ setOpenSectionAllocation, schoolId, teacherId }) => {
     return (
 
         <div className="App">
-
-            <>
-                {isEmptyObject(formFields) ? <></> : (
+            {
+                isLoading ? (
+                    <BasicSpinner />
+                ) : (
                     <>
-
-                        <React.Fragment>
-
-                            <Card>
-                                <Card.Body>
+                        {isEmptyObject(formFields) ? <></> : (
+                            <>
+                                <React.Fragment>
                                     <Formik
                                         initialValues={{
                                             client_class_id: '',
@@ -403,12 +406,14 @@ const AllocateSection = ({ setOpenSectionAllocation, schoolId, teacherId }) => {
                                                 </Row> </>
                                         )}
                                     </Formik>
-                                </Card.Body>
-                            </Card>
-                        </React.Fragment>
+                                </React.Fragment>
+                            </>
+                        )}
                     </>
-                )}
-            </>
+                )
+            }
+
+
         </div >
     );
 
