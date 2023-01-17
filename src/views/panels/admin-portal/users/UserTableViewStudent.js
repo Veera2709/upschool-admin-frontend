@@ -193,13 +193,14 @@ const UserTableViewStudent = ({ _userRole }) => {
     const [className_ID, setClassName_ID] = useState();
     const [schoolId, setSchoolId] = useState();
     const [sectionId, setSectionId] = useState();
-    
+
     const [multiDropOptions, setMultiDropOptions] = useState([]);
     const [options, setOptions] = useState([]);
     const [schoolName_ID, setSchoolName_ID] = useState({});
     const [previousSchool, setPreviousSchool] = useState('');
     const [previousClass, setPreviousClass] = useState('');
     const [defaultClass, setDefaultClass] = useState([]);
+    const [defaultSection, setDefaultSection] = useState([]);
     const [_userID, _setUserID] = useState('');
 
     const [isOpen, setIsOpen] = useState(false);
@@ -209,9 +210,14 @@ const UserTableViewStudent = ({ _userRole }) => {
     const { user_id } = decodeJWT(sessionStorage.getItem('user_jwt'));
     const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
     const [selectClassErr, setSelectClassErr] = useState(false);
+    const [selectSectionErr, setSelectSectionErr] = useState(false);
     const [_data, _setData] = useState([]);
     const classNameRef = useRef('');
     const schoolNameRef = useRef('');
+
+    console.log("options", options);
+    console.log("multiDropOptions", multiDropOptions);
+
 
     const phoneRegExp = /^(\+91[\-\s]?)?[0]?(91)?[6789]\d{9}$/;
 
@@ -295,17 +301,20 @@ const UserTableViewStudent = ({ _userRole }) => {
                     let individual_user_data = response.data.Items[0];
                     console.log({ individual_user_data });
                     setSchoolId(response.data.Items[0].school_id)
+                    setSectionId(response.data.Items[0].section_id)
+                    setClassName_ID(response.data.Items[0].class_id)
                     let classNameArr = response.data.classList.find(o => o.client_class_id === response.data.Items[0].class_id);
+                    let sectionArr = response.data.sectionList.find(o => o.section_id === response.data.Items[0].section_id);
                     let schoolNameArr = response.data.schoolList.find(o => o.school_id === response.data.Items[0].school_id);
-                    setDefaultClass({ value: classNameArr.client_class_id, label: classNameArr.client_class_name })
 
                     console.log(classNameArr);
                     console.log(schoolNameArr);
 
-                    // setClassName_ID(response.data.classList);
+                    setDefaultClass({ value: classNameArr.client_class_id, label: classNameArr.client_class_name })
+                    setDefaultSection({ value: sectionArr.section_id, label: sectionArr.section_name })
 
-                    const AllClassData = response.data.classList;
-                    AllClassData.forEach((item, index) => {
+                    console.log("response.data.classList", response.data.classList.length);
+                    response.data.classList.forEach((item, index) => {
                         colourOptions.push({ value: item.client_class_id, label: item.client_class_name })
                     })
                     setOptions(colourOptions)
@@ -318,6 +327,13 @@ const UserTableViewStudent = ({ _userRole }) => {
                     setIndividualUserData(individual_user_data);
                     setIsEditModalOpen(true);
                     _setUserID(user_id);
+
+
+
+                    response.data.sectionList.forEach((item, index) => {
+                        multiDropDownValues.push({ value: item.section_id, label: item.section_name })
+                    })
+                    setMultiDropOptions(multiDropDownValues)
 
                 } else {
 
@@ -729,7 +745,8 @@ const UserTableViewStudent = ({ _userRole }) => {
     }, [_userRole]);
 
     const classOption = async (e) => {
-        console.log("classOption", e);
+        // setDefaultSection({ value: '', label: 'Select Section' })
+        console.log("class Option", e);
         setClassName_ID(e.value)
         const ClientClassId = await fetchSectionByClientClassId(e.value);
         if (ClientClassId.Error) {
@@ -745,11 +762,11 @@ const UserTableViewStudent = ({ _userRole }) => {
 
     };
 
-    const GetSectionId =(event)=>{
-        console.log("event",event.value);
-        setSectionId(event.value)
+    const GetSectionId = (event) => {
+        console.log("event", event.target.value);
+        setSectionId(event.target.value)
     }
-   
+
     return (
 
         <React.Fragment>
@@ -855,6 +872,11 @@ const UserTableViewStudent = ({ _userRole }) => {
                                                             //         className_ID.find((e) => e.client_class_name == classNameRef.current.value).client_class_id
                                                             //     )
 
+                                                            if (className_ID === undefined || className_ID === '') {
+                                                                setSelectClassErr(true)
+                                                            } else if (sectionId === undefined || sectionId === '' || sectionId == 'Select Section') {
+                                                                setSelectSectionErr(true)
+                                                            } else {
                                                                 data = {
 
                                                                     student_id: _userID,
@@ -873,14 +895,13 @@ const UserTableViewStudent = ({ _userRole }) => {
                                                                 console.log(data);
                                                                 showLoader();
                                                                 _UpdateUser(data);
-
                                                             }
-
-
+                                                        }
 
                                                         }
+                                                    // }
                                                     >
-                                                        {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
+                                                        {({ errors, handleBlur, handleChange, handleSubmit, touched, values, setFieldValue }) => (
                                                             <form noValidate onSubmit={handleSubmit}>
                                                                 <Row>
                                                                     <Col>
@@ -986,7 +1007,7 @@ const UserTableViewStudent = ({ _userRole }) => {
 
                                                                         </Row>
 
-                                                                        {individualUserData.class_id && individualUserData.section_id  ? (
+                                                                        {individualUserData.class_id && individualUserData.section_id ? (
                                                                             <>
                                                                                 <Row>
 
@@ -1004,7 +1025,11 @@ const UserTableViewStudent = ({ _userRole }) => {
                                                                                                 name="client_class_id"
                                                                                                 options={options}
                                                                                                 onBlur={(event) => { handleBlur(event) }}
-                                                                                                onChange={(event) => { classOption(event)}}
+                                                                                                onChange={(event) => {
+                                                                                                    setFieldValue('section_id', '')
+                                                                                                    classOption(event)
+
+                                                                                                }}
                                                                                             />
                                                                                             {touched.class && errors.class && (
                                                                                                 <small className="text-danger form-text">{errors.class}</small>
@@ -1022,8 +1047,8 @@ const UserTableViewStudent = ({ _userRole }) => {
                                                                                             <label className="floating-label" htmlFor="section">
                                                                                                 <small className="text-danger">* </small>Section
                                                                                             </label>
-                                                                                            <Select
-                                                                                                // defaultValue={sectionData[index]}
+                                                                                            {/* <Select
+                                                                                                defaultValue={defaultSection}
                                                                                                 className="basic-single"
                                                                                                 label="section_id"
                                                                                                 classNamePrefix="select"
@@ -1032,7 +1057,29 @@ const UserTableViewStudent = ({ _userRole }) => {
                                                                                                 onChange={(event) => {
                                                                                                     GetSectionId(event)
                                                                                                 }}
-                                                                                            />
+                                                                                            /> */}
+                                                                                            <select
+                                                                                                className="form-control"
+                                                                                                error={touched.section_id && errors.section_id}
+                                                                                                name="section_id"
+                                                                                                onBlur={handleBlur}
+                                                                                                type="text"
+                                                                                                value={sectionId}
+                                                                                                onChange={(event) =>{GetSectionId(event);setSelectSectionErr(false)} }
+                                                                                            >                                                <option>                                    Select Section
+                                                                                                </option>                                                {multiDropOptions.map((optionsData) => {
+                                                                                                    return <option
+                                                                                                        value={optionsData.value}
+                                                                                                        key={optionsData.value}
+                                                                                                    >                                                        {optionsData.label}
+                                                                                                    </option>
+                                                                                                })}
+                                                                                            </select>
+                                                                                            {selectSectionErr && (
+
+                                                                                                <small className="text-danger form-text">Please select a Section</small>
+
+                                                                                            )}
                                                                                             {touched.section && errors.section && <small className="text-danger form-text">{errors.section}</small>}
                                                                                         </div>
                                                                                     </Col>
