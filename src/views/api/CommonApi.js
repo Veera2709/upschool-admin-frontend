@@ -146,7 +146,6 @@ export const fetchAllConcepts = () => {
     });
 }
 
-
 export const fetchPostLearningTopics = () => {
     return new Promise((resolve, reject) => {
         axios.post(url.fetchPostLearningTopics, {
@@ -223,12 +222,12 @@ export const getIndividualTopic = (topic_id) => {
     });
 }
 
-export const addClass = (formData) => { 
+export const addClass = (formData) => {
     console.log("formData : ", formData);
-  
+
     return new Promise((resolve, reject) => {
         axios.post(url.addClass, {
-          data: formData
+            data: formData
         }, {
             headers: { Authorization: sessionStorage.getItem('user_jwt') }
         })
@@ -240,13 +239,14 @@ export const addClass = (formData) => {
                 resolve({ Error: error });
             })
     });
-  }
-  export const editClass = (formData) => { 
+}
+
+export const editClass = (formData) => {
     console.log("formData : ", formData);
-  
+
     return new Promise((resolve, reject) => {
         axios.post(url.editClass, {
-          data: formData
+            data: formData
         }, {
             headers: { Authorization: sessionStorage.getItem('user_jwt') }
         })
@@ -258,13 +258,14 @@ export const addClass = (formData) => {
                 resolve({ Error: error });
             })
     });
-  }
-  export const toggleClassStatus = (data) => { 
+}
+
+export const toggleClassStatus = (data) => {
     console.log("data : ", data);
-  
+
     return new Promise((resolve, reject) => {
         axios.post(url.toggleClassStatus, {
-          data: data
+            data: data
         }, {
             headers: { Authorization: sessionStorage.getItem('user_jwt') }
         })
@@ -276,13 +277,14 @@ export const addClass = (formData) => {
                 resolve({ Error: error });
             })
     });
-  }
-  export const fetchAllClass = (class_status) => { 
+}
+
+export const fetchAllClass = (class_status) => {
     console.log("class_status : ", class_status);
-  
+
     return new Promise((resolve, reject) => {
         axios.post(url.fetchAllClass, {
-          data:{class_status: class_status}
+            data: { class_status: class_status }
         }, {
             headers: { Authorization: sessionStorage.getItem('user_jwt') }
         })
@@ -294,9 +296,10 @@ export const addClass = (formData) => {
                 resolve({ Error: error });
             })
     });
-  }
-  export const fetchSubjectIdName = () => { 
-    
+}
+
+export const fetchSubjectIdName = () => {
+
     return new Promise((resolve, reject) => {
         axios.post(url.fetchSubjectIdName, {}, {
             headers: { Authorization: sessionStorage.getItem('user_jwt') }
@@ -309,13 +312,14 @@ export const addClass = (formData) => {
                 resolve({ Error: error });
             })
     });
-  }
-  export const fetchIndividualClass = (class_id) => { 
+}
+
+export const fetchIndividualClass = (class_id) => {
     console.log("class_id : ", class_id);
-    
+
     return new Promise((resolve, reject) => {
         axios.post(url.fetchIndividualClass, {
-          data:{class_id: class_id}
+            data: { class_id: class_id }
         }, {
             headers: { Authorization: sessionStorage.getItem('user_jwt') }
         })
@@ -327,14 +331,14 @@ export const addClass = (formData) => {
                 resolve({ Error: error });
             })
     });
-  }
+}
 
-  export const fetchClassBasedOnSchool = (school_id) => { 
+export const fetchClassBasedOnSchool = (school_id) => {
     console.log("school_id : ", school_id);
-    
+
     return new Promise((resolve, reject) => {
         axios.post(url.fetchClassBasedOnSchool, {
-          data:{school_id: school_id}
+            data: { school_id: school_id }
         }, {
             headers: { Authorization: sessionStorage.getItem('user_jwt') }
         })
@@ -346,7 +350,84 @@ export const addClass = (formData) => {
                 resolve({ Error: error });
             })
     });
-  }
+}
 
-  
+export const fetchSchoolSection = (school_id) => {
+    console.log("school_id : ", school_id);
+
+    return new Promise((resolve, reject) => {
+        axios.post(url.fetchSchoolSection, {
+            data: { school_id: school_id }
+        }, {
+            headers: { Authorization: sessionStorage.getItem('user_jwt') }
+        })
+            .then((response) => {
+                console.log(response);
+                resolve(response.data);
+            })
+            .catch((error) => {
+                resolve({ Error: error });
+            })
+    });
+}
+
+export const fetchSectionById = (section_id) => {
+    console.log("school_id : ", section_id);
+
+    return new Promise((resolve, reject) => {
+        axios.post(url.fetchSectionById, {
+            data: { section_id: section_id }
+        }, {
+            headers: { Authorization: sessionStorage.getItem('user_jwt') }
+        })
+            .then((response) => {
+                console.log(response);
+                resolve(response.data);
+            })
+            .catch((error) => {
+                resolve({ Error: error });
+            })
+    });
+}
+
+export const fetchSectionByClientClassId = (client_class_id) => {
+    console.log("client_class_id : ", client_class_id);
+
+    return new Promise((resolve, reject) => {
+        axios.post(url.fetchSectionByClientClassId, {
+            data: { client_class_id: client_class_id }
+        }, {
+            headers: { Authorization: sessionStorage.getItem('user_jwt') }
+        })
+            .then((response) => {
+                console.log(response);
+                resolve(response.data);
+            })
+            .catch((error) => {
+                resolve({ Error: error });
+            })
+    });
+}
+
+export const fetchTeacherInfoDetails = (teacher_id) => {
+    console.log("teacher_id : ", teacher_id);
+
+    return new Promise((resolve, reject) => {
+        axios.post(url.fetchTeacherInfoDetails, {
+            data: { teacher_id: teacher_id }
+        }, {
+            headers: { Authorization: sessionStorage.getItem('user_jwt') }
+        })
+            .then((response) => {
+                console.log(response);
+                resolve(response.data);
+            })
+            .catch((error) => {
+                resolve({ Error: error });
+            })
+    });
+}
+
+
+
 

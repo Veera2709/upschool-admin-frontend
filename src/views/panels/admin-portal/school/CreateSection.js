@@ -19,7 +19,7 @@ import MESSAGES from '../../../../helper/messages';
 
 
 
-const CreateSection = ({setOpenAddSection,id}) => {
+const CreateSection = ({ setOpenAddSection, id }) => {
     const colourOptions = [];
     let history = useHistory();
     const [options, setOptions] = useState([]);
@@ -36,133 +36,152 @@ const CreateSection = ({setOpenAddSection,id}) => {
         });
     };
 
-    const postTopic = (formData) => {
-        axios.post(dynamicUrl.addTopic, { data: formData }, {
-            headers: { Authorization: sessionStorage.getItem('user_jwt') }
-        })
-            .then((response) => {
-                const result = response.data;
-                if (result == 200) {
-                    // sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingTopic });
+    const Addsection = (formData) => {
+        axios
+            .post(dynamicUrl.addSection, { data: formData }, { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
+            .then(async (response) => {
+                console.log({ response });
+                if (response.Error) {
+                    console.log('Error');
+                } else {
                     setOpenAddSection(false)
                     MySwal.fire({
-
-                        title: 'Topic added successfully!',
+                        title: 'Section added successfully!',
                         icon: 'success',
                     }).then((willDelete) => {
-
                         window.location.reload();
-
                     })
-
-                } else {
-                    console.log("error");
-                }
-                console.log('result: ', result);
-            })
-            .catch((err) => {
-                console.log(err.response.data);
-                if (err.response.data === 'Topic Name Already Exists') {
-                    sweetAlertHandler({ title: 'Sorry', type: 'error', text: 'Topic Name Already Exists!' })
                 }
             })
-    }
+            .catch((error) => {
+                if (error.response) {
+                    // Request made and server responded
+                    if (error.response.status === 400) {
+                        console.log();
+                        setOpenAddSection(false)
+                        sweetAlertHandler({ title: 'Sorry', type: 'error', text: 'Section Name Already Exists!' })
 
-    const fetchAllClassData = async () => {
-        const allClassData = await fetchClassBasedOnSchool(id);
-        console.log("allClassData", allClassData);
-        if (allClassData.Error) {
-            console.log("allClassData.Error", allClassData.Error);
-        } else {
-            let resultData = allClassData.Items;
-            resultData.forEach((item, index) => {
-                    colourOptions.push({ value: item.client_class_id, label: item.client_class_name })
-            })
-            setOptions(colourOptions)
+                    } else if (error.response.data === 'Invalid Token') {
 
-        }
-    }
-
-    useEffect(() => {
-        fetchAllClassData()
-    }, [])
-
-    const classOption = (e) => {
-        console.log("postPreOption", e);
-        setClass(e.value);
-    };
-    return (
-        <React.Fragment>
-            <Formik
-                initialValues={{
-                    section_name: '',
-                    class_id: '',
-                }}
-
-                validationSchema={Yup.object().shape({
-                    section_name: Yup.string()
-                        .trim()
-                        .required(Constants.AddSection.SectionTitleRequired),
-                })}
-                // validationSchema
-                onSubmit={(values, { setErrors, setStatus, setSubmitting }) => {
-                    // setSubmitting(true);
-
-
-                    const formData = {
-                        section_name: values.section_name,
-                        class_id: classId,
+                        sessionStorage.clear();
+                        localStorage.clear();
+                        history.push('/auth/signin-1');
+                        window.location.reload();
+                    } else {
+                        console.log("err", error);
                     }
-                    console.log('formData: ', formData)
-                    // postTopic(formData)
-                }}
-            >
-                {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
-                    <Form onSubmit={handleSubmit} >
-                        <Col sm={6}>
-                            <Form.Group>
-                                <Form.Label className="floating-label" htmlFor="section_name"><small className="text-danger">* </small>Section Name</Form.Label>
-                                <Form.Control
-                                    className="form-control"
-                                    name="section_name"
-                                    onBlur={handleBlur}
-                                    onChange={handleChange}
-                                    type="text"
-                                    value={values.section_name}
-                                />
-                                {touched.section_name && errors.section_name && <small className="text-danger form-text">{errors.section_name}</small>}
-                            </Form.Group>
-                        </Col>
+                
+            } else if (error.request) {
+                // The request was made but no response was received
+                console.log(error.request);
+            } else {
+            // Something happened in setting up the request that triggered an Error
+            console.log('Error', error.message);
+        }
+    });
+}
 
-                        <Col sm={6}>
+const fetchAllClassData = async () => {
+    const allClassData = await fetchClassBasedOnSchool(id);
+    console.log("allClassData", allClassData);
+    if (allClassData.Error) {
+        console.log("allClassData.Error", allClassData.Error);
+        if (allClassData.Error.response.data == 'Invalid Token') {
+            sessionStorage.clear();
+            localStorage.clear();
+            history.push('/auth/signin-1');
+            window.location.reload();
+        }
+    } else {
+        let resultData = allClassData.Items;
+        resultData.forEach((item, index) => {
+            colourOptions.push({ value: item.client_class_id, label: item.client_class_name })
+        })
+        setOptions(colourOptions)
 
-                            <div className="form-group fill">
-                                <label className="floating-label" >
-                                    <small className="text-danger">* </small>
-                                    Class
-                                </label>
-                                <Select
-                                    className="basic-single"
-                                    classNamePrefix="select"
-                                    name="color"
-                                    options={options}
-                                    onChange={(e) => { classOption(e) }}
-                                />
-                            </div>
-                        </Col>
-                        <div className="row d-flex justify-content-end">
-                            <div className="form-group fill">
-                                <div className="center col-sm-12">
-                                    <button color="success" type="submit" className="btn-block btn btn-success btn-large">Submit</button>
-                                </div>
+    }
+}
+
+useEffect(() => {
+    fetchAllClassData()
+}, [])
+
+const classOption = (e) => {
+    console.log("postPreOption", e);
+    setClass(e.value);
+};
+return (
+    <React.Fragment>
+        <Formik
+            initialValues={{
+                section_name: '',
+                class_id: '',
+            }}
+
+            validationSchema={Yup.object().shape({
+                section_name: Yup.string()
+                    .trim()
+                    .required(Constants.AddSection.SectionTitleRequired),
+            })}
+            // validationSchema
+            onSubmit={(values, { setErrors, setStatus, setSubmitting }) => {
+                setSubmitting(true);
+                // setOpenAddSection(false)
+                const formData = {
+                    section_name: values.section_name,
+                    client_class_id: classId,
+                    school_id: id
+                }
+                console.log('formData: ', formData)
+                Addsection(formData)
+            }}
+        >
+            {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
+                <Form onSubmit={handleSubmit} >
+                    <Col sm={6}>
+                        <Form.Group>
+                            <Form.Label className="floating-label" htmlFor="section_name"><small className="text-danger">* </small>Section Name</Form.Label>
+                            <Form.Control
+                                className="form-control"
+                                name="section_name"
+                                onBlur={handleBlur}
+                                onChange={handleChange}
+                                type="text"
+                                value={values.section_name}
+                            />
+                            {touched.section_name && errors.section_name && <small className="text-danger form-text">{errors.section_name}</small>}
+                        </Form.Group>
+                    </Col>
+
+                    <Col sm={6}>
+
+                        <div className="form-group fill">
+                            <label className="floating-label" >
+                                <small className="text-danger">* </small>
+                                Class
+                            </label>
+                            <Select
+                                className="basic-single"
+                                classNamePrefix="select"
+                                name="color"
+                                options={options}
+                                onChange={(e) => { classOption(e) }}
+                            />
+                        </div>
+                    </Col>
+                    <div className="row d-flex justify-content-end">
+                        <div className="form-group fill">
+                            <div className="center col-sm-12">
+                                <button color="success" type="submit" className="btn-block btn btn-success btn-large">Submit</button>
                             </div>
                         </div>
+                    </div>
 
-                    </Form>
-                )}
-            </Formik>
-        </React.Fragment>
-    )
+                </Form>
+            )}
+        </Formik>
+    </React.Fragment>
+)
 }
 
 export default CreateSection
