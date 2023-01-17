@@ -11,7 +11,7 @@ import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import MESSAGES from '../../../../helper/messages';
 import { isEmptyArray, decodeJWT } from '../../../../util/utils';
-
+import { fetchSectionByClientClassId } from "../../../api/CommonApi";
 import { GlobalFilter } from '../../../common-ui-components/tables/GlobalFilter';
 import { useTable, useSortBy, usePagination, useGlobalFilter } from 'react-table';
 import dynamicUrl from '../../../../helper/dynamicUrls';
@@ -183,16 +183,23 @@ const UserTableViewStudent = ({ _userRole }) => {
             accessor: 'action'
         }
     ], []);
-
+    const colourOptions = [];
+    const multiDropDownValues = [];
     const history = useHistory();
     const [userData, setUserData] = useState([]);
     const [individualUserData, setIndividualUserData] = useState([]);
     const [userDOB, setUserDOB] = useState('');
     const [loader, showLoader, hideLoader] = useFullPageLoader();
-    const [className_ID, setClassName_ID] = useState({});
+    const [className_ID, setClassName_ID] = useState();
+    const [schoolId, setSchoolId] = useState();
+    const [sectionId, setSectionId] = useState();
+    
+    const [multiDropOptions, setMultiDropOptions] = useState([]);
+    const [options, setOptions] = useState([]);
     const [schoolName_ID, setSchoolName_ID] = useState({});
     const [previousSchool, setPreviousSchool] = useState('');
     const [previousClass, setPreviousClass] = useState('');
+    const [defaultClass, setDefaultClass] = useState([]);
     const [_userID, _setUserID] = useState('');
 
     const [isOpen, setIsOpen] = useState(false);
@@ -287,14 +294,22 @@ const UserTableViewStudent = ({ _userRole }) => {
 
                     let individual_user_data = response.data.Items[0];
                     console.log({ individual_user_data });
-
+                    setSchoolId(response.data.Items[0].school_id)
                     let classNameArr = response.data.classList.find(o => o.client_class_id === response.data.Items[0].class_id);
                     let schoolNameArr = response.data.schoolList.find(o => o.school_id === response.data.Items[0].school_id);
+                    setDefaultClass({ value: classNameArr.client_class_id, label: classNameArr.client_class_name })
 
                     console.log(classNameArr);
                     console.log(schoolNameArr);
 
-                    setClassName_ID(response.data.classList);
+                    // setClassName_ID(response.data.classList);
+
+                    const AllClassData = response.data.classList;
+                    AllClassData.forEach((item, index) => {
+                        colourOptions.push({ value: item.client_class_id, label: item.client_class_name })
+                    })
+                    setOptions(colourOptions)
+
                     setSchoolName_ID(response.data.schoolList);
                     // setPreviousSchool(schoolNameArr.school_name);
                     schoolNameArr === "" || schoolNameArr === undefined || schoolNameArr === "undefined" || schoolNameArr === "N.A." ? setPreviousSchool("Select School") : setPreviousSchool(schoolNameArr.school_name);
@@ -381,8 +396,8 @@ const UserTableViewStudent = ({ _userRole }) => {
                 if (result) {
 
                     console.log('inside res', response.data);
-                    let newClassData = response.data.Items;
-                    setClassName_ID(newClassData);
+                    // let newClassData = response.data.Items;
+                    // setClassName_ID(newClassData);
 
                 } else {
                     console.log('else res');
@@ -713,6 +728,28 @@ const UserTableViewStudent = ({ _userRole }) => {
 
     }, [_userRole]);
 
+    const classOption = async (e) => {
+        console.log("classOption", e);
+        setClassName_ID(e.value)
+        const ClientClassId = await fetchSectionByClientClassId(e.value);
+        if (ClientClassId.Error) {
+            console.log('ClientClassId.Error', ClientClassId.Error);
+        } else {
+            console.log('ClientClassId', ClientClassId.Items);
+            const resultData = ClientClassId.Items
+            resultData.forEach((item, index) => {
+                multiDropDownValues.push({ value: item.section_id, label: item.section_name })
+            })
+            setMultiDropOptions(multiDropDownValues)
+        }
+
+    };
+
+    const GetSectionId =(event)=>{
+        console.log("event",event.value);
+        setSectionId(event.value)
+    }
+   
     return (
 
         <React.Fragment>
@@ -807,23 +844,23 @@ const UserTableViewStudent = ({ _userRole }) => {
                                                             console.log(selectedSchoolID);
                                                             console.log(classNameRef.current.value);
 
-                                                            if (classNameRef.current.value === 'Select Class') {
+                                                            // if (classNameRef.current.value === 'Select Class') {
 
-                                                                setSelectClassErr(true);
+                                                            //     setSelectClassErr(true);    
 
-                                                            } else {
+                                                            // } else {
 
-                                                                const selectedClassID = isEmptyArray(className_ID) ? "N.A." : (
+                                                            //     const selectedClassID = isEmptyArray(className_ID) ? "N.A." : (
 
-                                                                    className_ID.find((e) => e.client_class_name == classNameRef.current.value).client_class_id
-                                                                )
+                                                            //         className_ID.find((e) => e.client_class_name == classNameRef.current.value).client_class_id
+                                                            //     )
 
                                                                 data = {
 
                                                                     student_id: _userID,
-                                                                    class_id: selectedClassID,
+                                                                    class_id: className_ID,
                                                                     school_id: selectedSchoolID.school_id,
-                                                                    section_id: values.section,
+                                                                    section_id: sectionId,
                                                                     user_dob: values.user_dob,
                                                                     user_firstname: values.firstName,
                                                                     user_lastname: values.lastName,
@@ -841,7 +878,7 @@ const UserTableViewStudent = ({ _userRole }) => {
 
 
 
-                                                        }}
+                                                        }
                                                     >
                                                         {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
                                                             <form noValidate onSubmit={handleSubmit}>
@@ -949,7 +986,7 @@ const UserTableViewStudent = ({ _userRole }) => {
 
                                                                         </Row>
 
-                                                                        {individualUserData.class_id && individualUserData.section_id && className_ID ? (
+                                                                        {individualUserData.class_id && individualUserData.section_id  ? (
                                                                             <>
                                                                                 <Row>
 
@@ -959,35 +996,16 @@ const UserTableViewStudent = ({ _userRole }) => {
                                                                                             <label className="floating-label" htmlFor="class">
                                                                                                 <small className="text-danger">* </small>Class
                                                                                             </label>
-                                                                                            <select
-                                                                                                className="form-control"
-                                                                                                error={touched.class && errors.class}
-                                                                                                name="class"
-                                                                                                onBlur={handleBlur}
-                                                                                                onChange={() => {
-                                                                                                    setSelectClassErr(false)
-                                                                                                }}
-                                                                                                type="text"
-                                                                                                ref={classNameRef}
-                                                                                                // value={values.class}
-                                                                                                defaultValue={previousClass}
-                                                                                            >
-
-                                                                                                {
-                                                                                                    console.log("previousClass", previousClass)
-                                                                                                }
-                                                                                                <option>Select Class</option>
-
-                                                                                                {console.log("className_ID", className_ID)}
-                                                                                                {className_ID.map((classData) => {
-
-                                                                                                    return <option key={classData.client_class_id}>
-                                                                                                        {classData.client_class_name}
-                                                                                                    </option>
-
-                                                                                                })}
-
-                                                                                            </select>
+                                                                                            <Select
+                                                                                                defaultValue={defaultClass}
+                                                                                                className="basic-single"
+                                                                                                classNamePrefix="select"
+                                                                                                label="client_class_id"
+                                                                                                name="client_class_id"
+                                                                                                options={options}
+                                                                                                onBlur={(event) => { handleBlur(event) }}
+                                                                                                onChange={(event) => { classOption(event)}}
+                                                                                            />
                                                                                             {touched.class && errors.class && (
                                                                                                 <small className="text-danger form-text">{errors.class}</small>
                                                                                             )}
@@ -1004,15 +1022,16 @@ const UserTableViewStudent = ({ _userRole }) => {
                                                                                             <label className="floating-label" htmlFor="section">
                                                                                                 <small className="text-danger">* </small>Section
                                                                                             </label>
-                                                                                            <input
-                                                                                                className="form-control"
-                                                                                                error={touched.section && errors.section}
-                                                                                                name="section"
-                                                                                                onBlur={handleBlur}
-                                                                                                onChange={handleChange}
-                                                                                                type="text"
-                                                                                                value={values.section}
-
+                                                                                            <Select
+                                                                                                // defaultValue={sectionData[index]}
+                                                                                                className="basic-single"
+                                                                                                label="section_id"
+                                                                                                classNamePrefix="select"
+                                                                                                name="section_id"
+                                                                                                options={multiDropOptions}
+                                                                                                onChange={(event) => {
+                                                                                                    GetSectionId(event)
+                                                                                                }}
                                                                                             />
                                                                                             {touched.section && errors.section && <small className="text-danger form-text">{errors.section}</small>}
                                                                                         </div>

@@ -198,18 +198,19 @@ const ActiveTopics = (props) => {
     // const data = React.useMemo(() => makeData(80), []);
     const [topicData, setTopicData] = useState([]);
     const [reloadAllData, setReloadAllData] = useState('Fetched');
+    const [statusUrl, setStatusUrl] = useState('');
     const [loader, showLoader, hideLoader] = useFullPageLoader();
     const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[3]);
     const [isLoading, setIsLoading] = useState(false);
     const [isOpenAddTopic, setOpenAddTopic] = useState(false);
     const [isOpenEditTopic, setOpenEditTopic] = useState(false);
-    const [topicId,setTopicId] = useState();
+    const [topicId, setTopicId] = useState();
 
 
 
 
     // console.log('data: ', data)
-    
+
 
     let history = useHistory();
 
@@ -223,7 +224,7 @@ const ActiveTopics = (props) => {
     }
 
 
-    const handleAddTopic = ()=>{
+    const handleAddTopic = () => {
         setOpenAddTopic(true)
     }
 
@@ -247,6 +248,7 @@ const ActiveTopics = (props) => {
                             hideLoader();
                             sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
                         } else {
+                            allTopicList(statusUrl)
                             setReloadAllData("Deleted");
                             return MySwal.fire('', 'The ' + topic_title + ' is Deleted', 'success');
                         }
@@ -307,6 +309,7 @@ const ActiveTopics = (props) => {
                                 hideLoader();
                                 sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
                             } else {
+                                allTopicList(statusUrl)
                                 setReloadAllData("Deleted");
                                 return MySwal.fire('', 'The ' + topic_title + ' is Restored', 'success')
                             }
@@ -341,7 +344,7 @@ const ActiveTopics = (props) => {
     }
 
 
-    const allUnitsList = async (TopicStatus) => {
+    const allTopicList = async (TopicStatus) => {
         let userJWT = sessionStorage.getItem('user_jwt');
         console.log("jwt", userJWT);
 
@@ -373,7 +376,7 @@ const ActiveTopics = (props) => {
                                         size="sm"
                                         className="btn btn-icon btn-rounded btn-primary"
                                         // onClick={(e) => history.push(`/admin-portal/Topics/editTopic/${ActiveresultData[index].topic_id}`)}
-                                        onClick={(e)=>{setTopicId(ActiveresultData[index].topic_id) ; setOpenEditTopic(true)}}
+                                        onClick={(e) => { setTopicId(ActiveresultData[index].topic_id); setOpenEditTopic(true) }}
                                     >
                                         <i className="feather icon-edit" /> &nbsp; Edit
                                     </Button>
@@ -431,7 +434,8 @@ const ActiveTopics = (props) => {
         if (pageLocation) {
             console.log("--", pageLocation);
             const url = pageLocation === "active-topics" ? 'Active' : 'Archived';
-            allUnitsList(url);
+            setStatusUrl(url)
+            allTopicList(url);
         }
 
     }, [reloadAllData])

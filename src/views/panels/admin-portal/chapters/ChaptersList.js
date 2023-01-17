@@ -194,6 +194,7 @@ const ChaptersListChild = (props) => {
     // const data = React.useMemo(() => makeData(80), []);
     const [chapterData, setChapterData] = useState([]);
     const [reloadAllData, setReloadAllData] = useState('Fetched');
+    const [statusUrl, setStatusUrl] = useState('');
     const [loader, showLoader, hideLoader] = useFullPageLoader();
     const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[3]);
     const [isLoading, setIsLoading] = useState(false);
@@ -202,10 +203,10 @@ const ChaptersListChild = (props) => {
     const [isOpenAddChapter, setOpenAddChapter] = useState(false);
 
 
-const handleAddChapter =(e)=>{
-    e.preventDefault();
-    setOpenAddChapter(true)
-}
+    const handleAddChapter = (e) => {
+        e.preventDefault();
+        setOpenAddChapter(true)
+    }
 
 
     // console.log('data: ', data)
@@ -246,6 +247,7 @@ const handleAddChapter =(e)=>{
                             hideLoader();
                             sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
                         } else {
+                            allChaptersList(statusUrl)
                             setReloadAllData("Deleted");
                             return MySwal.fire('', 'The ' + chapter_title + ' is Deleted', 'success');
                             // window. location. reload() 
@@ -309,13 +311,11 @@ const handleAddChapter =(e)=>{
                                 hideLoader();
                                 sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
                             } else {
+                                allChaptersList(statusUrl)
                                 setReloadAllData("Deleted");
                                 return MySwal.fire('', 'The ' + chapter_title + ' is Restored', 'success');
                                 // window. location. reload() 
                                 //  MySwal.fire('', MESSAGES.INFO.CLIENT_DELETED, 'success');
-
-
-
                             }
                         })
                         .catch((error) => {
@@ -450,6 +450,7 @@ const handleAddChapter =(e)=>{
         if (pageLocation) {
             console.log("--", pageLocation);
             const url = pageLocation === "active-chapter" ? 'Active' : 'Archived';
+            setStatusUrl(url)
             allChaptersList(url);
         }
 

@@ -190,9 +190,11 @@ const DigiCard = () => {
     const [loader, showLoader, hideLoader] = useFullPageLoader();
     const [isLoading, setIsLoading] = useState(false);
     const [reloadAllData, setReloadAllData] = useState('Fetched');
-    const [statusUrl, setStatusUrl] = useState('Fetched');
+    const [statusUrl, setStatusUrl] = useState('');
     const MySwal = withReactContent(Swal);
     const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
+    let history = useHistory();
+
 
     const sweetConfirmHandler = (alert) => {
         MySwal.fire({
@@ -208,11 +210,6 @@ const DigiCard = () => {
     };
 
 
-
-
-
-
-    let history = useHistory();
 
     function deleteDigicard(digi_card_id, digi_card_title) {
         console.log("digi_card_id", digi_card_id);

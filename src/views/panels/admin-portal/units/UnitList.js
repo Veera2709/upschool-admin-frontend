@@ -196,6 +196,7 @@ const UnitList = (props) => {
     // const data = React.useMemo(() => makeData(80), []);
     const [unitData, setUnitData] = useState([]);
     const [reloadAllData, setReloadAllData] = useState('Fetched');
+    const [statusUrl, setStatusUrl] = useState('');
     const [loader, showLoader, hideLoader] = useFullPageLoader();
     const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[3]);
     const [isLoading, setIsLoading] = useState(false);
@@ -247,6 +248,7 @@ const UnitList = (props) => {
                             hideLoader();
                             sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
                         } else {
+                            allUnitsList(statusUrl)
                             setReloadAllData("Deleted");
                             return MySwal.fire('', 'The ' + unit_title + ' is Deleted', 'success');
                         }
@@ -307,6 +309,7 @@ const UnitList = (props) => {
                                 hideLoader();
                                 sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
                             } else {
+                                allUnitsList(statusUrl)
                                 setReloadAllData("Deleted");
                                 return MySwal.fire('', 'The ' + unit_title + ' is Restored', 'success')
                             }
@@ -436,6 +439,7 @@ const UnitList = (props) => {
         if (pageLocation) {
             console.log("--", pageLocation);
             const url = pageLocation === "active-units" ? 'Active' : 'Archived';
+            setStatusUrl(url)
             allUnitsList(url);
         }
 
