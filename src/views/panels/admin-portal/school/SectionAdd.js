@@ -25,7 +25,17 @@ const SectionAdd = () => {
 
     const { school_id } = useParams();
 
-   
+    const handleUserChange = (key) => {
+
+        if (key === '1') {
+        }
+        else if (key === '2') {
+        }
+        else if (key === '3') {
+        } else {
+            console.log("Invalid option!");
+        }
+    }
     useEffect(() => {
         if (threadLinks.length === 2) {
             setDisplayHeader(false);
@@ -62,7 +72,8 @@ const SectionAdd = () => {
                         )
                     }
                     <Tabs
-                        // defaultActiveKey={1}
+                        onSelect={handleUserChange}
+                        defaultActiveKey={1}
                         className="mb-3"
                     >
                         <Tab eventKey={1} title="General" >

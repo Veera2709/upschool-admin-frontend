@@ -19,11 +19,12 @@ import MESSAGES from '../../../../helper/messages';
 
 
 
-const CreateSection = ({setOpenAddSection,id}) => {
+const CreateSection = ({ setOpenAddSection, id }) => {
     const colourOptions = [];
     let history = useHistory();
     const [options, setOptions] = useState([]);
-    const [classId, setClass] = useState([]);
+    const [classId, setClass] = useState();
+    const [classIdErr, setClassIdErr] = useState(false);
 
     const MySwal = withReactContent(Swal);
 
@@ -36,36 +37,47 @@ const CreateSection = ({setOpenAddSection,id}) => {
         });
     };
 
-    const postTopic = (formData) => {
-        axios.post(dynamicUrl.addTopic, { data: formData }, {
-            headers: { Authorization: sessionStorage.getItem('user_jwt') }
-        })
-            .then((response) => {
-                const result = response.data;
-                if (result == 200) {
-                    // sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingTopic });
+    const Addsection = (formData) => {
+        axios
+            .post(dynamicUrl.addSection, { data: formData }, { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
+            .then(async (response) => {
+                console.log({ response });
+                if (response.Error) {
+                    console.log('Error');
+                } else {
                     setOpenAddSection(false)
                     MySwal.fire({
-
-                        title: 'Topic added successfully!',
+                        title: 'Section added successfully!',
                         icon: 'success',
                     }).then((willDelete) => {
-
                         window.location.reload();
-
                     })
+                }
+            })
+            .catch((error) => {
+                if (error.response) {
+                    // Request made and server responded
+                    if (error.response.status === 400) {
+                        console.log();
+                        setOpenAddSection(false)
+                        sweetAlertHandler({ title: 'Sorry', type: 'error', text: 'Section Name Already Exists!' })
+                    } else if (error.response.data === 'Invalid Token') {
+                        sessionStorage.clear();
+                        localStorage.clear();
+                        history.push('/auth/signin-1');
+                        window.location.reload();
+                    } else {
+                        console.log("err", error);
+                    }
 
+                } else if (error.request) {
+                    // The request was made but no response was received
+                    console.log(error.request);
                 } else {
-                    console.log("error");
+                    // Something happened in setting up the request that triggered an Error
+                    console.log('Error', error.message);
                 }
-                console.log('result: ', result);
-            })
-            .catch((err) => {
-                console.log(err.response.data);
-                if (err.response.data === 'Topic Name Already Exists') {
-                    sweetAlertHandler({ title: 'Sorry', type: 'error', text: 'Topic Name Already Exists!' })
-                }
-            })
+            });
     }
 
     const fetchAllClassData = async () => {
@@ -73,10 +85,16 @@ const CreateSection = ({setOpenAddSection,id}) => {
         console.log("allClassData", allClassData);
         if (allClassData.Error) {
             console.log("allClassData.Error", allClassData.Error);
+            if (allClassData.Error.response.data == 'Invalid Token') {
+                sessionStorage.clear();
+                localStorage.clear();
+                history.push('/auth/signin-1');
+                window.location.reload();
+            }
         } else {
             let resultData = allClassData.Items;
             resultData.forEach((item, index) => {
-                    colourOptions.push({ value: item.client_class_id, label: item.client_class_name })
+                colourOptions.push({ value: item.client_class_id, label: item.client_class_name })
             })
             setOptions(colourOptions)
 
@@ -107,14 +125,18 @@ const CreateSection = ({setOpenAddSection,id}) => {
                 // validationSchema
                 onSubmit={(values, { setErrors, setStatus, setSubmitting }) => {
                     // setSubmitting(true);
-
-
-                    const formData = {
-                        section_name: values.section_name,
-                        class_id: classId,
-                    }
-                    console.log('formData: ', formData)
-                    // postTopic(formData)
+                    // setOpenAddSection(false)
+                    if (classId === undefined || classId === '') {
+                        setClassIdErr(true)
+                    }else{
+                        const formData = {
+                            section_name: values.section_name,
+                            client_class_id: classId,
+                            school_id: id
+                        }
+                        console.log('formData: ', formData)
+                        Addsection(formData)
+                    } 
                 }}
             >
                 {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
@@ -146,9 +168,13 @@ const CreateSection = ({setOpenAddSection,id}) => {
                                     classNamePrefix="select"
                                     name="color"
                                     options={options}
-                                    onChange={(e) => { classOption(e) }}
+                                    onChange={(e) => {
+                                        classOption(e);
+                                        setClassIdErr(false)
+                                    }}
                                 />
                             </div>
+                            {classIdErr && (<small className="text-danger form-text">Select The Class!</small>)}
                         </Col>
                         <div className="row d-flex justify-content-end">
                             <div className="form-group fill">

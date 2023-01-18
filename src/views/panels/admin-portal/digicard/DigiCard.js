@@ -168,7 +168,7 @@ const DigiCard = () => {
     const columns = React.useMemo(
         () => [
             {
-                Header: '#',
+                Header: 'DigiCard Logo',
                 accessor: 'digicard_image'
             },
             {
@@ -190,8 +190,11 @@ const DigiCard = () => {
     const [loader, showLoader, hideLoader] = useFullPageLoader();
     const [isLoading, setIsLoading] = useState(false);
     const [reloadAllData, setReloadAllData] = useState('Fetched');
+    const [statusUrl, setStatusUrl] = useState('');
     const MySwal = withReactContent(Swal);
     const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
+    let history = useHistory();
+
 
     const sweetConfirmHandler = (alert) => {
         MySwal.fire({
@@ -207,11 +210,6 @@ const DigiCard = () => {
     };
 
 
-
-
-
-
-    let history = useHistory();
 
     function deleteDigicard(digi_card_id, digi_card_title) {
         console.log("digi_card_id", digi_card_id);
@@ -239,6 +237,7 @@ const DigiCard = () => {
                             hideLoader();
                             sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
                         } else {
+                            fetchAllDigiCards()
                             setReloadAllData("Deleted");
                             return MySwal.fire('', 'The ' + digi_card_title + ' is Deleted', 'success');
                             // window. location. reload() 
@@ -299,6 +298,7 @@ const DigiCard = () => {
                                 hideLoader();
                                 sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
                             } else {
+                                fetchAllDigiCards()
                                 setReloadAllData("Deleted");
                                 return MySwal.fire('', 'The ' + digi_card_title + ' is Restored', 'success');
                                 // window. location. reload() 
@@ -338,9 +338,9 @@ const DigiCard = () => {
 
     }
 
-    const fetchAllDigiCards = (digiCardStatus) => {
+    const fetchAllDigiCards = () => {
         setIsLoading(true);
-        console.log("digiCardStatus", digiCardStatus);
+        let digicardStatus = pageLocation === "active-digiCard" ? 'Active' : 'Archived';
         axios.post(dynamicUrl.fetchAllDigiCards, {}, {
             headers: { Authorization: sessionStorage.getItem('user_jwt') }
         })
@@ -348,7 +348,7 @@ const DigiCard = () => {
                 console.log(response);
                 let dataResponse = response.data.Items
                 let finalDataArray = [];
-                if (digiCardStatus === 'Active') {
+                if (digicardStatus === 'Active') {
                     let ActiveresultData = (dataResponse && dataResponse.filter(e => e.digicard_status === 'Active'))
                     console.log("ActiveresultData", ActiveresultData);
 
@@ -422,15 +422,18 @@ const DigiCard = () => {
     }
 
     useEffect(() => {
-        if (pageLocation) {
-            console.log("--", pageLocation);
-            const url = pageLocation === "active-digiCard" ? 'Active' : 'Archived';
-            // setPageURL(url);
-            url === 'Active' ? sessionStorage.setItem('digicard_type','Active Digicards'):sessionStorage.setItem('digicard_type','Archived Digicards')
-            fetchAllDigiCards(url);
+        let userJWT = sessionStorage.getItem('user_jwt');
+        console.log("jwt", userJWT);
 
+        if (userJWT === "" || userJWT === undefined || userJWT === "undefined" || userJWT === null) {
+
+            sessionStorage.clear();
+            localStorage.clear();
+            history.push('/auth/signin-1');
+            window.location.reload();
+        } else {
+            fetchAllDigiCards();
         }
-
     }, [reloadAllData])
 
     return (

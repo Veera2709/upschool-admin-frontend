@@ -17,6 +17,7 @@ import { useTable, useSortBy, usePagination, useGlobalFilter } from 'react-table
 import dynamicUrl from '../../../../helper/dynamicUrls';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import BasicSpinner from '../../../../helper/BasicSpinner';
+import AllocateSection from './AllocateSection';
 
 function Table({ columns, data, modalOpen }) {
   const {
@@ -206,6 +207,11 @@ const UserTableView = ({ _userRole }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [validationObj, setValidationObj] = useState({});
+  const [isOpenSectionAllocation, setOpenSectionAllocation] = useState(false);
+  const [schoolId, setSchoolId] = useState();
+  const [teacherId, setTeacherId] = useState();
+
+
 
   const [isLoading, setIsLoading] = useState(false);
   const { user_id } = decodeJWT(sessionStorage.getItem('user_jwt'));
@@ -621,7 +627,10 @@ const UserTableView = ({ _userRole }) => {
           {pageLocation === 'active-users' ? (
 
             <>
-
+              <Button size="sm" className="btn btn-icon btn-rounded btn-info" onClick={(e) => { setOpenSectionAllocation(true); setSchoolId(responseData[index].school_id); setTeacherId(responseData[index].teacher_id) }}>
+                <i className="feather icon-plus" /> &nbsp; Allocate Section
+              </Button>{' '}
+              &nbsp;
               <Button size="sm" className="btn btn-icon btn-rounded btn-info" onClick={(e) => saveUserId(e, userId, responseData[index].user_role)}>
                 <i className="feather icon-edit" /> &nbsp; Edit
               </Button>{' '}
@@ -633,6 +642,8 @@ const UserTableView = ({ _userRole }) => {
               >
                 <i className="feather icon-trash-2" /> &nbsp;Delete
               </Button>
+              &nbsp;
+
             </>
 
           ) : (
@@ -777,7 +788,14 @@ const UserTableView = ({ _userRole }) => {
                   {_data && (
 
                     <>
-
+                      <Modal dialogClassName="my-modal" show={isOpenSectionAllocation} onHide={() => setOpenSectionAllocation(false)}>
+                        <Modal.Header closeButton>
+                          <Modal.Title as="h5">Section Allocation</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                          <AllocateSection setOpenSectionAllocation={setOpenSectionAllocation} schoolId={schoolId} teacherId={teacherId} />
+                        </Modal.Body>
+                      </Modal>
                       < React.Fragment >
                         <Row>
                           <Col sm={12}>
@@ -1043,6 +1061,7 @@ const UserTableView = ({ _userRole }) => {
                                                 value={values.section}
 
                                               />
+                                          
                                               {touched.section && errors.section && <small className="text-danger form-text">{errors.section}</small>}
                                             </div>
                                           </Col>
@@ -1130,9 +1149,6 @@ const UserTableView = ({ _userRole }) => {
                                         </Row>
                                       </>
                                     )}
-
-
-
                                     <Row>
 
                                       <Col>
@@ -1162,22 +1178,13 @@ const UserTableView = ({ _userRole }) => {
                                         <Alert variant="danger">{errors.submit}</Alert>
                                       </Col>
                                     )}
-
-
                                     <hr />
-
                                     <Row>
-
                                       <Col></Col>
-
                                       <Button type="submit" color="success" variant="success">
                                         Update
                                       </Button>
-
-
                                     </Row>
-
-
                                   </Col>
                                 </Row>
                               </form>
@@ -1185,6 +1192,7 @@ const UserTableView = ({ _userRole }) => {
                           </Formik>
                         </Modal.Body>
                       </Modal>
+
                     </>
                   )}
 
