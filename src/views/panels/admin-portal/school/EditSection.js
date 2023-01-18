@@ -26,10 +26,11 @@ const EditSection = ({ setOpenEditSection, id, sectionId }) => {
     const colourOptions = [];
     let history = useHistory();
     const [options, setOptions] = useState([]);
-    const [classId, setClass] = useState([]);
+    const [classId, setClass] = useState();
     const [indidvidualSectionData, setIndidvidualSectionData] = useState();
     const [defaultClass, setdefaultClass] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [classIdErr, setClassIdErr] = useState(false);
 
     console.log('defaultClass', defaultClass);
     console.log('indidvidualSectionData', indidvidualSectionData);
@@ -47,6 +48,7 @@ const EditSection = ({ setOpenEditSection, id, sectionId }) => {
     };
 
     const UpdateSection = (formData) => {
+        console.log("formData", formData);
         axios.post(dynamicUrl.editSection, { data: formData }, {
             headers: { Authorization: sessionStorage.getItem('user_jwt') }
         })
@@ -70,11 +72,10 @@ const EditSection = ({ setOpenEditSection, id, sectionId }) => {
             })
             .catch((err) => {
                 console.log(err.response.data);
-                setOpenEditSection(false)
                 if (err.response.status === 400) {
+                    setOpenEditSection(false)
                     sweetAlertHandler({ title: 'Sorry', type: 'error', text: 'Section Name Already Exists!' })
                 } else if (err.response.data === 'Invalid Token') {
-
                     sessionStorage.clear();
                     localStorage.clear();
                     history.push('/auth/signin-1');
@@ -159,16 +160,20 @@ const EditSection = ({ setOpenEditSection, id, sectionId }) => {
                                 onSubmit={(values, { setErrors, setStatus, setSubmitting }) => {
                                     // setSubmitting(true);
 
+                                    if (classId === undefined || classId === '') {
+                                        setClassIdErr(true)
+                                    } else {
+                                        const formData = {
+                                            section_name: values.section_name,
+                                            client_class_id: classId,
+                                            school_id: id,
+                                            section_id: sectionId
 
-                                    const formData = {
-                                        section_name: values.section_name,
-                                        client_class_id: classId,
-                                        school_id: id,
-                                        section_id: sectionId
-
+                                        }
+                                        console.log('formData: ', formData)
+                                        UpdateSection(formData)
                                     }
-                                    console.log('formData: ', formData)
-                                    UpdateSection(formData)
+
                                 }}
                             >
                                 {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
@@ -195,16 +200,20 @@ const EditSection = ({ setOpenEditSection, id, sectionId }) => {
                                                         Class
                                                     </label>
                                                     <Select
+                                                        isDisabled={true}
                                                         defaultValue={defaultClass}
                                                         className="basic-single"
                                                         classNamePrefix="select"
                                                         name="color"
-                                                        options={options.disabled}
-                                                        onChange={(e) => { classOption(e) }}
+                                                        options={options}
+                                                        onChange={(e) => {
+                                                            classOption(e)
+                                                            setClassIdErr(true)
+                                                        }}
                                                     />
                                                 </div>
                                             )}
-
+                                            {classIdErr && (<small className="text-danger form-text">Select The Class!</small>)}
                                         </Col>
                                         <div className="row d-flex justify-content-end">
                                             <div className="form-group fill">
