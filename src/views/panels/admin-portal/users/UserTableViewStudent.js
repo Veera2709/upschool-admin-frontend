@@ -1065,9 +1065,9 @@ const UserTableViewStudent = ({ _userRole }) => {
                                                                                                 onBlur={handleBlur}
                                                                                                 type="text"
                                                                                                 value={sectionId}
-                                                                                                onChange={(event) =>{GetSectionId(event);setSelectSectionErr(false)} }
+                                                                                                onChange={(event) => { GetSectionId(event); setSelectSectionErr(false) }}
                                                                                             >                                                <option>                                    Select Section
-                                                                                                </option>                                                {multiDropOptions.map((optionsData) => {
+                                                                                                </option>                          {multiDropOptions.map((optionsData) => {
                                                                                                     return <option
                                                                                                         value={optionsData.value}
                                                                                                         key={optionsData.value}

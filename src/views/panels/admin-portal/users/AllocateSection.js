@@ -30,7 +30,6 @@ const AllocateSection = ({ setOpenSectionAllocation, schoolId, teacherId }) => {
         {
             client_class_id: '',
             section_id: '',
-            client_class_name: ''
         }
     ]);
     const [classId, setClass] = useState([]);
@@ -66,18 +65,16 @@ const AllocateSection = ({ setOpenSectionAllocation, schoolId, teacherId }) => {
 
 
 
-    const handleFormChange = (event, index) => {
+    const handleFormChange = (event, index, type) => {
 
-        console.log("handleFormChange", event);
+        console.log("handle FormChange", event);
 
         let data = [...formFields];
 
-        if (event.label) {
-            if (event.label.length >= 1 && event.label.startsWith("Class")) {
-
-                data[index]["client_class_id"] = event.value;
-                data[index]["client_class_name"] = event.label;
+        
+            if (type === 'class') {
                 console.log(data);
+                data[index]["client_class_id"] = event.value;
                 setCount(0);
                 setFormFields(data);
             } else {
@@ -85,21 +82,15 @@ const AllocateSection = ({ setOpenSectionAllocation, schoolId, teacherId }) => {
                 data[index]['section_id'] = event.value;
                 console.log(data);
             }
-        } else {
-            console.log("else", event);
-            console.log("index", data.length);
-            if (event.length >= 1) {
-                data[index]['section_ids'] = event.value;
-            }
         }
+       
 
-    }
+    
 
     const addFields = () => {
         let object = {
             client_class_id: '',
             section_id: '',
-            client_class_name: ''
         }
 
         setFormFields([...formFields, object])
@@ -133,15 +124,12 @@ const AllocateSection = ({ setOpenSectionAllocation, schoolId, teacherId }) => {
                     const result = response.data;
                     if (result == 200) {
                         setOpenSectionAllocation(false)
-                        // sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingTopic });
                         MySwal.fire({
 
                             title: 'Section Allocation successfully!',
                             icon: 'success',
                         }).then((willDelete) => {
-
                             window.location.reload();
-
                         })
 
                     } else {
@@ -210,10 +198,14 @@ const AllocateSection = ({ setOpenSectionAllocation, schoolId, teacherId }) => {
                             section_id: Items.section_id
                         }
                         tempArray.push(object);
-                        const defaultValue = colourOptions.filter(activity => (activity.value === Items.client_class_id))
-                        const sectiontValue = allSections.filter(activity => (activity.value === Items.section_id))
+                        console.log("options", options);
+                        console.log("Items.client_class_id", Items);
+                        const defaultValue = colourOptions && colourOptions.filter(activity => (activity.value === Items.client_class_id))
+                        const sectiontValue = allSections && allSections.filter(activity => (activity.value === Items.section_id))
 
                         classArray.push(defaultValue);
+                        console.log("defaultValue", defaultValue);
+                        console.log("sectiontValue", sectiontValue);
                         SesionArray.push({ value: sectiontValue[0].value, label: sectiontValue[0].label });
                         console.log("defaultValue", defaultValue);
                         console.log('sectiontValue', sectiontValue);
@@ -224,7 +216,6 @@ const AllocateSection = ({ setOpenSectionAllocation, schoolId, teacherId }) => {
                         tempArray.push(object = {
                             client_class_id: "",
                             section_id: "",
-                            client_class_name: ''
                         })
 
                     ) : (console.log("Not empty"))
@@ -354,7 +345,7 @@ const AllocateSection = ({ setOpenSectionAllocation, schoolId, teacherId }) => {
                                                                                     // onChange={(e) => { classOption(e) }}
                                                                                     onBlur={(e) => { handleBlur(e) }}
                                                                                     onChange={(event) => {
-                                                                                        handleFormChange(event, index);
+                                                                                        handleFormChange(event, index, 'class');
                                                                                         classOption(event, index);
                                                                                         handleDeleteEduItem(index);
                                                                                         SetSelectSection(true)
@@ -383,7 +374,7 @@ const AllocateSection = ({ setOpenSectionAllocation, schoolId, teacherId }) => {
                                                                                             value={sectionData[index] && sectionData[index]}
                                                                                             options={multiDropOptions}
                                                                                             onChange={(event) => {
-                                                                                                handleFormChange(event, index); SetSecctionRepeat(false);
+                                                                                                handleFormChange(event, index, 'section'); SetSecctionRepeat(false);
                                                                                                 setSectionValidation(false)
                                                                                                 SetSelectSection(true)
                                                                                                 SetSelectSectionErr(false)
@@ -401,7 +392,7 @@ const AllocateSection = ({ setOpenSectionAllocation, schoolId, teacherId }) => {
                                                                                             name="section_id"
                                                                                             options={multiDropOptions}
                                                                                             onChange={(event) => {
-                                                                                                handleFormChange(event, index); SetSecctionRepeat(false);
+                                                                                                handleFormChange(event, index, 'section'); SetSecctionRepeat(false);
                                                                                                 setSectionValidation(false)
                                                                                                 SetSelectSection(false)
                                                                                                 SetSelectSectionErr(false)
