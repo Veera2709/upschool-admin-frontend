@@ -39,11 +39,13 @@ const AllocateSection = ({ setOpenSectionAllocation, schoolId, teacherId }) => {
     const [multiDropOptions, setMultiDropOptions] = useState([]);
     const [loader, showLoader, hideLoader] = useFullPageLoader();
     const [sectionRepeat, SetSecctionRepeat] = useState(false)
+    const [selectSection, SetSelectSection] = useState(false)
+    const [selectSectionErr, SetSelectSectionErr] = useState(false)
     const [sectionValidation, setSectionValidation] = useState(false)
     const [count, setCount] = useState(0);
     const [validationIndex, setValidationIndex] = useState();
     const [sections, setSections] = useState();
-    const [sectionData, setSectionData] = useState();
+    const [sectionData, setSectionData] = useState([]);
     const [classData, setClassData] = useState();
     const [isLoading, setIsLoading] = useState(false);
     const MySwal = withReactContent(Swal);
@@ -58,6 +60,7 @@ const AllocateSection = ({ setOpenSectionAllocation, schoolId, teacherId }) => {
 
     console.log("multiDropDownValues", multiDropDownValues);
     console.log("sections", sections);
+    console.log("sectionsData", sectionData);
     console.log("colourOptions", colourOptions);
 
 
@@ -119,6 +122,8 @@ const AllocateSection = ({ setOpenSectionAllocation, schoolId, teacherId }) => {
         } else if (showError === true) {
             SetSecctionRepeat(showError)
 
+        } else if (selectSection === true) {
+            SetSelectSectionErr(true)
         } else {
             console.log("sending the data", sendData);
             axios.post(dynamicUrl.teacherSectionAllocation, { data: sendData }, {
@@ -209,8 +214,9 @@ const AllocateSection = ({ setOpenSectionAllocation, schoolId, teacherId }) => {
                         const sectiontValue = allSections.filter(activity => (activity.value === Items.section_id))
 
                         classArray.push(defaultValue);
-                        SesionArray.push(sectiontValue);
+                        SesionArray.push({ value: sectiontValue[0].value, label: sectiontValue[0].label });
                         console.log("defaultValue", defaultValue);
+                        console.log('sectiontValue', sectiontValue);
                     })
 
                     isEmptyArray(tempArray) ? (
@@ -255,12 +261,27 @@ const AllocateSection = ({ setOpenSectionAllocation, schoolId, teacherId }) => {
             resultData.forEach((item, index) => {
                 multiDropDownValues.push({ value: item.section_id, label: item.section_name })
             })
+            // setSectionData(multiDropDownValues);
             setMultiDropOptions(multiDropDownValues)
         }
 
     };
 
+    const handleDeleteEduItem = (index) => {
+        sectionData.splice(index, 1, { value: '', label: 'select' })
+    }
 
+    const handleDeleteSection = (event, index) => {
+        console.log("handleDeleteSection", event, index);
+        sectionData.splice(index, 1, event)
+        setSectionData(sectionData)
+        let data = [...classData]
+        setClassData(data)
+    }
+
+    useEffect(() => {
+
+    }, [classData])
     return (
 
         <div className="App">
@@ -291,7 +312,7 @@ const AllocateSection = ({ setOpenSectionAllocation, schoolId, teacherId }) => {
                                         }}
                                     >
 
-                                        {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
+                                        {({ errors, handleBlur, handleChange, handleSubmit, touched, values, setFieldValue }) => (
                                             <>
                                                 <form onSubmit={handleSubmit}>
 
@@ -332,7 +353,12 @@ const AllocateSection = ({ setOpenSectionAllocation, schoolId, teacherId }) => {
                                                                                     options={options}
                                                                                     // onChange={(e) => { classOption(e) }}
                                                                                     onBlur={(e) => { handleBlur(e) }}
-                                                                                    onChange={(event) => { handleFormChange(event, index); classOption(event, index) }}
+                                                                                    onChange={(event) => {
+                                                                                        handleFormChange(event, index);
+                                                                                        classOption(event, index);
+                                                                                        handleDeleteEduItem(index);
+                                                                                        SetSelectSection(true)
+                                                                                    }}
                                                                                 />
                                                                             )}
                                                                             {touched.upschool_class_id && errors.upschool_class_id && (
@@ -354,10 +380,14 @@ const AllocateSection = ({ setOpenSectionAllocation, schoolId, teacherId }) => {
                                                                                             label="section_id"
                                                                                             classNamePrefix="select"
                                                                                             name="section_id"
+                                                                                            value={sectionData[index] && sectionData[index]}
                                                                                             options={multiDropOptions}
                                                                                             onChange={(event) => {
                                                                                                 handleFormChange(event, index); SetSecctionRepeat(false);
                                                                                                 setSectionValidation(false)
+                                                                                                SetSelectSection(true)
+                                                                                                SetSelectSectionErr(false)
+                                                                                                handleDeleteSection(event, index)
                                                                                             }}
                                                                                             isDisabled={true}
                                                                                         />
@@ -366,12 +396,16 @@ const AllocateSection = ({ setOpenSectionAllocation, schoolId, teacherId }) => {
                                                                                             defaultValue={sectionData[index]}
                                                                                             className="basic-single"
                                                                                             label="section_id"
+                                                                                            value={sectionData[index] && sectionData[index]}
                                                                                             classNamePrefix="select"
                                                                                             name="section_id"
                                                                                             options={multiDropOptions}
                                                                                             onChange={(event) => {
                                                                                                 handleFormChange(event, index); SetSecctionRepeat(false);
                                                                                                 setSectionValidation(false)
+                                                                                                SetSelectSection(false)
+                                                                                                SetSelectSectionErr(false)
+                                                                                                handleDeleteSection(event, index)
                                                                                             }}
                                                                                         />
                                                                                     </>
@@ -397,6 +431,7 @@ const AllocateSection = ({ setOpenSectionAllocation, schoolId, teacherId }) => {
                                                     <Col>
                                                         {sectionRepeat && (<small className="text-danger form-text">Class and Section Combination is Repeated</small>)}
                                                         {sectionValidation && (<small className="text-danger form-text">Section is required!</small>)}
+                                                        {selectSectionErr && (<small className="text-danger form-text">please select section!</small>)}
                                                     </Col>
                                                     <Col>
                                                         <Button className="btn-block" color="success" size="large" type="submit" variant="success" onClick={subscribeClass} >
@@ -412,8 +447,6 @@ const AllocateSection = ({ setOpenSectionAllocation, schoolId, teacherId }) => {
                     </>
                 )
             }
-
-
         </div >
     );
 
