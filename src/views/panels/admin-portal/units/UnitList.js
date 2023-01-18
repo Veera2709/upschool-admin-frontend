@@ -248,7 +248,7 @@ const UnitList = (props) => {
                             hideLoader();
                             sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
                         } else {
-                            allUnitsList(statusUrl)
+                            allUnitsList(statusUrl&&statusUrl)
                             setReloadAllData("Deleted");
                             return MySwal.fire('', 'The ' + unit_title + ' is Deleted', 'success');
                         }
@@ -309,7 +309,7 @@ const UnitList = (props) => {
                                 hideLoader();
                                 sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
                             } else {
-                                allUnitsList(statusUrl)
+                                allUnitsList(statusUrl&&statusUrl)
                                 setReloadAllData("Deleted");
                                 return MySwal.fire('', 'The ' + unit_title + ' is Restored', 'success')
                             }
