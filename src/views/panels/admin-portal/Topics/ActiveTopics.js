@@ -248,7 +248,7 @@ const ActiveTopics = (props) => {
                             hideLoader();
                             sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
                         } else {
-                            allTopicList(statusUrl&&statusUrl)
+                            allTopicList()
                             setReloadAllData("Deleted");
                             return MySwal.fire('', 'The ' + topic_title + ' is Deleted', 'success');
                         }
@@ -309,7 +309,7 @@ const ActiveTopics = (props) => {
                                 hideLoader();
                                 sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
                             } else {
-                                allTopicList(statusUrl&&statusUrl)
+                                allTopicList()
                                 setReloadAllData("Deleted");
                                 return MySwal.fire('', 'The ' + topic_title + ' is Restored', 'success')
                             }
@@ -344,7 +344,8 @@ const ActiveTopics = (props) => {
     }
 
 
-    const allTopicList = async (TopicStatus) => {
+    const allTopicList = async () => {
+        const TopicStatus = pageLocation === "active-topics" ? 'Active' : 'Archived';
         let userJWT = sessionStorage.getItem('user_jwt');
         console.log("jwt", userJWT);
 
@@ -430,14 +431,16 @@ const ActiveTopics = (props) => {
     }
 
     useEffect(() => {
-
-        if (pageLocation) {
-            console.log("--", pageLocation);
-            const url = pageLocation === "active-topics" ? 'Active' : 'Archived';
-            setStatusUrl(url)
-            allTopicList(url);
+        let userJWT = sessionStorage.getItem('user_jwt');
+        console.log("jwt", userJWT);
+        if (userJWT === "" || userJWT === undefined || userJWT === "undefined" || userJWT === null) {
+            sessionStorage.clear();
+            localStorage.clear();
+            history.push('/auth/signin-1');
+            window.location.reload();
+        } else {
+            allTopicList();
         }
-
     }, [reloadAllData])
 
     return (

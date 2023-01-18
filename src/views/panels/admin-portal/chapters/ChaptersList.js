@@ -247,7 +247,7 @@ const ChaptersListChild = (props) => {
                             hideLoader();
                             sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
                         } else {
-                            allChaptersList(statusUrl&&statusUrl)
+                            allChaptersList()
                             setReloadAllData("Deleted");
                             return MySwal.fire('', 'The ' + chapter_title + ' is Deleted', 'success');
                             // window. location. reload() 
@@ -311,7 +311,7 @@ const ChaptersListChild = (props) => {
                                 hideLoader();
                                 sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
                             } else {
-                                allChaptersList(statusUrl&&statusUrl)
+                                allChaptersList()
                                 setReloadAllData("Deleted");
                                 return MySwal.fire('', 'The ' + chapter_title + ' is Restored', 'success');
                                 // window. location. reload() 
@@ -348,7 +348,9 @@ const ChaptersListChild = (props) => {
     }
 
 
-    const allChaptersList = (chapterStatus) => {
+    const allChaptersList = () => {
+        const chapterStatus = pageLocation === "active-chapter" ? 'Active' : 'Archived';
+
         setIsLoading(true);
         axios.post(dynamicUrl.fetchAllChapters, {}, {
             headers: { Authorization: sessionStorage.getItem('user_jwt') }
@@ -446,14 +448,16 @@ const ChaptersListChild = (props) => {
     }
 
     useEffect(() => {
-
-        if (pageLocation) {
-            console.log("--", pageLocation);
-            const url = pageLocation === "active-chapter" ? 'Active' : 'Archived';
-            setStatusUrl(url)
-            allChaptersList(url);
+        let userJWT = sessionStorage.getItem('user_jwt');
+        console.log("jwt", userJWT);
+        if (userJWT === "" || userJWT === undefined || userJWT === "undefined" || userJWT === null) {
+            sessionStorage.clear();
+            localStorage.clear();
+            history.push('/auth/signin-1');
+            window.location.reload();
+        } else {
+            allChaptersList();
         }
-
     }, [reloadAllData])
 
     return (

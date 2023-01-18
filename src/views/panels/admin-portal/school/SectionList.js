@@ -180,12 +180,12 @@ const SectionList = ({ id }) => {
                 accessor: 'index_no'
             },
             {
-                Header: 'Class Name',
-                accessor: 'client_class_name'
-            },
-            {
                 Header: 'Section Name',
                 accessor: 'section_name'
+            },
+            {
+                Header: 'Class Name',
+                accessor: 'client_class_name'
             },
             {
                 Header: 'Options',
