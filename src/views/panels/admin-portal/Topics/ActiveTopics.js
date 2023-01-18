@@ -248,7 +248,7 @@ const ActiveTopics = (props) => {
                             hideLoader();
                             sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
                         } else {
-                            allTopicList(statusUrl)
+                            allTopicList(statusUrl&&statusUrl)
                             setReloadAllData("Deleted");
                             return MySwal.fire('', 'The ' + topic_title + ' is Deleted', 'success');
                         }
@@ -309,7 +309,7 @@ const ActiveTopics = (props) => {
                                 hideLoader();
                                 sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
                             } else {
-                                allTopicList(statusUrl)
+                                allTopicList(statusUrl&&statusUrl)
                                 setReloadAllData("Deleted");
                                 return MySwal.fire('', 'The ' + topic_title + ' is Restored', 'success')
                             }

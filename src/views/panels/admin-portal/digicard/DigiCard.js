@@ -237,7 +237,7 @@ const DigiCard = () => {
                             hideLoader();
                             sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
                         } else {
-                            fetchAllDigiCards(statusUrl)
+                            fetchAllDigiCards(statusUrl&&statusUrl)
                             setReloadAllData("Deleted");
                             return MySwal.fire('', 'The ' + digi_card_title + ' is Deleted', 'success');
                             // window. location. reload() 
@@ -298,7 +298,7 @@ const DigiCard = () => {
                                 hideLoader();
                                 sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
                             } else {
-                                fetchAllDigiCards(statusUrl)
+                                fetchAllDigiCards(statusUrl&&statusUrl)
                                 setReloadAllData("Deleted");
                                 return MySwal.fire('', 'The ' + digi_card_title + ' is Restored', 'success');
                                 // window. location. reload() 

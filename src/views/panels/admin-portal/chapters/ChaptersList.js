@@ -247,7 +247,7 @@ const ChaptersListChild = (props) => {
                             hideLoader();
                             sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
                         } else {
-                            allChaptersList(statusUrl)
+                            allChaptersList(statusUrl&&statusUrl)
                             setReloadAllData("Deleted");
                             return MySwal.fire('', 'The ' + chapter_title + ' is Deleted', 'success');
                             // window. location. reload() 
@@ -311,7 +311,7 @@ const ChaptersListChild = (props) => {
                                 hideLoader();
                                 sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
                             } else {
-                                allChaptersList(statusUrl)
+                                allChaptersList(statusUrl&&statusUrl)
                                 setReloadAllData("Deleted");
                                 return MySwal.fire('', 'The ' + chapter_title + ' is Restored', 'success');
                                 // window. location. reload() 
