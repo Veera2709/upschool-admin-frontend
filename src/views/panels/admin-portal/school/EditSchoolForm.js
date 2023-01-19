@@ -618,7 +618,7 @@ const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive 
 
                                 }}
                             >
-                                {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, setFieldValue }) => (
+                                {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, setFieldValue, setFieldTouched }) => (
                                     <form noValidate onSubmit={handleSubmit}>
 
                                         <div className="row">
@@ -1030,6 +1030,13 @@ const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive 
                                                         copy === false ? setFieldValue('pincode2', pincodeRef.current.value) : setFieldValue('pincode2', '')
 
                                                         copy === false ? setFieldValue('phoneNumber2', phoneNumberRef.current.value) : setFieldValue('phoneNumber2', '')
+
+                                                        setFieldTouched('phoneNumber2', false, false);
+                                                        setFieldTouched('pincode2', false, false);
+                                                        setFieldTouched('city2', false, false);
+                                                        setFieldTouched('address_line2_2', false, false);
+                                                        setFieldTouched('address_line1_2', false, false);
+                                                        setFieldTouched('contact_name2', false, false);
 
                                                     }} onChange={handleCopyAddress} />
 
