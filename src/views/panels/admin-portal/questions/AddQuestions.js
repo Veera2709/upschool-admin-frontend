@@ -95,6 +95,10 @@ const AddQuestions = ({ className, ...rest }) => {
         tempPreviewAudio[index] = '';
         setPreviewAudios(tempPreviewAudio);
 
+        let tempFileValue = [...fileValues];
+        tempFileValue[index] = '';
+        setFileValues(tempFileValue);
+
         let data = [...answerOptionsForm];
         data[index]["answer_content"] = "";
         console.log(data);
@@ -194,6 +198,10 @@ const AddQuestions = ({ className, ...rest }) => {
             let tempPreviewAudio = [...previewAudios];
             tempPreviewAudio[index] = URL.createObjectURL(event.target.files[0]);
             setPreviewAudios(tempPreviewAudio);
+
+            let tempFileValue = [...fileValues];
+            tempFileValue[index] = event.target.files[0];
+            setFileValues(tempFileValue);
         }
     }
 
@@ -477,6 +485,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                 }
 
                                                                 const MySwal = withReactContent(Swal);
+
                                                                 MySwal.fire({
 
                                                                     title: 'Question added!',
@@ -486,7 +495,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                     history.push('/admin-portal/active-questions');
                                                                     // window.location.reload();
 
-                                                                })
+                                                                });
 
                                                             } else {
 
