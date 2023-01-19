@@ -328,6 +328,11 @@ const EditSchoolForm = ({ className, rest, id, setIsOpenEditSchool, fetchSchoolD
 
                                                             let tempObj = uploadParams[index];
 
+                                                            console.log(tempObj);
+                                                            console.log(keyName);
+                                                            console.log(tempObj[keyName]);
+
+
                                                             let result = fetch(tempObj[keyName], {
                                                                 method: 'PUT',
                                                                 body: blobField

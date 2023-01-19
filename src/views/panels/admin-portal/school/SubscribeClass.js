@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Row, Col, Card, Pagination, Button, Modal, ModalBody, Form, Alert } from 'react-bootstrap';
+import { Row, Col, Card, Pagination, Button, Modal, ModalBody, Form, Alert, CloseButton } from 'react-bootstrap';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import * as Yup from 'yup';
 import Board from 'react-trello';
@@ -12,7 +12,6 @@ import axios from 'axios';
 import dynamicUrl from "../../../../helper/dynamicUrls";
 import { useHistory } from 'react-router-dom';
 import { isEmptyObject } from '../../../../util/utils';
-import CloseButton from 'react-bootstrap/CloseButton';
 import { isEmptyArray } from '../../../../util/utils';
 import Select from 'react-select';
 

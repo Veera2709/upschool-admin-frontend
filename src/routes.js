@@ -156,9 +156,7 @@ const routes = [
       {
         exact: true,
         path: '/admin-portal/archived-users',
-        component: lazy(() =>
-
-          import('./views/panels/admin-portal/users/ListUsers')
+        component: lazy(() => import('./views/panels/admin-portal/users/ListUsers')
 
         )
       },
@@ -166,6 +164,11 @@ const routes = [
         exact: true,
         path: '/admin-portal/add-users',
         component: lazy(() => import('./views/panels/admin-portal/users/UsersBulkUpload'))
+      },
+      {
+        exact: true,
+        path: '/admin-portal/add-questions',
+        component: lazy(() => import('./views/panels/admin-portal/questions/AddQuestions'))
       },
       {
         exact: true,
@@ -182,7 +185,7 @@ const routes = [
         exact: true,
         path: '/admin-portal/archived-concepts',
         component: lazy(() => import('./views/panels/admin-portal/concepts/ListConcepts'))
-      }, 
+      },
 
       {
         exact: true,
@@ -219,13 +222,31 @@ const routes = [
       //   component: lazy(() => import('./views/panels/admin-portal/Topics/EditTopics'))
       // },
 
+      // Questions
+
+      {
+        exact: true,
+        path: '/admin-portal/active-questions',
+        component: lazy(() => import('./views/panels/admin-portal/questions/ListQuestions'))
+      },
+      {
+        exact: true,
+        path: '/admin-portal/archived-questions',
+        component: lazy(() => import('./views/panels/admin-portal/questions/ListQuestions'))
+      },
+      {
+        exact: true,
+        path: '/admin-portal/edit-questions/:question_id',
+        component: lazy(() => import('./views/panels/admin-portal/questions/EditQuestions'))
+      },
+
       // digi card
       {
         exact: true,
         path: '/admin-portal/active-digiCard',
         component: lazy(() => import('./views/panels/admin-portal/digicard/DigiCard'))
       },
-       {
+      {
         exact: true,
         path: '/admin-portal/digicard-Archived',
         component: lazy(() => import('./views/panels/admin-portal/digicard/DigiCard'))
@@ -271,7 +292,7 @@ const routes = [
         path: '/admin-portal/units/active-units',
         component: lazy(() => import('./views/panels/admin-portal/units/UnitList'))
       },
-       {
+      {
         exact: true,
         path: '/admin-portal/units/archived-units',
         component: lazy(() => import('./views/panels/admin-portal/units/UnitList'))

@@ -92,6 +92,8 @@ const MESSAGES = {
     SCHOOL_DELETED: 'School deleted successfully!',
     SUBJECT_RESTORED: 'The subject has been restored!',
     SUBJECT_DELETED: 'The subject has been deleted!',
+    QUESTION_RESTORED: 'Question has been restored!',
+    QUESTION_DELETED: 'Question has been deleted!'
   },
   VALIDATION: {
     MUST_BE_A_VALID_EMAIL_ADDRESS: 'Must be a valid email address',
