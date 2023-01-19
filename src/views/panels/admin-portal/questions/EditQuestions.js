@@ -34,7 +34,7 @@ const EditQuestions = () => {
     const [ansWeightageErrMsg, setAnsWeightageErrMsg] = useState(false);
 
     const [selectedQuestionType, setSelectedQuestionType] = useState([]);
-    const [showMathKeyboard, setShowMathKeyboard] = useState('');
+    const [showMathKeyboard, setShowMathKeyboard] = useState('No');
     const [answerTypeOptions, setAnswerTypeOptions] = useState([]);
     const [selectedAnswerType, setSelectedAnswerType] = useState([]);
     const [questionVoiceError, setQuestionVoiceError] = useState(true);
@@ -59,6 +59,7 @@ const EditQuestions = () => {
     const [previewAudios, setPreviewAudios] = useState([]);
     const [_radio, _setRadio] = useState(false);
     const [previousData, setPreviousData] = useState([]);
+    const [count, setCount] = useState(0);
 
     const [answerOptionsForm, setAnswerOptionsForm] = useState([
         {
@@ -77,13 +78,16 @@ const EditQuestions = () => {
         setPreviewImages(tempPreviewImg);
 
         let tempFileValue = [...fileValues];
-        tempFileValue[index] = '';
+        tempFileValue[count] = '';
         setFileValues(tempFileValue);
 
         let data = [...answerOptionsForm];
         data[index]["answer_content"] = "";
         console.log(data);
         setAnswerOptionsForm(data);
+
+        let tempCount = count - 1;
+        setCount(tempCount);
     }
 
     const removeSelectedAudio = (index) => {
@@ -92,11 +96,17 @@ const EditQuestions = () => {
         tempPreviewAudio[index] = '';
         setPreviewAudios(tempPreviewAudio);
 
+        let tempFileValue = [...fileValues];
+        tempFileValue[count] = '';
+        setFileValues(tempFileValue);
+
         let data = [...answerOptionsForm];
         data[index]["answer_content"] = "";
         console.log(data);
-        console.log(previewAudios);
         setAnswerOptionsForm(data);
+
+        let tempCount = count - 1;
+        setCount(tempCount);
     }
 
     const handleRadioChange = (e) => {
@@ -155,13 +165,11 @@ const EditQuestions = () => {
 
     const handleAnswerBlanks = (event, index) => {
 
-        console.log(event.target);
+        console.log(event.target.files[0]);
 
         let data = [...answerOptionsForm];
         data[index][event.target.name] = event.target.value;
         data[index]["answer_type"] = selectedAnswerType;
-
-        console.log(data);
 
         setAnswerOptionsForm(data);
 
@@ -173,30 +181,38 @@ const EditQuestions = () => {
             let tempEquation = [...equation];
             tempEquation[index] = event.target.value;
 
-            console.log(tempEquation);
             setEquation(tempEquation);
         }
 
-        if (toggleImageInput && event.target.files) {
+        if (toggleImageInput && event.target.name === 'answer_content') {
             let tempPreviewImg = [...previewImages];
             tempPreviewImg[index] = URL.createObjectURL(event.target.files[0]);
             setPreviewImages(tempPreviewImg);
 
             let tempFileValue = [...fileValues];
-            tempFileValue[index] = event.target.files[0];
+            tempFileValue[count] = event.target.files[0];
             setFileValues(tempFileValue);
+
+            let tempCount = count + 1;
+            setCount(tempCount);
         }
 
-        if (toggleAudioInput && event.target.files) {
+        if (toggleAudioInput && event.target.name === 'answer_content') {
             let tempPreviewAudio = [...previewAudios];
             tempPreviewAudio[index] = URL.createObjectURL(event.target.files[0]);
             setPreviewAudios(tempPreviewAudio);
+
+            let tempFileValue = [...fileValues];
+            tempFileValue[count] = event.target.files[0];
+            setFileValues(tempFileValue);
+
+            let tempCount = count + 1;
+            setCount(tempCount);
         }
     }
 
     const previewQuestionVoiceNote = (e) => {
-        console.log(e.target.files[0]);
-        console.log(URL.createObjectURL(e.target.files[0]));
+
         setQuestionVoiceNote(URL.createObjectURL(e.target.files[0]));
         setSelectedQuestionVoiceNote(e.target.value);
         setVoiceNoteFileValues(e.target.files[0]);
@@ -204,11 +220,7 @@ const EditQuestions = () => {
 
     const handleAnswerType = (event) => {
 
-        console.log(event.target.value);
-
         let valuesSelected = event.target.value;
-        console.log(valuesSelected);
-        console.log(articleDataTitle);
 
         setSelectedAnswerType(valuesSelected);
 
@@ -286,9 +298,6 @@ const EditQuestions = () => {
 
     const removeAnswerTypeOptions = (index) => {
 
-        console.log(answerOptionsForm);
-        console.log(index);
-
         let data = [...answerOptionsForm];
         data.splice(index, 1)
         setAnswerOptionsForm(data);
@@ -307,9 +316,6 @@ const EditQuestions = () => {
 
         } else {
 
-            console.log(threadLinks.length);
-            console.log(threadLinks.length === 2);
-
             threadLinks.length === 1 ? setDisplayHeader(false) : setDisplayHeader(true);
 
             setIsLoading(true);
@@ -327,8 +333,6 @@ const EditQuestions = () => {
                 )
                 .then((response) => {
 
-                    console.log(response.data);
-                    console.log(response.data.Items[0]);
                     hideLoader();
 
                     if (response.data.Items[0]) {
@@ -362,7 +366,6 @@ const EditQuestions = () => {
                         let object;
                         let tempArray = [];
                         let tempImgPreviewArr = [];
-                        let tempImgFileValueArr = [];
                         let tempAudioPreviewArr = [];
                         let tempEquPreviewArr = [];
 
@@ -386,9 +389,6 @@ const EditQuestions = () => {
 
                                         let tempPreviewImg = uploadParams[index].answer_content_url;
                                         tempImgPreviewArr.push(tempPreviewImg);
-
-                                        let tempFileValue = uploadParams[index].answer_content_url;
-                                        tempImgFileValueArr.push(tempFileValue);
 
                                         index++;
                                         setValues(index);
@@ -425,14 +425,11 @@ const EditQuestions = () => {
 
                                     ) : (console.log("Not empty"));
 
-                                    console.log("tempArray", tempArray);
-
-                                    tempArray.length > 1 ? setAddAnswerOptions(true) : setAddAnswerOptions(false);
+                                    tempArray.length >= 1 ? setAddAnswerOptions(true) : setAddAnswerOptions(false);
 
                                     setAnswerOptionsForm(tempArray);
 
                                     setPreviewImages(tempImgPreviewArr);
-                                    setFileValues(tempImgFileValueArr);
 
                                     setPreviewAudios(tempAudioPreviewArr);
 
@@ -602,10 +599,7 @@ const EditQuestions = () => {
 
                                                     onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
 
-                                                        console.log(values);
                                                         setSubmitting(true);
-
-                                                        console.log(sessionStorage.getItem('click_event') !== "");
 
                                                         if (sessionStorage.getItem('click_event') === "" || sessionStorage.getItem('click_event') === undefined || sessionStorage.getItem('click_event') === "undefined" || sessionStorage.getItem('click_event') === null) {
 
@@ -634,7 +628,7 @@ const EditQuestions = () => {
                                                                         answer_type: selectedAnswerType,
                                                                         answers_of_question: answerOptionsForm,
                                                                         question_status: sessionStorage.getItem('click_event'),
-                                                                        question_disclaimer: values.question_disclaimer,
+                                                                        question_disclaimer: values.question_disclaimer === "" ? "" : values.question_disclaimer,
                                                                         show_math_keyboard: showMathKeyboard
                                                                     }
 
@@ -654,11 +648,8 @@ const EditQuestions = () => {
                                                                         )
                                                                         .then((response) => {
 
-                                                                            console.log({ response });
-                                                                            console.log(response.status);
                                                                             console.log(response.data);
 
-                                                                            console.log(response.status === 200);
                                                                             let result = response.status === 200;
 
                                                                             if (result) {
@@ -676,13 +667,11 @@ const EditQuestions = () => {
 
                                                                                         let keyNameArr = Object.keys(uploadParamsQuestionsNote[index]);
                                                                                         let keyName = keyNameArr[1];
-                                                                                        console.log('KeyName', keyName);
 
                                                                                         let blobField = voiceNoteFileValues;
                                                                                         console.log({ blobField });
 
                                                                                         let tempObj = uploadParamsQuestionsNote[index];
-                                                                                        console.log(tempObj);
                                                                                         let result = fetch(tempObj[keyName], {
                                                                                             method: 'PUT',
                                                                                             body: blobField
@@ -698,15 +687,13 @@ const EditQuestions = () => {
 
                                                                                             let keyNameArr = Object.keys(uploadParamsAnswerOptions[index]);
                                                                                             let keyName = keyNameArr[1];
-                                                                                            console.log('KeyName', keyName);
+
+                                                                                            console.log(fileValues);
 
                                                                                             let blobField = fileValues[index];
                                                                                             console.log({ blobField });
 
                                                                                             let tempObjFile = uploadParamsAnswerOptions[index];
-                                                                                            console.log(tempObjFile);
-                                                                                            console.log(keyName);
-                                                                                            console.log(tempObjFile[keyName]);
 
                                                                                             let result = fetch(tempObjFile[keyName], {
                                                                                                 method: 'PUT',
@@ -743,13 +730,11 @@ const EditQuestions = () => {
 
                                                                                             let keyNameArr = Object.keys(uploadParamsAnswerOptions[index]);
                                                                                             let keyName = keyNameArr[1];
-                                                                                            console.log('KeyName', keyName);
 
                                                                                             let blobField = fileValues[index];
                                                                                             console.log({ blobField });
 
                                                                                             let tempObjFile = uploadParamsAnswerOptions[index];
-                                                                                            console.log(tempObjFile[keyName]);
 
                                                                                             let result = fetch(tempObjFile[keyName], {
                                                                                                 method: 'PUT',
@@ -883,7 +868,7 @@ const EditQuestions = () => {
                                                                                     <div className="form-group fill">
                                                                                         <audio controls>
                                                                                             <source src={questionVoiceNote} alt="Audio" type="audio/mp3" />
-                                                                                            {console.log("questionVoiceNote", questionVoiceNote)}
+
                                                                                         </audio>
                                                                                     </div>
                                                                                 </Col>
@@ -1123,7 +1108,7 @@ const EditQuestions = () => {
                                                                                             label="answer_content"
                                                                                             name="answer_content"
                                                                                             onBlur={handleBlur}
-                                                                                            type="answer_content"
+                                                                                            type="text"
                                                                                             onChange={event => handleAnswerBlanks(event, index)}
                                                                                             placeholder="Enter Answer"
                                                                                         />
@@ -1342,7 +1327,7 @@ const EditQuestions = () => {
                                                                                     <Col xs={6}>
                                                                                         <label className="floating-label">
                                                                                             <small className="text-danger"></small>
-                                                                                            Answer
+                                                                                            Equation
                                                                                         </label>
                                                                                         <textarea
                                                                                             value={form.answer_content}
@@ -1756,7 +1741,6 @@ const EditQuestions = () => {
                                                                                             // value={form.answer_content}
 
                                                                                             onChange={event => {
-
                                                                                                 handleAnswerBlanks(event, index);
                                                                                             }}
                                                                                             placeholder="Enter Answer"
@@ -1782,9 +1766,13 @@ const EditQuestions = () => {
                                                                                                         marginLeft: "-50px"
                                                                                                     }} />
 
+
                                                                                                     {
-                                                                                                        previewImages[index] && (
+                                                                                                        previewImages[index] && previewImages[index] !== 'N.A.' && (
+
                                                                                                             <CloseButton
+
+
                                                                                                                 onClick={() => {
                                                                                                                     setFieldValue("answer_content", "")
                                                                                                                     removeSelectedImg(index)
@@ -1854,7 +1842,6 @@ const EditQuestions = () => {
                                                                                                     <>
 
                                                                                                         {selectedArr.map((optionsData) => {
-                                                                                                            { console.log(optionsData) }
                                                                                                             return <option
                                                                                                                 value={optionsData.value}
                                                                                                                 key={optionsData.value}
@@ -1866,7 +1853,6 @@ const EditQuestions = () => {
                                                                                                     </> : <>
 
                                                                                                         {answerBlanksOptions.map((optionsData) => {
-                                                                                                            { console.log(optionsData) }
                                                                                                             return <option
                                                                                                                 value={optionsData.value}
                                                                                                                 key={optionsData.value}
@@ -1958,7 +1944,9 @@ const EditQuestions = () => {
                                                                                             name="answer_content"
                                                                                             id="answer_content"
                                                                                             onBlur={handleBlur}
-                                                                                            onChange={event => handleAnswerBlanks(event, index)}
+                                                                                            onChange={event => {
+                                                                                                handleAnswerBlanks(event, index)
+                                                                                            }}
                                                                                             type="file"
                                                                                             // value={form.answer_content}
                                                                                             accept=".mp3,audio/*"
@@ -1972,8 +1960,7 @@ const EditQuestions = () => {
                                                                                             Preview
                                                                                         </label>
 
-
-                                                                                        {previewAudios && previewAudios[index] &&
+                                                                                        {previewAudios && previewAudios[index] && previewAudios[index] !== 'N.A.' &&
                                                                                             (
                                                                                                 <>
                                                                                                     <br />
@@ -1984,8 +1971,7 @@ const EditQuestions = () => {
                                                                                                                 src={previewAudios[index]}
                                                                                                                 alt="Audio"
                                                                                                                 type="audio/mp3" />
-                                                                                                            {console.log("previewAudios", previewAudios[index])
-                                                                                                            }
+
                                                                                                         </audio>
                                                                                                     </div>
 
