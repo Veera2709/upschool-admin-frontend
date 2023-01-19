@@ -81,12 +81,22 @@ const dynamicUrl = {
     fetchIndividualSubject: baseUrl + '/fetchIndividualSubject',
     updateSubject: baseUrl + '/updateSubject',
 
+    // Classes
     addClass: baseUrl + '/addClass',
     fetchAllClass: baseUrl + '/fetchAllClass',
     fetchSubjectIdName: baseUrl + '/fetchSubjectIdName',
     fetchIndividualClass: baseUrl + '/fetchIndividualClass',
     toggleClassStatus: baseUrl + '/toggleClassStatus',
     editClass: baseUrl + '/editClass',
+
+    // Questions
+
+    fetchIndividualQuestionData: baseUrl + '/fetchIndividualQuestionData',
+    toggleQuestionStatus: baseUrl + '/toggleQuestionStatus',
+    editQuestion: baseUrl + '/editQuestion',
+    fetchAllQuestionsData: baseUrl + '/fetchAllQuestionsData',
+    addQuestions: baseUrl + '/addQuestions',
+    
 
     addSection: baseUrl + '/addSection',
     fetchSchoolSection: baseUrl + '/fetchSchoolSection',

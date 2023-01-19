@@ -503,11 +503,122 @@ const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive 
                                         console.log("School Boards Empty!");
                                         setSchoolBoardErrMsg(true);
 
+                                        axios
+                                            .post(
+                                                dynamicUrl.updateSchool,
+                                                formData,
+                                                {
+                                                    headers: { Authorization: sessionStorage.getItem('user_jwt') }
+                                                }
+                                            )
+                                            .then((response) => {
+
+                                                console.log({ response });
+
+                                                let result = response.status === 200;
+                                                hideLoader();
+
+                                                if (result) {
+
+                                                    console.log('inside res edit');
+
+                                                    // Upload Image to S3
+
+                                                    let uploadParams = response.data;
+                                                    // setDisableButton(false);
+                                                    hideLoader();
+                                                    console.log('Proceeding with file upload');
+
+                                                    if (Array.isArray(uploadParams)) {
+
+                                                        for (let index = 0; index < uploadParams.length; index++) {
+
+                                                            let keyNameArr = Object.keys(uploadParams[index]);
+                                                            let keyName = keyNameArr[0];
+                                                            console.log('KeyName', keyName);
+
+                                                            let blobField = fileValue;
+                                                            console.log({
+                                                                blobField
+                                                            });
+
+                                                            let tempObj = uploadParams[index];
+
+                                                            console.log(tempObj);
+                                                            console.log(keyName);
+                                                            console.log(tempObj[keyName]);
+
+
+                                                            let result = fetch(tempObj[keyName], {
+                                                                method: 'PUT',
+                                                                body: blobField
+                                                            });
+
+                                                            console.log({
+                                                                result
+                                                            });
+                                                        }
+
+                                                        setIsOpenEditSchool(false);
+                                                        const MySwal = withReactContent(Swal);
+                                                        MySwal.fire('', 'Your school has been updated!', 'success');
+                                                        fetchSchoolData();
+                                                        setInactive(false);
+                                                    } else {
+
+                                                        console.log('No files uploaded');
+
+
+                                                    }
+                                                } else {
+
+                                                    console.log('else res');
+
+                                                    hideLoader();
+                                                    // Request made and server responded
+                                                    setStatus({ success: false });
+                                                    setErrors({ submit: 'Error in Editing School' });
+
+
+                                                }
+                                            })
+                                            .catch((error) => {
+                                                if (error.response) {
+                                                    hideLoader();
+                                                    // Request made and server responded
+                                                    console.log(error.response.data);
+
+                                                    if (error.response.data === "Invalid Token") {
+
+                                                        sessionStorage.clear();
+                                                        localStorage.clear();
+
+                                                        history.push('/auth/signin-1');
+                                                        window.location.reload();
+                                                    } else {
+                                                        setStatus({ success: false });
+                                                        setErrors({ submit: error.response.data });
+                                                    }
+
+
+
+                                                } else if (error.request) {
+                                                    // The request was made but no response was received
+                                                    console.log(error.request);
+                                                    hideLoader();
+
+                                                } else {
+                                                    // Something happened in setting up the request that triggered an Error
+                                                    console.log('Error', error.message);
+                                                    hideLoader();
+
+                                                }
+                                            })
                                     }
 
                                 }}
                             >
-                                {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, setFieldValue }) => (
+                                {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, setFieldValue, setFieldTouched }) => (
                                     <form noValidate onSubmit={handleSubmit}>
 
                                         <div className="row">
@@ -919,6 +1030,13 @@ const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive 
                                                         copy === false ? setFieldValue('pincode2', pincodeRef.current.value) : setFieldValue('pincode2', '')
 
                                                         copy === false ? setFieldValue('phoneNumber2', phoneNumberRef.current.value) : setFieldValue('phoneNumber2', '')
+
+                                                        setFieldTouched('phoneNumber2', false, false);
+                                                        setFieldTouched('pincode2', false, false);
+                                                        setFieldTouched('city2', false, false);
+                                                        setFieldTouched('address_line2_2', false, false);
+                                                        setFieldTouched('address_line1_2', false, false);
+                                                        setFieldTouched('contact_name2', false, false);
 
                                                     }} onChange={handleCopyAddress} />
 
