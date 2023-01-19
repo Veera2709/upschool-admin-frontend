@@ -82,6 +82,7 @@
     "react-input-mask": "^2.0.4",
     "react-joyride": "^2.4.0",
     "react-jvectormap": "^0.0.16",
+    "react-mathjax": "^1.0.1",
     "react-multistep": "^5.3.0",
     "react-nestable": "^2.0.0",
     "react-number-format": "^4.9.1",

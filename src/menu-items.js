@@ -198,6 +198,26 @@ const menuItems = {
             }
           ]
         },
+        {
+          id: 'questions',
+          title: 'Questions',
+          type: 'collapse',
+          icon: 'feather icon-check-square',
+          children: [
+            {
+              id: 'active-questions',
+              title: 'Active Questions',
+              type: 'item',
+              url: '/admin-portal/active-questions'
+            },
+            {
+              id: 'archived-questions',
+              title: 'Archived Questions',
+              type: 'item',
+              url: '/admin-portal/archived-questions'
+            }
+          ]
+        },
       ]
     }
 
