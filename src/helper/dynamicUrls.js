@@ -2,7 +2,6 @@ const baseUrl = 'https://n4w2247vsi.execute-api.ap-south-1.amazonaws.com/dev/v1'
 
 // const baseUrl = process.env.REACT_APP_LAMBDA_URL;
 
-
 const dynamicUrl = {
     
     // Login
@@ -96,9 +95,18 @@ const dynamicUrl = {
     toggleQuestionStatus: baseUrl + '/toggleQuestionStatus',
     editQuestion: baseUrl + '/editQuestion',
     fetchAllQuestionsData: baseUrl + '/fetchAllQuestionsData',
-    addQuestions: baseUrl + '/addQuestions'
+    addQuestions: baseUrl + '/addQuestions',
     
 
+    addSection: baseUrl + '/addSection',
+    fetchSchoolSection: baseUrl + '/fetchSchoolSection',
+    fetchSectionById: baseUrl + '/fetchSectionById',
+    editSection: baseUrl + '/editSection',
+    fetchSectionByClientClassId: baseUrl + '/fetchSectionByClientClassId',
+    fetchTeacherInfoDetails: baseUrl + '/fetchTeacherInfoDetails',
+    teacherSectionAllocation: baseUrl + '/teacherSectionAllocation',
+    
+       
 }
 
 export default dynamicUrl;
