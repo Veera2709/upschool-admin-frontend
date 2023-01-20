@@ -315,7 +315,7 @@ const SubscribeClass = ({ className, rest, id, setIsOpenSubscribeClass }) => {
                                                                         <Col>
                                                                             <label className="floating-label">
                                                                                 <small className="text-danger">* </small>
-                                                                                New Class
+                                                                                Class to be mapped with UpSchool
                                                                             </label>
                                                                             <input
                                                                                 className="form-control"

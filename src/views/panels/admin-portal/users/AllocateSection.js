@@ -164,6 +164,7 @@ const AllocateSection = ({ setOpenSectionAllocation, schoolId, teacherId }) => {
     const fetchClass = async () => {
         setIsLoading(true)
         const ClientClassId = await fetchClassBasedOnSchool(schoolId);
+        console.log("SchollIdForSection",schoolId);
         if (ClientClassId.Error) {
             console.log("ClientClassId.Error", ClientClassId.Error);
         } else {
@@ -249,6 +250,7 @@ const AllocateSection = ({ setOpenSectionAllocation, schoolId, teacherId }) => {
         } else {
             console.log('ClientClassId', ClientClassId.Items);
             const resultData = ClientClassId.Items
+            console.log("resultData",resultData);
             resultData.forEach((item, index) => {
                 multiDropDownValues.push({ value: item.section_id, label: item.section_name })
             })
@@ -322,6 +324,7 @@ const AllocateSection = ({ setOpenSectionAllocation, schoolId, teacherId }) => {
                                                                                 <CloseButton onClick={() => {
                                                                                     removeFields(index);
                                                                                     SetSecctionRepeat(false)
+                                                                                    SetSelectSectionErr(false)
                                                                                 }} variant="white" />
                                                                             </Col>
                                                                         </Row>
