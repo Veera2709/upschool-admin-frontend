@@ -409,22 +409,47 @@ const QuestionsTableView = ({ _questionStatus }) => {
 
             <>
 
-              <Button
-                size="sm"
-                className="btn btn-icon btn-rounded btn-info"
-                onClick={(e) => history.push(`/admin-portal/edit-questions/${responseData[index].question_id}`)}
-              >
-                <i className="feather icon-edit" /> &nbsp; Edit
-              </Button>{' '}
-              &nbsp;
-              <Button
-                size="sm"
-                className="btn btn-icon btn-rounded btn-danger"
-                onClick={(e) => saveUserIdDelete(e, responseData[index].question_id, 'Archived')}
-              >
-                <i className="feather icon-trash-2" /> &nbsp;Delete
-              </Button>
+              {
+                sessionStorage.getItem('question_status') === 'Save' && (
+                  <>
+                    <Button
+                      size="sm"
+                      className="btn btn-icon btn-rounded btn-info"
+                      onClick={(e) => history.push(`/admin-portal/edit-questions/${responseData[index].question_id}`)}
+                    >
+                      <i className="feather icon-edit" /> &nbsp; Edit
+                    </Button>{' '}
+
+                    &nbsp;
+                    <Button
+                      size="sm"
+                      className="btn btn-icon btn-rounded btn-danger"
+                      onClick={(e) => saveUserIdDelete(e, responseData[index].question_id, 'Archived')}
+                    >
+                      <i className="feather icon-trash-2" /> &nbsp;Delete
+                    </Button>
+                  </>
+                )
+              }
+
+              {
+                sessionStorage.getItem('question_status') === 'Submit' && (
+                  <>
+
+                    <Button
+                      size="sm"
+                      className="btn btn-icon btn-rounded btn-info"
+                      onClick={(e) => history.push(`/admin-portal/edit-questions/${responseData[index].question_id}`)}
+                    >
+                      <i className="feather icon-eye" /> &nbsp;View
+                    </Button>{' '}
+
+                  </>
+                )
+              }
             </>
+
+
 
           ) : (
 
@@ -439,7 +464,8 @@ const QuestionsTableView = ({ _questionStatus }) => {
               </Button>
             </>
 
-          )}
+          )
+          }
 
         </>
       );

@@ -211,6 +211,7 @@ const UserTableViewStudent = ({ _userRole }) => {
     const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
     const [selectClassErr, setSelectClassErr] = useState(false);
     const [selectSectionErr, setSelectSectionErr] = useState(false);
+    const [selectDOBErr, setSelectDOBErr] = useState(false);
     const [_data, _setData] = useState([]);
     const classNameRef = useRef('');
     const schoolNameRef = useRef('');
@@ -275,6 +276,8 @@ const UserTableViewStudent = ({ _userRole }) => {
     const getIndividualUser = (user_id, user_role) => {
         // setEditUsersId(user_id);
 
+        setOptions([]);
+
         const values = {
             user_id: user_id,
             user_role: user_role
@@ -317,7 +320,7 @@ const UserTableViewStudent = ({ _userRole }) => {
                     response.data.classList.forEach((item, index) => {
                         colourOptions.push({ value: item.client_class_id, label: item.client_class_name })
                     })
-                    setOptions(colourOptions)
+                    setOptions(colourOptions);
 
                     setSchoolName_ID(response.data.schoolList);
                     // setPreviousSchool(schoolNameArr.school_name);
@@ -876,6 +879,8 @@ const UserTableViewStudent = ({ _userRole }) => {
                                                                 setSelectClassErr(true)
                                                             } else if (sectionId === undefined || sectionId === '' || sectionId == 'Select Section') {
                                                                 setSelectSectionErr(true)
+                                                            } else if (values.user_dob === "") {
+                                                                setSelectDOBErr(true);
                                                             } else {
                                                                 data = {
 
@@ -1182,12 +1187,22 @@ const UserTableViewStudent = ({ _userRole }) => {
                                                                                         error={touched.user_dob && errors.user_dob}
                                                                                         name="user_dob"
                                                                                         onBlur={handleBlur}
-                                                                                        onChange={handleChange}
+                                                                                        onChange={e => {
+                                                                                            setSelectDOBErr(false)
+                                                                                            handleChange(e)
+
+                                                                                        }}
                                                                                         type="date"
                                                                                         value={values.user_dob}
 
                                                                                     />
                                                                                     {touched.user_dob && errors.user_dob && <small className="text-danger form-text">{errors.user_dob}</small>}
+
+                                                                                    {selectDOBErr && (
+
+                                                                                        <small className="text-danger form-text">DOB required</small>
+
+                                                                                    )}
                                                                                 </div>
                                                                             </Col>
 
