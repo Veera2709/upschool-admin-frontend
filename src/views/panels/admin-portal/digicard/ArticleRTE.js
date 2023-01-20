@@ -76,7 +76,7 @@ function ArticleRTE({
             /** ['imageGallery'] */ // You must add the "imageGalleryUrl".
             ['fullScreen'],
             ['preview'],
-            ['math'],
+            ['math']
           ],
         }}
       />
