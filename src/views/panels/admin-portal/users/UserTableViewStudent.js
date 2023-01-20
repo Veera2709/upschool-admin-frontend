@@ -749,6 +749,7 @@ const UserTableViewStudent = ({ _userRole }) => {
 
     const classOption = async (e) => {
         // setDefaultSection({ value: '', label: 'Select Section' })
+        setSectionId('');
         console.log("class Option", e);
         setClassName_ID(e.value)
         const ClientClassId = await fetchSectionByClientClassId(e.value);

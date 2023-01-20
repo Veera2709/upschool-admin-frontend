@@ -47,6 +47,8 @@ const AllocateSection = ({ setOpenSectionAllocation, schoolId, teacherId }) => {
     const [sectionData, setSectionData] = useState([]);
     const [classData, setClassData] = useState();
     const [isLoading, setIsLoading] = useState(false);
+    const [selectIndex, SetSelectIndex] = useState();
+    
     const MySwal = withReactContent(Swal);
     const sweetAlertHandler = (alert) => {
         const MySwal = withReactContent(Swal);
@@ -159,11 +161,19 @@ const AllocateSection = ({ setOpenSectionAllocation, schoolId, teacherId }) => {
         data.splice(index, 1)
         setFormFields(data);
 
+        let data1 = [...sectionData]
+        data1.splice(index,1)
+        setSectionData(data1)
+
+        let data2 = [...classData]
+        data2.splice(index,1)
+        setClassData(data2)
     }
 
     const fetchClass = async () => {
         setIsLoading(true)
         const ClientClassId = await fetchClassBasedOnSchool(schoolId);
+        console.log("SchollIdForSection",schoolId);
         if (ClientClassId.Error) {
             console.log("ClientClassId.Error", ClientClassId.Error);
         } else {
@@ -249,6 +259,7 @@ const AllocateSection = ({ setOpenSectionAllocation, schoolId, teacherId }) => {
         } else {
             console.log('ClientClassId', ClientClassId.Items);
             const resultData = ClientClassId.Items
+            console.log("resultData",resultData);
             resultData.forEach((item, index) => {
                 multiDropDownValues.push({ value: item.section_id, label: item.section_name })
             })
@@ -268,6 +279,13 @@ const AllocateSection = ({ setOpenSectionAllocation, schoolId, teacherId }) => {
         setSectionData(sectionData)
         let data = [...classData]
         setClassData(data)
+    }
+
+    const SectionErr = (index)=>{
+        if(selectIndex === index){
+            SetSelectSectionErr(false)
+            SetSelectSection(false)
+        }
     }
 
     useEffect(() => {
@@ -322,6 +340,8 @@ const AllocateSection = ({ setOpenSectionAllocation, schoolId, teacherId }) => {
                                                                                 <CloseButton onClick={() => {
                                                                                     removeFields(index);
                                                                                     SetSecctionRepeat(false)
+                                                                                    // SetSelectSectionErr(false)
+                                                                                    SectionErr(index)
                                                                                 }} variant="white" />
                                                                             </Col>
                                                                         </Row>
@@ -349,6 +369,7 @@ const AllocateSection = ({ setOpenSectionAllocation, schoolId, teacherId }) => {
                                                                                         classOption(event, index);
                                                                                         handleDeleteEduItem(index);
                                                                                         SetSelectSection(true)
+                                                                                        SetSelectIndex(index)
                                                                                     }}
                                                                                 />
                                                                             )}
