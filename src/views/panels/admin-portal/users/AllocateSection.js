@@ -282,6 +282,7 @@ const AllocateSection = ({ setOpenSectionAllocation, schoolId, teacherId }) => {
     }
 
     const SectionErr = (index)=>{
+        setSectionValidation(false)
         if(selectIndex === index){
             SetSelectSectionErr(false)
             SetSelectSection(false)

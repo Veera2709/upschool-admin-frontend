@@ -314,11 +314,12 @@ const UserTableViewStudent = ({ _userRole }) => {
                     setDefaultSection({ value: sectionArr.section_id, label: sectionArr.section_name })
 
                     console.log("response.data.classList", response.data.classList.length);
-                    response.data.classList.forEach((item, index) => {
-                        colourOptions.push({ value: item.client_class_id, label: item.client_class_name })
-                    })
-                    setOptions(colourOptions)
-
+                    if (colourOptions.length <= 0) {
+                        response.data.classList.forEach((item, index) => {
+                            colourOptions.push({ value: item.client_class_id, label: item.client_class_name })
+                        })
+                        setOptions(colourOptions)
+                    }
                     setSchoolName_ID(response.data.schoolList);
                     // setPreviousSchool(schoolNameArr.school_name);
                     schoolNameArr === "" || schoolNameArr === undefined || schoolNameArr === "undefined" || schoolNameArr === "N.A." ? setPreviousSchool("Select School") : setPreviousSchool(schoolNameArr.school_name);
@@ -621,7 +622,7 @@ const UserTableViewStudent = ({ _userRole }) => {
 
                         <>
 
-                            <Button size="sm" className="btn btn-icon btn-rounded btn-info" onClick={(e) => saveUserId(e, responseData[index].student_id, responseData[index].user_role)}>
+                            <Button size="sm" className="btn btn-icon btn-rounded btn-info" onClick={(e) => { setSelectSectionErr(false); saveUserId(e, responseData[index].student_id, responseData[index].user_role) }}>
                                 <i className="feather icon-edit" /> &nbsp; Edit
                             </Button>{' '}
                             &nbsp;
@@ -817,7 +818,7 @@ const UserTableViewStudent = ({ _userRole }) => {
                                                 </Row>
                                             </React.Fragment>
 
-                                            <Modal dialogClassName="my-modal" show={isEditModalOpen} onHide={() => setIsEditModalOpen(false)}>
+                                            <Modal dialogClassName="my-modal" show={isEditModalOpen} onHide={(e) => { setIsEditModalOpen(false) }}>
                                                 <Modal.Header closeButton>
                                                     <Modal.Title as="h5">Update User</Modal.Title>
                                                 </Modal.Header>

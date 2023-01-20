@@ -625,29 +625,45 @@ const UserTableView = ({ _userRole }) => {
         <>
 
           {pageLocation === 'active-users' ? (
-
+            // responseData[index].user_role === "Teacher" ? ()
             <>
-              <Button size="sm" className="btn btn-icon btn-rounded btn-info" onClick={(e) => { setOpenSectionAllocation(true); setSchoolId(responseData[index].school_id); setTeacherId(responseData[index].teacher_id) }}>
-                <i className="feather icon-plus" /> &nbsp; Allocate Section
-              </Button>{' '}
-              &nbsp;
-              <Button size="sm" className="btn btn-icon btn-rounded btn-info" onClick={(e) => saveUserId(e, userId, responseData[index].user_role)}>
-                <i className="feather icon-edit" /> &nbsp; Edit
-              </Button>{' '}
-              &nbsp;
-              <Button
-                size="sm"
-                className="btn btn-icon btn-rounded btn-danger"
-                onClick={(e) => saveUserIdDelete(e, userId, responseData[index].user_role, 'Archived')}
-              >
-                <i className="feather icon-trash-2" /> &nbsp;Delete
-              </Button>
-              &nbsp;
-
+              {responseData[index].user_role === "Teacher" ? (
+                <>
+                  <Button size="sm" className="btn btn-icon btn-rounded btn-info" onClick={(e) => { setOpenSectionAllocation(true); setSchoolId(responseData[index].school_id); setTeacherId(responseData[index].teacher_id) }}>
+                    <i className="feather icon-plus" /> &nbsp; Allocate Section
+                  </Button>{' '}
+                  &nbsp;
+                  <Button size="sm" className="btn btn-icon btn-rounded btn-info" onClick={(e) => saveUserId(e, userId, responseData[index].user_role)}>
+                    <i className="feather icon-edit" /> &nbsp; Edit
+                  </Button>{' '}
+                  &nbsp;
+                  <Button
+                    size="sm"
+                    className="btn btn-icon btn-rounded btn-danger"
+                    onClick={(e) => saveUserIdDelete(e, userId, responseData[index].user_role, 'Archived')}
+                  >
+                    <i className="feather icon-trash-2" /> &nbsp;Delete
+                  </Button>
+                  &nbsp;
+                </>
+              ) : (
+                <>
+                  <Button size="sm" className="btn btn-icon btn-rounded btn-info" onClick={(e) => saveUserId(e, userId, responseData[index].user_role)}>
+                    <i className="feather icon-edit" /> &nbsp; Edit
+                  </Button>{' '}
+                  &nbsp;
+                  <Button
+                    size="sm"
+                    className="btn btn-icon btn-rounded btn-danger"
+                    onClick={(e) => saveUserIdDelete(e, userId, responseData[index].user_role, 'Archived')}
+                  >
+                    <i className="feather icon-trash-2" /> &nbsp;Delete
+                  </Button>
+                  &nbsp;
+                </>
+              )}
             </>
-
           ) : (
-
             <>
 
               <Button
@@ -1061,7 +1077,7 @@ const UserTableView = ({ _userRole }) => {
                                                 value={values.section}
 
                                               />
-                                          
+
                                               {touched.section && errors.section && <small className="text-danger form-text">{errors.section}</small>}
                                             </div>
                                           </Col>
