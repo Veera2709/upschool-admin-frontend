@@ -341,6 +341,8 @@ const DigiCard = () => {
     const fetchAllDigiCards = () => {
         setIsLoading(true);
         let digicardStatus = pageLocation === "active-digiCard" ? 'Active' : 'Archived';
+        let DigicardTyle = digicardStatus === "Active" ? "Active Digicards" : "Archived Digicards"
+        sessionStorage.setItem('digicard_type',DigicardTyle)
         axios.post(dynamicUrl.fetchAllDigiCards, {}, {
             headers: { Authorization: sessionStorage.getItem('user_jwt') }
         })
