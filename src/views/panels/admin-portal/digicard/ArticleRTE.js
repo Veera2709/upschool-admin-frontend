@@ -58,7 +58,11 @@ function ArticleRTE({
             'Helvetica',
             'Geneva',
             'Courier New',
-
+            "sans-serif",
+            "cursive",
+            "Mogra",
+            "monospace",
+            "Impact",
           ],
           preview: [{ pathpath: '/admin-portal/admin-dashboard' }
           ],
