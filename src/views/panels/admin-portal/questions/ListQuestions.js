@@ -49,10 +49,10 @@ const ListQuestions = () => {
             _setQuestionStatus('Reject');
         }
         else if (key === '5') {
-            _setQuestionStatus('Design Ready');
+            _setQuestionStatus('DesignReady');
         }
         else if (key === '6') {
-            _setQuestionStatus('Published');
+            _setQuestionStatus('Publish');
         } else {
             console.log("Invalid Tab Option!");
         }

@@ -210,7 +210,7 @@ const UserTableView = ({ _userRole }) => {
   const [isOpenSectionAllocation, setOpenSectionAllocation] = useState(false);
   const [schoolId, setSchoolId] = useState();
   const [teacherId, setTeacherId] = useState();
-
+  const [selectDOBErr, setSelectDOBErr] = useState(false);
 
 
   const [isLoading, setIsLoading] = useState(false);
@@ -864,7 +864,11 @@ const UserTableView = ({ _userRole }) => {
                               console.log(selectedSchoolID);
                               console.log(classNameRef.current.value);
 
-                              if (values.userRole === 'Teacher') {
+                              if (values.user_dob === "") {
+
+                                setSelectDOBErr(true);
+
+                              } else if (values.userRole === 'Teacher') {
 
                                 data = {
 
@@ -1177,12 +1181,21 @@ const UserTableView = ({ _userRole }) => {
                                             error={touched.user_dob && errors.user_dob}
                                             name="user_dob"
                                             onBlur={handleBlur}
-                                            onChange={handleChange}
+                                            onChange={e => {
+                                              setSelectDOBErr(false)
+                                              handleChange(e)
+                                            }}
                                             type="date"
                                             value={values.user_dob}
 
                                           />
                                           {touched.user_dob && errors.user_dob && <small className="text-danger form-text">{errors.user_dob}</small>}
+
+                                          {selectDOBErr && (
+
+                                            <small className="text-danger form-text">DOB required</small>
+
+                                          )}
                                         </div>
                                       </Col>
 
