@@ -517,7 +517,7 @@ const AddDigiCard = (
                     </Col>
                   </Row>
                   <Row>
-                    <Col sm='12'>
+                    <Col sm='12' style={{ position: "relative", zIndex: 10 }}>
                       <label className="floating-label" htmlFor="digicardtitleExcerpt">
                         <small className="text-danger"> </small>DigiCard Excerpt
                       </label>

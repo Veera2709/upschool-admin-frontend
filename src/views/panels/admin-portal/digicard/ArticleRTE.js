@@ -2,10 +2,8 @@ import React from "react";
 import "../digicard/Styles/article.css";
 import SunEditor from "suneditor-react";
 import "../digicard/Styles/suneditor.min.css";
-
 import katex from 'katex'
 import 'katex/dist/katex.min.css'
-
 import 'suneditor/dist/css/suneditor.min.css';
 // import EditTable from './Table'
 
@@ -42,7 +40,8 @@ function ArticleRTE({
         setOptions={{
           imageUploadSizeLimit: "250000",
           katex: katex,
-          plugins: plugins,
+          plugins:plugins,
+          // plugins:[listType],
           font: [
             'Arial',
             'tohoma',
@@ -57,12 +56,16 @@ function ArticleRTE({
             'Times',
             'Helvetica',
             'Geneva',
-            'Courier New',
             "sans-serif",
             "cursive",
             "Mogra",
             "monospace",
             "Impact",
+            "trebuchet ms",
+            "comic sans ms",
+            "verdana",
+            "arial black",
+            "tahoma",
           ],
           preview: [{ pathpath: '/admin-portal/admin-dashboard' }
           ],
@@ -80,7 +83,8 @@ function ArticleRTE({
             /** ['imageGallery'] */ // You must add the "imageGalleryUrl".
             ['fullScreen'],
             ['preview'],
-            ['math']
+            ['math'],
+            // ["specialCharacters"]
           ],
         }}
       />
