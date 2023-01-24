@@ -483,7 +483,15 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
 
                                         ))
                                         }
-                                        <small className="text-danger form-text" style={{ display: topicDuration ? 'none' : 'block' }}>Quiz Minutes are required!</small>
+                                        <Row>
+                                            <Col sm={4}>
+                                            </Col>
+                                            <Col sm={6}>
+                                                <small className="text-danger form-text" style={{ display: topicDuration ? 'none' : 'block' }}>Quiz Minutes are required!</small>
+                                            </Col>
+                                        </Row>
+
+
                                         <p></p>
                                         <button type="button" className="btn btn-primary" onClick={addTopic} >Add another Quiz</button>
 
