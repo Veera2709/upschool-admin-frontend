@@ -93,14 +93,17 @@ const AddDigiCard = (
   };
 
 
-  function encodeImageFileAsURL() {
-    var file = document.getElementById('digicard_image').files[0];
-    var reader = new FileReader();
-    reader.onloadend = function () {
-      console.log('RESULT', reader.result)
-      setImgURL(reader.result)
+  function encodeImageFileAsURL(e) {
+    let FileLength = e.target.files.length
+    if (FileLength === 1) {
+      var file = document.getElementById('digicard_image').files[0];
+      var reader = new FileReader();
+      reader.onloadend = function () {
+        // console.log('RESULT', reader.result)
+        setImgURL(reader.result)
+      }
+      reader.readAsDataURL(file);
     }
-    reader.readAsDataURL(file);
   }
   const sweetAlertHandler = (alert) => {
     MySwal.fire({
@@ -112,7 +115,14 @@ const AddDigiCard = (
 
 
   const previewImage = (e) => {
-    setImgFile(URL.createObjectURL(e.target.files[0]));
+    let FileLength = e.target.files.length
+    console.log("FileLength", FileLength);
+    FileLength === 1 ? setImgFile(URL.createObjectURL(e.target.files[0])) : setImgFile()
+    // if(FileLength===1){
+    //   setImgFile(URL.createObjectURL(e.target.files[0]))
+    // }else{
+    //   setImgFile()
+    // }
   }
 
 
@@ -190,6 +200,8 @@ const AddDigiCard = (
   }
 
 
+
+
   return (
     <>
       <React.Fragment>
@@ -234,7 +246,7 @@ const AddDigiCard = (
                 digicardtitle: Yup.string()
                   .trim()
                   .min(2, Constants.AddDigiCard.DigiCardtitleTooShort)
-                  .max(50, Constants.AddDigiCard.DigiCardtitleTooLong)
+                  .max(30, Constants.AddDigiCard.DigiCardtitleTooLong)
                   .matches(Constants.AddDigiCard.DigiCardtitleRegex, Constants.AddDigiCard.DigiCardtitleValidation)
                   .required(Constants.AddDigiCard.DigiCardtitleRequired),
                 digicard_image: Yup.string()
@@ -417,15 +429,14 @@ const AddDigiCard = (
                         </label>
                         <input
                           className="form-control"
-                          error={touched.digicard_image && errors.digicard_image}
                           name="digicard_image"
                           id="digicard_image"
                           onBlur={handleBlur}
                           onChange={(e) => {
                             handleChange(e);
-                            previewImage(e);
                             encodeImageFileAsURL(e);
-                            setImgValidation(true)
+                            setImgValidation(true);
+                            previewImage(e);
                           }}
                           type="file"
                           value={values.digicard_image}
