@@ -1038,7 +1038,8 @@ const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive 
                                                         setFieldTouched('address_line1_2', false, false);
                                                         setFieldTouched('contact_name2', false, false);
 
-                                                    }} onChange={handleCopyAddress} />
+                                                    }}
+                                                    onChange={handleCopyAddress} />
 
                                                 {errors.submit && (
                                                     <Col sm={12}>
