@@ -13,6 +13,7 @@ import dynamicUrl from '../../../../helper/dynamicUrls';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import { SessionStorage } from '../../../../util/SessionStorage';
 import BasicSpinner from '../../../../helper/BasicSpinner';
+import * as Constants from '../../../../helper/constants';
 
 const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEditConcept, fetchAllConceptsData }) => {
 
@@ -62,19 +63,6 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
                 }
             }
             setDropdownDigicards(valuesArr);
-        }
-
-        if (_relatedConcepts) {
-
-            let valuesArr = [];
-
-            for (let index = 0; index < _relatedConcepts.length; index++) {
-
-                if (_relatedConcepts[index]) {
-                    valuesArr.push({ value: _relatedConcepts[index].concept_id, label: _relatedConcepts[index].concept_title })
-                }
-            }
-            setDropdownRelatedConcepts(valuesArr)
         }
 
         axios
@@ -192,7 +180,7 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
                             setIsLoading(false);
                         }
 
-                    } getPreviousConcepts(0)
+                    } getPreviousConcepts(0);
 
                 } else {
 
@@ -236,7 +224,26 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
 
     }, []);
 
+    useEffect(() => {
 
+        console.log(previousData.concept_title);
+
+        if (_relatedConcepts) {
+
+            let valuesArr = [];
+
+            for (let index = 0; index < _relatedConcepts.length; index++) {
+
+                console.log(_relatedConcepts[index].concept_title !== previousData.concept_title);
+                console.log(_relatedConcepts[index].concept_title, previousData.concept_title);
+
+                if (_relatedConcepts[index] && _relatedConcepts[index].concept_title !== previousData.concept_title) {
+                    valuesArr.push({ value: _relatedConcepts[index].concept_id, label: _relatedConcepts[index].concept_title })
+                }
+            }
+            setDropdownRelatedConcepts(valuesArr);
+        }
+    }, [previousData]);
 
     const handleDeleteKeywords = (i, states) => {
         const newTags = tags.slice(0);
@@ -321,7 +328,11 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
                                             }
                                             validationSchema={
                                                 Yup.object().shape({
-                                                    conceptTitle: Yup.string().max(255).required('Concept Title is required')
+                                                    conceptTitle: Yup.string()
+                                                        .trim()
+                                                        .min(2, Constants.AddConcepts.ConceptTitleTooShort)
+                                                        .max(32, Constants.AddConcepts.ConceptTitleTooLong)
+                                                        .required(Constants.AddConcepts.ConceptTitleRequired),
 
                                                 })
                                             }

@@ -11,6 +11,7 @@ import { useHistory } from 'react-router-dom';
 
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import dynamicUrl from '../../../../helper/dynamicUrls';
+import * as Constants from '../../../../helper/constants';
 
 const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchAllConceptsData, setDigicardsAndConcepts }) => {
 
@@ -138,7 +139,11 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
                             }
                             validationSchema={
                                 Yup.object().shape({
-                                    conceptTitle: Yup.string().max(255).required('Concept Title is required')
+                                    conceptTitle: Yup.string()
+                                        .trim()
+                                        .min(2, Constants.AddConcepts.ConceptTitleTooShort)
+                                        .max(32, Constants.AddConcepts.ConceptTitleTooLong)
+                                        .required(Constants.AddConcepts.ConceptTitleRequired),
 
                                 })
                             }

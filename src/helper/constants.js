@@ -79,9 +79,9 @@ export const AddDigiCard = {
 };
 export const AddUnit = {
   
-  UnittitleRequired: 'Unit title is required!',
-  UnittitleTooShort: 'Unit title is too short!',
-  UnittitleTooLong: "Unit title is too long!",
+  UnittitleRequired: 'Unit Title is required!',
+  UnittitleTooShort: 'Unit Title is too short!',
+  UnittitleTooLong: "Unit Title is too long!",
   DescriptionRequired: "Unit Description is required!",
 };
 
@@ -90,21 +90,34 @@ export const AddClasses = {
   ClasstitleTooLong: 'Class Title is too Long',
   ClasstitleRequired: 'Class Title is required!',
 };
+
 export const AddTopic = {
   
-  TopictitleRequired: 'Topic title is required!',
+  TopictitleRequired: 'Topic Title is required!',
   QuizMinutesRequired: 'Quiz Minutes are required!',
-  TopictitleTooShort: 'Topic title is too short!',
-  TopictitleTooLong: "Topic title is too long!",
+  TopictitleTooShort: 'Topic Title is too short!',
+  TopictitleTooLong: "Topic Title is too long!",
   DescriptionRequired:" Topic Description is required!"
+};
+
+export const AddConcepts = {
+  ConceptTitleRequired: 'Concept Title required!',
+  ConceptTitleTooShort: 'Concept Title is too short!',
+  ConceptTitleTooLong: "Concept Title is too long!"
+};
+
+export const AddSubjects = {
+  SubjectTitleRequired: 'Subject Title required!',
+  SubjectTitleTooShort: 'Subject Title is too short!',
+  SubjectTitleTooLong: "Subject Title is too long!"
 };
 
 export const AddSection = {
   
   SectionTitleRequired: 'Section name is required!',
   QuizMinutesRequired: 'Quiz Minutes are required!',
-  TopictitleTooShort: 'Topic title is too short!',
-  TopictitleTooLong: "Topic title is too long!",
+  TopictitleTooShort: 'Topic Title is too short!',
+  TopictitleTooLong: "Topic Title is too long!",
   DescriptionRequired:" Topic Description is required!"
 };
 
