@@ -185,7 +185,7 @@ const AddChapter = ({ setOpenAddChapter }) => {
                     chaptertitle: Yup.string()
                         .trim()
                         .min(2, Constants.AddDigiCard.ChaptertitleTooShort)
-                        .max(30, Constants.AddDigiCard.ChaptertitleTooLong)
+                        .max(32, Constants.AddDigiCard.ChaptertitleTooLong)
                         .required(Constants.AddDigiCard.ChaptertitleRequired),
                 })}
 

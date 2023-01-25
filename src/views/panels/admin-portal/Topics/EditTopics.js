@@ -153,7 +153,7 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                 console.log("allTopicsData", allTopicsData.Items);
                 let resultTopicData = allTopicsData.Items
                 resultTopicData.forEach((item, index) => {
-                    if (item.topic_status === 'Active') {
+                    if (item.topic_status === 'Active' && item.topic_id!=topicId ) {
                         console.log();
                         topicArr.push({ value: item.topic_id, label: item.topic_title })
                     }
@@ -263,6 +263,8 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                                 validationSchema={Yup.object().shape({
                                     topic_title: Yup.string()
                                         .trim()
+                                        .min(2, Constants.AddTopic.TopictitleTooShort)
+                                        .max(32, Constants.AddTopic.TopictitleTooLong)
                                         .required(Constants.AddTopic.TopictitleRequired),
                                     topic_description: Yup.string()
                                         .trim()
@@ -483,7 +485,15 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
 
                                         ))
                                         }
-                                        <small className="text-danger form-text" style={{ display: topicDuration ? 'none' : 'block' }}>Quiz Minutes are required!</small>
+                                        <Row>
+                                            <Col sm={4}>
+                                            </Col>
+                                            <Col sm={6}>
+                                                <small className="text-danger form-text" style={{ display: topicDuration ? 'none' : 'block' }}>Quiz Minutes are required!</small>
+                                            </Col>
+                                        </Row>
+
+
                                         <p></p>
                                         <button type="button" className="btn btn-primary" onClick={addTopic} >Add another Quiz</button>
 

@@ -246,7 +246,7 @@ const AddDigiCard = (
                 digicardtitle: Yup.string()
                   .trim()
                   .min(2, Constants.AddDigiCard.DigiCardtitleTooShort)
-                  .max(30, Constants.AddDigiCard.DigiCardtitleTooLong)
+                  .max(32, Constants.AddDigiCard.DigiCardtitleTooLong)
                   .matches(Constants.AddDigiCard.DigiCardtitleRegex, Constants.AddDigiCard.DigiCardtitleValidation)
                   .required(Constants.AddDigiCard.DigiCardtitleRequired),
                 digicard_image: Yup.string()
@@ -528,7 +528,7 @@ const AddDigiCard = (
                     </Col>
                   </Row>
                   <Row>
-                    <Col sm='12' style={{ position: "relative", zIndex: 10 }}>
+                    <Col sm='12' >
                       <label className="floating-label" htmlFor="digicardtitleExcerpt">
                         <small className="text-danger"> </small>DigiCard Excerpt
                       </label>

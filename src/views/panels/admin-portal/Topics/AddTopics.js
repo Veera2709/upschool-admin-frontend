@@ -214,7 +214,7 @@ const AddTopics = ({ setOpenAddTopic }) => {
                     topic_title: Yup.string()
                         .trim()
                         .min(2, Constants.AddTopic.TopictitleTooShort)
-                        .max(30, Constants.AddTopic.TopictitleTooLong)
+                        .max(32, Constants.AddTopic.TopictitleTooLong)
                         .required(Constants.AddTopic.TopictitleRequired),
                     duration: Yup.string()
                         .trim()
@@ -359,7 +359,6 @@ const AddTopics = ({ setOpenAddTopic }) => {
                                                 autoComplete='off'
                                                 onBlur={handleBlur}
                                             />
-                                            {touched.duration && errors.duration && <small className="text-danger form-text">{errors.duration}</small>}
 
                                         </div>
                                         {topicQuiz.length === 1 ? "" :
@@ -375,7 +374,13 @@ const AddTopics = ({ setOpenAddTopic }) => {
                                 </div>
                             </div>
                         ))}
-
+                        <Row>
+                            <Col sm={4}>
+                            </Col>
+                            <Col sm={6}>
+                                {touched.duration && errors.duration && <small className="text-danger form-text">{errors.duration}</small>}
+                            </Col>
+                        </Row>
                         <p></p>
                         <button type="button" className="btn btn-primary" onClick={addTopic} >Add another Quiz</button>
 

@@ -130,7 +130,7 @@ const AddClass = ({ setOpenAddClass }) => {
           classTitle: Yup.string()
             .trim()
             .min(2, Constants.AddClasses.ClasstitleTooShort)
-            .max(30, Constants.AddClasses.ClasstitleTooLong)
+            .max(32, Constants.AddClasses.ClasstitleTooLong)
             .required(Constants.AddClasses.ClasstitleRequired),
         })}
         onSubmit={async (

@@ -215,7 +215,7 @@ const EditDigiCard = () => {
                                 digicardtitle: Yup.string()
                                     .trim()
                                     .min(2, Constants.AddDigiCard.DigiCardtitleTooShort)
-                                    .max(50, Constants.AddDigiCard.DigiCardtitleTooLong)
+                                    .max(32, Constants.AddDigiCard.DigiCardtitleTooLong)
                                     .matches(Constants.AddDigiCard.DigiCardtitleRegex, Constants.AddDigiCard.DigiCardtitleValidation)
                                     .required(Constants.AddDigiCard.DigiCardtitleRequired),
                             })}
