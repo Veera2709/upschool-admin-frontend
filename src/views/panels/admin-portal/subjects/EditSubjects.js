@@ -13,6 +13,7 @@ import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import { SessionStorage } from '../../../../util/SessionStorage';
 import { useHistory } from 'react-router-dom';
 import BasicSpinner from '../../../../helper/BasicSpinner';
+import * as Constants from '../../../../helper/constants';
 
 const EditSubjects = ({ _units, _relatedSubjects, editSubjectID, setIsOpenEditSubject, fetchAllSubjectsData }) => {
 
@@ -65,19 +66,6 @@ const EditSubjects = ({ _units, _relatedSubjects, editSubjectID, setIsOpenEditSu
                 }
             }
             setDropdownUnits(valuesArr);
-        }
-
-        if (_relatedSubjects) {
-
-            let valuesArr = [];
-
-            for (let index = 0; index < _relatedSubjects.length; index++) {
-
-                if (_relatedSubjects[index]) {
-                    valuesArr.push({ value: _relatedSubjects[index].subject_id, label: _relatedSubjects[index].subject_title })
-                }
-            }
-            setDropdownRelatedSubjects(valuesArr)
         }
 
         axios
@@ -222,7 +210,7 @@ const EditSubjects = ({ _units, _relatedSubjects, editSubjectID, setIsOpenEditSu
 
                         setIsLoading(false);
                         sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
-                        
+
                     }
 
 
@@ -241,7 +229,20 @@ const EditSubjects = ({ _units, _relatedSubjects, editSubjectID, setIsOpenEditSu
 
     }, []);
 
+    useEffect(() => {
+        if (_relatedSubjects && previousData.subject_title) {
 
+            let valuesArr = [];
+
+            for (let index = 0; index < _relatedSubjects.length; index++) {
+
+                if (_relatedSubjects[index] && _relatedSubjects[index].subject_title !== previousData.subject_title) {
+                    valuesArr.push({ value: _relatedSubjects[index].subject_id, label: _relatedSubjects[index].subject_title })
+                }
+            }
+            setDropdownRelatedSubjects(valuesArr)
+        }
+    }, [previousData])
 
     const handleDeleteKeywords = (i, states) => {
         const newTags = tags.slice(0);
@@ -327,8 +328,15 @@ const EditSubjects = ({ _units, _relatedSubjects, editSubjectID, setIsOpenEditSu
                                             }
                                             validationSchema={
                                                 Yup.object().shape({
-                                                    subjectTitle: Yup.string().max(255).required('Subject Title is required'),
-                                                    description: Yup.string().max(255).required('Subject Description is required')
+                                                    subjectTitle: Yup.string()
+                                                        .trim()
+                                                        .min(2, Constants.AddSubjects.SubjectTitleTooShort)
+                                                        .max(32, Constants.AddSubjects.SubjectTitleTooLong)
+                                                        .required(Constants.AddSubjects.SubjectTitleRequired),
+                                                    description: Yup.string()
+                                                        .trim()
+                                                        .min(2, Constants.AddSubjects.SubjectTitleTooShort)
+                                                        .required(Constants.AddSubjects.SubjectTitleRequired),
 
                                                 })
                                             }

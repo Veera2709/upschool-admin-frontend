@@ -7,10 +7,11 @@ import ReactTags from 'react-tag-autocomplete';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import { Row, Col } from 'react-bootstrap';
-import useFullPageLoader from '../../../../helper/useFullPageLoader';
-import dynamicUrl from '../../../../helper/dynamicUrls';
 import { useHistory } from 'react-router-dom';
 
+import useFullPageLoader from '../../../../helper/useFullPageLoader';
+import dynamicUrl from '../../../../helper/dynamicUrls';
+import * as Constants from '../../../../helper/constants';
 
 const AddSubjects = ({ _units, _relatedSubjects, setIsOpenAddSubject, fetchAllSubjectsData }) => {
 
@@ -138,9 +139,15 @@ const AddSubjects = ({ _units, _relatedSubjects, setIsOpenAddSubject, fetchAllSu
                             }
                             validationSchema={
                                 Yup.object().shape({
-                                    subjectTitle: Yup.string().max(255).required('Subject Title is required'),
-                                    description: Yup.string().max(255).required('Subject Description is required')
-
+                                    subjectTitle: Yup.string()
+                                        .trim()
+                                        .min(2, Constants.AddSubjects.SubjectTitleTooShort)
+                                        .max(32, Constants.AddSubjects.SubjectTitleTooLong)
+                                        .required(Constants.AddSubjects.SubjectTitleRequired),
+                                    description: Yup.string()
+                                        .trim()
+                                        .min(2, Constants.AddSubjects.SubjectTitleTooShort)
+                                        .required(Constants.AddSubjects.SubjectTitleRequired),
                                 })
                             }
                             onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {

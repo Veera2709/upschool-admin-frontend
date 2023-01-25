@@ -186,13 +186,7 @@ const QuestionsTableView = ({ _questionStatus }) => {
 
   const history = useHistory();
   const [userData, setUserData] = useState([]);
-  const [individualUserData, setIndividualUserData] = useState([]);
-  const [userDOB, setUserDOB] = useState('');
   const [loader, showLoader, hideLoader] = useFullPageLoader();
-  const [className_ID, setClassName_ID] = useState({});
-  const [schoolName_ID, setSchoolName_ID] = useState({});
-  const [previousSchool, setPreviousSchool] = useState('');
-  const [previousClass, setPreviousClass] = useState('');
   const [_userID, _setUserID] = useState('');
 
   const [isOpen, setIsOpen] = useState(false);
@@ -202,12 +196,7 @@ const QuestionsTableView = ({ _questionStatus }) => {
   const [isLoading, setIsLoading] = useState(false);
   const { user_id } = decodeJWT(sessionStorage.getItem('user_jwt'));
   const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
-  const [selectClassErr, setSelectClassErr] = useState(false);
   const [_data, _setData] = useState([]);
-  const classNameRef = useRef('');
-  const schoolNameRef = useRef('');
-
-  const phoneRegExp = /^(\+91[\-\s]?)?[0]?(91)?[6789]\d{9}$/;
 
   const MySwal = withReactContent(Swal);
 
@@ -410,7 +399,7 @@ const QuestionsTableView = ({ _questionStatus }) => {
             <>
 
               {
-                sessionStorage.getItem('question_status') === 'Save' && (
+                (sessionStorage.getItem('question_status') === 'Save' || sessionStorage.getItem('question_status') === 'Reject') && (
                   <>
                     <Button
                       size="sm"
@@ -433,7 +422,7 @@ const QuestionsTableView = ({ _questionStatus }) => {
               }
 
               {
-                sessionStorage.getItem('question_status') === 'Submit' && (
+                (sessionStorage.getItem('question_status') !== 'Save' && sessionStorage.getItem('question_status') !== 'Reject') && (
                   <>
 
                     <Button
