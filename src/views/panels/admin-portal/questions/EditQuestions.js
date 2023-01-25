@@ -610,6 +610,701 @@ const EditQuestions = () => {
 
                                                         if (sessionStorage.getItem('click_event') === "" || sessionStorage.getItem('click_event') === undefined || sessionStorage.getItem('click_event') === "undefined" || sessionStorage.getItem('click_event') === null) {
 
+                                                        } else if (sessionStorage.getItem('click_event') === "SaveAsNew") {
+
+                                                            if (isEmptyArray(selectedQuestionType)) {
+                                                                setQuestionTypeErrMsg(true);
+                                                            } else if (articleDataTitle === "" || articleDataTitle === undefined || articleDataTitle === 'undefined' || articleDataTitle === "<p><br></p>" || articleDataTitle === "<p></p>" || articleDataTitle === "<br>") {
+                                                                setQuestionEmptyErrMsg(true);
+                                                            } else if (answerOptionsForm) {
+
+                                                                let tempWeightage = answerOptionsForm.filter(value => value.answer_weightage < 0);
+
+                                                                if (tempWeightage.length !== 0) {
+                                                                    setAnsWeightageErrMsg(true);
+                                                                } else {
+
+                                                                    console.log('Data inserted!');
+
+                                                                    let payLoad = {
+
+                                                                        question_type: selectedQuestionType,
+                                                                        question_voice_note: selectedQuestionVoiceNote,
+                                                                        question_content: articleDataTitle,
+                                                                        answer_type: selectedAnswerType,
+                                                                        answers_of_question: answerOptionsForm,
+                                                                        question_status: 'Save',
+                                                                        question_disclaimer: values.question_disclaimer === "" ? "" : values.question_disclaimer,
+                                                                        show_math_keyboard: showMathKeyboard
+                                                                    }
+
+                                                                    console.log("payLoad", payLoad);
+
+                                                                    let allFilesData = [];
+
+                                                                    if (selectedAnswerType === "Image") {
+
+                                                                        fileValues.forEach((fileName) => {
+                                                                            let selectedFile = fileName;
+                                                                            console.log('File is here!');
+                                                                            console.log(selectedFile);
+                                                                            if (selectedFile) {
+                                                                                allFilesData.push(selectedFile);
+                                                                            }
+                                                                        });
+
+                                                                        console.log(allFilesData);
+
+                                                                        if (allFilesData.length === 0) {
+
+                                                                            showLoader();
+                                                                            axios
+                                                                                .post(
+                                                                                    dynamicUrl.addQuestions,
+                                                                                    {
+                                                                                        data: payLoad
+                                                                                    },
+                                                                                    {
+                                                                                        headers: { Authorization: sessionStorage.getItem('user_jwt') }
+                                                                                    }
+                                                                                )
+                                                                                .then((response) => {
+
+                                                                                    console.log(response.data);
+
+                                                                                    let result = response.status === 200;
+
+                                                                                    if (result) {
+
+                                                                                        console.log('inside res');
+
+                                                                                        let uploadParamsQuestionsNote = response.data.question_voice_note;
+                                                                                        let uploadParamsAnswerOptions = response.data.answers_options;
+
+                                                                                        hideLoader();
+
+                                                                                        if (Array.isArray(uploadParamsQuestionsNote)) {
+
+                                                                                            for (let index = 0; index < uploadParamsQuestionsNote.length; index++) {
+
+                                                                                                let keyNameArr = Object.keys(uploadParamsQuestionsNote[index]);
+                                                                                                let keyName = keyNameArr[1];
+
+                                                                                                let blobField = voiceNoteFileValues;
+                                                                                                console.log({ blobField });
+
+                                                                                                let tempObj = uploadParamsQuestionsNote[index];
+                                                                                                let result = fetch(tempObj[keyName], {
+                                                                                                    method: 'PUT',
+                                                                                                    body: blobField
+                                                                                                });
+
+                                                                                                console.log({ result });
+                                                                                            }
+
+
+                                                                                            if (Array.isArray(uploadParamsAnswerOptions)) {
+
+                                                                                                for (let index = 0; index < uploadParamsAnswerOptions.length; index++) {
+
+                                                                                                    let keyNameArr = Object.keys(uploadParamsAnswerOptions[index]);
+                                                                                                    let keyName = keyNameArr[1];
+
+                                                                                                    console.log(fileValues);
+
+                                                                                                    let blobField = fileValues[index];
+                                                                                                    console.log({ blobField });
+
+                                                                                                    let tempObjFile = uploadParamsAnswerOptions[index];
+
+                                                                                                    let result = fetch(tempObjFile[keyName], {
+                                                                                                        method: 'PUT',
+                                                                                                        body: blobField
+                                                                                                    });
+
+                                                                                                    console.log({ result });
+                                                                                                }
+
+                                                                                                const MySwal = withReactContent(Swal);
+
+                                                                                                MySwal.fire({
+
+                                                                                                    title: 'Question saved as new Item!',
+                                                                                                    icon: 'success',
+                                                                                                }).then((willDelete) => {
+
+                                                                                                    history.push('/admin-portal/active-questions');
+                                                                                                    // window.location.reload();
+
+                                                                                                });
+
+                                                                                            } else {
+
+                                                                                                console.log('Answer option files not uploaded!');
+                                                                                            }
+
+
+                                                                                        } else {
+
+                                                                                            if (Array.isArray(uploadParamsAnswerOptions)) {
+
+                                                                                                for (let index = 0; index < uploadParamsAnswerOptions.length; index++) {
+
+                                                                                                    let keyNameArr = Object.keys(uploadParamsAnswerOptions[index]);
+                                                                                                    let keyName = keyNameArr[1];
+
+                                                                                                    let blobField = fileValues[index];
+                                                                                                    console.log({ blobField });
+
+                                                                                                    let tempObjFile = uploadParamsAnswerOptions[index];
+
+                                                                                                    let result = fetch(tempObjFile[keyName], {
+                                                                                                        method: 'PUT',
+                                                                                                        body: blobField
+                                                                                                    });
+
+                                                                                                    console.log({ result });
+                                                                                                }
+
+                                                                                                const MySwal = withReactContent(Swal);
+                                                                                                MySwal.fire({
+
+                                                                                                    title: 'Question saved as new Item!',
+                                                                                                    icon: 'success',
+                                                                                                }).then((willDelete) => {
+
+                                                                                                    history.push('/admin-portal/active-questions');
+                                                                                                    // window.location.reload();
+
+                                                                                                })
+
+                                                                                                console.log('Question Voice Note not uploaded');
+                                                                                            }
+                                                                                        }
+
+
+                                                                                    } else {
+
+                                                                                        console.log('else res');
+                                                                                        hideLoader();
+
+                                                                                    }
+                                                                                })
+                                                                                .catch((error) => {
+                                                                                    if (error.response) {
+                                                                                        hideLoader();
+
+                                                                                        console.log(error.response.data);
+
+                                                                                    } else if (error.request) {
+
+                                                                                        console.log(error.request);
+                                                                                        hideLoader();
+
+                                                                                    } else {
+
+                                                                                        console.log('Error', error.message);
+                                                                                        hideLoader();
+                                                                                    }
+                                                                                });
+
+                                                                        } else {
+                                                                            if (areFilesInvalid(allFilesData) !== 0) {
+                                                                                sweetAlertHandler(
+                                                                                    {
+                                                                                        title: 'Warning',
+                                                                                        type: 'warning',
+                                                                                        text: 'Supported file formats are .png, .jpg, .jpeg. Uploaded files should be less than 2MB. '
+                                                                                    }
+                                                                                );
+                                                                            } else {
+
+                                                                                showLoader();
+                                                                                axios
+                                                                                    .post(
+                                                                                        dynamicUrl.addQuestions,
+                                                                                        {
+                                                                                            data: payLoad
+                                                                                        },
+                                                                                        {
+                                                                                            headers: { Authorization: sessionStorage.getItem('user_jwt') }
+                                                                                        }
+                                                                                    )
+                                                                                    .then((response) => {
+
+                                                                                        console.log(response.data);
+
+                                                                                        let result = response.status === 200;
+
+                                                                                        if (result) {
+
+                                                                                            console.log('inside res');
+
+                                                                                            let uploadParamsQuestionsNote = response.data.question_voice_note;
+                                                                                            let uploadParamsAnswerOptions = response.data.answers_options;
+
+                                                                                            hideLoader();
+
+                                                                                            if (Array.isArray(uploadParamsQuestionsNote)) {
+
+                                                                                                for (let index = 0; index < uploadParamsQuestionsNote.length; index++) {
+
+                                                                                                    let keyNameArr = Object.keys(uploadParamsQuestionsNote[index]);
+                                                                                                    let keyName = keyNameArr[1];
+
+                                                                                                    let blobField = voiceNoteFileValues;
+                                                                                                    console.log({ blobField });
+
+                                                                                                    let tempObj = uploadParamsQuestionsNote[index];
+                                                                                                    let result = fetch(tempObj[keyName], {
+                                                                                                        method: 'PUT',
+                                                                                                        body: blobField
+                                                                                                    });
+
+                                                                                                    console.log({ result });
+                                                                                                }
+
+
+                                                                                                if (Array.isArray(uploadParamsAnswerOptions)) {
+
+                                                                                                    for (let index = 0; index < uploadParamsAnswerOptions.length; index++) {
+
+                                                                                                        let keyNameArr = Object.keys(uploadParamsAnswerOptions[index]);
+                                                                                                        let keyName = keyNameArr[1];
+
+                                                                                                        console.log(fileValues);
+
+                                                                                                        let blobField = fileValues[index];
+                                                                                                        console.log({ blobField });
+
+                                                                                                        let tempObjFile = uploadParamsAnswerOptions[index];
+
+                                                                                                        let result = fetch(tempObjFile[keyName], {
+                                                                                                            method: 'PUT',
+                                                                                                            body: blobField
+                                                                                                        });
+
+                                                                                                        console.log({ result });
+                                                                                                    }
+
+                                                                                                    const MySwal = withReactContent(Swal);
+
+                                                                                                    MySwal.fire({
+
+                                                                                                        title: 'Question saved as new Item!',
+                                                                                                        icon: 'success',
+                                                                                                    }).then((willDelete) => {
+
+                                                                                                        history.push('/admin-portal/active-questions');
+                                                                                                        // window.location.reload();
+
+                                                                                                    });
+
+                                                                                                } else {
+
+                                                                                                    console.log('Answer option files not uploaded!');
+                                                                                                }
+
+
+                                                                                            } else {
+
+                                                                                                if (Array.isArray(uploadParamsAnswerOptions)) {
+
+                                                                                                    for (let index = 0; index < uploadParamsAnswerOptions.length; index++) {
+
+                                                                                                        let keyNameArr = Object.keys(uploadParamsAnswerOptions[index]);
+                                                                                                        let keyName = keyNameArr[1];
+
+                                                                                                        let blobField = fileValues[index];
+                                                                                                        console.log({ blobField });
+
+                                                                                                        let tempObjFile = uploadParamsAnswerOptions[index];
+
+                                                                                                        let result = fetch(tempObjFile[keyName], {
+                                                                                                            method: 'PUT',
+                                                                                                            body: blobField
+                                                                                                        });
+
+                                                                                                        console.log({ result });
+                                                                                                    }
+
+                                                                                                    const MySwal = withReactContent(Swal);
+                                                                                                    MySwal.fire({
+
+                                                                                                        title: 'Question saved as new Item!',
+                                                                                                        icon: 'success',
+                                                                                                    }).then((willDelete) => {
+
+                                                                                                        history.push('/admin-portal/active-questions');
+                                                                                                        // window.location.reload();
+
+                                                                                                    })
+
+                                                                                                    console.log('Question Voice Note not uploaded');
+                                                                                                }
+                                                                                            }
+
+
+                                                                                        } else {
+
+                                                                                            console.log('else res');
+                                                                                            hideLoader();
+
+                                                                                        }
+                                                                                    })
+                                                                                    .catch((error) => {
+                                                                                        if (error.response) {
+                                                                                            hideLoader();
+
+                                                                                            console.log(error.response.data);
+
+                                                                                        } else if (error.request) {
+
+                                                                                            console.log(error.request);
+                                                                                            hideLoader();
+
+                                                                                        } else {
+
+                                                                                            console.log('Error', error.message);
+                                                                                            hideLoader();
+                                                                                        }
+                                                                                    });
+                                                                            }
+                                                                        }
+
+                                                                    } else if (selectedAnswerType === "Audio File") {
+
+                                                                        fileValues.forEach((fileName) => {
+                                                                            let selectedFile = fileName;
+                                                                            console.log('File is here!');
+                                                                            console.log(selectedFile);
+                                                                            if (selectedFile) {
+                                                                                allFilesData.push(selectedFile);
+                                                                            }
+                                                                        });
+
+                                                                        console.log(allFilesData);
+
+                                                                        if (allFilesData.length === 0) {
+
+                                                                            showLoader();
+                                                                            axios
+                                                                                .post(
+                                                                                    dynamicUrl.addQuestions,
+                                                                                    {
+                                                                                        data: payLoad
+                                                                                    },
+                                                                                    {
+                                                                                        headers: { Authorization: sessionStorage.getItem('user_jwt') }
+                                                                                    }
+                                                                                )
+                                                                                .then((response) => {
+
+                                                                                    console.log(response.data);
+
+                                                                                    let result = response.status === 200;
+
+                                                                                    if (result) {
+
+                                                                                        console.log('inside res');
+
+                                                                                        let uploadParamsQuestionsNote = response.data.question_voice_note;
+                                                                                        let uploadParamsAnswerOptions = response.data.answers_options;
+
+                                                                                        hideLoader();
+
+                                                                                        if (Array.isArray(uploadParamsQuestionsNote)) {
+
+                                                                                            for (let index = 0; index < uploadParamsQuestionsNote.length; index++) {
+
+                                                                                                let keyNameArr = Object.keys(uploadParamsQuestionsNote[index]);
+                                                                                                let keyName = keyNameArr[1];
+
+                                                                                                let blobField = voiceNoteFileValues;
+                                                                                                console.log({ blobField });
+
+                                                                                                let tempObj = uploadParamsQuestionsNote[index];
+                                                                                                let result = fetch(tempObj[keyName], {
+                                                                                                    method: 'PUT',
+                                                                                                    body: blobField
+                                                                                                });
+
+                                                                                                console.log({ result });
+                                                                                            }
+
+
+                                                                                            if (Array.isArray(uploadParamsAnswerOptions)) {
+
+                                                                                                for (let index = 0; index < uploadParamsAnswerOptions.length; index++) {
+
+                                                                                                    let keyNameArr = Object.keys(uploadParamsAnswerOptions[index]);
+                                                                                                    let keyName = keyNameArr[1];
+
+                                                                                                    console.log(fileValues);
+
+                                                                                                    let blobField = fileValues[index];
+                                                                                                    console.log({ blobField });
+
+                                                                                                    let tempObjFile = uploadParamsAnswerOptions[index];
+
+                                                                                                    let result = fetch(tempObjFile[keyName], {
+                                                                                                        method: 'PUT',
+                                                                                                        body: blobField
+                                                                                                    });
+
+                                                                                                    console.log({ result });
+                                                                                                }
+
+                                                                                                const MySwal = withReactContent(Swal);
+
+                                                                                                MySwal.fire({
+
+                                                                                                    title: 'Question saved as new Item!',
+                                                                                                    icon: 'success',
+                                                                                                }).then((willDelete) => {
+
+                                                                                                    history.push('/admin-portal/active-questions');
+                                                                                                    // window.location.reload();
+
+                                                                                                });
+
+                                                                                            } else {
+
+                                                                                                console.log('Answer option files not uploaded!');
+                                                                                            }
+
+
+                                                                                        } else {
+
+                                                                                            if (Array.isArray(uploadParamsAnswerOptions)) {
+
+                                                                                                for (let index = 0; index < uploadParamsAnswerOptions.length; index++) {
+
+                                                                                                    let keyNameArr = Object.keys(uploadParamsAnswerOptions[index]);
+                                                                                                    let keyName = keyNameArr[1];
+
+                                                                                                    let blobField = fileValues[index];
+                                                                                                    console.log({ blobField });
+
+                                                                                                    let tempObjFile = uploadParamsAnswerOptions[index];
+
+                                                                                                    let result = fetch(tempObjFile[keyName], {
+                                                                                                        method: 'PUT',
+                                                                                                        body: blobField
+                                                                                                    });
+
+                                                                                                    console.log({ result });
+                                                                                                }
+
+                                                                                                const MySwal = withReactContent(Swal);
+                                                                                                MySwal.fire({
+
+                                                                                                    title: 'Question saved as new Item!',
+                                                                                                    icon: 'success',
+                                                                                                }).then((willDelete) => {
+
+                                                                                                    history.push('/admin-portal/active-questions');
+                                                                                                    // window.location.reload();
+
+                                                                                                })
+
+                                                                                                console.log('Question Voice Note not uploaded');
+                                                                                            }
+                                                                                        }
+
+
+                                                                                    } else {
+
+                                                                                        console.log('else res');
+                                                                                        hideLoader();
+
+                                                                                    }
+                                                                                })
+                                                                                .catch((error) => {
+                                                                                    if (error.response) {
+                                                                                        hideLoader();
+
+                                                                                        console.log(error.response.data);
+
+                                                                                    } else if (error.request) {
+
+                                                                                        console.log(error.request);
+                                                                                        hideLoader();
+
+                                                                                    } else {
+
+                                                                                        console.log('Error', error.message);
+                                                                                        hideLoader();
+                                                                                    }
+                                                                                });
+
+                                                                        } else {
+
+                                                                            if (voiceInvalid(allFilesData) !== 0) {
+                                                                                sweetAlertHandler({
+                                                                                    title: 'Warning',
+                                                                                    type: 'warning',
+                                                                                    text: 'Supported file formats are .mp3, .mpeg, .wav. Uploaded files should be less than 10MB. '
+                                                                                });
+                                                                            } else {
+
+                                                                                showLoader();
+                                                                                axios
+                                                                                    .post(
+                                                                                        dynamicUrl.addQuestions,
+                                                                                        {
+                                                                                            data: payLoad
+                                                                                        },
+                                                                                        {
+                                                                                            headers: { Authorization: sessionStorage.getItem('user_jwt') }
+                                                                                        }
+                                                                                    )
+                                                                                    .then((response) => {
+
+                                                                                        console.log(response.data);
+
+                                                                                        let result = response.status === 200;
+
+                                                                                        if (result) {
+
+                                                                                            console.log('inside res');
+
+                                                                                            let uploadParamsQuestionsNote = response.data.question_voice_note;
+                                                                                            let uploadParamsAnswerOptions = response.data.answers_options;
+
+                                                                                            hideLoader();
+
+                                                                                            if (Array.isArray(uploadParamsQuestionsNote)) {
+
+                                                                                                for (let index = 0; index < uploadParamsQuestionsNote.length; index++) {
+
+                                                                                                    let keyNameArr = Object.keys(uploadParamsQuestionsNote[index]);
+                                                                                                    let keyName = keyNameArr[1];
+
+                                                                                                    let blobField = voiceNoteFileValues;
+                                                                                                    console.log({ blobField });
+
+                                                                                                    let tempObj = uploadParamsQuestionsNote[index];
+                                                                                                    let result = fetch(tempObj[keyName], {
+                                                                                                        method: 'PUT',
+                                                                                                        body: blobField
+                                                                                                    });
+
+                                                                                                    console.log({ result });
+                                                                                                }
+
+
+                                                                                                if (Array.isArray(uploadParamsAnswerOptions)) {
+
+                                                                                                    for (let index = 0; index < uploadParamsAnswerOptions.length; index++) {
+
+                                                                                                        let keyNameArr = Object.keys(uploadParamsAnswerOptions[index]);
+                                                                                                        let keyName = keyNameArr[1];
+
+                                                                                                        console.log(fileValues);
+
+                                                                                                        let blobField = fileValues[index];
+                                                                                                        console.log({ blobField });
+
+                                                                                                        let tempObjFile = uploadParamsAnswerOptions[index];
+
+                                                                                                        let result = fetch(tempObjFile[keyName], {
+                                                                                                            method: 'PUT',
+                                                                                                            body: blobField
+                                                                                                        });
+
+                                                                                                        console.log({ result });
+                                                                                                    }
+
+                                                                                                    const MySwal = withReactContent(Swal);
+
+                                                                                                    MySwal.fire({
+
+                                                                                                        title: 'Question saved as a new Item!',
+                                                                                                        icon: 'success',
+                                                                                                    }).then((willDelete) => {
+
+                                                                                                        history.push('/admin-portal/active-questions');
+                                                                                                        // window.location.reload();
+
+                                                                                                    });
+
+                                                                                                } else {
+
+                                                                                                    console.log('Answer option files not uploaded!');
+                                                                                                }
+
+
+                                                                                            } else {
+
+                                                                                                if (Array.isArray(uploadParamsAnswerOptions)) {
+
+                                                                                                    for (let index = 0; index < uploadParamsAnswerOptions.length; index++) {
+
+                                                                                                        let keyNameArr = Object.keys(uploadParamsAnswerOptions[index]);
+                                                                                                        let keyName = keyNameArr[1];
+
+                                                                                                        let blobField = fileValues[index];
+                                                                                                        console.log({ blobField });
+
+                                                                                                        let tempObjFile = uploadParamsAnswerOptions[index];
+
+                                                                                                        let result = fetch(tempObjFile[keyName], {
+                                                                                                            method: 'PUT',
+                                                                                                            body: blobField
+                                                                                                        });
+
+                                                                                                        console.log({ result });
+                                                                                                    }
+
+                                                                                                    const MySwal = withReactContent(Swal);
+                                                                                                    MySwal.fire({
+
+                                                                                                        title: 'Question saved as a new Item!',
+                                                                                                        icon: 'success',
+                                                                                                    }).then((willDelete) => {
+
+                                                                                                        history.push('/admin-portal/active-questions');
+                                                                                                        // window.location.reload();
+
+                                                                                                    })
+
+                                                                                                    console.log('Question Voice Note not uploaded');
+                                                                                                }
+                                                                                            }
+
+
+                                                                                        } else {
+
+                                                                                            console.log('else res');
+                                                                                            hideLoader();
+
+                                                                                        }
+                                                                                    })
+                                                                                    .catch((error) => {
+                                                                                        if (error.response) {
+                                                                                            hideLoader();
+
+                                                                                            console.log(error.response.data);
+
+                                                                                        } else if (error.request) {
+
+                                                                                            console.log(error.request);
+                                                                                            hideLoader();
+
+                                                                                        } else {
+
+                                                                                            console.log('Error', error.message);
+                                                                                            hideLoader();
+                                                                                        }
+                                                                                    });
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+
+
                                                         } else {
 
                                                             if (isEmptyArray(selectedQuestionType)) {
@@ -1301,6 +1996,158 @@ const EditQuestions = () => {
                                                                                     });
                                                                             }
                                                                         }
+                                                                    } else {
+
+                                                                        showLoader();
+                                                                        axios
+                                                                            .post(
+                                                                                dynamicUrl.editQuestion,
+                                                                                {
+                                                                                    data: payLoad
+                                                                                },
+                                                                                {
+                                                                                    headers: { Authorization: sessionStorage.getItem('user_jwt') }
+                                                                                }
+                                                                            )
+                                                                            .then((response) => {
+
+                                                                                console.log(response.data);
+
+                                                                                let result = response.status === 200;
+
+                                                                                if (result) {
+
+                                                                                    console.log('inside res');
+
+                                                                                    let uploadParamsQuestionsNote = response.data.question_voice_note;
+                                                                                    let uploadParamsAnswerOptions = response.data.answers_options;
+
+                                                                                    hideLoader();
+
+                                                                                    if (Array.isArray(uploadParamsQuestionsNote)) {
+
+                                                                                        for (let index = 0; index < uploadParamsQuestionsNote.length; index++) {
+
+                                                                                            let keyNameArr = Object.keys(uploadParamsQuestionsNote[index]);
+                                                                                            let keyName = keyNameArr[1];
+
+                                                                                            let blobField = voiceNoteFileValues;
+                                                                                            console.log({ blobField });
+
+                                                                                            let tempObj = uploadParamsQuestionsNote[index];
+                                                                                            let result = fetch(tempObj[keyName], {
+                                                                                                method: 'PUT',
+                                                                                                body: blobField
+                                                                                            });
+
+                                                                                            console.log({ result });
+                                                                                        }
+
+
+                                                                                        if (Array.isArray(uploadParamsAnswerOptions)) {
+
+                                                                                            for (let index = 0; index < uploadParamsAnswerOptions.length; index++) {
+
+                                                                                                let keyNameArr = Object.keys(uploadParamsAnswerOptions[index]);
+                                                                                                let keyName = keyNameArr[1];
+
+                                                                                                console.log(fileValues);
+
+                                                                                                let blobField = fileValues[index];
+                                                                                                console.log({ blobField });
+
+                                                                                                let tempObjFile = uploadParamsAnswerOptions[index];
+
+                                                                                                let result = fetch(tempObjFile[keyName], {
+                                                                                                    method: 'PUT',
+                                                                                                    body: blobField
+                                                                                                });
+
+                                                                                                console.log({ result });
+                                                                                            }
+
+                                                                                            const MySwal = withReactContent(Swal);
+
+                                                                                            MySwal.fire({
+
+                                                                                                title: 'Question updated!',
+                                                                                                icon: 'success',
+                                                                                            }).then((willDelete) => {
+
+                                                                                                history.push('/admin-portal/active-questions');
+                                                                                                // window.location.reload();
+
+                                                                                            });
+
+                                                                                        } else {
+
+                                                                                            console.log('Answer option files not uploaded!');
+                                                                                        }
+
+
+                                                                                    } else {
+
+                                                                                        if (Array.isArray(uploadParamsAnswerOptions)) {
+
+                                                                                            for (let index = 0; index < uploadParamsAnswerOptions.length; index++) {
+
+                                                                                                let keyNameArr = Object.keys(uploadParamsAnswerOptions[index]);
+                                                                                                let keyName = keyNameArr[1];
+
+                                                                                                let blobField = fileValues[index];
+                                                                                                console.log({ blobField });
+
+                                                                                                let tempObjFile = uploadParamsAnswerOptions[index];
+
+                                                                                                let result = fetch(tempObjFile[keyName], {
+                                                                                                    method: 'PUT',
+                                                                                                    body: blobField
+                                                                                                });
+
+                                                                                                console.log({ result });
+                                                                                            }
+
+                                                                                            const MySwal = withReactContent(Swal);
+                                                                                            MySwal.fire({
+
+                                                                                                title: 'Question updated!',
+                                                                                                icon: 'success',
+                                                                                            }).then((willDelete) => {
+
+                                                                                                history.push('/admin-portal/active-questions');
+                                                                                                // window.location.reload();
+
+                                                                                            })
+
+                                                                                            console.log('Question Voice Note not uploaded');
+                                                                                        }
+                                                                                    }
+
+
+                                                                                } else {
+
+                                                                                    console.log('else res');
+                                                                                    hideLoader();
+
+                                                                                }
+                                                                            })
+                                                                            .catch((error) => {
+                                                                                if (error.response) {
+                                                                                    hideLoader();
+
+                                                                                    console.log(error.response.data);
+
+                                                                                } else if (error.request) {
+
+                                                                                    console.log(error.request);
+                                                                                    hideLoader();
+
+                                                                                } else {
+
+                                                                                    console.log('Error', error.message);
+                                                                                    hideLoader();
+                                                                                }
+                                                                            });
                                                                     }
                                                                 }
                                                             }
@@ -2541,7 +3388,7 @@ const EditQuestions = () => {
 
                                                             <br />
                                                             <Row className="my-3">
-                                                                <Col></Col>
+                                                                <Col xs={2}></Col>
                                                                 <Col>
                                                                     {ansWeightageErrMsg && (
                                                                         <>
@@ -2554,42 +3401,221 @@ const EditQuestions = () => {
                                                                         </>
                                                                     )}
                                                                 </Col>
-                                                                <Col>
-                                                                    <Row>
+
+                                                                {
+                                                                    sessionStorage.getItem('question_status') === 'Save' && (
                                                                         <Col>
-                                                                            <Button
-                                                                                className="btn-block"
-                                                                                color="warning"
-                                                                                size="small"
-                                                                                variant="warning"
-                                                                                onClick={() => window.location.reload()}>
-                                                                                Clear
-                                                                            </Button>
+                                                                            <Row>
+                                                                                <Col xs={5}>
+                                                                                    <Button
+                                                                                        className="btn-block"
+                                                                                        color="secondary"
+                                                                                        size="large"
+                                                                                        type="submit"
+                                                                                        variant="secondary"
+                                                                                        onClick={() => sessionStorage.setItem('click_event', 'SaveAsNew')}>
+                                                                                        Save As New
+                                                                                    </Button>
+                                                                                </Col>
+                                                                                <Col>
+                                                                                    <Button
+                                                                                        className="btn-block"
+                                                                                        color="info"
+                                                                                        size="small"
+                                                                                        type="submit"
+                                                                                        variant="info"
+                                                                                        onClick={() => sessionStorage.setItem('click_event', 'Save')}>
+                                                                                        Save
+                                                                                    </Button>
+                                                                                </Col>
+                                                                                <Col>
+                                                                                    <Button
+                                                                                        className="btn-block"
+                                                                                        color="success"
+                                                                                        size="small"
+                                                                                        type="submit"
+                                                                                        variant="success"
+                                                                                        onClick={() => sessionStorage.setItem('click_event', 'Submit')}>
+                                                                                        Submit
+                                                                                    </Button>
+                                                                                </Col>
+                                                                            </Row>
                                                                         </Col>
+                                                                    )
+                                                                }
+
+                                                                {
+                                                                    sessionStorage.getItem('question_status') === 'Submit' && (
+
+                                                                        <Col >
+                                                                            <Row>
+                                                                                <Col></Col>
+                                                                                <Col>
+                                                                                    <Button
+                                                                                        className="btn-block"
+                                                                                        color="success"
+                                                                                        size="small"
+                                                                                        type="submit"
+                                                                                        variant="success"
+                                                                                        onClick={() => sessionStorage.setItem('click_event', 'Accept')}>
+                                                                                        Accept
+                                                                                    </Button>
+                                                                                </Col>
+                                                                                <Col>
+                                                                                    <Button
+                                                                                        className="btn-block"
+                                                                                        color="danger"
+                                                                                        size="small"
+                                                                                        type="submit"
+                                                                                        variant="danger"
+                                                                                        onClick={() => sessionStorage.setItem('click_event', 'Reject')}>
+                                                                                        Reject
+                                                                                    </Button>
+                                                                                </Col>
+                                                                            </Row>
+                                                                        </Col>
+                                                                    )
+                                                                }
+
+                                                                {
+                                                                    sessionStorage.getItem('question_status') === 'Accept' && (
+
+                                                                        <Col >
+                                                                            <Row>
+                                                                                <Col>
+                                                                                    <Button
+                                                                                        className="btn-block"
+                                                                                        color="danger"
+                                                                                        size="small"
+                                                                                        type="submit"
+                                                                                        variant="danger"
+                                                                                        onClick={() => sessionStorage.setItem('click_event', 'Revisit')}>
+                                                                                        Revisit
+                                                                                    </Button>
+                                                                                </Col>
+                                                                                <Col xs={5}>
+                                                                                    <Button
+                                                                                        className="btn-block"
+                                                                                        color="info"
+                                                                                        size="small"
+                                                                                        type="submit"
+                                                                                        variant="info"
+                                                                                        onClick={() => sessionStorage.setItem('click_event', 'DesignReady')}>
+                                                                                        Design Ready
+                                                                                    </Button>
+                                                                                </Col>
+                                                                                <Col>
+                                                                                    <Button
+                                                                                        className="btn-block"
+                                                                                        color="success"
+                                                                                        size="small"
+                                                                                        type="submit"
+                                                                                        variant="success"
+                                                                                        onClick={() => sessionStorage.setItem('click_event', 'Publish')}>
+                                                                                        Publish
+                                                                                    </Button>
+                                                                                </Col>
+                                                                            </Row>
+                                                                        </Col>
+                                                                    )
+                                                                }
+
+                                                                {
+                                                                    sessionStorage.getItem('question_status') === 'Reject' && (
                                                                         <Col>
-                                                                            <Button
-                                                                                className="btn-block"
-                                                                                color="warning"
-                                                                                size="small"
-                                                                                type="submit"
-                                                                                variant="info"
-                                                                                onClick={() => sessionStorage.setItem('click_event', 'Save')}>
-                                                                                Save
-                                                                            </Button>
+                                                                            <Row>
+                                                                                <Col xs={5}>
+                                                                                    <Button
+                                                                                        className="btn-block"
+                                                                                        color="secondary"
+                                                                                        size="large"
+                                                                                        type="submit"
+                                                                                        variant="secondary"
+                                                                                        onClick={() => sessionStorage.setItem('click_event', 'SaveAsNew')}>
+                                                                                        Save As New
+                                                                                    </Button>
+                                                                                </Col>
+                                                                                <Col>
+                                                                                    <Button
+                                                                                        className="btn-block"
+                                                                                        color="info"
+                                                                                        size="small"
+                                                                                        type="submit"
+                                                                                        variant="info"
+                                                                                        onClick={() => sessionStorage.setItem('click_event', 'Save')}>
+                                                                                        Save
+                                                                                    </Button>
+                                                                                </Col>
+                                                                                <Col>
+                                                                                    <Button
+                                                                                        className="btn-block"
+                                                                                        color="success"
+                                                                                        size="small"
+                                                                                        type="submit"
+                                                                                        variant="success"
+                                                                                        onClick={() => sessionStorage.setItem('click_event', 'Submit')}>
+                                                                                        Submit
+                                                                                    </Button>
+                                                                                </Col>
+                                                                            </Row>
                                                                         </Col>
-                                                                        <Col>
-                                                                            <Button
-                                                                                className="btn-block"
-                                                                                color="success"
-                                                                                size="small"
-                                                                                type="submit"
-                                                                                variant="success"
-                                                                                onClick={() => sessionStorage.setItem('click_event', 'Submit')}>
-                                                                                Submit
-                                                                            </Button>
+                                                                    )
+                                                                }
+
+                                                                {
+                                                                    sessionStorage.getItem('question_status') === 'Revisit' && (
+                                                                        <Col >
+                                                                            <Row>
+                                                                                <Col></Col>
+                                                                                <Col>
+                                                                                    <Button
+                                                                                        className="btn-block"
+                                                                                        color="success"
+                                                                                        size="small"
+                                                                                        type="submit"
+                                                                                        variant="success"
+                                                                                        onClick={() => sessionStorage.setItem('click_event', 'Accept')}>
+                                                                                        Accept
+                                                                                    </Button>
+                                                                                </Col>
+                                                                                <Col>
+                                                                                    <Button
+                                                                                        className="btn-block"
+                                                                                        color="danger"
+                                                                                        size="small"
+                                                                                        type="submit"
+                                                                                        variant="danger"
+                                                                                        onClick={() => sessionStorage.setItem('click_event', 'Reject')}>
+                                                                                        Reject
+                                                                                    </Button>
+                                                                                </Col>
+                                                                            </Row>
                                                                         </Col>
-                                                                    </Row>
-                                                                </Col>
+                                                                    )
+                                                                }
+
+                                                                {
+                                                                    sessionStorage.getItem('question_status') === 'DesignReady' && (
+
+                                                                        <Col >
+                                                                            <Row>
+                                                                                <Col></Col>
+                                                                                <Col></Col>
+                                                                                <Col>
+                                                                                    <Button
+                                                                                        className="btn-block"
+                                                                                        color="success"
+                                                                                        size="small"
+                                                                                        type="submit"
+                                                                                        variant="success"
+                                                                                        onClick={() => sessionStorage.setItem('click_event', 'Publish')}>
+                                                                                        Publish
+                                                                                    </Button>
+                                                                                </Col>
+                                                                            </Row>
+                                                                        </Col>
+                                                                    )
+                                                                }
                                                             </Row>
 
                                                         </form>
