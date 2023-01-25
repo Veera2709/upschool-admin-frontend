@@ -44,6 +44,8 @@ const EditDigiCard = () => {
     const [digiCardDataTitel, setDigiCardDataTitel] = useState([]);
     const [displayHeading, setDisplayHeading] = useState(sessionStorage.getItem('digicard_type'));
     const [displayHeader, setDisplayHeader] = useState(true);
+    const [imgValidation, setImgValidation] = useState(false);
+
     const threadLinks = document.getElementsByClassName('page-header');
     console.log('individualDigiCardData initial', individualDigiCardData);
     console.log("defaultOptions", defaultOptions);
@@ -97,7 +99,7 @@ const EditDigiCard = () => {
             console.log("allDigicardData", allDigicardData.Items);
             let resultData = allDigicardData.Items;
             resultData.forEach((item, index) => {
-                if (item.digicard_status === 'Active') {
+                if (item.digicard_status === 'Active' && item.digi_card_id!=digi_card_id) {
                     colourOptions.push({ value: item.digi_card_id, label: item.digi_card_title })
                 }
             })
@@ -221,139 +223,8 @@ const EditDigiCard = () => {
 
                             onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
                                 console.log("multiOptions in submitting time", multiOptions);
-
-
-                                var formData;
-
-                                if (values.digicard_image === '' || voiceNote !== undefined) {
-                                    console.log("if condition");
-                                    formData = {
-                                        digi_card_id: individualDigiCardData[0].digi_card_id,
-                                        digi_card_title: values.digicardtitle,
-                                        digi_card_files: [values.digicard_image],
-                                        digicard_image: imgFile,
-                                        digicard_voice_note: voiceNote === undefined ? values.digicard_voice_note : values.digicard_voice_note,
-                                        digi_card_excerpt: articleDataTitle,
-                                        digi_card_content: articleData,
-                                        digi_card_keywords: tags,
-                                        related_digi_cards: multiOptions
-                                    };
-                                } else {
-                                    console.log("else condition");
-                                    formData = {
-                                        digi_card_id: individualDigiCardData[0].digi_card_id,
-                                        digi_card_title: values.digicardtitle,
-                                        digi_card_files: [values.digicard_image],
-                                        digicard_image: values.digicard_image,
-                                        digicard_voice_note: values.digicard_voice_note,
-                                        digi_card_excerpt: articleDataTitle,
-                                        digi_card_content: articleData,
-                                        digi_card_keywords: tags,
-                                        related_digi_cards: multiOptions
-                                    };
-                                }
-
-                                console.log("formData",formData);
-
-                                axios
-                                    .post(dynamicUrl.editDigiCard, { data: formData }, { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
-                                    .then(async (response) => {
-                                        console.log({ response });
-                                        if (response.Error) {
-                                            console.log('Error');
-                                            hideLoader();
-                                            setDisableButton(false);
-                                        } else {
-                                            let uploadParams = response.data;
-                                            hideLoader();
-                                            setDisableButton(false);
-                                            console.log('Proceeding with file upload');
-
-                                            if (Array.isArray(uploadParams)) {
-                                                for (let index = 0; index < uploadParams.length; index++) {
-                                                    let keyNameArr = Object.keys(uploadParams[index]);
-                                                    let keyName = keyNameArr[0];
-                                                    console.log('KeyName', keyName);
-
-                                                    let blobField = document.getElementById(keyName).files[0];
-                                                    console.log({
-                                                        blobField
-                                                    });
-
-                                                    let tempObj = uploadParams[index];
-
-                                                    let result = await fetch(tempObj[keyName], {
-                                                        method: 'PUT',
-                                                        body: blobField
-                                                    });
-
-                                                    console.log({
-                                                        result
-                                                    });
-                                                }
-                                                // sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.EditDigiCard });
-                                                MySwal.fire({
-
-                                                    title: 'DigiCard Updated successfully!',
-                                                    icon: 'success',
-                                                }).then((willDelete) => {
-                                                    history.push('/admin-portal/active-digiCard');
-                                                    window.location.reload();
-
-                                                })
-                                                hideLoader();
-                                                setDisableButton(false);
-                                                // fetchClientData();
-                                                setIsOpen(false);
-                                            } else {
-                                                console.log('No files uploaded');
-                                                sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.EditDigiCard });
-                                                hideLoader();
-                                                setDisableButton(false);
-                                                // fetchClientData();
-                                                setIsOpen(false);
-                                            }
-                                        }
-                                    })
-                                    .catch((error) => {
-                                        if (error.response) {
-                                            // Request made and server responded
-                                            console.log(error.response.data);
-
-                                            console.log(error.response.data);
-                                            if (error.response.status === 401) {
-                                                console.log();
-                                                hideLoader();
-                                                // setIsClientExists(true);
-                                                sweetAlertHandler({ title: 'Error', type: 'error', text: MESSAGES.ERROR.DigiCardNameExists });
-
-                                            } else if (error.response.data === 'Invalid Token') {
-
-                                                sessionStorage.clear();
-                                                localStorage.clear();
-                                                history.push('/auth/signin-1');
-                                                window.location.reload();
-                                            } else {
-                                                console.log("err", error);
-                                            }
-                                        } else if (error.request) {
-                                            // The request was made but no response was received
-                                            console.log(error.request);
-                                            setDisableButton(false);
-                                            hideLoader();
-                                        } else {
-                                            // Something happened in setting up the request that triggered an Error
-                                            console.log('Error', error.message);
-                                            setDisableButton(false);
-                                            hideLoader();
-                                        }
-                                    });
-                                // setSubmitting(true);
-                                console.log(formData);
-                                console.log('Submitting');
-
-                                // sla file validation
                                 let allFilesData = [];
+
                                 const fileNameArray = ['digicard_image'];
 
                                 fileNameArray.forEach((fileName) => {
@@ -365,25 +236,136 @@ const EditDigiCard = () => {
                                     }
                                 });
 
-                                console.log(allFilesData);
-
-                                if (allFilesData.length === 0) {
-                                    showLoader();
-                                    // if (contact === false) {
-                                    setDisableButton(true);
-                                    // _SubmitClient(formData);
-                                    // }
+                                if (areFilesInvalid(allFilesData) !== 0) {
+                                    setImgValidation(true)
+                                    hideLoader();
                                 } else {
-                                    if (areFilesInvalid(allFilesData) !== 0) {
-                                        setInvalidFile(true);
+                                    var formData;
+                                    if (values.digicard_image === '' || voiceNote !== undefined) {
+                                        console.log("if condition");
+                                        formData = {
+                                            digi_card_id: individualDigiCardData[0].digi_card_id,
+                                            digi_card_title: values.digicardtitle,
+                                            digi_card_files: [values.digicard_image],
+                                            digicard_image: imgFile,
+                                            digicard_voice_note: voiceNote === undefined ? values.digicard_voice_note : values.digicard_voice_note,
+                                            digi_card_excerpt: articleDataTitle,
+                                            digi_card_content: articleData,
+                                            digi_card_keywords: tags,
+                                            related_digi_cards: multiOptions
+                                        };
                                     } else {
-                                        showLoader();
-                                        // if (contact === false) {
-                                        setDisableButton(true);
-                                        // _SubmitClient(formData);
-                                        // }
+                                        console.log("else condition");
+                                        formData = {
+                                            digi_card_id: individualDigiCardData[0].digi_card_id,
+                                            digi_card_title: values.digicardtitle,
+                                            digi_card_files: [values.digicard_image],
+                                            digicard_image: values.digicard_image,
+                                            digicard_voice_note: values.digicard_voice_note,
+                                            digi_card_excerpt: articleDataTitle,
+                                            digi_card_content: articleData,
+                                            digi_card_keywords: tags,
+                                            related_digi_cards: multiOptions
+                                        };
                                     }
+
+                                    console.log("formData", formData);
+
+                                    axios
+                                        .post(dynamicUrl.editDigiCard, { data: formData }, { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
+                                        .then(async (response) => {
+                                            console.log({ response });
+                                            if (response.Error) {
+                                                console.log('Error');
+                                                hideLoader();
+                                                setDisableButton(false);
+                                            } else {
+                                                let uploadParams = response.data;
+                                                hideLoader();
+                                                setDisableButton(false);
+                                                console.log('Proceeding with file upload');
+
+                                                if (Array.isArray(uploadParams)) {
+                                                    for (let index = 0; index < uploadParams.length; index++) {
+                                                        let keyNameArr = Object.keys(uploadParams[index]);
+                                                        let keyName = keyNameArr[0];
+                                                        console.log('KeyName', keyName);
+
+                                                        let blobField = document.getElementById(keyName).files[0];
+                                                        console.log({
+                                                            blobField
+                                                        });
+
+                                                        let tempObj = uploadParams[index];
+
+                                                        let result = await fetch(tempObj[keyName], {
+                                                            method: 'PUT',
+                                                            body: blobField
+                                                        });
+
+                                                        console.log({
+                                                            result
+                                                        });
+                                                    }
+                                                    // sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.EditDigiCard });
+                                                    MySwal.fire({
+
+                                                        title: 'DigiCard Updated successfully!',
+                                                        icon: 'success',
+                                                    }).then((willDelete) => {
+                                                        history.push('/admin-portal/active-digiCard');
+                                                        window.location.reload();
+
+                                                    })
+                                                    hideLoader();
+                                                    setDisableButton(false);
+                                                    // fetchClientData();
+                                                    setIsOpen(false);
+                                                } else {
+                                                    console.log('No files uploaded');
+                                                    sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.EditDigiCard });
+                                                    hideLoader();
+                                                    setDisableButton(false);
+                                                    // fetchClientData();
+                                                    setIsOpen(false);
+                                                }
+                                            }
+                                        })
+                                        .catch((error) => {
+                                            if (error.response) {
+                                                // Request made and server responded
+                                                console.log(error.response.data);
+
+                                                console.log(error.response.data);
+                                                if (error.response.status === 401) {
+                                                    console.log();
+                                                    hideLoader();
+                                                    // setIsClientExists(true);
+                                                    sweetAlertHandler({ title: 'Error', type: 'error', text: MESSAGES.ERROR.DigiCardNameExists });
+
+                                                } else if (error.response.data === 'Invalid Token') {
+
+                                                    sessionStorage.clear();
+                                                    localStorage.clear();
+                                                    history.push('/auth/signin-1');
+                                                    window.location.reload();
+                                                } else {
+                                                    console.log("err", error);
+                                                }
+                                            } else if (error.request) {
+                                                // The request was made but no response was received
+                                                console.log(error.request);
+                                                setDisableButton(false);
+                                                hideLoader();
+                                            } else {
+                                                // Something happened in setting up the request that triggered an Error
+                                                console.log('Error', error.message);
+                                                setDisableButton(false);
+                                                hideLoader();
+                                            }
+                                        });
                                 }
+                                // setSubmitting(true);
                             }}
                         >
                             {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
@@ -419,6 +401,7 @@ const EditDigiCard = () => {
                                                     onChange={(e) => {
                                                         handleChange(e);
                                                         previewImage(e);
+                                                        setImgValidation(false)
                                                     }}
                                                     type="file"
                                                     value={values.digicard_image}
@@ -427,6 +410,7 @@ const EditDigiCard = () => {
                                                 {touched.digicard_image && errors.digicard_image && (
                                                     <small className="text-danger form-text">{errors.digicard_image}</small>
                                                 )}
+                                                {imgValidation && (<small className="text-danger form-text">Invalid File Type or File size is Exceed More Than 1MB</small>)}
                                             </div>
                                             <div className="form-group fill">
                                                 <label className="floating-label" htmlFor="digicard_voice_note">

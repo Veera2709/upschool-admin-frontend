@@ -113,7 +113,7 @@ const AddTopics = ({ setOpenAddTopic }) => {
     }
 
     const fetchAllConceptsData = async () => {
-        const allConceptsData = await fetchAllConcepts();   
+        const allConceptsData = await fetchAllConcepts();
         if (allConceptsData.Error) {
             console.log("allConceptsData.ERROR", allConceptsData.Error);
             if (allConceptsData.Error.response.data == 'Invalid Token') {
@@ -213,6 +213,8 @@ const AddTopics = ({ setOpenAddTopic }) => {
                 validationSchema={Yup.object().shape({
                     topic_title: Yup.string()
                         .trim()
+                        .min(2, Constants.AddTopic.TopictitleTooShort)
+                        .max(30, Constants.AddTopic.TopictitleTooLong)
                         .required(Constants.AddTopic.TopictitleRequired),
                     duration: Yup.string()
                         .trim()
