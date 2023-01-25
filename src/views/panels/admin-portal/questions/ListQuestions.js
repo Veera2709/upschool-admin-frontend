@@ -49,9 +49,12 @@ const ListQuestions = () => {
             _setQuestionStatus('Reject');
         }
         else if (key === '5') {
-            _setQuestionStatus('DesignReady');
+            _setQuestionStatus('Revisit');
         }
         else if (key === '6') {
+            _setQuestionStatus('DesignReady');
+        }
+        else if (key === '7') {
             _setQuestionStatus('Publish');
         } else {
             console.log("Invalid Tab Option!");
@@ -62,37 +65,68 @@ const ListQuestions = () => {
         <>
             {state && (
                 <>
-                    <Tabs
-                        defaultActiveKey={1}
-                        onSelect={handleQuestionStatusTab}
-                        className="mb-3"
-                    >
+                    {
+                        pageLocation === 'active-questions' && (
+                            <Tabs
+                                defaultActiveKey={1}
+                                onSelect={handleQuestionStatusTab}
+                                className="mb-3"
+                            >
 
-                        <Tab eventKey={1} title="Saved" >
-                            {sessionStorage.setItem('question_status', _questionStatus)}
-                            <QuestionsTableView _questionStatus={_questionStatus} />
-                        </Tab>
-                        <Tab eventKey={2} title="Submitted" >
-                            {sessionStorage.setItem('question_status', _questionStatus)}
-                            <QuestionsTableView _questionStatus={_questionStatus} />
-                        </Tab>
-                        <Tab eventKey={3} title="Accepted" >
-                            {sessionStorage.setItem('question_status', _questionStatus)}
-                            <QuestionsTableView _questionStatus={_questionStatus} />
-                        </Tab>
-                        <Tab eventKey={4} title="Rejected" >
-                            {sessionStorage.setItem('question_status', _questionStatus)}
-                            <QuestionsTableView _questionStatus={_questionStatus} />
-                        </Tab>
-                        <Tab eventKey={5} title="Design Ready">
-                            {sessionStorage.setItem('question_status', _questionStatus)}
-                            <QuestionsTableView _questionStatus={_questionStatus} />
-                        </Tab>
-                        <Tab eventKey={6} title="Published">
-                            {sessionStorage.setItem('question_status', _questionStatus)}
-                            <QuestionsTableView _questionStatus={_questionStatus} />
-                        </Tab>
-                    </Tabs>
+                                <Tab eventKey={1} title="Saved" >
+                                    {sessionStorage.setItem('question_status', _questionStatus)}
+                                    <QuestionsTableView _questionStatus={_questionStatus} />
+                                </Tab>
+                                <Tab eventKey={2} title="Submitted" >
+                                    {sessionStorage.setItem('question_status', _questionStatus)}
+                                    <QuestionsTableView _questionStatus={_questionStatus} />
+                                </Tab>
+                                <Tab eventKey={3} title="Accepted" >
+                                    {sessionStorage.setItem('question_status', _questionStatus)}
+                                    <QuestionsTableView _questionStatus={_questionStatus} />
+                                </Tab>
+                                <Tab eventKey={4} title="Rejected" >
+                                    {sessionStorage.setItem('question_status', _questionStatus)}
+                                    <QuestionsTableView _questionStatus={_questionStatus} />
+                                </Tab>
+                                <Tab eventKey={5} title="Revisit" >
+                                    {sessionStorage.setItem('question_status', _questionStatus)}
+                                    <QuestionsTableView _questionStatus={_questionStatus} />
+                                </Tab>
+                                <Tab eventKey={6} title="Design Ready">
+                                    {sessionStorage.setItem('question_status', _questionStatus)}
+                                    <QuestionsTableView _questionStatus={_questionStatus} />
+                                </Tab>
+                                <Tab eventKey={7} title="Published">
+                                    {sessionStorage.setItem('question_status', _questionStatus)}
+                                    <QuestionsTableView _questionStatus={_questionStatus} />
+                                </Tab>
+                            </Tabs>
+                        )
+                    }
+
+                    {
+                        pageLocation === 'archived-questions' && (
+
+                            <Tabs
+                                defaultActiveKey={1}
+                                onSelect={handleQuestionStatusTab}
+                                className="mb-3"
+                            >
+
+                                <Tab eventKey={1} title="Saved" >
+                                    {sessionStorage.setItem('question_status', _questionStatus)}
+                                    <QuestionsTableView _questionStatus={_questionStatus} />
+                                </Tab>
+                                <Tab eventKey={4} title="Rejected" >
+                                    {sessionStorage.setItem('question_status', _questionStatus)}
+                                    <QuestionsTableView _questionStatus={_questionStatus} />
+                                </Tab>
+                            </Tabs>
+                        )
+                    }
+
+
                 </>
             )}
         </>
