@@ -246,7 +246,7 @@ const AddDigiCard = (
                 digicardtitle: Yup.string()
                   .trim()
                   .min(2, Constants.AddDigiCard.DigiCardtitleTooShort)
-                  .max(30, Constants.AddDigiCard.DigiCardtitleTooLong)
+                  .max(32, Constants.AddDigiCard.DigiCardtitleTooLong)
                   .matches(Constants.AddDigiCard.DigiCardtitleRegex, Constants.AddDigiCard.DigiCardtitleValidation)
                   .required(Constants.AddDigiCard.DigiCardtitleRequired),
                 digicard_image: Yup.string()
@@ -488,7 +488,7 @@ const AddDigiCard = (
                         />
                         {/* {touched.digicardKeywords && errors.digicardKeywords && (<small className="text-danger form-text">{errors.digicardKeywords}</small>)} */}
                       </div><br />
-                      <div className="form-group fill" style={{ position: "relative", zIndex: 10 }}>
+                      <div className="form-group fill" style={{ position: "relative", zIndex: 20 }}>
                         <label className="floating-label" htmlFor="clientComponents">
                           <small className="text-danger"> </small>Related DigiCard Titles
                         </label>

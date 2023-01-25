@@ -215,7 +215,7 @@ const EditDigiCard = () => {
                                 digicardtitle: Yup.string()
                                     .trim()
                                     .min(2, Constants.AddDigiCard.DigiCardtitleTooShort)
-                                    .max(50, Constants.AddDigiCard.DigiCardtitleTooLong)
+                                    .max(32, Constants.AddDigiCard.DigiCardtitleTooLong)
                                     .matches(Constants.AddDigiCard.DigiCardtitleRegex, Constants.AddDigiCard.DigiCardtitleValidation)
                                     .required(Constants.AddDigiCard.DigiCardtitleRequired),
                             })}
@@ -452,7 +452,7 @@ const EditDigiCard = () => {
                                             {console.log("---------------------------", defaultOptions)}
 
 
-                                            <div className="form-group fill" style={{ position: "relative", zIndex: 10 }}>
+                                            <div className="form-group fill" style={{ position: "relative", zIndex: 20 }}>
                                                 <label className="floating-label" htmlFor="digicardtitle">
                                                     <small className="text-danger"> </small>Related DigiCard Titles
                                                 </label>
@@ -518,7 +518,7 @@ const EditDigiCard = () => {
                                         </Col>
                                     </Row>
                                     <Row>
-                                        <Col sm='12'>
+                                        <Col sm='12' style={{ position: "relative", zIndex: 10 }}>
                                             <label className="floating-label" htmlFor="digicardtitle">
                                                 <small className="text-danger"> </small>DigiCard Excerpt
                                             </label>
