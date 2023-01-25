@@ -214,7 +214,7 @@ const AddTopics = ({ setOpenAddTopic }) => {
                     topic_title: Yup.string()
                         .trim()
                         .min(2, Constants.AddTopic.TopictitleTooShort)
-                        .max(30, Constants.AddTopic.TopictitleTooLong)
+                        .max(32, Constants.AddTopic.TopictitleTooLong)
                         .required(Constants.AddTopic.TopictitleRequired),
                     duration: Yup.string()
                         .trim()
