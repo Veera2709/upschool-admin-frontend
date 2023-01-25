@@ -217,7 +217,7 @@ const EditChapter = ({ setOpenEditChapter, chapterId }) => {
                     chaptertitle: Yup.string()
                         .trim()
                         .min(2, Constants.AddDigiCard.ChaptertitleTooShort)
-                        .max(30, Constants.AddDigiCard.ChaptertitleTooLong)
+                        .max(32, Constants.AddDigiCard.ChaptertitleTooLong)
                         .required(Constants.AddDigiCard.ChaptertitleRequired),
                     chapter_description: Yup.string()
                         .required(Constants.AddUnit.DescriptionRequired),
