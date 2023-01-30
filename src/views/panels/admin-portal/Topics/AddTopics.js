@@ -34,6 +34,9 @@ const AddTopics = ({ setOpenAddTopic }) => {
     const [relatedTopicNames, setRelatedTopicNames] = useState([]);
     const [isShownConcept, setIsShownConcept] = useState(true);
     const [isShownTopic, setIsShownTopic] = useState(true);
+    const [topicDuration, setTopicDuration] = useState(false);
+    const [negativeValue, setNegative] = useState(false);
+    const [timeLimit, setTimeLimit] = useState(false);
     const MySwal = withReactContent(Swal);
 
 
@@ -227,9 +230,15 @@ const AddTopics = ({ setOpenAddTopic }) => {
                 // validationSchema
                 onSubmit={(values, { setErrors, setStatus, setSubmitting }) => {
                     // setSubmitting(true);
-
+                    let emptyFieldValidation = topicQuiz.find(o => o.duration === "" || o.duration === 0 || o.duration <= 0)
+                    // let TopicDuration = topicQuiz.find(o => o.duration <=0)
+                    let TopicDurationLimit = topicQuiz.find(o => o.duration > 150)
                     if (topicConceptId == '') {
                         setIsShownConcept(false)
+                    } else if (emptyFieldValidation) {
+                        setTopicDuration(true)
+                    } else if (TopicDurationLimit) {
+                        setTimeLimit(true)
                     }
                     else {
                         setOpenAddTopic(false)
@@ -332,8 +341,14 @@ const AddTopics = ({ setOpenAddTopic }) => {
                                 {touched.topic_description && errors.topic_description && <small className="text-danger form-text">{errors.topic_description}</small>}
                             </Form.Group>
                         </Col>
-
-                        <Form.Label className="floating-label" ><small className="text-danger">* </small>Topic Quiz Config</Form.Label>
+                        <Row>
+                            <Col sm={4}>
+                                <Form.Label className="floating-label" ><small className="text-danger">* </small>Topic Quiz Levels</Form.Label>
+                            </Col>
+                            <Col sm={6}>
+                                <Form.Label className="floating-label" ><small className="text-danger">* </small>Topic Quiz Minutes</Form.Label>
+                            </Col>
+                        </Row>
                         {topicQuiz.map((topic, index) => (
                             <div className='row ml-1 mb-2' key={index + 1000} >
                                 <div className='col-md-4' key={index + 10} >
@@ -355,11 +370,15 @@ const AddTopics = ({ setOpenAddTopic }) => {
                                                 name='duration'
                                                 placeholder='Minutes'
                                                 value={topic.duration}
-                                                onChange={(e) => { onDynamicFormChange(e, index, 'duration'); handleChange(e) }}
+                                                onChange={(e) => {
+                                                    onDynamicFormChange(e, index, 'duration');
+                                                    handleChange(e);
+                                                    setTopicDuration(false)
+                                                    setTimeLimit(false);
+                                                }}
                                                 autoComplete='off'
                                                 onBlur={handleBlur}
                                             />
-
                                         </div>
                                         {topicQuiz.length === 1 ? "" :
                                             (
@@ -379,11 +398,19 @@ const AddTopics = ({ setOpenAddTopic }) => {
                             </Col>
                             <Col sm={6}>
                                 {touched.duration && errors.duration && <small className="text-danger form-text">{errors.duration}</small>}
+                                {topicDuration && (
+                                    <small className="text-danger form-text">Quiz Minutes are required!</small>
+                                )}
+                                {/* {negativeValue&&(
+                                <small className="text-danger form-text">Quiz Minutes are required in positive value!</small>
+                                )} */}
+                                {timeLimit && (
+                                    <small className="text-danger form-text">Quiz Minutes exceeds more 150min !</small>
+                                )}
                             </Col>
                         </Row>
                         <p></p>
                         <button type="button" className="btn btn-primary" onClick={addTopic} >Add another Quiz</button>
-
                         <div className="row d-flex justify-content-end">
                             <div className="form-group fill">
                                 <div className="center col-sm-12">
@@ -391,7 +418,6 @@ const AddTopics = ({ setOpenAddTopic }) => {
                                 </div>
                             </div>
                         </div>
-
                     </Form>
                 )}
             </Formik>

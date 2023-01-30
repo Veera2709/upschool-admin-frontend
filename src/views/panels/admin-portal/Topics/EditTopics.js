@@ -41,6 +41,8 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
     const [defaultOption, setDefaultOption] = useState([]);
     const [isShownRelatedTopic, setIsShownRelatedTopic] = useState([]);
     const [topicDuration, setTopicDuration] = useState(true);
+    const [negativeValue, setNegative] = useState(false);
+    const [timeLimit, setTimeLimit] = useState(false);
     const MySwal = withReactContent(Swal);
 
 
@@ -153,8 +155,7 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                 console.log("allTopicsData", allTopicsData.Items);
                 let resultTopicData = allTopicsData.Items
                 resultTopicData.forEach((item, index) => {
-                    if (item.topic_status === 'Active' && item.topic_id!=topicId ) {
-                        console.log();
+                    if (item.topic_status === 'Active' && item.topic_id != topicId) {
                         topicArr.push({ value: item.topic_id, label: item.topic_title })
                     }
                 }
@@ -276,13 +277,14 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
 
                                     console.log("SUBMIT SIDE QUIZ : ", topicQuiz);
 
-                                    let emptyFieldValidation = topicQuiz.find(o => o.duration === "" || o.duration === 0)
-
-
+                                    let emptyFieldValidation = topicQuiz.find(o => o.duration === "" || o.duration === 0 || o.duration <= 0)
+                                    // let TopicDuration = topicQuiz.find(o => o.duration <= 0)
+                                    let TopicDurationLimit = topicQuiz.find(o => o.duration > 150)
                                     if (emptyFieldValidation) {
                                         setTopicDuration(false)
-                                    }
-                                    else {
+                                    } else if (TopicDurationLimit) {
+                                        setTimeLimit(true)
+                                    } else {
                                         if (topicConceptId == '') {
                                             setIsShown(false)
                                         } else {
@@ -470,7 +472,12 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                                                                 name='duration'
                                                                 placeholder='Minutes'
                                                                 value={topic.duration}
-                                                                onChange={(e) => { onDynamicFormChange(e, index, 'duration'); handleChange(e); setTopicDuration(true) }}
+                                                                onChange={(e) => {
+                                                                    onDynamicFormChange(e, index, 'duration');
+                                                                    handleChange(e);
+                                                                    setTopicDuration(true);
+                                                                    setTimeLimit(false);
+                                                                }}
                                                                 autoComplete='off'
                                                             />
                                                         </div>
@@ -490,13 +497,16 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                                             </Col>
                                             <Col sm={6}>
                                                 <small className="text-danger form-text" style={{ display: topicDuration ? 'none' : 'block' }}>Quiz Minutes are required!</small>
+                                                {/* {negativeValue && (
+                                                    <small className="text-danger form-text">Quiz Minutes are required in positive value!</small>
+                                                )} */}
+                                                {timeLimit && (
+                                                    <small className="text-danger form-text">Quiz Minutes exceeds more 150min !</small>
+                                                )}
                                             </Col>
                                         </Row>
-
-
                                         <p></p>
                                         <button type="button" className="btn btn-primary" onClick={addTopic} >Add another Quiz</button>
-
                                         <div className="row d-flex justify-content-end">
                                             <div className="form-group fill">
                                                 <div className="center col-sm-12">
@@ -504,7 +514,6 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                                                 </div>
                                             </div>
                                         </div>
-
                                     </Form>
                                 )}
                             </Formik>
