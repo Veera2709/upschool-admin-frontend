@@ -66,6 +66,7 @@ function ArticleRTE({
             "verdana",
             "arial black",
             "tahoma",
+            "Lucida Console"
           ],
           preview: [{ pathpath: '/admin-portal/admin-dashboard' }
           ],
