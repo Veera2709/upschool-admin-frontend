@@ -19,7 +19,7 @@ import { Link, useHistory } from 'react-router-dom';
 
 function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
     const [imgFile, setImgFile] = useState('');
-    let [data, setData] = useState({});
+    const [data, setData] = useState({});
     const [_radio, _setRadio] = useState(false);
     const [previousBoards, setPreviousBoards] = useState([]);
     const [selectedBoards, setSelectedBoards] = useState([]);
@@ -59,26 +59,8 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
     };
 
     const handlesetCopyInputs = () => {
+        console.log(data);
         setCopy(!copy);
-        setData({
-            school_name: schoolNameRef.current.value,
-            school_board: schoolBoardRef.current.value,
-            school_logo: schoolLogoRef.current.value,
-            contact_name: contactNameRef.current.value,
-            address_line1: addressLine1Ref.current.value,
-            address_line2: addressLine2Ref.current.value,
-            city: cityRef.current.value,
-            pincode: pincodeRef.current.value,
-            phoneNumber: phoneNumberRef.current.value,
-
-            contact_name2: data === {} ? '' : contactNameRef.current.value,
-            addres_line1_2: data === {} ? '' : addressLine1Ref.current.value,
-            address_line2_2: data === {} ? '' : addressLine2Ref.current.value,
-            city2: data === {} ? '' : cityRef.current.value,
-            pincode2: data === {} ? '' : pincodeRef.current.value,
-            phone_no2: data === {} ? '' : phoneNumberRef.current.value,
-            GST_no: data === {} ? '' : gst_numberRef.current.value,
-        })
     }
 
     const previewImage = (e) => {
@@ -125,13 +107,13 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
 
     const handleSelectBoard = (selectedList, selectedItem) => {
         console.log('selectedList: ', selectedList);
-        setSchoolBoardErrMsg(false);
+
         setSelectedBoards(selectedList.map((ele) => ele.value));
     }
 
     const handleOnRemove = (selectedList, selectedItem) => {
         console.log('remove selectedList: ', selectedList);
-        setSchoolBoardErrMsg(false);
+
         setSelectedBoards(selectedList.map(skillId => skillId.id));
     }
 
@@ -401,7 +383,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                 }
             >
 
-                {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
+                {({ errors, handleBlur, handleChange, handleSubmit, touched, values, setFieldValue, setFieldTouched }) => (
                     <form noValidate onSubmit={handleSubmit} className={className} {...rest}>
 
                         <div class="row">
@@ -435,17 +417,20 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                                         </label>
                                         {console.log("HERE : ", previousBoards)}
 
-                                        <Multiselect
+                                        <Select
+                                            defaultValue={previousBoards}
+                                            isMulti
+                                            name="boards"
                                             options={schoolBoardOptions}
-                                            displayValue="value"
-                                            selectionLimit="25"
-                                            name="school_board"
-                                            // selectedValues={defaultOptions}
+                                            className="basic-multi-select"
+                                            classNamePrefix="Select"
+                                            onChange={event => {
+                                                setSchoolBoardErrMsg(false);
+                                                handleSelectChange(event)
+                                            }}
                                             onSelect={handleSelectBoard}
                                             onRemove={handleOnRemove}
                                         />
-
-                                        {/* {selectedBoards === true && <small className="text-danger form-text">{'Please select a Board'}</small>} */}
 
                                         {schoolBoardErrMsg && (
                                             <small className="text-danger form-text">{'Please select School Board'}</small>
@@ -511,7 +496,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                                         <small className="text-danger form-text">'upload a proper image!'</small>
                                     )}
                                     {imgEmptyErr && (
-                                        <small className="text-danger form-text">Image can not be empty!</small>
+                                        <small className="text-danger form-text">Logo required</small>
                                     )}
                                 </div>
                             </div>
@@ -823,9 +808,39 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                                                 <small className="text-danger form-text">{errors.GST_no}</small>
                                             )}
                                         </Col>
-                                        <Form.Check className='mt-3 ml-3' type='checkbox' id={`default-checkbox`} label={`Same as Business Address`} checked={copy} onChange={handlesetCopyInputs} />
+                                        <Form.Check
+                                            className='mt-3 ml-3'
+                                            type='checkbox'
+                                            id={`default-checkbox`}
+                                            label={`Same as Business Address`}
+                                            checked={copy}
+                                            onClick={() => {
+                                                console.log("copy", copy);
+
+                                                copy === false ? setFieldValue('contact_name2', contactNameRef.current.value) : setFieldValue('contact_name2', '')
+
+                                                copy === false ? setFieldValue('addres_line1_2', addressLine1Ref.current.value) : setFieldValue('addres_line1_2', '')
+
+                                                copy === false ? setFieldValue('address_line2_2', addressLine2Ref.current.value) : setFieldValue('address_line2_2', '')
+
+                                                copy === false ? setFieldValue('city2', cityRef.current.value) : setFieldValue('city2', '')
+
+                                                copy === false ? setFieldValue('pincode2', pincodeRef.current.value) : setFieldValue('pincode2', '')
+
+                                                copy === false ? setFieldValue('phone_no2', phoneNumberRef.current.value) : setFieldValue('phone_no2', '')
+
+                                                setFieldTouched('phone_no2', false, false);
+                                                setFieldTouched('pincode2', false, false);
+                                                setFieldTouched('city2', false, false);
+                                                setFieldTouched('address_line2_2', false, false);
+                                                setFieldTouched('addres_line1_2', false, false);
+                                                setFieldTouched('contact_name2', false, false);
+
+                                            }}
+                                            onChange={handlesetCopyInputs}
+                                        />
                                     </Row>
-                                </div>
+                                </div>  
                             </div>
                         </div>
 
