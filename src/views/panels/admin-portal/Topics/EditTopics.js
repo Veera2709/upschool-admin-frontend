@@ -30,7 +30,7 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
 
 
     const [editTopicData, setEditTopicData] = useState({});
-    const [prePostLearning, setprePostLearning] = useState('pre-Learning');
+    const [prePostLearning, setprePostLearning] = useState('Pre-Learning');
 
     const [topicConceptId, setTopicConceptId] = useState([]);
     const [relatedTopicsId, setRelatedTopicsId] = useState([]);
@@ -179,7 +179,7 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                 // setTopicQuiz(result.topic_quiz_config)
 
 
-                topicData.Items[0].pre_post_learning === 'Pre-Learning' ? DefaultisLockedOption.push({ value: result.pre_post_learning, label: result.pre_post_learning }) : DefaultisLockedOption.push({ value: 'Post-Learning', label: 'Post-Learning' })
+                result.pre_post_learning === 'Pre-Learning' ? DefaultisLockedOption.push({ value: result.pre_post_learning, label: result.pre_post_learning }) : DefaultisLockedOption.push({ value: 'Post-Learning', label: 'Post-Learning' })
                 console.log("DefaultisLockedOption", DefaultisLockedOption);
                 setprePostLearning(DefaultisLockedOption[0].value)
                 setDefaultOption(DefaultisLockedOption)
@@ -344,6 +344,7 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                                                                     name="color"
                                                                     options={prePostOptions}
                                                                     onChange={(e) => { postPreOption(e) }}
+                                                                    isDisabled={true}
                                                                 />
 
                                                             ) : (
@@ -357,6 +358,7 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                                                                             name="color"
                                                                             options={prePostOptions}
                                                                             onChange={(e) => { postPreOption(e) }}
+                                                                            isDisabled={true}
                                                                         />
 
                                                                     )}
@@ -470,11 +472,20 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
 
                                                         <div className='row ml-1 mb-2' key={index + 1000} >
                                                             <div className='col-md-4' key={index + 10} >
-                                                                <select className='form-control' name="level" id="level" onChange={(e) => onDynamicFormChange(e, index, 'level')} value={topic.level} >
+                                                                {/* <select className='form-control' name="level" id="level" onChange={(e) => onDynamicFormChange(e, index, 'level')} value={topic.level} >
                                                                     {levels.map((ele, i) => {
                                                                         return <option id="level" keys={i} value={ele.value} >{ele.label}</option>
                                                                     })}
-                                                                </select>
+                                                                </select> */}
+                                                                <Form.Control
+                                                                    type='text'
+                                                                    name='topic_level'
+                                                                    value={topic.level}
+                                                                    onChange={(e) => { onDynamicFormChange(e, index, 'level'); handleChange(e) }}
+                                                                    autoComplete='off'
+                                                                    onBlur={handleBlur}
+                                                                    disabled={"disabled"}
+                                                                />
                                                             </div>
                                                             <p></p>
                                                             <div className='col-md-4'>
@@ -494,10 +505,10 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                                                                             autoComplete='off'
                                                                         />
                                                                     </div>
-                                                                    {topicQuiz.length == 1 ? "" :
+                                                                    {/* {topicQuiz.length == 1 ? "" :
                                                                         <div className='col-md-6'>
                                                                             <Button variant='danger' onClick={() => removeTopic(index)}>Remove</Button>
-                                                                        </div>}
+                                                                        </div>} */}
 
                                                                 </div>
                                                             </div>
@@ -510,16 +521,13 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                                                         </Col>
                                                         <Col sm={6}>
                                                             <small className="text-danger form-text" style={{ display: topicDuration ? 'none' : 'block' }}>Quiz Minutes are required!</small>
-                                                            {/* {negativeValue && (
-                                                    <small className="text-danger form-text">Quiz Minutes are required in positive value!</small>
-                                                )} */}
                                                             {timeLimit && (
                                                                 <small className="text-danger form-text">Quiz Minutes exceeds more 150min !</small>
                                                             )}
                                                         </Col>
                                                     </Row>
                                                     <p></p>
-                                                    <button type="button" className="btn btn-primary" onClick={addTopic} >Add another Quiz</button>
+                                                    {/* <button type="button" className="btn btn-primary" onClick={addTopic} >Add another Quiz</button> */}
                                                     <div className="row d-flex justify-content-end">
                                                         <div className="form-group fill">
                                                             <div className="center col-sm-12">

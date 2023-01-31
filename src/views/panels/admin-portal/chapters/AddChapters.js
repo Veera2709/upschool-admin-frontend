@@ -33,10 +33,7 @@ const AddChapter = ({ setOpenAddChapter }) => {
 
     const postLeraning = [];
     const preLeraning = [];
-    const isLocked = [
-        { value: 'Yes', label: 'Yes' },
-        { value: 'No', label: 'No' },
-    ]
+
 
 
 
@@ -53,7 +50,6 @@ const AddChapter = ({ setOpenAddChapter }) => {
 
     const [postlearningOption, setPostlearningOption] = useState([]);
     const [prelearningOptions, setPrelearningOptions] = useState([]);
-    const [isLockedOption, setValue] = useState();
     const [description, setDescription] = useState();
     const [isShown, setIsShown] = useState(true);
     const [isShownPre, setIsShownPre] = useState(true);
@@ -92,9 +88,7 @@ const AddChapter = ({ setOpenAddChapter }) => {
     };
 
 
-    const isLockedOPtion = (e) => {
-        setValue(e.value);
-    };
+
 
     const ChapterDescription = (text) => {
         setDescription(text.target.value)
@@ -178,7 +172,6 @@ const AddChapter = ({ setOpenAddChapter }) => {
                     chaptertitle: '',
                     postlearning_topic: '',
                     prelearning_topic: '',
-                    isLocked: '',
                     chapter_description: '',
                 }}
                 validationSchema={Yup.object().shape({
@@ -202,14 +195,12 @@ const AddChapter = ({ setOpenAddChapter }) => {
                     }
                     else {
                         setIsShown(true)
-                        setOpenAddChapter(false)
                         console.log("on submit");
                         var formData = {
                             chapter_title: values.chaptertitle,
                             chapter_description: description,
                             prelearning_topic_id: prelearningOptions,
                             postlearning_topic_id: postlearningOption,
-                            is_locked: isLockedOption === undefined ? 'Yes' : isLockedOption,
                         };
                         console.log("formdata", formData);
                         axios
@@ -221,6 +212,8 @@ const AddChapter = ({ setOpenAddChapter }) => {
                                     hideLoader();
                                     setDisableButton(false);
                                 } else {
+                                    setOpenAddChapter(false)
+
                                     // sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingChapter });
                                     MySwal.fire({
                                         title: 'Chapter added successfully!',
@@ -261,10 +254,7 @@ const AddChapter = ({ setOpenAddChapter }) => {
                                     hideLoader();
                                 }
                             });
-
                     }
-
-
                 }
                 }
             >
@@ -288,7 +278,7 @@ const AddChapter = ({ setOpenAddChapter }) => {
                                     />
                                     {touched.chaptertitle && errors.chaptertitle && <small className="text-danger form-text">{errors.chaptertitle}</small>}
                                 </div><br />
-                                <div className="form-group fill" style={{ position: "relative", zIndex: 20 }}>
+                                <div className="form-group fill">
                                     <label className="floating-label" htmlFor="postlearning_topic">
                                         <small className="text-danger">* </small> Post-learning Topic
                                     </label>
@@ -301,19 +291,14 @@ const AddChapter = ({ setOpenAddChapter }) => {
                                         onChange={(e) => { handleOnSelect(e); setIsShown(true) }}
                                         options={topicTitles}
                                         placeholder="Select"
+                                        menuPortalTarget={document.body}
+                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                     />
                                     <br />
                                     <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>Postlearning Topic Required</small>
                                 </div>
-                                <div className="form-group fill" htmlFor="chapter_description">
-                                    <Form.Label> <small className="text-danger">* </small>Chapter Description</Form.Label>
-                                    <Form.Control as="textarea" onChange={(e) => { ChapterDescription(e); setIsShownDes(true) }} rows="4" />
-                                    <br />
-                                    <small className="text-danger form-text" style={{ display: isShownDes ? 'none' : 'block' }}>Chapter Description Required</small>
-                                </div>
-                            </Col>
-                            <Col sm={6}>
-                                <div className="form-group fill" style={{ position: "relative", zIndex: 20 }}>
+
+                                <div className="form-group fill">
                                     <label className="floating-label" htmlFor="prelearning_topic">
                                         <small className="text-danger">* </small>Pre-learning Topic
                                     </label>
@@ -326,26 +311,21 @@ const AddChapter = ({ setOpenAddChapter }) => {
                                         onChange={(e) => { handleOnSelectPre(e); setIsShownPre(true) }}
                                         options={topicTitlesPre}
                                         placeholder="Select"
+                                        menuPortalTarget={document.body}
+                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                     />
                                     <br />
                                     <small className="text-danger form-text" style={{ display: isShownPre ? 'none' : 'block' }}>Prelearning Topic Required</small>
                                 </div>
 
-                                <div className="form-group fill" style={{ position: "relative", zIndex: 10 }}>
-                                    <label className="floating-label" htmlFor="isLocked">
-                                        <small className="text-danger">* </small> Is Locked
-                                    </label>
-                                    <Select
-                                        className="basic-single"
-                                        classNamePrefix="select"
-                                        defaultValue={isLocked[0]}
-                                        name="color"
-                                        options={isLocked}
-                                        onChange={(e) => { isLockedOPtion(e) }}
-                                    /><br />
+                                <div className="form-group fill" htmlFor="chapter_description">
+                                    <Form.Label> <small className="text-danger">* </small>Chapter Description</Form.Label>
+                                    <Form.Control as="textarea" onChange={(e) => { ChapterDescription(e); setIsShownDes(true) }} rows="4" />
+                                    <br />
+                                    <small className="text-danger form-text" style={{ display: isShownDes ? 'none' : 'block' }}>Chapter Description Required</small>
                                 </div>
-
                             </Col>
+
                         </Row>
                         <br></br>
                         <Row>
