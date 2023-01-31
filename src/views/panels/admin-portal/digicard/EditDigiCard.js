@@ -452,7 +452,7 @@ const EditDigiCard = () => {
                                             {console.log("---------------------------", defaultOptions)}
 
 
-                                            <div className="form-group fill" style={{ position: "relative", zIndex: 10 }}>
+                                            <div className="form-group fill">
                                                 <label className="floating-label" htmlFor="digicardtitle">
                                                     <small className="text-danger"> </small>Related DigiCard Titles
                                                 </label>
@@ -468,6 +468,8 @@ const EditDigiCard = () => {
                                                         onChange={getMultiOptions}
                                                         options={digiCardTitles}
                                                         placeholder="Select"
+                                                        menuPortalTarget={document.body}
+                                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                                     />
 
                                                 ) : (
@@ -484,6 +486,8 @@ const EditDigiCard = () => {
                                                                 onChange={getMultiOptions}
                                                                 options={digiCardTitles}
                                                                 placeholder="Select"
+                                                                menuPortalTarget={document.body}
+                                                                styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                                             />
 
                                                         )}
