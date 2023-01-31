@@ -73,7 +73,10 @@ const EditDigiCard = () => {
     };
 
     const previewImage = (e) => {
-        setImgFile(URL.createObjectURL(e.target.files[0]));
+        // setImgFile(URL.createObjectURL(e.target.files[0]));
+        let FileLength = e.target.files.length
+        console.log("FileLength", FileLength);
+        FileLength === 1 ? setImgFile(URL.createObjectURL(e.target.files[0])) : setImgFile()
     }
 
     const previewVoiceNote = (e) => {
