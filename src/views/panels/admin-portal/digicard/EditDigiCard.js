@@ -73,7 +73,10 @@ const EditDigiCard = () => {
     };
 
     const previewImage = (e) => {
-        setImgFile(URL.createObjectURL(e.target.files[0]));
+        // setImgFile(URL.createObjectURL(e.target.files[0]));
+        let FileLength = e.target.files.length
+        console.log("FileLength", FileLength);
+        FileLength === 1 ? setImgFile(URL.createObjectURL(e.target.files[0])) : setImgFile()
     }
 
     const previewVoiceNote = (e) => {
@@ -452,7 +455,7 @@ const EditDigiCard = () => {
                                             {console.log("---------------------------", defaultOptions)}
 
 
-                                            <div className="form-group fill" style={{ position: "relative", zIndex: 10 }}>
+                                            <div className="form-group fill">
                                                 <label className="floating-label" htmlFor="digicardtitle">
                                                     <small className="text-danger"> </small>Related DigiCard Titles
                                                 </label>
@@ -468,6 +471,8 @@ const EditDigiCard = () => {
                                                         onChange={getMultiOptions}
                                                         options={digiCardTitles}
                                                         placeholder="Select"
+                                                        menuPortalTarget={document.body}
+                                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                                     />
 
                                                 ) : (
@@ -484,6 +489,8 @@ const EditDigiCard = () => {
                                                                 onChange={getMultiOptions}
                                                                 options={digiCardTitles}
                                                                 placeholder="Select"
+                                                                menuPortalTarget={document.body}
+                                                                styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                                             />
 
                                                         )}
