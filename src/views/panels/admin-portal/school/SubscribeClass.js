@@ -213,7 +213,7 @@ const SubscribeClass = ({ className, rest, id, setIsOpenSubscribeClass }) => {
                             upschool_class_id: ""
                         })
 
-                    ) : (console.log("Not empty"))
+                    ) : (console.log(""))
 
                     console.log("tempArray", tempArray);
                     setdropDownValues(responseData.upschoolClassItems);
@@ -297,17 +297,22 @@ const SubscribeClass = ({ className, rest, id, setIsOpenSubscribeClass }) => {
                                                                     < br />
 
                                                                     {console.log(formFields)}
+                                                                    {console.log(form)}
+                                                                    {console.log(form.client_class_name)}
+                                                                    {console.log(form.upschool_class_id)}
 
-                                                                    {/* {formFields.length >1 && (
-                                                                        <Row>
-                                                                            <Col></Col>
-                                                                            <Col>
-                                                                                <CloseButton onClick={() => {
-                                                                                    removeFields(index)
-                                                                                }} variant="white" />
-                                                                            </Col>
-                                                                        </Row>
-                                                                    )} */}
+
+                                                                    {(form.client_class_name === "" || form.upschool_class_id === "") &&
+                                                                        (
+                                                                            <Row>
+                                                                                <Col></Col>
+                                                                                <Col>
+                                                                                    <CloseButton onClick={() => {
+                                                                                        removeFields(index)
+                                                                                    }} variant="white" />
+                                                                                </Col>
+                                                                            </Row>
+                                                                        )}
 
                                                                     <Row key={index}>
 
