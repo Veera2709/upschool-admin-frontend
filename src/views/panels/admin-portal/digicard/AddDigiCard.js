@@ -488,7 +488,7 @@ const AddDigiCard = (
                         />
                         {/* {touched.digicardKeywords && errors.digicardKeywords && (<small className="text-danger form-text">{errors.digicardKeywords}</small>)} */}
                       </div><br />
-                      <div className="form-group fill" style={{ position: "relative", zIndex: 10 }}>
+                      <div className="form-group fill">
                         <label className="floating-label" htmlFor="clientComponents">
                           <small className="text-danger"> </small>Related DigiCard Titles
                         </label>
@@ -509,6 +509,8 @@ const AddDigiCard = (
                           onChange={getMultiOptions}
                           options={digitalTitles}
                           placeholder="Select"
+                          menuPortalTarget={document.body}
+                          styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                         />
                         <br />
                         {touched.clientComponents && errors.clientComponents && (
@@ -528,7 +530,7 @@ const AddDigiCard = (
                     </Col>
                   </Row>
                   <Row>
-                    <Col sm='12' >
+                    <Col sm='12'>
                       <label className="floating-label" htmlFor="digicardtitleExcerpt">
                         <small className="text-danger"> </small>DigiCard Excerpt
                       </label>
@@ -538,7 +540,8 @@ const AddDigiCard = (
                         imageCount={imageCount}
                         articleData={articleDataTitle}
                         setArticleData={setArticleDataTtitle}
-
+                        menuPortalTarget={document.body}
+                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                       />
                     </Col>
                     <br />
@@ -556,7 +559,8 @@ const AddDigiCard = (
                         setArticleData={setArticleData}
                         onChange={handleChange}
                         name="digicardcontent"
-
+                        menuPortalTarget={document.body}
+                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                       />
                     </Col>
                     {/* {touched.digicardcontent && errors.digicardcontent && <small className="text-danger form-text">{errors.digicardcontent}</small>} */}

@@ -62,6 +62,7 @@ const AllocateSection = ({ setOpenSectionAllocation, schoolId, teacherId }) => {
     console.log("multiDropDownValues", multiDropDownValues);
     console.log("sections", sections);
     console.log("sectionsData", sectionData);
+    console.log("classData",classData);
     console.log("colourOptions", colourOptions);
 
 
@@ -168,6 +169,7 @@ const AllocateSection = ({ setOpenSectionAllocation, schoolId, teacherId }) => {
         let data2 = [...classData]
         data2.splice(index,1)
         setClassData(data2)
+        
     }
 
     const fetchClass = async () => {
@@ -213,7 +215,7 @@ const AllocateSection = ({ setOpenSectionAllocation, schoolId, teacherId }) => {
                         const defaultValue = colourOptions && colourOptions.filter(activity => (activity.value === Items.client_class_id))
                         const sectiontValue = allSections && allSections.filter(activity => (activity.value === Items.section_id))
 
-                        classArray.push(defaultValue);
+                        classArray.push({value: defaultValue[0].value, label: defaultValue[0].label});
                         console.log("defaultValue", defaultValue);
                         console.log("sectiontValue", sectiontValue);
                         SesionArray.push({ value: sectiontValue[0].value, label: sectiontValue[0].label });
@@ -291,7 +293,7 @@ const AllocateSection = ({ setOpenSectionAllocation, schoolId, teacherId }) => {
 
     useEffect(() => {
 
-    }, [classData])
+    }, [classData,sectionData])
     return (
 
         <div className="App">

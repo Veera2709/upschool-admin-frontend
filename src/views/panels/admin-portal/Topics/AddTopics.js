@@ -21,7 +21,7 @@ import MESSAGES from '../../../../helper/messages';
 
 const AddTopics = ({ setOpenAddTopic }) => {
     let history = useHistory();
-    const [prePostLearning, setprePostLearning] = useState('pre-Learning');
+    const [prePostLearning, setprePostLearning] = useState('Pre-Learning');
 
     const [topicConceptId, setTopicConceptId] = useState([]);
     const [topicConceptNames, setTopicConceptNames] = useState([]);
@@ -34,6 +34,9 @@ const AddTopics = ({ setOpenAddTopic }) => {
     const [relatedTopicNames, setRelatedTopicNames] = useState([]);
     const [isShownConcept, setIsShownConcept] = useState(true);
     const [isShownTopic, setIsShownTopic] = useState(true);
+    const [topicDuration, setTopicDuration] = useState(false);
+    const [timeLimit, setTimeLimit] = useState(false);
+
     const MySwal = withReactContent(Swal);
 
 
@@ -54,13 +57,14 @@ const AddTopics = ({ setOpenAddTopic }) => {
         { label: 'Level-3', value: 'Level-3' },
     ]
 
-    const topicQuizTemplate = { level: levels[0].value, duration: "" }
-    const [topicQuiz, setTopicQuiz] = useState([topicQuizTemplate])
+    const topicQuizTemplatePre = [{ level: "Level-1", duration: "", is_Locked: "No" }, { level: "Level-2", duration: "", is_Locked: "Yes" }]
+    const topicQuizTemplatePost = [{ level: "Level-1", duration: "", is_Locked: "Yes" }, { level: "Level-2", duration: "", is_Locked: "Yes" }, { level: "Level-3", duration: "", is_Locked: "Yes" }]
+    const [topicQuiz, setTopicQuiz] = useState(topicQuizTemplatePre)
     console.log("topicQuiz : ", topicQuiz);
 
-    const addTopic = () => {
-        setTopicQuiz([...topicQuiz, topicQuizTemplate])
-    }
+    // const addTopic = () => {
+    //     setTopicQuiz([...topicQuiz, topicQuizTemplate])
+    // }
     const onDynamicFormChange = (e, index, fieldType) => {
         console.log("e", e)
         console.log("Field", fieldType)
@@ -71,15 +75,11 @@ const AddTopics = ({ setOpenAddTopic }) => {
         )
         setTopicQuiz(updatedTopics)
     }
-    const removeTopic = (index) => {
-        const filteredProjects = [...topicQuiz]
-        filteredProjects.splice(index, 1)
-        setTopicQuiz(filteredProjects)
-    }
-
-    const data = [{ id: 'ac05006b-2351-59e1-a5bf-aa88e249ad05', name: 'ac05006b-2351-59e1-a5bf-aa88e249ad05' }]
-
-
+    // const removeTopic = (index) => {
+    //     const filteredProjects = [...topicQuiz]
+    //     filteredProjects.splice(index, 1)
+    //     setTopicQuiz(filteredProjects)
+    // }
 
     const postTopic = (formData) => {
         axios.post(dynamicUrl.addTopic, { data: formData }, {
@@ -88,6 +88,7 @@ const AddTopics = ({ setOpenAddTopic }) => {
             .then((response) => {
                 const result = response.data;
                 if (result == 200) {
+                    setOpenAddTopic(false)
                     // sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingTopic });
                     MySwal.fire({
 
@@ -178,6 +179,7 @@ const AddTopics = ({ setOpenAddTopic }) => {
     const postPreOption = (e) => {
         console.log("postPreOption", e);
         setprePostLearning(e.value);
+        e.value === 'Pre-Learning' ? setTopicQuiz(topicQuizTemplatePre) : setTopicQuiz(topicQuizTemplatePost)
     };
 
     const getconceptId = (event) => {
@@ -228,11 +230,16 @@ const AddTopics = ({ setOpenAddTopic }) => {
                 onSubmit={(values, { setErrors, setStatus, setSubmitting }) => {
                     // setSubmitting(true);
 
+                    let emptyFieldValidation = topicQuiz.find(o => o.duration === "" || o.duration === 0 || o.duration <= 0)
+                    let TopicDurationLimit = topicQuiz.find(o => o.duration > 150)
                     if (topicConceptId == '') {
                         setIsShownConcept(false)
+                    } else if (emptyFieldValidation) {
+                        setTopicDuration(true)
+                    } else if (TopicDurationLimit) {
+                        setTimeLimit(true)
                     }
                     else {
-                        setOpenAddTopic(false)
                         const formData = {
                             topic_title: values.topic_title,
                             topic_description: values.topic_description,
@@ -333,18 +340,26 @@ const AddTopics = ({ setOpenAddTopic }) => {
                             </Form.Group>
                         </Col>
 
-                        <Form.Label className="floating-label" ><small className="text-danger">* </small>Topic Quiz Config</Form.Label>
+                        <Row>
+                            <Col sm={4}>
+                                <Form.Label className="floating-label" ><small className="text-danger">* </small>Topic Quiz Levels</Form.Label>
+                            </Col>
+                            <Col sm={6}>
+                                <Form.Label className="floating-label" ><small className="text-danger">* </small>Topic Quiz Minutes</Form.Label>
+                            </Col>
+                        </Row>
                         {topicQuiz.map((topic, index) => (
-                            <div className='row ml-1 mb-2' key={index + 1000} >
-                                <div className='col-md-4' key={index + 10} >
-                                    <select className='form-control' name="level" id="level" onChange={(e) => onDynamicFormChange(e, index, 'level')} value={topic.level} >
-                                        {levels.map((ele, i) => {
-                                            console.log("VALUE : ", ele.value);
-                                            console.log("LABEL : ", ele.label);
-                                            return <option id="level" keys={i} value={ele.value} >{ele.label}</option>
-                                        })}
-                                    </select>
-
+                            <div className='row ml-1 mb-2' >
+                                <div className='col-md-4'  >
+                                    <Form.Control
+                                        type='text'
+                                        name='topic_level'
+                                        value={topic.level}
+                                        onChange={(e) => { onDynamicFormChange(e, index, 'level'); handleChange(e) }}
+                                        autoComplete='off'
+                                        onBlur={handleBlur}
+                                        disabled={"disabled"}
+                                    />
                                 </div>
                                 <p></p>
                                 <div className='col-md-4'>
@@ -355,21 +370,16 @@ const AddTopics = ({ setOpenAddTopic }) => {
                                                 name='duration'
                                                 placeholder='Minutes'
                                                 value={topic.duration}
-                                                onChange={(e) => { onDynamicFormChange(e, index, 'duration'); handleChange(e) }}
+                                                onChange={(e) => {
+                                                    onDynamicFormChange(e, index, 'duration');
+                                                    handleChange(e);
+                                                    setTopicDuration(false)
+                                                    setTimeLimit(false);
+                                                }}
                                                 autoComplete='off'
                                                 onBlur={handleBlur}
                                             />
-
                                         </div>
-                                        {topicQuiz.length === 1 ? "" :
-                                            (
-                                                <div className='col-md-6'>
-                                                    <Button variant='danger' onClick={() => removeTopic(index)}>Remove</Button>
-                                                </div>
-                                            )
-
-                                        }
-
                                     </div>
                                 </div>
                             </div>
@@ -379,11 +389,19 @@ const AddTopics = ({ setOpenAddTopic }) => {
                             </Col>
                             <Col sm={6}>
                                 {touched.duration && errors.duration && <small className="text-danger form-text">{errors.duration}</small>}
+                                {topicDuration && (
+                                    <small className="text-danger form-text">Quiz Minutes are required!</small>
+                                )}
+                                {/* {negativeValue&&(
+                                <small className="text-danger form-text">Quiz Minutes are required in positive value!</small>
+                                )} */}
+                                {timeLimit && (
+                                    <small className="text-danger form-text">Quiz Minutes exceeds more 150min !</small>
+                                )}
                             </Col>
                         </Row>
                         <p></p>
-                        <button type="button" className="btn btn-primary" onClick={addTopic} >Add another Quiz</button>
-
+                        {/* <button type="button" className="btn btn-primary" onClick={addTopic} >Add another Quiz</button> */}
                         <div className="row d-flex justify-content-end">
                             <div className="form-group fill">
                                 <div className="center col-sm-12">
