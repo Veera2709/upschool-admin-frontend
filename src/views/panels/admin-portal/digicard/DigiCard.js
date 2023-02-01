@@ -86,7 +86,9 @@ function Table({ columns, data, modalOpen }) {
                 </Col>
                 <Col className="d-flex justify-content-end">
                     <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
-                    <Button className='btn-sm btn-round has-ripple ml-2 btn btn-success' onClick={() => { adddigicard(); }}  >
+                    <Button className='btn-sm btn-round has-ripple ml-2 btn btn-success'
+                        onClick={() => { adddigicard(); }}
+                    > <i className="feather icon-plus" />&nbsp;
                         Add DigiCard
                     </Button>
                 </Col>

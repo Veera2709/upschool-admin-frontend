@@ -10,7 +10,7 @@ import withReactContent from 'sweetalert2-react-content';
 import Swal from 'sweetalert2';
 import axios from 'axios';
 import dynamicUrl from "../../../../helper/dynamicUrls";
-import { Link, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
 const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive }) => {
 
@@ -35,8 +35,6 @@ const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive 
     const pincodeRef = useRef('');
     const phoneNumberRef = useRef('');
 
-    // const phoneRegExp = /^(\+91[\-\s]?)?[0]?(91)?[789]\d{9}$/;
-
     const schoolBoardOptions = [
         { value: 'ICSE', label: 'ICSE' },
         { value: 'CBSE', label: 'CBSE' },
@@ -45,15 +43,6 @@ const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive 
         { value: 'NIOS', label: 'NIOS' },
         { value: 'IB', label: 'IB' }
     ];
-
-    const sweetAlertHandler = (alert) => {
-        const MySwal = withReactContent(Swal);
-        MySwal.fire({
-            title: alert.title,
-            text: alert.text,
-            icon: alert.type
-        });
-    };
 
     const handleSelectChange = (event) => {
 

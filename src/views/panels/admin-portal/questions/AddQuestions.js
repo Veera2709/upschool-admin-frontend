@@ -38,7 +38,7 @@ const AddQuestions = ({ className, ...rest }) => {
     const threadLinks = document.getElementsByClassName('page-header');
     const [showMathKeyboard, setShowMathKeyboard] = useState('');
     const [answerTypeOptions, setAnswerTypeOptions] = useState([]);
-    const [selectedAnswerType, setSelectedAnswerType] = useState([]);
+    const [selectedAnswerType, setSelectedAnswerType] = useState('');
     const [questionVoiceError, setQuestionVoiceError] = useState(true);
     const [questionVoiceNote, setQuestionVoiceNote] = useState("");
     const [selectedQuestionVoiceNote, setSelectedQuestionVoiceNote] = useState("");
@@ -53,6 +53,8 @@ const AddQuestions = ({ className, ...rest }) => {
     const [toggleEquationsInput, setToggleEquationsInput] = useState(false);
     const [toggleImageInput, setToggleImageInput] = useState(false);
     const [toggleAudioInput, setToggleAudioInput] = useState(false);
+    const [questionLabelErr, setQuestionLabelErr] = useState(false);
+    const [questionLabelValue, setQuestionLabelValue] = useState('');
 
     const [equation, setEquation] = useState([]);
     const [previewImages, setPreviewImages] = useState([]);
@@ -304,6 +306,12 @@ const AddQuestions = ({ className, ...rest }) => {
         setAnswerOptionsForm(data);
     }
 
+    const handleQuestionLabel = (e) => {
+
+        setQuestionLabelValue(e.target.value);
+        setQuestionLabelErr(false);
+    }
+
     useEffect(() => {
 
         const validateJWT = sessionStorage.getItem('user_jwt');
@@ -380,7 +388,12 @@ const AddQuestions = ({ className, ...rest }) => {
 
                                 } else {
 
-                                    if (isEmptyArray(selectedQuestionType)) {
+                                    console.log(questionLabelValue);
+                                    if (questionLabelValue === "" || questionLabelValue === undefined || questionLabelValue === "undefined") {
+
+                                        setQuestionLabelErr(true);
+
+                                    } else if (isEmptyArray(selectedQuestionType)) {
                                         setQuestionTypeErrMsg(true);
                                     } else if (articleDataTitle === "" || articleDataTitle === undefined || articleDataTitle === 'undefined' || articleDataTitle === "<p><br></p>" || articleDataTitle === "<p></p>" || articleDataTitle === "<br>") {
                                         setQuestionEmptyErrMsg(true);
@@ -392,7 +405,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                             setAnsWeightageErrMsg(true);
                                         } else {
 
-                                            console.log('Data inserted!');
+                                            console.log('Data inserted!', values.question_disclaimer);
 
                                             let payLoad = {
 
@@ -402,8 +415,9 @@ const AddQuestions = ({ className, ...rest }) => {
                                                 answer_type: selectedAnswerType,
                                                 answers_of_question: answerOptionsForm,
                                                 question_status: sessionStorage.getItem('click_event'),
-                                                question_disclaimer: values.question_disclaimer,
-                                                show_math_keyboard: showMathKeyboard
+                                                question_disclaimer: values.question_disclaimer === undefined ? "" : values.question_disclaimer,
+                                                show_math_keyboard: showMathKeyboard,
+                                                question_label: questionLabelValue
                                             }
 
                                             console.log("payLoad", payLoad);
@@ -581,7 +595,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                 <form noValidate onSubmit={handleSubmit} className={className} {...rest}>
 
                                     <Row>
-                                        <Col>
+                                        <Col xs={6}>
                                             <label className="floating-label">
                                                 <small className="text-danger">* </small>
                                                 Question Type
@@ -608,7 +622,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                             )}
                                         </Col>
 
-                                        <Col>
+                                        <Col xs={6}>
                                             <label className="floating-label" htmlFor="question_voice_note">
                                                 <small className="text-danger"> </small>Question Voice Note
                                             </label>
@@ -632,8 +646,8 @@ const AddQuestions = ({ className, ...rest }) => {
                                             {questionVoiceNote && (
                                                 <>
                                                     <br />
-                                                    <Row>
-                                                        <Col>
+                                                    <Row style={{ display: "contents" }}>
+                                                        <Col xs={8}>
                                                             <div className="form-group fill">
                                                                 <audio controls>
                                                                     <source src={questionVoiceNote} alt="Audio" type="audio/mp3" />
@@ -641,7 +655,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                 </audio>
                                                             </div>
                                                         </Col>
-                                                        <Col style={{ padding: '5px' }}>
+                                                        <Col xs={3}>
                                                             <div>
                                                                 <Button
                                                                     size="lg"
@@ -652,6 +666,12 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                         setVoiceNoteFileValues('');
                                                                         setFieldValue('question_voice_note', '')
                                                                     }}
+                                                                    style={
+                                                                        {
+                                                                            marginTop: "-120px",
+                                                                            marginLeft: "310px"
+                                                                        }
+                                                                    }
                                                                 >
                                                                     <i className="feather icon-trash-2 " />
                                                                 </Button>
@@ -664,7 +684,42 @@ const AddQuestions = ({ className, ...rest }) => {
                                             {touched.question_voice_note && errors.question_voice_note && (
                                                 <small className="text-danger form-text">{errors.question_voice_note}</small>
                                             )}
-                                            <small className="text-danger form-text" style={{ display: questionVoiceError ? 'none' : 'block' }}>Invalid File Type or File size is Exceed More Than 10MB</small>
+                                            <small className="text-danger form-text" style={{ display: questionVoiceError ? 'none' : 'block' }}>{'Invalid File Type or File size is Exceed More Than 10MB'}</small>
+                                        </Col>
+                                    </Row>
+
+                                    <br />
+                                    <Row>
+                                        <Col>
+                                            <div
+                                                title="This will be shown as question in the table!"
+
+                                            >
+                                                <label className="floating-label">
+                                                    <small className="text-danger">* </small>
+                                                    Question Label
+                                                </label>
+
+                                                <input
+                                                    value={values.question_label}
+                                                    className="form-control"
+                                                    error={touched.question_label && errors.question_label}
+                                                    label="question_label"
+                                                    name="question_label"
+                                                    onBlur={handleBlur}
+                                                    type="question_label"
+                                                    onChange={e => handleQuestionLabel(e)}
+                                                    placeholder="Question Label"
+
+                                                />
+                                            </div>
+
+                                            {
+                                                questionLabelErr && (
+                                                    <small className="text-danger form-text">{'Question Label is required!'}</small>
+                                                )
+                                            }
+
                                         </Col>
                                     </Row>
 
@@ -740,7 +795,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                             />
 
                                             {questionEmptyErrMsg && (
-                                                <small className="text-danger form-text">{'Question required!'}</small>
+                                                <small className="text-danger form-text">{'Question is required!'}</small>
                                             )}
 
                                         </Col>
@@ -956,7 +1011,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                         <br />
 
                                                         {answerOptionsForm.length > 1 && (
-                                                            <Row>
+                                                            <Row key={index}>
                                                                 <Col></Col>
                                                                 <Col>
                                                                     <CloseButton onClick={() => {

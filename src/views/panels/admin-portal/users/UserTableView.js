@@ -206,9 +206,7 @@ const UserTableView = ({ _userRole }) => {
 
   const [isOpen, setIsOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [validationObj, setValidationObj] = useState({});
   const [isOpenSectionAllocation, setOpenSectionAllocation] = useState(false);
-  const [schoolId, setSchoolId] = useState();
   const [teacherId, setTeacherId] = useState();
   const [selectDOBErr, setSelectDOBErr] = useState(false);
 
@@ -523,124 +521,57 @@ const UserTableView = ({ _userRole }) => {
     setIsOpen(true);
   };
 
-  const _UpdateUser = (data) => {
-    console.log(data);
-    console.log('Submitted');
-
-    axios
-      .post(dynamicUrl.updateUsersByRole, { data }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
-      .then(async (response) => {
-
-        console.log({ response });
-        if (response.Error) {
-          hideLoader();
-          setIsEditModalOpen(false);
-          sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.UpdatingUser });
-
-          fetchUserData();
-
-
-        } else {
-          hideLoader();
-          setIsEditModalOpen(false);
-          sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.UpdatingUser });
-
-          fetchUserData();
-
-
-        }
-      })
-      .catch((error) => {
-        if (error.response) {
-          // Request made and server responded
-          hideLoader();
-          console.log(error.response.data);
-          setIsEditModalOpen(false);
-
-          if (error.response.data === 'Invalid Token') {
-
-            sessionStorage.clear();
-            localStorage.clear();
-
-            history.push('/auth/signin-1');
-            window.location.reload();
-
-          } else {
-
-            sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
-            fetchUserData();
-          }
-
-        } else if (error.request) {
-          // The request was made but no response was received
-          hideLoader();
-          console.log(error.request);
-          fetchUserData();
-
-        } else {
-          // Something happened in setting up the request that triggered an Error
-          hideLoader();
-          console.log('Error', error.message);
-          fetchUserData();
-
-        }
-      });
-  };
-
   const updateValues = (_data) => {
     let responseData = _data;
-    // let responseData = [];
 
     console.log("responseData", responseData);
 
+
     let finalDataArray = [];
+
     for (let index = 0; index < responseData.length; index++) {
       responseData[index].id = index + 1;
-
-      let userId;
-
-      if (responseData[index].user_role === "Teacher") {
-        userId = responseData[index].teacher_id;
-        setValidationObj({
-          firstName: Yup.string().max(255).required('First Name is required'),
-          lastName: Yup.string().max(255).required('Last Name is required'),
-          userEmail: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
-          phoneNumber: Yup.string().matches(phoneRegExp, 'Phone number is not valid').max(255).required('Phone Number is required'),
-          userRole: Yup.string().max(255).required('User Role is required'),
-          school: Yup.string().max(255).required('School is required')
-        })
-      } else {
-        userId = responseData[index].parent_id;
-        setValidationObj({
-          firstName: Yup.string().max(255).required('First Name is required'),
-          lastName: Yup.string().max(255).required('Last Name is required'),
-          userEmail: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
-          phoneNumber: Yup.string().matches(phoneRegExp, 'Phone number is not valid').max(255).required('Phone Number is required'),
-          userRole: Yup.string().max(255).required('User Role is required'),
-          school: Yup.string().max(255).required('School is required')
-        })
-      }
 
       responseData[index]['action'] = (
         <>
 
           {pageLocation === 'active-users' ? (
-            // responseData[index].user_role === "Teacher" ? ()
+
+
             <>
+
               {responseData[index].user_role === "Teacher" ? (
                 <>
-                  <Button size="sm" className="btn btn-icon btn-rounded btn-info" onClick={(e) => { setOpenSectionAllocation(true); setSchoolId(responseData[index].school_id); setTeacherId(responseData[index].teacher_id) }}>
+                  {/* <Button
+                    size="sm"
+                    className="btn btn-icon btn-rounded btn-info"
+                    onClick={(e) => {
+                      setOpenSectionAllocation(true);
+                      setSchoolId(responseData[index].school_id);
+                      setTeacherId(responseData[index].teacher_id)
+                    }}
+                  >
                     <i className="feather icon-plus" /> &nbsp; Allocate Section
                   </Button>{' '}
-                  &nbsp;
-                  <Button size="sm" className="btn btn-icon btn-rounded btn-info" onClick={(e) => saveUserId(e, userId, responseData[index].user_role)}>
+                  &nbsp; */}
+
+                  <Button
+                    size="sm"
+                    className="btn btn-icon btn-rounded btn-info"
+                    // onClick={(e) => saveUserId(e, userId, responseData[index].user_role)}
+                    onClick={(e) => {
+                      history.push(`/admin-porttal/edit-users/${responseData[index].teacher_id}/${responseData[index].user_role}/${responseData[index].school_id}`)
+                    }
+
+                    }
+                  >
                     <i className="feather icon-edit" /> &nbsp; Edit
                   </Button>{' '}
                   &nbsp;
                   <Button
                     size="sm"
                     className="btn btn-icon btn-rounded btn-danger"
-                    onClick={(e) => saveUserIdDelete(e, userId, responseData[index].user_role, 'Archived')}
+                    onClick={(e) => saveUserIdDelete(e, responseData[index].teacher_id, responseData[index].user_role, 'Archived')}
                   >
                     <i className="feather icon-trash-2" /> &nbsp;Delete
                   </Button>
@@ -648,14 +579,19 @@ const UserTableView = ({ _userRole }) => {
                 </>
               ) : (
                 <>
-                  <Button size="sm" className="btn btn-icon btn-rounded btn-info" onClick={(e) => saveUserId(e, userId, responseData[index].user_role)}>
+                  <Button
+                    size="sm"
+                    className="btn btn-icon btn-rounded btn-info"
+                    // onClick={(e) => saveUserId(e, userId, responseData[index].user_role)}
+                    onClick={(e) => history.push(`/admin-porttal/edit-users/${responseData[index].parent_id}/${responseData[index].user_role}/${responseData[index].school_id}`)}
+                  >
                     <i className="feather icon-edit" /> &nbsp; Edit
                   </Button>{' '}
                   &nbsp;
                   <Button
                     size="sm"
                     className="btn btn-icon btn-rounded btn-danger"
-                    onClick={(e) => saveUserIdDelete(e, userId, responseData[index].user_role, 'Archived')}
+                    onClick={(e) => saveUserIdDelete(e, responseData[index].parent_id, responseData[index].user_role, 'Archived')}
                   >
                     <i className="feather icon-trash-2" /> &nbsp;Delete
                   </Button>
@@ -664,17 +600,30 @@ const UserTableView = ({ _userRole }) => {
               )}
             </>
           ) : (
+
             <>
-
-              <Button
-                size="sm"
-                className="btn btn-icon btn-rounded btn-primary"
-                onClick={(e) => saveUserIdDelete(e, userId, responseData[index].user_role, 'Active')}
-              >
-                <i className="feather icon-plus" /> &nbsp;Restore
-              </Button>
+              {responseData[index].user_role === "Teacher" ? (
+                <>
+                  <Button
+                    size="sm"
+                    className="btn btn-icon btn-rounded btn-primary"
+                    onClick={(e) => saveUserIdDelete(e, responseData[index].teacher_id, responseData[index].user_role, 'Active')}
+                  >
+                    <i className="feather icon-plus" /> &nbsp;Restore
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button
+                    size="sm"
+                    className="btn btn-icon btn-rounded btn-primary"
+                    onClick={(e) => saveUserIdDelete(e, responseData[index].parent_id, responseData[index].user_role, 'Active')}
+                  >
+                    <i className="feather icon-plus" /> &nbsp;Restore
+                  </Button>
+                </>
+              )}
             </>
-
           )}
 
         </>
@@ -811,14 +760,6 @@ const UserTableView = ({ _userRole }) => {
                   {_data && (
 
                     <>
-                      <Modal dialogClassName="my-modal" show={isOpenSectionAllocation} onHide={() => setOpenSectionAllocation(false)}>
-                        <Modal.Header closeButton>
-                          <Modal.Title as="h5">Section Allocation</Modal.Title>
-                        </Modal.Header>
-                        <Modal.Body>
-                          <AllocateSection setOpenSectionAllocation={setOpenSectionAllocation} schoolId={schoolId} teacherId={teacherId} />
-                        </Modal.Body>
-                      </Modal>
                       < React.Fragment >
                         <Row>
                           <Col sm={12}>
@@ -834,401 +775,6 @@ const UserTableView = ({ _userRole }) => {
                           </Col>
                         </Row>
                       </React.Fragment>
-
-                      <Modal dialogClassName="my-modal" show={isEditModalOpen} onHide={() => setIsEditModalOpen(false)}>
-                        <Modal.Header closeButton>
-                          <Modal.Title as="h5">Update User</Modal.Title>
-                        </Modal.Header>
-                        <Modal.Body>
-                          <Formik
-                            initialValues={{
-                              firstName: individualUserData.user_firstname,
-                              lastName: individualUserData.user_lastname,
-                              userEmail: individualUserData.user_email,
-                              phoneNumber: individualUserData.user_phone_no,
-                              userRole: individualUserData.user_role,
-                              user_dob: userDOB.yyyy_mm_dd,
-                              class: individualUserData.class_id,
-                              section: individualUserData.section_id,
-                              school: individualUserData.school_id
-
-                              //individualUserData.user_dob.yyyy_mm_dd
-
-                            }}
-                            validationSchema={
-                              Yup.object().shape(validationObj)
-                            }
-                            onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-
-                              console.log("Submit")
-                              setStatus({ success: true });
-                              setSubmitting(true);
-
-                              let data;
-
-                              const selectedSchoolID = schoolName_ID.find((e) => e.school_name == schoolNameRef.current.value);
-
-                              console.log(selectedSchoolID);
-                              console.log(classNameRef.current.value);
-
-                              if (values.user_dob === "") {
-
-                                setSelectDOBErr(true);
-
-                              } else if (values.userRole === 'Teacher') {
-
-                                data = {
-
-                                  teacher_id: _userID,
-                                  school_id: selectedSchoolID.school_id,
-                                  user_dob: values.user_dob,
-                                  user_firstname: values.firstName,
-                                  user_lastname: values.lastName,
-                                  user_email: values.userEmail,
-                                  user_phone_no: values.phoneNumber,
-                                  user_role: values.userRole
-
-                                };
-
-                                console.log(data);
-                                showLoader();
-                                _UpdateUser(data);
-
-                              } else {
-
-                                data = {
-
-                                  parent_id: _userID,
-                                  school_id: selectedSchoolID.school_id,
-                                  user_dob: values.user_dob,
-                                  user_firstname: values.firstName,
-                                  user_lastname: values.lastName,
-                                  user_email: values.userEmail,
-                                  user_phone_no: values.phoneNumber,
-                                  user_role: values.userRole
-
-                                };
-
-                                console.log(data);
-                                showLoader();
-                                _UpdateUser(data);
-
-                              }
-
-                            }}
-                          >
-                            {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
-                              <form noValidate onSubmit={handleSubmit}>
-                                <Row>
-                                  <Col>
-                                    <Row>
-                                      <Col>
-                                        <div className="form-group fill">
-                                          <label className="floating-label" htmlFor="firstName">
-                                            <small className="text-danger">* </small>First Name
-                                          </label>
-                                          <input
-                                            className="form-control"
-                                            error={touched.firstName && errors.firstName}
-                                            name="firstName"
-                                            onBlur={handleBlur}
-                                            onChange={handleChange}
-                                            type="text"
-                                            value={values.firstName}
-                                          />
-                                          {touched.firstName && errors.firstName && <small className="text-danger form-text">{errors.firstName}</small>}
-                                        </div>
-                                      </Col>
-
-                                      <Col>
-                                        <div className="form-group fill">
-                                          <label className="floating-label" htmlFor="lastName">
-                                            <small className="text-danger">* </small>Last Name
-                                          </label>
-                                          <input
-                                            className="form-control"
-                                            error={touched.lastName && errors.lastName}
-                                            name="lastName"
-                                            onBlur={handleBlur}
-                                            onChange={handleChange}
-                                            type="text"
-                                            value={values.lastName}
-                                          />
-                                          {touched.lastName && errors.lastName && <small className="text-danger form-text">{errors.lastName}</small>}
-                                        </div>
-                                      </Col>
-
-                                    </Row>
-
-                                    <Row>
-
-                                      <Col>
-
-                                        <div className="form-group fill">
-                                          <label className="floating-label" htmlFor="class">
-                                            <small className="text-danger">* </small>School
-                                          </label>
-                                          {console.log(previousSchool)}
-                                          <select
-                                            className="form-control"
-                                            error={touched.school && errors.school}
-                                            name="school"
-                                            onBlur={handleBlur}
-                                            // onChange={handleChange}
-                                            onChange={handleSchoolChange}
-                                            type="text"
-                                            ref={schoolNameRef}
-                                            // value={values.school}
-                                            defaultValue={previousSchool}
-                                            disabled={true}
-                                          >
-
-                                            <option>Select School</option>
-
-                                            {schoolName_ID.map((schoolData) => {
-
-                                              return <option key={schoolData.school_id}>
-                                                {schoolData.school_name}
-                                              </option>
-
-                                            })}
-
-                                          </select>
-                                          {touched.school && errors.school && (
-                                            <small className="text-danger form-text">{errors.school}</small>
-                                          )}
-                                        </div>
-                                      </Col>
-
-
-                                      <Col>
-                                        <div className="form-group fill">
-                                          <label className="floating-label" htmlFor="userRole">
-                                            <small className="text-danger">* </small>Role
-                                          </label>
-                                          <input
-                                            className="form-control"
-                                            error={touched.userRole && errors.userRole}
-                                            name="userRole"
-                                            onBlur={handleBlur}
-                                            onChange={handleChange}
-                                            type="text"
-                                            value={values.userRole}
-                                            readOnly={true}
-                                          />
-
-
-                                        </div>
-                                      </Col>
-
-                                    </Row>
-
-                                    {individualUserData.class_id && individualUserData.section_id && className_ID ? (
-                                      <>
-                                        <Row>
-
-                                          <Col>
-
-                                            <div className="form-group fill">
-                                              <label className="floating-label" htmlFor="class">
-                                                <small className="text-danger">* </small>Class
-                                              </label>
-                                              <select
-                                                className="form-control"
-                                                error={touched.class && errors.class}
-                                                name="class"
-                                                onBlur={handleBlur}
-                                                onChange={() => {
-                                                  setSelectClassErr(false)
-                                                }}
-                                                type="text"
-                                                ref={classNameRef}
-                                                // value={values.class}
-                                                defaultValue={previousClass}
-                                              >
-
-                                                {
-                                                  console.log("previousClass", previousClass)
-                                                }
-                                                <option>Select Class</option>
-
-                                                {console.log("className_ID", className_ID)}
-                                                {className_ID.map((classData) => {
-
-                                                  return <option key={classData.client_class_id}>
-                                                    {classData.client_class_name}
-                                                  </option>
-
-                                                })}
-
-                                              </select>
-                                              {touched.class && errors.class && (
-                                                <small className="text-danger form-text">{errors.class}</small>
-                                              )}
-                                              {selectClassErr && (
-
-                                                <small className="text-danger form-text">Please select a class</small>
-
-                                              )}
-                                            </div>
-                                          </Col>
-
-                                          <Col>
-                                            <div className="form-group fill">
-                                              <label className="floating-label" htmlFor="section">
-                                                <small className="text-danger">* </small>Section
-                                              </label>
-                                              <input
-                                                className="form-control"
-                                                error={touched.section && errors.section}
-                                                name="section"
-                                                onBlur={handleBlur}
-                                                onChange={handleChange}
-                                                type="text"
-                                                value={values.section}
-
-                                              />
-
-                                              {touched.section && errors.section && <small className="text-danger form-text">{errors.section}</small>}
-                                            </div>
-                                          </Col>
-                                        </Row>
-
-                                        <Row>
-                                          <Col>
-                                            <div className="form-group fill">
-                                              <label className="floating-label" htmlFor="userEmail">
-                                                <small className="text-danger">* </small>Email ID
-                                              </label>
-                                              <input
-                                                className="form-control"
-                                                error={touched.userEmail && errors.userEmail}
-                                                name="userEmail"
-                                                onBlur={handleBlur}
-                                                onChange={handleChange}
-                                                type="email"
-                                                value={values.userEmail}
-                                                readOnly={true}
-                                              />
-                                              {touched.userEmail && errors.userEmail && <small className="text-danger form-text">{errors.userEmail}</small>}
-                                            </div>
-                                          </Col>
-                                          <Col>
-                                            <div className="form-group fill">
-                                              <label className="floating-label" htmlFor="phoneNumber">
-                                                <small className="text-danger">* </small>Phone No
-                                              </label>
-                                              <input
-                                                className="form-control"
-                                                error={touched.phoneNumber && errors.phoneNumber}
-                                                name="phoneNumber"
-                                                onBlur={handleBlur}
-                                                onChange={handleChange}
-                                                type="number"
-                                                value={values.phoneNumber}
-                                                readOnly={true}
-                                              />
-                                              {touched.phoneNumber && errors.phoneNumber && <small className="text-danger form-text">{errors.phoneNumber}</small>}
-                                            </div>
-                                          </Col>
-                                        </Row>
-                                      </>
-
-                                    ) : (
-                                      <>
-                                        <Row>
-                                          <Col>
-                                            <div className="form-group fill">
-                                              <label className="floating-label" htmlFor="userEmail">
-                                                <small className="text-danger">* </small>Email ID
-                                              </label>
-                                              <input
-                                                className="form-control"
-                                                error={touched.userEmail && errors.userEmail}
-                                                name="userEmail"
-                                                onBlur={handleBlur}
-                                                onChange={handleChange}
-                                                type="email"
-                                                value={values.userEmail}
-
-                                              />
-                                              {touched.userEmail && errors.userEmail && <small className="text-danger form-text">{errors.userEmail}</small>}
-                                            </div>
-                                          </Col>
-                                          <Col>
-                                            <div className="form-group fill">
-                                              <label className="floating-label" htmlFor="phoneNumber">
-                                                <small className="text-danger">* </small>Phone No
-                                              </label>
-                                              <input
-                                                className="form-control"
-                                                error={touched.phoneNumber && errors.phoneNumber}
-                                                name="phoneNumber"
-                                                onBlur={handleBlur}
-                                                onChange={handleChange}
-                                                type="number"
-                                                value={values.phoneNumber}
-
-                                              />
-                                              {touched.phoneNumber && errors.phoneNumber && <small className="text-danger form-text">{errors.phoneNumber}</small>}
-                                            </div>
-                                          </Col>
-                                        </Row>
-                                      </>
-                                    )}
-                                    <Row>
-
-                                      <Col>
-                                        <div className="form-group fill">
-                                          <label className="floating-label" htmlFor="user_dob">
-                                            <small className="text-danger">* </small>DOB
-                                          </label>
-                                          <input
-                                            className="form-control"
-                                            error={touched.user_dob && errors.user_dob}
-                                            name="user_dob"
-                                            onBlur={handleBlur}
-                                            onChange={e => {
-                                              setSelectDOBErr(false)
-                                              handleChange(e)
-                                            }}
-                                            type="date"
-                                            value={values.user_dob}
-
-                                          />
-                                          {touched.user_dob && errors.user_dob && <small className="text-danger form-text">{errors.user_dob}</small>}
-
-                                          {selectDOBErr && (
-
-                                            <small className="text-danger form-text">DOB required</small>
-
-                                          )}
-                                        </div>
-                                      </Col>
-
-                                      <Col></Col>
-                                    </Row>
-
-                                    {errors.submit && (
-                                      <Col sm={12}>
-                                        <Alert variant="danger">{errors.submit}</Alert>
-                                      </Col>
-                                    )}
-                                    <hr />
-                                    <Row>
-                                      <Col></Col>
-                                      <Button type="submit" color="success" variant="success">
-                                        Update
-                                      </Button>
-                                    </Row>
-                                  </Col>
-                                </Row>
-                              </form>
-                            )}
-                          </Formik>
-                        </Modal.Body>
-                      </Modal>
-
                     </>
                   )}
 

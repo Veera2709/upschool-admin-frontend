@@ -134,7 +134,7 @@ const EditClass = ({setOpenEditClass,classId}) => {
               enableReinitialize
               initialValues={{
                 classTitle: individualClassdata.class_name,
-                class_subject_id: subjectOption,
+                // class_subject_id: subjectOption,
               }}
               validationSchema={Yup.object().shape({
                 classTitle: Yup.string()

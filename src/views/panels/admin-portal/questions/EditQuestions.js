@@ -51,6 +51,8 @@ const EditQuestions = () => {
     const [toggleEquationsInput, setToggleEquationsInput] = useState(false);
     const [toggleImageInput, setToggleImageInput] = useState(false);
     const [toggleAudioInput, setToggleAudioInput] = useState(false);
+    const [questionLabelErr, setQuestionLabelErr] = useState(false);
+    const [questionLabelValue, setQuestionLabelValue] = useState('');
 
     const [equation, setEquation] = useState([]);
     const [previewImages, setPreviewImages] = useState([]);
@@ -70,6 +72,12 @@ const EditQuestions = () => {
             answer_weightage: ''
         }
     ]);
+
+    const handleQuestionLabel = (e) => {
+
+        setQuestionLabelValue(e.target.value);
+        setQuestionLabelErr(false);
+    }
 
     const removeSelectedImg = (index) => {
 
@@ -354,7 +362,8 @@ const EditQuestions = () => {
                         _setRadio(radioValue);
 
                         setSelectedQuestionType(individual_user_data.question_type);
-
+                        setQuestionLabelValue(individual_user_data.question_label);
+                        
                         individual_user_data.question_type === 'Subjective' ? setAnswerTypeOptions([
                             { value: 'Words', label: 'Words' },
                             { value: 'Numbers', label: 'Numbers' },
@@ -595,12 +604,14 @@ const EditQuestions = () => {
                                                 <Formik
 
                                                     initialValues={{
+                                                        question_label: previousData.question_label,
                                                         question_disclaimer: previousData.question_disclaimer,
                                                         answerType: '',
                                                         submit: null
                                                     }}
 
                                                     validationSchema={Yup.object().shape({
+
                                                         // answer_weightage: Yup.string().matches(Constants.Common.marksWeightageRegex, "Invalid Marks Weightage")
                                                     })}
 
@@ -612,7 +623,13 @@ const EditQuestions = () => {
 
                                                         } else if (sessionStorage.getItem('click_event') === "SaveAsNew") {
 
-                                                            if (isEmptyArray(selectedQuestionType)) {
+                                                            console.log(questionLabelValue);
+
+                                                            if (questionLabelValue === "" || questionLabelValue === undefined || questionLabelValue === "undefined") {
+
+                                                                setQuestionLabelErr(true);
+
+                                                            } else if (isEmptyArray(selectedQuestionType)) {
                                                                 setQuestionTypeErrMsg(true);
                                                             } else if (articleDataTitle === "" || articleDataTitle === undefined || articleDataTitle === 'undefined' || articleDataTitle === "<p><br></p>" || articleDataTitle === "<p></p>" || articleDataTitle === "<br>") {
                                                                 setQuestionEmptyErrMsg(true);
@@ -635,7 +652,8 @@ const EditQuestions = () => {
                                                                         answers_of_question: answerOptionsForm,
                                                                         question_status: 'Save',
                                                                         question_disclaimer: values.question_disclaimer === "" ? "" : values.question_disclaimer,
-                                                                        show_math_keyboard: showMathKeyboard
+                                                                        show_math_keyboard: showMathKeyboard,
+                                                                        question_label: questionLabelValue
                                                                     }
 
                                                                     console.log("payLoad", payLoad);
@@ -1307,7 +1325,13 @@ const EditQuestions = () => {
 
                                                         } else {
 
-                                                            if (isEmptyArray(selectedQuestionType)) {
+                                                            console.log(questionLabelValue);
+
+                                                            if (questionLabelValue === "" || questionLabelValue === undefined || questionLabelValue === "undefined") {
+
+                                                                setQuestionLabelErr(true);
+
+                                                            } else if (isEmptyArray(selectedQuestionType)) {
                                                                 setQuestionTypeErrMsg(true);
                                                             } else if (articleDataTitle === "" || articleDataTitle === undefined || articleDataTitle === 'undefined' || articleDataTitle === "<p><br></p>" || articleDataTitle === "<p></p>" || articleDataTitle === "<br>") {
                                                                 setQuestionEmptyErrMsg(true);
@@ -1331,7 +1355,8 @@ const EditQuestions = () => {
                                                                         answers_of_question: answerOptionsForm,
                                                                         question_status: sessionStorage.getItem('click_event'),
                                                                         question_disclaimer: values.question_disclaimer === "" ? "" : values.question_disclaimer,
-                                                                        show_math_keyboard: showMathKeyboard
+                                                                        show_math_keyboard: showMathKeyboard,
+                                                                        question_label: questionLabelValue
                                                                     }
 
                                                                     console.log("payLoad", payLoad);
@@ -2259,6 +2284,44 @@ const EditQuestions = () => {
                                                                         <small className="text-danger form-text">{errors.question_voice_note}</small>
                                                                     )}
                                                                     <small className="text-danger form-text" style={{ display: questionVoiceError ? 'none' : 'block' }}>Invalid File Type or File size is Exceed More Than 10MB</small>
+                                                                </Col>
+                                                            </Row>
+
+                                                            <br />
+                                                            <Row>
+                                                                <Col>
+                                                                    <div
+                                                                        title="This will be shown as question in the table!"
+
+                                                                    >
+                                                                        <label className="floating-label">
+                                                                            <small className="text-danger">* </small>
+                                                                            Question Label
+                                                                        </label>
+
+                                                                        <input
+                                                                            value={values.question_label}
+                                                                            className="form-control"
+                                                                            error={touched.question_label && errors.question_label}
+                                                                            label="question_label"
+                                                                            name="question_label"
+                                                                            onBlur={handleBlur}
+                                                                            type="question_label"
+                                                                            // onChange={e => handleQuestionLabel(e)}
+                                                                            onChange={e => {
+                                                                                handleQuestionLabel(e)
+                                                                                handleChange(e)
+                                                                            }}
+                                                                            placeholder="Question Label"
+
+                                                                        />
+                                                                    </div>
+
+                                                                    {
+                                                                        questionLabelErr && (
+                                                                            <small className="text-danger form-text">{'Question Label is required!'}</small>
+                                                                        )
+                                                                    }
                                                                 </Col>
                                                             </Row>
 
