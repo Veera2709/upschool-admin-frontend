@@ -172,7 +172,7 @@ const QuestionsTableView = ({ _questionStatus }) => {
     },
     {
       Header: 'Question',
-      accessor: 'question_content'
+      accessor: 'question_label'
     },
     // {
     //   Header: 'Status',

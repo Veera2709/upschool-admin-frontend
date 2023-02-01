@@ -159,6 +159,11 @@ const routes = [
       },
       {
         exact: true,
+        path: '/admin-porttal/edit-users/:user_id/:user_role/:schoolId',
+        component: lazy(() => import('./views/panels/admin-portal/users/EditUserOptions'))
+      },
+      {
+        exact: true,
         path: '/admin-portal/archived-users',
         component: lazy(() => import('./views/panels/admin-portal/users/ListUsers')
 
