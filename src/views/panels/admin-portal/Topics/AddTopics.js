@@ -51,14 +51,13 @@ const AddTopics = ({ setOpenAddTopic }) => {
         });
     };
 
-    const levels = [
-        { label: 'Level-1', value: 'Level-1' },
-        { label: 'Level-2', value: 'Level-2' },
-        { label: 'Level-3', value: 'Level-3' },
-    ]
-
-    const topicQuizTemplatePre = [{ level: "Level-1", duration: "", is_Locked: "No" }, { level: "Level-2", duration: "", is_Locked: "Yes" }]
-    const topicQuizTemplatePost = [{ level: "Level-1", duration: "", is_Locked: "Yes" }, { level: "Level-2", duration: "", is_Locked: "Yes" }, { level: "Level-3", duration: "", is_Locked: "Yes" }]
+    const topicQuizTemplatePre = [
+        { level: "Level-1", duration: "", is_Locked: "No" ,attempts_left:'2'},
+        { level: "Level-2", duration: "", is_Locked: "Yes",attempts_left:'2' }]
+    const topicQuizTemplatePost = [
+        { level: "Level-1", duration: "", is_Locked: "Yes",attempts_left:'2' },
+        { level: "Level-2", duration: "", is_Locked: "Yes",attempts_left:'2' },
+        { level: "Level-3", duration: "", is_Locked: "Yes",attempts_left:'2' }]
     const [topicQuiz, setTopicQuiz] = useState(topicQuizTemplatePre)
     console.log("topicQuiz : ", topicQuiz);
 
