@@ -215,8 +215,6 @@ const EditChapter = ({ setOpenEditChapter, chapterId }) => {
                                     .required(Constants.AddUnit.DescriptionRequired),
                             })}
 
-
-
                             onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
                                 if (postlearningOption == '') {
                                     setIsShown(false)
@@ -442,7 +440,6 @@ const EditChapter = ({ setOpenEditChapter, chapterId }) => {
                                     </Row>
                                 </form>
                             )}
-
                         </Formik>
                     </React.Fragment>
                 )
