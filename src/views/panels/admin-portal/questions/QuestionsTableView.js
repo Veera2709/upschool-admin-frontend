@@ -563,20 +563,27 @@ const QuestionsTableView = ({ _questionStatus }) => {
 
             {
               userData.length <= 0 && _data ? (
-                <div>
+                <>
+                  {
+                    pageLocation === 'active-questions' ? (
+                      <div>
+                        <h3 style={{ textAlign: 'center' }}>No Questions Found</h3>
+                        <div className="form-group fill text-center">
+                          <br></br>
 
-                  <h3 style={{ textAlign: 'center' }}>No Questions Found</h3>
-                  <div className="form-group fill text-center">
-                    <br></br>
+                          <Link to={'/admin-portal/add-questions'}>
+                            <Button variant="success" className="btn-sm btn-round has-ripple ml-2">
+                              <i className="feather icon-plus" /> Add Questions
+                            </Button>
+                          </Link>
+                        </div>
+                      </div>
+                    ) : (
+                      <h3 style={{ textAlign: 'center' }}>No Questions Found</h3>
+                    )
+                  }
+                </>
 
-                    <Link to={'/admin-portal/add-questions'}>
-                      <Button variant="success" className="btn-sm btn-round has-ripple ml-2">
-                        <i className="feather icon-plus" /> Add Questions
-                      </Button>
-                    </Link>
-                  </div>
-
-                </div>
               ) : (
 
                 <>
