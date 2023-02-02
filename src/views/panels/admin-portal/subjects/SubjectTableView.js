@@ -890,7 +890,9 @@ const SubjectTableView = ({ userStatus }) => {
                         {
                             subjectData.length <= 0 ? (
                                 <>
-                                    < React.Fragment >
+                                {
+                                    pageLocation === 'active-subjects' ? (
+                                        < React.Fragment >
                                         <div>
 
                                             <h3 style={{ textAlign: 'center' }}>No Subjects Found</h3>
@@ -929,6 +931,11 @@ const SubjectTableView = ({ userStatus }) => {
                                         </Modal>
 
                                     </React.Fragment>
+                                    ) : (
+                                        <h3 style={{ textAlign: 'center' }}>No Subjects Found</h3>
+                                    )
+                                }
+                                  
                                 </>
                             ) : (
 

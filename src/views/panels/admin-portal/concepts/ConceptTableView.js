@@ -922,45 +922,52 @@ const ConceptTableView = ({ userStatus }) => {
 
                     {conceptData.length <= 0 ? (
                         <>
-                            < React.Fragment >
-                                <div>
+                            {
+                                pageLocation === 'active-concepts' ? (
+                                    < React.Fragment >
+                                        <div>
 
+                                            <h3 style={{ textAlign: 'center' }}>No Concepts Found</h3>
+                                            <div className="form-group fill text-center">
+                                                <br></br>
+
+                                                <Button
+                                                    variant="success"
+                                                    className="btn-sm btn-round has-ripple ml-2"
+                                                    onClick={(e) => {
+                                                        handleAddConcepts(e);
+                                                    }}
+                                                >
+                                                    <i className="feather icon-plus" /> Add Concepts
+                                                </Button>
+
+
+                                            </div>
+
+                                        </div>
+
+                                        <Modal dialogClassName="my-modal" show={isOpenAddConcept} onHide={() => setIsOpenAddConcept(false)}>
+
+                                            <Modal.Header closeButton>
+
+                                                <Modal.Title as="h5">Add Concept</Modal.Title>
+
+                                            </Modal.Header>
+
+                                            <Modal.Body>
+
+                                                <AddConcepts _digicards={_digicards} _relatedConcepts={_relatedConcepts} setIsOpenAddConcept={setIsOpenAddConcept} fetchAllConceptsData={fetchAllConceptsData} setDigicardsAndConcepts={setDigicardsAndConcepts} />
+
+                                            </Modal.Body>
+
+                                        </Modal>
+
+                                    </React.Fragment>
+                                ) : (
                                     <h3 style={{ textAlign: 'center' }}>No Concepts Found</h3>
-                                    <div className="form-group fill text-center">
-                                        <br></br>
+                                )
+                            }
 
-                                        <Button
-                                            variant="success"
-                                            className="btn-sm btn-round has-ripple ml-2"
-                                            onClick={(e) => {
-                                                handleAddConcepts(e);
-                                            }}
-                                        >
-                                            <i className="feather icon-plus" /> Add Concepts
-                                        </Button>
-
-
-                                    </div>
-
-                                </div>
-
-                                <Modal dialogClassName="my-modal" show={isOpenAddConcept} onHide={() => setIsOpenAddConcept(false)}>
-
-                                    <Modal.Header closeButton>
-
-                                        <Modal.Title as="h5">Add Concept</Modal.Title>
-
-                                    </Modal.Header>
-
-                                    <Modal.Body>
-
-                                        <AddConcepts _digicards={_digicards} _relatedConcepts={_relatedConcepts} setIsOpenAddConcept={setIsOpenAddConcept} fetchAllConceptsData={fetchAllConceptsData} setDigicardsAndConcepts={setDigicardsAndConcepts} />
-
-                                    </Modal.Body>
-
-                                </Modal>
-
-                            </React.Fragment>
                         </>
                     ) : (
 

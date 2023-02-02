@@ -733,20 +733,27 @@ const UserTableView = ({ _userRole }) => {
 
             {
               userData.length <= 0 && _data ? (
-                <div>
+                <>
+                  {
+                    pageLocation === 'active-users' ? (
+                      <div>
+                        <h3 style={{ textAlign: 'center' }}>No Users Found</h3>
+                        <div className="form-group fill text-center">
+                          <br></br>
 
-                  <h3 style={{ textAlign: 'center' }}>No Users Found</h3>
-                  <div className="form-group fill text-center">
-                    <br></br>
+                          <Link to={'/admin-portal/add-users'}>
+                            <Button variant="success" className="btn-sm btn-round has-ripple ml-2">
+                              <i className="feather icon-plus" /> Add Users
+                            </Button>
+                          </Link>
+                        </div>
+                      </div>
+                    ) : (
+                      <h3 style={{ textAlign: 'center' }}>No Users Found</h3>
+                    )
+                  }
+                </>
 
-                    <Link to={'/admin-portal/add-users'}>
-                      <Button variant="success" className="btn-sm btn-round has-ripple ml-2">
-                        <i className="feather icon-plus" /> Add Users
-                      </Button>
-                    </Link>
-                  </div>
-
-                </div>
               ) : (
 
                 <>

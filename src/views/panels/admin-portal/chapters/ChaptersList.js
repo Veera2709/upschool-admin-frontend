@@ -470,26 +470,35 @@ const ChaptersListChild = (props) => {
                         {
                             chapterData.length <= 0 ? (
                                 <>
-                                    < React.Fragment >
-                                        <div>
+                                    {
+                                        pageLocation === 'active-chapter' ? (
+                                            < React.Fragment >
+                                                <div>
 
-                                            <h3 style={{ textAlign: 'center' }}>No Chapter Found</h3>
-                                            <div className="form-group fill text-center">
-                                                <br></br>
-                                                <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={(e) => { handleAddChapter(e) }}>
-                                                    <i className="feather icon-plus" /> Add Chapter
-                                                </Button>
-                                            </div>
-                                        </div>
-                                        <Modal dialogClassName="my-modal" show={isOpenAddChapter} onHide={() => setOpenAddChapter(false)}>
-                                            <Modal.Header closeButton>
-                                                <Modal.Title as="h5">Add Chapter</Modal.Title>
-                                            </Modal.Header>
-                                            <Modal.Body>
-                                                <AddChapter setOpenAddChapter={setOpenAddChapter} />
-                                            </Modal.Body>
-                                        </Modal>
-                                    </React.Fragment>
+                                                    <h3 style={{ textAlign: 'center' }}>No Chapter Found</h3>
+                                                    <div className="form-group fill text-center">
+                                                        <br></br>
+                                                        <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={(e) => { handleAddChapter(e) }}>
+                                                            <i className="feather icon-plus" /> Add Chapter
+                                                        </Button>
+                                                    </div>
+                                                </div>
+                                                <Modal dialogClassName="my-modal" show={isOpenAddChapter} onHide={() => setOpenAddChapter(false)}>
+                                                    <Modal.Header closeButton>
+                                                        <Modal.Title as="h5">Add Chapter</Modal.Title>
+                                                    </Modal.Header>
+                                                    <Modal.Body>
+                                                        <AddChapter setOpenAddChapter={setOpenAddChapter} />
+                                                    </Modal.Body>
+                                                </Modal>
+                                            </React.Fragment>
+                                        ) : (
+                                            <React.Fragment>
+                                                <h3 style={{ textAlign: 'center' }}>No Chapter Found</h3>
+                                            </React.Fragment>
+                                        )
+                                    }
+
                                 </>
                             ) : (
                                 <>
