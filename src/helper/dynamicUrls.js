@@ -2,9 +2,8 @@
 // const baseUrl = 'https://dssqy2gip2.execute-api.ap-south-1.amazonaws.com/testing/v1'; // testing env URL
 const baseUrl = process.env.REACT_APP_LAMBDA_URL;
 
-
 const dynamicUrl = {
-    
+
     // Login
     login: baseUrl + '/login',
     loginWithOTP: baseUrl + '/loginWithOTP',
@@ -25,7 +24,7 @@ const dynamicUrl = {
     fetchIndividualSchool: baseUrl + '/fetchIndividualSchool',
     deleteSchool: baseUrl + '/deleteSchool',
     fetchUpschoolAndClientClasses: baseUrl + '/fetchUpschoolAndClientClasses',
-    classSubscribe: baseUrl + '/classSubscribe',    
+    classSubscribe: baseUrl + '/classSubscribe',
 
     //chapters
     fetchAllChapters: baseUrl + '/fetchAllChapters',
@@ -101,7 +100,7 @@ const dynamicUrl = {
     editQuestion: baseUrl + '/editQuestion',
     fetchAllQuestionsData: baseUrl + '/fetchAllQuestionsData',
     addQuestions: baseUrl + '/addQuestions',
-    
+
 
     addSection: baseUrl + '/addSection',
     fetchSchoolSection: baseUrl + '/fetchSchoolSection',
@@ -110,8 +109,14 @@ const dynamicUrl = {
     fetchSectionByClientClassId: baseUrl + '/fetchSectionByClientClassId',
     fetchTeacherInfoDetails: baseUrl + '/fetchTeacherInfoDetails',
     teacherSectionAllocation: baseUrl + '/teacherSectionAllocation',
-    
-       
+
+    // Groups
+    fetchAllGroupsData: baseUrl + '/fetchAllGroupsData',
+    addGroups: baseUrl + '/addGroups',
+    fetchIndividualGroupData: baseUrl + '/fetchIndividualGroupData',
+    toggleGroupStatus: baseUrl + '/toggleGroupStatus',
+    editGroup: baseUrl + '/editGroup'
+
 }
 
 export default dynamicUrl;
