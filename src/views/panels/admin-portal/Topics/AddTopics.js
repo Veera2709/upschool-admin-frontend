@@ -51,20 +51,17 @@ const AddTopics = ({ setOpenAddTopic }) => {
         });
     };
 
-    const levels = [
-        { label: 'Level-1', value: 'Level-1' },
-        { label: 'Level-2', value: 'Level-2' },
-        { label: 'Level-3', value: 'Level-3' },
-    ]
-
-    const topicQuizTemplatePre = [{ level: "Level-1", duration: "", is_Locked: "No" }, { level: "Level-2", duration: "", is_Locked: "Yes" }]
-    const topicQuizTemplatePost = [{ level: "Level-1", duration: "", is_Locked: "Yes" }, { level: "Level-2", duration: "", is_Locked: "Yes" }, { level: "Level-3", duration: "", is_Locked: "Yes" }]
+    const topicQuizTemplatePre = [
+        { level: 'Level-1', duration: "" },
+        { level: 'Level-2', duration: "" }]
+    const topicQuizTemplatePost = [
+        { level: 'Level-1', duration: "" },
+        { level: 'Level-2', duration: "" },
+        { level: 'Level-3', duration: "" }]
     const [topicQuiz, setTopicQuiz] = useState(topicQuizTemplatePre)
     console.log("topicQuiz : ", topicQuiz);
 
-    // const addTopic = () => {
-    //     setTopicQuiz([...topicQuiz, topicQuizTemplate])
-    // }
+
     const onDynamicFormChange = (e, index, fieldType) => {
         console.log("e", e)
         console.log("Field", fieldType)
@@ -75,11 +72,7 @@ const AddTopics = ({ setOpenAddTopic }) => {
         )
         setTopicQuiz(updatedTopics)
     }
-    // const removeTopic = (index) => {
-    //     const filteredProjects = [...topicQuiz]
-    //     filteredProjects.splice(index, 1)
-    //     setTopicQuiz(filteredProjects)
-    // }
+
 
     const postTopic = (formData) => {
         axios.post(dynamicUrl.addTopic, { data: formData }, {
@@ -229,7 +222,6 @@ const AddTopics = ({ setOpenAddTopic }) => {
                 // validationSchema
                 onSubmit={(values, { setErrors, setStatus, setSubmitting }) => {
                     // setSubmitting(true);
-
                     let emptyFieldValidation = topicQuiz.find(o => o.duration === "" || o.duration === 0 || o.duration <= 0)
                     let TopicDurationLimit = topicQuiz.find(o => o.duration > 150)
                     if (topicConceptId == '') {
@@ -240,14 +232,34 @@ const AddTopics = ({ setOpenAddTopic }) => {
                         setTimeLimit(true)
                     }
                     else {
-                        const formData = {
-                            topic_title: values.topic_title,
-                            topic_description: values.topic_description,
-                            topic_concept_id: topicConceptId,
-                            pre_post_learning: prePostLearning,
-                            related_topics: relatedTopicsId,
-                            topic_quiz_config: topicQuiz
+
+                        if (prePostLearning === 'Pre-Learning') {
+                            var formData = {
+                                topic_title: values.topic_title,
+                                topic_description: values.topic_description,
+                                topic_concept_id: topicConceptId,
+                                pre_post_learning: prePostLearning,
+                                related_topics: relatedTopicsId,
+                                // topic_quiz_config: topicQuiz
+                                Level_1: { duration: topicQuiz[0].duration },
+                                Level_2: { duration: topicQuiz[1].duration },
+
+                            }
+                        } else {
+                            var formData = {
+                                topic_title: values.topic_title,
+                                topic_description: values.topic_description,
+                                topic_concept_id: topicConceptId,
+                                pre_post_learning: prePostLearning,
+                                related_topics: relatedTopicsId,
+                                // topic_quiz_config: topicQuiz
+                                Level_1: { duration: topicQuiz[0].duration },
+                                Level_2: { duration: topicQuiz[1].duration },
+                                Level_3: { duration: topicQuiz[2].duration },
+
+                            }
                         }
+
                         console.log('formData: ', formData)
                         postTopic(formData)
                     }
@@ -413,7 +425,7 @@ const AddTopics = ({ setOpenAddTopic }) => {
                     </Form>
                 )}
             </Formik>
-        </React.Fragment>
+        </React.Fragment >
     )
 }
 

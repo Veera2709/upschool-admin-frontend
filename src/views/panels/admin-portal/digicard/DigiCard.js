@@ -452,20 +452,29 @@ const DigiCard = () => {
                         {
                             data.length <= 0 ? (
                                 <>
-                                    < React.Fragment >
-                                        <div>
-                                            <h3 style={{ textAlign: 'center' }}>No DigiCard Found</h3>
-                                            <div className="form-group fill text-center">
-                                                <br></br>
+                                    {
+                                        pageLocation === 'active-digiCard' ? (
+                                            < React.Fragment >
+                                                <div>
+                                                    <h3 style={{ textAlign: 'center' }}>No DigiCard Found</h3>
+                                                    <div className="form-group fill text-center">
+                                                        <br></br>
 
-                                                <Link to={'/admin-portal/add-digicard'}>
-                                                    <Button variant="success" className="btn-sm btn-round has-ripple ml-2">
-                                                        <i className="feather icon-plus" /> Add DigiCard
-                                                    </Button>
-                                                </Link>
-                                            </div>
-                                        </div>
-                                    </React.Fragment>
+                                                        <Link to={'/admin-portal/add-digicard'}>
+                                                            <Button variant="success" className="btn-sm btn-round has-ripple ml-2">
+                                                                <i className="feather icon-plus" /> Add DigiCard
+                                                            </Button>
+                                                        </Link>
+                                                    </div>
+                                                </div>
+                                            </React.Fragment>
+                                        ) : (
+                                            <React.Fragment>
+                                                <h3 style={{ textAlign: 'center' }}>No DigiCard Found</h3>
+                                            </React.Fragment>
+                                        )
+                                    }
+
                                 </>
                             ) : (
                                 <>

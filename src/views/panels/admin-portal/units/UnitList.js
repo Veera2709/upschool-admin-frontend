@@ -453,25 +453,32 @@ const UnitList = (props) => {
                         {
                             unitData.length <= 0 ? (
                                 <>
-                                    < React.Fragment >
-                                        <div>
+                                    {
+                                        pageLocation === 'active-units' ? (
+                                            < React.Fragment >
+                                                <div>
+                                                    <h3 style={{ textAlign: 'center' }}>No Units Found</h3>
+                                                    <div className="form-group fill text-center">
+                                                        <br></br>
+                                                        <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={(e) => { handleAddUnit(e) }}>
+                                                            <i className="feather icon-plus" /> Add Units
+                                                        </Button>
+                                                    </div>
+                                                </div>
+                                                <Modal dialogClassName="my-modal" show={isOpenAddUnit} onHide={() => setOpenAddUnit(false)}>
+                                                    <Modal.Header closeButton>
+                                                        <Modal.Title as="h5">Add Unit</Modal.Title>
+                                                    </Modal.Header>
+                                                    <Modal.Body>
+                                                        <AddUnit setOpenAddUnit={setOpenAddUnit} />
+                                                    </Modal.Body>
+                                                </Modal>
+                                            </React.Fragment>
+                                        ) : (
                                             <h3 style={{ textAlign: 'center' }}>No Units Found</h3>
-                                            <div className="form-group fill text-center">
-                                                <br></br>
-                                                <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={(e) => { handleAddUnit(e) }}>
-                                                    <i className="feather icon-plus" /> Add Units
-                                                </Button>
-                                            </div>
-                                        </div>
-                                        <Modal dialogClassName="my-modal" show={isOpenAddUnit} onHide={() => setOpenAddUnit(false)}>
-                                            <Modal.Header closeButton>
-                                                <Modal.Title as="h5">Add Unit</Modal.Title>
-                                            </Modal.Header>
-                                            <Modal.Body>
-                                                <AddUnit setOpenAddUnit={setOpenAddUnit} />
-                                            </Modal.Body>
-                                        </Modal>
-                                    </React.Fragment>
+                                        )
+                                    }
+
                                 </>
                             ) : (
                                 <>
