@@ -441,7 +441,7 @@ const EditQuestions = () => {
 
                                     ) : (console.log("Not empty"));
 
-                                    tempArray.length >= 1 ? setAddAnswerOptions(true) : setAddAnswerOptions(false);
+                                    tempArray.length > 1 ? setAddAnswerOptions(true) : setAddAnswerOptions(false);
 
                                     setAnswerOptionsForm(tempArray);
 

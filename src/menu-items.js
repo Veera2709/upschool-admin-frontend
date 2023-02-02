@@ -218,6 +218,26 @@ const menuItems = {
             }
           ]
         },
+        {
+          id: 'groups',
+          title: 'Groups',
+          type: 'collapse',
+          icon: 'feather icon-folder',
+          children: [
+            {
+              id: 'active-groups',
+              title: 'Active Groups',
+              type: 'item',
+              url: '/admin-portal/active-groups'
+            },
+            {
+              id: 'archived-groups',
+              title: 'Archived Groups',
+              type: 'item',
+              url: '/admin-portal/archived-groups'
+            }
+          ]
+        },
       ]
     }
 
