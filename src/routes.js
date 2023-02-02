@@ -181,6 +181,11 @@ const routes = [
       },
       {
         exact: true,
+        path: '/admin-portal/add-groups',
+        component: lazy(() => import('./views/panels/admin-portal/groups/AddGroups'))
+      },
+      {
+        exact: true,
         path: '/admin-portal/add-concepts',
         component: lazy(() => import('./views/panels/admin-portal/concepts/AddConcepts'))
       },
@@ -247,8 +252,22 @@ const routes = [
         exact: true,
         path: '/admin-portal/edit-questions/:question_id',
         component: lazy(() => import('./views/panels/admin-portal/questions/EditQuestions'))
+      }, 
+      {
+        exact: true,
+        path: '/admin-portal/active-groups',
+        component: lazy(() => import('./views/panels/admin-portal/groups/ListGroups'))
+      }, 
+      {
+        exact: true,
+        path: '/admin-portal/edit-groups/:group_id',
+        component: lazy(() => import('./views/panels/admin-portal/groups/EditGroups'))
       },
-
+      {
+        exact: true,
+        path: '/admin-portal/archived-groups',
+        component: lazy(() => import('./views/panels/admin-portal/groups/ListGroups'))
+      },
       // digi card
       {
         exact: true,
