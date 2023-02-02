@@ -46,11 +46,11 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
     const [timeLimit, setTimeLimit] = useState(false);
     const MySwal = withReactContent(Swal);
     const [isLoading, setIsLoading] = useState(false);
+    const [topicQuiz, setTopicQuiz] = useState([])
 
 
 
-
-    console.log("defaultConceptOption", defaultConceptOption);
+    console.log("topicQuiz", topicQuiz);
     console.log("defaultTopicOption", defaultTopicOption);
     console.log("defaultOption", defaultOption);
     const sweetAlertHandler = (alert) => {
@@ -62,18 +62,12 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
         });
     };
 
-    const levels = [
-        { label: 'Level-1', value: 'Level-1' },
-        { label: 'Level-2', value: 'Level-2' },
-        { label: 'Level-3', value: 'Level-3' },
-    ]
+  
 
-    const topicQuizTemplate = { level: levels[0].value, duration: "" }
-    const [topicQuiz, setTopicQuiz] = useState([topicQuizTemplate])
 
-    const addTopic = () => {
-        setTopicQuiz([...topicQuiz, topicQuizTemplate])
-    }
+    
+
+
     const onDynamicFormChange = (e, index, fieldType) => {
         console.log("e", e)
         console.log("Field", fieldType)
@@ -84,11 +78,7 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
         )
         setTopicQuiz(updatedTopics)
     }
-    const removeTopic = (index) => {
-        const filteredProjects = [...topicQuiz]
-        filteredProjects.splice(index, 1)
-        setTopicQuiz(filteredProjects)
-    }
+
 
     const data = [{ id: 'ac05006b-2351-59e1-a5bf-aa88e249ad05', name: 'ac05006b-2351-59e1-a5bf-aa88e249ad05' }]
 
@@ -101,6 +91,7 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                 const result = response.data;
                 console.log('result: ', result);
                 if (result == 200) {
+                    setOpenEditTopic(false)
                     // sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.EditTopic });
                     MySwal.fire({
 
@@ -211,7 +202,31 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                 });
 
                 setEditTopicData(result);
-                setTopicQuiz(result.topic_quiz_config)
+
+                result.pre_post_learning === 'Pre-Learning' ?
+                    setTopicQuiz([
+                        {
+                            label: 'Level-1',   duration: result.Level_1.duration
+                        },
+                        {
+                            label: 'Level-2', duration: result.Level_2.duration
+                        }
+                    ]
+                    ) :
+                    setTopicQuiz([
+                        {
+                            label: 'Level-1',  duration: result.Level_1.duration
+                        },
+                        {
+                            label: 'Level-2', duration: result.Level_2.duration
+                        },
+                        {
+                            label: 'Level-3', duration: result.Level_3.duration
+                        }
+                    ]
+                    )
+
+
             }
 
         }
@@ -295,16 +310,31 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                                                     if (topicConceptId == '') {
                                                         setIsShown(false)
                                                     } else {
-                                                        setOpenEditTopic(false)
-                                                        const formData = {
-                                                            topic_id: topicId,
-                                                            topic_title: values.topic_title,
-                                                            topic_description: values.topic_description,
-                                                            topic_concept_id: topicConceptId,
-                                                            pre_post_learning: prePostLearning,
-                                                            related_topics: relatedTopicsId,
-                                                            topic_quiz_config: topicQuiz
+                                                        if (prePostLearning === 'Pre-Learning') {
+                                                            var formData = {
+                                                                topic_id: topicId,
+                                                                topic_title: values.topic_title,
+                                                                topic_description: values.topic_description,
+                                                                topic_concept_id: topicConceptId,
+                                                                pre_post_learning: prePostLearning,
+                                                                related_topics: relatedTopicsId,
+                                                                Level_1: { duration: topicQuiz[0].duration },
+                                                                Level_2: { duration: topicQuiz[1].duration },
+                                                            }
+                                                        } else {
+                                                            var formData = {
+                                                                topic_id: topicId,
+                                                                topic_title: values.topic_title,
+                                                                topic_description: values.topic_description,
+                                                                topic_concept_id: topicConceptId,
+                                                                pre_post_learning: prePostLearning,
+                                                                related_topics: relatedTopicsId,
+                                                                Level_1: { duration: topicQuiz[0].duration },
+                                                                Level_2: { duration: topicQuiz[1].duration },
+                                                                Level_3: { duration: topicQuiz[2].duration },
+                                                            }
                                                         }
+
                                                         console.log('formData: ', formData)
                                                         submitEditTopic(formData)
                                                     }
@@ -480,7 +510,7 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                                                                 <Form.Control
                                                                     type='text'
                                                                     name='topic_level'
-                                                                    value={topic.level}
+                                                                    value={topicQuiz[index].label}
                                                                     onChange={(e) => { onDynamicFormChange(e, index, 'level'); handleChange(e) }}
                                                                     autoComplete='off'
                                                                     onBlur={handleBlur}

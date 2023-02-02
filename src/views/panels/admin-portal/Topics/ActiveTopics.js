@@ -453,26 +453,35 @@ const ActiveTopics = (props) => {
                         {
                             topicData.length <= 0 ? (
                                 <>
-                                    < React.Fragment >
-                                        <div>
+                                    {
+                                        pageLocation === 'active-topics' ? (
+                                            < React.Fragment >
+                                                <div>
 
-                                            <h3 style={{ textAlign: 'center' }}>No Topics Found</h3>
-                                            <div className="form-group fill text-center">
-                                                <br></br>
-                                                <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={handleAddTopic}>
-                                                    <i className="feather icon-plus" /> Add Topic
-                                                </Button>
-                                            </div>
-                                        </div>
-                                        <Modal dialogClassName="my-modal" show={isOpenAddTopic} onHide={() => setOpenAddTopic(false)}>
-                                            <Modal.Header closeButton>
-                                                <Modal.Title as="h5">Add Topic</Modal.Title>
-                                            </Modal.Header>
-                                            <Modal.Body>
-                                                <AddTopics setOpenAddTopic={setOpenAddTopic} />
-                                            </Modal.Body>
-                                        </Modal>
-                                    </React.Fragment>
+                                                    <h3 style={{ textAlign: 'center' }}>No Topics Found</h3>
+                                                    <div className="form-group fill text-center">
+                                                        <br></br>
+                                                        <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={handleAddTopic}>
+                                                            <i className="feather icon-plus" /> Add Topic
+                                                        </Button>
+                                                    </div>
+                                                </div>
+                                                <Modal dialogClassName="my-modal" show={isOpenAddTopic} onHide={() => setOpenAddTopic(false)}>
+                                                    <Modal.Header closeButton>
+                                                        <Modal.Title as="h5">Add Topic</Modal.Title>
+                                                    </Modal.Header>
+                                                    <Modal.Body>
+                                                        <AddTopics setOpenAddTopic={setOpenAddTopic} />
+                                                    </Modal.Body>
+                                                </Modal>
+                                            </React.Fragment>
+                                        ) : (
+                                            <React.Fragment>
+                                                <h3 style={{ textAlign: 'center' }}>No Topics Found</h3>
+                                            </React.Fragment>
+                                        )
+                                    }
+
                                 </>
                             ) : (
                                 <>
