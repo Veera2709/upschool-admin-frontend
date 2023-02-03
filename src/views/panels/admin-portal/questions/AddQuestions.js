@@ -16,7 +16,7 @@ import { defaultPostApi } from '../../../common-ui-components/sow/bgv-api/BgvApi
 import { bgvAlerts } from '../../../common-ui-components/sow/bgv-api/bgvAlerts';
 import { areFilesInvalidBulkUpload, isEmptyObject } from '../../../../util/utils';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
-import { isEmptyArray } from '../../../../util/utils';
+import { isEmptyArray, areFilesInvalid, voiceInvalid } from '../../../../util/utils';
 import * as Constants from '../../../../config/constant';
 
 const AddQuestions = ({ className, ...rest }) => {
@@ -281,6 +281,15 @@ const AddQuestions = ({ className, ...rest }) => {
 
     }
 
+    const sweetAlertHandler = (alert) => {
+        const MySwal = withReactContent(Swal);
+        MySwal.fire({
+            title: alert.title,
+            text: alert.text,
+            icon: alert.type
+        });
+    };
+
     const addAnswerTypeOptions = () => {
 
         sessionStorage.setItem('click_event', "");
@@ -331,6 +340,168 @@ const AddQuestions = ({ className, ...rest }) => {
         }
 
     }, []);
+
+    const _addQuestions = (payLoad) => {
+
+        axios
+            .post(
+                dynamicUrl.addQuestions,
+                {
+                    data: payLoad
+                },
+                {
+                    headers: { Authorization: sessionStorage.getItem('user_jwt') }
+                }
+            )
+            .then((response) => {
+
+                console.log({ response });
+                console.log(response.status);
+                console.log(response.data);
+
+                console.log(response.status === 200);
+                let result = response.status === 200;
+
+                if (result) {
+
+                    console.log('inside res');
+
+                    let uploadParamsQuestionsNote = response.data.question_voice_note;
+                    let uploadParamsAnswerOptions = response.data.answers_options;
+
+                    hideLoader();
+
+                    if (Array.isArray(uploadParamsQuestionsNote)) {
+
+                        for (let index = 0; index < uploadParamsQuestionsNote.length; index++) {
+
+                            let keyNameArr = Object.keys(uploadParamsQuestionsNote[index]);
+                            let keyName = keyNameArr[1];
+                            console.log('KeyName', keyName);
+
+                            let blobField = voiceNoteFileValues;
+                            console.log({ blobField });
+
+                            let tempObj = uploadParamsQuestionsNote[index];
+                            console.log(tempObj);
+                            let result = fetch(tempObj[keyName], {
+                                method: 'PUT',
+                                body: blobField
+                            });
+
+                            console.log({ result });
+                        }
+
+
+                        if (Array.isArray(uploadParamsAnswerOptions)) {
+
+                            for (let index = 0; index < uploadParamsAnswerOptions.length; index++) {
+
+                                let keyNameArr = Object.keys(uploadParamsAnswerOptions[index]);
+                                let keyName = keyNameArr[1];
+                                console.log('KeyName', keyName);
+
+                                let blobField = fileValues[index];
+                                console.log({ blobField });
+
+                                let tempObjFile = uploadParamsAnswerOptions[index];
+                                console.log(tempObjFile);
+                                console.log(keyName);
+                                console.log(tempObjFile[keyName]);
+
+                                let result = fetch(tempObjFile[keyName], {
+                                    method: 'PUT',
+                                    body: blobField
+                                });
+
+                                console.log({ result });
+                            }
+
+                            const MySwal = withReactContent(Swal);
+
+                            MySwal.fire({
+
+                                title: 'Question added!',
+                                icon: 'success',
+                            }).then((willDelete) => {
+
+                                history.push('/admin-portal/active-questions');
+                                // window.location.reload();
+
+                            });
+
+                        } else {
+
+                            console.log('Answer option files not uploaded!');
+                        }
+
+
+                    } else {
+
+                        if (Array.isArray(uploadParamsAnswerOptions)) {
+
+                            for (let index = 0; index < uploadParamsAnswerOptions.length; index++) {
+
+                                let keyNameArr = Object.keys(uploadParamsAnswerOptions[index]);
+                                let keyName = keyNameArr[1];
+                                console.log('KeyName', keyName);
+
+                                let blobField = fileValues[index];
+                                console.log({ blobField });
+
+                                let tempObjFile = uploadParamsAnswerOptions[index];
+                                console.log(tempObjFile[keyName]);
+
+                                let result = fetch(tempObjFile[keyName], {
+                                    method: 'PUT',
+                                    body: blobField
+                                });
+
+                                console.log({ result });
+                            }
+
+                            const MySwal = withReactContent(Swal);
+                            MySwal.fire({
+
+                                title: 'Question added!',
+                                icon: 'success',
+                            }).then((willDelete) => {
+
+                                history.push('/admin-portal/active-questions');
+                                // window.location.reload();
+
+                            })
+
+                            console.log('Question Voice Note not uploaded');
+                        }
+                    }
+
+
+                } else {
+
+                    console.log('else res');
+                    hideLoader();
+
+                }
+            })
+            .catch((error) => {
+                if (error.response) {
+                    hideLoader();
+
+                    console.log(error.response.data);
+
+                } else if (error.request) {
+
+                    console.log(error.request);
+                    hideLoader();
+
+                } else {
+
+                    console.log('Error', error.message);
+                    hideLoader();
+                }
+            });
+    }
 
     return (
 
@@ -422,173 +593,266 @@ const AddQuestions = ({ className, ...rest }) => {
 
                                             console.log("payLoad", payLoad);
 
+                                            let allFilesData = [];
+                                            let questionsVoiceNoteFilesData = [];
 
-                                            showLoader();
-                                            axios
-                                                .post(
-                                                    dynamicUrl.addQuestions,
-                                                    {
-                                                        data: payLoad
-                                                    },
-                                                    {
-                                                        headers: { Authorization: sessionStorage.getItem('user_jwt') }
-                                                    }
-                                                )
-                                                .then((response) => {
+                                            if (selectedQuestionVoiceNote) {
 
-                                                    console.log({ response });
-                                                    console.log(response.status);
-                                                    console.log(response.data);
+                                                let selectedFile = voiceNoteFileValues;
+                                                console.log('File is here!');
+                                                console.log(selectedFile);
 
-                                                    console.log(response.status === 200);
-                                                    let result = response.status === 200;
+                                                if (selectedFile) {
+                                                    questionsVoiceNoteFilesData.push(selectedFile);
+                                                }
 
-                                                    if (result) {
+                                                if (questionsVoiceNoteFilesData.length === 0) {
 
-                                                        console.log('inside res');
+                                                    if (selectedAnswerType === "Image") {
 
-                                                        let uploadParamsQuestionsNote = response.data.question_voice_note;
-                                                        let uploadParamsAnswerOptions = response.data.answers_options;
-
-                                                        hideLoader();
-
-                                                        if (Array.isArray(uploadParamsQuestionsNote)) {
-
-                                                            for (let index = 0; index < uploadParamsQuestionsNote.length; index++) {
-
-                                                                let keyNameArr = Object.keys(uploadParamsQuestionsNote[index]);
-                                                                let keyName = keyNameArr[1];
-                                                                console.log('KeyName', keyName);
-
-                                                                let blobField = voiceNoteFileValues;
-                                                                console.log({ blobField });
-
-                                                                let tempObj = uploadParamsQuestionsNote[index];
-                                                                console.log(tempObj);
-                                                                let result = fetch(tempObj[keyName], {
-                                                                    method: 'PUT',
-                                                                    body: blobField
-                                                                });
-
-                                                                console.log({ result });
+                                                        fileValues.forEach((fileName) => {
+                                                            let selectedFile = fileName;
+                                                            console.log('File is here!');
+                                                            console.log(selectedFile);
+                                                            if (selectedFile) {
+                                                                allFilesData.push(selectedFile);
                                                             }
+                                                        });
 
+                                                        console.log(allFilesData);
 
-                                                            if (Array.isArray(uploadParamsAnswerOptions)) {
+                                                        if (allFilesData.length === 0) {
 
-                                                                for (let index = 0; index < uploadParamsAnswerOptions.length; index++) {
+                                                            showLoader();
+                                                            _addQuestions(payLoad);
 
-                                                                    let keyNameArr = Object.keys(uploadParamsAnswerOptions[index]);
-                                                                    let keyName = keyNameArr[1];
-                                                                    console.log('KeyName', keyName);
-
-                                                                    let blobField = fileValues[index];
-                                                                    console.log({ blobField });
-
-                                                                    let tempObjFile = uploadParamsAnswerOptions[index];
-                                                                    console.log(tempObjFile);
-                                                                    console.log(keyName);
-                                                                    console.log(tempObjFile[keyName]);
-
-                                                                    let result = fetch(tempObjFile[keyName], {
-                                                                        method: 'PUT',
-                                                                        body: blobField
-                                                                    });
-
-                                                                    console.log({ result });
-                                                                }
-
-                                                                const MySwal = withReactContent(Swal);
-
-                                                                MySwal.fire({
-
-                                                                    title: 'Question added!',
-                                                                    icon: 'success',
-                                                                }).then((willDelete) => {
-
-                                                                    history.push('/admin-portal/active-questions');
-                                                                    // window.location.reload();
-
-                                                                });
-
+                                                        } else {
+                                                            if (areFilesInvalid(allFilesData) !== 0) {
+                                                                sweetAlertHandler(
+                                                                    {
+                                                                        title: 'Invalid Image File(s)!',
+                                                                        type: 'warning',
+                                                                        text: 'Supported file formats are .png, .jpg, .jpeg. Uploaded files should be less than 2MB. '
+                                                                    }
+                                                                );
                                                             } else {
 
-                                                                console.log('Answer option files not uploaded!');
-                                                            }
+                                                                showLoader();
+                                                                _addQuestions(payLoad);
 
+                                                            }
+                                                        }
+                                                    } else if (selectedAnswerType === "Audio File") {
+
+                                                        fileValues.forEach((fileName) => {
+                                                            let selectedFile = fileName;
+                                                            console.log('File is here!');
+                                                            console.log(selectedFile);
+                                                            if (selectedFile) {
+                                                                allFilesData.push(selectedFile);
+                                                            }
+                                                        });
+
+                                                        console.log(allFilesData);
+
+                                                        if (allFilesData.length === 0) {
+
+                                                            showLoader();
+                                                            _addQuestions(payLoad);
 
                                                         } else {
 
-                                                            if (Array.isArray(uploadParamsAnswerOptions)) {
+                                                            if (voiceInvalid(allFilesData) !== 0) {
+                                                                sweetAlertHandler({
+                                                                    title: 'Invalid Audio File(s)!',
+                                                                    type: 'warning',
+                                                                    text: 'Supported file formats are .mp3, .mpeg, .wav. Uploaded files should be less than 10MB. '
+                                                                });
+                                                            } else {
 
-                                                                for (let index = 0; index < uploadParamsAnswerOptions.length; index++) {
+                                                                showLoader();
+                                                                _addQuestions(payLoad);
 
-                                                                    let keyNameArr = Object.keys(uploadParamsAnswerOptions[index]);
-                                                                    let keyName = keyNameArr[1];
-                                                                    console.log('KeyName', keyName);
-
-                                                                    let blobField = fileValues[index];
-                                                                    console.log({ blobField });
-
-                                                                    let tempObjFile = uploadParamsAnswerOptions[index];
-                                                                    console.log(tempObjFile[keyName]);
-
-                                                                    let result = fetch(tempObjFile[keyName], {
-                                                                        method: 'PUT',
-                                                                        body: blobField
-                                                                    });
-
-                                                                    console.log({ result });
-                                                                }
-
-                                                                const MySwal = withReactContent(Swal);
-                                                                MySwal.fire({
-
-                                                                    title: 'Question added!',
-                                                                    icon: 'success',
-                                                                }).then((willDelete) => {
-
-                                                                    history.push('/admin-portal/active-questions');
-                                                                    // window.location.reload();
-
-                                                                })
-
-                                                                console.log('Question Voice Note not uploaded');
                                                             }
                                                         }
 
+                                                    } else {
+
+                                                        showLoader();
+                                                        _addQuestions(payLoad);
+                                                    }
+
+                                                } else {
+
+                                                    if (voiceInvalid(questionsVoiceNoteFilesData) !== 0) {
+                                                        sweetAlertHandler({
+                                                            title: 'Invalid Question Voice Note File!',
+                                                            type: 'warning',
+                                                            text: 'Supported file formats are .mp3, .mpeg, .wav. Uploaded files should be less than 10MB. '
+                                                        });
+                                                    } else {
+
+                                                        if (selectedAnswerType === "Image") {
+
+                                                            fileValues.forEach((fileName) => {
+                                                                let selectedFile = fileName;
+                                                                console.log('File is here!');
+                                                                console.log(selectedFile);
+                                                                if (selectedFile) {
+                                                                    allFilesData.push(selectedFile);
+                                                                }
+                                                            });
+
+                                                            console.log(allFilesData);
+
+                                                            if (allFilesData.length === 0) {
+
+                                                                showLoader();
+                                                                _addQuestions(payLoad);
+
+                                                            } else {
+                                                                if (areFilesInvalid(allFilesData) !== 0) {
+                                                                    sweetAlertHandler(
+                                                                        {
+                                                                            title: 'Invalid Image File(s)!',
+                                                                            type: 'warning',
+                                                                            text: 'Supported file formats are .png, .jpg, .jpeg. Uploaded files should be less than 2MB. '
+                                                                        }
+                                                                    );
+                                                                } else {
+
+                                                                    showLoader();
+                                                                    _addQuestions(payLoad);
+
+                                                                }
+                                                            }
+                                                        } else if (selectedAnswerType === "Audio File") {
+
+                                                            fileValues.forEach((fileName) => {
+                                                                let selectedFile = fileName;
+                                                                console.log('File is here!');
+                                                                console.log(selectedFile);
+                                                                if (selectedFile) {
+                                                                    allFilesData.push(selectedFile);
+                                                                }
+                                                            });
+
+                                                            console.log(allFilesData);
+
+                                                            if (allFilesData.length === 0) {
+
+                                                                showLoader();
+                                                                _addQuestions(payLoad);
+
+                                                            } else {
+
+                                                                if (voiceInvalid(allFilesData) !== 0) {
+                                                                    sweetAlertHandler({
+                                                                        title: 'Invalid Audio File(s)!',
+                                                                        type: 'warning',
+                                                                        text: 'Supported file formats are .mp3, .mpeg, .wav. Uploaded files should be less than 10MB. '
+                                                                    });
+                                                                } else {
+
+                                                                    showLoader();
+                                                                    _addQuestions(payLoad);
+
+                                                                }
+                                                            }
+
+                                                        } else {
+
+                                                            showLoader();
+                                                            _addQuestions(payLoad);
+                                                        }
+
+                                                    }
+
+                                                }
+
+
+                                            } else {
+
+                                                if (selectedAnswerType === "Image") {
+
+                                                    fileValues.forEach((fileName) => {
+                                                        let selectedFile = fileName;
+                                                        console.log('File is here!');
+                                                        console.log(selectedFile);
+                                                        if (selectedFile) {
+                                                            allFilesData.push(selectedFile);
+                                                        }
+                                                    });
+
+                                                    console.log(allFilesData);
+
+                                                    if (allFilesData.length === 0) {
+
+                                                        showLoader();
+                                                        _addQuestions(payLoad);
+
+                                                    } else {
+                                                        if (areFilesInvalid(allFilesData) !== 0) {
+                                                            sweetAlertHandler(
+                                                                {
+                                                                    title: 'Invalid Image File(s)!',
+                                                                    type: 'warning',
+                                                                    text: 'Supported file formats are .png, .jpg, .jpeg. Uploaded files should be less than 2MB. '
+                                                                }
+                                                            );
+                                                        } else {
+
+                                                            showLoader();
+                                                            _addQuestions(payLoad);
+
+                                                        }
+                                                    }
+                                                } else if (selectedAnswerType === "Audio File") {
+
+                                                    fileValues.forEach((fileName) => {
+                                                        let selectedFile = fileName;
+                                                        console.log('File is here!');
+                                                        console.log(selectedFile);
+                                                        if (selectedFile) {
+                                                            allFilesData.push(selectedFile);
+                                                        }
+                                                    });
+
+                                                    console.log(allFilesData);
+
+                                                    if (allFilesData.length === 0) {
+
+                                                        showLoader();
+                                                        _addQuestions(payLoad);
 
                                                     } else {
 
-                                                        console.log('else res');
-                                                        hideLoader();
+                                                        if (voiceInvalid(allFilesData) !== 0) {
+                                                            sweetAlertHandler({
+                                                                title: 'Invalid Audio File(s)!',
+                                                                type: 'warning',
+                                                                text: 'Supported file formats are .mp3, .mpeg, .wav. Uploaded files should be less than 10MB. '
+                                                            });
+                                                        } else {
 
+                                                            showLoader();
+                                                            _addQuestions(payLoad);
+
+                                                        }
                                                     }
-                                                })
-                                                .catch((error) => {
-                                                    if (error.response) {
-                                                        hideLoader();
+                                                } else {
+                                                    showLoader();
+                                                    _addQuestions(payLoad);
+                                                }
 
-                                                        console.log(error.response.data);
-
-                                                    } else if (error.request) {
-
-                                                        console.log(error.request);
-                                                        hideLoader();
-
-                                                    } else {
-
-                                                        console.log('Error', error.message);
-                                                        hideLoader();
-                                                    }
-                                                });
+                                            }
                                         }
                                     }
+
+
                                 }
-
-
-                            }}
-
+                            }
+                            }
 
                         >
                             {({ errors, handleBlur, handleChange, handleSubmit, touched, values, setFieldValue }) => (

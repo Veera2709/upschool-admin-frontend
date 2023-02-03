@@ -352,6 +352,40 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
                                                     </div>
                                                 </Col>
                                             </Row>
+                                            <Row>
+                                                <Col xs={3}>
+                                                    <div className="form-group fill">
+                                                        <label
+                                                            className="floating-label"
+                                                            htmlFor="basicgroups">
+                                                        </label>
+                                                        <input
+                                                            className="form-control"
+                                                            error={touched.basicgroups && errors.basicgroups}
+                                                            name="basicgroups"
+                                                            onBlur={handleBlur}
+                                                            placeholder="Basic Groups"
+                                                            readOnly={true}
+                                                            type="text"
+                                                            value={values.basicgroups}
+                                                        />
+
+                                                        {
+                                                            touched.basicgroups && errors.basicgroups &&
+                                                            <small className="text-danger form-text">{errors.basicgroups}</small>
+                                                        }
+
+                                                        {
+                                                            conceptTitleErr && conceptTitleErrMessage &&
+                                                            <small className="text-danger form-text">{conceptTitleErrMessage}</small>
+                                                        }
+
+                                                    </div>
+                                                </Col>
+                                                <Col>
+
+                                                </Col>
+                                            </Row>
                                             {loader}
                                             <br />
                                             <hr />
