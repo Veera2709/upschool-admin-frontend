@@ -363,7 +363,7 @@ const EditQuestions = () => {
 
                         setSelectedQuestionType(individual_user_data.question_type);
                         setQuestionLabelValue(individual_user_data.question_label);
-                        
+
                         individual_user_data.question_type === 'Subjective' ? setAnswerTypeOptions([
                             { value: 'Words', label: 'Words' },
                             { value: 'Numbers', label: 'Numbers' },
@@ -1318,6 +1318,158 @@ const EditQuestions = () => {
                                                                                     });
                                                                             }
                                                                         }
+                                                                    } else {
+
+                                                                        showLoader();
+                                                                        axios
+                                                                            .post(
+                                                                                dynamicUrl.addQuestions,
+                                                                                {
+                                                                                    data: payLoad
+                                                                                },
+                                                                                {
+                                                                                    headers: { Authorization: sessionStorage.getItem('user_jwt') }
+                                                                                }
+                                                                            )
+                                                                            .then((response) => {
+
+                                                                                console.log(response.data);
+
+                                                                                let result = response.status === 200;
+
+                                                                                if (result) {
+
+                                                                                    console.log('inside res');
+
+                                                                                    let uploadParamsQuestionsNote = response.data.question_voice_note;
+                                                                                    let uploadParamsAnswerOptions = response.data.answers_options;
+
+                                                                                    hideLoader();
+
+                                                                                    if (Array.isArray(uploadParamsQuestionsNote)) {
+
+                                                                                        for (let index = 0; index < uploadParamsQuestionsNote.length; index++) {
+
+                                                                                            let keyNameArr = Object.keys(uploadParamsQuestionsNote[index]);
+                                                                                            let keyName = keyNameArr[1];
+
+                                                                                            let blobField = voiceNoteFileValues;
+                                                                                            console.log({ blobField });
+
+                                                                                            let tempObj = uploadParamsQuestionsNote[index];
+                                                                                            let result = fetch(tempObj[keyName], {
+                                                                                                method: 'PUT',
+                                                                                                body: blobField
+                                                                                            });
+
+                                                                                            console.log({ result });
+                                                                                        }
+
+
+                                                                                        if (Array.isArray(uploadParamsAnswerOptions)) {
+
+                                                                                            for (let index = 0; index < uploadParamsAnswerOptions.length; index++) {
+
+                                                                                                let keyNameArr = Object.keys(uploadParamsAnswerOptions[index]);
+                                                                                                let keyName = keyNameArr[1];
+
+                                                                                                console.log(fileValues);
+
+                                                                                                let blobField = fileValues[index];
+                                                                                                console.log({ blobField });
+
+                                                                                                let tempObjFile = uploadParamsAnswerOptions[index];
+
+                                                                                                let result = fetch(tempObjFile[keyName], {
+                                                                                                    method: 'PUT',
+                                                                                                    body: blobField
+                                                                                                });
+
+                                                                                                console.log({ result });
+                                                                                            }
+
+                                                                                            const MySwal = withReactContent(Swal);
+
+                                                                                            MySwal.fire({
+
+                                                                                                title: 'Question updated!',
+                                                                                                icon: 'success',
+                                                                                            }).then((willDelete) => {
+
+                                                                                                history.push('/admin-portal/active-questions');
+                                                                                                // window.location.reload();
+
+                                                                                            });
+
+                                                                                        } else {
+
+                                                                                            console.log('Answer option files not uploaded!');
+                                                                                        }
+
+
+                                                                                    } else {
+
+                                                                                        if (Array.isArray(uploadParamsAnswerOptions)) {
+
+                                                                                            for (let index = 0; index < uploadParamsAnswerOptions.length; index++) {
+
+                                                                                                let keyNameArr = Object.keys(uploadParamsAnswerOptions[index]);
+                                                                                                let keyName = keyNameArr[1];
+
+                                                                                                let blobField = fileValues[index];
+                                                                                                console.log({ blobField });
+
+                                                                                                let tempObjFile = uploadParamsAnswerOptions[index];
+
+                                                                                                let result = fetch(tempObjFile[keyName], {
+                                                                                                    method: 'PUT',
+                                                                                                    body: blobField
+                                                                                                });
+
+                                                                                                console.log({ result });
+                                                                                            }
+
+                                                                                            const MySwal = withReactContent(Swal);
+                                                                                            MySwal.fire({
+
+                                                                                                title: 'Question updated!',
+                                                                                                icon: 'success',
+                                                                                            }).then((willDelete) => {
+
+                                                                                                history.push('/admin-portal/active-questions');
+                                                                                                // window.location.reload();
+
+                                                                                            })
+
+                                                                                            console.log('Question Voice Note not uploaded');
+                                                                                        }
+                                                                                    }
+
+
+                                                                                } else {
+
+                                                                                    console.log('else res');
+                                                                                    hideLoader();
+
+                                                                                }
+                                                                            })
+                                                                            .catch((error) => {
+                                                                                if (error.response) {
+                                                                                    hideLoader();
+
+                                                                                    console.log(error.response.data);
+
+                                                                                } else if (error.request) {
+
+                                                                                    console.log(error.request);
+                                                                                    hideLoader();
+
+                                                                                } else {
+
+                                                                                    console.log('Error', error.message);
+                                                                                    hideLoader();
+                                                                                }
+                                                                            });
                                                                     }
                                                                 }
                                                             }
