@@ -97,7 +97,7 @@ const dynamicUrl = {
 
     fetchIndividualQuestionData: baseUrl + '/fetchIndividualQuestionData',
     toggleQuestionStatus: baseUrl + '/toggleQuestionStatus',
-    // editQuestion: baseUrl + '/editQuestion',
+    editQuestion: baseUrl + '/editQuestion',
     fetchAllQuestionsData: baseUrl + '/fetchAllQuestionsData',
     addQuestions: baseUrl + '/addQuestions',
 
