@@ -66,6 +66,7 @@ const dynamicUrl = {
     toggleConceptStatus: baseUrl + '/toggleConceptStatus',
     fetchIndividualConcept: baseUrl + '/fetchIndividualConcept',
     updateConcept: baseUrl + '/updateConcept',
+    fetchAllTypesOfGroups: baseUrl + '/fetchAllTypesOfGroups',
 
     // Topics
     addTopic: baseUrl + '/addTopic',

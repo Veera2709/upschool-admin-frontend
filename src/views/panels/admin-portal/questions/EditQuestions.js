@@ -25,6 +25,9 @@ const EditQuestions = () => {
     const threadLinks = document.getElementsByClassName('page-header');
     const [displayHeader, setDisplayHeader] = useState(true);
     const [displayHeading, setDisplayHeading] = useState(sessionStorage.getItem('question_active_status'));
+    const _questionStatus = sessionStorage.getItem('click_event');
+    let displaySuccessMsg;
+
     const [questionTypeOptions, setQquestionTypeOptions] = useState([
         { value: 'Objective', label: 'Objective' },
         { value: 'Subjective', label: 'Subjective' }
@@ -72,6 +75,22 @@ const EditQuestions = () => {
             answer_weightage: ''
         }
     ]);
+
+    if (_questionStatus === 'Save') {
+        displaySuccessMsg = 'Question Saved!';
+    } else if (_questionStatus === 'Submit') {
+        displaySuccessMsg = 'Question Submitted!';
+    } else if (_questionStatus === 'Accept') {
+        displaySuccessMsg = 'Question Accepted!';
+    } else if (_questionStatus === 'Reject') {
+        displaySuccessMsg = 'Question Rejected!';
+    } else if (_questionStatus === 'Revisit') {
+        displaySuccessMsg = 'Question set as Revisit!';
+    } else if (_questionStatus === 'DesignReady') {
+        displaySuccessMsg = 'Question set as Design Ready!';
+    } else if (_questionStatus === 'Publish') {
+        displaySuccessMsg = 'Question Published!';
+    }
 
     const handleQuestionLabel = (e) => {
 
@@ -501,7 +520,7 @@ const EditQuestions = () => {
 
                                         setSelectedQuestionVoiceNote(individual_user_data.question_voice_note);
                                         setQuestionVoiceNote(individual_user_data.question_voice_note_url);
-                                        setVoiceNoteFileValues(individual_user_data.question_voice_note_url);
+                                        // setVoiceNoteFileValues(individual_user_data.question_voice_note_url);
                                     }
                                     setPreviousData(individual_user_data);
 
@@ -781,7 +800,7 @@ const EditQuestions = () => {
 
                             MySwal.fire({
 
-                                title: 'Question updated!',
+                                title: sessionStorage.getItem('click_event') === 'Save' ? 'Question Saved!' : sessionStorage.getItem('click_event') === 'Submit' ? 'Question Submitted!' : sessionStorage.getItem('click_event') === 'Accept' ? "Question Accepted!" : sessionStorage.getItem('click_event') === 'Rejected' ? "Question Rejected!" : sessionStorage.getItem('click_event') === 'Revisit' ? "Question marked as Revist!" : sessionStorage.getItem('click_event') === 'DesignReady' ? "Question marked as Design Ready!" : "Question Published!",
                                 icon: 'success',
                             }).then((willDelete) => {
 
@@ -821,7 +840,7 @@ const EditQuestions = () => {
                             const MySwal = withReactContent(Swal);
                             MySwal.fire({
 
-                                title: 'Question updated!',
+                                title: displaySuccessMsg,
                                 icon: 'success',
                             }).then((willDelete) => {
 
@@ -969,12 +988,12 @@ const EditQuestions = () => {
 
                                                                     if (selectedQuestionVoiceNote) {
 
-                                                                        let selectedFile = voiceNoteFileValues;
+                                                                        let selectedFileVoiceNote = voiceNoteFileValues;
                                                                         console.log('File is here!');
-                                                                        console.log(selectedFile);
+                                                                        console.log(selectedFileVoiceNote);
 
-                                                                        if (selectedFile) {
-                                                                            questionsVoiceNoteFilesData.push(selectedFile);
+                                                                        if (selectedFileVoiceNote) {
+                                                                            questionsVoiceNoteFilesData.push(selectedFileVoiceNote);
                                                                         }
 
                                                                         if (questionsVoiceNoteFilesData.length === 0) {
@@ -1271,12 +1290,12 @@ const EditQuestions = () => {
 
                                                                     if (selectedQuestionVoiceNote) {
 
-                                                                        let selectedFile = voiceNoteFileValues;
+                                                                        let selectedFileVoiceNote = voiceNoteFileValues;
                                                                         console.log('File is here!');
-                                                                        console.log(selectedFile);
+                                                                        console.log(selectedFileVoiceNote);
 
-                                                                        if (selectedFile) {
-                                                                            questionsVoiceNoteFilesData.push(selectedFile);
+                                                                        if (selectedFileVoiceNote) {
+                                                                            questionsVoiceNoteFilesData.push(selectedFileVoiceNote);
                                                                         }
 
                                                                         if (questionsVoiceNoteFilesData.length === 0) {
