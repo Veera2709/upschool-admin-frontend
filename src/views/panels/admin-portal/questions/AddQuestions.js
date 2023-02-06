@@ -541,11 +541,16 @@ const AddQuestions = ({ className, ...rest }) => {
 
                             initialValues={{
                                 answerType: '',
+                                question_label: '',
                                 submit: null
                             }}
 
                             validationSchema={Yup.object().shape({
-                                // answer_weightage: Yup.string().matches(Constants.Common.marksWeightageRegex, "Invalid Marks Weightage")
+                                question_label: Yup.string()
+                                    .trim()
+                                    .min(2, 'Question Label is too short!')
+                                    .max(51, 'Question Label is too long!')
+                                    .required('Question Label is required!'),
                             })}
 
                             onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
@@ -972,11 +977,18 @@ const AddQuestions = ({ className, ...rest }) => {
                                                     name="question_label"
                                                     onBlur={handleBlur}
                                                     type="question_label"
-                                                    onChange={e => handleQuestionLabel(e)}
+                                                    onChange={e => {
+                                                        handleChange(e)
+                                                        handleQuestionLabel(e)
+                                                    }}
                                                     placeholder="Question Label"
 
                                                 />
                                             </div>
+
+                                            {
+                                                touched.question_label && errors.question_label && <small className="text-danger form-text">{errors.question_label}</small>
+                                            }
 
                                             {
                                                 questionLabelErr && (
