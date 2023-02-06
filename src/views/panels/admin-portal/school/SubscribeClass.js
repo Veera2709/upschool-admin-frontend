@@ -61,7 +61,6 @@ const SubscribeClass = ({ className, rest, id, setIsOpenSubscribeClass }) => {
     const subscribeClass = (e) => {
         e.preventDefault();
         console.log(formFields);
-
         showLoader();
 
         let sendData = {
@@ -308,6 +307,7 @@ const SubscribeClass = ({ className, rest, id, setIsOpenSubscribeClass }) => {
                                                                                 <Col></Col>
                                                                                 <Col>
                                                                                     <CloseButton onClick={() => {
+                                                                                        setErrorMessage()
                                                                                         removeFields(index)
                                                                                     }} variant="white" />
                                                                                 </Col>
@@ -403,7 +403,15 @@ const SubscribeClass = ({ className, rest, id, setIsOpenSubscribeClass }) => {
                                                             <div style={{ color: 'red' }} className="error"> {errorMessage} </div>}
                                                     </Col>
                                                     <Col>
-                                                        <Button onClick={subscribeClass} className="btn-block" color="success" size="large" type="submit" variant="success">
+                                                        <Button
+                                                            onClick={(event) => {
+                                                                subscribeClass(event);
+                                                            }}
+                                                            className="btn-block"
+                                                            color="success"
+                                                            size="large"
+                                                            type="submit"
+                                                            variant="success">
                                                             Submit
                                                         </Button>
                                                     </Col>

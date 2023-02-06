@@ -59,6 +59,7 @@ const AllocateSubjects = ({ schoolId, user_id }) => {
     const [classData, setClassData] = useState();
     const [selectIndex, SetSelectIndex] = useState();
     const [subRepeatedErrMsg, setSubRepeatedErrMsg] = useState('');
+    const [selectedClassSection, setSelectedClassSection] = useState('');
 
     console.log("multiDropDownValues", multiDropDownValues);
     console.log("sections", sections);
@@ -75,10 +76,14 @@ const AllocateSubjects = ({ schoolId, user_id }) => {
         let data = [...formFields];
 
         if (type === 'class') {
+            
+            classData.splice(index, 1, { value: event.value, label: event.label })
             console.log(data);
             data[index]["classSectionId"] = event.value;
             setCount(0);
+            setSelectedClassSection(event.label);
             setFormFields(data);
+
         } else {
             console.log(event);
             data[index]['subject_id'] = event.value;
@@ -274,14 +279,14 @@ const AllocateSubjects = ({ schoolId, user_id }) => {
                     .then(async (response) => {
 
                         console.log({ response });
-                        console.log(response.data);                        
+                        console.log(response.data);
 
                         const subjectList = response.data.subjectList;
-                        console.log("subjectList", subjectList); 
-                        
+                        console.log("subjectList", subjectList);
+
                         const classSectionList = response.data.classSectionList;
                         console.log("classSectionList", classSectionList);
-                       
+
                         const mappedSubject = response.data.mappedSubject;
 
                         let object;
@@ -432,179 +437,208 @@ const AllocateSubjects = ({ schoolId, user_id }) => {
                     {isLoading ? (
                         <BasicSpinner />
                     ) : (
+
                         <>
 
-                            {isEmptyObject(formFields) ? <></> : (
+                            <Card>
+                                <Card.Body>
+                                    <Card.Title>Allocate Subjects</Card.Title>
+                                    <Formik
+                                        initialValues={{
+                                            classSectionId: '',
+                                            subject_id: multiOptions,
+                                            submit: null
+                                        }}
 
-                                <>
+                                        validationSchema={Yup.object().shape({
 
-                                    <Card>
-                                        <Card.Body>
-                                            <Card.Title>Allocate Subjects</Card.Title>
-                                            <Formik
-                                                initialValues={{
-                                                    classSectionId: '',
-                                                    subject_id: multiOptions,
-                                                    submit: null
-                                                }}
+                                        })}
 
-                                                validationSchema={Yup.object().shape({
+                                        onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
 
-                                                })}
-
-                                                onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-
-                                                    setSubmitting(true);
+                                            setSubmitting(true);
 
 
-                                                }}
-                                            >
+                                        }}
+                                    >
 
-                                                {({ errors, handleBlur, handleChange, handleSubmit, touched, values, setFieldValue }) => (
-                                                    <>
-                                                        <form onSubmit={handleSubmit}>
+                                        {({ errors, handleBlur, handleChange, handleSubmit, touched, values, setFieldValue }) => (
+                                            <>
+                                                <form onSubmit={handleSubmit}>
 
-                                                            {
-                                                                formFields.map((form, index) => {
+                                                    {
+                                                        formFields.map((form, index) => {
 
-                                                                    return (
+                                                            console.log(form.subject_title)
 
-                                                                        <>
-                                                                            {console.log(formFields)}
+                                                            return (
 
-                                                                            {formFields.length > 1 && (
-                                                                                <Row>
-                                                                                    <Col></Col>
-                                                                                    <Col>
-                                                                                        <CloseButton onClick={() => {
-                                                                                            removeFields(index);
-                                                                                            SetSecctionRepeat(false)
-                                                                                            // SetSelectSectionErr(false)
-                                                                                            SectionErr(index)
-                                                                                        }} variant="white" />
-                                                                                    </Col>
-                                                                                </Row>
+                                                                <>
+                                                                    {console.log(formFields)}
+
+                                                                    {formFields && (
+                                                                        <Row>
+                                                                            <Col></Col>
+                                                                            <Col>
+                                                                                <CloseButton onClick={() => {
+                                                                                    removeFields(index);
+                                                                                    SetSecctionRepeat(false)
+                                                                                    // SetSelectSectionErr(false)
+                                                                                    SectionErr(index)
+                                                                                }} variant="white" />
+                                                                            </Col>
+                                                                        </Row>
+                                                                    )}
+
+                                                                    <Row key={index}>
+                                                                        <Col>
+                                                                            <label className="floating-label" >
+                                                                                <small className="text-danger">* </small>
+                                                                                Class - Section
+                                                                            </label>
+                                                                            {classData && (
+                                                                                <Select
+                                                                                    // defaultValue={classData[index]}
+                                                                                    className="basic-single"
+                                                                                    classNamePrefix="select"
+                                                                                    label="classSectionId"
+                                                                                    name="classSectionId"
+                                                                                    options={classSecDropdownOptions}
+                                                                                    onBlur={(e) => { handleBlur(e) }}
+                                                                                    value={classData[index] && classData[index]}
+                                                                                    onChange={(event) => {
+                                                                                        handleFormChange(event, index, 'class');
+                                                                                        classOption(event, index);
+                                                                                        handleDeleteEduItem(index);
+                                                                                        SetSelectSection(true)
+                                                                                        SetSelectIndex(index)
+                                                                                    }}
+                                                                                />
+
+                                                                                // <select
+                                                                                //     className="form-control"
+                                                                                //     error={touched.classSectionId && errors.classSectionId}
+                                                                                //     name="classSectionId"
+                                                                                //     onBlur={handleBlur}
+                                                                                //     type="text"
+                                                                                //     defaultValue={form.subject_title}
+                                                                                //     onChange={(event) => {
+                                                                                //         handleFormChange(event, index, 'class');
+                                                                                //         classOption(event, index);
+                                                                                //         handleDeleteEduItem(index);
+                                                                                //         SetSelectSection(true)
+                                                                                //         SetSelectIndex(index)
+                                                                                //     }}
+                                                                                // >
+
+                                                                                //     <option>
+                                                                                //         Select...
+                                                                                //     </option>
+                                                                                //     {classSecDropdownOptions.map((optionsData) => {
+
+                                                                                //         return <option
+                                                                                //             value={optionsData.value}
+                                                                                //             key={optionsData.value}
+                                                                                //         >
+                                                                                //             {optionsData.label}
+                                                                                //         </option>
+
+                                                                                //     })}
+
+                                                                                // </select>
                                                                             )}
+                                                                            {touched.upschool_class_id && errors.upschool_class_id && (
+                                                                                <small className="text-danger form-text">{errors.zupschool_class_id}</small>
+                                                                            )}
+                                                                        </Col>
 
-                                                                            <Row key={index}>
-                                                                                <Col>
-                                                                                    <label className="floating-label" >
-                                                                                        <small className="text-danger">* </small>
-                                                                                        Class - Section
-                                                                                    </label>
-                                                                                    {classData && (
+                                                                        {multiDropOptions && sectionData && (
+                                                                            <Col>
+                                                                                <label className="floating-label">
+                                                                                    <small className="text-danger">* </small>
+                                                                                    Subject
+                                                                                </label>
+
+                                                                                {
+                                                                                    validationIndex !== index ? <>
                                                                                         <Select
-                                                                                            defaultValue={classData[index]}
+                                                                                            defaultValue={sectionData[index]}
                                                                                             className="basic-single"
+                                                                                            label="subject_id"
                                                                                             classNamePrefix="select"
-                                                                                            label="classSectionId"
-                                                                                            name="classSectionId"
-                                                                                            options={classSecDropdownOptions}
-                                                                                            onBlur={(e) => { handleBlur(e) }}
+                                                                                            name="subject_id"
+                                                                                            value={sectionData[index] && sectionData[index]}
+                                                                                            options={multiDropOptions}
                                                                                             onChange={(event) => {
-                                                                                                handleFormChange(event, index, 'class');
-                                                                                                classOption(event, index);
-                                                                                                handleDeleteEduItem(index);
+                                                                                                handleFormChange(event, index, 'section'); SetSecctionRepeat(false);
+                                                                                                setSectionValidation(false)
                                                                                                 SetSelectSection(true)
-                                                                                                SetSelectIndex(index)
+                                                                                                SetSelectSectionErr(false)
+                                                                                                handleDeleteSection(event, index)
+                                                                                            }}
+                                                                                            isDisabled={true}
+                                                                                        />
+                                                                                    </> : <>
+                                                                                        <Select
+                                                                                            defaultValue={sectionData[index]}
+                                                                                            className="basic-single"
+                                                                                            label="subject_id"
+                                                                                            value={sectionData[index] && sectionData[index]}
+                                                                                            classNamePrefix="select"
+                                                                                            name="subject_id"
+                                                                                            options={multiDropOptions}
+                                                                                            onChange={(event) => {
+                                                                                                handleFormChange(event, index, 'section'); SetSecctionRepeat(false);
+                                                                                                setSectionValidation(false)
+                                                                                                SetSelectSection(false)
+                                                                                                SetSelectSectionErr(false)
+                                                                                                handleDeleteSection(event, index)
                                                                                             }}
                                                                                         />
-                                                                                    )}
-                                                                                    {touched.upschool_class_id && errors.upschool_class_id && (
-                                                                                        <small className="text-danger form-text">{errors.zupschool_class_id}</small>
-                                                                                    )}
-                                                                                </Col>
-
-                                                                                {multiDropOptions && sectionData && (
-                                                                                    <Col>
-                                                                                        <label className="floating-label">
-                                                                                            <small className="text-danger">* </small>
-                                                                                            Subject
-                                                                                        </label>
-
-                                                                                        {
-                                                                                            validationIndex !== index ? <>
-                                                                                                <Select
-                                                                                                    defaultValue={sectionData[index]}
-                                                                                                    className="basic-single"
-                                                                                                    label="subject_id"
-                                                                                                    classNamePrefix="select"
-                                                                                                    name="subject_id"
-                                                                                                    value={sectionData[index] && sectionData[index]}
-                                                                                                    options={multiDropOptions}
-                                                                                                    onChange={(event) => {
-                                                                                                        handleFormChange(event, index, 'section'); SetSecctionRepeat(false);
-                                                                                                        setSectionValidation(false)
-                                                                                                        SetSelectSection(true)
-                                                                                                        SetSelectSectionErr(false)
-                                                                                                        handleDeleteSection(event, index)
-                                                                                                    }}
-                                                                                                    isDisabled={true}
-                                                                                                />
-                                                                                            </> : <>
-                                                                                                <Select
-                                                                                                    defaultValue={sectionData[index]}
-                                                                                                    className="basic-single"
-                                                                                                    label="subject_id"
-                                                                                                    value={sectionData[index] && sectionData[index]}
-                                                                                                    classNamePrefix="select"
-                                                                                                    name="subject_id"
-                                                                                                    options={multiDropOptions}
-                                                                                                    onChange={(event) => {
-                                                                                                        handleFormChange(event, index, 'section'); SetSecctionRepeat(false);
-                                                                                                        setSectionValidation(false)
-                                                                                                        SetSelectSection(false)
-                                                                                                        SetSelectSectionErr(false)
-                                                                                                        handleDeleteSection(event, index)
-                                                                                                    }}
-                                                                                                />
-                                                                                            </>
-                                                                                        }
+                                                                                    </>
+                                                                                }
 
 
-                                                                                    </Col>
-                                                                                )}
-                                                                            </Row>
+                                                                            </Col>
+                                                                        )}
+                                                                    </Row>
+                                                                    <br />
+                                                                </>
 
-                                                                        </>
+                                                            )
+                                                        })
 
-                                                                    )
-                                                                })
+                                                    }
+                                                </form>
 
-                                                            }
-                                                        </form>
+                                                <br />
+                                                <Row className="my-3">
+                                                    <Col sm={2}>
+                                                        <button onClick={addFields}>+</button>
+                                                    </Col>
+                                                    <Col>
+                                                        {sectionRepeat && (<div className="text-danger form-text">{subRepeatedErrMsg}</div>)}
+                                                        {sectionValidation && (<div className="text-danger form-text">Fields can't be empty!</div>)}
+                                                        {selectSectionErr && (<div className="text-danger form-text">Please Select Subject!</div>)}
+                                                    </Col>
+                                                    <Col sm={2}>
+                                                        <Button
+                                                            className="btn-block"
+                                                            color="success"
+                                                            size="small"
+                                                            type="submit"
+                                                            variant="success"
+                                                            onClick={subscribeClass} >
+                                                            Submit
+                                                        </Button>
+                                                    </Col>
+                                                </Row>
+                                            </>
+                                        )}
+                                    </Formik>
 
-                                                        <br />
-                                                        <Row className="my-3">
-                                                            <Col sm={2}>
-                                                                <button onClick={addFields}>+</button>
-                                                            </Col>
-                                                            <Col>
-                                                                {sectionRepeat && (<div className="text-danger form-text">{subRepeatedErrMsg}</div>)}
-                                                                {sectionValidation && (<div className="text-danger form-text">Fields can't be empty!</div>)}
-                                                                {selectSectionErr && (<div className="text-danger form-text">Please Select Subject!</div>)}
-                                                            </Col>
-                                                            <Col sm={2}>
-                                                                <Button
-                                                                    className="btn-block"
-                                                                    color="success"
-                                                                    size="small"
-                                                                    type="submit"
-                                                                    variant="success"
-                                                                    onClick={subscribeClass} >
-                                                                    Submit
-                                                                </Button>
-                                                            </Col>
-                                                        </Row>
-                                                    </>
-                                                )}
-                                            </Formik>
-
-                                        </Card.Body>
-                                    </Card>
-                                </>
-
-                            )}
+                                </Card.Body>
+                            </Card>
                         </>
                     )}
                 </div>
