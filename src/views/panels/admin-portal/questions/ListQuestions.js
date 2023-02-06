@@ -40,18 +40,22 @@ const ListQuestions = () => {
             _setQuestionStatus('Save');
         }
         else if (key === '2') {
+           
             _setQuestionStatus('Submit');
         }
         else if (key === '3') {
+           
             _setQuestionStatus('Accept');
         }
         else if (key === '4') {
             _setQuestionStatus('Reject');
         }
         else if (key === '5') {
+            
             _setQuestionStatus('Revisit');
         }
         else if (key === '6') {
+           
             _setQuestionStatus('DesignReady');
         }
         else if (key === '7') {
@@ -74,30 +78,37 @@ const ListQuestions = () => {
                             >
 
                                 <Tab eventKey={1} title="Saved" >
+                                   
                                     {sessionStorage.setItem('question_status', _questionStatus)}
                                     <QuestionsTableView _questionStatus={_questionStatus} />
                                 </Tab>
                                 <Tab eventKey={2} title="Submitted" >
+                                   
                                     {sessionStorage.setItem('question_status', _questionStatus)}
                                     <QuestionsTableView _questionStatus={_questionStatus} />
                                 </Tab>
                                 <Tab eventKey={3} title="Accepted" >
+                                   
                                     {sessionStorage.setItem('question_status', _questionStatus)}
                                     <QuestionsTableView _questionStatus={_questionStatus} />
                                 </Tab>
                                 <Tab eventKey={4} title="Rejected" >
+                                    
                                     {sessionStorage.setItem('question_status', _questionStatus)}
                                     <QuestionsTableView _questionStatus={_questionStatus} />
                                 </Tab>
                                 <Tab eventKey={5} title="Revisit" >
+                               
                                     {sessionStorage.setItem('question_status', _questionStatus)}
                                     <QuestionsTableView _questionStatus={_questionStatus} />
                                 </Tab>
                                 <Tab eventKey={6} title="Design Ready">
+                                   
                                     {sessionStorage.setItem('question_status', _questionStatus)}
                                     <QuestionsTableView _questionStatus={_questionStatus} />
                                 </Tab>
                                 <Tab eventKey={7} title="Published">
+                                    
                                     {sessionStorage.setItem('question_status', _questionStatus)}
                                     <QuestionsTableView _questionStatus={_questionStatus} />
                                 </Tab>
