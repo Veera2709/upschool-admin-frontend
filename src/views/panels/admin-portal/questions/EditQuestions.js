@@ -144,8 +144,8 @@ const EditQuestions = () => {
 
     const [answerBlanksOptions, setAnswerBlanksOptions] = useState([]);
     const [answerDisplayOptions, setAnswerDisplayOptions] = useState([
-        { value: 'Yes', label: 'Yes' },
-        { value: 'No', label: 'No' }
+        { value: 'No', label: 'No' },
+        { value: 'Yes', label: 'Yes' }
     ]);
 
     const selectedArr = [{ label: 'Options', value: 'Options' }];
@@ -888,7 +888,7 @@ const EditQuestions = () => {
             });
 
     }
-    
+
     return (
 
         <>
@@ -1929,9 +1929,9 @@ const EditQuestions = () => {
                                                                                             onChange={event => handleAnswerBlanks(event, index)}
                                                                                         >
 
-                                                                                            <option>
+                                                                                            {/* <option>
                                                                                                 Select...
-                                                                                            </option>
+                                                                                            </option> */}
 
                                                                                             {answerDisplayOptions.map((optionsData) => {
 
@@ -2074,9 +2074,9 @@ const EditQuestions = () => {
                                                                                             }}
                                                                                         >
 
-                                                                                            <option>
+                                                                                            {/* <option>
                                                                                                 Select...
-                                                                                            </option>
+                                                                                            </option> */}
 
                                                                                             {answerDisplayOptions.map((optionsData) => {
 
@@ -2283,9 +2283,9 @@ const EditQuestions = () => {
                                                                                             onChange={event => handleAnswerBlanks(event, index)}
                                                                                         >
 
-                                                                                            <option>
+                                                                                            {/* <option>
                                                                                                 Select...
-                                                                                            </option>
+                                                                                            </option> */}
 
                                                                                             {answerDisplayOptions.map((optionsData) => {
 
@@ -2475,9 +2475,9 @@ const EditQuestions = () => {
                                                                                             }}
                                                                                         >
 
-                                                                                            <option>
+                                                                                            {/* <option>
                                                                                                 Select...
-                                                                                            </option>
+                                                                                            </option> */}
 
                                                                                             {answerDisplayOptions.map((optionsData) => {
 
@@ -2687,9 +2687,9 @@ const EditQuestions = () => {
                                                                                             onChange={event => handleAnswerBlanks(event, index)}
                                                                                         >
 
-                                                                                            <option>
+                                                                                            {/* <option>
                                                                                                 Select...
-                                                                                            </option>
+                                                                                            </option> */}
 
                                                                                             {answerDisplayOptions.map((optionsData) => {
 
