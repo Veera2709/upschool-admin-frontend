@@ -43,9 +43,12 @@ const AllocateClass = ({ schoolId, user_id }) => {
     const [validationIndex, setValidationIndex] = useState();
     const [sections, setSections] = useState();
     const [sectionData, setSectionData] = useState([]);
-    const [classData, setClassData] = useState();
+    const [classData, setClassData] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [selectIndex, SetSelectIndex] = useState();
+    const [reloadAllData, setReloadAllData] = useState('Fetched');
+    console.log("classData", classData);
+    console.log("sectionsData", sectionData);
 
     const MySwal = withReactContent(Swal);
     const sweetAlertHandler = (alert) => {
@@ -58,10 +61,11 @@ const AllocateClass = ({ schoolId, user_id }) => {
     };
 
     const handleFormChange = (event, index, type) => {
-
+        console.log("event", event);
         let data = [...formFields];
 
         if (type === 'class') {
+            classData.splice(index, 1, { value: event.value, label: event.label })
             console.log(data);
             data[index]["client_class_id"] = event.value;
             setCount(0);
@@ -152,6 +156,8 @@ const AllocateClass = ({ schoolId, user_id }) => {
         let data2 = [...classData]
         data2.splice(index, 1)
         setClassData(data2)
+        setReloadAllData('Deleted')
+
     }
 
     const fetchClass = async () => {
@@ -193,17 +199,14 @@ const AllocateClass = ({ schoolId, user_id }) => {
                             section_id: Items.section_id
                         }
                         tempArray.push(object);
-                        // console.log("options", options);
-                        // console.log("Items.client_class_id", Items);
+                        
                         const defaultValue = colourOptions && colourOptions.filter(activity => (activity.value === Items.client_class_id))
                         const sectiontValue = allSections && allSections.filter(activity => (activity.value === Items.section_id))
 
-                        classArray.push(defaultValue);
-                        // console.log("defaultValue", defaultValue);
-                        // console.log("sectiontValue", sectiontValue);
+                        classArray.push({ value: defaultValue[0].value, label: defaultValue[0].label });
+                      
                         SesionArray.push({ value: sectiontValue[0].value, label: sectiontValue[0].label });
-                        // console.log("defaultValue", defaultValue);
-                        // console.log('sectiontValue', sectiontValue);
+                        
                     })
 
                     isEmptyArray(tempArray) ? (
@@ -246,6 +249,10 @@ const AllocateClass = ({ schoolId, user_id }) => {
         }
     }, [])
 
+    useEffect(() => {
+        setClassData(classData)
+    }, [reloadAllData])
+
     const classOption = async (e, index) => {
         setValidationIndex(index)
         console.log("classOption", e);
@@ -286,9 +293,6 @@ const AllocateClass = ({ schoolId, user_id }) => {
         }
     }
 
-    useEffect(() => {
-
-    }, [classData])
 
 
     return (
@@ -330,16 +334,11 @@ const AllocateClass = ({ schoolId, user_id }) => {
                                                 {({ errors, handleBlur, handleChange, handleSubmit, touched, values, setFieldValue }) => (
                                                     <>
                                                         <form onSubmit={handleSubmit}>
-
                                                             {
                                                                 formFields.map((form, index) => {
-
                                                                     return (
-
                                                                         <>
-
-
-                                                                            {formFields.length > 1 && (
+                                                                            {formFields && (
                                                                                 <Row>
                                                                                     <Col></Col>
                                                                                     <Col>
@@ -361,14 +360,14 @@ const AllocateClass = ({ schoolId, user_id }) => {
                                                                                     </label>
                                                                                     {classData && (
                                                                                         <Select
-                                                                                            // classData
-                                                                                            defaultValue={classData[index]}
+
+                                                                                            // defaultValue={classData[index]&&classData[index]}
                                                                                             className="basic-single"
                                                                                             classNamePrefix="select"
                                                                                             label="client_class_id"
                                                                                             name="client_class_id"
+                                                                                            value={classData[index] && classData[index]}
                                                                                             options={options}
-                                                                                            // onChange={(e) => { classOption(e) }}
                                                                                             onBlur={(e) => { handleBlur(e) }}
                                                                                             onChange={(event) => {
                                                                                                 handleFormChange(event, index, 'class');
