@@ -25,6 +25,9 @@ const EditQuestions = () => {
     const threadLinks = document.getElementsByClassName('page-header');
     const [displayHeader, setDisplayHeader] = useState(true);
     const [displayHeading, setDisplayHeading] = useState(sessionStorage.getItem('question_active_status'));
+    const _questionStatus = sessionStorage.getItem('click_event');
+    let displaySuccessMsg;
+
     const [questionTypeOptions, setQquestionTypeOptions] = useState([
         { value: 'Objective', label: 'Objective' },
         { value: 'Subjective', label: 'Subjective' }
@@ -72,6 +75,22 @@ const EditQuestions = () => {
             answer_weightage: ''
         }
     ]);
+
+    if (_questionStatus === 'Save') {
+        displaySuccessMsg = 'Question Saved!';
+    } else if (_questionStatus === 'Submit') {
+        displaySuccessMsg = 'Question Submitted!';
+    } else if (_questionStatus === 'Accept') {
+        displaySuccessMsg = 'Question Accepted!';
+    } else if (_questionStatus === 'Reject') {
+        displaySuccessMsg = 'Question Rejected!';
+    } else if (_questionStatus === 'Revisit') {
+        displaySuccessMsg = 'Question set as Revisit!';
+    } else if (_questionStatus === 'DesignReady') {
+        displaySuccessMsg = 'Question set as Design Ready!';
+    } else if (_questionStatus === 'Publish') {
+        displaySuccessMsg = 'Question Published!';
+    }
 
     const handleQuestionLabel = (e) => {
 
@@ -363,7 +382,7 @@ const EditQuestions = () => {
 
                         setSelectedQuestionType(individual_user_data.question_type);
                         setQuestionLabelValue(individual_user_data.question_label);
-                        
+
                         individual_user_data.question_type === 'Subjective' ? setAnswerTypeOptions([
                             { value: 'Words', label: 'Words' },
                             { value: 'Numbers', label: 'Numbers' },
@@ -441,7 +460,7 @@ const EditQuestions = () => {
 
                                     ) : (console.log("Not empty"));
 
-                                    tempArray.length >= 1 ? setAddAnswerOptions(true) : setAddAnswerOptions(false);
+                                    tempArray.length > 1 ? setAddAnswerOptions(true) : setAddAnswerOptions(false);
 
                                     setAnswerOptionsForm(tempArray);
 
@@ -501,7 +520,7 @@ const EditQuestions = () => {
 
                                         setSelectedQuestionVoiceNote(individual_user_data.question_voice_note);
                                         setQuestionVoiceNote(individual_user_data.question_voice_note_url);
-                                        setVoiceNoteFileValues(individual_user_data.question_voice_note_url);
+                                        // setVoiceNoteFileValues(individual_user_data.question_voice_note_url);
                                     }
                                     setPreviousData(individual_user_data);
 
@@ -557,7 +576,310 @@ const EditQuestions = () => {
 
     }, []);
 
+    const _addQuestions = (payLoad) => {
+        axios
+            .post(
+                dynamicUrl.addQuestions,
+                {
+                    data: payLoad
+                },
+                {
+                    headers: { Authorization: sessionStorage.getItem('user_jwt') }
+                }
+            )
+            .then((response) => {
 
+                console.log(response.data);
+
+                let result = response.status === 200;
+
+                if (result) {
+
+                    console.log('inside res');
+
+                    let uploadParamsQuestionsNote = response.data.question_voice_note;
+                    let uploadParamsAnswerOptions = response.data.answers_options;
+
+                    hideLoader();
+
+                    if (Array.isArray(uploadParamsQuestionsNote)) {
+
+                        for (let index = 0; index < uploadParamsQuestionsNote.length; index++) {
+
+                            let keyNameArr = Object.keys(uploadParamsQuestionsNote[index]);
+                            let keyName = keyNameArr[1];
+
+                            let blobField = voiceNoteFileValues;
+                            console.log({ blobField });
+
+                            let tempObj = uploadParamsQuestionsNote[index];
+                            let result = fetch(tempObj[keyName], {
+                                method: 'PUT',
+                                body: blobField
+                            });
+
+                            console.log({ result });
+                        }
+
+
+                        if (Array.isArray(uploadParamsAnswerOptions)) {
+
+                            for (let index = 0; index < uploadParamsAnswerOptions.length; index++) {
+
+                                let keyNameArr = Object.keys(uploadParamsAnswerOptions[index]);
+                                let keyName = keyNameArr[1];
+
+                                console.log(fileValues);
+
+                                let blobField = fileValues[index];
+                                console.log({ blobField });
+
+                                let tempObjFile = uploadParamsAnswerOptions[index];
+
+                                let result = fetch(tempObjFile[keyName], {
+                                    method: 'PUT',
+                                    body: blobField
+                                });
+
+                                console.log({ result });
+                            }
+
+                            const MySwal = withReactContent(Swal);
+
+                            MySwal.fire({
+
+                                title: 'Question saved as new Item!',
+                                icon: 'success',
+                            }).then((willDelete) => {
+
+                                history.push('/admin-portal/active-questions');
+                                // window.location.reload();
+
+                            });
+
+                        } else {
+
+                            console.log('Answer option files not uploaded!');
+                        }
+
+
+                    } else {
+
+                        if (Array.isArray(uploadParamsAnswerOptions)) {
+
+                            for (let index = 0; index < uploadParamsAnswerOptions.length; index++) {
+
+                                let keyNameArr = Object.keys(uploadParamsAnswerOptions[index]);
+                                let keyName = keyNameArr[1];
+
+                                let blobField = fileValues[index];
+                                console.log({ blobField });
+
+                                let tempObjFile = uploadParamsAnswerOptions[index];
+
+                                let result = fetch(tempObjFile[keyName], {
+                                    method: 'PUT',
+                                    body: blobField
+                                });
+
+                                console.log({ result });
+                            }
+
+                            const MySwal = withReactContent(Swal);
+                            MySwal.fire({
+
+                                title: 'Question saved as new Item!',
+                                icon: 'success',
+                            }).then((willDelete) => {
+
+                                history.push('/admin-portal/active-questions');
+                                // window.location.reload();
+
+                            })
+
+                            console.log('Question Voice Note not uploaded');
+                        }
+                    }
+
+
+                } else {
+
+                    console.log('else res');
+                    hideLoader();
+
+                }
+            })
+            .catch((error) => {
+                if (error.response) {
+                    hideLoader();
+
+                    console.log(error.response.data);
+
+                } else if (error.request) {
+
+                    console.log(error.request);
+                    hideLoader();
+
+                } else {
+
+                    console.log('Error', error.message);
+                    hideLoader();
+                }
+            });
+    }
+
+    const _editQuestions = (payLoad) => {
+        axios
+            .post(
+                dynamicUrl.editQuestion,
+                {
+                    data: payLoad
+                },
+                {
+                    headers: { Authorization: sessionStorage.getItem('user_jwt') }
+                }
+            )
+            .then((response) => {
+
+                console.log(response.data);
+
+                let result = response.status === 200;
+
+                if (result) {
+
+                    console.log('inside res');
+
+                    let uploadParamsQuestionsNote = response.data.question_voice_note;
+                    let uploadParamsAnswerOptions = response.data.answers_options;
+
+                    hideLoader();
+
+                    if (Array.isArray(uploadParamsQuestionsNote)) {
+
+                        for (let index = 0; index < uploadParamsQuestionsNote.length; index++) {
+
+                            let keyNameArr = Object.keys(uploadParamsQuestionsNote[index]);
+                            let keyName = keyNameArr[1];
+
+                            let blobField = voiceNoteFileValues;
+                            console.log({ blobField });
+
+                            let tempObj = uploadParamsQuestionsNote[index];
+                            let result = fetch(tempObj[keyName], {
+                                method: 'PUT',
+                                body: blobField
+                            });
+
+                            console.log({ result });
+                        }
+
+
+                        if (Array.isArray(uploadParamsAnswerOptions)) {
+
+                            for (let index = 0; index < uploadParamsAnswerOptions.length; index++) {
+
+                                let keyNameArr = Object.keys(uploadParamsAnswerOptions[index]);
+                                let keyName = keyNameArr[1];
+
+                                console.log(fileValues);
+
+                                let blobField = fileValues[index];
+                                console.log({ blobField });
+
+                                let tempObjFile = uploadParamsAnswerOptions[index];
+
+                                let result = fetch(tempObjFile[keyName], {
+                                    method: 'PUT',
+                                    body: blobField
+                                });
+
+                                console.log({ result });
+                            }
+
+                            const MySwal = withReactContent(Swal);
+
+                            MySwal.fire({
+
+                                title: sessionStorage.getItem('click_event') === 'Save' ? 'Question Saved!' : sessionStorage.getItem('click_event') === 'Submit' ? 'Question Submitted!' : sessionStorage.getItem('click_event') === 'Accept' ? "Question Accepted!" : sessionStorage.getItem('click_event') === 'Rejected' ? "Question Rejected!" : sessionStorage.getItem('click_event') === 'Revisit' ? "Question marked as Revist!" : sessionStorage.getItem('click_event') === 'DesignReady' ? "Question marked as Design Ready!" : "Question Published!",
+                                icon: 'success',
+                            }).then((willDelete) => {
+
+                                history.push('/admin-portal/active-questions');
+                                // window.location.reload();
+
+                            });
+
+                        } else {
+
+                            console.log('Answer option files not uploaded!');
+                        }
+
+
+                    } else {
+
+                        if (Array.isArray(uploadParamsAnswerOptions)) {
+
+                            for (let index = 0; index < uploadParamsAnswerOptions.length; index++) {
+
+                                let keyNameArr = Object.keys(uploadParamsAnswerOptions[index]);
+                                let keyName = keyNameArr[1];
+
+                                let blobField = fileValues[index];
+                                console.log({ blobField });
+
+                                let tempObjFile = uploadParamsAnswerOptions[index];
+
+                                let result = fetch(tempObjFile[keyName], {
+                                    method: 'PUT',
+                                    body: blobField
+                                });
+
+                                console.log({ result });
+                            }
+
+                            const MySwal = withReactContent(Swal);
+                            MySwal.fire({
+
+                                title: displaySuccessMsg,
+                                icon: 'success',
+                            }).then((willDelete) => {
+
+                                history.push('/admin-portal/active-questions');
+                                // window.location.reload();
+
+                            })
+
+                            console.log('Question Voice Note not uploaded');
+                        }
+                    }
+
+
+                } else {
+
+                    console.log('else res');
+                    hideLoader();
+
+                }
+            })
+            .catch((error) => {
+                if (error.response) {
+                    hideLoader();
+
+                    console.log(error.response.data);
+
+                } else if (error.request) {
+
+                    console.log(error.request);
+                    hideLoader();
+
+                } else {
+
+                    console.log('Error', error.message);
+                    hideLoader();
+                }
+            });
+
+    }
     return (
 
         <>
@@ -611,8 +933,11 @@ const EditQuestions = () => {
                                                     }}
 
                                                     validationSchema={Yup.object().shape({
-
-                                                        // answer_weightage: Yup.string().matches(Constants.Common.marksWeightageRegex, "Invalid Marks Weightage")
+                                                        question_label: Yup.string()
+                                                            .trim()
+                                                            .min(2, 'Question Label is too short!')
+                                                            .max(51, 'Question Label is too long!')
+                                                            .required('Question Label is required!'),
                                                     })}
 
                                                     onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
@@ -659,665 +984,264 @@ const EditQuestions = () => {
                                                                     console.log("payLoad", payLoad);
 
                                                                     let allFilesData = [];
+                                                                    let questionsVoiceNoteFilesData = [];
 
-                                                                    if (selectedAnswerType === "Image") {
+                                                                    if (selectedQuestionVoiceNote) {
 
-                                                                        fileValues.forEach((fileName) => {
-                                                                            let selectedFile = fileName;
-                                                                            console.log('File is here!');
-                                                                            console.log(selectedFile);
-                                                                            if (selectedFile) {
-                                                                                allFilesData.push(selectedFile);
-                                                                            }
-                                                                        });
+                                                                        let selectedFileVoiceNote = voiceNoteFileValues;
+                                                                        console.log('File is here!');
+                                                                        console.log(selectedFileVoiceNote);
 
-                                                                        console.log(allFilesData);
+                                                                        if (selectedFileVoiceNote) {
+                                                                            questionsVoiceNoteFilesData.push(selectedFileVoiceNote);
+                                                                        }
 
-                                                                        if (allFilesData.length === 0) {
+                                                                        if (questionsVoiceNoteFilesData.length === 0) {
 
-                                                                            showLoader();
-                                                                            axios
-                                                                                .post(
-                                                                                    dynamicUrl.addQuestions,
-                                                                                    {
-                                                                                        data: payLoad
-                                                                                    },
-                                                                                    {
-                                                                                        headers: { Authorization: sessionStorage.getItem('user_jwt') }
-                                                                                    }
-                                                                                )
-                                                                                .then((response) => {
+                                                                            if (selectedAnswerType === "Image") {
 
-                                                                                    console.log(response.data);
-
-                                                                                    let result = response.status === 200;
-
-                                                                                    if (result) {
-
-                                                                                        console.log('inside res');
-
-                                                                                        let uploadParamsQuestionsNote = response.data.question_voice_note;
-                                                                                        let uploadParamsAnswerOptions = response.data.answers_options;
-
-                                                                                        hideLoader();
-
-                                                                                        if (Array.isArray(uploadParamsQuestionsNote)) {
-
-                                                                                            for (let index = 0; index < uploadParamsQuestionsNote.length; index++) {
-
-                                                                                                let keyNameArr = Object.keys(uploadParamsQuestionsNote[index]);
-                                                                                                let keyName = keyNameArr[1];
-
-                                                                                                let blobField = voiceNoteFileValues;
-                                                                                                console.log({ blobField });
-
-                                                                                                let tempObj = uploadParamsQuestionsNote[index];
-                                                                                                let result = fetch(tempObj[keyName], {
-                                                                                                    method: 'PUT',
-                                                                                                    body: blobField
-                                                                                                });
-
-                                                                                                console.log({ result });
-                                                                                            }
-
-
-                                                                                            if (Array.isArray(uploadParamsAnswerOptions)) {
-
-                                                                                                for (let index = 0; index < uploadParamsAnswerOptions.length; index++) {
-
-                                                                                                    let keyNameArr = Object.keys(uploadParamsAnswerOptions[index]);
-                                                                                                    let keyName = keyNameArr[1];
-
-                                                                                                    console.log(fileValues);
-
-                                                                                                    let blobField = fileValues[index];
-                                                                                                    console.log({ blobField });
-
-                                                                                                    let tempObjFile = uploadParamsAnswerOptions[index];
-
-                                                                                                    let result = fetch(tempObjFile[keyName], {
-                                                                                                        method: 'PUT',
-                                                                                                        body: blobField
-                                                                                                    });
-
-                                                                                                    console.log({ result });
-                                                                                                }
-
-                                                                                                const MySwal = withReactContent(Swal);
-
-                                                                                                MySwal.fire({
-
-                                                                                                    title: 'Question saved as new Item!',
-                                                                                                    icon: 'success',
-                                                                                                }).then((willDelete) => {
-
-                                                                                                    history.push('/admin-portal/active-questions');
-                                                                                                    // window.location.reload();
-
-                                                                                                });
-
-                                                                                            } else {
-
-                                                                                                console.log('Answer option files not uploaded!');
-                                                                                            }
-
-
-                                                                                        } else {
-
-                                                                                            if (Array.isArray(uploadParamsAnswerOptions)) {
-
-                                                                                                for (let index = 0; index < uploadParamsAnswerOptions.length; index++) {
-
-                                                                                                    let keyNameArr = Object.keys(uploadParamsAnswerOptions[index]);
-                                                                                                    let keyName = keyNameArr[1];
-
-                                                                                                    let blobField = fileValues[index];
-                                                                                                    console.log({ blobField });
-
-                                                                                                    let tempObjFile = uploadParamsAnswerOptions[index];
-
-                                                                                                    let result = fetch(tempObjFile[keyName], {
-                                                                                                        method: 'PUT',
-                                                                                                        body: blobField
-                                                                                                    });
-
-                                                                                                    console.log({ result });
-                                                                                                }
-
-                                                                                                const MySwal = withReactContent(Swal);
-                                                                                                MySwal.fire({
-
-                                                                                                    title: 'Question saved as new Item!',
-                                                                                                    icon: 'success',
-                                                                                                }).then((willDelete) => {
-
-                                                                                                    history.push('/admin-portal/active-questions');
-                                                                                                    // window.location.reload();
-
-                                                                                                })
-
-                                                                                                console.log('Question Voice Note not uploaded');
-                                                                                            }
-                                                                                        }
-
-
-                                                                                    } else {
-
-                                                                                        console.log('else res');
-                                                                                        hideLoader();
-
-                                                                                    }
-                                                                                })
-                                                                                .catch((error) => {
-                                                                                    if (error.response) {
-                                                                                        hideLoader();
-
-                                                                                        console.log(error.response.data);
-
-                                                                                    } else if (error.request) {
-
-                                                                                        console.log(error.request);
-                                                                                        hideLoader();
-
-                                                                                    } else {
-
-                                                                                        console.log('Error', error.message);
-                                                                                        hideLoader();
+                                                                                fileValues.forEach((fileName) => {
+                                                                                    let selectedFile = fileName;
+                                                                                    console.log('File is here!');
+                                                                                    console.log(selectedFile);
+                                                                                    if (selectedFile) {
+                                                                                        allFilesData.push(selectedFile);
                                                                                     }
                                                                                 });
 
-                                                                        } else {
-                                                                            if (areFilesInvalid(allFilesData) !== 0) {
-                                                                                sweetAlertHandler(
-                                                                                    {
-                                                                                        title: 'Warning',
-                                                                                        type: 'warning',
-                                                                                        text: 'Supported file formats are .png, .jpg, .jpeg. Uploaded files should be less than 2MB. '
+                                                                                console.log(allFilesData);
+
+                                                                                if (allFilesData.length === 0) {
+
+                                                                                    showLoader();
+                                                                                    _addQuestions(payLoad);
+
+                                                                                } else {
+                                                                                    if (areFilesInvalid(allFilesData) !== 0) {
+                                                                                        sweetAlertHandler(
+                                                                                            {
+                                                                                                title: 'Invalid Image File(s)!',
+                                                                                                type: 'warning',
+                                                                                                text: 'Supported file formats are .png, .jpg, .jpeg. Uploaded files should be less than 2MB. '
+                                                                                            }
+                                                                                        );
+                                                                                    } else {
+
+                                                                                        showLoader();
+                                                                                        _addQuestions(payLoad);
+
                                                                                     }
-                                                                                );
+                                                                                }
+
+                                                                            } else if (selectedAnswerType === "Audio File") {
+
+                                                                                fileValues.forEach((fileName) => {
+                                                                                    let selectedFile = fileName;
+                                                                                    console.log('File is here!');
+                                                                                    console.log(selectedFile);
+                                                                                    if (selectedFile) {
+                                                                                        allFilesData.push(selectedFile);
+                                                                                    }
+                                                                                });
+
+                                                                                console.log(allFilesData);
+
+                                                                                if (allFilesData.length === 0) {
+
+                                                                                    showLoader();
+                                                                                    _addQuestions(payLoad);
+
+
+                                                                                } else {
+
+                                                                                    if (voiceInvalid(allFilesData) !== 0) {
+                                                                                        sweetAlertHandler({
+                                                                                            title: 'Invalid Audio File(s)!',
+                                                                                            type: 'warning',
+                                                                                            text: 'Supported file formats are .mp3, .mpeg, .wav. Uploaded files should be less than 10MB. '
+                                                                                        });
+                                                                                    } else {
+
+                                                                                        showLoader();
+                                                                                        _addQuestions(payLoad);
+
+                                                                                    }
+                                                                                }
                                                                             } else {
 
                                                                                 showLoader();
-                                                                                axios
-                                                                                    .post(
-                                                                                        dynamicUrl.addQuestions,
-                                                                                        {
-                                                                                            data: payLoad
-                                                                                        },
-                                                                                        {
-                                                                                            headers: { Authorization: sessionStorage.getItem('user_jwt') }
-                                                                                        }
-                                                                                    )
-                                                                                    .then((response) => {
+                                                                                _addQuestions(payLoad);
 
-                                                                                        console.log(response.data);
-
-                                                                                        let result = response.status === 200;
-
-                                                                                        if (result) {
-
-                                                                                            console.log('inside res');
-
-                                                                                            let uploadParamsQuestionsNote = response.data.question_voice_note;
-                                                                                            let uploadParamsAnswerOptions = response.data.answers_options;
-
-                                                                                            hideLoader();
-
-                                                                                            if (Array.isArray(uploadParamsQuestionsNote)) {
-
-                                                                                                for (let index = 0; index < uploadParamsQuestionsNote.length; index++) {
-
-                                                                                                    let keyNameArr = Object.keys(uploadParamsQuestionsNote[index]);
-                                                                                                    let keyName = keyNameArr[1];
-
-                                                                                                    let blobField = voiceNoteFileValues;
-                                                                                                    console.log({ blobField });
-
-                                                                                                    let tempObj = uploadParamsQuestionsNote[index];
-                                                                                                    let result = fetch(tempObj[keyName], {
-                                                                                                        method: 'PUT',
-                                                                                                        body: blobField
-                                                                                                    });
-
-                                                                                                    console.log({ result });
-                                                                                                }
-
-
-                                                                                                if (Array.isArray(uploadParamsAnswerOptions)) {
-
-                                                                                                    for (let index = 0; index < uploadParamsAnswerOptions.length; index++) {
-
-                                                                                                        let keyNameArr = Object.keys(uploadParamsAnswerOptions[index]);
-                                                                                                        let keyName = keyNameArr[1];
-
-                                                                                                        console.log(fileValues);
-
-                                                                                                        let blobField = fileValues[index];
-                                                                                                        console.log({ blobField });
-
-                                                                                                        let tempObjFile = uploadParamsAnswerOptions[index];
-
-                                                                                                        let result = fetch(tempObjFile[keyName], {
-                                                                                                            method: 'PUT',
-                                                                                                            body: blobField
-                                                                                                        });
-
-                                                                                                        console.log({ result });
-                                                                                                    }
-
-                                                                                                    const MySwal = withReactContent(Swal);
-
-                                                                                                    MySwal.fire({
-
-                                                                                                        title: 'Question saved as new Item!',
-                                                                                                        icon: 'success',
-                                                                                                    }).then((willDelete) => {
-
-                                                                                                        history.push('/admin-portal/active-questions');
-                                                                                                        // window.location.reload();
-
-                                                                                                    });
-
-                                                                                                } else {
-
-                                                                                                    console.log('Answer option files not uploaded!');
-                                                                                                }
-
-
-                                                                                            } else {
-
-                                                                                                if (Array.isArray(uploadParamsAnswerOptions)) {
-
-                                                                                                    for (let index = 0; index < uploadParamsAnswerOptions.length; index++) {
-
-                                                                                                        let keyNameArr = Object.keys(uploadParamsAnswerOptions[index]);
-                                                                                                        let keyName = keyNameArr[1];
-
-                                                                                                        let blobField = fileValues[index];
-                                                                                                        console.log({ blobField });
-
-                                                                                                        let tempObjFile = uploadParamsAnswerOptions[index];
-
-                                                                                                        let result = fetch(tempObjFile[keyName], {
-                                                                                                            method: 'PUT',
-                                                                                                            body: blobField
-                                                                                                        });
-
-                                                                                                        console.log({ result });
-                                                                                                    }
-
-                                                                                                    const MySwal = withReactContent(Swal);
-                                                                                                    MySwal.fire({
-
-                                                                                                        title: 'Question saved as new Item!',
-                                                                                                        icon: 'success',
-                                                                                                    }).then((willDelete) => {
-
-                                                                                                        history.push('/admin-portal/active-questions');
-                                                                                                        // window.location.reload();
-
-                                                                                                    })
-
-                                                                                                    console.log('Question Voice Note not uploaded');
-                                                                                                }
-                                                                                            }
-
-
-                                                                                        } else {
-
-                                                                                            console.log('else res');
-                                                                                            hideLoader();
-
-                                                                                        }
-                                                                                    })
-                                                                                    .catch((error) => {
-                                                                                        if (error.response) {
-                                                                                            hideLoader();
-
-                                                                                            console.log(error.response.data);
-
-                                                                                        } else if (error.request) {
-
-                                                                                            console.log(error.request);
-                                                                                            hideLoader();
-
-                                                                                        } else {
-
-                                                                                            console.log('Error', error.message);
-                                                                                            hideLoader();
-                                                                                        }
-                                                                                    });
                                                                             }
-                                                                        }
-
-                                                                    } else if (selectedAnswerType === "Audio File") {
-
-                                                                        fileValues.forEach((fileName) => {
-                                                                            let selectedFile = fileName;
-                                                                            console.log('File is here!');
-                                                                            console.log(selectedFile);
-                                                                            if (selectedFile) {
-                                                                                allFilesData.push(selectedFile);
-                                                                            }
-                                                                        });
-
-                                                                        console.log(allFilesData);
-
-                                                                        if (allFilesData.length === 0) {
-
-                                                                            showLoader();
-                                                                            axios
-                                                                                .post(
-                                                                                    dynamicUrl.addQuestions,
-                                                                                    {
-                                                                                        data: payLoad
-                                                                                    },
-                                                                                    {
-                                                                                        headers: { Authorization: sessionStorage.getItem('user_jwt') }
-                                                                                    }
-                                                                                )
-                                                                                .then((response) => {
-
-                                                                                    console.log(response.data);
-
-                                                                                    let result = response.status === 200;
-
-                                                                                    if (result) {
-
-                                                                                        console.log('inside res');
-
-                                                                                        let uploadParamsQuestionsNote = response.data.question_voice_note;
-                                                                                        let uploadParamsAnswerOptions = response.data.answers_options;
-
-                                                                                        hideLoader();
-
-                                                                                        if (Array.isArray(uploadParamsQuestionsNote)) {
-
-                                                                                            for (let index = 0; index < uploadParamsQuestionsNote.length; index++) {
-
-                                                                                                let keyNameArr = Object.keys(uploadParamsQuestionsNote[index]);
-                                                                                                let keyName = keyNameArr[1];
-
-                                                                                                let blobField = voiceNoteFileValues;
-                                                                                                console.log({ blobField });
-
-                                                                                                let tempObj = uploadParamsQuestionsNote[index];
-                                                                                                let result = fetch(tempObj[keyName], {
-                                                                                                    method: 'PUT',
-                                                                                                    body: blobField
-                                                                                                });
-
-                                                                                                console.log({ result });
-                                                                                            }
-
-
-                                                                                            if (Array.isArray(uploadParamsAnswerOptions)) {
-
-                                                                                                for (let index = 0; index < uploadParamsAnswerOptions.length; index++) {
-
-                                                                                                    let keyNameArr = Object.keys(uploadParamsAnswerOptions[index]);
-                                                                                                    let keyName = keyNameArr[1];
-
-                                                                                                    console.log(fileValues);
-
-                                                                                                    let blobField = fileValues[index];
-                                                                                                    console.log({ blobField });
-
-                                                                                                    let tempObjFile = uploadParamsAnswerOptions[index];
-
-                                                                                                    let result = fetch(tempObjFile[keyName], {
-                                                                                                        method: 'PUT',
-                                                                                                        body: blobField
-                                                                                                    });
-
-                                                                                                    console.log({ result });
-                                                                                                }
-
-                                                                                                const MySwal = withReactContent(Swal);
-
-                                                                                                MySwal.fire({
-
-                                                                                                    title: 'Question saved as new Item!',
-                                                                                                    icon: 'success',
-                                                                                                }).then((willDelete) => {
-
-                                                                                                    history.push('/admin-portal/active-questions');
-                                                                                                    // window.location.reload();
-
-                                                                                                });
-
-                                                                                            } else {
-
-                                                                                                console.log('Answer option files not uploaded!');
-                                                                                            }
-
-
-                                                                                        } else {
-
-                                                                                            if (Array.isArray(uploadParamsAnswerOptions)) {
-
-                                                                                                for (let index = 0; index < uploadParamsAnswerOptions.length; index++) {
-
-                                                                                                    let keyNameArr = Object.keys(uploadParamsAnswerOptions[index]);
-                                                                                                    let keyName = keyNameArr[1];
-
-                                                                                                    let blobField = fileValues[index];
-                                                                                                    console.log({ blobField });
-
-                                                                                                    let tempObjFile = uploadParamsAnswerOptions[index];
-
-                                                                                                    let result = fetch(tempObjFile[keyName], {
-                                                                                                        method: 'PUT',
-                                                                                                        body: blobField
-                                                                                                    });
-
-                                                                                                    console.log({ result });
-                                                                                                }
-
-                                                                                                const MySwal = withReactContent(Swal);
-                                                                                                MySwal.fire({
-
-                                                                                                    title: 'Question saved as new Item!',
-                                                                                                    icon: 'success',
-                                                                                                }).then((willDelete) => {
-
-                                                                                                    history.push('/admin-portal/active-questions');
-                                                                                                    // window.location.reload();
-
-                                                                                                })
-
-                                                                                                console.log('Question Voice Note not uploaded');
-                                                                                            }
-                                                                                        }
-
-
-                                                                                    } else {
-
-                                                                                        console.log('else res');
-                                                                                        hideLoader();
-
-                                                                                    }
-                                                                                })
-                                                                                .catch((error) => {
-                                                                                    if (error.response) {
-                                                                                        hideLoader();
-
-                                                                                        console.log(error.response.data);
-
-                                                                                    } else if (error.request) {
-
-                                                                                        console.log(error.request);
-                                                                                        hideLoader();
-
-                                                                                    } else {
-
-                                                                                        console.log('Error', error.message);
-                                                                                        hideLoader();
-                                                                                    }
-                                                                                });
 
                                                                         } else {
 
-                                                                            if (voiceInvalid(allFilesData) !== 0) {
+                                                                            if (voiceInvalid(questionsVoiceNoteFilesData) !== 0) {
                                                                                 sweetAlertHandler({
-                                                                                    title: 'Warning',
+                                                                                    title: 'Invalid Question Voice Note File!',
                                                                                     type: 'warning',
                                                                                     text: 'Supported file formats are .mp3, .mpeg, .wav. Uploaded files should be less than 10MB. '
                                                                                 });
                                                                             } else {
 
-                                                                                showLoader();
-                                                                                axios
-                                                                                    .post(
-                                                                                        dynamicUrl.addQuestions,
-                                                                                        {
-                                                                                            data: payLoad
-                                                                                        },
-                                                                                        {
-                                                                                            headers: { Authorization: sessionStorage.getItem('user_jwt') }
-                                                                                        }
-                                                                                    )
-                                                                                    .then((response) => {
+                                                                                if (selectedAnswerType === "Image") {
 
-                                                                                        console.log(response.data);
-
-                                                                                        let result = response.status === 200;
-
-                                                                                        if (result) {
-
-                                                                                            console.log('inside res');
-
-                                                                                            let uploadParamsQuestionsNote = response.data.question_voice_note;
-                                                                                            let uploadParamsAnswerOptions = response.data.answers_options;
-
-                                                                                            hideLoader();
-
-                                                                                            if (Array.isArray(uploadParamsQuestionsNote)) {
-
-                                                                                                for (let index = 0; index < uploadParamsQuestionsNote.length; index++) {
-
-                                                                                                    let keyNameArr = Object.keys(uploadParamsQuestionsNote[index]);
-                                                                                                    let keyName = keyNameArr[1];
-
-                                                                                                    let blobField = voiceNoteFileValues;
-                                                                                                    console.log({ blobField });
-
-                                                                                                    let tempObj = uploadParamsQuestionsNote[index];
-                                                                                                    let result = fetch(tempObj[keyName], {
-                                                                                                        method: 'PUT',
-                                                                                                        body: blobField
-                                                                                                    });
-
-                                                                                                    console.log({ result });
-                                                                                                }
-
-
-                                                                                                if (Array.isArray(uploadParamsAnswerOptions)) {
-
-                                                                                                    for (let index = 0; index < uploadParamsAnswerOptions.length; index++) {
-
-                                                                                                        let keyNameArr = Object.keys(uploadParamsAnswerOptions[index]);
-                                                                                                        let keyName = keyNameArr[1];
-
-                                                                                                        console.log(fileValues);
-
-                                                                                                        let blobField = fileValues[index];
-                                                                                                        console.log({ blobField });
-
-                                                                                                        let tempObjFile = uploadParamsAnswerOptions[index];
-
-                                                                                                        let result = fetch(tempObjFile[keyName], {
-                                                                                                            method: 'PUT',
-                                                                                                            body: blobField
-                                                                                                        });
-
-                                                                                                        console.log({ result });
-                                                                                                    }
-
-                                                                                                    const MySwal = withReactContent(Swal);
-
-                                                                                                    MySwal.fire({
-
-                                                                                                        title: 'Question saved as a new Item!',
-                                                                                                        icon: 'success',
-                                                                                                    }).then((willDelete) => {
-
-                                                                                                        history.push('/admin-portal/active-questions');
-                                                                                                        // window.location.reload();
-
-                                                                                                    });
-
-                                                                                                } else {
-
-                                                                                                    console.log('Answer option files not uploaded!');
-                                                                                                }
-
-
-                                                                                            } else {
-
-                                                                                                if (Array.isArray(uploadParamsAnswerOptions)) {
-
-                                                                                                    for (let index = 0; index < uploadParamsAnswerOptions.length; index++) {
-
-                                                                                                        let keyNameArr = Object.keys(uploadParamsAnswerOptions[index]);
-                                                                                                        let keyName = keyNameArr[1];
-
-                                                                                                        let blobField = fileValues[index];
-                                                                                                        console.log({ blobField });
-
-                                                                                                        let tempObjFile = uploadParamsAnswerOptions[index];
-
-                                                                                                        let result = fetch(tempObjFile[keyName], {
-                                                                                                            method: 'PUT',
-                                                                                                            body: blobField
-                                                                                                        });
-
-                                                                                                        console.log({ result });
-                                                                                                    }
-
-                                                                                                    const MySwal = withReactContent(Swal);
-                                                                                                    MySwal.fire({
-
-                                                                                                        title: 'Question saved as a new Item!',
-                                                                                                        icon: 'success',
-                                                                                                    }).then((willDelete) => {
-
-                                                                                                        history.push('/admin-portal/active-questions');
-                                                                                                        // window.location.reload();
-
-                                                                                                    })
-
-                                                                                                    console.log('Question Voice Note not uploaded');
-                                                                                                }
-                                                                                            }
-
-
-                                                                                        } else {
-
-                                                                                            console.log('else res');
-                                                                                            hideLoader();
-
-                                                                                        }
-                                                                                    })
-                                                                                    .catch((error) => {
-                                                                                        if (error.response) {
-                                                                                            hideLoader();
-
-                                                                                            console.log(error.response.data);
-
-                                                                                        } else if (error.request) {
-
-                                                                                            console.log(error.request);
-                                                                                            hideLoader();
-
-                                                                                        } else {
-
-                                                                                            console.log('Error', error.message);
-                                                                                            hideLoader();
+                                                                                    fileValues.forEach((fileName) => {
+                                                                                        let selectedFile = fileName;
+                                                                                        console.log('File is here!');
+                                                                                        console.log(selectedFile);
+                                                                                        if (selectedFile) {
+                                                                                            allFilesData.push(selectedFile);
                                                                                         }
                                                                                     });
+
+                                                                                    console.log(allFilesData);
+
+                                                                                    if (allFilesData.length === 0) {
+
+                                                                                        showLoader();
+                                                                                        _addQuestions(payLoad);
+
+                                                                                    } else {
+                                                                                        if (areFilesInvalid(allFilesData) !== 0) {
+                                                                                            sweetAlertHandler(
+                                                                                                {
+                                                                                                    title: 'Invalid Image File(s)!',
+                                                                                                    type: 'warning',
+                                                                                                    text: 'Supported file formats are .png, .jpg, .jpeg. Uploaded files should be less than 2MB. '
+                                                                                                }
+                                                                                            );
+                                                                                        } else {
+
+                                                                                            showLoader();
+                                                                                            _addQuestions(payLoad);
+
+                                                                                        }
+                                                                                    }
+
+                                                                                } else if (selectedAnswerType === "Audio File") {
+
+                                                                                    fileValues.forEach((fileName) => {
+                                                                                        let selectedFile = fileName;
+                                                                                        console.log('File is here!');
+                                                                                        console.log(selectedFile);
+                                                                                        if (selectedFile) {
+                                                                                            allFilesData.push(selectedFile);
+                                                                                        }
+                                                                                    });
+
+                                                                                    console.log(allFilesData);
+
+                                                                                    if (allFilesData.length === 0) {
+
+                                                                                        showLoader();
+                                                                                        _addQuestions(payLoad);
+
+
+                                                                                    } else {
+
+                                                                                        if (voiceInvalid(allFilesData) !== 0) {
+                                                                                            sweetAlertHandler({
+                                                                                                title: 'Invalid Audio File(s)!',
+                                                                                                type: 'warning',
+                                                                                                text: 'Supported file formats are .mp3, .mpeg, .wav. Uploaded files should be less than 10MB. '
+                                                                                            });
+                                                                                        } else {
+
+                                                                                            showLoader();
+                                                                                            _addQuestions(payLoad);
+
+                                                                                        }
+                                                                                    }
+                                                                                } else {
+
+                                                                                    showLoader();
+                                                                                    _addQuestions(payLoad);
+
+                                                                                }
+
                                                                             }
                                                                         }
+
+                                                                    }
+                                                                    else {
+
+                                                                        if (selectedAnswerType === "Image") {
+
+                                                                            fileValues.forEach((fileName) => {
+                                                                                let selectedFile = fileName;
+                                                                                console.log('File is here!');
+                                                                                console.log(selectedFile);
+                                                                                if (selectedFile) {
+                                                                                    allFilesData.push(selectedFile);
+                                                                                }
+                                                                            });
+
+                                                                            console.log(allFilesData);
+
+                                                                            if (allFilesData.length === 0) {
+
+                                                                                showLoader();
+                                                                                _addQuestions(payLoad);
+
+                                                                            } else {
+                                                                                if (areFilesInvalid(allFilesData) !== 0) {
+                                                                                    sweetAlertHandler(
+                                                                                        {
+                                                                                            title: 'Invalid Image File(s)!',
+                                                                                            type: 'warning',
+                                                                                            text: 'Supported file formats are .png, .jpg, .jpeg. Uploaded files should be less than 2MB. '
+                                                                                        }
+                                                                                    );
+                                                                                } else {
+
+                                                                                    showLoader();
+                                                                                    _addQuestions(payLoad);
+
+                                                                                }
+                                                                            }
+
+                                                                        } else if (selectedAnswerType === "Audio File") {
+
+                                                                            fileValues.forEach((fileName) => {
+                                                                                let selectedFile = fileName;
+                                                                                console.log('File is here!');
+                                                                                console.log(selectedFile);
+                                                                                if (selectedFile) {
+                                                                                    allFilesData.push(selectedFile);
+                                                                                }
+                                                                            });
+
+                                                                            console.log(allFilesData);
+
+                                                                            if (allFilesData.length === 0) {
+
+                                                                                showLoader();
+                                                                                _addQuestions(payLoad);
+
+
+                                                                            } else {
+
+                                                                                if (voiceInvalid(allFilesData) !== 0) {
+                                                                                    sweetAlertHandler({
+                                                                                        title: 'Invalid Audio File(s)!',
+                                                                                        type: 'warning',
+                                                                                        text: 'Supported file formats are .mp3, .mpeg, .wav. Uploaded files should be less than 10MB. '
+                                                                                    });
+                                                                                } else {
+
+                                                                                    showLoader();
+                                                                                    _addQuestions(payLoad);
+
+                                                                                }
+                                                                            }
+                                                                        } else {
+
+                                                                            showLoader();
+                                                                            _addQuestions(payLoad);
+
+                                                                        }
+
                                                                     }
                                                                 }
                                                             }
@@ -1362,818 +1286,252 @@ const EditQuestions = () => {
                                                                     console.log("payLoad", payLoad);
 
                                                                     let allFilesData = [];
+                                                                    let questionsVoiceNoteFilesData = [];
 
-                                                                    if (selectedAnswerType === "Image") {
+                                                                    if (selectedQuestionVoiceNote) {
 
-                                                                        fileValues.forEach((fileName) => {
-                                                                            let selectedFile = fileName;
-                                                                            console.log('File is here!');
-                                                                            console.log(selectedFile);
-                                                                            if (selectedFile) {
-                                                                                allFilesData.push(selectedFile);
-                                                                            }
-                                                                        });
+                                                                        let selectedFileVoiceNote = voiceNoteFileValues;
+                                                                        console.log('File is here!');
+                                                                        console.log(selectedFileVoiceNote);
 
-                                                                        console.log(allFilesData);
+                                                                        if (selectedFileVoiceNote) {
+                                                                            questionsVoiceNoteFilesData.push(selectedFileVoiceNote);
+                                                                        }
 
-                                                                        if (allFilesData.length === 0) {
+                                                                        if (questionsVoiceNoteFilesData.length === 0) {
 
-                                                                            showLoader();
-                                                                            axios
-                                                                                .post(
-                                                                                    dynamicUrl.editQuestion,
-                                                                                    {
-                                                                                        data: payLoad
-                                                                                    },
-                                                                                    {
-                                                                                        headers: { Authorization: sessionStorage.getItem('user_jwt') }
-                                                                                    }
-                                                                                )
-                                                                                .then((response) => {
+                                                                            if (selectedAnswerType === "Image") {
 
-                                                                                    console.log(response.data);
-
-                                                                                    let result = response.status === 200;
-
-                                                                                    if (result) {
-
-                                                                                        console.log('inside res');
-
-                                                                                        let uploadParamsQuestionsNote = response.data.question_voice_note;
-                                                                                        let uploadParamsAnswerOptions = response.data.answers_options;
-
-                                                                                        hideLoader();
-
-                                                                                        if (Array.isArray(uploadParamsQuestionsNote)) {
-
-                                                                                            for (let index = 0; index < uploadParamsQuestionsNote.length; index++) {
-
-                                                                                                let keyNameArr = Object.keys(uploadParamsQuestionsNote[index]);
-                                                                                                let keyName = keyNameArr[1];
-
-                                                                                                let blobField = voiceNoteFileValues;
-                                                                                                console.log({ blobField });
-
-                                                                                                let tempObj = uploadParamsQuestionsNote[index];
-                                                                                                let result = fetch(tempObj[keyName], {
-                                                                                                    method: 'PUT',
-                                                                                                    body: blobField
-                                                                                                });
-
-                                                                                                console.log({ result });
-                                                                                            }
-
-
-                                                                                            if (Array.isArray(uploadParamsAnswerOptions)) {
-
-                                                                                                for (let index = 0; index < uploadParamsAnswerOptions.length; index++) {
-
-                                                                                                    let keyNameArr = Object.keys(uploadParamsAnswerOptions[index]);
-                                                                                                    let keyName = keyNameArr[1];
-
-                                                                                                    console.log(fileValues);
-
-                                                                                                    let blobField = fileValues[index];
-                                                                                                    console.log({ blobField });
-
-                                                                                                    let tempObjFile = uploadParamsAnswerOptions[index];
-
-                                                                                                    let result = fetch(tempObjFile[keyName], {
-                                                                                                        method: 'PUT',
-                                                                                                        body: blobField
-                                                                                                    });
-
-                                                                                                    console.log({ result });
-                                                                                                }
-
-                                                                                                const MySwal = withReactContent(Swal);
-
-                                                                                                MySwal.fire({
-
-                                                                                                    title: 'Question updated!',
-                                                                                                    icon: 'success',
-                                                                                                }).then((willDelete) => {
-
-                                                                                                    history.push('/admin-portal/active-questions');
-                                                                                                    // window.location.reload();
-
-                                                                                                });
-
-                                                                                            } else {
-
-                                                                                                console.log('Answer option files not uploaded!');
-                                                                                            }
-
-
-                                                                                        } else {
-
-                                                                                            if (Array.isArray(uploadParamsAnswerOptions)) {
-
-                                                                                                for (let index = 0; index < uploadParamsAnswerOptions.length; index++) {
-
-                                                                                                    let keyNameArr = Object.keys(uploadParamsAnswerOptions[index]);
-                                                                                                    let keyName = keyNameArr[1];
-
-                                                                                                    let blobField = fileValues[index];
-                                                                                                    console.log({ blobField });
-
-                                                                                                    let tempObjFile = uploadParamsAnswerOptions[index];
-
-                                                                                                    let result = fetch(tempObjFile[keyName], {
-                                                                                                        method: 'PUT',
-                                                                                                        body: blobField
-                                                                                                    });
-
-                                                                                                    console.log({ result });
-                                                                                                }
-
-                                                                                                const MySwal = withReactContent(Swal);
-                                                                                                MySwal.fire({
-
-                                                                                                    title: 'Question updated!',
-                                                                                                    icon: 'success',
-                                                                                                }).then((willDelete) => {
-
-                                                                                                    history.push('/admin-portal/active-questions');
-                                                                                                    // window.location.reload();
-
-                                                                                                })
-
-                                                                                                console.log('Question Voice Note not uploaded');
-                                                                                            }
-                                                                                        }
-
-
-                                                                                    } else {
-
-                                                                                        console.log('else res');
-                                                                                        hideLoader();
-
-                                                                                    }
-                                                                                })
-                                                                                .catch((error) => {
-                                                                                    if (error.response) {
-                                                                                        hideLoader();
-
-                                                                                        console.log(error.response.data);
-
-                                                                                    } else if (error.request) {
-
-                                                                                        console.log(error.request);
-                                                                                        hideLoader();
-
-                                                                                    } else {
-
-                                                                                        console.log('Error', error.message);
-                                                                                        hideLoader();
+                                                                                fileValues.forEach((fileName) => {
+                                                                                    let selectedFile = fileName;
+                                                                                    console.log('File is here!');
+                                                                                    console.log(selectedFile);
+                                                                                    if (selectedFile) {
+                                                                                        allFilesData.push(selectedFile);
                                                                                     }
                                                                                 });
 
-                                                                        } else {
-                                                                            if (areFilesInvalid(allFilesData) !== 0) {
-                                                                                sweetAlertHandler(
-                                                                                    {
-                                                                                        title: 'Warning',
-                                                                                        type: 'warning',
-                                                                                        text: 'Supported file formats are .png, .jpg, .jpeg. Uploaded files should be less than 2MB. '
+                                                                                console.log(allFilesData);
+
+                                                                                if (allFilesData.length === 0) {
+
+                                                                                    showLoader();
+                                                                                    _editQuestions(payLoad);
+
+                                                                                } else {
+                                                                                    if (areFilesInvalid(allFilesData) !== 0) {
+                                                                                        sweetAlertHandler(
+                                                                                            {
+                                                                                                title: 'Invalid Image File(s)!',
+                                                                                                type: 'warning',
+                                                                                                text: 'Supported file formats are .png, .jpg, .jpeg. Uploaded files should be less than 2MB. '
+                                                                                            }
+                                                                                        );
+                                                                                    } else {
+
+                                                                                        showLoader();
+                                                                                        _editQuestions(payLoad);
                                                                                     }
-                                                                                );
+                                                                                }
+
+                                                                            } else if (selectedAnswerType === "Audio File") {
+
+                                                                                fileValues.forEach((fileName) => {
+                                                                                    let selectedFile = fileName;
+                                                                                    console.log('File is here!');
+                                                                                    console.log(selectedFile);
+                                                                                    if (selectedFile) {
+                                                                                        allFilesData.push(selectedFile);
+                                                                                    }
+                                                                                });
+
+                                                                                console.log(allFilesData);
+
+                                                                                if (allFilesData.length === 0) {
+
+                                                                                    showLoader();
+                                                                                    _editQuestions(payLoad);
+
+                                                                                } else {
+
+                                                                                    if (voiceInvalid(allFilesData) !== 0) {
+                                                                                        sweetAlertHandler({
+                                                                                            title: 'Invalid Audio File(s)!',
+                                                                                            type: 'warning',
+                                                                                            text: 'Supported file formats are .mp3, .mpeg, .wav. Uploaded files should be less than 10MB. '
+                                                                                        });
+                                                                                    } else {
+
+                                                                                        showLoader();
+                                                                                        _editQuestions(payLoad);
+                                                                                    }
+                                                                                }
                                                                             } else {
 
                                                                                 showLoader();
-                                                                                axios
-                                                                                    .post(
-                                                                                        dynamicUrl.editQuestion,
-                                                                                        {
-                                                                                            data: payLoad
-                                                                                        },
-                                                                                        {
-                                                                                            headers: { Authorization: sessionStorage.getItem('user_jwt') }
-                                                                                        }
-                                                                                    )
-                                                                                    .then((response) => {
-
-                                                                                        console.log(response.data);
-
-                                                                                        let result = response.status === 200;
-
-                                                                                        if (result) {
-
-                                                                                            console.log('inside res');
-
-                                                                                            let uploadParamsQuestionsNote = response.data.question_voice_note;
-                                                                                            let uploadParamsAnswerOptions = response.data.answers_options;
-
-                                                                                            hideLoader();
-
-                                                                                            if (Array.isArray(uploadParamsQuestionsNote)) {
-
-                                                                                                for (let index = 0; index < uploadParamsQuestionsNote.length; index++) {
-
-                                                                                                    let keyNameArr = Object.keys(uploadParamsQuestionsNote[index]);
-                                                                                                    let keyName = keyNameArr[1];
-
-                                                                                                    let blobField = voiceNoteFileValues;
-                                                                                                    console.log({ blobField });
-
-                                                                                                    let tempObj = uploadParamsQuestionsNote[index];
-                                                                                                    let result = fetch(tempObj[keyName], {
-                                                                                                        method: 'PUT',
-                                                                                                        body: blobField
-                                                                                                    });
-
-                                                                                                    console.log({ result });
-                                                                                                }
-
-
-                                                                                                if (Array.isArray(uploadParamsAnswerOptions)) {
-
-                                                                                                    for (let index = 0; index < uploadParamsAnswerOptions.length; index++) {
-
-                                                                                                        let keyNameArr = Object.keys(uploadParamsAnswerOptions[index]);
-                                                                                                        let keyName = keyNameArr[1];
-
-                                                                                                        console.log(fileValues);
-
-                                                                                                        let blobField = fileValues[index];
-                                                                                                        console.log({ blobField });
-
-                                                                                                        let tempObjFile = uploadParamsAnswerOptions[index];
-
-                                                                                                        let result = fetch(tempObjFile[keyName], {
-                                                                                                            method: 'PUT',
-                                                                                                            body: blobField
-                                                                                                        });
-
-                                                                                                        console.log({ result });
-                                                                                                    }
-
-                                                                                                    const MySwal = withReactContent(Swal);
-
-                                                                                                    MySwal.fire({
-
-                                                                                                        title: 'Question updated!',
-                                                                                                        icon: 'success',
-                                                                                                    }).then((willDelete) => {
-
-                                                                                                        history.push('/admin-portal/active-questions');
-                                                                                                        // window.location.reload();
-
-                                                                                                    });
-
-                                                                                                } else {
-
-                                                                                                    console.log('Answer option files not uploaded!');
-                                                                                                }
-
-
-                                                                                            } else {
-
-                                                                                                if (Array.isArray(uploadParamsAnswerOptions)) {
-
-                                                                                                    for (let index = 0; index < uploadParamsAnswerOptions.length; index++) {
-
-                                                                                                        let keyNameArr = Object.keys(uploadParamsAnswerOptions[index]);
-                                                                                                        let keyName = keyNameArr[1];
-
-                                                                                                        let blobField = fileValues[index];
-                                                                                                        console.log({ blobField });
-
-                                                                                                        let tempObjFile = uploadParamsAnswerOptions[index];
-
-                                                                                                        let result = fetch(tempObjFile[keyName], {
-                                                                                                            method: 'PUT',
-                                                                                                            body: blobField
-                                                                                                        });
-
-                                                                                                        console.log({ result });
-                                                                                                    }
-
-                                                                                                    const MySwal = withReactContent(Swal);
-                                                                                                    MySwal.fire({
-
-                                                                                                        title: 'Question updated!',
-                                                                                                        icon: 'success',
-                                                                                                    }).then((willDelete) => {
-
-                                                                                                        history.push('/admin-portal/active-questions');
-                                                                                                        // window.location.reload();
-
-                                                                                                    })
-
-                                                                                                    console.log('Question Voice Note not uploaded');
-                                                                                                }
-                                                                                            }
-
-
-                                                                                        } else {
-
-                                                                                            console.log('else res');
-                                                                                            hideLoader();
-
-                                                                                        }
-                                                                                    })
-                                                                                    .catch((error) => {
-                                                                                        if (error.response) {
-                                                                                            hideLoader();
-
-                                                                                            console.log(error.response.data);
-
-                                                                                        } else if (error.request) {
-
-                                                                                            console.log(error.request);
-                                                                                            hideLoader();
-
-                                                                                        } else {
-
-                                                                                            console.log('Error', error.message);
-                                                                                            hideLoader();
-                                                                                        }
-                                                                                    });
+                                                                                _editQuestions(payLoad);
                                                                             }
-                                                                        }
-
-                                                                    } else if (selectedAnswerType === "Audio File") {
-
-                                                                        fileValues.forEach((fileName) => {
-                                                                            let selectedFile = fileName;
-                                                                            console.log('File is here!');
-                                                                            console.log(selectedFile);
-                                                                            if (selectedFile) {
-                                                                                allFilesData.push(selectedFile);
-                                                                            }
-                                                                        });
-
-                                                                        console.log(allFilesData);
-
-                                                                        if (allFilesData.length === 0) {
-
-                                                                            showLoader();
-                                                                            axios
-                                                                                .post(
-                                                                                    dynamicUrl.editQuestion,
-                                                                                    {
-                                                                                        data: payLoad
-                                                                                    },
-                                                                                    {
-                                                                                        headers: { Authorization: sessionStorage.getItem('user_jwt') }
-                                                                                    }
-                                                                                )
-                                                                                .then((response) => {
-
-                                                                                    console.log(response.data);
-
-                                                                                    let result = response.status === 200;
-
-                                                                                    if (result) {
-
-                                                                                        console.log('inside res');
-
-                                                                                        let uploadParamsQuestionsNote = response.data.question_voice_note;
-                                                                                        let uploadParamsAnswerOptions = response.data.answers_options;
-
-                                                                                        hideLoader();
-
-                                                                                        if (Array.isArray(uploadParamsQuestionsNote)) {
-
-                                                                                            for (let index = 0; index < uploadParamsQuestionsNote.length; index++) {
-
-                                                                                                let keyNameArr = Object.keys(uploadParamsQuestionsNote[index]);
-                                                                                                let keyName = keyNameArr[1];
-
-                                                                                                let blobField = voiceNoteFileValues;
-                                                                                                console.log({ blobField });
-
-                                                                                                let tempObj = uploadParamsQuestionsNote[index];
-                                                                                                let result = fetch(tempObj[keyName], {
-                                                                                                    method: 'PUT',
-                                                                                                    body: blobField
-                                                                                                });
-
-                                                                                                console.log({ result });
-                                                                                            }
-
-
-                                                                                            if (Array.isArray(uploadParamsAnswerOptions)) {
-
-                                                                                                for (let index = 0; index < uploadParamsAnswerOptions.length; index++) {
-
-                                                                                                    let keyNameArr = Object.keys(uploadParamsAnswerOptions[index]);
-                                                                                                    let keyName = keyNameArr[1];
-
-                                                                                                    console.log(fileValues);
-
-                                                                                                    let blobField = fileValues[index];
-                                                                                                    console.log({ blobField });
-
-                                                                                                    let tempObjFile = uploadParamsAnswerOptions[index];
-
-                                                                                                    let result = fetch(tempObjFile[keyName], {
-                                                                                                        method: 'PUT',
-                                                                                                        body: blobField
-                                                                                                    });
-
-                                                                                                    console.log({ result });
-                                                                                                }
-
-                                                                                                const MySwal = withReactContent(Swal);
-
-                                                                                                MySwal.fire({
-
-                                                                                                    title: 'Question updated!',
-                                                                                                    icon: 'success',
-                                                                                                }).then((willDelete) => {
-
-                                                                                                    history.push('/admin-portal/active-questions');
-                                                                                                    // window.location.reload();
-
-                                                                                                });
-
-                                                                                            } else {
-
-                                                                                                console.log('Answer option files not uploaded!');
-                                                                                            }
-
-
-                                                                                        } else {
-
-                                                                                            if (Array.isArray(uploadParamsAnswerOptions)) {
-
-                                                                                                for (let index = 0; index < uploadParamsAnswerOptions.length; index++) {
-
-                                                                                                    let keyNameArr = Object.keys(uploadParamsAnswerOptions[index]);
-                                                                                                    let keyName = keyNameArr[1];
-
-                                                                                                    let blobField = fileValues[index];
-                                                                                                    console.log({ blobField });
-
-                                                                                                    let tempObjFile = uploadParamsAnswerOptions[index];
-
-                                                                                                    let result = fetch(tempObjFile[keyName], {
-                                                                                                        method: 'PUT',
-                                                                                                        body: blobField
-                                                                                                    });
-
-                                                                                                    console.log({ result });
-                                                                                                }
-
-                                                                                                const MySwal = withReactContent(Swal);
-                                                                                                MySwal.fire({
-
-                                                                                                    title: 'Question updated!',
-                                                                                                    icon: 'success',
-                                                                                                }).then((willDelete) => {
-
-                                                                                                    history.push('/admin-portal/active-questions');
-                                                                                                    // window.location.reload();
-
-                                                                                                })
-
-                                                                                                console.log('Question Voice Note not uploaded');
-                                                                                            }
-                                                                                        }
-
-
-                                                                                    } else {
-
-                                                                                        console.log('else res');
-                                                                                        hideLoader();
-
-                                                                                    }
-                                                                                })
-                                                                                .catch((error) => {
-                                                                                    if (error.response) {
-                                                                                        hideLoader();
-
-                                                                                        console.log(error.response.data);
-
-                                                                                    } else if (error.request) {
-
-                                                                                        console.log(error.request);
-                                                                                        hideLoader();
-
-                                                                                    } else {
-
-                                                                                        console.log('Error', error.message);
-                                                                                        hideLoader();
-                                                                                    }
-                                                                                });
 
                                                                         } else {
 
-                                                                            if (voiceInvalid(allFilesData) !== 0) {
+                                                                            if (voiceInvalid(questionsVoiceNoteFilesData) !== 0) {
                                                                                 sweetAlertHandler({
-                                                                                    title: 'Warning',
+                                                                                    title: 'Invalid Question Voice Note File!',
                                                                                     type: 'warning',
                                                                                     text: 'Supported file formats are .mp3, .mpeg, .wav. Uploaded files should be less than 10MB. '
                                                                                 });
                                                                             } else {
 
-                                                                                showLoader();
-                                                                                axios
-                                                                                    .post(
-                                                                                        dynamicUrl.editQuestion,
-                                                                                        {
-                                                                                            data: payLoad
-                                                                                        },
-                                                                                        {
-                                                                                            headers: { Authorization: sessionStorage.getItem('user_jwt') }
-                                                                                        }
-                                                                                    )
-                                                                                    .then((response) => {
+                                                                                if (selectedAnswerType === "Image") {
 
-                                                                                        console.log(response.data);
-
-                                                                                        let result = response.status === 200;
-
-                                                                                        if (result) {
-
-                                                                                            console.log('inside res');
-
-                                                                                            let uploadParamsQuestionsNote = response.data.question_voice_note;
-                                                                                            let uploadParamsAnswerOptions = response.data.answers_options;
-
-                                                                                            hideLoader();
-
-                                                                                            if (Array.isArray(uploadParamsQuestionsNote)) {
-
-                                                                                                for (let index = 0; index < uploadParamsQuestionsNote.length; index++) {
-
-                                                                                                    let keyNameArr = Object.keys(uploadParamsQuestionsNote[index]);
-                                                                                                    let keyName = keyNameArr[1];
-
-                                                                                                    let blobField = voiceNoteFileValues;
-                                                                                                    console.log({ blobField });
-
-                                                                                                    let tempObj = uploadParamsQuestionsNote[index];
-                                                                                                    let result = fetch(tempObj[keyName], {
-                                                                                                        method: 'PUT',
-                                                                                                        body: blobField
-                                                                                                    });
-
-                                                                                                    console.log({ result });
-                                                                                                }
-
-
-                                                                                                if (Array.isArray(uploadParamsAnswerOptions)) {
-
-                                                                                                    for (let index = 0; index < uploadParamsAnswerOptions.length; index++) {
-
-                                                                                                        let keyNameArr = Object.keys(uploadParamsAnswerOptions[index]);
-                                                                                                        let keyName = keyNameArr[1];
-
-                                                                                                        console.log(fileValues);
-
-                                                                                                        let blobField = fileValues[index];
-                                                                                                        console.log({ blobField });
-
-                                                                                                        let tempObjFile = uploadParamsAnswerOptions[index];
-
-                                                                                                        let result = fetch(tempObjFile[keyName], {
-                                                                                                            method: 'PUT',
-                                                                                                            body: blobField
-                                                                                                        });
-
-                                                                                                        console.log({ result });
-                                                                                                    }
-
-                                                                                                    const MySwal = withReactContent(Swal);
-
-                                                                                                    MySwal.fire({
-
-                                                                                                        title: 'Question updated!',
-                                                                                                        icon: 'success',
-                                                                                                    }).then((willDelete) => {
-
-                                                                                                        history.push('/admin-portal/active-questions');
-                                                                                                        // window.location.reload();
-
-                                                                                                    });
-
-                                                                                                } else {
-
-                                                                                                    console.log('Answer option files not uploaded!');
-                                                                                                }
-
-
-                                                                                            } else {
-
-                                                                                                if (Array.isArray(uploadParamsAnswerOptions)) {
-
-                                                                                                    for (let index = 0; index < uploadParamsAnswerOptions.length; index++) {
-
-                                                                                                        let keyNameArr = Object.keys(uploadParamsAnswerOptions[index]);
-                                                                                                        let keyName = keyNameArr[1];
-
-                                                                                                        let blobField = fileValues[index];
-                                                                                                        console.log({ blobField });
-
-                                                                                                        let tempObjFile = uploadParamsAnswerOptions[index];
-
-                                                                                                        let result = fetch(tempObjFile[keyName], {
-                                                                                                            method: 'PUT',
-                                                                                                            body: blobField
-                                                                                                        });
-
-                                                                                                        console.log({ result });
-                                                                                                    }
-
-                                                                                                    const MySwal = withReactContent(Swal);
-                                                                                                    MySwal.fire({
-
-                                                                                                        title: 'Question updated!',
-                                                                                                        icon: 'success',
-                                                                                                    }).then((willDelete) => {
-
-                                                                                                        history.push('/admin-portal/active-questions');
-                                                                                                        // window.location.reload();
-
-                                                                                                    })
-
-                                                                                                    console.log('Question Voice Note not uploaded');
-                                                                                                }
-                                                                                            }
-
-
-                                                                                        } else {
-
-                                                                                            console.log('else res');
-                                                                                            hideLoader();
-
-                                                                                        }
-                                                                                    })
-                                                                                    .catch((error) => {
-                                                                                        if (error.response) {
-                                                                                            hideLoader();
-
-                                                                                            console.log(error.response.data);
-
-                                                                                        } else if (error.request) {
-
-                                                                                            console.log(error.request);
-                                                                                            hideLoader();
-
-                                                                                        } else {
-
-                                                                                            console.log('Error', error.message);
-                                                                                            hideLoader();
+                                                                                    fileValues.forEach((fileName) => {
+                                                                                        let selectedFile = fileName;
+                                                                                        console.log('File is here!');
+                                                                                        console.log(selectedFile);
+                                                                                        if (selectedFile) {
+                                                                                            allFilesData.push(selectedFile);
                                                                                         }
                                                                                     });
-                                                                            }
-                                                                        }
-                                                                    } else {
 
-                                                                        showLoader();
-                                                                        axios
-                                                                            .post(
-                                                                                dynamicUrl.editQuestion,
-                                                                                {
-                                                                                    data: payLoad
-                                                                                },
-                                                                                {
-                                                                                    headers: { Authorization: sessionStorage.getItem('user_jwt') }
-                                                                                }
-                                                                            )
-                                                                            .then((response) => {
+                                                                                    console.log(allFilesData);
 
-                                                                                console.log(response.data);
+                                                                                    if (allFilesData.length === 0) {
 
-                                                                                let result = response.status === 200;
-
-                                                                                if (result) {
-
-                                                                                    console.log('inside res');
-
-                                                                                    let uploadParamsQuestionsNote = response.data.question_voice_note;
-                                                                                    let uploadParamsAnswerOptions = response.data.answers_options;
-
-                                                                                    hideLoader();
-
-                                                                                    if (Array.isArray(uploadParamsQuestionsNote)) {
-
-                                                                                        for (let index = 0; index < uploadParamsQuestionsNote.length; index++) {
-
-                                                                                            let keyNameArr = Object.keys(uploadParamsQuestionsNote[index]);
-                                                                                            let keyName = keyNameArr[1];
-
-                                                                                            let blobField = voiceNoteFileValues;
-                                                                                            console.log({ blobField });
-
-                                                                                            let tempObj = uploadParamsQuestionsNote[index];
-                                                                                            let result = fetch(tempObj[keyName], {
-                                                                                                method: 'PUT',
-                                                                                                body: blobField
-                                                                                            });
-
-                                                                                            console.log({ result });
-                                                                                        }
-
-
-                                                                                        if (Array.isArray(uploadParamsAnswerOptions)) {
-
-                                                                                            for (let index = 0; index < uploadParamsAnswerOptions.length; index++) {
-
-                                                                                                let keyNameArr = Object.keys(uploadParamsAnswerOptions[index]);
-                                                                                                let keyName = keyNameArr[1];
-
-                                                                                                console.log(fileValues);
-
-                                                                                                let blobField = fileValues[index];
-                                                                                                console.log({ blobField });
-
-                                                                                                let tempObjFile = uploadParamsAnswerOptions[index];
-
-                                                                                                let result = fetch(tempObjFile[keyName], {
-                                                                                                    method: 'PUT',
-                                                                                                    body: blobField
-                                                                                                });
-
-                                                                                                console.log({ result });
-                                                                                            }
-
-                                                                                            const MySwal = withReactContent(Swal);
-
-                                                                                            MySwal.fire({
-
-                                                                                                title: 'Question updated!',
-                                                                                                icon: 'success',
-                                                                                            }).then((willDelete) => {
-
-                                                                                                history.push('/admin-portal/active-questions');
-                                                                                                // window.location.reload();
-
-                                                                                            });
-
-                                                                                        } else {
-
-                                                                                            console.log('Answer option files not uploaded!');
-                                                                                        }
-
+                                                                                        showLoader();
+                                                                                        _editQuestions(payLoad);
 
                                                                                     } else {
+                                                                                        if (areFilesInvalid(allFilesData) !== 0) {
+                                                                                            sweetAlertHandler(
+                                                                                                {
+                                                                                                    title: 'Invalid Image File(s)!',
+                                                                                                    type: 'warning',
+                                                                                                    text: 'Supported file formats are .png, .jpg, .jpeg. Uploaded files should be less than 2MB. '
+                                                                                                }
+                                                                                            );
+                                                                                        } else {
 
-                                                                                        if (Array.isArray(uploadParamsAnswerOptions)) {
-
-                                                                                            for (let index = 0; index < uploadParamsAnswerOptions.length; index++) {
-
-                                                                                                let keyNameArr = Object.keys(uploadParamsAnswerOptions[index]);
-                                                                                                let keyName = keyNameArr[1];
-
-                                                                                                let blobField = fileValues[index];
-                                                                                                console.log({ blobField });
-
-                                                                                                let tempObjFile = uploadParamsAnswerOptions[index];
-
-                                                                                                let result = fetch(tempObjFile[keyName], {
-                                                                                                    method: 'PUT',
-                                                                                                    body: blobField
-                                                                                                });
-
-                                                                                                console.log({ result });
-                                                                                            }
-
-                                                                                            const MySwal = withReactContent(Swal);
-                                                                                            MySwal.fire({
-
-                                                                                                title: 'Question updated!',
-                                                                                                icon: 'success',
-                                                                                            }).then((willDelete) => {
-
-                                                                                                history.push('/admin-portal/active-questions');
-                                                                                                // window.location.reload();
-
-                                                                                            })
-
-                                                                                            console.log('Question Voice Note not uploaded');
+                                                                                            showLoader();
+                                                                                            _editQuestions(payLoad);
                                                                                         }
                                                                                     }
 
+                                                                                } else if (selectedAnswerType === "Audio File") {
 
+                                                                                    fileValues.forEach((fileName) => {
+                                                                                        let selectedFile = fileName;
+                                                                                        console.log('File is here!');
+                                                                                        console.log(selectedFile);
+                                                                                        if (selectedFile) {
+                                                                                            allFilesData.push(selectedFile);
+                                                                                        }
+                                                                                    });
+
+                                                                                    console.log(allFilesData);
+
+                                                                                    if (allFilesData.length === 0) {
+
+                                                                                        showLoader();
+                                                                                        _editQuestions(payLoad);
+
+                                                                                    } else {
+
+                                                                                        if (voiceInvalid(allFilesData) !== 0) {
+                                                                                            sweetAlertHandler({
+                                                                                                title: 'Invalid Audio File(s)!',
+                                                                                                type: 'warning',
+                                                                                                text: 'Supported file formats are .mp3, .mpeg, .wav. Uploaded files should be less than 10MB. '
+                                                                                            });
+                                                                                        } else {
+
+                                                                                            showLoader();
+                                                                                            _editQuestions(payLoad);
+                                                                                        }
+                                                                                    }
                                                                                 } else {
 
-                                                                                    console.log('else res');
-                                                                                    hideLoader();
-
+                                                                                    showLoader();
+                                                                                    _editQuestions(payLoad);
                                                                                 }
-                                                                            })
-                                                                            .catch((error) => {
-                                                                                if (error.response) {
-                                                                                    hideLoader();
 
-                                                                                    console.log(error.response.data);
+                                                                            }
+                                                                        }
 
-                                                                                } else if (error.request) {
+                                                                    } else {
 
-                                                                                    console.log(error.request);
-                                                                                    hideLoader();
+                                                                        if (selectedAnswerType === "Image") {
 
-                                                                                } else {
-
-                                                                                    console.log('Error', error.message);
-                                                                                    hideLoader();
+                                                                            fileValues.forEach((fileName) => {
+                                                                                let selectedFile = fileName;
+                                                                                console.log('File is here!');
+                                                                                console.log(selectedFile);
+                                                                                if (selectedFile) {
+                                                                                    allFilesData.push(selectedFile);
                                                                                 }
                                                                             });
+
+                                                                            console.log(allFilesData);
+
+                                                                            if (allFilesData.length === 0) {
+
+                                                                                showLoader();
+                                                                                _editQuestions(payLoad);
+
+                                                                            } else {
+                                                                                if (areFilesInvalid(allFilesData) !== 0) {
+                                                                                    sweetAlertHandler(
+                                                                                        {
+                                                                                            title: 'Invalid Image File(s)!',
+                                                                                            type: 'warning',
+                                                                                            text: 'Supported file formats are .png, .jpg, .jpeg. Uploaded files should be less than 2MB. '
+                                                                                        }
+                                                                                    );
+                                                                                } else {
+
+                                                                                    showLoader();
+                                                                                    _editQuestions(payLoad);
+                                                                                }
+                                                                            }
+
+                                                                        } else if (selectedAnswerType === "Audio File") {
+
+                                                                            fileValues.forEach((fileName) => {
+                                                                                let selectedFile = fileName;
+                                                                                console.log('File is here!');
+                                                                                console.log(selectedFile);
+                                                                                if (selectedFile) {
+                                                                                    allFilesData.push(selectedFile);
+                                                                                }
+                                                                            });
+
+                                                                            console.log(allFilesData);
+
+                                                                            if (allFilesData.length === 0) {
+
+                                                                                showLoader();
+                                                                                _editQuestions(payLoad);
+
+                                                                            } else {
+
+                                                                                if (voiceInvalid(allFilesData) !== 0) {
+                                                                                    sweetAlertHandler({
+                                                                                        title: 'Invalid Audio File(s)!',
+                                                                                        type: 'warning',
+                                                                                        text: 'Supported file formats are .mp3, .mpeg, .wav. Uploaded files should be less than 10MB. '
+                                                                                    });
+                                                                                } else {
+
+                                                                                    showLoader();
+                                                                                    _editQuestions(payLoad);
+                                                                                }
+                                                                            }
+                                                                        } else {
+
+                                                                            showLoader();
+                                                                            _editQuestions(payLoad);
+                                                                        }
                                                                     }
+
                                                                 }
                                                             }
                                                         }
@@ -2316,6 +1674,10 @@ const EditQuestions = () => {
 
                                                                         />
                                                                     </div>
+
+                                                                    {
+                                                                        touched.question_label && errors.question_label && <small className="text-danger form-text">{errors.question_label}</small>
+                                                                    }
 
                                                                     {
                                                                         questionLabelErr && (
