@@ -431,6 +431,7 @@ const AllocateSubjects = ({ schoolId, user_id }) => {
     }, [])
 
     return (
+        
         <>
             <React.Fragment>
                 <div>
