@@ -17,7 +17,6 @@ import { useTable, useSortBy, usePagination, useGlobalFilter } from 'react-table
 import dynamicUrl from '../../../../helper/dynamicUrls';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import BasicSpinner from '../../../../helper/BasicSpinner';
-import AllocateSection from './AllocateSection';
 
 function Table({ columns, data, modalOpen }) {
   const {
