@@ -251,7 +251,7 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
                                         related_concept: selectedRelatedConcepts,
                                         concept_group_id: {
                                             basic: selectedBasicGroups,
-                                            intermidiate: selectedIntermediateGroups,
+                                            intermediate: selectedIntermediateGroups,
                                             advanced: selectedAdvancedGroups
                                         }
                                     }
