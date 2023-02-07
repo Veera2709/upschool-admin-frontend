@@ -116,8 +116,8 @@ const AddQuestions = ({ className, ...rest }) => {
 
     const [answerBlanksOptions, setAnswerBlanksOptions] = useState([]);
     const [answerDisplayOptions, setAnswerDisplayOptions] = useState([
-        { value: 'Yes', label: 'Yes' },
-        { value: 'No', label: 'No' }
+        { value: 'No', label: 'No' },
+        { value: 'Yes', label: 'Yes' }
     ]);
 
     const selectedArr = [{ label: 'Options', value: 'Options' }];
@@ -1241,9 +1241,9 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                     onChange={event => handleAnswerBlanks(event, index)}
                                                                 >
 
-                                                                    <option>
+                                                                    {/* <option>
                                                                         Select...
-                                                                    </option>
+                                                                    </option> */}
 
                                                                     {answerDisplayOptions.map((optionsData) => {
 
@@ -1386,9 +1386,9 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                     }}
                                                                 >
 
-                                                                    <option>
+                                                                    {/* <option>
                                                                         Select...
-                                                                    </option>
+                                                                    </option> */}
 
                                                                     {answerDisplayOptions.map((optionsData) => {
 
@@ -1596,9 +1596,9 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                     onChange={event => handleAnswerBlanks(event, index)}
                                                                 >
 
-                                                                    <option>
+                                                                    {/* <option>
                                                                         Select...
-                                                                    </option>
+                                                                    </option> */}
 
                                                                     {answerDisplayOptions.map((optionsData) => {
 
@@ -1788,9 +1788,9 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                     }}
                                                                 >
 
-                                                                    <option>
+                                                                    {/* <option>
                                                                         Select...
-                                                                    </option>
+                                                                    </option> */}
 
                                                                     {answerDisplayOptions.map((optionsData) => {
 
@@ -1993,9 +1993,9 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                     onChange={event => handleAnswerBlanks(event, index)}
                                                                 >
 
-                                                                    <option>
+                                                                    {/* <option>
                                                                         Select...
-                                                                    </option>
+                                                                    </option> */}
 
                                                                     {answerDisplayOptions.map((optionsData) => {
 
