@@ -309,6 +309,14 @@ const EditQuestions = () => {
                 setToggleNumbersInput(false);
                 setToggleImageInput(false);
                 break;
+            case 'Select...':
+                setToggleAudioInput(false);
+                setToggleWordsInput(false);
+                setToggleEquationsInput(false);
+                setToggleNumbersInput(false);
+                setToggleImageInput(false);
+                setAddAnswerOptions(false);
+                break;
             default:
 
         }
@@ -880,6 +888,7 @@ const EditQuestions = () => {
             });
 
     }
+    
     return (
 
         <>
