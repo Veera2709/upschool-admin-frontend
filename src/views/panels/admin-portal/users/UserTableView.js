@@ -736,7 +736,7 @@ const UserTableView = ({ _userRole }) => {
                   {
                     pageLocation === 'active-users' ? (
                       <div>
-                        <h3 style={{ textAlign: 'center' }}>No Users Found</h3>
+                        <h3 style={{ textAlign: 'center' }}>No {sessionStorage.getItem('user_type')} Found</h3>
                         <div className="form-group fill text-center">
                           <br></br>
 
@@ -748,7 +748,7 @@ const UserTableView = ({ _userRole }) => {
                         </div>
                       </div>
                     ) : (
-                      <h3 style={{ textAlign: 'center' }}>No Users Found</h3>
+                      <h3 style={{ textAlign: 'center' }}>No {sessionStorage.getItem('user_type')} Found</h3>
                     )
                   }
                 </>
