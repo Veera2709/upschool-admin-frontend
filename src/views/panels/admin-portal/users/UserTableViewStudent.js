@@ -793,15 +793,20 @@ const UserTableViewStudent = ({ _userRole }) => {
                             userData.length <= 0 && _data ? (
                                 <div>
 
-                                    <h3 style={{ textAlign: 'center' }}>No Users Found</h3>
+                                    <h3 style={{ textAlign: 'center' }}>No {sessionStorage.getItem('user_type')} Found</h3>
                                     <div className="form-group fill text-center">
                                         <br></br>
 
-                                        <Link to={'/admin-portal/add-users'}>
-                                            <Button variant="success" className="btn-sm btn-round has-ripple ml-2">
-                                                <i className="feather icon-plus" /> Add Users
-                                            </Button>
-                                        </Link>
+                                        {
+                                            pageLocation === 'active-users' && (
+                                                <Link to={'/admin-portal/add-users'}>
+                                                    <Button variant="success" className="btn-sm btn-round has-ripple ml-2">
+                                                        <i className="feather icon-plus" /> Add Users
+                                                    </Button>
+                                                </Link>
+                                            )
+                                        }
+
                                     </div>
 
                                 </div>
@@ -828,7 +833,7 @@ const UserTableViewStudent = ({ _userRole }) => {
                                                 </Row>
                                             </React.Fragment>
 
-                                           
+
                                         </>
                                     )}
 
