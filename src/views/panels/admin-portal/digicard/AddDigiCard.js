@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 // import './style.css'
 import { Row, Col, Card, Button, Modal } from 'react-bootstrap';
 // import CkDecoupledEditor from '../../../components/CK-Editor/CkDecoupledEditor';
@@ -65,13 +65,18 @@ const AddDigiCard = (
   const [digitalTitles, setDigitalTitles] = useState([]);
   const [imgValidation, setImgValidation] = useState(true);
   const [voiceError, setVoiceError] = useState(true);
-  const [topicDigiCardIds, setTopicDigiCardIds] = useState([]);
+  const [status, setStatus] = useState(''); 
+  const [newDigicard, setnNewDigicard] = useState(false);
   const [displayHeading, setDisplayHeading] = useState(sessionStorage.getItem('digicard_type'));
   const [displayHeader, setDisplayHeader] = useState(true);
+  const [imagePre, setImage] = useState();
+  const [newdIgicardErrMax, setNewDigicardErrMax] = useState(false);
+  const [newdIgicardErrMin, setNewDigicardErrMin] = useState(false);
+  const [newdIgicardErrReq, setNewDigicardErrReq] = useState(false);
+  const [imageErr, setImageErr] = useState(false);
   const threadLinks = document.getElementsByClassName('page-header');
 
   let history = useHistory();
-
 
 
 
@@ -88,7 +93,6 @@ const AddDigiCard = (
 
   const handleAddition = (tag, state) => {
     const newTags = [].concat(tags, tag);
-
     setTags(newTags);
   };
 
@@ -116,13 +120,9 @@ const AddDigiCard = (
 
   const previewImage = (e) => {
     let FileLength = e.target.files.length
+    setImage(e.target)
     console.log("FileLength", FileLength);
     FileLength === 1 ? setImgFile(URL.createObjectURL(e.target.files[0])) : setImgFile()
-    // if(FileLength===1){
-    //   setImgFile(URL.createObjectURL(e.target.files[0]))
-    // }else{
-    //   setImgFile()
-    // }
   }
 
 
@@ -200,7 +200,7 @@ const AddDigiCard = (
   }
 
 
-
+ 
 
   return (
     <>
@@ -301,7 +301,6 @@ const AddDigiCard = (
                     related_digi_cards: multiOptions,
                   };
                   console.log("formData", formData);
-
                   axios
                     .post(dynamicUrl.insertDigicard, { data: formData }, { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
                     .then(async (response) => {
@@ -445,6 +444,9 @@ const AddDigiCard = (
                         {touched.digicard_image && errors.digicard_image && (
                           <small className="text-danger form-text">{errors.digicard_image}</small>
                         )}
+                        {imageErr && (
+                          <small className="text-danger form-text">Digicard Image is required!</small>
+                        )}
                         <small className="text-danger form-text" style={{ display: imgValidation ? 'none' : 'block' }}>Invalid File Type or File size is Exceed More Than 1MB</small>
                       </div>
                       <div className="form-group fill">
@@ -568,23 +570,25 @@ const AddDigiCard = (
                     <br />
                     {/* <small className="text-danger form-text" >Select DigiCard Titles</small> */}
                   </Row><br></br>
-                  <Row>
+                  <Row >
                     <Col sm={10}>
                     </Col>
-                    <div className="form-group fill float-end" >
-                      <Col sm={12} className="center">
-                        <Button
-                          className="btn-block"
-                          color="success"
-                          size="large"
-                          type="submit"
-                          variant="success"
-                        // disabled={disableButton === true}
-                        >
-                          Submit
-                        </Button>
-                      </Col>
-                    </div>
+                    <Col>
+                      <Row>
+                        
+                        <Col>
+                          <Button
+                            className="btn-block"
+                            color="success"
+                            size="large"
+                            type="submit"
+                            variant="success"
+                          >
+                            Submit
+                          </Button>
+                        </Col>
+                      </Row>
+                    </Col>
                   </Row>
                 </form>
               )}
@@ -607,17 +611,13 @@ const AddDigiCard = (
                 </Button>
               </Col>
             </div> */}
+
             </Row>
           </Card.Body>
 
         </Card>
       </React.Fragment>
     </>
-
-
-
-
-
   )
 
 };
