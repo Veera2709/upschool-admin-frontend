@@ -1,19 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Row, Col, Card, Pagination, Button, Modal, ModalBody, Form, Alert, CloseButton } from 'react-bootstrap';
+import { Row, Col, Card, Button, CloseButton } from 'react-bootstrap';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import * as Yup from 'yup';
-import Board from 'react-trello';
-import { FieldArray, Formik } from 'formik';
-import { areFilesInvalid } from '../../../../util/utils';
-import * as Constants from '../../../../config/constant'
+import { Formik } from 'formik';
 import withReactContent from 'sweetalert2-react-content';
 import Swal from 'sweetalert2';
 import axios from 'axios';
 import dynamicUrl from "../../../../helper/dynamicUrls";
-import { useHistory } from 'react-router-dom';
 import { isEmptyObject } from '../../../../util/utils';
 import { isEmptyArray } from '../../../../util/utils';
-import Select from 'react-select';
 
 const SubscribeClass = ({ className, rest, id, setIsOpenSubscribeClass }) => {
 
@@ -197,7 +192,8 @@ const SubscribeClass = ({ className, rest, id, setIsOpenSubscribeClass }) => {
 
                             object = {
                                 client_class_name: uploadParams[index].client_class_name,
-                                upschool_class_id: uploadParams[index].upschool_class_id
+                                upschool_class_id: uploadParams[index].upschool_class_id,
+                                setTrue: true
                             }
 
                             tempArray.push(object);
@@ -301,7 +297,8 @@ const SubscribeClass = ({ className, rest, id, setIsOpenSubscribeClass }) => {
                                                                     {console.log(form.upschool_class_id)}
 
 
-                                                                    {(form.client_class_name === "" || form.upschool_class_id === "") &&
+                                                                    {
+                                                                        ((form.client_class_name === "" && form.upschool_class_id === "") || form.client_class_name === "" || form.upschool_class_id === "Select Class" || form.upschool_class_id === "") &&
                                                                         (
                                                                             <Row>
                                                                                 <Col></Col>
@@ -312,7 +309,8 @@ const SubscribeClass = ({ className, rest, id, setIsOpenSubscribeClass }) => {
                                                                                     }} variant="white" />
                                                                                 </Col>
                                                                             </Row>
-                                                                        )}
+                                                                        )
+                                                                    }
 
                                                                     <Row key={index}>
 
@@ -351,7 +349,7 @@ const SubscribeClass = ({ className, rest, id, setIsOpenSubscribeClass }) => {
                                                                                     error={touched.upschool_class_id && errors.upschool_class_id}
                                                                                     name="upschool_class_id"
                                                                                     onBlur={handleBlur}
-
+                                                                                    disabled={form.setTrue}
                                                                                     type="text"
                                                                                     ref={classNameRef}
                                                                                     value={form.upschool_class_id}
