@@ -296,10 +296,8 @@ const SubscribeClass = ({ className, rest, id, setIsOpenSubscribeClass }) => {
                                                                     {console.log(form.client_class_name)}
                                                                     {console.log(form.upschool_class_id)}
 
-
                                                                     {
-                                                                        ((form.client_class_name === "" && form.upschool_class_id === "") || form.client_class_name === "" || form.upschool_class_id === "Select Class" || form.upschool_class_id === "") &&
-                                                                        (
+                                                                        form.setTrue === true ? (<></>) : (
                                                                             <Row>
                                                                                 <Col></Col>
                                                                                 <Col>
