@@ -144,8 +144,8 @@ const EditQuestions = () => {
 
     const [answerBlanksOptions, setAnswerBlanksOptions] = useState([]);
     const [answerDisplayOptions, setAnswerDisplayOptions] = useState([
-        { value: 'Yes', label: 'Yes' },
-        { value: 'No', label: 'No' }
+        { value: 'No', label: 'No' },
+        { value: 'Yes', label: 'Yes' }
     ]);
 
     const selectedArr = [{ label: 'Options', value: 'Options' }];
@@ -308,6 +308,14 @@ const EditQuestions = () => {
                 setToggleEquationsInput(false);
                 setToggleNumbersInput(false);
                 setToggleImageInput(false);
+                break;
+            case 'Select...':
+                setToggleAudioInput(false);
+                setToggleWordsInput(false);
+                setToggleEquationsInput(false);
+                setToggleNumbersInput(false);
+                setToggleImageInput(false);
+                setAddAnswerOptions(false);
                 break;
             default:
 
@@ -800,7 +808,7 @@ const EditQuestions = () => {
 
                             MySwal.fire({
 
-                                title: sessionStorage.getItem('click_event') === 'Save' ? 'Question Saved!' : sessionStorage.getItem('click_event') === 'Submit' ? 'Question Submitted!' : sessionStorage.getItem('click_event') === 'Accept' ? "Question Accepted!" : sessionStorage.getItem('click_event') === 'Rejected' ? "Question Rejected!" : sessionStorage.getItem('click_event') === 'Revisit' ? "Question marked as Revist!" : sessionStorage.getItem('click_event') === 'DesignReady' ? "Question marked as Design Ready!" : "Question Published!",
+                                title: sessionStorage.getItem('click_event') === 'Save' ? 'Question Saved!' : sessionStorage.getItem('click_event') === 'Submit' ? 'Question Submitted!' : sessionStorage.getItem('click_event') === 'Accept' ? "Question Accepted!" : sessionStorage.getItem('click_event') === 'Reject' ? "Question Rejected!" : sessionStorage.getItem('click_event') === 'Revisit' ? "Question marked as Revisit!" : sessionStorage.getItem('click_event') === 'DesignReady' ? "Question marked as Design Ready!" : "Question Published!",
                                 icon: 'success',
                             }).then((willDelete) => {
 
@@ -880,6 +888,7 @@ const EditQuestions = () => {
             });
 
     }
+
     return (
 
         <>
@@ -1920,9 +1929,9 @@ const EditQuestions = () => {
                                                                                             onChange={event => handleAnswerBlanks(event, index)}
                                                                                         >
 
-                                                                                            <option>
+                                                                                            {/* <option>
                                                                                                 Select...
-                                                                                            </option>
+                                                                                            </option> */}
 
                                                                                             {answerDisplayOptions.map((optionsData) => {
 
@@ -2065,9 +2074,9 @@ const EditQuestions = () => {
                                                                                             }}
                                                                                         >
 
-                                                                                            <option>
+                                                                                            {/* <option>
                                                                                                 Select...
-                                                                                            </option>
+                                                                                            </option> */}
 
                                                                                             {answerDisplayOptions.map((optionsData) => {
 
@@ -2274,9 +2283,9 @@ const EditQuestions = () => {
                                                                                             onChange={event => handleAnswerBlanks(event, index)}
                                                                                         >
 
-                                                                                            <option>
+                                                                                            {/* <option>
                                                                                                 Select...
-                                                                                            </option>
+                                                                                            </option> */}
 
                                                                                             {answerDisplayOptions.map((optionsData) => {
 
@@ -2466,9 +2475,9 @@ const EditQuestions = () => {
                                                                                             }}
                                                                                         >
 
-                                                                                            <option>
+                                                                                            {/* <option>
                                                                                                 Select...
-                                                                                            </option>
+                                                                                            </option> */}
 
                                                                                             {answerDisplayOptions.map((optionsData) => {
 
@@ -2678,9 +2687,9 @@ const EditQuestions = () => {
                                                                                             onChange={event => handleAnswerBlanks(event, index)}
                                                                                         >
 
-                                                                                            <option>
+                                                                                            {/* <option>
                                                                                                 Select...
-                                                                                            </option>
+                                                                                            </option> */}
 
                                                                                             {answerDisplayOptions.map((optionsData) => {
 

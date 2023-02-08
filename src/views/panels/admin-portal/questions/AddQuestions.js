@@ -116,8 +116,8 @@ const AddQuestions = ({ className, ...rest }) => {
 
     const [answerBlanksOptions, setAnswerBlanksOptions] = useState([]);
     const [answerDisplayOptions, setAnswerDisplayOptions] = useState([
-        { value: 'Yes', label: 'Yes' },
-        { value: 'No', label: 'No' }
+        { value: 'No', label: 'No' },
+        { value: 'Yes', label: 'Yes' }
     ]);
 
     const selectedArr = [{ label: 'Options', value: 'Options' }];
@@ -275,6 +275,14 @@ const AddQuestions = ({ className, ...rest }) => {
                 setToggleNumbersInput(false);
                 setToggleImageInput(false);
                 break;
+            case 'Select...':
+                setToggleAudioInput(false);
+                setToggleWordsInput(false);
+                setToggleEquationsInput(false);
+                setToggleNumbersInput(false);
+                setToggleImageInput(false);
+                setAddAnswerOptions(false);
+                break;
             default:
 
         }
@@ -420,8 +428,7 @@ const AddQuestions = ({ className, ...rest }) => {
                             const MySwal = withReactContent(Swal);
 
                             MySwal.fire({
-
-                                title: 'Question added!',
+                                title: sessionStorage.getItem('click_event') === 'Save' ? 'Question Saved!' : 'Question Submitted!',
                                 icon: 'success',
                             }).then((willDelete) => {
 
@@ -1227,16 +1234,16 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                     error={touched.answer_display && errors.answer_display}
                                                                     name="answer_display"
                                                                     onBlur={handleBlur}
-
+                                                                    placeholder="Select..."
                                                                     type="text"
                                                                     value={form.answer_display}
                                                                     key={index}
                                                                     onChange={event => handleAnswerBlanks(event, index)}
                                                                 >
 
-                                                                    <option>
+                                                                    {/* <option>
                                                                         Select...
-                                                                    </option>
+                                                                    </option> */}
 
                                                                     {answerDisplayOptions.map((optionsData) => {
 
@@ -1369,7 +1376,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                     error={touched.answer_display && errors.answer_display}
                                                                     name="answer_display"
                                                                     onBlur={handleBlur}
-
+                                                                    placeholder="Select..."
                                                                     type="text"
                                                                     value={form.answer_display}
                                                                     key={index}
@@ -1379,9 +1386,9 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                     }}
                                                                 >
 
-                                                                    <option>
+                                                                    {/* <option>
                                                                         Select...
-                                                                    </option>
+                                                                    </option> */}
 
                                                                     {answerDisplayOptions.map((optionsData) => {
 
@@ -1589,9 +1596,9 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                     onChange={event => handleAnswerBlanks(event, index)}
                                                                 >
 
-                                                                    <option>
+                                                                    {/* <option>
                                                                         Select...
-                                                                    </option>
+                                                                    </option> */}
 
                                                                     {answerDisplayOptions.map((optionsData) => {
 
@@ -1781,9 +1788,9 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                     }}
                                                                 >
 
-                                                                    <option>
+                                                                    {/* <option>
                                                                         Select...
-                                                                    </option>
+                                                                    </option> */}
 
                                                                     {answerDisplayOptions.map((optionsData) => {
 
@@ -1980,16 +1987,15 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                     error={touched.answer_display && errors.answer_display}
                                                                     name="answer_display"
                                                                     onBlur={handleBlur}
-
                                                                     type="text"
                                                                     value={form.answer_display}
                                                                     key={index}
                                                                     onChange={event => handleAnswerBlanks(event, index)}
                                                                 >
 
-                                                                    <option>
+                                                                    {/* <option>
                                                                         Select...
-                                                                    </option>
+                                                                    </option> */}
 
                                                                     {answerDisplayOptions.map((optionsData) => {
 
