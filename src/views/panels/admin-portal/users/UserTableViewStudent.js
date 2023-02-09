@@ -1,24 +1,19 @@
-import React, { useState, useEffect, useRef } from 'react';
-import Select from 'react-select';
+import React, { useState, useEffect } from 'react';
 import { Link, useHistory, useLocation } from 'react-router-dom';
-import { Row, Col, Card, Pagination, Button, Modal, Alert } from 'react-bootstrap';
+import { Row, Col, Card, Pagination, Button } from 'react-bootstrap';
 import BTable from 'react-bootstrap/Table';
-import * as Yup from 'yup';
-import { Formik } from 'formik';
 import axios from 'axios';
 import { SessionStorage } from '../../../../util/SessionStorage';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import MESSAGES from '../../../../helper/messages';
-import { isEmptyArray, decodeJWT } from '../../../../util/utils';
-import { fetchSectionByClientClassId } from "../../../api/CommonApi";
 import { GlobalFilter } from '../../../common-ui-components/tables/GlobalFilter';
 import { useTable, useSortBy, usePagination, useGlobalFilter } from 'react-table';
 import dynamicUrl from '../../../../helper/dynamicUrls';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import BasicSpinner from '../../../../helper/BasicSpinner';
 
-function Table({ columns, data, modalOpen }) {
+function Table({ columns, data }) {
     const {
         getTableProps,
         getTableBodyProps,
@@ -187,34 +182,16 @@ const UserTableViewStudent = ({ _userRole }) => {
     const multiDropDownValues = [];
     const history = useHistory();
     const [userData, setUserData] = useState([]);
-    const [individualUserData, setIndividualUserData] = useState([]);
-    const [userDOB, setUserDOB] = useState('');
     const [loader, showLoader, hideLoader] = useFullPageLoader();
-    const [className_ID, setClassName_ID] = useState();
     const [schoolId, setSchoolId] = useState();
-    const [sectionId, setSectionId] = useState();
 
     const [multiDropOptions, setMultiDropOptions] = useState([]);
     const [options, setOptions] = useState([]);
-    const [schoolName_ID, setSchoolName_ID] = useState({});
-    const [previousSchool, setPreviousSchool] = useState('');
-    const [previousClass, setPreviousClass] = useState('');
-    const [defaultClass, setDefaultClass] = useState([]);
-    const [defaultSection, setDefaultSection] = useState([]);
     const [_userID, _setUserID] = useState('');
 
-    const [isOpen, setIsOpen] = useState(false);
-    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-
     const [isLoading, setIsLoading] = useState(false);
-    const { user_id } = decodeJWT(sessionStorage.getItem('user_jwt'));
-    const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
-    const [selectClassErr, setSelectClassErr] = useState(false);
-    const [selectSectionErr, setSelectSectionErr] = useState(false);
-    const [selectDOBErr, setSelectDOBErr] = useState(false);
+    const pageLocation = useLocation().pathname.split('/')[2];
     const [_data, _setData] = useState([]);
-    const classNameRef = useRef('');
-    const schoolNameRef = useRef('');
 
     console.log("options", options);
     console.log("multiDropOptions", multiDropOptions);
@@ -243,15 +220,7 @@ const UserTableViewStudent = ({ _userRole }) => {
             if (willDelete.value) {
                 showLoader();
                 deleteUser(user_id, user_role, updateStatus);
-            } else {
-
-                // const returnValue = pageLocation === 'active-users' ? (
-                //   MySwal.fire('', MESSAGES.INFO.DATA_SAFE, 'success')
-                // ) : (
-                //   MySwal.fire('', MESSAGES.INFO.FAILED_TO_RESTORE, 'error')
-                // )
-                // return returnValue;
-            }
+            } 
         });
     };
 
@@ -304,17 +273,12 @@ const UserTableViewStudent = ({ _userRole }) => {
                     let individual_user_data = response.data.Items[0];
                     console.log({ individual_user_data });
                     setSchoolId(response.data.Items[0].school_id)
-                    setSectionId(response.data.Items[0].section_id)
-                    setClassName_ID(response.data.Items[0].class_id)
                     let classNameArr = response.data.classList.find(o => o.client_class_id === response.data.Items[0].class_id);
                     let sectionArr = response.data.sectionList.find(o => o.section_id === response.data.Items[0].section_id);
                     let schoolNameArr = response.data.schoolList.find(o => o.school_id === response.data.Items[0].school_id);
 
                     console.log(classNameArr);
                     console.log(schoolNameArr);
-
-                    setDefaultClass({ value: classNameArr.client_class_id, label: classNameArr.client_class_name })
-                    setDefaultSection({ value: sectionArr.section_id, label: sectionArr.section_name })
 
                     console.log("response.data.classList", response.data.classList.length);
                     if (colourOptions.length <= 0) {
@@ -323,16 +287,8 @@ const UserTableViewStudent = ({ _userRole }) => {
                         })
                         setOptions(colourOptions)
                     }
-                    setSchoolName_ID(response.data.schoolList);
-                    // setPreviousSchool(schoolNameArr.school_name);
-                    schoolNameArr === "" || schoolNameArr === undefined || schoolNameArr === "undefined" || schoolNameArr === "N.A." ? setPreviousSchool("Select School") : setPreviousSchool(schoolNameArr.school_name);
-                    classNameArr === "" || classNameArr === undefined || classNameArr === "undefined" || classNameArr === "N.A." ? setPreviousClass("Select Class") : setPreviousClass(classNameArr.client_class_name);
-                    setUserDOB(response.data.Items[0].user_dob);
-                    setIndividualUserData(individual_user_data);
-                    setIsEditModalOpen(true);
+
                     _setUserID(user_id);
-
-
 
                     response.data.sectionList.forEach((item, index) => {
                         multiDropDownValues.push({ value: item.section_id, label: item.section_name })
@@ -341,7 +297,6 @@ const UserTableViewStudent = ({ _userRole }) => {
 
                 } else {
 
-                    setIsEditModalOpen(true);
                 }
 
             })
@@ -349,7 +304,6 @@ const UserTableViewStudent = ({ _userRole }) => {
                 if (error.response) {
                     // Request made and server responded
                     console.log(error.response.data);
-                    setIsEditModalOpen(false);
                     hideLoader();
 
                     if (error.response.data === 'Invalid Token') {
@@ -379,87 +333,6 @@ const UserTableViewStudent = ({ _userRole }) => {
                 }
             });
     };
-
-    const handleSchoolChange = () => {
-
-        const filteredResult = schoolName_ID.find((e) => e.school_name == schoolNameRef.current.value);
-
-        console.log(filteredResult.school_id);
-        console.log(filteredResult.school_name);
-
-        let sendData = {
-            data: {
-                school_id: filteredResult.school_id
-            }
-        }
-
-        console.log(sendData);
-
-        axios
-            .post(
-                dynamicUrl.fetchClassBasedOnSchool,
-                {
-                    data: {
-                        school_id: filteredResult.school_id
-                    }
-                },
-                {
-                    headers: { Authorization: sessionStorage.getItem('user_jwt') }
-                }
-            )
-            .then((response) => {
-
-                console.log(response.status === 200);
-                let result = response.status === 200;
-
-                hideLoader();
-                if (result) {
-
-                    console.log('inside res', response.data);
-                    // let newClassData = response.data.Items;
-                    // setClassName_ID(newClassData);
-
-                } else {
-                    console.log('else res');
-                    hideLoader();
-
-                }
-            })
-            .catch((error) => {
-                if (error.response) {
-                    hideLoader();
-                    // Request made and server responded
-                    console.log(error.response.data);
-
-                    if (error.response.data === 'Invalid Token') {
-
-                        sessionStorage.clear();
-                        localStorage.clear();
-
-                        history.push('/auth/signin-1');
-                        window.location.reload();
-
-                    } else {
-
-                        fetchUserData();
-                    }
-
-                } else if (error.request) {
-                    // The request was made but no response was received
-                    console.log(error.request);
-                    hideLoader();
-                    fetchUserData();
-
-                } else {
-                    // Something happened in setting up the request that triggered an Error
-                    console.log('Error', error.message);
-                    hideLoader();
-                    fetchUserData();
-
-                }
-            });
-
-    }
 
     const deleteUser = (user_id, user_role, updateStatus) => {
         const values = {
@@ -539,73 +412,6 @@ const UserTableViewStudent = ({ _userRole }) => {
             });
     };
 
-    const openHandler = () => {
-        setIsOpen(true);
-    };
-
-    const _UpdateUser = (data) => {
-        console.log(data);
-        console.log('Submitted');
-
-        axios
-            .post(dynamicUrl.updateUsersByRole, { data }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
-            .then(async (response) => {
-
-                console.log({ response });
-                if (response.Error) {
-                    hideLoader();
-                    setIsEditModalOpen(false);
-                    sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.UpdatingUser });
-
-                    fetchUserData();
-
-
-                } else {
-                    hideLoader();
-                    setIsEditModalOpen(false);
-                    sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.UpdatingUser });
-
-                    fetchUserData();
-
-
-                }
-            })
-            .catch((error) => {
-                if (error.response) {
-                    // Request made and server responded
-                    hideLoader();
-                    console.log(error.response.data);
-                    setIsEditModalOpen(false);
-
-                    if (error.response.data === 'Invalid Token') {
-
-                        sessionStorage.clear();
-                        localStorage.clear();
-
-                        history.push('/auth/signin-1');
-                        window.location.reload();
-
-                    } else {
-
-                        sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
-                    }
-
-                } else if (error.request) {
-                    // The request was made but no response was received
-                    hideLoader();
-                    console.log(error.request);
-                    fetchUserData();
-
-                } else {
-                    // Something happened in setting up the request that triggered an Error
-                    hideLoader();
-                    console.log('Error', error.message);
-                    fetchUserData();
-
-                }
-            });
-    };
-
     const updateValues = (_data) => {
         let responseData = _data;
         // let responseData = [];
@@ -628,8 +434,6 @@ const UserTableViewStudent = ({ _userRole }) => {
                                 size="sm"
                                 className="btn btn-icon btn-rounded btn-info"
                                 onClick={(e) => {
-                                    setSelectSectionErr(false);
-                                    // saveUserId(e, responseData[index].student_id, responseData[index].user_role)
 
                                     history.push(`/admin-porttal/edit-users/${responseData[index].student_id}/${responseData[index].user_role}/${schoolId}`)
                                 }}>
@@ -755,30 +559,6 @@ const UserTableViewStudent = ({ _userRole }) => {
 
     }, [_userRole]);
 
-    const classOption = async (e) => {
-        // setDefaultSection({ value: '', label: 'Select Section' })
-        setSectionId('');
-        console.log("class Option", e);
-        setClassName_ID(e.value)
-        const ClientClassId = await fetchSectionByClientClassId(e.value);
-        if (ClientClassId.Error) {
-            console.log('ClientClassId.Error', ClientClassId.Error);
-        } else {
-            console.log('ClientClassId', ClientClassId.Items);
-            const resultData = ClientClassId.Items
-            resultData.forEach((item, index) => {
-                multiDropDownValues.push({ value: item.section_id, label: item.section_name })
-            })
-            setMultiDropOptions(multiDropDownValues)
-        }
-
-    };
-
-    const GetSectionId = (event) => {
-        console.log("event", event.target.value);
-        setSectionId(event.target.value)
-    }
-
     return (
 
         <React.Fragment>
@@ -825,7 +605,7 @@ const UserTableViewStudent = ({ _userRole }) => {
                                                                 <Card.Title as="h5">User List</Card.Title>
                                                             </Card.Header>
                                                             <Card.Body>
-                                                                <Table columns={columns} data={userData} modalOpen={openHandler} />
+                                                                <Table columns={columns} data={userData} />
                                                             </Card.Body>
                                                         </Card>
 

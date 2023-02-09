@@ -34,6 +34,7 @@ const AddGroups = ({ className, ...rest }) => {
         { value: 'Level_3', label: 'Level-3' }
     ]);
 
+    const [digicardsDropdown, setDigicardsDropdown] = useState([]);
     const [questionsDropdown, setQuestionsDropdown] = useState([]);
 
     const [groupNameExistsErrMsg, setGroupNameExistsErrMsg] = useState(false);
@@ -42,6 +43,7 @@ const AddGroups = ({ className, ...rest }) => {
 
     const [selectedGroupType, setSelectedGroupType] = useState([]);
     const [selectedQuestions, setSelectedQuestions] = useState([]);
+    const [selectedDigicards, setSelectedDigicards] = useState([]);
     const [selectedLevels, setSelectedLevels] = useState([]);
 
     const handleGroupTypeChange = (event) => {
@@ -62,6 +64,19 @@ const AddGroups = ({ className, ...rest }) => {
 
         console.log(valuesArr);
         setSelectedQuestions(valuesArr);
+    }
+
+    const handleDigicardsChange = (event) => {
+
+        console.log(event);
+
+        let valuesArr = [];
+        for (let i = 0; i < event.length; i++) {
+            valuesArr.push(event[i].value)
+        }
+
+        console.log(valuesArr);
+        setSelectedDigicards(valuesArr);
     }
 
     const handleLevelsChange = (event) => {
@@ -150,6 +165,72 @@ const AddGroups = ({ className, ...rest }) => {
 
     }
 
+    const fetchDigicards = () => {
+
+        axios
+            .post(
+                dynamicUrl.fetchDigicardIdAndName,
+                {},
+                {
+                    headers: { Authorization: sessionStorage.getItem('user_jwt') }
+                }
+            )
+            .then((response) => {
+
+                console.log(response.status === 200);
+                let result = response.status === 200;
+
+                if (result) {
+
+                    console.log('inside res');
+
+                    let resultData = response.data.Items;
+                    console.log("resultData", resultData);
+
+                    let digicardsArr = [];
+                    let getQuestionsArr;
+
+                    if (Array.isArray(resultData)) {
+                        for (let index = 0; index < resultData.length; index++) {
+
+                            getQuestionsArr = [{ value: resultData[index].digi_card_id, label: resultData[index].digi_card_title }];
+
+                            digicardsArr.push(getQuestionsArr[0]);
+
+                        }
+                    }
+
+                    console.log(digicardsArr);
+                    // setIsLoading(false);
+                    setDigicardsDropdown(digicardsArr);
+
+
+                } else {
+
+                    console.log('else res');
+                    hideLoader();
+
+                }
+            })
+            .catch((error) => {
+                if (error.response) {
+                    hideLoader();
+
+                    console.log(error.response.data);
+
+                } else if (error.request) {
+
+                    console.log(error.request);
+                    hideLoader();
+
+                } else {
+
+                    console.log('Error', error.message);
+                    hideLoader();
+                }
+            });
+    }
+
     useEffect(() => {
 
         const validateJWT = sessionStorage.getItem('user_jwt');
@@ -167,7 +248,7 @@ const AddGroups = ({ className, ...rest }) => {
             threadLinks.length === 2 ? setDisplayHeader(false) : setDisplayHeader(true);
             setIsLoading(true);
             fetchQuestions();
-
+            fetchDigicards();
         }
 
     }, []);
@@ -248,7 +329,8 @@ const AddGroups = ({ className, ...rest }) => {
                                                     group_name: values.group_name,
                                                     group_type: selectedGroupType,
                                                     group_question_id: selectedQuestions,
-                                                    group_levels: selectedLevels
+                                                    group_levels: selectedLevels,
+                                                    group_related_digicard: selectedDigicards
                                                 }
 
                                                 console.log("payLoad", payLoad);
@@ -405,7 +487,6 @@ const AddGroups = ({ className, ...rest }) => {
                                                                     </label>
 
                                                                     <Select
-                                                                        // defaultValue={previousQuestions}
                                                                         isMulti
                                                                         name="questions"
                                                                         options={questionsDropdown}
@@ -439,6 +520,32 @@ const AddGroups = ({ className, ...rest }) => {
                                                     </Col>
                                                 </Row>
 
+                                                <br />
+                                                <Row>
+
+                                                    <Col xs={6}>
+                                                        {
+                                                            digicardsDropdown && (
+                                                                <>
+                                                                    <label className="floating-label">
+                                                                        <small className="text-danger"></small>
+                                                                        Related Digicards
+                                                                    </label>
+
+                                                                    <Select
+                                                                        // defaultValue={previousQuestions}
+                                                                        isMulti
+                                                                        name="relatedDigicards"
+                                                                        options={digicardsDropdown}
+                                                                        className="basic-multi-select"
+                                                                        classNamePrefix="Select"
+                                                                        onChange={event => handleDigicardsChange(event)}
+                                                                    />
+                                                                </>
+                                                            )
+                                                        }
+                                                    </Col>
+                                                </Row>
                                                 {loader}
 
                                                 <br />

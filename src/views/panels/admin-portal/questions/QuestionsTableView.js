@@ -567,7 +567,7 @@ const QuestionsTableView = ({ _questionStatus }) => {
                   {
                     pageLocation === 'active-questions' ? (
                       <div>
-                        <h3 style={{ textAlign: 'center' }}>No Questions Found</h3>
+                        <h3 style={{ textAlign: 'center' }}>No {pageLocation === "active-questions" ? 'Active Questions' : 'Archived Questions'} Found</h3>
                         <div className="form-group fill text-center">
                           <br></br>
 
@@ -579,7 +579,7 @@ const QuestionsTableView = ({ _questionStatus }) => {
                         </div>
                       </div>
                     ) : (
-                      <h3 style={{ textAlign: 'center' }}>No Questions Found</h3>
+                      <h3 style={{ textAlign: 'center' }}>No {pageLocation === "active-questions" ? 'Active Questions' : 'Archived Questions'} Found</h3>
                     )
                   }
                 </>

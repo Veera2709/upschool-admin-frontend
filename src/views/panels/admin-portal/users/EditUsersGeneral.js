@@ -107,7 +107,7 @@ const EditUsersGeneral = ({ user_id, user_role }) => {
 
     const handleSchoolChange = () => {
 
-        const filteredResult = schoolName_ID.find((e) => e.school_name == schoolNameRef.current.value);
+        const filteredResult = schoolName_ID.find((e) => e.school_name.trim() === schoolNameRef.current.value);
 
         console.log(filteredResult.school_id);
         console.log(filteredResult.school_name);
@@ -348,7 +348,7 @@ const EditUsersGeneral = ({ user_id, user_role }) => {
 
                                                 let data;
 
-                                                const selectedSchoolID = schoolName_ID.find((e) => e.school_name == schoolNameRef.current.value);
+                                                const selectedSchoolID = schoolName_ID.find((e) => e.school_name.trim() === schoolNameRef.current.value);
 
                                                 console.log(selectedSchoolID);
                                                 console.log(classNameRef.current.value);
@@ -465,7 +465,7 @@ const EditUsersGeneral = ({ user_id, user_role }) => {
                                                                             disabled={true}
                                                                         >
 
-                                                                            <option>Select School</option>
+                                                                            {/* <option>Select School</option> */}
 
                                                                             {schoolName_ID.map((schoolData) => {
 

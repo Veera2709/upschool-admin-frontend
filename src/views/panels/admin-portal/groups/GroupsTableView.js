@@ -491,7 +491,7 @@ const GroupsTableView = ({ _groupType }) => {
                             groupData.length <= 0 && _data ? (
                                 <div>
 
-                                    <h3 style={{ textAlign: 'center' }}>No Groups Found</h3>
+                                    <h3 style={{ textAlign: 'center' }}>No {pageLocation === "active-groups" ? 'Active Groups' : 'Archived Groups'} Found</h3>
                                     <div className="form-group fill text-center">
                                         <br></br>
                                         {

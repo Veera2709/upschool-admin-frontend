@@ -890,52 +890,52 @@ const SubjectTableView = ({ userStatus }) => {
                         {
                             subjectData.length <= 0 ? (
                                 <>
-                                {
-                                    pageLocation === 'active-subjects' ? (
-                                        < React.Fragment >
-                                        <div>
+                                    {
+                                        pageLocation === 'active-subjects' ? (
+                                            < React.Fragment >
+                                                <div>
 
-                                            <h3 style={{ textAlign: 'center' }}>No Subjects Found</h3>
-                                            <div className="form-group fill text-center">
-                                                <br></br>
+                                                    <h3 style={{ textAlign: 'center' }}>No {pageLocation === "active-subjects" ? 'Active Subjects' : 'Archived Subjects'} Found</h3>
+                                                    <div className="form-group fill text-center">
+                                                        <br></br>
 
-                                                <Button
-                                                    variant="success"
-                                                    className="btn-sm btn-round has-ripple ml-2"
-                                                    onClick={(e) => {
-                                                        handleAddSubjects(e);
-                                                    }}
-                                                >
-                                                    <i className="feather icon-plus" /> Add Subjects
-                                                </Button>
+                                                        <Button
+                                                            variant="success"
+                                                            className="btn-sm btn-round has-ripple ml-2"
+                                                            onClick={(e) => {
+                                                                handleAddSubjects(e);
+                                                            }}
+                                                        >
+                                                            <i className="feather icon-plus" /> Add Subjects
+                                                        </Button>
 
 
-                                            </div>
+                                                    </div>
 
-                                        </div>
+                                                </div>
 
-                                        <Modal dialogClassName="my-modal" show={isOpenAddSubject} onHide={() => setIsOpenAddSubject(false)}>
+                                                <Modal dialogClassName="my-modal" show={isOpenAddSubject} onHide={() => setIsOpenAddSubject(false)}>
 
-                                            <Modal.Header closeButton>
+                                                    <Modal.Header closeButton>
 
-                                                <Modal.Title as="h5">Add Subject</Modal.Title>
+                                                        <Modal.Title as="h5">Add Subject</Modal.Title>
 
-                                            </Modal.Header>
+                                                    </Modal.Header>
 
-                                            <Modal.Body>
+                                                    <Modal.Body>
 
-                                                <AddSubjects _units={_units} _relatedSubjects={_relatedSubjects} setIsOpenAddSubject={setIsOpenAddSubject} fetchAllSubjectsData={fetchAllSubjectsData} />
+                                                        <AddSubjects _units={_units} _relatedSubjects={_relatedSubjects} setIsOpenAddSubject={setIsOpenAddSubject} fetchAllSubjectsData={fetchAllSubjectsData} />
 
-                                            </Modal.Body>
+                                                    </Modal.Body>
 
-                                        </Modal>
+                                                </Modal>
 
-                                    </React.Fragment>
-                                    ) : (
-                                        <h3 style={{ textAlign: 'center' }}>No Subjects Found</h3>
-                                    )
-                                }
-                                  
+                                            </React.Fragment>
+                                        ) : (
+                                            <h3 style={{ textAlign: 'center' }}>No {pageLocation === "active-subjects" ? 'Active Subjects' : 'Archived Subjects'} Found</h3>
+                                        )
+                                    }
+
                                 </>
                             ) : (
 
