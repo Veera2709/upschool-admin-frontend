@@ -20,11 +20,10 @@ const UsersBulkUpload = ({ className, ...rest }) => {
   const history = useHistory();
   const schoolNameRef = useRef('');
   const [schoolName_ID, setSchoolName_ID] = useState({});
-  const [schoolID, setSchoolID] = useState('');
   const [disableButton, setDisableButton] = useState(false);
   const [loader, showLoader, hideLoader] = useFullPageLoader();
   const [displayHeader, setDisplayHeader] = useState(true);
-  const [displayHeading, setDisplayHeading] = useState(sessionStorage.getItem('user_type'));
+  const displayHeading = sessionStorage.getItem('user_type');
   const threadLinks = document.getElementsByClassName('page-header');
 
   const sweetAlertHandler = (alert) => {

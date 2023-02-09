@@ -1081,7 +1081,7 @@ const ConceptTableView = ({ userStatus }) => {
                                     < React.Fragment >
                                         <div>
 
-                                            <h3 style={{ textAlign: 'center' }}>No Concepts Found</h3>
+                                            <h3 style={{ textAlign: 'center' }}>No {pageLocation === 'active-concepts' ? 'Active Concepts' : 'Archived Concepts'} Found</h3>
                                             <div className="form-group fill text-center">
                                                 <br></br>
 
@@ -1118,7 +1118,7 @@ const ConceptTableView = ({ userStatus }) => {
 
                                     </React.Fragment>
                                 ) : (
-                                    <h3 style={{ textAlign: 'center' }}>No Concepts Found</h3>
+                                    <h3 style={{ textAlign: 'center' }}>No {pageLocation === 'active-concepts' ? 'Active Concepts' : 'Archived Concepts'} Found</h3>
                                 )
                             }
 
