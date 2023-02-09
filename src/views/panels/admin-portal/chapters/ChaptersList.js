@@ -475,7 +475,7 @@ const ChaptersListChild = (props) => {
                                             < React.Fragment >
                                                 <div>
 
-                                                    <h3 style={{ textAlign: 'center' }}>No Chapter Found</h3>
+                                                    <h3 style={{ textAlign: 'center' }}>No {pageLocation === "active-chapter" ? 'Active Chapters' : 'Archived Chapters'} Found</h3>
                                                     <div className="form-group fill text-center">
                                                         <br></br>
                                                         <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={(e) => { handleAddChapter(e) }}>
@@ -494,7 +494,7 @@ const ChaptersListChild = (props) => {
                                             </React.Fragment>
                                         ) : (
                                             <React.Fragment>
-                                                <h3 style={{ textAlign: 'center' }}>No Chapter Found</h3>
+                                                <h3 style={{ textAlign: 'center' }}>No {pageLocation === "active-chapter" ? 'Active Chapters' : 'Archived Chapters'} Found</h3>
                                             </React.Fragment>
                                         )
                                     }

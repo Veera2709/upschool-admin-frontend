@@ -36,7 +36,6 @@ const EditUsersGeneralStudent = ({ user_id, user_role }) => {
 
     const [userDOB, setUserDOB] = useState('');
     const [loader, showLoader, hideLoader] = useFullPageLoader();
-    const classNameRef = useRef('');
     const schoolNameRef = useRef('');
     const [selectClassErr, setSelectClassErr] = useState(false);
     const [selectSectionErr, setSelectSectionErr] = useState(false);
@@ -112,7 +111,7 @@ const EditUsersGeneralStudent = ({ user_id, user_role }) => {
 
     const handleSchoolChange = () => {
 
-        const filteredResult = schoolName_ID.find((e) => e.school_name == schoolNameRef.current.value);
+        const filteredResult = schoolName_ID.find((e) => e.school_name.trim() === schoolNameRef.current.value);
 
         console.log(filteredResult.school_id);
         console.log(filteredResult.school_name);
@@ -330,7 +329,7 @@ const EditUsersGeneralStudent = ({ user_id, user_role }) => {
     };
 
     return (
-        
+
         <React.Fragment>
 
             <div>
@@ -381,10 +380,9 @@ const EditUsersGeneralStudent = ({ user_id, user_role }) => {
 
                                                 let data;
 
-                                                const selectedSchoolID = schoolName_ID.find((e) => e.school_name == schoolNameRef.current.value);
+                                                const selectedSchoolID = schoolName_ID.find((e) => e.school_name.trim() === schoolNameRef.current.value);
 
                                                 console.log(selectedSchoolID);
-                                                console.log(classNameRef.current.value);
 
                                                 if (className_ID === undefined || className_ID === '') {
                                                     setSelectClassErr(true)
@@ -483,8 +481,8 @@ const EditUsersGeneralStudent = ({ user_id, user_role }) => {
                                                                             disabled={true}
                                                                         >
 
-                                                                            <option>Select School</option>
-
+                                                                            {/* <option>Select School</option> */}
+                                                                            {console.log(schoolName_ID)}
                                                                             {schoolName_ID.map((schoolData) => {
 
                                                                                 return <option key={schoolData.school_id}>

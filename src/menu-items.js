@@ -238,6 +238,26 @@ const menuItems = {
             }
           ]
         },
+        // {
+        //   id: 'boards',
+        //   title: 'Boards',
+        //   type: 'collapse',
+        //   icon: 'feather icon-file',
+        //   children: [
+        //     {
+        //       id: 'active-boards',
+        //       title: 'Active Boards',
+        //       type: 'item',
+        //       url: '/admin-portal/active-boards'
+        //     },
+        //     {
+        //       id: 'archived-boards',
+        //       title: 'Archived Boards',
+        //       type: 'item',
+        //       url: '/admin-portal/archived-boards'
+        //     }
+        //   ]
+        // },
       ]
     }
 
