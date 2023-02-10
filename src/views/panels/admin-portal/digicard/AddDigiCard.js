@@ -65,24 +65,12 @@ const AddDigiCard = (
   const [digitalTitles, setDigitalTitles] = useState([]);
   const [imgValidation, setImgValidation] = useState(true);
   const [voiceError, setVoiceError] = useState(true);
-  const [status, setStatus] = useState(''); 
-  const [newDigicard, setnNewDigicard] = useState(false);
   const [displayHeading, setDisplayHeading] = useState(sessionStorage.getItem('digicard_type'));
   const [displayHeader, setDisplayHeader] = useState(true);
   const [imagePre, setImage] = useState();
-  const [newdIgicardErrMax, setNewDigicardErrMax] = useState(false);
-  const [newdIgicardErrMin, setNewDigicardErrMin] = useState(false);
-  const [newdIgicardErrReq, setNewDigicardErrReq] = useState(false);
-  const [imageErr, setImageErr] = useState(false);
   const threadLinks = document.getElementsByClassName('page-header');
 
   let history = useHistory();
-
-
-
-
-
-
 
 
   const handleDelete = (i, states) => {
@@ -444,9 +432,7 @@ const AddDigiCard = (
                         {touched.digicard_image && errors.digicard_image && (
                           <small className="text-danger form-text">{errors.digicard_image}</small>
                         )}
-                        {imageErr && (
-                          <small className="text-danger form-text">Digicard Image is required!</small>
-                        )}
+                       
                         <small className="text-danger form-text" style={{ display: imgValidation ? 'none' : 'block' }}>Invalid File Type or File size is Exceed More Than 1MB</small>
                       </div>
                       <div className="form-group fill">

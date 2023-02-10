@@ -225,13 +225,16 @@ const EditDigiCard = () => {
         } else if (name.trim().length === 0) {
             setNewDigicardErrReq(true)
             setnNewDigicard(true)
+        } else if ( individualDigiCardData[0].digicard_image==='' || individualDigiCardData[0].digicard_image===undefined) {
+            setImageErr(true)
+            setnNewDigicard(false)
         } else {
             setnNewDigicard(false)
             var formData;
             console.log("------------------------------------------------------");
             if (img === '' || voiceNote === '') {
                 console.log("if condition");
-                 formData = {
+                formData = {
                     // digi_card_name: values.digicardname,
                     digi_card_title: name,
                     digi_card_files: [document.getElementById("digicard_image").value],
@@ -244,7 +247,7 @@ const EditDigiCard = () => {
                 };
             } else {
                 console.log("else condition");
-                 formData = {
+                formData = {
                     // digi_card_name: values.digicardname,
                     digi_card_title: name,
                     digi_card_files: [document.getElementById("digicard_image").value],
@@ -433,7 +436,7 @@ const EditDigiCard = () => {
                                             digi_card_title: values.digicardtitle,
                                             digi_card_files: [values.digicard_image],
                                             digicard_image: imgFile,
-                                            digicard_voice_note: voiceNotePre ,
+                                            digicard_voice_note: voiceNotePre,
                                             digi_card_excerpt: articleDataTitle,
                                             digi_card_content: articleData,
                                             digi_card_keywords: tags,
@@ -595,6 +598,9 @@ const EditDigiCard = () => {
                                                 {touched.digicard_image && errors.digicard_image && (
                                                     <small className="text-danger form-text">{errors.digicard_image}</small>
                                                 )}
+                                                {imageErr && (
+                                                    <small className="text-danger form-text">Digicard Image is required!</small>
+                                                )}
                                                 {imgValidation && (<small className="text-danger form-text">Invalid File Type or File size is Exceed More Than 1MB</small>)}
                                             </div>
                                             <div className="form-group fill">
@@ -634,7 +640,7 @@ const EditDigiCard = () => {
                                                     onAddition={(e) => handleAddition(e)}
                                                 />
                                             </div><br />
-                                            
+
 
 
                                             <div className="form-group fill">
@@ -812,7 +818,7 @@ const EditDigiCard = () => {
                             <Col>
                                 <Button variant="primary" onClick={(e) => {
                                     inserNewDigicard();
-                                }}>Save changes</Button>
+                                }}>Create New DigiCard</Button>
                             </Col>
                         </Row>
                     </Modal.Body>
