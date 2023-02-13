@@ -357,7 +357,7 @@ const DigiCard = () => {
                     console.log("ActiveresultData", ActiveresultData);
 
                     for (let index = 0; index < ActiveresultData.length; index++) {
-                        ActiveresultData[index]['digicard_image'] = <img class="img-fluid img-radius wid-40" alt="Poison regulate" src={ActiveresultData[index].digicard_imageURL} />
+                        ActiveresultData[index]['digicard_image'] = <img className="img-fluid img-radius wid-40" alt="Poison regulate" src={ActiveresultData[index].digicard_imageURL} />
                         ActiveresultData[index]['actions'] = (
                             <>
                                 <Button
@@ -388,7 +388,7 @@ const DigiCard = () => {
                 } else {
                     let resultData = (dataResponse && dataResponse.filter(e => e.digicard_status === 'Archived'))
                     for (let index = 0; index < resultData.length; index++) {
-                        resultData[index]['digicard_image'] = <img class="img-fluid img-radius wid-40" alt="Poison regulate" src={resultData[index].digicard_imageURL} />
+                        resultData[index]['digicard_image'] = <img className="img-fluid img-radius wid-40" alt="Poison regulate" src={resultData[index].digicard_imageURL} />
                         resultData[index]['actions'] = (
                             <>
                                 <>
