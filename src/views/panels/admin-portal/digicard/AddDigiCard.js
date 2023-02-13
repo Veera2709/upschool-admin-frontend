@@ -278,7 +278,6 @@ const AddDigiCard = (
                 } else {
 
                   var formData = {
-                    // digi_card_name: values.digicardname,
                     digi_card_title: values.digicardtitle,
                     digi_card_files: [values.digicard_image],
                     digicard_image: values.digicard_image,
