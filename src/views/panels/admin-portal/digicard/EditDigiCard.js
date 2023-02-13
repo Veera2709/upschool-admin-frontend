@@ -13,7 +13,7 @@ import Swal from 'sweetalert2';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import withReactContent from 'sweetalert2-react-content';
 import ArticleRTE from './ArticleRTE'
-import { areFilesInvalid, isEmptyArray } from '../../../../util/utils';
+import { areFilesInvalid, voiceInvalid } from '../../../../util/utils';
 import Multiselect from 'multiselect-react-dropdown';
 import { fetchIndividualDigiCard, fetchAllDigiCards } from '../../../api/CommonApi'
 import { Link, useHistory, useParams } from 'react-router-dom';
@@ -33,7 +33,7 @@ const EditDigiCard = () => {
     const [imageCount, setImageCount] = useState(0);
     const [tags, setTags] = useState([]);
     const [imgFile, setImgFile] = useState([]);
-    const [voiceNote, setVoiceNote] = useState("");
+    const [voiceNotePre, setVoiceNote] = useState("");
     const [articleData, setArticleData] = useState("");
     const [articleDataTitle, setArticleDataTtitle] = useState("");
     const [digiCardTitles, setDigitalTitles] = useState([]);
@@ -45,6 +45,15 @@ const EditDigiCard = () => {
     const [displayHeading, setDisplayHeading] = useState(sessionStorage.getItem('digicard_type'));
     const [displayHeader, setDisplayHeader] = useState(true);
     const [imgValidation, setImgValidation] = useState(false);
+    const [newdIgicardErrMax, setNewDigicardErrMax] = useState(false);
+    const [newdIgicardErrMin, setNewDigicardErrMin] = useState(false);
+    const [newdIgicardErrReq, setNewDigicardErrReq] = useState(false);
+    const [imageErr, setImageErr] = useState(false);
+    const [status, setStatus] = useState('');
+    const [newDigicard, setnNewDigicard] = useState(false);
+    const [voiceError, setVoiceError] = useState(true);
+
+
 
     const threadLinks = document.getElementsByClassName('page-header');
     console.log('individualDigiCardData initial', individualDigiCardData);
@@ -102,7 +111,7 @@ const EditDigiCard = () => {
             console.log("allDigicardData", allDigicardData.Items);
             let resultData = allDigicardData.Items;
             resultData.forEach((item, index) => {
-                if (item.digicard_status === 'Active' && item.digi_card_id!=digi_card_id) {
+                if (item.digicard_status === 'Active' && item.digi_card_id != digi_card_id) {
                     colourOptions.push({ value: item.digi_card_id, label: item.digi_card_title })
                 }
             })
@@ -175,6 +184,182 @@ const EditDigiCard = () => {
         selectedOption(valuesArr);
     }
 
+    const inserNewDigicard = () => {
+        let name = document.getElementById("newdigicardtitle").value;
+        console.log("nameLength", name.length);
+        let allFilesData = [];
+        let voiceData = [];
+        const fileNameArray = ['digicard_image'];
+        let voiceNote = document.getElementById('digicard_voice_note').files[0];
+        let img = document.getElementById('digicard_image').value;
+        // voiceData.push(voiceNote)
+        console.log("voicenote", voiceNote);
+
+        if (voiceNote == undefined) {
+            voiceData.push({ values: 'false' })
+        } else {
+            voiceData.push(voiceNote)
+        }
+
+
+        fileNameArray.forEach((fileName) => {
+            let selectedFile = document.getElementById(fileName).files[0];
+            console.log('File is here!');
+            console.log(selectedFile);
+            if (selectedFile) {
+                allFilesData.push(selectedFile);
+            }
+        });
+
+        if (areFilesInvalid(allFilesData) !== 0) {
+            setImgValidation(false)
+            setnNewDigicard(false)
+            hideLoader();
+        } else if (voiceInvalid(voiceData) !== 0) {
+            setVoiceError(false)
+            setnNewDigicard(false)
+            console.log("voice note not a mp3");
+        } else if ((name.length <= 2 && name.length > 0) || name.length > 32) {
+            name.length > 32 ? setNewDigicardErrMax(true) : setNewDigicardErrMin(true)
+            setnNewDigicard(true)
+        } else if (name.trim().length === 0) {
+            setNewDigicardErrReq(true)
+            setnNewDigicard(true)
+        } else if ( individualDigiCardData[0].digicard_image==='' || individualDigiCardData[0].digicard_image===undefined) {
+            setImageErr(true)
+            setnNewDigicard(false)
+        } else {
+            setnNewDigicard(false)
+            var formData;
+            console.log("------------------------------------------------------");
+            if (img === '' || voiceNote === '') {
+                console.log("if condition");
+                formData = {
+                    // digi_card_name: values.digicardname,
+                    digi_card_title: name,
+                    digi_card_files: [document.getElementById("digicard_image").value],
+                    digicard_image: individualDigiCardData[0].digicard_image,
+                    digi_card_excerpt: articleDataTitle,
+                    digi_card_content: articleData,
+                    digi_card_keywords: tags,
+                    digicard_voice_note: individualDigiCardData[0].digicard_voice_note === '' ? '' :individualDigiCardData[0].digicard_voice_note,
+                    related_digi_cards: multiOptions,
+                };
+            } else {
+                console.log("else condition");
+                formData = {
+                    // digi_card_name: values.digicardname,
+                    digi_card_title: name,
+                    digi_card_files: [document.getElementById("digicard_image").value],
+                    digicard_image: document.getElementById("digicard_image").value,
+                    digi_card_excerpt: articleDataTitle,
+                    digi_card_content: articleData,
+                    digi_card_keywords: tags,
+                    digicard_voice_note: document.getElementById("digicard_voice_note").value === undefined || '' ? "" : document.getElementById("digicard_voice_note").value,
+                    related_digi_cards: multiOptions,
+                };
+            }
+
+            console.log("formData", formData);
+            axios
+                .post(dynamicUrl.insertDigicard, { data: formData }, { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
+                .then(async (response) => {
+                    console.log({ response });
+                    if (response.Error) {
+                        console.log('Error');
+                        hideLoader();
+                        setDisableButton(false);
+                    } else {
+                        let uploadParams = response.data;
+                        hideLoader();
+                        setDisableButton(false);
+                        console.log('Proceeding with file upload');
+
+                        if (Array.isArray(uploadParams)) {
+                            for (let index = 0; index < uploadParams.length; index++) {
+                                let keyNameArr = Object.keys(uploadParams[index]);
+                                let keyName = keyNameArr[0];
+                                console.log('KeyName', keyName);
+
+
+                                let blobField = document.getElementById(keyName).files[0];
+                                console.log({
+                                    blobField
+                                });
+
+                                let tempObj = uploadParams[index];
+
+                                let result = await fetch(tempObj[keyName], {
+                                    method: 'PUT',
+                                    body: blobField
+                                });
+
+                                console.log({
+                                    result
+                                });
+                            }
+                            // sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingDigiCard });
+                            hideLoader();
+                            setDisableButton(false);
+                            // fetchClientData();
+                            setIsOpen(false);
+
+                            MySwal.fire({
+
+                                title: 'Digicard added successfully!',
+                                icon: 'success',
+                            }).then((willDelete) => {
+
+
+
+                            })
+                        } else {
+                            console.log('No files uploaded');
+                            sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingDigiCard });
+                            hideLoader();
+                            setDisableButton(false);
+                            // fetchClientData();
+                            setIsOpen(false);
+                        }
+                    }
+                })
+                .catch((error) => {
+                    if (error.response) {
+                        // Request made and server responded
+                        console.log(error.response.data);
+
+                        console.log(error.response.data);
+                        if (error.response.status === 401) {
+                            console.log();
+                            hideLoader();
+                            // setIsClientExists(true);
+                            sweetAlertHandler({ title: 'Error', type: 'error', text: MESSAGES.ERROR.DigiCardNameExists });
+
+                        } else if (error.response.data === 'Invalid Token') {
+
+                            sessionStorage.clear();
+                            localStorage.clear();
+                            history.push('/auth/signin-1');
+                            window.location.reload();
+                        } else {
+                            console.log("err", error);
+                        }
+
+                    } else if (error.request) {
+                        // The request was made but no response was received
+                        console.log(error.request);
+                        setDisableButton(false);
+                        hideLoader();
+                    } else {
+                        // Something happened in setting up the request that triggered an Error
+                        console.log('Error', error.message);
+                        setDisableButton(false);
+                        hideLoader();
+                    }
+                });
+        }
+    }
+
     return (
         <>
             <React.Fragment>
@@ -244,14 +429,14 @@ const EditDigiCard = () => {
                                     hideLoader();
                                 } else {
                                     var formData;
-                                    if (values.digicard_image === '' || voiceNote !== undefined) {
+                                    if (values.digicard_image === '' || voiceNotePre !== undefined) {
                                         console.log("if condition");
                                         formData = {
                                             digi_card_id: individualDigiCardData[0].digi_card_id,
                                             digi_card_title: values.digicardtitle,
                                             digi_card_files: [values.digicard_image],
                                             digicard_image: imgFile,
-                                            digicard_voice_note: voiceNote === undefined ? values.digicard_voice_note : values.digicard_voice_note,
+                                            digicard_voice_note: voiceNotePre === undefined ? values.digicard_voice_note : values.digicard_voice_note,
                                             digi_card_excerpt: articleDataTitle,
                                             digi_card_content: articleData,
                                             digi_card_keywords: tags,
@@ -413,6 +598,9 @@ const EditDigiCard = () => {
                                                 {touched.digicard_image && errors.digicard_image && (
                                                     <small className="text-danger form-text">{errors.digicard_image}</small>
                                                 )}
+                                                {imageErr && (
+                                                    <small className="text-danger form-text">Digicard Image is required!</small>
+                                                )}
                                                 {imgValidation && (<small className="text-danger form-text">Invalid File Type or File size is Exceed More Than 1MB</small>)}
                                             </div>
                                             <div className="form-group fill">
@@ -452,7 +640,7 @@ const EditDigiCard = () => {
                                                     onAddition={(e) => handleAddition(e)}
                                                 />
                                             </div><br />
-                                            {console.log("---------------------------", defaultOptions)}
+
 
 
                                             <div className="form-group fill">
@@ -509,14 +697,13 @@ const EditDigiCard = () => {
                                                 </label><br />
                                                 <img width={100} src={imgFile} alt="" className="img-fluid mb-3" />
                                             </div>
-                                            {voiceNote && (<div className="form-group fill">
+                                            {voiceNotePre && (<div className="form-group fill">
                                                 <label className="floating-label" htmlFor="digicard">
                                                     <small className="text-danger">* </small>Voice Note Preview
                                                 </label><br />
                                                 {/* <img width={150} src={voiceNote} alt="" className="img-fluid mb-3" /> */}
                                                 <audio controls>
-                                                    <source src={voiceNote} alt="Audio" type="audio/mp3" />
-                                                    {console.log("voicenote", voiceNote)}
+                                                    <source src={voiceNotePre} alt="Audio" type="audio/mp3" />
                                                 </audio>
                                             </div>)}
 
@@ -552,23 +739,39 @@ const EditDigiCard = () => {
                                             />
                                         </Col>
                                     </Row><br></br>
-                                    <Row>
-                                        <Col sm={10}>
+                                    <Row >
+                                        <Col sm={8}>
                                         </Col>
-                                        <div className="form-group fill float-end" >
-                                            <Col sm={12} className="center">
-                                                <Button
-                                                    className="btn-block"
-                                                    color="success"
-                                                    size="large"
-                                                    type="submit"
-                                                    variant="success"
-                                                // disabled={disableButton === true}
-                                                >
-                                                    Submit
-                                                </Button>
-                                            </Col>
-                                        </div>
+                                        <Col>
+                                            <Row>
+                                                <Col>
+                                                    <Button
+                                                        className="btn-block"
+                                                        color="success"
+                                                        size="large"
+                                                        // type="submit"
+                                                        variant="primary"
+                                                        onClick={(e) => {
+                                                            setStatus("Save");
+                                                            setnNewDigicard(true)
+                                                        }}
+                                                    >
+                                                        Save As New
+                                                    </Button>
+                                                </Col>
+                                                <Col>
+                                                    <Button
+                                                        className="btn-block"
+                                                        color="success"
+                                                        size="large"
+                                                        type="submit"
+                                                        variant="success"
+                                                    >
+                                                        Submit
+                                                    </Button>
+                                                </Col>
+                                            </Row>
+                                        </Col>
                                     </Row>
                                 </form>
                             )}
@@ -576,6 +779,50 @@ const EditDigiCard = () => {
                     </Card.Body>
 
                 </Card>
+                <Modal dialogClassName="my-modal" show={newDigicard} onHide={() => setnNewDigicard(false)}>
+                    <Modal.Header closeButton>
+                        <Modal.Title as="h5">New Digicard Title</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <Row>
+                            <Col sm={9} >
+                                <div className="form-group fill">
+                                    <label className="floating-label" htmlFor="digicardtitle">
+                                        <small className="text-danger">* </small>DigiCard Title
+                                    </label>
+                                    <input
+                                        className="form-control"
+                                        id="newdigicardtitle"
+                                        type="text"
+                                        onChange={(e) => {
+                                            setNewDigicardErrMin(false)
+                                            setNewDigicardErrMax(false)
+                                            setNewDigicardErrReq(false)
+                                        }}
+                                    />
+                                </div>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col sm={9}>
+                                {newdIgicardErrMin && (
+                                    <small className="text-danger form-text">Digicard title is too short!</small>
+                                )}
+                                {newdIgicardErrMax && (
+                                    <small className="text-danger form-text">Digicard title is too long!</small>
+                                )}
+                                {newdIgicardErrReq && (
+                                    <small className="text-danger form-text">Digicard title is required!</small>
+                                )}
+                            </Col>
+                            <Col>
+                                <Button variant="primary" onClick={(e) => {
+                                    inserNewDigicard();
+                                }}>Create New DigiCard</Button>
+                            </Col>
+                        </Row>
+                    </Modal.Body>
+                </Modal>
             </React.Fragment>
         </>
     )
