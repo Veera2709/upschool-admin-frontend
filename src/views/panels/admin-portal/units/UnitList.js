@@ -457,7 +457,7 @@ const UnitList = (props) => {
                                         pageLocation === 'active-units' ? (
                                             < React.Fragment >
                                                 <div>
-                                                    <h3 style={{ textAlign: 'center' }}>No Units Found</h3>
+                                                    <h3 style={{ textAlign: 'center' }}>No {pageLocation === "active-units" ? 'Active Units' : 'Archived Units'} Found</h3>
                                                     <div className="form-group fill text-center">
                                                         <br></br>
                                                         <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={(e) => { handleAddUnit(e) }}>
@@ -475,7 +475,7 @@ const UnitList = (props) => {
                                                 </Modal>
                                             </React.Fragment>
                                         ) : (
-                                            <h3 style={{ textAlign: 'center' }}>No Units Found</h3>
+                                            <h3 style={{ textAlign: 'center' }}>No {pageLocation === "active-units" ? 'Active Units' : 'Archived Units'} Found</h3>
                                         )
                                     }
 

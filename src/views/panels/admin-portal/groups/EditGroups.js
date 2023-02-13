@@ -35,6 +35,7 @@ const EditGroups = ({ className, ...rest }) => {
         { value: 'Level_3', label: 'Level-3' }
     ]);
 
+    const [digicardsDropdown, setDigicardsDropdown] = useState([]);
     const [questionsDropdown, setQuestionsDropdown] = useState([]);
 
     const [groupNameExistsErrMsg, setGroupNameExistsErrMsg] = useState(false);
@@ -43,11 +44,13 @@ const EditGroups = ({ className, ...rest }) => {
 
     const [selectedGroupType, setSelectedGroupType] = useState([]);
     const [selectedQuestions, setSelectedQuestions] = useState([]);
+    const [selectedDigicards, setSelectedDigicards] = useState([]);
     const [selectedLevels, setSelectedLevels] = useState([]);
 
     const [previousGroupData, setPreviousGroupData] = useState([]);
     const [previousGroupType, setPreviousGroupType] = useState([]);
     const [previousQuestions, setPreviousQuestions] = useState([]);
+    const [previousDigicards, setPreviousDigicards] = useState([]);
     const [previousLevels, setPreviousLevels] = useState([]);
 
     const handleGroupTypeChange = (event) => {
@@ -68,6 +71,19 @@ const EditGroups = ({ className, ...rest }) => {
 
         console.log(valuesArr);
         setSelectedQuestions(valuesArr);
+    }
+
+    const handleDigicardsChange = (event) => {
+
+        console.log(event);
+
+        let valuesArr = [];
+        for (let i = 0; i < event.length; i++) {
+            valuesArr.push(event[i].value)
+        }
+
+        console.log(valuesArr);
+        setSelectedDigicards(valuesArr);
     }
 
     const handleLevelsChange = (event) => {
@@ -127,13 +143,11 @@ const EditGroups = ({ className, ...rest }) => {
 
                     setQuestionsDropdown(questionsArr);
 
+
                     axios
                         .post(
-                            dynamicUrl.fetchIndividualGroupData,
-                            {
-                                data: group_id
-
-                            },
+                            dynamicUrl.fetchDigicardIdAndName,
+                            {},
                             {
                                 headers: { Authorization: sessionStorage.getItem('user_jwt') }
                             }
@@ -147,50 +161,133 @@ const EditGroups = ({ className, ...rest }) => {
 
                                 console.log('inside res');
 
-                                let resultDataIndGroup = response.data.Items[0];
-                                console.log("resultDataIndGroup", resultDataIndGroup);
+                                let resultDataAllDigicards = response.data.Items;
+                                console.log("resultDataAllDigicards", resultDataAllDigicards);
 
-                                setIsLoading(false);
+                                let digicardsArr = [];
+                                let getQuestionsArr;
 
-                                setPreviousGroupType({ value: resultDataIndGroup.group_type, label: resultDataIndGroup.group_type });
-                                setSelectedGroupType(resultDataIndGroup.group_type);
+                                if (Array.isArray(resultDataAllDigicards)) {
+                                    for (let index = 0; index < resultDataAllDigicards.length; index++) {
 
-                                let questionData = resultDataIndGroup.group_question_id;
-                                let questionsArr = [];
-                                let getQuestionsArr, getDataQuestionsSec;
+                                        getQuestionsArr = [{ value: resultDataAllDigicards[index].digi_card_id, label: resultDataAllDigicards[index].digi_card_title }];
 
-                                if (Array.isArray(questionData)) {
-                                    for (let index = 0; index < questionData.length; index++) {
-
-                                        getDataQuestionsSec = resultDataAllQuestions.filter(p => p.question_id === questionData[index]);
-                                        getQuestionsArr = [{ label: getDataQuestionsSec[0].question_label, value: questionData[index] }];
-                                        questionsArr.push(getQuestionsArr[0]);
+                                        digicardsArr.push(getQuestionsArr[0]);
 
                                     }
                                 }
 
-                                setPreviousQuestions(questionsArr);
-                                setSelectedQuestions(resultDataIndGroup.group_question_id);
+                                console.log(digicardsArr);
+                                setDigicardsDropdown(digicardsArr);
 
-                                let levelsData = resultDataIndGroup.group_levels;
-                                let levelsArr = [];
-                                let getLevelsArr, getDataLevelsSec;
 
-                                if (Array.isArray(levelsData)) {
-                                    for (let index = 0; index < levelsData.length; index++) {
+                                axios
+                                    .post(
+                                        dynamicUrl.fetchIndividualGroupData,
+                                        {
+                                            data: group_id
 
-                                        getDataLevelsSec = levelsDropdown.filter(p => p.value === levelsData[index]);
-                                        getLevelsArr = [{ label: getDataLevelsSec[0].label, value: levelsData[index] }];
-                                        console.log(getLevelsArr);
-                                        levelsArr.push(getLevelsArr[0]);
+                                        },
+                                        {
+                                            headers: { Authorization: sessionStorage.getItem('user_jwt') }
+                                        }
+                                    )
+                                    .then((response) => {
 
-                                    }
-                                }
+                                        console.log(response.status === 200);
+                                        let result = response.status === 200;
 
-                                setPreviousLevels(levelsArr);
-                                setSelectedLevels(resultDataIndGroup.group_levels);
+                                        if (result) {
 
-                                setPreviousGroupData(resultDataIndGroup);
+                                            console.log('inside res');
+
+                                            let resultDataIndGroup = response.data.Items[0];
+                                            console.log("resultDataIndGroup", resultDataIndGroup);
+
+                                            setIsLoading(false);
+
+                                            setPreviousGroupType({ value: resultDataIndGroup.group_type, label: resultDataIndGroup.group_type });
+                                            setSelectedGroupType(resultDataIndGroup.group_type);
+
+                                            let questionData = resultDataIndGroup.group_question_id;
+                                            let questionsArr = [];
+                                            let getQuestionsArr, getDataQuestionsSec;
+
+                                            if (Array.isArray(questionData)) {
+                                                for (let index = 0; index < questionData.length; index++) {
+
+                                                    getDataQuestionsSec = resultDataAllQuestions.filter(p => p.question_id === questionData[index]);
+                                                    getQuestionsArr = [{ label: getDataQuestionsSec[0].question_label, value: questionData[index] }];
+                                                    questionsArr.push(getQuestionsArr[0]);
+
+                                                }
+                                            }
+
+                                            setPreviousQuestions(questionsArr);
+                                            setSelectedQuestions(resultDataIndGroup.group_question_id);
+
+                                            let digicardData = resultDataIndGroup.group_related_digicard;
+                                            let digicardsArr = [];
+                                            let getDigicardsArr, getDataDigicardsSec;
+
+                                            if (Array.isArray(digicardData)) {
+                                                for (let index = 0; index < digicardData.length; index++) {
+
+                                                    getDataDigicardsSec = resultDataAllDigicards.filter(p => p.digi_card_id === digicardData[index]);
+                                                    getDigicardsArr = [{ label: getDataDigicardsSec[0].digi_card_title, value: digicardData[index] }];
+                                                    digicardsArr.push(getDigicardsArr[0]);
+
+                                                }
+                                            }
+
+                                            setPreviousDigicards(digicardsArr);
+                                            setSelectedDigicards(resultDataIndGroup.group_related_digicard);
+
+                                            let levelsData = resultDataIndGroup.group_levels;
+                                            let levelsArr = [];
+                                            let getLevelsArr, getDataLevelsSec;
+
+                                            if (Array.isArray(levelsData)) {
+                                                for (let index = 0; index < levelsData.length; index++) {
+
+                                                    getDataLevelsSec = levelsDropdown.filter(p => p.value === levelsData[index]);
+                                                    getLevelsArr = [{ label: getDataLevelsSec[0].label, value: levelsData[index] }];
+                                                    console.log(getLevelsArr);
+                                                    levelsArr.push(getLevelsArr[0]);
+
+                                                }
+                                            }
+
+                                            setPreviousLevels(levelsArr);
+                                            setSelectedLevels(resultDataIndGroup.group_levels);
+
+                                            setPreviousGroupData(resultDataIndGroup);
+
+
+                                        } else {
+
+                                            console.log('else res');
+                                            hideLoader();
+
+                                        }
+                                    })
+                                    .catch((error) => {
+                                        if (error.response) {
+                                            hideLoader();
+
+                                            console.log(error.response.data);
+
+                                        } else if (error.request) {
+
+                                            console.log(error.request);
+                                            hideLoader();
+
+                                        } else {
+
+                                            console.log('Error', error.message);
+                                            hideLoader();
+                                        }
+                                    });
 
 
                             } else {
@@ -304,7 +401,7 @@ const EditGroups = ({ className, ...rest }) => {
                             }
 
                             {
-                                previousGroupData.length === 0 || previousGroupData.length === "0" || previousGroupType.length === 0 ? <></> : (
+                                previousGroupData.length === 0 || previousGroupType.length === 0 ? <></> : (
 
                                     <Card>
 
@@ -352,7 +449,8 @@ const EditGroups = ({ className, ...rest }) => {
                                                             group_name: values.group_name,
                                                             group_type: selectedGroupType,
                                                             group_question_id: selectedQuestions,
-                                                            group_levels: selectedLevels
+                                                            group_levels: selectedLevels,
+                                                            group_related_digicard: selectedDigicards
                                                         }
 
                                                         console.log("payLoad", payLoad);
@@ -540,6 +638,33 @@ const EditGroups = ({ className, ...rest }) => {
                                                                 {levelsErrMsg && (
                                                                     <small className="text-danger form-text">{'Levels required!'}</small>
                                                                 )}
+                                                            </Col>
+                                                        </Row>
+
+                                                        <br />
+                                                        <Row>
+
+                                                            <Col xs={6}>
+                                                                {
+                                                                    digicardsDropdown && (
+                                                                        <>
+                                                                            <label className="floating-label">
+                                                                                <small className="text-danger"></small>
+                                                                                Related Digicards
+                                                                            </label>
+
+                                                                            <Select
+                                                                                defaultValue={previousDigicards}
+                                                                                isMulti
+                                                                                name="relatedDigicards"
+                                                                                options={digicardsDropdown}
+                                                                                className="basic-multi-select"
+                                                                                classNamePrefix="Select"
+                                                                                onChange={event => handleDigicardsChange(event)}
+                                                                            />
+                                                                        </>
+                                                                    )
+                                                                }
                                                             </Col>
                                                         </Row>
 

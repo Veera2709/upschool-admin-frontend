@@ -97,7 +97,7 @@ const AllocateClass = ({ schoolId, user_id }) => {
         const showError = formFields.some(element => unique.size === unique.add(element.section_id).size);
         // alert(showError)
 
-        let emptyFieldValidation = formFields.find(o => o.section_id === "" || o.section_id === 0 || o.section_id === undefined)
+        let emptyFieldValidation = formFields.find(o => o.section_id.trim() === "" || o.section_id === 0 || o.section_id === undefined)
         if (emptyFieldValidation) {
             setSectionValidation(true)
         } else if (showError === true) {

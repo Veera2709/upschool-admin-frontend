@@ -117,7 +117,8 @@ const dynamicUrl = {
     addGroups: baseUrl + '/addGroups',
     fetchIndividualGroupData: baseUrl + '/fetchIndividualGroupData',
     toggleGroupStatus: baseUrl + '/toggleGroupStatus',
-    editGroup: baseUrl + '/editGroup'
+    editGroup: baseUrl + '/editGroup',
+    fetchDigicardIdAndName: baseUrl + '/fetchDigicardIdAndName'
 
 }
 

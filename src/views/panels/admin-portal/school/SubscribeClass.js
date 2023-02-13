@@ -65,7 +65,7 @@ const SubscribeClass = ({ className, rest, id, setIsOpenSubscribeClass }) => {
 
         console.log(sendData);
 
-        let emptyFieldValidation = formFields.find(o => o.client_class_name === "" || o.upschool_class_id === "" || o.upschool_class_id === "Select Class")
+        let emptyFieldValidation = formFields.find(o => o.client_class_name.trim() === "" || o.upschool_class_id === "" || o.upschool_class_id === "Select Class")
 
         console.log(emptyFieldValidation);
 
@@ -121,7 +121,7 @@ const SubscribeClass = ({ className, rest, id, setIsOpenSubscribeClass }) => {
 
                         displayErrorMessage = displayErrorMessage.startsWith("REPEATED") ? error.response.data : (
                             "MULTIPLE SUBSCRIPTION FOR : " +
-                            previousData.upschoolClassItems.find(o => o.class_id === matchID).class_name
+                            previousData.upschoolClassItems.find(o => o.class_id.trim() === matchID).class_name
 
                         )
 
