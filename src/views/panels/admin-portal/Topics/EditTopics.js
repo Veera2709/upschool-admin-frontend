@@ -12,7 +12,6 @@ import withReactContent from 'sweetalert2-react-content';
 import Swal from 'sweetalert2';
 import dynamicUrl from '../../../../helper/dynamicUrls';
 import { Label } from 'recharts';
-import Multiselect from 'multiselect-react-dropdown';
 import axios from 'axios';
 import { fetchAllConcepts, fetchAllTopics, getIndividualTopic } from '../../../api/CommonApi'
 import MESSAGES from '../../../../helper/messages';
