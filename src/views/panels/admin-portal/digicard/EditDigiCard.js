@@ -91,6 +91,10 @@ const EditDigiCard = () => {
         FileLength === 1 ? setImgFile(URL.createObjectURL(e.target.files[0])) : setImgFile()
     }
 
+    const previewData = () => {
+        window.open(`/admin-portal/preview/${digi_card_id}`)
+      }
+
     const previewVoiceNote = (e) => {
         setVoiceNote(URL.createObjectURL(e.target.files[0]));
     }
@@ -750,10 +754,21 @@ const EditDigiCard = () => {
                                                 </Col>
                                             </Row><br></br>
                                             <Row >
-                                                <Col sm={8}>
+                                                <Col sm={6}>
                                                 </Col>
                                                 <Col>
                                                     <Row>
+                                                        <Col>
+                                                            <Button
+                                                                className="btn-block"
+                                                                color="success"
+                                                                size="large"
+                                                                variant="success"
+                                                                onClick={previewData}
+                                                            >
+                                                                preview
+                                                            </Button>
+                                                        </Col>
                                                         <Col>
                                                             <Button
                                                                 className="btn-block"
