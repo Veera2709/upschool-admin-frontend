@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { DeviceFrameset } from './react-device-frameset';
+import { DeviceFrameset } from './react-device-frameset/dist/index.js';
 import { Container, Row, Col, Button, Card } from 'react-bootstrap';
 import './react-device-frameset/dist/styles/marvel-devices.min.css'
 import './react-device-frameset/dist/styles/device-selector.min.css'
