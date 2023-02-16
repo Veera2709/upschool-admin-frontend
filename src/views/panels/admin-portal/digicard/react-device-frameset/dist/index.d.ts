@@ -146,4 +146,4 @@ declare const DeviceEmulator: React$1.NamedExoticComponent<DeviceEmulatorProps>;
 declare type ZoomableType = React$1.DetailedHTMLProps<React$1.HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 declare const Zoomable: React$1.NamedExoticComponent<ZoomableType>;
 
-export { DeviceEmulator, DeviceEmulatorProps, DeviceFrameset, DeviceFramesetProps, DeviceOptions, DeviceSelector, DeviceSelectorProps, Zoomable, ZoomableType };
+export default { DeviceEmulator, DeviceFrameset, DeviceOptions, DeviceSelector, Zoomable, };
