@@ -355,7 +355,8 @@ const EditUsersGeneralStudent = ({ user_id, user_role }) => {
                                                 user_dob: userDOB.yyyy_mm_dd,
                                                 class: individualUserData.class_id,
                                                 section: individualUserData.section_id,
-                                                school: individualUserData.school_id
+                                                // school: individualUserData.school_id
+                                                school: previousSchool
 
                                                 //individualUserData.user_dob.yyyy_mm_dd
 
@@ -467,7 +468,7 @@ const EditUsersGeneralStudent = ({ user_id, user_role }) => {
                                                                             <small className="text-danger">* </small>School
                                                                         </label>
                                                                         {console.log(previousSchool)}
-                                                                        <select
+                                                                        {/* <select
                                                                             className="form-control"
                                                                             error={touched.school && errors.school}
                                                                             name="school"
@@ -479,9 +480,7 @@ const EditUsersGeneralStudent = ({ user_id, user_role }) => {
                                                                             // value={values.school}
                                                                             defaultValue={previousSchool}
                                                                             disabled={true}
-                                                                        >
-
-                                                                            {/* <option>Select School</option> */}
+                                                                        >                                                                            
                                                                             {console.log(schoolName_ID)}
                                                                             {schoolName_ID.map((schoolData) => {
 
@@ -491,7 +490,18 @@ const EditUsersGeneralStudent = ({ user_id, user_role }) => {
 
                                                                             })}
 
-                                                                        </select>
+                                                                        </select> */}
+
+                                                                        <input
+                                                                            className="form-control"
+                                                                            error={touched.school && errors.school}
+                                                                            name="school"
+                                                                            onBlur={handleBlur}
+                                                                            onChange={handleChange}
+                                                                            type="text"
+                                                                            value={values.school}
+                                                                            readOnly={true}
+                                                                        />
                                                                         {touched.school && errors.school && (
                                                                             <small className="text-danger form-text">{errors.school}</small>
                                                                         )}
