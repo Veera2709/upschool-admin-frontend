@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { DeviceFrameset } from './react-device-frameset/dist/index.js';
+import { DeviceFrameset } from './react-device-frameset/dist/index';
 import { Container, Row, Col, Button, Card } from 'react-bootstrap';
 import './react-device-frameset/dist/styles/marvel-devices.min.css'
 import './react-device-frameset/dist/styles/device-selector.min.css'
@@ -12,7 +12,7 @@ import { Scrollbars } from 'react-custom-scrollbars';
 import { Link, useHistory, useParams } from 'react-router-dom';
 import { fetchIndividualDigiCard, fetchAllDigiCards } from '../../../api/CommonApi'
 import dynamicUrl from '../../../../helper/dynamicUrls';
-import { async } from "q";
+
 
 
 
