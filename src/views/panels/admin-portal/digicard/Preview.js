@@ -17,7 +17,6 @@ import dynamicUrl from '../../../../helper/dynamicUrls';
 
 
 
-
 function Preview() {
 
     const [device, setDevice] = useState('iPhone X');
