@@ -62,27 +62,24 @@ function Preview() {
     return isEmptyObject(previewData) ? null : (
 
 
-        <div className="auth-wrapper">
+        <div>
             <Row>
-                <Col sm={4}>
+                <Col sm={2}>
 
                     <Row>
-                        <Col className='d-flex flex-column justify-content-between' style={{marginTop:'20px'}}>
-                            <Button id='primary' variant="warning" onClick={(e) => {
+                        <Col className='d-flex flex-column justify-content-between' style={{marginTop:'20px',marginLeft: '20px'}}>
+                            <Button id='primary' variant="primary" onClick={(e) => {
                                 setDevice("iPhone 8");
                                 setId("card");
                             }}>iPhone 8</Button><br/>
-                            <Button id='primary' variant="warning" onClick={(e) => { setDevice("HTC One"); setId('card1') }}>HTC One </Button> <br/>
-                            <Button id='primary' variant="warning" onClick={(e) => { setDevice("Samsung Galaxy S5"); setId('card1') }}>Samsung Galaxy S5</Button><br/>
-                            <Button id='primary' variant="warning" onClick={() => { setDevice("iPad Mini"); setId('ipad') }}>Ipad</Button><br/>
-                            <Button id='primary' variant="warning" onClick={() => { setLandscape(true) }}>Landscape View</Button><br/>
-                            <Button id='primary' variant="warning" onClick={() => { setLandscape(false) }}>Front View</Button><br/>
+                            <Button id='primary' variant="primary" onClick={(e) => { setDevice("HTC One"); setId('card1') }}>HTC One </Button> <br/>
+                            <Button id='primary' variant="primary" onClick={(e) => { setDevice("Samsung Galaxy S5"); setId('card1') }}>Samsung Galaxy S5</Button><br/>
+                            <Button id='primary' variant="primary" onClick={() => { setDevice("iPad Mini"); setId('ipad') }}>Ipad</Button><br/>
                         </Col>
                     </Row>
                 </Col>
                 <Col sm={2}></Col>
-                <Col sm={6}>
-                    {isLandscape === false ? (
+                <Col sm={6} style={{marginTop:'20px'}}>
                         <DeviceFrameset device={device} color="gold">
                             <Scrollbars>
                                 <div style={{ display: isShown ? 'block' : 'none' }} >
@@ -110,43 +107,7 @@ function Preview() {
                                     <Button className='float-right' variant="primary" onClick={() => { setIsShown(true) }}>Close</Button>
                                 </div>
                             </Scrollbars>
-
                         </DeviceFrameset>
-                    ) : (
-                        <DeviceFrameset device={device} color="gold" landscape>
-                            <Scrollbars>
-                                <div style={{ display: isShown ? 'block' : 'none', marginLeft: '20px', marginRight: '20px' }} >
-                                    <Container>
-                                        <Card id={id}>
-                                            <Card.Img variant="top" src={previewData[0].digicard_imageURL} className='img-fluid  wid-160' />
-                                            <Card.Body>
-                                                <Card.Title>{previewData[0].digi_card_title}</Card.Title>
-                                                <Card.Text >
-                                                    {ReactHtmlParser(previewData[0].digi_card_excerpt)}
-                                                </Card.Text>
-                                            </Card.Body>
-                                            <Card.Footer>
-                                                <Button variant="primary" className='float-right' onClick={() => { setIsShown(false) }}>RED MORE</Button>
-                                            </Card.Footer>
-                                        </Card>
-                                    </Container>
-                                </div>
-                                <div style={{ display: isShown ? 'none' : 'block', marginLeft: '20px', marginRight: '20px' }} id='digicardText'>
-                                    <h3 id='digicardTitle'>{previewData[0].digi_card_title}</h3><br />
-                                    <Card>
-                                        <Card.Body>
-                                            <Card.Text>
-                                                {ReactHtmlParser(previewData[0].digi_card_content)}
-                                            </Card.Text>
-                                            <Card.Footer>
-                                                <Button variant="primary" className='float-right' onClick={() => { setIsShown(true) }}>Close</Button>
-                                            </Card.Footer>
-                                        </Card.Body>
-                                    </Card>
-                                </div>
-                            </Scrollbars>
-                        </DeviceFrameset>
-                    )}
                 </Col>
             </Row>
         </div>
