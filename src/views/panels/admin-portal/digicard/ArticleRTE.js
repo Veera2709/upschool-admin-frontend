@@ -1,6 +1,6 @@
 import React from "react";
 import "./Styles/article.css";
-import SunEditor from "./suneditor-react";
+import SunEditor from "./suneditor-react/dist/SunEditor";
 import "../digicard/Styles/suneditor.min.css";
 import katex from 'katex'
 import 'katex/dist/katex.min.css'
