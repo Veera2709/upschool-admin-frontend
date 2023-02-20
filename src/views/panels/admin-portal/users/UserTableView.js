@@ -478,7 +478,7 @@ const UserTableView = ({ _userRole }) => {
                     className="btn btn-icon btn-rounded btn-info"
                     // onClick={(e) => saveUserId(e, userId, responseData[index].user_role)}
                     onClick={(e) => {
-                      history.push(`/admin-porttal/edit-users/${responseData[index].teacher_id}/${responseData[index].user_role}/${responseData[index].school_id}`)
+                      history.push(`/admin-portal/edit-users/${responseData[index].teacher_id}/${responseData[index].user_role}/${responseData[index].school_id}`)
                     }
 
                     }
@@ -501,7 +501,7 @@ const UserTableView = ({ _userRole }) => {
                     size="sm"
                     className="btn btn-icon btn-rounded btn-info"
                     // onClick={(e) => saveUserId(e, userId, responseData[index].user_role)}
-                    onClick={(e) => history.push(`/admin-porttal/edit-users/${responseData[index].parent_id}/${responseData[index].user_role}/${responseData[index].school_id}`)}
+                    onClick={(e) => history.push(`/admin-portal/edit-users/${responseData[index].parent_id}/${responseData[index].user_role}/${responseData[index].school_id}`)}
                   >
                     <i className="feather icon-edit" /> &nbsp; Edit
                   </Button>{' '}
