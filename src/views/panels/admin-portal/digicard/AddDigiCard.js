@@ -115,17 +115,7 @@ const AddDigiCard = (
 
 
 
-  // const previewData = () => {
-  //   var data = {
-  //     imgUrl: ImgURL,
-  //     articleData: articleData,
-  //     digi_card_name: document.getElementById('name').value,
-  //     digi_card_title: document.getElementById('title').value
-  //   }
-
-  //   sessionStorage.setItem("data", JSON.stringify(data))
-  //   history.push(`/admin-portal/preview`)
-  // }
+ 
 
 
   const fetchAllData = async () => {
@@ -188,7 +178,7 @@ const AddDigiCard = (
   }
 
 
- 
+
 
   return (
     <>
@@ -431,7 +421,7 @@ const AddDigiCard = (
                         {touched.digicard_image && errors.digicard_image && (
                           <small className="text-danger form-text">{errors.digicard_image}</small>
                         )}
-                       
+
                         <small className="text-danger form-text" style={{ display: imgValidation ? 'none' : 'block' }}>Invalid File Type or File size is Exceed More Than 1MB</small>
                       </div>
                       <div className="form-group fill">
@@ -556,11 +546,11 @@ const AddDigiCard = (
                     {/* <small className="text-danger form-text" >Select DigiCard Titles</small> */}
                   </Row><br></br>
                   <Row >
-                    <Col sm={10}>
+                    <Col sm={8}>
                     </Col>
                     <Col>
                       <Row>
-                        
+                        <Col></Col>
                         <Col>
                           <Button
                             className="btn-block"
@@ -579,25 +569,6 @@ const AddDigiCard = (
               )}
 
             </Formik>
-            <Row>
-              <Col sm={10}>
-              </Col>
-              {/* <div className="form-group fill float-end" >
-              <Col sm={12} className="center">
-                <Button
-                  className="btn-block"
-                  color="success"
-                  size="large"
-                  type="submit"
-                  variant="success"
-                  onClick={previewData}
-                >
-                  preview
-                </Button>
-              </Col>
-            </div> */}
-
-            </Row>
           </Card.Body>
 
         </Card>

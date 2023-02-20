@@ -1,130 +1,95 @@
-/* .container{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #000;
-  height: 100vh;
-  overflow: hidden;
-}
-.mobile{
-  width: 300px;
-  height: 600px;
-  background: #fff;
-  border-radius: 20px;
-}
-.upper{
-  background: rgb(123, 123, 123);
-  width: 100%;
-  height: 50px;
-  border-radius: 20px 20px 0 0 ;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.lower{
-  background: rgb(123, 123, 123);
-  width: 100%;
-  height: 50px;
-  border-radius: 0 0 20px 20px;
-  transform: translateY(500px);
-}
-.camera{
-  width: 12px;
-  height: 12px;
-  background: #000;
-  border-radius: 50%;
-}
-.speaker{
-  width: 50px;
-  height: 12px;
-  background: #000;
-  border-radius: 10px;
-} */
+@import url("https://fonts.googleapis.com/css?family=Lato:400,400i,700");
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Teko:wght@600&display=swap');
+
+
+
 
 .App {
   font-family: sans-serif;
   text-align: center;
 }
-#digicardTitle{
-  text-align: center;
-}
-/* .preview{
-  text-align: center;
-} */
-.main{
+
+.main {
   display: flex;
   justify-content: space-between;
 }
-#digicardTitle{
-  text-shadow: 0 0 20px #9a9595, 0 0 5px #2a2728;
-}
-#img{
-  margin-top:70px ;
+
+#img {
+  margin-top: 70px;
   width: 200px;
 }
 
-.justify-content-md-cente{
- display: flex;
+.justify-content-md-cente {
+  display: flex;
 }
-span{
+
+/* span {
   background-color: black;
   color: white;
   width: 80%;
   margin: 5px auto;
-}
+} */
 
-#digicardText{
- height: 0px;
- display: none
+#digicardText {
+  height: 0px;
+  display: none
 }
 
 #digicardText h3 {
   text-decoration: underline;
 }
-#digicardText{
+
+#digicardText {
   /* padding: 17px 15px */
   padding-left: 15px;
   padding-right: 10px;
 }
 
-#digicardText h1{
-  font-family: fantasy;
 
+
+#deviceScroll {
+  height: 100px;
+  overflow-y: auto
 }
-#deviceScroll{
-  height: 100px;      
-   overflow-y: auto
-}
-#ipad{
+
+
+
+#iphonex {
   margin-top: 100px;
-  padding: 50px 50px 50px 50px;
-  width: 20rem;
+  padding: 50px 50px 70px 50px;
 }
 
-#iphonex{
-  margin-top:100px;
+#card {
+  margin-top: 60px;
   padding: 50px 50px 70px 50px;
 }
-#card{
-  margin-top:60px;
-  padding: 50px 50px 70px 50px;
-}
-#card1{
-  margin-top:50px;
+
+#card1 {
+  margin-top: 50px;
   padding: 20px 20px 20px 20px;
 }
 
-      
 
-#digicardText{
+
+#digicardText {
   margin-top: 50px;
 }
 
-#iphonex{
+#iphonex {
   margin-top: 50px;
-  height: 710px;
-  overflow-y: auto;
 }
+
+h1{
+  font-family: 'Teko', sans-serif;
+  background-color: rgb(172, 171, 191);
+  border-radius: 10px;
+}
+/* h1>strong{
+  margin-left: 15px;
+  font-size: x-large;
+  font-family: 'Teko';
+} */
 /* 
 ol  {
   clear: both;
@@ -181,19 +146,24 @@ ol  li::before {
 
 
 
-@import url("https://fonts.googleapis.com/css?family=Lato:400,400i,700");
-  
+
 ol {
   max-width: 350px;
   counter-reset: my-awesome-counter;
   list-style: none;
   padding-left: 40px;
 }
+
+
 ol li {
   margin: 0 0 0.5rem 0;
   counter-increment: my-awesome-counter;
   position: relative;
+  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  background: linear-gradient(135deg, #83e4e2 0%, #a2ed56 100%);
+  /* border-radius: 5%; */
 }
+
 ol li::before {
   content: counter(my-awesome-counter);
   color: #fcd000;
@@ -211,7 +181,56 @@ ol li::before {
   border-radius: 50%;
   text-align: center;
   box-shadow: 1px 1px 0 #999;
-} 
+}
+
+ul {
+  max-width: 350px;
+  counter-reset: my-awesome-counter;
+  list-style: none;
+  padding-left: 40px;
+}
+
+
+ul li {
+  align-items: center;
+  margin: 0 0 0.5rem 0;
+  position: relative;
+  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  /* background-color: rgb(107, 250, 171); */
+  /* border-radius: 5%; */
+}
+
+ul li::before {
+  content: counter(my-awesome-counter);
+  color:black;
+  font-size: 1.5rem;
+  font-weight: bold;
+  position: absolute;
+  --size: 32px;
+  left: calc(-1 * var(--size) - 10px);
+  line-height: var(--size);
+  width: var(--size);
+  height: var(--size);
+  top: 0;
+  transform: rotate(-10deg);
+  background: black;
+  border-radius: 50%;
+  text-align: center;
+  box-shadow: 1px 1px 0 #999;
+}
+
+.closeBut{
+  margin-bottom: 10px;
+}
+
+table, th, td {
+  border: 1px solid;
+}
+
+th{
+  background-color: #999;
+}
+
 
 
 /* 
@@ -234,7 +253,36 @@ li:before {
   display: inline-block;
 } */
 
-h2{
+/* h2 {
   font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
   font-size: 5px;
+} */
+
+/* h1 ,h2,h3,h4,h5,h6{
+  border-radius: 20px;
+  background: black;
+  color: white;
+  font-size: 30px;
+  overflow-wrap: break-word;
+  font-family: 'Courier New', Courier, monospace;
+  font-style: italic;
+} */
+
+
+
+
+
+#digicardTitle{
+  background: black;
+  border-radius:  100px / 120px;
+  text-align: center;
+  color: white;
 }
+
+#divBut{
+  padding-left: 20px;
+}
+
+
+
+

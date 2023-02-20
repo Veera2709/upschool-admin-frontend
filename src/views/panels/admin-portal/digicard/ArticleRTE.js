@@ -1,13 +1,13 @@
 import React from "react";
-import "../digicard/Styles/article.css";
-import SunEditor from "suneditor-react";
+import "./Styles/article.css";
+import SunEditor from "./suneditor-react/dist/SunEditor";
 import "../digicard/Styles/suneditor.min.css";
 import katex from 'katex'
 import 'katex/dist/katex.min.css'
-import 'suneditor/dist/css/suneditor.min.css';
+import './suneditor/dist/suneditor.css';
 // import EditTable from './Table'
 
-import plugins from 'suneditor/src/plugins'
+import plugins from './suneditor/src/plugins'
 
 function ArticleRTE({
   setArticleSize,
