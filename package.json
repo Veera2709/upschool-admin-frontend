@@ -101,6 +101,7 @@
     "react-tag-autocomplete": "^6.3.0",
     "react-to-print": "^2.14.5",
     "react-toast-notifications": "^2.5.1",
+    "react-tooltip": "^5.8.1",
     "react-trello": "^2.2.11",
     "react-useinterval": "^1.0.2",
     "reactour": "^1.18.7",

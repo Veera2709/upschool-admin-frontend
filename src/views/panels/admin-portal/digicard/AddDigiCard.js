@@ -56,9 +56,7 @@ const AddDigiCard = (
   const [imageCount, setImageCount] = useState(0);
   const [multiOptions, setMultiOptions] = useState([]);
   const [tags, setTags] = useState([]);
-  const [index, setIndex] = useState(0);
   const [ImgURL, setImgURL] = useState([]);
-  const [display, setDisplay] = useState('none');
   const [imgFile, setImgFile] = useState([]);
   const [articleData, setArticleData] = useState("");
   const [articleDataTitle, setArticleDataTtitle] = useState("");
@@ -111,6 +109,7 @@ const AddDigiCard = (
     setImage(e.target)
     console.log("FileLength", FileLength);
     FileLength === 1 ? setImgFile(URL.createObjectURL(e.target.files[0])) : setImgFile()
+    console.log(URL.createObjectURL(e.target.files[0]));
   }
 
 
@@ -496,14 +495,13 @@ const AddDigiCard = (
                       </div>
                     </Col>
                     <Col sm={6}><br />
-
                       <div className="form-group fill">
                         <label className="floating-label" htmlFor="digicardtitle">
                           <small className="text-danger">* </small>Logo preview
                         </label><br />
+                        {console.log("url",imgFile)}
                         <img width={150} src={imgFile} alt="" className="img-fluid mb-3" />
                       </div>
-
                     </Col>
                   </Row>
                   <Row>

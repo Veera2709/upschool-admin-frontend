@@ -84,6 +84,8 @@ const EditDigiCard = () => {
         });
     };
 
+    
+
     const previewImage = (e) => {
         // setImgFile(URL.createObjectURL(e.target.files[0]));
         let FileLength = e.target.files.length

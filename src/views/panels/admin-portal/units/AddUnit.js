@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 // import './style.css'
-import { Row, Col, Card, Button, Modal, Dropdown, Form, ModalBody } from 'react-bootstrap';
+import { Row, Col, Card, Button, OverlayTrigger, Tooltip, Form, ModalBody } from 'react-bootstrap';
 // import CkDecoupledEditor from '../../../components/CK-Editor/CkDecoupledEditor';
 import * as Constants from '../../../../helper/constants';
 import { Formik } from 'formik';
@@ -20,7 +20,8 @@ import Multiselect from 'multiselect-react-dropdown';
 import { fetchAllChapters } from '../../../api/CommonApi'
 import Select from 'react-select';
 import { useHistory, useParams } from 'react-router-dom';
-import Breadcrumb from '../../../../layouts/AdminLayout/Breadcrumb';
+
+
 
 
 const AddUnit = ({ setOpenAddUnit }) => {
@@ -225,7 +226,8 @@ const AddUnit = ({ setOpenAddUnit }) => {
                                     />
                                     {touched.unittitle && errors.unittitle && <small className="text-danger form-text">{errors.unittitle}</small>}
                                 </div><br />
-                                <div className="form-group fill" style={{ position: "relative", zIndex: 20 }}>
+                                <OverlayTrigger placement="top" overlay={<Tooltip id={`tooltip-top`} style={{zIndex:1151 }}>The selected order will be the index of chapter!</Tooltip>}>
+                                <div className="form-group fill">
                                     <label className="floating-label" htmlFor="chapter">
                                         <small className="text-danger">* </small> Chapters
                                     </label>
@@ -238,10 +240,13 @@ const AddUnit = ({ setOpenAddUnit }) => {
                                         onChange={(e) => { getMultiOptions(e); setIsShown(true) }}
                                         options={topicTitles}
                                         placeholder="Select"
+                                        menuPortalTarget={document.body}
+                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                     />
                                     <br />
                                     <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>Field Required</small>
                                 </div>
+                                </OverlayTrigger>
                                 <div className="form-group fill" htmlFor="unit_description">
                                     <Form.Label> <small className="text-danger">* </small>Unit Description</Form.Label>
                                     <Form.Control as="textarea" onChange={(e) => { UnitDescription(e); setIsShownDes(true) }} rows="4" />

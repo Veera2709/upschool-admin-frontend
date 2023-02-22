@@ -51,12 +51,18 @@ function Preview() {
         }
     }
 
-    const readMore = () => {
-        setIsShown(false)
-    }
 
     useEffect(() => {
-        getPreviewData();
+        let userJWT = sessionStorage.getItem('user_jwt');
+        console.log("jwt", userJWT);
+        if (userJWT === "" || userJWT === undefined || userJWT === "undefined" || userJWT === null) {
+            sessionStorage.clear();
+            localStorage.clear();
+            history.push('/auth/signin-1');
+            window.location.reload();
+        } else {
+            getPreviewData();
+        }
     }, [])
 
     return isEmptyObject(previewData) ? null : (

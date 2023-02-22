@@ -5,7 +5,7 @@ import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import Select from 'react-select';
 import * as Yup from 'yup';
-import { Row, Col, Card, CloseButton, Form, Button } from 'react-bootstrap';
+import { Row, Col, Card, CloseButton, Form, Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { useHistory, useParams } from 'react-router-dom';
 import MathJax from "react-mathjax";
 
@@ -1657,37 +1657,37 @@ const EditQuestions = () => {
                                                             <br />
                                                             <Row>
                                                                 <Col>
-                                                                    <div
-                                                                        title="This will be shown as question in the table!"
+                                                                    <OverlayTrigger placement="top" overlay={<Tooltip id={`tooltip-top`}>This will be treated as the Question Title!</Tooltip>}>
+                                                                        <div
+                                                                            title="This will be shown as question in the table!"
 
-                                                                    >
-                                                                        <label className="floating-label">
-                                                                            <small className="text-danger">* </small>
-                                                                            Question Label
-                                                                        </label>
+                                                                        >
+                                                                            <label className="floating-label">
+                                                                                <small className="text-danger">* </small>
+                                                                                Question Label
+                                                                            </label>
 
-                                                                        <input
-                                                                            value={values.question_label}
-                                                                            className="form-control"
-                                                                            error={touched.question_label && errors.question_label}
-                                                                            label="question_label"
-                                                                            name="question_label"
-                                                                            onBlur={handleBlur}
-                                                                            type="question_label"
-                                                                            // onChange={e => handleQuestionLabel(e)}
-                                                                            onChange={e => {
-                                                                                handleQuestionLabel(e)
-                                                                                handleChange(e)
-                                                                            }}
-                                                                            placeholder="Question Label"
+                                                                            <input
+                                                                                value={values.question_label}
+                                                                                className="form-control"
+                                                                                error={touched.question_label && errors.question_label}
+                                                                                label="question_label"
+                                                                                name="question_label"
+                                                                                onBlur={handleBlur}
+                                                                                type="question_label"
+                                                                                // onChange={e => handleQuestionLabel(e)}
+                                                                                onChange={e => {
+                                                                                    handleQuestionLabel(e)
+                                                                                    handleChange(e)
+                                                                                }}
+                                                                                placeholder="Question Label"
 
-                                                                        />
-                                                                    </div>
-
+                                                                            />
+                                                                        </div>
+                                                                    </OverlayTrigger>
                                                                     {
                                                                         touched.question_label && errors.question_label && <small className="text-danger form-text">{errors.question_label}</small>
                                                                     }
-
                                                                     {
                                                                         questionLabelErr && (
                                                                             <small className="text-danger form-text">{'Question Label is required!'}</small>
