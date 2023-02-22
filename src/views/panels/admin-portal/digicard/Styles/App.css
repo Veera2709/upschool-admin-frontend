@@ -146,9 +146,7 @@ ol  li::before {
 
 
 
-
 ol {
-  max-width: 350px;
   counter-reset: my-awesome-counter;
   list-style: none;
   padding-left: 40px;
@@ -184,7 +182,6 @@ ol li::before {
 }
 
 ul {
-  max-width: 350px;
   counter-reset: my-awesome-counter;
   list-style: none;
   padding-left: 40px;
@@ -279,9 +276,7 @@ li:before {
   color: white;
 }
 
-#divBut{
-  padding-left: 20px;
-}
+
 
 
 

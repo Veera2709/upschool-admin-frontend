@@ -30,7 +30,6 @@ function ArticleRTE({
 
   return (
     <div>
-      {/* <EditTable> </EditTable> */}
       <SunEditor placeholder="Please type here..."
         disable={sessionStorage.getItem("user_role") == "Viewer"}
         setContents={articleData}
@@ -81,11 +80,9 @@ function ArticleRTE({
             ['outdent', 'indent'],
             ['align', 'horizontalRule', 'list', 'lineHeight'],
             ['table', 'link', 'image', 'video', 'audio' /** ,'math' */], // You must add the 'katex' library at options to use the 'math' plugin.
-            /** ['imageGallery'] */ // You must add the "imageGalleryUrl".
             ['fullScreen'],
             ['preview'],
             ['math'],
-            // ["specialCharacters"]
           ],
         }}
       />
