@@ -84,11 +84,26 @@ const EditDigiCard = () => {
         });
     };
 
+    
+
     const previewImage = (e) => {
         // setImgFile(URL.createObjectURL(e.target.files[0]));
         let FileLength = e.target.files.length
         console.log("FileLength", FileLength);
         FileLength === 1 ? setImgFile(URL.createObjectURL(e.target.files[0])) : setImgFile()
+    }
+
+    const previewData = () => {
+        let userJWT = sessionStorage.getItem('user_jwt');
+        console.log("jwt", userJWT);
+        if (userJWT === "" || userJWT === undefined || userJWT === "undefined" || userJWT === null) {
+            sessionStorage.clear();
+            localStorage.clear();
+            history.push('/auth/signin-1');
+            window.location.reload();
+        } else {
+            window.open(`/admin-portal/preview/${digi_card_id}`)
+        }
     }
 
     const previewVoiceNote = (e) => {
@@ -165,9 +180,7 @@ const EditDigiCard = () => {
     useEffect(() => {
         let userJWT = sessionStorage.getItem('user_jwt');
         console.log("jwt", userJWT);
-
         if (userJWT === "" || userJWT === undefined || userJWT === "undefined" || userJWT === null) {
-
             sessionStorage.clear();
             localStorage.clear();
             history.push('/auth/signin-1');
@@ -750,10 +763,21 @@ const EditDigiCard = () => {
                                                 </Col>
                                             </Row><br></br>
                                             <Row >
-                                                <Col sm={8}>
+                                                <Col sm={6}>
                                                 </Col>
                                                 <Col>
                                                     <Row>
+                                                        <Col>
+                                                            <Button
+                                                                className="btn-block"
+                                                                color="success"
+                                                                size="large"
+                                                                variant="success"
+                                                                onClick={previewData}
+                                                            >
+                                                                preview
+                                                            </Button>
+                                                        </Col>
                                                         <Col>
                                                             <Button
                                                                 className="btn-block"

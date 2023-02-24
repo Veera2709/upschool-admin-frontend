@@ -73,11 +73,11 @@ const routes = [
     path: '/maintenance/offline-ui',
     component: lazy(() => import('./views/maintenance/OfflineUI'))
   },
-  // {
-  //   exact: true,
-  //   path: '/admin-portal/preview',
-  //   component: lazy(() => import('./views/panels/admin-portal/digicard/Preview'))
-  // },
+  {
+    exact: true,
+    path: '/admin-portal/preview/:digi_card_id',
+    component: lazy(() => import('./views/panels/admin-portal/digicard/Preview'))
+  },
   // {
   //   exact: true,
   //   path: '/auth/signup-1',
@@ -141,12 +141,12 @@ const routes = [
       },
       {
         exact: true,
-        path: '/admin-porttal/archived-schools',
+        path: '/admin-portal/archived-schools',
         component: lazy(() => import('./views/panels/admin-portal/school/ArchivedSchools'))
       },
       {
         exact: true,
-        path: '/admin-porttal/addSection/:school_id',
+        path: '/admin-portal/addSection/:school_id',
         component: lazy(() => import('./views/panels/admin-portal/school/SectionAdd'))
       },
       {
@@ -159,7 +159,7 @@ const routes = [
       },
       {
         exact: true,
-        path: '/admin-porttal/edit-users/:user_id/:user_role/:schoolId',
+        path: '/admin-portal/edit-users/:user_id/:user_role/:schoolId',
         component: lazy(() => import('./views/panels/admin-portal/users/EditUserOptions'))
       },
       {

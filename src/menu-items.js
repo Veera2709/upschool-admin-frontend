@@ -29,7 +29,7 @@ const menuItems = {
               id: 'archived-schools',
               title: 'Archived Schools',
               type: 'item',
-              url: '/admin-porttal/archived-schools'
+              url: '/admin-portal/archived-schools'
             }
           ]
         },

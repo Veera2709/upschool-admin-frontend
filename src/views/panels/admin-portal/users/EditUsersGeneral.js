@@ -251,6 +251,7 @@ const EditUsersGeneral = ({ user_id, user_role }) => {
                         }
 
                         setSchoolName_ID(response.data.schoolList);
+                        console.log("schoolNameArr.school_name", schoolNameArr.school_name);
                         setPreviousSchool(schoolNameArr.school_name);
                         setUserDOB(response.data.Items[0].user_dob);
                         setIndividualUserData(individual_user_data);
@@ -332,7 +333,8 @@ const EditUsersGeneral = ({ user_id, user_role }) => {
                                                 user_dob: userDOB.yyyy_mm_dd,
                                                 class: individualUserData.class_id,
                                                 section: individualUserData.section_id,
-                                                school: individualUserData.school_id
+                                                // school: individualUserData.school_id
+                                                school: previousSchool
 
                                                 //individualUserData.user_dob.yyyy_mm_dd
 
@@ -444,7 +446,7 @@ const EditUsersGeneral = ({ user_id, user_role }) => {
 
                                                             <Row>
 
-                                                                <Col>
+                                                                {/* <Col>
 
                                                                     <div className="form-group fill">
                                                                         <label className="floating-label" htmlFor="class">
@@ -465,8 +467,6 @@ const EditUsersGeneral = ({ user_id, user_role }) => {
                                                                             disabled={true}
                                                                         >
 
-                                                                            {/* <option>Select School</option> */}
-
                                                                             {schoolName_ID.map((schoolData) => {
 
                                                                                 return <option key={schoolData.school_id}>
@@ -479,6 +479,25 @@ const EditUsersGeneral = ({ user_id, user_role }) => {
                                                                         {touched.school && errors.school && (
                                                                             <small className="text-danger form-text">{errors.school}</small>
                                                                         )}
+                                                                    </div>
+                                                                </Col> */}
+
+                                                                <Col>
+                                                                    <div className="form-group fill">
+                                                                        <label className="floating-label" htmlFor="lastName">
+                                                                            <small className="text-danger">* </small>School
+                                                                        </label>
+                                                                        <input
+                                                                            className="form-control"
+                                                                            error={touched.school && errors.school}
+                                                                            name="school"
+                                                                            onBlur={handleBlur}
+                                                                            onChange={handleChange}
+                                                                            type="text"
+                                                                            value={values.school}
+                                                                            readOnly={true}
+                                                                        />
+                                                                        {touched.school && errors.school && <small className="text-danger form-text">{errors.school}</small>}
                                                                     </div>
                                                                 </Col>
 

@@ -1,13 +1,13 @@
 import React from "react";
-import "../digicard/Styles/article.css";
-import SunEditor from "suneditor-react";
+import "./Styles/article.css";
+import SunEditor from "./suneditor-react/dist/SunEditor";
 import "../digicard/Styles/suneditor.min.css";
 import katex from 'katex'
 import 'katex/dist/katex.min.css'
-import 'suneditor/dist/css/suneditor.min.css';
+import './suneditor/dist/suneditor.css';
 // import EditTable from './Table'
 
-import plugins from 'suneditor/src/plugins'
+import plugins from './suneditor/src/plugins'
 
 function ArticleRTE({
   setArticleSize,
@@ -30,7 +30,6 @@ function ArticleRTE({
 
   return (
     <div>
-      {/* <EditTable> </EditTable> */}
       <SunEditor placeholder="Please type here..."
         disable={sessionStorage.getItem("user_role") == "Viewer"}
         setContents={articleData}
@@ -81,11 +80,9 @@ function ArticleRTE({
             ['outdent', 'indent'],
             ['align', 'horizontalRule', 'list', 'lineHeight'],
             ['table', 'link', 'image', 'video', 'audio' /** ,'math' */], // You must add the 'katex' library at options to use the 'math' plugin.
-            /** ['imageGallery'] */ // You must add the "imageGalleryUrl".
             ['fullScreen'],
             ['preview'],
             ['math'],
-            // ["specialCharacters"]
           ],
         }}
       />
