@@ -234,17 +234,16 @@ const EditUsersGeneral = ({ user_id, user_role }) => {
                                 firstName: Yup.string().max(255).required('First Name is required'),
                                 lastName: Yup.string().max(255).required('Last Name is required'),
                                 userEmail: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
-                                phoneNumber: Yup.string().matches(phoneRegExp, 'Phone number is not valid').max(255).required('Phone Number is required'),
+                                phoneNumber: Yup.string().matches(phoneRegExp, 'Phone number is not valid').required('Phone Number is required'),
                                 userRole: Yup.string().max(255).required('User Role is required'),
                                 school: Yup.string().max(255).required('School is required')
                             })
                         } else {
-
                             setValidationObj({
                                 firstName: Yup.string().max(255).required('First Name is required'),
                                 lastName: Yup.string().max(255).required('Last Name is required'),
                                 userEmail: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
-                                phoneNumber: Yup.string().matches(phoneRegExp, 'Phone number is not valid').max(255).required('Phone Number is required'),
+                                phoneNumber: Yup.string().matches(phoneRegExp, 'Phone number is not valid').required('Phone Number is required'),
                                 userRole: Yup.string().max(255).required('User Role is required'),
                                 school: Yup.string().max(255).required('School is required')
                             })
