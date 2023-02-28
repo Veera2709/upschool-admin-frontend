@@ -19,7 +19,7 @@ import dynamicUrl from '../../../../helper/dynamicUrls';
 
 function Preview() {
 
-    const [device, setDevice] = useState('iPhone X');
+    const [device, setDevice] = useState();
     const [data, setData] = useState();
 
     const [id, setId] = useState('iphonex');
@@ -66,6 +66,11 @@ function Preview() {
             window.location.reload();
         } else {
             getPreviewData();
+            let DeviceName = sessionStorage.getItem('Device')
+            console.log("DeviceName",DeviceName);
+            let Device =  DeviceName === '' || DeviceName===null ? 'iPhone X' :DeviceName;
+            console.log("Device",Device);
+            setDevice (Device)
         }
     }, [])
 
@@ -78,11 +83,11 @@ function Preview() {
 
                     <Row>
                         <Col className='d-flex flex-column justify-content-between' style={{ marginTop: '20px', marginLeft: '20px' }}>
-                            <Button id='primary' variant="primary" onClick={(e) => { setDevice("iPhone X") }}>iPhone x</Button><br />
-                            <Button id='primary' variant="primary" onClick={(e) => { setDevice("iPhone 8"); setId("card"); }}>iPhone 8</Button><br />
-                            <Button id='primary' variant="primary" onClick={(e) => { setDevice("HTC One"); setId('card1') }}>HTC One </Button> <br />
-                            <Button id='primary' variant="primary" onClick={(e) => { setDevice("Samsung Galaxy S5"); setId('card1') }}>Samsung Galaxy S5</Button><br />
-                            <Button id='primary' variant="primary" onClick={() => { setDevice("iPad Mini"); setId('ipad') }}>Ipad</Button><br />
+                            <Button id='primary' variant="primary" onClick={(e) => { setDevice("iPhone X");sessionStorage.setItem('Device','iPhone X') }}>iPhone x</Button><br />
+                            <Button id='primary' variant="primary" onClick={(e) => { setDevice("iPhone 8"); setId("card");sessionStorage.setItem('Device','iPhone 8') }}>iPhone 8</Button><br />
+                            <Button id='primary' variant="primary" onClick={(e) => { setDevice("HTC One"); setId('card1');sessionStorage.setItem('Device','HTC One') }}>HTC One </Button> <br />
+                            <Button id='primary' variant="primary" onClick={(e) => { setDevice("Samsung Galaxy S5"); setId('card1');sessionStorage.setItem('Device','Samsung Galaxy S5') }}>Samsung Galaxy S5</Button><br />
+                            <Button id='primary' variant="primary" onClick={() => { setDevice("iPad Mini"); setId('ipad');sessionStorage.setItem('Device','iPad Mini') }}>Ipad</Button><br />
                         </Col>
                     </Row>
                 </Col>
