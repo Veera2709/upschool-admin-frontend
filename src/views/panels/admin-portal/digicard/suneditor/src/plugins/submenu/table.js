@@ -100,10 +100,8 @@ export default {
             '<div class="se-table-size-unhighlighted"></div>' +
             '</div>' +
             '<div class="se-table-size-display">1 x 1</div> <br/>'+
-            '<span >Border Size<span/> <br/>'+
-            '<input type="text" id="tableWidth" /><br/>';
-            // '<span>height<span/>'+;
-            // '<input type="text" id="tableHeight"/>';
+            '<span id="tableWidth">Border Size :<span/> <br/>'+
+            '<input type="text" id="tableWidth"  placeholder="1" /><br/>';
         return listDiv;
     },
 
@@ -782,9 +780,8 @@ export default {
 
                 if (insertIndex !== null && cells.length > 0) {
                     console.log("9");
-                    newCell = option === 'left' ? this.plugins.table.createCells.call(this, cells[0].nodeName, 0, true) : this.plugins.table.createCells.call(this, 'th', this, cells[0].nodeName, 0, true);
-                    // newCell = this.plugins.table.createCells.call(this, cells[0].nodeName, 0, true);
-                    // newCell =  this.plugins.table.createCells.call(this, 'th', this, cells[0].nodeName, 0, true) ;
+                    console.log("option",option);
+                    newCell = option === 'left1' ?  this.plugins.table.createCells.call(this, 'th', this, cells[0].nodeName, 0, true) :this.plugins.table.createCells.call(this,'td',this, cells[0].nodeName, 0, true);
                     newCell = row.insertBefore(newCell, cells[insertIndex]);
                 }
             }
@@ -1097,212 +1094,6 @@ export default {
             this.plugins.table.setPositionControllerDiv.call(this, this.context.table._tdElement, false);
         }
     },
-
-
-
-    // toggleHeaderCol: function (option, positionResetElement) {
-    //     console.log("1");
-    //     const contextTable = this.context.table;
-    //     const util = this.util;
-    //     const remove = !option;
-
-    //     const left = option === 'left';
-    //     const colSpan = contextTable._current_colSpan;
-    //     const cellIndex = remove || left ? contextTable._logical_cellIndex : contextTable._logical_cellIndex + colSpan + 1;
-
-    //     const rows = contextTable._trElements;
-    //     let rowSpanArr = [];
-    //     let spanIndex = [];
-    //     let passCell = 0;
-    //     const removeCell = [];
-    //     const removeSpanArr = [];
-
-    //     for (let i = 0, len = contextTable._rowCnt, row, insertIndex, cells, newCell, applySpan, cellColSpan; i < len; i++) {
-    //         row = rows[i];
-    //         insertIndex = cellIndex;
-    //         applySpan = false;
-    //         cells = row.cells;
-    //         cellColSpan = 0;
-
-    //         for (let c = 0, cell, cLen = cells.length, rs, cs, removeIndex; c < cLen; c++) {
-    //             cell = cells[c];
-    //             if (!cell) break;
-
-    //             rs = cell.rowSpan - 1;
-    //             cs = cell.colSpan - 1;
-
-    //             if (!remove) {
-    //                 console.log("2");
-    //                 if (c >= insertIndex) break;
-    //                 if (cs > 0) {
-    //                     console.log("3");
-    //                     if (passCell < 1 && cs + c >= insertIndex) {
-    //                         cell.colSpan += 1;
-    //                         insertIndex = null;
-    //                         passCell = rs + 1;
-    //                         break;
-    //                     }
-
-    //                     insertIndex -= cs;
-    //                 }
-
-    //                 if (!applySpan) {
-    //                     console.log("4");
-    //                     for (let r = 0, arr; r < spanIndex.length; r++) {
-    //                         arr = spanIndex[r];
-    //                         insertIndex -= arr.cs;
-    //                         arr.rs -= 1;
-    //                         if (arr.rs < 1) {
-    //                             spanIndex.splice(r, 1);
-    //                             r--;
-    //                         }
-    //                     }
-    //                     applySpan = true;
-    //                 }
-    //             } else {
-    //                 console.log("5");
-    //                 removeIndex = c + cellColSpan;
-
-    //                 if (spanIndex.length > 0) {
-    //                     const lastCell = !cells[c + 1];
-    //                     for (let r = 0, arr; r < spanIndex.length; r++) {
-    //                         arr = spanIndex[r];
-    //                         if (arr.row > i) continue;
-
-    //                         if (removeIndex >= arr.index) {
-    //                             cellColSpan += arr.cs;
-    //                             removeIndex = c + cellColSpan;
-    //                             arr.rs -= 1;
-    //                             arr.row = i + 1;
-    //                             if (arr.rs < 1) {
-    //                                 spanIndex.splice(r, 1);
-    //                                 r--;
-    //                             }
-    //                         } else if (lastCell) {
-    //                             arr.rs -= 1;
-    //                             arr.row = i + 1;
-    //                             if (arr.rs < 1) {
-    //                                 spanIndex.splice(r, 1);
-    //                                 r--;
-    //                             }
-    //                         }
-    //                     }
-    //                 }
-
-    //                 if (rs > 0) {
-    //                     rowSpanArr.push({
-    //                         rs: rs,
-    //                         cs: cs + 1,
-    //                         index: removeIndex,
-    //                         row: -1
-    //                     });
-    //                 }
-
-    //                 if (removeIndex >= insertIndex && removeIndex + cs <= insertIndex + colSpan) {
-    //                     removeCell.push(cell);
-    //                 } else if (removeIndex <= insertIndex + colSpan && removeIndex + cs >= insertIndex) {
-    //                     cell.colSpan -= util.getOverlapRangeAtIndex(cellIndex, cellIndex + colSpan, removeIndex, removeIndex + cs);
-    //                 } else if (rs > 0 && (removeIndex < insertIndex || removeIndex + cs > insertIndex + colSpan)) {
-    //                     removeSpanArr.push({
-    //                         cell: cell,
-    //                         i: i,
-    //                         rs: i + rs,
-
-    //                     });
-    //                 }
-
-    //                 cellColSpan += cs;
-    //             }
-    //         }
-    //         console.log("6");
-
-    //         spanIndex = spanIndex.concat(rowSpanArr).sort(function (a, b) { return a.index - b.index; });
-    //         rowSpanArr = [];
-
-    //         if (!remove) {
-    //             console.log("7");
-    //             if (passCell > 0) {
-    //                 console.log("8");
-    //                 passCell -= 1;
-    //                 continue;
-    //             }
-
-    //             if (insertIndex !== null && cells.length > 0) {
-    //                 console.log("9");
-
-    //                 // newCell = this.plugins.table.createCells.call(this, cells[0].nodeName, 0, true);
-    //                 newCell = this.plugins.table.createCells.call(this, 'th', this, cells[0].nodeName, 0, true);
-    //                 newCell = row.insertBefore(newCell, cells[insertIndex]);
-    //             }
-    //         }
-    //     }
-
-    //     if (remove) {
-    //         let removeFirst, removeEnd;
-    //         for (let r = 0, rLen = removeCell.length, row; r < rLen; r++) {
-    //             row = removeCell[r].parentNode;
-    //             util.removeItem(removeCell[r]);
-    //             if (row.cells.length === 0) {
-    //                 if (!removeFirst) removeFirst = util.getArrayIndex(rows, row);
-    //                 removeEnd = util.getArrayIndex(rows, row);
-    //                 util.removeItem(row);
-    //             }
-    //         }
-
-    //         for (let c = 0, cLen = removeSpanArr.length, rowSpanCell; c < cLen; c++) {
-    //             rowSpanCell = removeSpanArr[c];
-    //             rowSpanCell.cell.rowSpan = util.getOverlapRangeAtIndex(removeFirst, removeEnd, rowSpanCell.i, rowSpanCell.rs);
-    //         }
-
-    //         this.controllersOff();
-    //     } else {
-    //         this.plugins.table.setPositionControllerDiv.call(this, positionResetElement || contextTable._tdElement, true);
-    //     }
-    //     // // const util = this.util;
-    //     // // const headerButton = this.context.table.headerButton;
-    //     // // const active = util.hasClass(headerButton, 'active');
-    //     // // const table = this.context.table._element;
-
-    //     // // if (!active) {
-    //     // //     const headerCol = util.createElement('THEAD');
-    //     // //     headerCol.innerHTML = '<tr>' + this.plugins.table.createCells.call(this, 'th', this.context.table._logical_cellCnt, false) + '</tr>';
-    //     // //     table.insertBefore(headerCol, table.firstElementChild);
-    //     // // } else {
-    //     // //     util.removeItem(table.querySelector('thead'));
-    //     // // }
-
-    //     // // util.toggleClass(headerButton, 'active');
-
-    //     // // if (/TH/i.test(this.context.table._tdElement.nodeName)) {
-    //     // //     this.controllersOff();
-    //     // // } else {
-    //     // //     this.plugins.table.setPositionControllerDiv.call(this, this.context.table._tdElement, false);
-    //     // // }
-    //     // const tablePlugin = this.plugins.table;
-    //     // const contextTable = this.context.table;
-    //     // const util = this.util;
-    //     // const headerButton = this.context.table.headerButton;
-    //     // const active = util.hasClass(headerButton, 'active');
-    //     // const selectedCells = tablePlugin._selectedCells;
-    //     // const rows = contextTable._trElements;
-    //     // const index = contextTable._logical_cellIndex;
-    //     // const table = this.context.table._element;
-
-    //     // const rowIndexFirst = util.getArrayIndex(rows);
-    //     // const rowIndexLast = util.getArrayIndex(rows);
-    //     // // <tr style={{'background-color':'white'}}></tr>
-    //     // console.log("selectedCells", selectedCells);
-    //     // console.log("contextTable", contextTable);
-    //     // console.log("rowIndexFirst", rowIndexFirst);
-    //     // console.log("rowIndexLast", rowIndexLast);
-    //     // console.log("_logical_cellIndex", index);
-    //     // if (!active) {
-    //     //     // alert("!active") 
-    //     // } else {
-    //     //     alert('hi')
-    //     // }
-    //     // // '<tr key={index} style={{backgroundColor:"black"}}></tr>'
-    // },
 
     setTableStyle: function (styles) {
         const contextTable = this.context.table;
