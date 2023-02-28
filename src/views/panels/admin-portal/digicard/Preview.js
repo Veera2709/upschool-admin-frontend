@@ -51,7 +51,7 @@ function Preview() {
         }
     }
 
-    const reloadPage =()=>{
+    const reloadPage = () => {
         window.location.reload();
     }
 
@@ -67,10 +67,10 @@ function Preview() {
         } else {
             getPreviewData();
             let DeviceName = sessionStorage.getItem('Device')
-            console.log("DeviceName",DeviceName);
-            let Device =  DeviceName === '' || DeviceName===null ? 'iPhone X' :DeviceName;
-            console.log("Device",Device);
-            setDevice (Device)
+            console.log("DeviceName", DeviceName);
+            let Device = DeviceName === '' || DeviceName === null ? 'iPhone X' : DeviceName;
+            console.log("Device", Device);
+            setDevice(Device)
         }
     }, [])
 
@@ -83,11 +83,11 @@ function Preview() {
 
                     <Row>
                         <Col className='d-flex flex-column justify-content-between' style={{ marginTop: '20px', marginLeft: '20px' }}>
-                            <Button id='primary' variant="primary" onClick={(e) => { setDevice("iPhone X");sessionStorage.setItem('Device','iPhone X') }}>iPhone x</Button><br />
-                            <Button id='primary' variant="primary" onClick={(e) => { setDevice("iPhone 8"); setId("card");sessionStorage.setItem('Device','iPhone 8') }}>iPhone 8</Button><br />
-                            <Button id='primary' variant="primary" onClick={(e) => { setDevice("HTC One"); setId('card1');sessionStorage.setItem('Device','HTC One') }}>HTC One </Button> <br />
-                            <Button id='primary' variant="primary" onClick={(e) => { setDevice("Samsung Galaxy S5"); setId('card1');sessionStorage.setItem('Device','Samsung Galaxy S5') }}>Samsung Galaxy S5</Button><br />
-                            <Button id='primary' variant="primary" onClick={() => { setDevice("iPad Mini"); setId('ipad');sessionStorage.setItem('Device','iPad Mini') }}>Ipad</Button><br />
+                            <Button id='primary' variant="primary" onClick={(e) => { setDevice("iPhone X"); sessionStorage.setItem('Device', 'iPhone X') }}>iPhone x</Button><br />
+                            <Button id='primary' variant="primary" onClick={(e) => { setDevice("iPhone 8"); setId("card"); sessionStorage.setItem('Device', 'iPhone 8') }}>iPhone 8</Button><br />
+                            <Button id='primary' variant="primary" onClick={(e) => { setDevice("HTC One"); setId('card1'); sessionStorage.setItem('Device', 'HTC One') }}>HTC One </Button> <br />
+                            <Button id='primary' variant="primary" onClick={(e) => { setDevice("Samsung Galaxy S5"); setId('card1'); sessionStorage.setItem('Device', 'Samsung Galaxy S5') }}>Samsung Galaxy S5</Button><br />
+                            <Button id='primary' variant="primary" onClick={() => { setDevice("iPad Mini"); setId('ipad'); sessionStorage.setItem('Device', 'iPad Mini') }}>Ipad</Button><br />
                         </Col>
                     </Row>
                 </Col>
@@ -115,7 +115,16 @@ function Preview() {
                                 <h3 id='digicardTitle'>{previewData[0].digi_card_title}</h3><br />
                                 {ReactHtmlParser(previewData[0].digi_card_content)}
                                 <br />
-                                <Button className='float-right' variant="primary" onClick={(e) => { setIsShown(true) ; reloadPage()}}>Close</Button>
+                                <div>
+                                    <label className="floating-label" htmlFor="digicard">
+                                        Digicard Voice Note
+                                    </label><br />
+                                    <audio controls>
+                                        <source src={previewData[0].digicard_voice_noteURL} alt="Audio" type="audio/mp3" />
+                                    </audio>
+                                </div>
+                                <br />
+                                <Button className='float-right' variant="primary" onClick={(e) => { setIsShown(true); reloadPage() }}>Close</Button>
                             </div>
                         </Scrollbars>
                     </DeviceFrameset>
