@@ -33,7 +33,6 @@ const menuItems = {
             }
           ]
         },
-
         {
           id: 'users',
           title: 'Users',
@@ -54,7 +53,26 @@ const menuItems = {
             }
           ]
         },
-
+        // {
+        //   id: 'upSchoolUsers',
+        //   title: 'CMS Users',
+        //   type: 'collapse',
+        //   icon: 'feather icon-users',
+        //   children: [
+        //     {
+        //       id: 'active-upSchoolUsers',
+        //       title: 'Active Users',
+        //       type: 'item',
+        //       url: '/admin-portal/active-upSchoolUsers'
+        //     },
+        //     {
+        //       id: 'archived-upSchoolUsers',
+        //       title: 'Archived Users',
+        //       type: 'item',
+        //       url: '/admin-portal/archived-upSchoolUsers'
+        //     }
+        //   ]
+        // },
         {
           id: 'digicard',
           title: 'DigiCard',

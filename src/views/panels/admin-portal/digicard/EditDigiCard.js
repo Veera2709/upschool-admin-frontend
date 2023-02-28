@@ -84,6 +84,8 @@ const EditDigiCard = () => {
         });
     };
 
+    
+
     const previewImage = (e) => {
         // setImgFile(URL.createObjectURL(e.target.files[0]));
         let FileLength = e.target.files.length
@@ -92,8 +94,17 @@ const EditDigiCard = () => {
     }
 
     const previewData = () => {
-        window.open(`/admin-portal/preview/${digi_card_id}`)
-      }
+        let userJWT = sessionStorage.getItem('user_jwt');
+        console.log("jwt", userJWT);
+        if (userJWT === "" || userJWT === undefined || userJWT === "undefined" || userJWT === null) {
+            sessionStorage.clear();
+            localStorage.clear();
+            history.push('/auth/signin-1');
+            window.location.reload();
+        } else {
+            window.open(`/admin-portal/preview/${digi_card_id}`)
+        }
+    }
 
     const previewVoiceNote = (e) => {
         setVoiceNote(URL.createObjectURL(e.target.files[0]));
@@ -169,9 +180,7 @@ const EditDigiCard = () => {
     useEffect(() => {
         let userJWT = sessionStorage.getItem('user_jwt');
         console.log("jwt", userJWT);
-
         if (userJWT === "" || userJWT === undefined || userJWT === "undefined" || userJWT === null) {
-
             sessionStorage.clear();
             localStorage.clear();
             history.push('/auth/signin-1');

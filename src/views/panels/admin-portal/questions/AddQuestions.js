@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Row, Col, Button, Card, CloseButton, Form } from 'react-bootstrap';
+import { Row, Col, Button, Card, CloseButton, Form ,OverlayTrigger,Tooltip} from 'react-bootstrap';
 import Select from 'react-select';
 import Swal from 'sweetalert2';
 import axios from 'axios';
@@ -968,31 +968,31 @@ const AddQuestions = ({ className, ...rest }) => {
                                     <br />
                                     <Row>
                                         <Col>
-                                            <div
-                                                title="This will be shown as question in the table!"
+                                            <OverlayTrigger placement="top" overlay={<Tooltip id={`tooltip-top`}>This will be treated as the Question Title!</Tooltip>}>
+                                                <div>
+                                                    <label className="floating-label">
+                                                        <small className="text-danger">* </small>
+                                                        Question Label
+                                                    </label>
 
-                                            >
-                                                <label className="floating-label">
-                                                    <small className="text-danger">* </small>
-                                                    Question Label
-                                                </label>
+                                                    <input
+                                                        value={values.question_label}
+                                                        className="form-control"
+                                                        error={touched.question_label && errors.question_label}
+                                                        label="question_label"
+                                                        name="question_label"
+                                                        onBlur={handleBlur}
+                                                        type="question_label"
+                                                        onChange={e => {
+                                                            handleChange(e)
+                                                            handleQuestionLabel(e)
+                                                        }}
+                                                        placeholder="Question Label"
 
-                                                <input
-                                                    value={values.question_label}
-                                                    className="form-control"
-                                                    error={touched.question_label && errors.question_label}
-                                                    label="question_label"
-                                                    name="question_label"
-                                                    onBlur={handleBlur}
-                                                    type="question_label"
-                                                    onChange={e => {
-                                                        handleChange(e)
-                                                        handleQuestionLabel(e)
-                                                    }}
-                                                    placeholder="Question Label"
+                                                    />
+                                                </div>
+                                            </OverlayTrigger>
 
-                                                />
-                                            </div>
 
                                             {
                                                 touched.question_label && errors.question_label && <small className="text-danger form-text">{errors.question_label}</small>
