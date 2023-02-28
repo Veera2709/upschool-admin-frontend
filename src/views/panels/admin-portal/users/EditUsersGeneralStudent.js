@@ -111,7 +111,7 @@ const EditUsersGeneralStudent = ({ user_id, user_role }) => {
 
     const handleSchoolChange = () => {
 
-        const filteredResult = schoolName_ID.find((e) => e.school_name.trim() === schoolNameRef.current.value);
+        const filteredResult = schoolName_ID.find((e) => e.school_name.trim() === schoolNameRef.current.value.trim());
 
         console.log(filteredResult.school_id);
         console.log(filteredResult.school_name);
@@ -381,7 +381,7 @@ const EditUsersGeneralStudent = ({ user_id, user_role }) => {
 
                                                 let data;
 
-                                                const selectedSchoolID = schoolName_ID.find((e) => e.school_name.trim() === schoolNameRef.current.value);
+                                                const selectedSchoolID = schoolName_ID.find((e) => e.school_name.trim() === schoolNameRef.current.value.trim());
 
                                                 console.log(selectedSchoolID);
 
@@ -499,6 +499,7 @@ const EditUsersGeneralStudent = ({ user_id, user_role }) => {
                                                                             onBlur={handleBlur}
                                                                             onChange={handleChange}
                                                                             type="text"
+                                                                            ref={schoolNameRef}
                                                                             value={values.school}
                                                                             readOnly={true}
                                                                         />
