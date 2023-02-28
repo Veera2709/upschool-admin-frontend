@@ -441,6 +441,10 @@ const UsersList = (props) => {
         // } else {
         //     allUnitsList();
         // }
+        let digicardStatus = pageLocation === "active-upSchoolUsers" ? 'Active' : 'Archived';
+        let DigicardTyle = digicardStatus === "Active" ? "Active Users" : "Archived Users"
+        sessionStorage.setItem('Upusers_type', DigicardTyle)
+
     }, [reloadAllData])
 
     return (
@@ -475,7 +479,7 @@ const UsersList = (props) => {
                                                 </Modal> */}
                                             </React.Fragment>
                                         ) : (
-                                            <h3 style={{ textAlign: 'center' }}>No {pageLocation === "active-units" ? 'Active Units' : 'Archived Units'} Found</h3>
+                                            <h3 style={{ textAlign: 'center' }}>No {pageLocation === "active-units" ? 'Active Users' : 'Archived Users'} Found</h3>
                                         )
                                     }
 

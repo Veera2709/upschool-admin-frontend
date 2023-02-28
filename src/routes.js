@@ -357,6 +357,11 @@ const routes = [
       },
       {
         exact: true,
+        path: '/admin-portal/archived-upSchoolUsers',
+        component: lazy(() => import('./views/panels/admin-portal/UpSchoolUsers/usersList'))
+      },
+      {
+        exact: true,
         path: '/admin-portal/add_UpSchoolusers',
         component: lazy(() => import('./views/panels/admin-portal/UpSchoolUsers/addUsers'))
       },

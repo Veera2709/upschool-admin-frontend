@@ -106,13 +106,17 @@ export const cmsRole = {
   FirstNameTooShort: 'First Name is too short!',
   FirstNameTooLong: "First Name is too long!",
 
+  UserName: 'User Name is required!',
+  UserNameTooShort: 'User Name is too short!',
+  UserNameTooLong: "User Name is too long!",
+
   LastName: 'Last Name is required!',
   LastNameTooShort: 'Last Name is too short!',
   LastNameTooLong: "Last Name is too long!",
 
-  userEmail: 'Last Name is required!',
-  userEmailTooShort: 'Last Name is too short!',
-  userEmailTooLong: "Last Name is too long!",
+  userEmail: 'Email is required!',
+  userEmailTooShort: 'Email is too short!',
+  userEmailTooLong: "Email is too long!",
 
   phoneRegExp: /^(\+91[\-\s]?)?[0]?(91)?[6789]\d{9}$/,
   phoneNumVali:"Phone number is not valid",

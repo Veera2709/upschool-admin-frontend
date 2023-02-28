@@ -45,7 +45,7 @@ const AddUsers = ({ setOpenAddTopic }) => {
 
     const userRole =
         [
-            { entity: '', creater: 'No', previewer: 'No', publisher: 'No' }
+            { entitie: '', creater: 'No', previewer: 'No', publisher: 'No' }
         ]
 
     const [userRoles, setTopicQuiz] = useState(userRole)
@@ -54,9 +54,6 @@ const AddUsers = ({ setOpenAddTopic }) => {
     const [isDateReq, setIsDateReq] = useState(false)
     const [displayHeading, setDisplayHeading] = useState(sessionStorage.getItem('Upusers_type'));
     const [displayHeader, setDisplayHeader] = useState(true);
-    const [isNoSelection, setNoSelection] = useState(false);
-    const [isSelected, setIsSelected] = useState(false);
-    const [isSelectedEntity, setIsSelectedEntity] = useState(false);
     const threadLinks = document.getElementsByClassName('page-header');
 
 
@@ -65,7 +62,7 @@ const AddUsers = ({ setOpenAddTopic }) => {
     const addOneRole = () => {
         let object =
         {
-            entity: '',
+            entitie: '',
             creater: 'No',
             previewer: 'No',
             publisher: 'No'
@@ -86,7 +83,7 @@ const AddUsers = ({ setOpenAddTopic }) => {
         console.log("event", index);
         let data = [...userRoles]
 
-        if (type === 'entity') {
+        if (type === 'entitie') {
             data[index][type] = e.value;
         } else {
             if (e.target.checked === true) {
@@ -142,7 +139,6 @@ const AddUsers = ({ setOpenAddTopic }) => {
                     </Card.Title>
                     <Formik
                         initialValues={{
-                            userName: '',
                             firstName: '',
                             lastName: "",
                             userEmail: "",
@@ -174,36 +170,19 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                 .max(15, Constants.cmsRole.phoneNumTooLong)
                                 .matches(Constants.cmsRole.phoneRegExp, Constants.cmsRole.phoneNumVali)
                                 .required(Constants.cmsRole.phoneNum),
-                            userName: Yup.string()
-                                .trim()
-                                .min(2, Constants.cmsRole.UserNameTooShort)
-                                .max(32, Constants.cmsRole.UserNameTooLong)
-                                .required(Constants.cmsRole.UserName),
 
                         })}
                         // validationSchema
                         onSubmit={(values, { setErrors, setStatus, setSubmitting }) => {
-                            console.log("userRoles", userRoles);
-                            const unique = new Set();
-                            const showError = userRoles.some(element => unique.size === unique.add(element.entity).size);
-                            let validateRole = userRoles.find(o => o.entity === '' || o.entity === 0 || o.entity === undefined)
 
-                            userRoles.map((item, index) => {
-                                if (item.creater === 'No' && item.previewer === 'No' && item.publisher === 'No') {
-                                    setNoSelection(true)
-                                }
-                            })
+                            const unique = new Set();
+                            const showError = userRoles.some(element => unique.size === unique.add(element.entitie).size);
                             if (showError) {
                                 setIsRoleRep(true)
                             } else if (isDate === '' || isDate === undefined) {
                                 setIsDateReq(true)
-                            } else if (isNoSelection === true) {
-                                setIsSelected(true)
-                            } else if (validateRole) {
-                                setIsSelectedEntity(true)
                             } else {
                                 var formData = {
-                                    user_name: values.userName,
                                     first_name: values.firstName,
                                     last_name: values.lastName,
                                     user_email: values.userEmail,
@@ -226,24 +205,6 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                 <Row>
                                     <Col>
                                         <div className="form-group fill">
-                                            <label className="floating-label" htmlFor="userName">
-                                                <small className="text-danger">* </small>User Name
-                                            </label>
-                                            <input
-                                                className="form-control"
-                                                error={touched.userName && errors.userName}
-                                                name="userName"
-                                                onBlur={handleBlur}
-                                                onChange={handleChange}
-                                                type="text"
-                                                value={values.userName}
-                                            />
-                                            {touched.userName && errors.userName && <small className="text-danger form-text">{errors.userName}</small>}
-                                        </div>
-                                    </Col>
-
-                                    <Col>
-                                        <div className="form-group fill">
                                             <label className="floating-label" htmlFor="firstName">
                                                 <small className="text-danger">* </small>First Name
                                             </label>
@@ -260,8 +221,6 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                         </div>
                                     </Col>
 
-                                </Row>
-                                <Row>
                                     <Col>
                                         <div className="form-group fill">
                                             <label className="floating-label" htmlFor="lastName">
@@ -279,6 +238,9 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                             {touched.lastName && errors.lastName && <small className="text-danger form-text">{errors.lastName}</small>}
                                         </div>
                                     </Col>
+
+                                </Row>
+                                <Row>
                                     <Col>
                                         <div className="form-group fill">
                                             <label className="floating-label" htmlFor="userEmail">
@@ -297,8 +259,6 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                             {touched.userEmail && errors.userEmail && <small className="text-danger form-text">{errors.userEmail}</small>}
                                         </div>
                                     </Col>
-                                </Row>
-                                <Row>
                                     <Col>
                                         <div className="form-group fill">
                                             <label className="floating-label" htmlFor="phoneNumber">
@@ -317,6 +277,9 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                             {touched.phoneNumber && errors.phoneNumber && <small className="text-danger form-text">{errors.phoneNumber}</small>}
                                         </div>
                                     </Col>
+                                </Row>
+                                <Row>
+
                                     <Col>
                                         <div className="form-group fill">
                                             <label className="floating-label" htmlFor="user_dob">
@@ -338,11 +301,12 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                             {isDateReq && (
                                                 <small className="text-danger form-text">DOB is required!</small>
                                             )}
+
                                         </div>
                                     </Col>
+
+                                    <Col></Col>
                                 </Row>
-                                <Form.Label className="floating-label" ><small className="text-danger">* </small>CMS Allocation</Form.Label>
-                                <hr/>
                                 <br />
                                 <Row>
                                     <Col sm={4}>
@@ -367,13 +331,9 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                                 <Select
                                                     className="basic-single"
                                                     classNamePrefix="select"
-                                                    name="entity"
+                                                    name="user_role"
                                                     closeMenuOnSelect={false}
-                                                    onChange={(e) => {
-                                                        getUserRole(e, 'entity', index);
-                                                        setIsRoleRep(false);
-                                                        setIsSelectedEntity(false)
-                                                    }}
+                                                    onChange={(e) => { getUserRole(e, 'entitie', index) }}
                                                     options={entitieType}
                                                     placeholder="Select"
                                                     menuPortalTarget={document.body}
@@ -390,10 +350,7 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                                         className="form-control"
                                                         name="creater"
                                                         onBlur={handleBlur}
-                                                        onChange={(e) => {
-                                                            getUserRole(e, 'creater', index);
-                                                            setIsSelected(false);
-                                                        }}
+                                                        onChange={(e) => { getUserRole(e, 'creater', index) }}
                                                         type="checkbox"
                                                         value={values.creater}
                                                         style={{ width: '25px', marginLeft: '14px' }}
@@ -405,10 +362,7 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                                         className="form-control"
                                                         name="previewer"
                                                         onBlur={handleBlur}
-                                                        onChange={(e) => {
-                                                            getUserRole(e, 'previewer', index);
-                                                            setIsSelected(false);
-                                                        }}
+                                                        onChange={(e) => { getUserRole(e, 'previewer', index) }}
                                                         type="checkbox"
                                                         value={values.previewer}
                                                         style={{ width: '25px' }}
@@ -421,10 +375,7 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                                         className="form-control"
                                                         name="publisher"
                                                         onBlur={handleBlur}
-                                                        onChange={(e) => {
-                                                            getUserRole(e, 'publisher', index);
-                                                            setIsSelected(false);
-                                                        }}
+                                                        onChange={(e) => { getUserRole(e, 'publisher', index) }}
                                                         type="checkbox"
                                                         value={values.publisher}
                                                         style={{ width: '25px' }}
@@ -452,13 +403,7 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                 <Row>
                                     <Col>
                                         {isRoleRep && (
-                                            <small className="text-danger form-text">Entity Repeated!</small>
-                                        )}
-                                        {isSelected && (
-                                            <small className="text-danger form-text">Role Not selected!</small>
-                                        )}
-                                        {isSelectedEntity && (
-                                            <small className="text-danger form-text">Entity Not selected!</small>
+                                            <small className="text-danger form-text">user role Repeated!</small>
                                         )}
                                         <br />
                                         <button type='button' onClick={addOneRole}>+</button>

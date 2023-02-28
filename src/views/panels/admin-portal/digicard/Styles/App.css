@@ -80,11 +80,11 @@
   margin-top: 50px;
 }
 
-h1 {
+/* h1 {
   font-family: 'Teko', sans-serif;
   background-color: rgb(172, 171, 191);
   border-radius: 10px;
-}
+} */
 
 /* h1>strong{
   margin-left: 15px;
@@ -292,3 +292,7 @@ blockquote {
   border: solid #b1b1b1;
   border-width: 0 0 0 5px;
 }
+/* 
+blockquote{
+  quotes: """ """;
+} */
