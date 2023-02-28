@@ -51,6 +51,10 @@ function Preview() {
         }
     }
 
+    const reloadPage =()=>{
+        window.location.reload();
+    }
+
 
     useEffect(() => {
         let userJWT = sessionStorage.getItem('user_jwt');
@@ -97,7 +101,7 @@ function Preview() {
                                             </Card.Text>
                                         </Card.Body>
                                         <Card.Footer>
-                                            <Button className='float-right' variant="primary" onClick={() => { setIsShown(false) }}>RED MORE</Button>
+                                            <Button className='float-right' variant="primary" onClick={() => { setIsShown(false) }}>READ MORE</Button>
                                         </Card.Footer>
                                     </Card>
                                 </Container>
@@ -106,7 +110,7 @@ function Preview() {
                                 <h3 id='digicardTitle'>{previewData[0].digi_card_title}</h3><br />
                                 {ReactHtmlParser(previewData[0].digi_card_content)}
                                 <br />
-                                <Button className='float-right' variant="primary" onClick={() => { setIsShown(true) }}>Close</Button>
+                                <Button className='float-right' variant="primary" onClick={(e) => { setIsShown(true) ; reloadPage()}}>Close</Button>
                             </div>
                         </Scrollbars>
                     </DeviceFrameset>
