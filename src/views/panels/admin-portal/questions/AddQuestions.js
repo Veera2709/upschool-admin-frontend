@@ -871,6 +871,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                 <form noValidate onSubmit={handleSubmit} className={className} {...rest}>
 
                                     <Row>
+                                        
                                         <Col xs={6}>
                                             <label className="floating-label">
                                                 <small className="text-danger">* </small>

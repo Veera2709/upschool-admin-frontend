@@ -146,8 +146,8 @@ const routes = [
       },
       {
         exact: true,
-        path: '/admin-portal/addSection/:school_id',
-        component: lazy(() => import('./views/panels/admin-portal/school/SectionAdd'))
+        path: '/admin-portal/editSchool/:school_id',
+        component: lazy(() => import('./views/panels/admin-portal/school/EditTabs'))
       },
       {
         exact: true,
