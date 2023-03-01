@@ -304,7 +304,8 @@ const AddGroups = ({ className, ...rest }) => {
                                                     .min(2, 'Group Name is too short!')
                                                     .max(51, 'Group Name is too long!')
                                                     .required('Group Name is required!'),
-                                            })}
+                                            })
+                                        }
 
                                         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
 
