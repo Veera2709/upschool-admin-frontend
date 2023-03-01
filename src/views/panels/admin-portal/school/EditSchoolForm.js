@@ -13,6 +13,7 @@ import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import { areFilesInvalid } from '../../../../util/utils';
 import dynamicUrl from "../../../../helper/dynamicUrls";
 import BasicSpinner from '../../../../helper/BasicSpinner';
+import MESSAGES from "../../../../helper/messages";
 
 const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive }) => {
 
@@ -351,11 +352,15 @@ const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive 
                                                                                     });
                                                                                 }
 
-                                                                                // setIsOpenEditSchool(false);
                                                                                 const MySwal = withReactContent(Swal);
-                                                                                MySwal.fire('', 'Your school has been updated!', 'success');
-                                                                                // fetchSchoolData();
-                                                                                // setInactive(false);
+                                                                                MySwal.fire({
+                                                                                    title: MESSAGES.TTTLES.Goodjob,
+                                                                                    type: 'success',
+                                                                                    text: 'Your school has been updated!',
+                                                                                    icon: 'success',
+                                                                                }).then((willDelete) => {
+                                                                                    window.location.reload();
+                                                                                });
                                                                             } else {
 
                                                                                 console.log('No files uploaded');
@@ -466,9 +471,14 @@ const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive 
 
                                                                             // setIsOpenEditSchool(false);
                                                                             const MySwal = withReactContent(Swal);
-                                                                            MySwal.fire('', 'Your school has been updated!', 'success');
-                                                                            // fetchSchoolData();
-                                                                            // setInactive(false);
+                                                                            MySwal.fire({
+                                                                                title: MESSAGES.TTTLES.Goodjob,
+                                                                                type: 'success',
+                                                                                text: 'Your school has been updated!',
+                                                                                icon: 'success',
+                                                                            }).then((willDelete) => {
+                                                                                window.location.reload();
+                                                                            });
                                                                         } else {
 
                                                                             console.log('No files uploaded');
@@ -578,11 +588,15 @@ const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive 
                                                                             });
                                                                         }
 
-                                                                        setIsOpenEditSchool(false);
                                                                         const MySwal = withReactContent(Swal);
-                                                                        MySwal.fire('', 'Your school has been updated!', 'success');
-                                                                        fetchSchoolData();
-                                                                        setInactive(false);
+                                                                        MySwal.fire({
+                                                                            title: MESSAGES.TTTLES.Goodjob,
+                                                                            type: 'success',
+                                                                            text: 'Your school has been updated!',
+                                                                            icon: 'success',
+                                                                        }).then((willDelete) => {
+                                                                            window.location.reload();
+                                                                        });
                                                                     } else {
 
                                                                         console.log('No files uploaded');

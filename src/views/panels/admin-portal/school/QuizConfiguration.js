@@ -8,7 +8,7 @@ import axios from 'axios';
 import { useHistory } from 'react-router-dom';
 
 import dynamicUrl from "../../../../helper/dynamicUrls";
-import { isEmptyObject, isEmptyArray } from '../../../../util/utils';
+import MESSAGES from '../../../../helper/messages';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import * as Constants from '../../../../config/constant';
 import BasicSpinner from '../../../../helper/BasicSpinner';
@@ -27,12 +27,22 @@ const QuizConfiguration = ({ className, rest, id }) => {
     const [_radioReadDigicardPost, _setRadioReadDigicardPost] = useState(false);
     const [_radioRecommendTeachersPost, _setRadioRecommendTeachersPost] = useState(false);
 
-    const [selectedL2MandatoryPre, setSlectedL2MandatoryPre] = useState('');
-    const [selectedReadDigicardPre, setSlectedReadDigicardPre] = useState('');
-    const [selectedRecommendTeachersPre, setSlectedRecommendTeachersPre] = useState('');
+    const [selectedL2MandatoryPre, setSlectedL2MandatoryPre] = useState('No');
+    const [selectedReadDigicardPre, setSlectedReadDigicardPre] = useState('No');
+    const [selectedRecommendTeachersPre, setSlectedRecommendTeachersPre] = useState('No');
 
-    const [selectedReadDigicardPost, setSlectedReadDigicardPost] = useState('');
-    const [selectedRecommendTeachersPost, setSlectedRecommendTeachersPost] = useState('');
+    const [selectedReadDigicardPost, setSlectedReadDigicardPost] = useState('No');
+    const [selectedRecommendTeachersPost, setSlectedRecommendTeachersPost] = useState('No');
+
+    const MySwal = withReactContent(Swal);
+
+    const sweetAlertHandler = (alert) => {
+        MySwal.fire({
+            title: alert.title,
+            text: alert.text,
+            icon: alert.type
+        });
+    };
 
     const handleL2MandatoryPre = () => {
 
@@ -63,6 +73,7 @@ const QuizConfiguration = ({ className, rest, id }) => {
         _setRadioRecommendTeachersPost(!_radioRecommendTeachersPost);
         _radioRecommendTeachersPost === true ? setSlectedRecommendTeachersPost('No') : setSlectedRecommendTeachersPost('Yes');
     }
+
 
     const schemaValues = (_radioRecommendTeachersPost === false && _radioRecommendTeachersPre === true) ? {
         passPercentageL1Pre: Yup.string()
@@ -210,10 +221,7 @@ const QuizConfiguration = ({ className, rest, id }) => {
             .required('Field is required/Invalid Number!'),
     }
 
-    useEffect(() => {
-
-        setIsLoading(true);
-
+    const fetchIndividualSchoolDetails = () => {
         axios
             .post(
                 dynamicUrl.fetchIndividualSchool,
@@ -239,7 +247,8 @@ const QuizConfiguration = ({ className, rest, id }) => {
                     let previousDataPreQuiz = response.data.Items[0].school_quiz_config.pre_learning;
                     let previousDataPostQuiz = response.data.Items[0].school_quiz_config.post_learning;
                     console.log(previousDataPreQuiz);
-                    console.log(previousDataPostQuiz);
+                    console.log(previousDataPostQuiz.pass_pct_quiz_l3);
+                    console.log(previousDataPostQuiz.pct_of_student_for_focus);
 
                     const radioValueL2MandatoryPre = previousDataPreQuiz.l2_mandatory === 'Yes' ? true : false;
                     const radioValueReadDigicardPre = previousDataPreQuiz.read_digicard_mandatory === 'Yes' ? true : false;
@@ -253,8 +262,16 @@ const QuizConfiguration = ({ className, rest, id }) => {
                     _setRadioReadDigicardPost(radioValueReadDigicardPost);
                     _setRadioRecommendTeachersPost(radioValueRecommendTeachersPost);
 
+                    setSlectedL2MandatoryPre(previousDataPreQuiz.l2_mandatory);
+                    setSlectedReadDigicardPre(previousDataPreQuiz.read_digicard_mandatory);
+                    setSlectedRecommendTeachersPre(previousDataPreQuiz.recommend_teacher_on_focus_area);
+
+                    setSlectedReadDigicardPost(previousDataPostQuiz.read_digicard_mandatory);
+                    setSlectedRecommendTeachersPost(previousDataPostQuiz.recommend_teacher_on_focus_area);
+
+
                     setPreviousDataPreQuiz(previousDataPreQuiz);
-                    setPreviousDataPostQuiz(previousDataPreQuiz);
+                    setPreviousDataPostQuiz(previousDataPostQuiz);
                     setIsLoading(false);
                 } else {
                     console.log('else res');
@@ -290,6 +307,13 @@ const QuizConfiguration = ({ className, rest, id }) => {
                     setIsLoading(false);
                 }
             });
+    }
+
+    useEffect(() => {
+
+        setIsLoading(true);
+        fetchIndividualSchoolDetails();
+
 
     }, []);
 
@@ -336,10 +360,10 @@ const QuizConfiguration = ({ className, rest, id }) => {
                                                             pass_pct_quiz_l2: values.passPercentageL2Pre,
                                                             pct_of_student_for_reteach: values.minStudentsPre,
                                                             no_of_attempt_to_unlock: values.noOfAttemptsPre,
-                                                            l2_mandatory: _radioL2MandatoryPre === true ? 'Yes' : 'No',
-                                                            read_digicard_mandatory: _radioReadDigicardPre === true ? 'Yes' : 'No',
-                                                            recommend_teacher_on_focus_area: _radioRecommendTeachersPre === true ? 'Yes' : 'No',
-                                                            pct_of_student_for_focus: values.percentageOfStudentsPre,
+                                                            l2_mandatory: selectedL2MandatoryPre,
+                                                            read_digicard_mandatory: selectedReadDigicardPre,
+                                                            recommend_teacher_on_focus_area: selectedRecommendTeachersPre,
+                                                            pct_of_student_for_focus: selectedRecommendTeachersPre === 'Yes' ? values.percentageOfStudentsPre : '',
                                                         },
                                                         post_learning: {
                                                             pass_pct_quiz_l1: values.passPercentageL1Post,
@@ -347,9 +371,9 @@ const QuizConfiguration = ({ className, rest, id }) => {
                                                             pass_pct_quiz_l3: values.passPercentageL3Post,
                                                             pct_of_student_for_reteach: values.minStudentsPost,
                                                             no_of_attempt_to_unlock: values.noOfAttemptsPost,
-                                                            read_digicard_mandatory: _radioReadDigicardPost === true ? 'Yes' : 'No',
-                                                            recommend_teacher_on_focus_area: _radioRecommendTeachersPost === true ? 'Yes' : 'No',
-                                                            pct_of_student_for_focus: values.percentageOfStudentsPost,
+                                                            read_digicard_mandatory: selectedReadDigicardPost,
+                                                            recommend_teacher_on_focus_area: selectedRecommendTeachersPost,
+                                                            pct_of_student_for_focus: selectedRecommendTeachersPost === 'Yes' ? values.percentageOfStudentsPost : '',
                                                         }
                                                     }
                                                 }
@@ -379,9 +403,19 @@ const QuizConfiguration = ({ className, rest, id }) => {
                                                         if (response.status === 200) {
 
                                                             const MySwal = withReactContent(Swal);
-                                                            MySwal.fire('', 'Successfully updated the Quiz configuration settings!', 'success');
+                                                            // MySwal.fire('', 'Successfully updated the Quiz configuration settings!', 'success');
+                                                            // sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.UpdatingQuizConfiguration });
+                                                            // history.push(`/admin-portal/editSchool/${id}`);
+                                                            // fetchIndividualSchoolDetails();
 
-                                                            history.push(`/admin-portal/editSchool/${id}`)
+                                                            MySwal.fire({
+                                                                title: MESSAGES.TTTLES.Goodjob,
+                                                                type: 'success',
+                                                                text: MESSAGES.SUCCESS.UpdatingQuizConfiguration,
+                                                                icon: 'success',
+                                                            }).then((willDelete) => {
+                                                                window.location.reload();
+                                                            });
 
                                                         } else {
 

@@ -1,14 +1,16 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Row, Col, Card, Button, CloseButton } from 'react-bootstrap';
-import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
 import withReactContent from 'sweetalert2-react-content';
 import Swal from 'sweetalert2';
 import axios from 'axios';
+
 import dynamicUrl from "../../../../helper/dynamicUrls";
 import { isEmptyObject } from '../../../../util/utils';
 import { isEmptyArray } from '../../../../util/utils';
+import useFullPageLoader from '../../../../helper/useFullPageLoader';
+import MESSAGES from "../../../../helper/messages";
 
 const SubscribeClass = ({ className, rest, id, setIsOpenSubscribeClass }) => {
 
@@ -96,11 +98,17 @@ const SubscribeClass = ({ className, rest, id, setIsOpenSubscribeClass }) => {
                     hideLoader();
 
                     if (result) {
-                        console.log('inside res');
+                        console.log('inside res');                      
 
-                        // setIsOpenSubscribeClass(false);
                         const MySwal = withReactContent(Swal);
-                        MySwal.fire('', 'School subscrption successful!', 'success');
+                        MySwal.fire({
+                            title: MESSAGES.TTTLES.Goodjob,
+                            type: 'success',
+                            text: 'School subscrption successful!',
+                            icon: 'success',
+                        }).then((willDelete) => {
+                            window.location.reload();
+                        });
 
                     } else {
                         console.log('else res');
