@@ -309,7 +309,7 @@ const SchoolChild = (props) => {
                     &nbsp; */}
                     <Button
                         // onClick={(e) => { handleEditSchool(e, resultData[index].school_id);}}
-                        onClick={(e) => history.push(`/admin-portal/addSection/${resultData[index].school_id}`)}
+                        onClick={(e) => history.push(`/admin-portal/editSchool/${resultData[index].school_id}`)}
                         size="sm"
                         className="btn btn-icon btn-rounded btn-info"
                     >
