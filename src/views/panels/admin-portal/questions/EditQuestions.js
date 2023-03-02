@@ -74,6 +74,8 @@ const EditQuestions = () => {
     const [newdIgicardErrReq, setNewDigicardErrReq] = useState(false);
     const [newdIgicardErrRegex, setNewDigicardErrRegex] = useState(false);
 
+    const [questionLabelAlreadyExists, setQuestionLabelAlreadyExists] = useState(false);
+
     const [answerOptionsForm, setAnswerOptionsForm] = useState([
         {
             answer_type: '',
@@ -104,6 +106,7 @@ const EditQuestions = () => {
 
         setQuestionLabelValue(e.target.value);
         setQuestionLabelErr(false);
+        setQuestionLabelAlreadyExists(false);
     }
 
     const removeSelectedImg = (index) => {
@@ -210,7 +213,11 @@ const EditQuestions = () => {
     const handleAnswerBlanks = (event, index) => {
 
         let data = [...answerOptionsForm];
-        data[index][event.target.name] = event.target.value;
+        if (toggleNumbersInput && event.target.name === 'answer_content') {
+            data[index][event.target.name] = Number(event.target.value);
+        } else {
+            data[index][event.target.name] = event.target.value;
+        }
         data[index]["answer_type"] = selectedAnswerType;
 
         setAnswerOptionsForm(data);
@@ -730,7 +737,7 @@ const EditQuestions = () => {
                 if (error.response) {
                     hideLoader();
                     setnNewDigicard(false)
-                    sweetAlertHandler({ title: 'Error', type: 'error', text:error.response.data  });
+                    sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
                     console.log(error.response.data);
 
                 } else if (error.request) {
@@ -884,6 +891,9 @@ const EditQuestions = () => {
                     hideLoader();
 
                     console.log(error.response.data);
+                    if (error.response.data === "Question Label Already Exist!") {
+                        setQuestionLabelAlreadyExists(true);
+                    }
 
                 } else if (error.request) {
 
@@ -1991,7 +2001,6 @@ const EditQuestions = () => {
                                                                                 name="question_label"
                                                                                 onBlur={handleBlur}
                                                                                 type="question_label"
-                                                                                // onChange={e => handleQuestionLabel(e)}
                                                                                 onChange={e => {
                                                                                     handleQuestionLabel(e)
                                                                                     handleChange(e)
@@ -2007,6 +2016,11 @@ const EditQuestions = () => {
                                                                     {
                                                                         questionLabelErr && (
                                                                             <small className="text-danger form-text">{'Question Label is required!'}</small>
+                                                                        )
+                                                                    }
+                                                                    {
+                                                                        questionLabelAlreadyExists && (
+                                                                            <small className="text-danger form-text">{'Question Label already exists!'}</small>
                                                                         )
                                                                     }
                                                                 </Col>
@@ -3384,7 +3398,7 @@ const EditQuestions = () => {
                                                 <Modal.Body>
                                                     <Row>
                                                         <Col sm={9} >
-                                                            <OverlayTrigger placement="top" overlay={<Tooltip id={`tooltip-top`} style={{zIndex:1151 }} >This will be treated as the Question Title!</Tooltip>}>
+                                                            <OverlayTrigger placement="top" overlay={<Tooltip id={`tooltip-top`} style={{ zIndex: 1151 }} >This will be treated as the Question Title!</Tooltip>}>
                                                                 <div className="form-group fill">
                                                                     <label className="floating-label" htmlFor="questionLabel">
                                                                         <small className="text-danger">* </small>Question Label
@@ -3415,7 +3429,7 @@ const EditQuestions = () => {
                                                             {newdIgicardErrReq && (
                                                                 <small className="text-danger form-text">Question Label is required!</small>
                                                             )}
-                                                          
+
                                                         </Col>
                                                         <Col sm={2}>
                                                             <Button variant="primary" onClick={(e) => {
