@@ -15,8 +15,10 @@ import { SessionStorage } from '../../../../util/SessionStorage';
 import MESSAGES from '../../../../helper/messages';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import { useLocation } from "react-router-dom";
-import { fetchAllUnits } from '../../../api/CommonApi';
+import { fetchCMSUsersBasedonRoleStatus1, toggleUserStatus } from '../../../api/CommonApi';
 import BasicSpinner from '../../../../helper/BasicSpinner';
+import { async } from 'q';
+import { isEmptyArray } from '../../../../util/utils';
 // import AddUnit from './AddUnit';
 // import EditUnit from './EditUnit';
 
@@ -86,8 +88,8 @@ function Table({ columns, data, modalOpen }) {
 
                 <Col className="d-flex justify-content-end">
                     <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
-                    <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={() => { setOpenAddUnit(true) }}>
-                        <i className="feather icon-plus" /> Add Unit
+                    <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={(e) => { history.push('/admin-portal/add_UpSchoolusers'); }}>
+                        <i className="feather icon-plus" /> Add User
                     </Button>
                 </Col>
             </Row>
@@ -174,7 +176,7 @@ function Table({ columns, data, modalOpen }) {
     );
 }
 
-const UsersList = (props) => {
+const UsersList = ({ _userType }) => {
     const columns = React.useMemo(
         () => [
             {
@@ -182,8 +184,16 @@ const UsersList = (props) => {
                 accessor: "index_no"
             },
             {
-                Header: ' Unit Title',
-                accessor: 'unit_title'
+                Header: ' User Name',
+                accessor: 'user_name'
+            },
+            {
+                Header: ' User Role',
+                accessor: 'display_role'
+            },
+            {
+                Header: ' Entity',
+                accessor: 'entity_type'
             },
             {
                 Header: 'Options',
@@ -203,6 +213,7 @@ const UsersList = (props) => {
     const [isOpenEditUnit, setOpenEditUnit] = useState(false);
     const [isOpenAddUnit, setOpenAddUnit] = useState(false);
     const [unitId, setUnitId] = useState()
+    const MySwal = withReactContent(Swal);
 
 
 
@@ -216,181 +227,122 @@ const UsersList = (props) => {
         setOpenAddUnit(true);
     }
 
-    const MySwal = withReactContent(Swal);
-    const sweetConfirmHandler = (alert) => {
-        MySwal.fire({
-            title: alert.title,
-            text: alert.text,
-            icon: alert.type
-        });
-    }
+
     let history = useHistory();
 
 
 
-    const deleteUnit = (unit_id, unit_title) => {
+    const sweetConfirmHandler = (user_id, user_status) => {
         var data = {
-            "unit_id": unit_id,
-            "unit_status": "Archived"
+            user_id: user_id,
+            user_status: user_status
         }
         MySwal.fire({
             title: 'Are you sure?',
-            text: 'Confirm deleting ' + unit_title + 'Unit',
+            text: user_status === 'Active' ? 'Confirm to Restore User!' : 'Confirm to Delete user!',
             type: 'warning',
             showCloseButton: true,
             showCancelButton: true
         }).then((willDelete) => {
             if (willDelete.value) {
-                axios
-                    .post(dynamicUrl.toggleUnitStatus, { data: data }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
-                    .then((response) => {
-                        if (response.Error) {
-                            hideLoader();
-                            sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
-                        } else {
-                            allUnitsList()
-                            setReloadAllData("Deleted");
-                            return MySwal.fire('', 'The ' + unit_title + ' is Deleted', 'success');
-                        }
-                    })
-                    .catch((error) => {
-                        if (error.response) {
-                            // Request made and server responded
-                            console.log(error.response.data);
-                            hideLoader();
-                            if (error.response.data === 'Invalid Token') {
-                                sessionStorage.clear();
-                                localStorage.clear();
-                                history.push('/auth/signin-1');
-                                window.location.reload();
-                            } else {
-                                sweetConfirmHandler({ title: 'Sorry', type: 'warning', text: error.response.data });
-                            }
-                        } else if (error.request) {
-                            // The request was made but no response was received
-                            console.log(error.request);
-                            hideLoader();
-                        } else {
-                            // Something happened in setting up the request that triggered an Error
-                            console.log('Error', error.message);
-                            hideLoader();
-                        }
-                    });
-            } else {
+                console.log("api calling");
+                changeStatus(data, user_status);
             }
         });
     };
 
-
-
-
-
-    function restoreChapter(unit_id, unit_title) {
-        console.log("unit_id", unit_id);
-        var data = {
-            "unit_id": unit_id,
-            "unit_status": 'Active'
-        }
-
-        const sweetConfirmHandler = () => {
-            const MySwal = withReactContent(Swal);
+    const changeStatus = async (data, user_status) => {
+        let changeStatusResponse = await toggleUserStatus(data)
+        if (changeStatusResponse.Error) {
+            if (changeStatusResponse.Error.response.data == 'Invalid Token') {
+                sessionStorage.clear();
+                localStorage.clear();
+                history.push('/auth/signin-1');
+                window.location.reload();
+            }
+        } else {
             MySwal.fire({
-                title: 'Are you sure?',
-                text: 'Confirm to Restore ' + unit_title + ' unit',
-                type: 'warning',
-                showCloseButton: true,
-                showCancelButton: true
+                title: user_status === 'Active' ? 'User Restored successfully!' : 'User Deleted successfully!',
+                icon: 'success',
             }).then((willDelete) => {
-                if (willDelete.value) {
-                    axios
-                        .post(dynamicUrl.toggleUnitStatus, { data: data }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
-                        .then((response) => {
-                            if (response.Error) {
-                                hideLoader();
-                                sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
-                            } else {
-                                allUnitsList()
-                                setReloadAllData("Deleted");
-                                return MySwal.fire('', 'The ' + unit_title + ' is Restored', 'success')
-                            }
-                        })
-                        .catch((error) => {
-                            if (error.response) {
-                                // Request made and server responded
-                                console.log(error.response.data);
-                                if (error.response.data === 'Invalid Token') {
-                                    sessionStorage.clear();
-                                    localStorage.clear();
-                                    history.push('/auth/signin-1');
-                                    window.location.reload();
-                                } else {
-                                    console.log("err", error);
-                                }
-                            } else if (error.request) {
-                                // The request was made but no response was received
-                                console.log(error.request);
-                                hideLoader();
-                            } else {
-                                // Something happened in setting up the request that triggered an Error
-                                console.log('Error', error.message);
-                                hideLoader();
-                            }
-                        });
-                } else {
-                }
-            });
-        };
-        sweetConfirmHandler();
+                allUserList();
+                // window.location.reload();
+            })
+        }
     }
 
 
-    const allUnitsList = async () => {
-        const UnitStatus = pageLocation === "active-units" ? 'Active' : 'Archived';
-        let userJWT = sessionStorage.getItem('user_jwt');
-        console.log("jwt", userJWT);
 
-        if (userJWT === "" || userJWT === undefined || userJWT === "undefined" || userJWT === null) {
 
-            sessionStorage.clear();
-            localStorage.clear();
-            history.push('/auth/signin-1');
-            window.location.reload();
-        } else {
 
-            setIsLoading(true)
-            const allUnitsData = await fetchAllUnits();
-            if (allUnitsData.ERROR) {
-                console.log("allUnitsData.ERROR", allUnitsData.ERROR);
-            } else {
-                let dataResponse = allUnitsData.Items
+
+    const allUserList = async () => {
+        setIsLoading(true)
+        const UnitStatus = pageLocation === "active-upSchoolUsers" ? 'Active' : 'Archived';
+        var userType = sessionStorage.getItem('user_type')
+        var plyloadData = {
+            user_status: UnitStatus,
+            user_type: userType
+        }
+        console.log("plyloadData", plyloadData);
+        axios.post(dynamicUrl.fetchCMSUsersBasedonRoleStatus, {
+            data: plyloadData
+        }, {
+            headers: { Authorization: sessionStorage.getItem('user_jwt') }
+        })
+            .then((response) => {
+                console.log("Check : ", response);
+
+                let dataResponse = response.data
                 console.log("dataResponse", dataResponse);
                 let finalDataArray = [];
                 if (UnitStatus === 'Active') {
-                    let ActiveresultData = (dataResponse && dataResponse.filter(e => e.unit_status === 'Active'))
-                    console.log("ActiveresultData", ActiveresultData);
+                    for (let index = 0; index < dataResponse.length; index++) {
+                        console.log("index", index);
+                        dataResponse[index]['display_role'] = userType;
+                        if (userType === 'admin') {
+                            dataResponse[index]['entity_type'] = 'All'
+                        } else {
+                            var user_role = dataResponse[index]['user_role'];
+                            console.log("user_role", user_role);
+                            dataResponse[index]['entity_type'] = (
+                                <>
+                                    {
+                                        user_role.map((e, index) => {
+                                            return (
+                                                <>
+                                                    &nbsp;
+                                                    <span
+                                                        style={{ backgroundColor: "cadetblue" }}
+                                                        className="badge badge-warning inline-block mr-1"
+                                                    >{e.roles.includes(userType) && e.entity}</span>
+                                                </>
+                                            );
+                                        })
 
-                    for (let index = 0; index < ActiveresultData.length; index++) {
-                        ActiveresultData[index].index_no = index + 1;
-                        ActiveresultData[index]['actions'] = (
+                                    }
+                                </>
+                            );;
+                        }
+
+                        dataResponse[index].index_no = index + 1;
+                        dataResponse[index]['actions'] = (
                             <>
                                 <>
                                     <Button
                                         size="sm"
                                         className="btn btn-icon btn-rounded btn-primary"
-                                        // onClick={(e) => history.push(`/admin-portal/editunit/${ActiveresultData[index].unit_id}`)}
                                         onClick={(e) => {
-                                            setUnitId(ActiveresultData[index].unit_id);
-                                            setOpenEditUnit(true)
+                                            history.push(`/admin-portal/editCMSUser/${dataResponse[index].user_id}`)
                                         }}
                                     >
                                         <i className="feather icon-edit" /> &nbsp; Edit
                                     </Button>
                                     &nbsp;
-                                    {/* if(resultData[index].chapter_status=='Active') */}
                                     <Button
                                         size="sm"
                                         className="btn btn-icon btn-rounded btn-danger"
-                                        onClick={(e) => deleteUnit(ActiveresultData[index].unit_id, ActiveresultData[index].unit_title)}
+                                        onClick={(e) => sweetConfirmHandler(dataResponse[index].user_id, 'Archived')}
                                     >
                                         <i className="feather icon-trash-2 " /> &nbsp; Delete
                                     </Button>
@@ -398,20 +350,46 @@ const UsersList = (props) => {
                                 </>
                             </>
                         );
-                        finalDataArray.push(ActiveresultData[index]);
+                        finalDataArray.push(dataResponse[index]);
                         console.log('finalDataArray: ', finalDataArray)
                     }
                 } else {
-                    let resultData = (dataResponse && dataResponse.filter(e => e.unit_status === 'Archived'))
-                    for (let index = 0; index < resultData.length; index++) {
-                        resultData[index].index_no = index + 1;
-                        resultData[index]['actions'] = (
+                    for (let index = 0; index < dataResponse.length; index++) {
+                        console.log("index", index);
+                        dataResponse[index]['display_role'] = userType;
+                        if (userType === 'admin') {
+                            dataResponse[index]['entity_type'] = 'All'
+                        } else {
+                            var user_role = dataResponse[index]['user_role'];
+                            console.log("user_role", user_role);
+                            dataResponse[index]['entity_type'] = (
+                                <>
+                                    {
+                                        user_role.map((e, index) => {
+                                            return (
+                                                <>
+                                                    &nbsp;
+                                                    <span
+                                                        style={{ backgroundColor: "cadetblue" }}
+                                                        className="badge badge-warning inline-block mr-1"
+                                                    >{e.roles.includes(userType) && e.entity}</span>
+                                                </>
+                                            );
+                                        })
+
+                                    }
+                                </>
+                            );;
+                        }
+
+                        dataResponse[index].index_no = index + 1;
+                        dataResponse[index]['actions'] = (
                             <>
                                 <>
                                     <Button
                                         size="sm"
                                         className="btn btn-icon btn-rounded btn-primary"
-                                        onClick={(e) => restoreChapter(resultData[index].unit_id, resultData[index].unit_title)}
+                                        onClick={(e) => sweetConfirmHandler(dataResponse[index].user_id, 'Active')}
                                     >
                                         <i className="feather icon-plus" /> &nbsp; Restore
                                     </Button>
@@ -419,33 +397,47 @@ const UsersList = (props) => {
                                 </>
                             </>
                         );
-                        finalDataArray.push(resultData[index]);
+                        finalDataArray.push(dataResponse[index]);
                         console.log('finalDataArray: ', finalDataArray)
+
                     }
                 }
+
                 setUnitData(finalDataArray);
                 console.log('resultData: ', finalDataArray);
                 setIsLoading(false)
-            }
-        }
+
+            })
+            .catch((error) => {
+                if (error.response.data === 'Invalid Token') {
+                    sessionStorage.clear();
+                    localStorage.clear();
+                    history.push('/auth/signin-1');
+                    window.location.reload();
+                } else {
+                    console.log("err", error);
+                }
+            })
+
     }
 
     useEffect(() => {
-        // let userJWT = sessionStorage.getItem('user_jwt');
-        // console.log("jwt", userJWT);
-        // if (userJWT === "" || userJWT === undefined || userJWT === "undefined" || userJWT === null) {
-        //     sessionStorage.clear();
-        //     localStorage.clear();
-        //     history.push('/auth/signin-1');
-        //     window.location.reload();
-        // } else {
-        //     allUnitsList();
-        // }
-        let digicardStatus = pageLocation === "active-upSchoolUsers" ? 'Active' : 'Archived';
-        let DigicardTyle = digicardStatus === "Active" ? "Active Users" : "Archived Users"
-        sessionStorage.setItem('Upusers_type', DigicardTyle)
+        let userJWT = sessionStorage.getItem('user_jwt');
+        console.log("jwt", userJWT);
+        if (userJWT === "" || userJWT === undefined || userJWT === "undefined" || userJWT === null) {
+            sessionStorage.clear();
+            localStorage.clear();
+            history.push('/auth/signin-1');
+            window.location.reload();
+        } else {
 
-    }, [reloadAllData])
+            allUserList();
+        }
+
+
+
+    }, [_userType])
+  
 
     return (
         <div>
@@ -469,14 +461,6 @@ const UsersList = (props) => {
                                                         </Button>
                                                     </div>
                                                 </div>
-                                                {/* <Modal dialogClassName="my-modal" show={isOpenAddUnit} onHide={() => setOpenAddUnit(false)}>
-                                                    <Modal.Header closeButton>
-                                                        <Modal.Title as="h5">Add Unit</Modal.Title>
-                                                    </Modal.Header>
-                                                    <Modal.Body>
-                                                        <AddUnit setOpenAddUnit={setOpenAddUnit} />
-                                                    </Modal.Body>
-                                                </Modal> */}
                                             </React.Fragment>
                                         ) : (
                                             <h3 style={{ textAlign: 'center' }}>No {pageLocation === "active-units" ? 'Active Users' : 'Archived Users'} Found</h3>
@@ -491,7 +475,7 @@ const UsersList = (props) => {
                                             <Col sm={12}>
                                                 <Card>
                                                     <Card.Header>
-                                                        <Card.Title as="h5">Unit List</Card.Title>
+                                                        <Card.Title as="h5">CMS Users</Card.Title>
                                                     </Card.Header>
                                                     <Card.Body>
                                                         <Table columns={columns} data={unitData} />
@@ -499,14 +483,6 @@ const UsersList = (props) => {
                                                 </Card>
                                             </Col>
                                         </Row>
-                                        {/* <Modal dialogClassName="my-modal" show={isOpenEditUnit} onHide={() => setOpenEditUnit(false)}>
-                                            <Modal.Header closeButton>
-                                                <Modal.Title as="h5">Edit Unit</Modal.Title>
-                                            </Modal.Header>
-                                            <Modal.Body>
-                                                <EditUnit setOpenEditUnit={setOpenEditUnit} unitId={unitId} />
-                                            </Modal.Body>
-                                        </Modal> */}
                                     </React.Fragment>
                                 </>
                             )
