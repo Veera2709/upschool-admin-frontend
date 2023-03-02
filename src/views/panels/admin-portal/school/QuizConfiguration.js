@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Row, Col, Card, Button, Form } from 'react-bootstrap';
+import { Row, Col, Card, Button, Form, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
 import withReactContent from 'sweetalert2-react-content';
@@ -403,11 +403,6 @@ const QuizConfiguration = ({ className, rest, id }) => {
                                                         if (response.status === 200) {
 
                                                             const MySwal = withReactContent(Swal);
-                                                            // MySwal.fire('', 'Successfully updated the Quiz configuration settings!', 'success');
-                                                            // sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.UpdatingQuizConfiguration });
-                                                            // history.push(`/admin-portal/editSchool/${id}`);
-                                                            // fetchIndividualSchoolDetails();
-
                                                             MySwal.fire({
                                                                 title: MESSAGES.TTTLES.Goodjob,
                                                                 type: 'success',
@@ -520,43 +515,69 @@ const QuizConfiguration = ({ className, rest, id }) => {
                                                 <br />
                                                 <Row>
                                                     <Col xs={6}>
-                                                        <label className="floating-label">
-                                                            <small className="text-danger">* </small>
-                                                            Percentage of students to clear the quiz
-                                                        </label>
-                                                        <input
-                                                            className="form-control"
-                                                            error={touched.minStudentsPre && errors.minStudentsPre}
-                                                            label="minStudentsPre"
-                                                            name="minStudentsPre"
-                                                            onBlur={handleBlur}
-                                                            onChange={handleChange}
-                                                            type="number"
-                                                            value={values.minStudentsPre}
-                                                        // placeholder="To clear the Quiz"
-                                                        />
+                                                        <OverlayTrigger
+                                                            placement="top"
+                                                            overlay={
+                                                                <Tooltip
+                                                                    id={`tooltip-top`}
+                                                                    style={{ zIndex: 1151, fontSize: '10px' }}
+                                                                >
+                                                                    So that the teacher will get recommendations of Concepts to re-teach
+                                                                </Tooltip>}>
+                                                            <div className="form-group fill">
+                                                                <label className="floating-label">
+                                                                    <small className="text-danger">* </small>
+                                                                    Percentage of students to clear the quiz
+                                                                </label>
+                                                                <input
+                                                                    className="form-control"
+                                                                    error={touched.minStudentsPre && errors.minStudentsPre}
+                                                                    label="minStudentsPre"
+                                                                    name="minStudentsPre"
+                                                                    onBlur={handleBlur}
+                                                                    onChange={handleChange}
+                                                                    type="number"
+                                                                    value={values.minStudentsPre}
+                                                                // placeholder="To clear the Quiz"
+                                                                />
+                                                                {touched.minStudentsPre && errors.minStudentsPre && <small className="text-danger form-text">{errors.minStudentsPre}</small>}
+                                                            </div>
+                                                        </OverlayTrigger>
 
-                                                        {touched.minStudentsPre && errors.minStudentsPre && <small className="text-danger form-text">{errors.minStudentsPre}</small>}
                                                     </Col>
                                                     <Col>
-                                                        <label className="floating-label">
-                                                            <small className="text-danger">* </small>
-                                                            No. of attempts
-                                                        </label>
 
-                                                        <input
-                                                            className="form-control"
-                                                            error={touched.noOfAttemptsPre && errors.noOfAttemptsPre}
-                                                            label="noOfAttemptsPre"
-                                                            name="noOfAttemptsPre"
-                                                            onBlur={handleBlur}
-                                                            onChange={handleChange}
-                                                            type="number"
-                                                            // placeholder="After unlocking from Need Attention"
-                                                            value={values.noOfAttemptsPre}
-                                                        />
+                                                        <OverlayTrigger
+                                                            placement="top"
+                                                            overlay={
+                                                                <Tooltip id={`tooltip-top`}
+                                                                    style={{ zIndex: 1151, fontSize: '10px' }}
+                                                                >
+                                                                    After unlocking from Need Attention
+                                                                </Tooltip>}>
+                                                            <div className="form-group fill">
 
-                                                        {touched.noOfAttemptsPre && errors.noOfAttemptsPre && <small className="text-danger form-text">{errors.noOfAttemptsPre}</small>}
+                                                                <label className="floating-label">
+                                                                    <small className="text-danger">* </small>
+                                                                    No. of attempts
+                                                                </label>
+
+                                                                <input
+                                                                    className="form-control"
+                                                                    error={touched.noOfAttemptsPre && errors.noOfAttemptsPre}
+                                                                    label="noOfAttemptsPre"
+                                                                    name="noOfAttemptsPre"
+                                                                    onBlur={handleBlur}
+                                                                    onChange={handleChange}
+                                                                    type="number"
+                                                                    // placeholder="After unlocking from Need Attention"
+                                                                    value={values.noOfAttemptsPre}
+                                                                />
+
+                                                                {touched.noOfAttemptsPre && errors.noOfAttemptsPre && <small className="text-danger form-text">{errors.noOfAttemptsPre}</small>}
+                                                            </div>
+                                                        </OverlayTrigger>
+
                                                     </Col>
                                                 </Row>
 
@@ -624,37 +645,48 @@ const QuizConfiguration = ({ className, rest, id }) => {
                                                 <br />
                                                 <Row>
                                                     <Col xs={6}>
-                                                        <Row>
-                                                            <Col>
-                                                                <label className="floating-label">
-                                                                    <small className="text-danger">* </small>Recommend teachers on focus areas?
-                                                                </label>
-                                                            </Col>
-                                                            <Col xs={3}>
-                                                                <div className="row profile-view-radio-button-view">
-                                                                    <Form.Check
-                                                                        id={`radio-recommendTeachersPre`}
-                                                                        // label="Yes"
-                                                                        error={touched.recommendTeachersPre && errors.recommendTeachersPre}
-                                                                        type="switch"
-                                                                        variant={'outline-primary'}
-                                                                        name="radio-recommendTeachersPre"
-                                                                        checked={_radioRecommendTeachersPre}
-                                                                        onChange={(e) => {
 
-                                                                            console.log("_radioRecommendTeachersPre", _radioRecommendTeachersPre);
-                                                                            _radioRecommendTeachersPre === false ? setFieldValue('percentageOfStudentsPre', '') : setFieldValue('percentageOfStudentsPre', '')
-                                                                            handleRecommendTeachersPre(e)
-                                                                        }
-                                                                        }
-                                                                    // className='ml-3 col-md-6'
-                                                                    />
-                                                                    <Form.Label className="profile-view-question" id={`radio-recommendTeachersPre`}>
-                                                                        {_radioRecommendTeachersPre === true ? 'Yes' : 'No'}
-                                                                    </Form.Label>
-                                                                </div>
-                                                            </Col>
-                                                        </Row>
+                                                        <OverlayTrigger
+                                                            placement="top"
+                                                            overlay={
+                                                                <Tooltip id={`tooltip-top`}
+                                                                    style={{ zIndex: 1151, fontSize: '10px' }}
+                                                                >
+                                                                    Based on classroom pre assesement results
+                                                                </Tooltip>}>
+                                                            <Row>
+                                                                <Col>
+                                                                    <label className="floating-label">
+                                                                        <small className="text-danger">* </small>Recommend teachers on focus areas?
+                                                                    </label>
+                                                                </Col>
+                                                                <Col xs={3}>
+                                                                    <div className="row profile-view-radio-button-view">
+                                                                        <Form.Check
+                                                                            id={`radio-recommendTeachersPre`}
+                                                                            // label="Yes"
+                                                                            error={touched.recommendTeachersPre && errors.recommendTeachersPre}
+                                                                            type="switch"
+                                                                            variant={'outline-primary'}
+                                                                            name="radio-recommendTeachersPre"
+                                                                            checked={_radioRecommendTeachersPre}
+                                                                            onChange={(e) => {
+
+                                                                                console.log("_radioRecommendTeachersPre", _radioRecommendTeachersPre);
+                                                                                _radioRecommendTeachersPre === false ? setFieldValue('percentageOfStudentsPre', '') : setFieldValue('percentageOfStudentsPre', '')
+                                                                                handleRecommendTeachersPre(e)
+                                                                            }
+                                                                            }
+                                                                        // className='ml-3 col-md-6'
+                                                                        />
+                                                                        <Form.Label className="profile-view-question" id={`radio-recommendTeachersPre`}>
+                                                                            {_radioRecommendTeachersPre === true ? 'Yes' : 'No'}
+                                                                        </Form.Label>
+                                                                    </div>
+                                                                </Col>
+                                                            </Row>
+                                                        </OverlayTrigger>
+
                                                     </Col>
                                                 </Row>
 
@@ -665,23 +697,39 @@ const QuizConfiguration = ({ className, rest, id }) => {
                                                             _radioRecommendTeachersPre === true && (
                                                                 <Row>
                                                                     <Col>
-                                                                        <label className="floating-label">
-                                                                            <small className="text-danger">* </small>Percentage of Students
-                                                                        </label>
 
-                                                                        <input
-                                                                            className="form-control"
-                                                                            error={touched.percentageOfStudentsPre && errors.percentageOfStudentsPre}
-                                                                            label="percentageOfStudentsPre"
-                                                                            name="percentageOfStudentsPre"
-                                                                            onBlur={handleBlur}
-                                                                            onChange={handleChange}
-                                                                            type="number"
-                                                                            // placeholder="After unlocking from Need Attention"
-                                                                            value={values.percentageOfStudentsPre}
-                                                                        />
+                                                                        <OverlayTrigger
+                                                                            placement="top"
+                                                                            overlay={
+                                                                                <Tooltip id={`tooltip-top`}
+                                                                                    style={{ zIndex: 1151, fontSize: '10px' }}
+                                                                                >
+                                                                                    For generating focus points of Concepts in reports
+                                                                                </Tooltip>}>
+                                                                            <div className="form-group fill">
 
-                                                                        {touched.percentageOfStudentsPre && errors.percentageOfStudentsPre && <small className="text-danger form-text">{errors.percentageOfStudentsPre}</small>}
+                                                                                <label className="floating-label">
+                                                                                    <small className="text-danger">* </small>Percentage of Students
+                                                                                </label>
+
+                                                                                <input
+                                                                                    className="form-control"
+                                                                                    error={touched.percentageOfStudentsPre && errors.percentageOfStudentsPre}
+                                                                                    label="percentageOfStudentsPre"
+                                                                                    name="percentageOfStudentsPre"
+                                                                                    onBlur={handleBlur}
+                                                                                    onChange={handleChange}
+                                                                                    type="number"
+                                                                                    // placeholder="After unlocking from Need Attention"
+                                                                                    value={values.percentageOfStudentsPre}
+                                                                                />
+
+                                                                                {touched.percentageOfStudentsPre && errors.percentageOfStudentsPre && <small className="text-danger form-text">{errors.percentageOfStudentsPre}</small>}
+
+                                                                            </div>
+                                                                        </OverlayTrigger>
+
+
                                                                     </Col>
                                                                 </Row>
                                                             )}
@@ -760,47 +808,76 @@ const QuizConfiguration = ({ className, rest, id }) => {
                                                     </Col>
 
                                                     <Col xs={6}>
-                                                        <label className="floating-label">
-                                                            <small className="text-danger">* </small>
-                                                            Percentage of students to clear the quiz
-                                                        </label>
-                                                        <input
-                                                            className="form-control"
-                                                            error={touched.minStudentsPost && errors.minStudentsPost}
-                                                            label="minStudentsPost"
-                                                            name="minStudentsPost"
-                                                            onBlur={handleBlur}
-                                                            onChange={handleChange}
-                                                            type="number"
-                                                            value={values.minStudentsPost}
-                                                        // placeholder="To clear the Quiz"
-                                                        />
 
-                                                        {touched.minStudentsPost && errors.minStudentsPost && <small className="text-danger form-text">{errors.minStudentsPost}</small>}
+                                                        <OverlayTrigger
+                                                            placement="top"
+                                                            overlay={
+                                                                <Tooltip id={`tooltip-top`}
+                                                                    style={{ zIndex: 1151, fontSize: '10px' }}
+                                                                >
+                                                                    So that the teacher will get recommendations of Concepts to re-teach
+                                                                </Tooltip>}>
+                                                            <div className="form-group fill">
+
+                                                                <label className="floating-label">
+                                                                    <small className="text-danger">* </small>
+                                                                    Percentage of students to clear the quiz
+                                                                </label>
+                                                                <input
+                                                                    className="form-control"
+                                                                    error={touched.minStudentsPost && errors.minStudentsPost}
+                                                                    label="minStudentsPost"
+                                                                    name="minStudentsPost"
+                                                                    onBlur={handleBlur}
+                                                                    onChange={handleChange}
+                                                                    type="number"
+                                                                    value={values.minStudentsPost}
+                                                                // placeholder="To clear the Quiz"
+                                                                />
+
+                                                                {touched.minStudentsPost && errors.minStudentsPost && <small className="text-danger form-text">{errors.minStudentsPost}</small>}
+
+                                                            </div>
+                                                        </OverlayTrigger>
                                                     </Col>
                                                 </Row>
                                                 <br />
                                                 <Row>
 
                                                     <Col xs={6}>
-                                                        <label className="floating-label">
-                                                            <small className="text-danger">* </small>
-                                                            No. of attempts
-                                                        </label>
 
-                                                        <input
-                                                            className="form-control"
-                                                            error={touched.noOfAttemptsPost && errors.noOfAttemptsPost}
-                                                            label="noOfAttemptsPost"
-                                                            name="noOfAttemptsPost"
-                                                            onBlur={handleBlur}
-                                                            onChange={handleChange}
-                                                            type="number"
-                                                            // placeholder="After unlocking from Need Attention"
-                                                            value={values.noOfAttemptsPost}
-                                                        />
+                                                        <OverlayTrigger
+                                                            placement="top"
+                                                            overlay={
+                                                                <Tooltip id={`tooltip-top`}
+                                                                    style={{ zIndex: 1151, fontSize: '10px' }}
+                                                                >
+                                                                    After unlocking from Need Attention
+                                                                </Tooltip>}>
+                                                            <div className="form-group fill">
 
-                                                        {touched.noOfAttemptsPost && errors.noOfAttemptsPost && <small className="text-danger form-text">{errors.noOfAttemptsPost}</small>}
+                                                                <label className="floating-label">
+                                                                    <small className="text-danger">* </small>
+                                                                    No. of attempts
+                                                                </label>
+
+                                                                <input
+                                                                    className="form-control"
+                                                                    error={touched.noOfAttemptsPost && errors.noOfAttemptsPost}
+                                                                    label="noOfAttemptsPost"
+                                                                    name="noOfAttemptsPost"
+                                                                    onBlur={handleBlur}
+                                                                    onChange={handleChange}
+                                                                    type="number"
+                                                                    // placeholder="After unlocking from Need Attention"
+                                                                    value={values.noOfAttemptsPost}
+                                                                />
+
+                                                                {touched.noOfAttemptsPost && errors.noOfAttemptsPost && <small className="text-danger form-text">{errors.noOfAttemptsPost}</small>}
+                                                            </div>
+                                                        </OverlayTrigger>
+
+
                                                     </Col>
 
                                                 </Row>
@@ -837,31 +914,45 @@ const QuizConfiguration = ({ className, rest, id }) => {
                                                     </Col>
 
                                                     <Col xs={6}>
-                                                        <Row>
-                                                            <Col>
-                                                                <label className="floating-label">
-                                                                    <small className="text-danger">* </small>Recommend teachers on focus areas?
-                                                                </label>
-                                                            </Col>
-                                                            <Col xs={3}>
-                                                                <div className="row profile-view-radio-button-view">
-                                                                    <Form.Check
-                                                                        id={`radio-recommendTeachersPost`}
-                                                                        // label="Yes"
-                                                                        error={touched.recommendTeachersPost && errors.recommendTeachersPost}
-                                                                        type="switch"
-                                                                        variant={'outline-primary'}
-                                                                        name="radio-recommendTeachersPost"
-                                                                        checked={_radioRecommendTeachersPost}
-                                                                        onChange={(e) => handleRecommendTeachersPost(e)}
-                                                                    // className='ml-3 col-md-6'
-                                                                    />
-                                                                    <Form.Label className="profile-view-question" id={`radio-recommendTeachersPost`}>
-                                                                        {_radioRecommendTeachersPost === true ? 'Yes' : 'No'}
-                                                                    </Form.Label>
-                                                                </div>
-                                                            </Col>
-                                                        </Row>
+
+                                                        <OverlayTrigger
+                                                            placement="top"
+                                                            overlay={
+                                                                <Tooltip id={`tooltip-top`}
+                                                                    style={{ zIndex: 1151, fontSize: '10px' }}
+                                                                >
+                                                                    Based on classroom post-assesement results
+                                                                </Tooltip>}>
+
+                                                            <Row>
+                                                                <Col>
+                                                                    <label className="floating-label">
+                                                                        <small className="text-danger">* </small>Recommend teachers on focus areas?
+                                                                    </label>
+                                                                </Col>
+                                                                <Col xs={3}>
+                                                                    <div className="row profile-view-radio-button-view">
+                                                                        <Form.Check
+                                                                            id={`radio-recommendTeachersPost`}
+                                                                            // label="Yes"
+                                                                            error={touched.recommendTeachersPost && errors.recommendTeachersPost}
+                                                                            type="switch"
+                                                                            variant={'outline-primary'}
+                                                                            name="radio-recommendTeachersPost"
+                                                                            checked={_radioRecommendTeachersPost}
+                                                                            onChange={(e) => handleRecommendTeachersPost(e)}
+                                                                        // className='ml-3 col-md-6'
+                                                                        />
+                                                                        <Form.Label className="profile-view-question" id={`radio-recommendTeachersPost`}>
+                                                                            {_radioRecommendTeachersPost === true ? 'Yes' : 'No'}
+                                                                        </Form.Label>
+                                                                    </div>
+                                                                </Col>
+                                                            </Row>
+
+                                                        </OverlayTrigger>
+
+
                                                     </Col>
                                                 </Row>
 
@@ -872,25 +963,37 @@ const QuizConfiguration = ({ className, rest, id }) => {
                                                         {
                                                             _radioRecommendTeachersPost === true && (
                                                                 <Row>
-                                                                    <Col>
-                                                                        <label className="floating-label">
-                                                                            <small className="text-danger">* </small>Percentage of Students
-                                                                        </label>
 
-                                                                        <input
-                                                                            className="form-control"
-                                                                            error={touched.percentageOfStudentsPost && errors.percentageOfStudentsPost}
-                                                                            label="percentageOfStudentsPost"
-                                                                            name="percentageOfStudentsPost"
-                                                                            onBlur={handleBlur}
-                                                                            onChange={handleChange}
-                                                                            type="number"
-                                                                            // placeholder="After unlocking from Need Attention"
-                                                                            value={values.percentageOfStudentsPost}
-                                                                        />
+                                                                    <OverlayTrigger
+                                                                        placement="top"
+                                                                        overlay={
+                                                                            <Tooltip
+                                                                                id={`tooltip-top`}
+                                                                                style={{ zIndex: 1151, fontSize: '10px' }}
+                                                                            >
+                                                                                For generating focus points of Concepts in reports
+                                                                            </Tooltip>}>
 
-                                                                        {touched.percentageOfStudentsPost && errors.percentageOfStudentsPost && <small className="text-danger form-text">{errors.percentageOfStudentsPost}</small>}
-                                                                    </Col>
+                                                                        <Col>
+                                                                            <label className="floating-label">
+                                                                                <small className="text-danger">* </small>Percentage of Students
+                                                                            </label>
+
+                                                                            <input
+                                                                                className="form-control"
+                                                                                error={touched.percentageOfStudentsPost && errors.percentageOfStudentsPost}
+                                                                                label="percentageOfStudentsPost"
+                                                                                name="percentageOfStudentsPost"
+                                                                                onBlur={handleBlur}
+                                                                                onChange={handleChange}
+                                                                                type="number"
+                                                                                // placeholder="After unlocking from Need Attention"
+                                                                                value={values.percentageOfStudentsPost}
+                                                                            />
+
+                                                                            {touched.percentageOfStudentsPost && errors.percentageOfStudentsPost && <small className="text-danger form-text">{errors.percentageOfStudentsPost}</small>}
+                                                                        </Col>
+                                                                    </OverlayTrigger>
                                                                 </Row>
                                                             )}
                                                     </Col>
