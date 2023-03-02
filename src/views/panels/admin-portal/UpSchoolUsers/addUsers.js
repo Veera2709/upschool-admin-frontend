@@ -45,7 +45,7 @@ const AddUsers = ({ setOpenAddTopic }) => {
 
     const userRole =
         [
-            { entity: '', creater: 'No', previewer: 'No', publisher: 'No' }
+            { entity: '', roles: [] }
         ]
 
     const [userRoles, setTopicQuiz] = useState(userRole)
@@ -54,10 +54,12 @@ const AddUsers = ({ setOpenAddTopic }) => {
     const [isDateReq, setIsDateReq] = useState(false)
     const [displayHeading, setDisplayHeading] = useState(sessionStorage.getItem('Upusers_type'));
     const [displayHeader, setDisplayHeader] = useState(true);
-    const [isNoSelection, setNoSelection] = useState(false);
+    const [isNoSelection, setNoSelection] = useState(0);
     const [isSelected, setIsSelected] = useState(false);
     const [isSelectedEntity, setIsSelectedEntity] = useState(false);
     const threadLinks = document.getElementsByClassName('page-header');
+    const [loader, showLoader, hideLoader] = useFullPageLoader();
+
 
 
 
@@ -66,9 +68,7 @@ const AddUsers = ({ setOpenAddTopic }) => {
         let object =
         {
             entity: '',
-            creater: 'No',
-            previewer: 'No',
-            publisher: 'No'
+            roles: []
         }
 
         setTopicQuiz([...userRoles, object])
@@ -90,10 +90,13 @@ const AddUsers = ({ setOpenAddTopic }) => {
             data[index][type] = e.value;
         } else {
             if (e.target.checked === true) {
-                data[index][type] = 'Yes';
+                data[index]['roles'].push(type)
             } else {
-                data[index][type] = 'No';
+                const i = data[index]['roles'].indexOf(type);
+                data[index]['roles'].splice(i, 1);
             }
+
+
         }
     }
 
@@ -101,12 +104,74 @@ const AddUsers = ({ setOpenAddTopic }) => {
         setDate(e.target.value)
     }
 
+    const inserUser = (formData) => {
+        axios
+            .post(dynamicUrl.addCMSUser, { data: formData }, { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
+            .then(async (response) => {
+                console.log({ response });
+                if (response.Error) {
+                    console.log('Error');
+                    hideLoader();
+
+                } else {
+                    hideLoader();
+                    MySwal.fire({
+
+                        title: 'User added successfully!',
+                        icon: 'success',
+                    }).then((willDelete) => {
+
+                        window.location.reload();
+
+                    })
+
+                }
+            })
+            .catch((error) => {
+                if (error.response) {
+                    // Request made and server responded
+                    console.log(error.response.data);
+
+                    console.log(error.response.data);
+                    if (error.response.status === 401) {
+                        console.log();
+                        hideLoader();
+                        // setIsClientExists(true);
+                        sweetAlertHandler({ title: 'Error', type: 'error', text: "User Already Exist" });
+
+                    } else {
+                        sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+                    }
+                } else if (error.request) {
+                    console.log(error.request);
+                    hideLoader();
+                } else {
+                    console.log('Error', error.message);
+                    hideLoader();
+                }
+            });
+    }
+
     useEffect(() => {
-        if (threadLinks.length === 2) {
-            setDisplayHeader(false);
+        const validateJWT = sessionStorage.getItem('user_jwt');
+
+        if (validateJWT === "" || validateJWT === null || validateJWT === undefined || validateJWT === "undefined") {
+
+            sessionStorage.clear();
+            localStorage.clear();
+
+            history.push('/auth/signin-1');
+            window.location.reload();
+
         } else {
-            setDisplayHeader(true);
+
+            if (threadLinks.length === 2) {
+                setDisplayHeader(false);
+            } else {
+                setDisplayHeader(true);
+            }
         }
+
     }, [])
 
     return (
@@ -187,32 +252,30 @@ const AddUsers = ({ setOpenAddTopic }) => {
                             const unique = new Set();
                             const showError = userRoles.some(element => unique.size === unique.add(element.entity).size);
                             let validateRole = userRoles.find(o => o.entity === '' || o.entity === 0 || o.entity === undefined)
+                            var validator = userRoles.filter((e) => (e.roles).length <= 0)
+                            console.log("validator : ", validator);
 
-                            userRoles.map((item, index) => {
-                                if (item.creater === 'No' && item.previewer === 'No' && item.publisher === 'No') {
-                                    setNoSelection(true)
-                                }
-                            })
+
                             if (showError) {
                                 setIsRoleRep(true)
                             } else if (isDate === '' || isDate === undefined) {
                                 setIsDateReq(true)
-                            } else if (isNoSelection === true) {
-                                setIsSelected(true)
                             } else if (validateRole) {
                                 setIsSelectedEntity(true)
+                            } else if (validator.length > 0) {
+                                setIsSelected(true)
                             } else {
                                 var formData = {
                                     user_name: values.userName,
                                     first_name: values.firstName,
                                     last_name: values.lastName,
                                     user_email: values.userEmail,
-                                    phone_number: values.phoneNumber,
+                                    user_phone_no: `${values.phoneNumber}`,
                                     user_dob: isDate,
                                     user_role: userRoles
                                 }
                                 console.log('formData: ', formData)
-                                sessionStorage.setItem('formData', JSON.stringify(formData))
+                                inserUser(formData)
                             }
 
                         }
@@ -259,7 +322,6 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                             {touched.firstName && errors.firstName && <small className="text-danger form-text">{errors.firstName}</small>}
                                         </div>
                                     </Col>
-
                                 </Row>
                                 <Row>
                                     <Col>
@@ -341,8 +403,9 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                         </div>
                                     </Col>
                                 </Row>
-                                <Form.Label className="floating-label" ><small className="text-danger">* </small>CMS Allocation</Form.Label>
-                                <hr/>
+                                <br />
+                                <Form.Label className="floating-label" ><small className="text-danger">* </small>CMS Role Allocation</Form.Label>
+                                <hr />
                                 <br />
                                 <Row>
                                     <Col sm={4}>
@@ -350,7 +413,7 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                     </Col>
                                     <Col sm={6}>
                                         <div className='d-flex justify-content-between'>
-                                            <Form.Label className="floating-label" ><small className="text-danger">* </small>Creater</Form.Label>
+                                            <Form.Label className="floating-label" ><small className="text-danger">* </small>Creator</Form.Label>
                                             <Form.Label className="floating-label" ><small className="text-danger">* </small>Previewer</Form.Label>
                                             <Form.Label className="floating-label" style={{ marginRight: '-15px' }} ><small className="text-danger">* </small>Publisher</Form.Label>
                                         </div>
@@ -388,14 +451,14 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                                 <div>
                                                     <Form.Control
                                                         className="form-control"
-                                                        name="creater"
+                                                        name="creator"
                                                         onBlur={handleBlur}
                                                         onChange={(e) => {
-                                                            getUserRole(e, 'creater', index);
+                                                            getUserRole(e, 'creator', index);
                                                             setIsSelected(false);
                                                         }}
                                                         type="checkbox"
-                                                        value={values.creater}
+                                                        value={values.creator}
                                                         style={{ width: '25px', marginLeft: '14px' }}
                                                         key={index}
                                                     />

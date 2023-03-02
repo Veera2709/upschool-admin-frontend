@@ -74,6 +74,8 @@ const EditQuestions = () => {
     const [newdIgicardErrReq, setNewDigicardErrReq] = useState(false);
     const [newdIgicardErrRegex, setNewDigicardErrRegex] = useState(false);
 
+    const [questionLabelAlreadyExists, setQuestionLabelAlreadyExists] = useState(false);
+
     const [answerOptionsForm, setAnswerOptionsForm] = useState([
         {
             answer_type: '',
@@ -104,6 +106,7 @@ const EditQuestions = () => {
 
         setQuestionLabelValue(e.target.value);
         setQuestionLabelErr(false);
+        setQuestionLabelAlreadyExists(false);
     }
 
     const removeSelectedImg = (index) => {
@@ -210,7 +213,11 @@ const EditQuestions = () => {
     const handleAnswerBlanks = (event, index) => {
 
         let data = [...answerOptionsForm];
-        data[index][event.target.name] = event.target.value;
+        if (toggleNumbersInput && event.target.name === 'answer_content') {
+            data[index][event.target.name] = Number(event.target.value);
+        } else {
+            data[index][event.target.name] = event.target.value;
+        }
         data[index]["answer_type"] = selectedAnswerType;
 
         setAnswerOptionsForm(data);
@@ -730,7 +737,7 @@ const EditQuestions = () => {
                 if (error.response) {
                     hideLoader();
                     setnNewDigicard(false)
-                    sweetAlertHandler({ title: 'Error', type: 'error', text:error.response.data  });
+                    sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
                     console.log(error.response.data);
 
                 } else if (error.request) {
@@ -884,6 +891,9 @@ const EditQuestions = () => {
                     hideLoader();
 
                     console.log(error.response.data);
+                    if (error.response.data === "Question Label Already Exist!") {
+                        setQuestionLabelAlreadyExists(true);
+                    }
 
                 } else if (error.request) {
 
@@ -899,21 +909,38 @@ const EditQuestions = () => {
 
     }
 
-    const addnewQuestion = () => {
+    const newQuestion = () => {
         let name = document.getElementById('newQuestionLabel').value;
-        let DigiCardtitleRegex = Constants.AddDigiCard.DigiCardtitleRegex;
-        if (questionLabelValue === "" || questionLabelValue === undefined || questionLabelValue === "undefined") {
-
-            setQuestionLabelErr(true);
-
-        } else if (isEmptyArray(selectedQuestionType)) {
-            setQuestionTypeErrMsg(true);
-        } else if ((name.length <= 2 && name.length > 0) || name.length > 32) {
+        if ((name.length <= 2 && name.length > 0) || name.length > 32) {
             name.length > 32 ? setNewDigicardErrMax(true) : setNewDigicardErrMin(true)
             setnNewDigicard(true)
         } else if (name.trim().length === 0) {
             setNewDigicardErrReq(true)
             setnNewDigicard(true)
+        } else {
+            let payLoad = {
+
+                question_type: selectedQuestionType,
+                question_voice_note: selectedQuestionVoiceNote,
+                question_content: articleDataTitle,
+                answer_type: selectedAnswerType,
+                answers_of_question: answerOptionsForm,
+                question_status: 'Save',
+                question_disclaimer: document.getElementById('question_disclaimer').value === "" ? "" : document.getElementById('question_disclaimer').value,
+                show_math_keyboard: showMathKeyboard,
+                question_label: document.getElementById('newQuestionLabel').value
+            }
+
+            _addQuestions(payLoad)
+        }
+    }
+
+    const addnewQuestion = () => {
+        let DigiCardtitleRegex = Constants.AddDigiCard.DigiCardtitleRegex;
+        if (questionLabelValue === "" || questionLabelValue === undefined || questionLabelValue === "undefined") {
+            setQuestionLabelErr(true);
+        } else if (isEmptyArray(selectedQuestionType)) {
+            setQuestionTypeErrMsg(true);
         } else if (articleDataTitle === "" || articleDataTitle === undefined || articleDataTitle === 'undefined' || articleDataTitle === "<p><br></p>" || articleDataTitle === "<p></p>" || articleDataTitle === "<br>") {
             setQuestionEmptyErrMsg(true);
         } else if (answerOptionsForm) {
@@ -925,21 +952,6 @@ const EditQuestions = () => {
             } else {
 
                 console.log('Data inserted!');
-
-                let payLoad = {
-
-                    question_type: selectedQuestionType,
-                    question_voice_note: selectedQuestionVoiceNote,
-                    question_content: articleDataTitle,
-                    answer_type: selectedAnswerType,
-                    answers_of_question: answerOptionsForm,
-                    question_status: 'Save',
-                    question_disclaimer: document.getElementById('question_disclaimer').value === "" ? "" : document.getElementById('question_disclaimer').value,
-                    show_math_keyboard: showMathKeyboard,
-                    question_label: document.getElementById('newQuestionLabel').value
-                }
-
-                console.log("payLoad", payLoad);
 
                 let allFilesData = [];
                 let questionsVoiceNoteFilesData = [];
@@ -971,8 +983,9 @@ const EditQuestions = () => {
 
                             if (allFilesData.length === 0) {
 
-                                showLoader();
-                                _addQuestions(payLoad);
+
+                                setnNewDigicard(true)
+
 
                             } else {
                                 if (areFilesInvalid(allFilesData) !== 0) {
@@ -985,8 +998,9 @@ const EditQuestions = () => {
                                     );
                                 } else {
 
-                                    showLoader();
-                                    _addQuestions(payLoad);
+    
+                                    setnNewDigicard(true)
+
 
                                 }
                             }
@@ -1006,8 +1020,9 @@ const EditQuestions = () => {
 
                             if (allFilesData.length === 0) {
 
-                                showLoader();
-                                _addQuestions(payLoad);
+
+                                setnNewDigicard(true)
+
 
 
                             } else {
@@ -1020,15 +1035,16 @@ const EditQuestions = () => {
                                     });
                                 } else {
 
-                                    showLoader();
-                                    _addQuestions(payLoad);
+    
+                                    setnNewDigicard(true)
+
 
                                 }
                             }
                         } else {
 
-                            showLoader();
-                            _addQuestions(payLoad);
+                            setnNewDigicard(true)
+
 
                         }
 
@@ -1057,8 +1073,9 @@ const EditQuestions = () => {
 
                                 if (allFilesData.length === 0) {
 
-                                    showLoader();
-                                    _addQuestions(payLoad);
+    
+                                    setnNewDigicard(true)
+
 
                                 } else {
                                     if (areFilesInvalid(allFilesData) !== 0) {
@@ -1071,8 +1088,9 @@ const EditQuestions = () => {
                                         );
                                     } else {
 
-                                        showLoader();
-                                        _addQuestions(payLoad);
+        
+                                        setnNewDigicard(true)
+
 
                                     }
                                 }
@@ -1092,8 +1110,9 @@ const EditQuestions = () => {
 
                                 if (allFilesData.length === 0) {
 
-                                    showLoader();
-                                    _addQuestions(payLoad);
+    
+                                    setnNewDigicard(true)
+
 
 
                                 } else {
@@ -1106,15 +1125,17 @@ const EditQuestions = () => {
                                         });
                                     } else {
 
-                                        showLoader();
-                                        _addQuestions(payLoad);
+        
+                                        setnNewDigicard(true)
+
 
                                     }
                                 }
                             } else {
 
-                                showLoader();
-                                _addQuestions(payLoad);
+
+                                setnNewDigicard(true)
+
 
                             }
 
@@ -1139,8 +1160,8 @@ const EditQuestions = () => {
 
                         if (allFilesData.length === 0) {
 
-                            showLoader();
-                            _addQuestions(payLoad);
+                            setnNewDigicard(true)
+
 
                         } else {
                             if (areFilesInvalid(allFilesData) !== 0) {
@@ -1153,8 +1174,9 @@ const EditQuestions = () => {
                                 );
                             } else {
 
-                                showLoader();
-                                _addQuestions(payLoad);
+
+                                setnNewDigicard(true)
+
 
                             }
                         }
@@ -1174,8 +1196,8 @@ const EditQuestions = () => {
 
                         if (allFilesData.length === 0) {
 
-                            showLoader();
-                            _addQuestions(payLoad);
+                            setnNewDigicard(true)
+
 
 
                         } else {
@@ -1188,15 +1210,15 @@ const EditQuestions = () => {
                                 });
                             } else {
 
-                                showLoader();
-                                _addQuestions(payLoad);
+
+                                setnNewDigicard(true)
+
 
                             }
                         }
                     } else {
+                        setnNewDigicard(true)
 
-                        showLoader();
-                        _addQuestions(payLoad);
 
                     }
 
@@ -1864,7 +1886,7 @@ const EditQuestions = () => {
                                                     }}
 
                                                 >
-                                                    {({ errors, handleBlur, handleChange, handleSubmit, touched, values, setFieldValue }) => (
+                                                    {({ errors, handleBlur, handleChange, handleSubmit, touched, values, setFieldValue,setFieldTouched }) => (
                                                         <form noValidate onSubmit={handleSubmit} >
 
                                                             <Row>
@@ -1991,7 +2013,6 @@ const EditQuestions = () => {
                                                                                 name="question_label"
                                                                                 onBlur={handleBlur}
                                                                                 type="question_label"
-                                                                                // onChange={e => handleQuestionLabel(e)}
                                                                                 onChange={e => {
                                                                                     handleQuestionLabel(e)
                                                                                     handleChange(e)
@@ -2007,6 +2028,11 @@ const EditQuestions = () => {
                                                                     {
                                                                         questionLabelErr && (
                                                                             <small className="text-danger form-text">{'Question Label is required!'}</small>
+                                                                        )
+                                                                    }
+                                                                    {
+                                                                        questionLabelAlreadyExists && (
+                                                                            <small className="text-danger form-text">{'Question Label already exists!'}</small>
                                                                         )
                                                                     }
                                                                 </Col>
@@ -2891,6 +2917,7 @@ const EditQuestions = () => {
 
                                                                                                                 onClick={() => {
                                                                                                                     setFieldValue("answer_content", "")
+                                                                                                                    setFieldTouched("answer_content", false, false);
                                                                                                                     removeSelectedImg(index)
                                                                                                                 }}
                                                                                                                 style={
@@ -3096,6 +3123,7 @@ const EditQuestions = () => {
                                                                                                             <CloseButton
                                                                                                                 onClick={() => {
                                                                                                                     setFieldValue("answer_content", "")
+                                                                                                                    setFieldTouched("answer_content", false, false);
                                                                                                                     removeSelectedAudio(index)
                                                                                                                 }}
                                                                                                                 style={
@@ -3166,7 +3194,7 @@ const EditQuestions = () => {
                                                                                         variant="secondary"
                                                                                         onClick={() => {
                                                                                             sessionStorage.setItem('click_event', 'SaveAsNew');
-                                                                                            setnNewDigicard(true);
+                                                                                            addnewQuestion()
                                                                                         }
                                                                                         }>
                                                                                         Save As New
@@ -3286,7 +3314,10 @@ const EditQuestions = () => {
                                                                                         size="large"
                                                                                         type="button"
                                                                                         variant="secondary"
-                                                                                        onClick={(e) => { sessionStorage.setItem('click_event', 'SaveAsNew'); setnNewDigicard(true) }}>
+                                                                                        onClick={(e) => {
+                                                                                            sessionStorage.setItem('click_event', 'SaveAsNew');
+                                                                                            addnewQuestion()
+                                                                                        }}>
                                                                                         Save As New
                                                                                     </Button>
                                                                                 </Col>
@@ -3384,7 +3415,7 @@ const EditQuestions = () => {
                                                 <Modal.Body>
                                                     <Row>
                                                         <Col sm={9} >
-                                                            <OverlayTrigger placement="top" overlay={<Tooltip id={`tooltip-top`} style={{zIndex:1151 }} >This will be treated as the Question Title!</Tooltip>}>
+                                                            <OverlayTrigger placement="top" overlay={<Tooltip id={`tooltip-top`} style={{ zIndex: 1151 }} >This will be treated as the Question Title!</Tooltip>}>
                                                                 <div className="form-group fill">
                                                                     <label className="floating-label" htmlFor="questionLabel">
                                                                         <small className="text-danger">* </small>Question Label
@@ -3415,11 +3446,11 @@ const EditQuestions = () => {
                                                             {newdIgicardErrReq && (
                                                                 <small className="text-danger form-text">Question Label is required!</small>
                                                             )}
-                                                          
+
                                                         </Col>
                                                         <Col sm={2}>
                                                             <Button variant="primary" onClick={(e) => {
-                                                                addnewQuestion()
+                                                                newQuestion()
                                                             }}>Create</Button>
                                                         </Col>
                                                     </Row>
