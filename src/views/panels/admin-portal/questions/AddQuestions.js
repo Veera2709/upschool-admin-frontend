@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Row, Col, Button, Card, CloseButton, Form ,OverlayTrigger,Tooltip} from 'react-bootstrap';
+import { Row, Col, Button, Card, CloseButton, Form, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import Select from 'react-select';
 import Swal from 'sweetalert2';
 import axios from 'axios';
@@ -62,6 +62,8 @@ const AddQuestions = ({ className, ...rest }) => {
     const [voiceNoteFileValues, setVoiceNoteFileValues] = useState('');
     const [previewAudios, setPreviewAudios] = useState([]);
     const [_radio, _setRadio] = useState(false);
+
+    const [questionLabelAlreadyExists, setQuestionLabelAlreadyExists] = useState(false);
 
     const [answerOptionsForm, setAnswerOptionsForm] = useState([
         {
@@ -327,6 +329,7 @@ const AddQuestions = ({ className, ...rest }) => {
 
         setQuestionLabelValue(e.target.value);
         setQuestionLabelErr(false);
+        setQuestionLabelAlreadyExists(false);
     }
 
     useEffect(() => {
@@ -496,6 +499,9 @@ const AddQuestions = ({ className, ...rest }) => {
                     hideLoader();
 
                     console.log(error.response.data);
+                    if (error.response.data === "Question Label Already Exist!") {
+                        setQuestionLabelAlreadyExists(true);
+                    }
 
                 } else if (error.request) {
 
@@ -871,7 +877,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                 <form noValidate onSubmit={handleSubmit} className={className} {...rest}>
 
                                     <Row>
-                                        
+
                                         <Col xs={6}>
                                             <label className="floating-label">
                                                 <small className="text-danger">* </small>
@@ -1001,6 +1007,12 @@ const AddQuestions = ({ className, ...rest }) => {
                                             {
                                                 questionLabelErr && (
                                                     <small className="text-danger form-text">{'Question Label is required!'}</small>
+                                                )
+                                            }
+
+                                            {
+                                                questionLabelAlreadyExists && (
+                                                    <small className="text-danger form-text">{'Question Label already exists!'}</small>
                                                 )
                                             }
 
