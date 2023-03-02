@@ -2,6 +2,7 @@
 // const baseUrl = 'https://dssqy2gip2.execute-api.ap-south-1.amazonaws.com/testing/v1'; // testing env URL
 const baseUrl = process.env.REACT_APP_LAMBDA_URL;
 
+
 const dynamicUrl = {
 
     // Login
@@ -117,8 +118,14 @@ const dynamicUrl = {
     fetchIndividualGroupData: baseUrl + '/fetchIndividualGroupData',
     toggleGroupStatus: baseUrl + '/toggleGroupStatus',
     editGroup: baseUrl + '/editGroup',
-    fetchDigicardIdAndName: baseUrl + '/fetchDigicardIdAndName'
+    fetchDigicardIdAndName: baseUrl + '/fetchDigicardIdAndName',
 
+    //CMS users
+    addCMSUser: baseUrl + '/addCMSUser',
+    fetchCMSUsersBasedonRoleStatus  : baseUrl + '/fetchCMSUsersBasedonRoleStatus',
+    fetchIndividualCMSUser: baseUrl + '/fetchIndividualCMSUser',
+    toggleCMSUserStatus: baseUrl + '/toggleCMSUserStatus',
+    editCMSUser: baseUrl + '/editCMSUser',
 }
 
 export default dynamicUrl;

@@ -212,7 +212,6 @@ const EditUnit = ({ setOpenEditUnit, unitId }) => {
                                     }).then((willDelete) => {
                                         history.push('/admin-portal/units/active-units');
                                         window.location.reload();
-
                                     })
                                     hideLoader();
                                     setDisableButton(false);
