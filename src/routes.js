@@ -353,12 +353,17 @@ const routes = [
       {
         exact: true,
         path: '/admin-portal/active-upSchoolUsers',
-        component: lazy(() => import('./views/panels/admin-portal/UpSchoolUsers/usersList'))
+        component: lazy(() => import('./views/panels/admin-portal/UpSchoolUsers/userTable'))
       },
       {
         exact: true,
         path: '/admin-portal/archived-upSchoolUsers',
-        component: lazy(() => import('./views/panels/admin-portal/UpSchoolUsers/usersList'))
+        component: lazy(() => import('./views/panels/admin-portal/UpSchoolUsers/userTable'))
+      },
+      {
+        exact: true,
+        path: '/admin-portal/editCMSUser/:id',
+        component: lazy(() => import('./views/panels/admin-portal/UpSchoolUsers/editUsers'))
       },
       {
         exact: true,
