@@ -646,14 +646,14 @@ const QuizConfiguration = ({ className, rest, id }) => {
                                                 <Row>
                                                     <Col xs={6}>
 
-                                                        <OverlayTrigger
+                                                        {/* <OverlayTrigger
                                                             placement="top"
                                                             overlay={
                                                                 <Tooltip id={`tooltip-top`}
                                                                     style={{ zIndex: 1151, fontSize: '10px' }}
                                                                 >
                                                                     Based on classroom pre assesement results
-                                                                </Tooltip>}>
+                                                                </Tooltip>}> */}
                                                             <Row>
                                                                 <Col>
                                                                     <label className="floating-label">
@@ -685,7 +685,7 @@ const QuizConfiguration = ({ className, rest, id }) => {
                                                                     </div>
                                                                 </Col>
                                                             </Row>
-                                                        </OverlayTrigger>
+                                                        {/* </OverlayTrigger> */}
 
                                                     </Col>
                                                 </Row>
@@ -704,7 +704,7 @@ const QuizConfiguration = ({ className, rest, id }) => {
                                                                                 <Tooltip id={`tooltip-top`}
                                                                                     style={{ zIndex: 1151, fontSize: '10px' }}
                                                                                 >
-                                                                                    For generating focus points of Concepts in reports
+                                                                                    For generating focus points of Concepts in reports based on classroom pre-assesement results
                                                                                 </Tooltip>}>
                                                                             <div className="form-group fill">
 
@@ -915,14 +915,14 @@ const QuizConfiguration = ({ className, rest, id }) => {
 
                                                     <Col xs={6}>
 
-                                                        <OverlayTrigger
+                                                        {/* <OverlayTrigger
                                                             placement="top"
                                                             overlay={
                                                                 <Tooltip id={`tooltip-top`}
                                                                     style={{ zIndex: 1151, fontSize: '10px' }}
                                                                 >
                                                                     Based on classroom post-assesement results
-                                                                </Tooltip>}>
+                                                                </Tooltip>}> */}
 
                                                             <Row>
                                                                 <Col>
@@ -950,7 +950,7 @@ const QuizConfiguration = ({ className, rest, id }) => {
                                                                 </Col>
                                                             </Row>
 
-                                                        </OverlayTrigger>
+                                                        {/* </OverlayTrigger> */}
 
 
                                                     </Col>
@@ -971,7 +971,7 @@ const QuizConfiguration = ({ className, rest, id }) => {
                                                                                 id={`tooltip-top`}
                                                                                 style={{ zIndex: 1151, fontSize: '10px' }}
                                                                             >
-                                                                                For generating focus points of Concepts in reports
+                                                                                For generating focus points of Concepts in reports based on classroom post-assesement results
                                                                             </Tooltip>}>
 
                                                                         <Col>
