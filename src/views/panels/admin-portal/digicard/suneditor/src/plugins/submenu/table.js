@@ -100,8 +100,8 @@ export default {
             '<div class="se-table-size-unhighlighted"></div>' +
             '</div>' +
             '<div class="se-table-size-display">1 x 1</div> <br/>'+
-            '<span id="tableWidth">Border Size :<span/> <br/>'+
-            '<input type="text" id="tableWidth"  placeholder="1" /><br/>';
+            '<span>Border Size :<span/> <br/>'+
+            '<input type="text" id="tableWidth" /><br/>';
         return listDiv;
     },
 
@@ -244,7 +244,6 @@ export default {
 
     onMouseMove_tablePicker: function (contextTable, e) {
         e.stopPropagation();
-
         let x = this._w.Math.ceil(e.offsetX / 18);
         let y = this._w.Math.ceil(e.offsetY / 18);
         x = x < 1 ? 1 : x;
