@@ -74,6 +74,8 @@ const EditQuestions = () => {
     const [newdIgicardErrReq, setNewDigicardErrReq] = useState(false);
     const [newdIgicardErrRegex, setNewDigicardErrRegex] = useState(false);
 
+    const [questionLabelAlreadyExists, setQuestionLabelAlreadyExists] = useState(false);
+
     const [answerOptionsForm, setAnswerOptionsForm] = useState([
         {
             answer_type: '',
@@ -104,6 +106,7 @@ const EditQuestions = () => {
 
         setQuestionLabelValue(e.target.value);
         setQuestionLabelErr(false);
+        setQuestionLabelAlreadyExists(false);
     }
 
     const removeSelectedImg = (index) => {
@@ -210,7 +213,11 @@ const EditQuestions = () => {
     const handleAnswerBlanks = (event, index) => {
 
         let data = [...answerOptionsForm];
-        data[index][event.target.name] = event.target.value;
+        if (toggleNumbersInput && event.target.name === 'answer_content') {
+            data[index][event.target.name] = Number(event.target.value);
+        } else {
+            data[index][event.target.name] = event.target.value;
+        }
         data[index]["answer_type"] = selectedAnswerType;
 
         setAnswerOptionsForm(data);
@@ -884,6 +891,9 @@ const EditQuestions = () => {
                     hideLoader();
 
                     console.log(error.response.data);
+                    if (error.response.data === "Question Label Already Exist!") {
+                        setQuestionLabelAlreadyExists(true);
+                    }
 
                 } else if (error.request) {
 
@@ -2003,7 +2013,6 @@ const EditQuestions = () => {
                                                                                 name="question_label"
                                                                                 onBlur={handleBlur}
                                                                                 type="question_label"
-                                                                                // onChange={e => handleQuestionLabel(e)}
                                                                                 onChange={e => {
                                                                                     handleQuestionLabel(e)
                                                                                     handleChange(e)
@@ -2019,6 +2028,11 @@ const EditQuestions = () => {
                                                                     {
                                                                         questionLabelErr && (
                                                                             <small className="text-danger form-text">{'Question Label is required!'}</small>
+                                                                        )
+                                                                    }
+                                                                    {
+                                                                        questionLabelAlreadyExists && (
+                                                                            <small className="text-danger form-text">{'Question Label already exists!'}</small>
                                                                         )
                                                                     }
                                                                 </Col>
