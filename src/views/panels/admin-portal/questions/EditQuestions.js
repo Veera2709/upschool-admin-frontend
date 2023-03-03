@@ -218,6 +218,15 @@ const EditQuestions = () => {
         } else {
             data[index][event.target.name] = event.target.value;
         }
+
+        if (toggleNumbersInput && event.target.name === 'answer_range_from') {
+            data[index][event.target.name] = Number(event.target.value);
+        }
+
+        if (toggleNumbersInput && event.target.name === 'answer_range_to') {
+            data[index][event.target.name] = Number(event.target.value);
+        }
+
         data[index]["answer_type"] = selectedAnswerType;
 
         setAnswerOptionsForm(data);
@@ -433,15 +442,32 @@ const EditQuestions = () => {
 
                                 if (index < uploadParams.length) {
 
-                                    object = {
-                                        answer_type: individual_user_data.answer_type,
-                                        answer_content: uploadParams[index].answer_content,
-                                        answer_display: uploadParams[index].answer_display,
-                                        answer_option: uploadParams[index].answer_option,
-                                        answer_weightage: uploadParams[index].answer_weightage
-                                    }
+                                    if (individual_user_data.answer_type === 'Numbers') {
 
-                                    tempArray.push(object);
+                                        object = {
+                                            answer_type: individual_user_data.answer_type,
+                                            answer_content: uploadParams[index].answer_content,
+                                            answer_display: uploadParams[index].answer_display,
+                                            answer_option: uploadParams[index].answer_option,
+                                            answer_weightage: uploadParams[index].answer_weightage,
+                                            answer_range_from: Number(uploadParams[index].answer_range_from),
+                                            answer_range_to: Number(uploadParams[index].answer_range_to)
+                                        }
+
+                                        tempArray.push(object);
+
+                                    } else {
+
+                                        object = {
+                                            answer_type: individual_user_data.answer_type,
+                                            answer_content: uploadParams[index].answer_content,
+                                            answer_display: uploadParams[index].answer_display,
+                                            answer_option: uploadParams[index].answer_option,
+                                            answer_weightage: uploadParams[index].answer_weightage
+                                        }
+
+                                        tempArray.push(object);
+                                    }
 
                                     if (individual_user_data.answer_type === 'Image') {
 
@@ -998,7 +1024,7 @@ const EditQuestions = () => {
                                     );
                                 } else {
 
-    
+
                                     setnNewDigicard(true)
 
 
@@ -1035,7 +1061,7 @@ const EditQuestions = () => {
                                     });
                                 } else {
 
-    
+
                                     setnNewDigicard(true)
 
 
@@ -1073,7 +1099,7 @@ const EditQuestions = () => {
 
                                 if (allFilesData.length === 0) {
 
-    
+
                                     setnNewDigicard(true)
 
 
@@ -1088,7 +1114,7 @@ const EditQuestions = () => {
                                         );
                                     } else {
 
-        
+
                                         setnNewDigicard(true)
 
 
@@ -1110,7 +1136,7 @@ const EditQuestions = () => {
 
                                 if (allFilesData.length === 0) {
 
-    
+
                                     setnNewDigicard(true)
 
 
@@ -1125,7 +1151,7 @@ const EditQuestions = () => {
                                         });
                                     } else {
 
-        
+
                                         setnNewDigicard(true)
 
 
@@ -1886,7 +1912,7 @@ const EditQuestions = () => {
                                                     }}
 
                                                 >
-                                                    {({ errors, handleBlur, handleChange, handleSubmit, touched, values, setFieldValue,setFieldTouched }) => (
+                                                    {({ errors, handleBlur, handleChange, handleSubmit, touched, values, setFieldValue, setFieldTouched }) => (
                                                         <form noValidate onSubmit={handleSubmit} >
 
                                                             <Row>
@@ -2321,11 +2347,11 @@ const EditQuestions = () => {
                                                                         {toggleEquationsInput && answerBlanksOptions && (
 
                                                                             <>
-
                                                                                 <br />
 
                                                                                 {answerOptionsForm.length > 1 && (
-                                                                                    <Row>
+
+                                                                                    < Row >
                                                                                         <Col></Col>
                                                                                         <Col>
                                                                                             <CloseButton onClick={() => {
@@ -2533,6 +2559,7 @@ const EditQuestions = () => {
 
                                                                                 <Row key={index}>
 
+                                                                                    {console.log(form)}
                                                                                     <Col xs={3}>
                                                                                         <label className="floating-label">
                                                                                             <small className="text-danger"></small>
@@ -2602,7 +2629,7 @@ const EditQuestions = () => {
                                                                                             name="answer_content"
                                                                                             onBlur={handleBlur}
                                                                                             type="number"
-                                                                                            value={values.answer_content}
+                                                                                            value={form.answer_content}
                                                                                             onChange={event => handleAnswerBlanks(event, index)}
                                                                                             placeholder="Enter Answer"
                                                                                         />
@@ -2689,7 +2716,7 @@ const EditQuestions = () => {
                                                                                                         name="answer_range_from"
                                                                                                         onBlur={handleBlur}
                                                                                                         type="number"
-                                                                                                        value={values.answer_range_from}
+                                                                                                        value={form.answer_range_from}
                                                                                                         onChange={event => handleAnswerBlanks(event, index)}
                                                                                                         placeholder="From"
                                                                                                     />
@@ -2707,7 +2734,7 @@ const EditQuestions = () => {
                                                                                                         name="answer_range_to"
                                                                                                         onBlur={handleBlur}
                                                                                                         type="number"
-                                                                                                        value={values.answer_range_to}
+                                                                                                        value={form.answer_range_to}
                                                                                                         onChange={event => handleAnswerBlanks(event, index)}
                                                                                                         placeholder="To"
                                                                                                     />
