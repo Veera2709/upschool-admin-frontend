@@ -17,6 +17,8 @@ const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive 
     const [imgFile, setImgFile] = useState([]);
     const [subscription_active, setSubscription_active] = useState('');
     const [previousData, setPreviousData] = useState([]);
+    const [schoolLabel, setSchoolLabel] = useState('Upschool');
+    const [previousLabel, setPreviousLabel] = useState([])
     const [previousBoards, setPreviousBoards] = useState([]);
     const [selectedBoards, setSelectedBoards] = useState([]);
     const [copy, setCopy] = useState(false);
@@ -34,6 +36,8 @@ const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive 
     const cityRef = useRef('');
     const pincodeRef = useRef('');
     const phoneNumberRef = useRef('');
+    // const refVariable = React.createRef();
+
 
     const schoolBoardOptions = [
         { value: 'ICSE', label: 'ICSE' },
@@ -43,6 +47,13 @@ const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive 
         { value: 'NIOS', label: 'NIOS' },
         { value: 'IB', label: 'IB' }
     ];
+
+    const schoolLabelling = [
+        { value: 'Upschool', label: 'Upschool' },
+        { value: 'Co-brand', label: 'Co-brand' },
+        { value: 'White-label', label: 'White-label' }
+
+    ]
 
     const handleSelectChange = (event) => {
 
@@ -66,6 +77,12 @@ const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive 
         setFileValue(e.target.files[0])
         setUpdatedImage(e.target.files[0].name);
         setImgFile(URL.createObjectURL(e.target.files[0]));
+    }
+
+    const handleSelectBoard = (selectedList, selectedItem) => {
+        console.log('selectedList: ', selectedList);
+
+        setSelectedBoards(selectedList.map((ele) => ele.value));
     }
 
     const handleCopyAddress = () => {
@@ -123,7 +140,14 @@ const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive 
                         }
                     }
 
+                    console.log("------------- data", individual_client_data.school_labelling);
+                    setPreviousLabel({ value: individual_client_data.school_labelling, label: individual_client_data.school_labelling });
+
+
                     console.log(boardArr);
+
+                    // const [previousLabel, setPreviousLabel] = useState([])
+                    // let previousLabel = [];
 
                     setSubscription_active(previousSubscription);
                     _setRadio(radioValue);
@@ -158,6 +182,12 @@ const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive 
             });
 
     }, []);
+
+    const handleSchoolLabelling = (selectedSchoolLabel) => {
+        console.log("--------------", selectedSchoolLabel.value);
+        setSchoolLabel(selectedSchoolLabel.value)
+    }
+
 
 
     return (
@@ -225,6 +255,7 @@ const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive 
                                             school_id: id,
                                             school_name: values.schoolName,
                                             school_board: selectedBoards,
+                                            school_labelling: schoolLabel,
                                             school_logo: updatedImage === "" ? previousData.school_logo : updatedImage,
                                             subscription_active: subscription_active,
                                             school_contact_info: {
@@ -644,7 +675,12 @@ const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive 
                                                         options={schoolBoardOptions}
                                                         className="basic-multi-select"
                                                         classNamePrefix="Select"
-                                                        onChange={event => handleSelectChange(event)}
+                                                        // onChange={event => handleSelectChange(event)}
+                                                        onChange={event => {
+                                                            setSchoolBoardErrMsg(false);
+                                                            handleSelectChange(event)
+                                                        }}
+                                                        onSelect={handleSelectBoard}
                                                     />
 
                                                     {schoolBoardErrMsg && (
@@ -726,6 +762,59 @@ const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive 
                                                 <img width={150} src={imgFile} alt="" className="img-fluid mb-3" />
                                             </div>
                                         </div>
+
+
+
+                                        <div class="row">
+                                            <div className='col-sm-6'>
+                                                <div className="form-group fill">
+
+                                                    <label className="floating-label">
+                                                        <>School labelling </>
+
+                                                    </label>
+                                                    {console.log("HERE : ", previousLabel)}
+
+                                                    <Select
+                                                        defaultValue={previousLabel}
+                                                        name="boards"
+                                                        options={schoolLabelling}
+                                                        className="basic-select"
+                                                        classNamePrefix="Select"
+                                                        onBlur={handleBlur}
+                                                        // onChange={handleChange}
+                                                        // onChange={event => handleSelectChange(event)}
+                                                        onChange={(e) => {
+                                                            handleSchoolLabelling(e)
+                                                        }}
+                                                    //     onChange={event => {
+                                                    //         setSchoolBoardErrMsg(false);
+                                                    //         handleSelectChange(event)
+                                                    //     }}
+                                                    // // onSelect={handleSelectBoard}
+                                                    // onRemove={handleOnRemove}
+                                                    />
+
+                                                    {schoolBoardErrMsg && (
+                                                        <small className="text-danger form-text">{'Please select School Board'}</small>
+                                                    )}
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
 
                                         <div className="row">
                                             <div className="col-md-6">
@@ -1052,7 +1141,7 @@ const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive 
                                     </form>
                                 )
                                 }
-                            </Formik >
+                            </Formik>
                         </Card.Body>
                     </Card>
                 </>

@@ -78,7 +78,7 @@ export const AddDigiCard = {
   PricingOnlyNumber: 'Pricing should contain only numbers!'
 };
 export const AddUnit = {
-  
+
   UnittitleRequired: 'Unit Title is required!',
   UnittitleTooShort: 'Unit Title is too short!',
   UnittitleTooLong: "Unit Title is too long!",
@@ -92,12 +92,12 @@ export const AddClasses = {
 };
 
 export const AddTopic = {
-  
+
   TopictitleRequired: 'Topic Title is required!',
   QuizMinutesRequired: 'Quiz Minutes are required!',
   TopictitleTooShort: 'Topic Title is too short!',
   TopictitleTooLong: "Topic Title is too long!",
-  DescriptionRequired:" Topic Description is required!"
+  DescriptionRequired: " Topic Description is required!"
 };
 
 export const AddConcepts = {
@@ -113,12 +113,12 @@ export const AddSubjects = {
 };
 
 export const AddSection = {
-  
+
   SectionTitleRequired: 'Section name is required!',
   QuizMinutesRequired: 'Quiz Minutes are required!',
   TopictitleTooShort: 'Topic Title is too short!',
   TopictitleTooLong: "Topic Title is too long!",
-  DescriptionRequired:" Topic Description is required!"
+  DescriptionRequired: " Topic Description is required!"
 };
 
 export const AddressForm = {
@@ -857,3 +857,6 @@ export const componentsListArray = [
 export const EmailInitiation = {
   EmailsRequired: 'Recipients are required!'
 };
+
+
+export const userRolesArray = ["Teachers", "Students", "Parents"];

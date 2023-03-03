@@ -85,6 +85,7 @@ const MESSAGES = {
     ABLE_TO_DELETE: 'You can anyway delete your data after restoring!',
     DATA_DELETED: 'Your data has been deleted!',
     USER_DELETED: 'User has been deleted!',
+    USERS_DELETED: 'Multiple Users has been deleted!',
     USER_RESTORED: 'User has been restored!',
     CLIENT_DELETED: 'The client has been deleted!',
     DATA_SAFE: 'Your data is safe!',

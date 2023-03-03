@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios'
-import { Row, Col, Card, Pagination, Button, Modal } from 'react-bootstrap';
+import { Row, Col, Card, Pagination, Button, Modal, Form } from 'react-bootstrap';
 import BTable from 'react-bootstrap/Table';
 import withReactContent from 'sweetalert2-react-content';
 import Swal from 'sweetalert2';
@@ -14,10 +14,11 @@ import EditSchoolForm from './EditSchoolForm';
 import SubscribeClass from './SubscribeClass';
 import { isEmptyArray } from '../../../../util/utils';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
-import { Link ,useHistory   } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import BasicSpinner from '../../../../helper/BasicSpinner';
 
 function Table({ columns, data, modalOpen }) {
+    const [stateCustomer, setStateCustomer] = useState([])
     const { getTableProps, getTableBodyProps, headerGroups, prepareRow, globalFilter, setGlobalFilter, page, canPreviousPage, canNextPage, pageOptions, pageCount, gotoPage, nextPage, previousPage, setPageSize, state: { pageIndex, pageSize } } = useTable(
         {
             columns,
@@ -31,9 +32,26 @@ function Table({ columns, data, modalOpen }) {
 
 
 
+
+    //handle delete multi school
+    const deleteSchoolById = () => {
+        let arrIds = [];
+        stateCustomer.forEach(d => {
+            if (d.select) {
+                arrIds.push(d.id)
+            }
+        })
+        console.log(arrIds)
+
+    }
+
+
     return (
         <>
             <Row className="mb-3">
+
+                <Button onClick={deleteSchoolById} variant="danger" className="btn-sm btn-round has-ripple ml-2" style={{ marginLeft: "1.5rem" }} >Delete</Button>
+
                 <Col className="d-flex align-items-center">
                     Show
                     <select
@@ -58,8 +76,13 @@ function Table({ columns, data, modalOpen }) {
                         <i className="feather icon-plus" /> Add School
                     </Button>
                 </Col>
+
+                {/* <Button onClick={handleDeleteAll} variant="danger" className="btn-sm btn-round has-ripple ml-2" >Delete</Button> */}
             </Row>
 
+
+
+            {/* style={{ background: "red", color: "white" }} */}
             <BTable striped bordered hover responsive {...getTableProps()}>
                 <thead>
                     {headerGroups.map((headerGroup) => (
@@ -80,6 +103,7 @@ function Table({ columns, data, modalOpen }) {
                                         ) : (
                                             ''
                                         )}
+
                                     </span>
                                 </th>
                             ))}
@@ -137,9 +161,12 @@ function Table({ columns, data, modalOpen }) {
 const SchoolChild = (props) => {
     const { _data, fetchSchoolData, inactive, setInactive } = props
 
-
     const columns = React.useMemo(
         () => [
+            {
+                Header: 'Option',
+                accessor: 'action'
+            },
             {
                 Header: 'School Logo',
                 accessor: 'school_avatar'
@@ -159,7 +186,9 @@ const SchoolChild = (props) => {
             {
                 Header: 'Options',
                 accessor: 'actions'
-            }
+            },
+
+
         ],
         []
     );
@@ -177,15 +206,15 @@ const SchoolChild = (props) => {
     let history = useHistory();
 
 
-    const MySwal = withReactContent(Swal);
+        const MySwal = withReactContent(Swal);
 
-    const sweetAlertHandler = (alert) => {
-        MySwal.fire({
-            title: alert.title,
-            text: alert.text,
-            icon: alert.type
-        });
-    };
+        const sweetAlertHandler = (alert) => {
+            MySwal.fire({
+                title: alert.title,
+                text: alert.text,
+                icon: alert.type
+            });
+        };
 
     const handleDeleteSchool = (e, school_id, Archieved) => {
         e.preventDefault();
@@ -291,6 +320,16 @@ const SchoolChild = (props) => {
         for (let index = 0; index < resultData.length; index++) {
 
             console.log('status: ', resultData[index]['school_status'])
+
+
+            resultData[index]['action'] = (
+
+                <input type="checkbox" name="checkboxName" id="checkboxID" value="checkboxValue"
+                // checked={this.state.checked} onChange={this.handleChange}
+                />
+            )
+
+            resultData[index]['school_name'] = <p>{resultData[index].school_name}</p>
             resultData[index]['school_avatar'] = <img className='img-fluid img-radius wid-50 circle-image' src={resultData[index].school_logoURL} alt="school_image" />
             resultData[index]['school_name'] = <p>{resultData[index].school_name}</p>
             resultData[index]['phone_number'] = <p>{resultData[index].school_contact_info.business_address.phone_no}</p>
@@ -363,6 +402,8 @@ const SchoolChild = (props) => {
                                                 <i className="feather icon-plus" /> Add Schools
                                             </Button>
 
+
+
                                             <Modal dialogClassName="my-modal" show={isOpen} onHide={() => setIsOpen(false)}>
                                                 <Modal.Header closeButton>
                                                     <Modal.Title as="h5">Add School</Modal.Title>
@@ -400,6 +441,8 @@ const SchoolChild = (props) => {
                                                     <Modal.Body>
                                                         <AddSchoolForm setIsOpen={setIsOpen} fetchSchoolData={fetchSchoolData} />
                                                     </Modal.Body>
+
+
                                                     {/* <Modal.Footer>
                             <Button variant="danger" onClick={() => setIsOpen(false)}>
                                 Clear

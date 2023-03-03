@@ -13,7 +13,11 @@ import dynamicUrl from '../../../../helper/dynamicUrls';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import BasicSpinner from '../../../../helper/BasicSpinner';
 
-function Table({ columns, data }) {
+function Table({ columns, data, modalOpen, userRole }) {
+
+    console.log("_userRole in Table", userRole);
+
+    const [stateStudent, setStateStudent] = useState([])
     const {
         getTableProps,
         getTableBodyProps,
@@ -37,16 +41,110 @@ function Table({ columns, data }) {
         {
             columns,
             data,
-            initialState: { pageIndex: 0, pageSize: 10 }
+            initialState: { pageIndex: 0, pageSize: 10 },
+            userRole
         },
         useGlobalFilter,
         useSortBy,
         usePagination
     );
 
+    const [loader, showLoader, hideLoader] = useFullPageLoader();
+    const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
+
+    const MySwal = withReactContent(Swal);
+    const history = useHistory();
+    const sweetAlertHandler = (alert) => {
+        MySwal.fire({
+            title: alert.title,
+            text: alert.text,
+            icon: alert.type
+        });
+    };
+    const user_status = pageLocation === 'active-users' ? "Active" : "Archived"
+    console.log("user_status : ", user_status);
+
+
+    const deleteStudentById = () => {
+        // let arrIds = [];
+        // stateStudent.forEach(d => {
+        //     if (d.select) {
+        //         arrIds.push(d.id)
+        //     }
+        // })
+        // console.log(arrIds)
+
+        console.log("data check: ", data);
+        console.log("userRole : ", userRole);
+
+        let arrIds = [];
+        let userId = (userRole === "Students") ? "student_id" : "N.A.";
+
+        let userRolePayload = (userRole === "Students") ? "Student" : "N.A.";
+
+        console.log(userId);
+        for (let k = 0; k < data.length; k++) {
+
+            console.log(data[k][userId]);
+
+            // console.log("document.getElementById(data[k][userId]).checked ", document.getElementById(data[k][userId]).checked, "---", data[k][userId]);
+
+            if (document.getElementById(data[k][userId]).checked) {
+                console.log("Inside Condition");
+
+                arrIds.push(data[k][userId]);
+            }
+        }
+        console.log("CHECK ROWS : ", arrIds);
+        // Call API : 
+        axios
+            .post(
+                dynamicUrl.bulkToggleUsersStatus,
+                {
+                    data: {
+                        userIdArray: arrIds,
+                        user_role: userRolePayload,
+                        user_status: user_status === "Active" ? "Archived" : "Active"
+                    }
+                }, {
+                headers: { Authorization: sessionStorage.getItem('user_jwt') }
+            }
+            )
+            .then(async (response) => {
+                if (response.Error) {
+                    hideLoader();
+                    sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
+                    history.push('/admin-portal/' + pageLocation)
+                    // fetchUserData();
+                } else {
+                    console.log("response : ", response);
+
+                    sweetAlertHandler({ title: MESSAGES.INFO.SCHOOL_DELETED, type: 'success' });
+                    hideLoader();
+                    history.push('/admin-portal/' + pageLocation)
+
+                    // fetchSchoolData();
+                    // setInactive(false);
+                    // _fetchSchoolData();
+                }
+            }
+            )
+
+    }
+
     return (
         <>
             <Row className="mb-3">
+
+                {user_status === "Active" ?
+                    <Button onClick={deleteStudentById} variant="danger" className="btn-sm btn-round has-ripple ml-2" style={{ marginLeft: "1.5rem" }} >Delete</Button>
+
+                    :
+
+                    <Button onClick={deleteStudentById} variant="primary" className="btn-sm btn-round has-ripple ml-2" style={{ marginLeft: "1.5rem" }} >Restores</Button>
+
+                }
+
                 <Col className="d-flex align-items-center">
                     Show
                     <select
@@ -158,6 +256,10 @@ const UserTableViewStudent = ({ _userRole }) => {
 
     const columns = React.useMemo(() => [
         {
+            Header: <input type="checkbox"></input>,
+            accessor: 'activity'
+        },
+        {
             Header: '#',
             accessor: 'id'
         },
@@ -220,7 +322,7 @@ const UserTableViewStudent = ({ _userRole }) => {
             if (willDelete.value) {
                 showLoader();
                 deleteUser(user_id, user_role, updateStatus);
-            } 
+            }
         });
     };
 
@@ -416,20 +518,26 @@ const UserTableViewStudent = ({ _userRole }) => {
         let responseData = _data;
         // let responseData = [];
 
+        let userId = (_userRole === "Students") ? "student_id" : "N.A.";
+
         console.log("responseData", responseData);
 
         let finalDataArray = [];
         for (let index = 0; index < responseData.length; index++) {
             responseData[index].id = index + 1;
 
+            responseData[index]['activity'] = (
+                <input type="checkbox"
+                    name={responseData[index]["id"]}
+                    id={responseData[index][userId]}
+                />
+            )
+
 
             responseData[index]['action'] = (
                 <>
-
                     {pageLocation === 'active-users' ? (
-
                         <>
-
                             <Button
                                 size="sm"
                                 className="btn btn-icon btn-rounded btn-info"
@@ -605,7 +713,7 @@ const UserTableViewStudent = ({ _userRole }) => {
                                                                 <Card.Title as="h5">User List</Card.Title>
                                                             </Card.Header>
                                                             <Card.Body>
-                                                                <Table columns={columns} data={userData} />
+                                                                <Table columns={columns} data={userData} userRole={_userRole} />
                                                             </Card.Body>
                                                         </Card>
 
@@ -627,7 +735,7 @@ const UserTableViewStudent = ({ _userRole }) => {
 
 
 
-            </div >
+            </div>
             {loader}
         </React.Fragment>
     );
