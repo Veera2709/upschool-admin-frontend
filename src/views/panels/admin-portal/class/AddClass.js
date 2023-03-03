@@ -130,7 +130,7 @@ const AddClass = ({ setOpenAddClass }) => {
           classTitle: Yup.string()
             .trim()
             .min(2, Constants.AddClasses.ClasstitleTooShort)
-            .max(30, Constants.AddClasses.ClasstitleTooLong)
+            .max(32, Constants.AddClasses.ClasstitleTooLong)
             .required(Constants.AddClasses.ClasstitleRequired),
         })}
         onSubmit={async (
@@ -241,14 +241,8 @@ const AddClass = ({ setOpenAddClass }) => {
                     options={topicSubjects}
                     className="basic-multi-select"
                     classNamePrefix="Select"
-                    onChange={(event) => handleDigicardChange(event)}
+                    onChange={(event) => {handleDigicardChange(event);setIsShown(true)}}
                   />
-                  {showDigicardErr && (
-                    <small className="text-danger form-text">
-                      {"Please select a Subject"}
-                    </small>
-                  )}
-
                   <br />
                   <small
                     className="text-danger form-text"

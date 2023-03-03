@@ -73,11 +73,11 @@ const routes = [
     path: '/maintenance/offline-ui',
     component: lazy(() => import('./views/maintenance/OfflineUI'))
   },
-  // {
-  //   exact: true,
-  //   path: '/admin-portal/preview',
-  //   component: lazy(() => import('./views/panels/admin-portal/digicard/Preview'))
-  // },
+  {
+    exact: true,
+    path: '/admin-portal/preview/:digi_card_id',
+    component: lazy(() => import('./views/panels/admin-portal/digicard/Preview'))
+  },
   // {
   //   exact: true,
   //   path: '/auth/signup-1',
@@ -141,10 +141,14 @@ const routes = [
       },
       {
         exact: true,
-        path: '/admin-porttal/archived-schools',
+        path: '/admin-portal/archived-schools',
         component: lazy(() => import('./views/panels/admin-portal/school/ArchivedSchools'))
       },
-
+      {
+        exact: true,
+        path: '/admin-portal/editSchool/:school_id',
+        component: lazy(() => import('./views/panels/admin-portal/school/EditTabs'))
+      },
       {
         exact: true,
         path: '/admin-portal/active-users',
@@ -155,10 +159,13 @@ const routes = [
       },
       {
         exact: true,
+        path: '/admin-portal/edit-users/:user_id/:user_role/:schoolId',
+        component: lazy(() => import('./views/panels/admin-portal/users/EditUserOptions'))
+      },
+      {
+        exact: true,
         path: '/admin-portal/archived-users',
-        component: lazy(() =>
-
-          import('./views/panels/admin-portal/users/ListUsers')
+        component: lazy(() => import('./views/panels/admin-portal/users/ListUsers')
 
         )
       },
@@ -166,6 +173,16 @@ const routes = [
         exact: true,
         path: '/admin-portal/add-users',
         component: lazy(() => import('./views/panels/admin-portal/users/UsersBulkUpload'))
+      },
+      {
+        exact: true,
+        path: '/admin-portal/add-questions',
+        component: lazy(() => import('./views/panels/admin-portal/questions/AddQuestions'))
+      },
+      {
+        exact: true,
+        path: '/admin-portal/add-groups',
+        component: lazy(() => import('./views/panels/admin-portal/groups/AddGroups'))
       },
       {
         exact: true,
@@ -182,7 +199,7 @@ const routes = [
         exact: true,
         path: '/admin-portal/archived-concepts',
         component: lazy(() => import('./views/panels/admin-portal/concepts/ListConcepts'))
-      }, 
+      },
 
       {
         exact: true,
@@ -219,13 +236,45 @@ const routes = [
       //   component: lazy(() => import('./views/panels/admin-portal/Topics/EditTopics'))
       // },
 
+      // Questions
+
+      {
+        exact: true,
+        path: '/admin-portal/active-questions',
+        component: lazy(() => import('./views/panels/admin-portal/questions/ListQuestions'))
+      },
+      {
+        exact: true,
+        path: '/admin-portal/archived-questions',
+        component: lazy(() => import('./views/panels/admin-portal/questions/ListQuestions'))
+      },
+      {
+        exact: true,
+        path: '/admin-portal/edit-questions/:question_id',
+        component: lazy(() => import('./views/panels/admin-portal/questions/EditQuestions'))
+      }, 
+      {
+        exact: true,
+        path: '/admin-portal/active-groups',
+        component: lazy(() => import('./views/panels/admin-portal/groups/ListGroups'))
+      }, 
+      {
+        exact: true,
+        path: '/admin-portal/edit-groups/:group_id',
+        component: lazy(() => import('./views/panels/admin-portal/groups/EditGroups'))
+      },
+      {
+        exact: true,
+        path: '/admin-portal/archived-groups',
+        component: lazy(() => import('./views/panels/admin-portal/groups/ListGroups'))
+      },
       // digi card
       {
         exact: true,
         path: '/admin-portal/active-digiCard',
         component: lazy(() => import('./views/panels/admin-portal/digicard/DigiCard'))
       },
-       {
+      {
         exact: true,
         path: '/admin-portal/digicard-Archived',
         component: lazy(() => import('./views/panels/admin-portal/digicard/DigiCard'))
@@ -271,7 +320,7 @@ const routes = [
         path: '/admin-portal/units/active-units',
         component: lazy(() => import('./views/panels/admin-portal/units/UnitList'))
       },
-       {
+      {
         exact: true,
         path: '/admin-portal/units/archived-units',
         component: lazy(() => import('./views/panels/admin-portal/units/UnitList'))
@@ -299,6 +348,29 @@ const routes = [
         path: '/admin-portal/classes/archived-classes',
         component: lazy(() => import('./views/panels/admin-portal/class/ClassesList'))
       },
+      
+      //UpSchool_useers
+      {
+        exact: true,
+        path: '/admin-portal/active-upSchoolUsers',
+        component: lazy(() => import('./views/panels/admin-portal/CMS users/userTable'))
+      },
+      {
+        exact: true,
+        path: '/admin-portal/archived-upSchoolUsers',
+        component: lazy(() => import('./views/panels/admin-portal/CMS users/userTable'))
+      },
+      {
+        exact: true,
+        path: '/admin-portal/editCMSUser/:id',
+        component: lazy(() => import('./views/panels/admin-portal/CMS users/editUsers'))
+      },
+      {
+        exact: true,
+        path: '/admin-portal/add_UpSchoolusers',
+        component: lazy(() => import('./views/panels/admin-portal/CMS users/addUsers'))
+      },
+
       // Add Standards
       // {
       //   exact: true,

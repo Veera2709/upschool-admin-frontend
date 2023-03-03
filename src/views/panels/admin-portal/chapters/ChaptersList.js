@@ -194,6 +194,7 @@ const ChaptersListChild = (props) => {
     // const data = React.useMemo(() => makeData(80), []);
     const [chapterData, setChapterData] = useState([]);
     const [reloadAllData, setReloadAllData] = useState('Fetched');
+    const [statusUrl, setStatusUrl] = useState('');
     const [loader, showLoader, hideLoader] = useFullPageLoader();
     const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[3]);
     const [isLoading, setIsLoading] = useState(false);
@@ -202,10 +203,10 @@ const ChaptersListChild = (props) => {
     const [isOpenAddChapter, setOpenAddChapter] = useState(false);
 
 
-const handleAddChapter =(e)=>{
-    e.preventDefault();
-    setOpenAddChapter(true)
-}
+    const handleAddChapter = (e) => {
+        e.preventDefault();
+        setOpenAddChapter(true)
+    }
 
 
     // console.log('data: ', data)
@@ -246,6 +247,7 @@ const handleAddChapter =(e)=>{
                             hideLoader();
                             sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
                         } else {
+                            allChaptersList()
                             setReloadAllData("Deleted");
                             return MySwal.fire('', 'The ' + chapter_title + ' is Deleted', 'success');
                             // window. location. reload() 
@@ -309,13 +311,11 @@ const handleAddChapter =(e)=>{
                                 hideLoader();
                                 sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
                             } else {
+                                allChaptersList()
                                 setReloadAllData("Deleted");
                                 return MySwal.fire('', 'The ' + chapter_title + ' is Restored', 'success');
                                 // window. location. reload() 
                                 //  MySwal.fire('', MESSAGES.INFO.CLIENT_DELETED, 'success');
-
-
-
                             }
                         })
                         .catch((error) => {
@@ -348,7 +348,9 @@ const handleAddChapter =(e)=>{
     }
 
 
-    const allChaptersList = (chapterStatus) => {
+    const allChaptersList = () => {
+        const chapterStatus = pageLocation === "active-chapter" ? 'Active' : 'Archived';
+
         setIsLoading(true);
         axios.post(dynamicUrl.fetchAllChapters, {}, {
             headers: { Authorization: sessionStorage.getItem('user_jwt') }
@@ -446,13 +448,16 @@ const handleAddChapter =(e)=>{
     }
 
     useEffect(() => {
-
-        if (pageLocation) {
-            console.log("--", pageLocation);
-            const url = pageLocation === "active-chapter" ? 'Active' : 'Archived';
-            allChaptersList(url);
+        let userJWT = sessionStorage.getItem('user_jwt');
+        console.log("jwt", userJWT);
+        if (userJWT === "" || userJWT === undefined || userJWT === "undefined" || userJWT === null) {
+            sessionStorage.clear();
+            localStorage.clear();
+            history.push('/auth/signin-1');
+            window.location.reload();
+        } else {
+            allChaptersList();
         }
-
     }, [reloadAllData])
 
     return (
@@ -465,26 +470,35 @@ const handleAddChapter =(e)=>{
                         {
                             chapterData.length <= 0 ? (
                                 <>
-                                    < React.Fragment >
-                                        <div>
+                                    {
+                                        pageLocation === 'active-chapter' ? (
+                                            < React.Fragment >
+                                                <div>
 
-                                            <h3 style={{ textAlign: 'center' }}>No Chapter Found</h3>
-                                            <div className="form-group fill text-center">
-                                                <br></br>
-                                                <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={(e) => { handleAddChapter(e) }}>
-                                                    <i className="feather icon-plus" /> Add Chapter
-                                                </Button>
-                                            </div>
-                                        </div>
-                                        <Modal dialogClassName="my-modal" show={isOpenAddChapter} onHide={() => setOpenAddChapter(false)}>
-                                            <Modal.Header closeButton>
-                                                <Modal.Title as="h5">Add Chapter</Modal.Title>
-                                            </Modal.Header>
-                                            <Modal.Body>
-                                                <AddChapter setOpenAddChapter={setOpenAddChapter} />
-                                            </Modal.Body>
-                                        </Modal>
-                                    </React.Fragment>
+                                                    <h3 style={{ textAlign: 'center' }}>No {pageLocation === "active-chapter" ? 'Active Chapters' : 'Archived Chapters'} Found</h3>
+                                                    <div className="form-group fill text-center">
+                                                        <br></br>
+                                                        <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={(e) => { handleAddChapter(e) }}>
+                                                            <i className="feather icon-plus" /> Add Chapter
+                                                        </Button>
+                                                    </div>
+                                                </div>
+                                                <Modal dialogClassName="my-modal" show={isOpenAddChapter} onHide={() => setOpenAddChapter(false)}>
+                                                    <Modal.Header closeButton>
+                                                        <Modal.Title as="h5">Add Chapter</Modal.Title>
+                                                    </Modal.Header>
+                                                    <Modal.Body>
+                                                        <AddChapter setOpenAddChapter={setOpenAddChapter} />
+                                                    </Modal.Body>
+                                                </Modal>
+                                            </React.Fragment>
+                                        ) : (
+                                            <React.Fragment>
+                                                <h3 style={{ textAlign: 'center' }}>No {pageLocation === "active-chapter" ? 'Active Chapters' : 'Archived Chapters'} Found</h3>
+                                            </React.Fragment>
+                                        )
+                                    }
+
                                 </>
                             ) : (
                                 <>

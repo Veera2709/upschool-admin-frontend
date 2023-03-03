@@ -59,7 +59,9 @@ export const Common = {
   pincodeNumberRegex: "^[1-9][0-9]{5}$",
   positiveNumber: "^[1-9]+[0-9]*$",
   phoneNumberValidRegex: "^[0-9]{10}$",
-
+  marksWeightageRegex: /^\d*[1-9]\d*$/,
+  passPercentageRegex: /^(100|[1-9][0-9]?)$/,
+  numOfAttemptsRegex: /^(100|[0-9][0-9]?)$/,
   // 
   // UserNameRegex: /^([a-zA-Z]+\s)*[a-zA-Z]+$/, //accepts numbers
   UserNameRegex: "/^[a-zA-Z ]+$/", //accepts numbers

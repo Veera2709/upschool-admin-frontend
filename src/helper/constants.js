@@ -78,10 +78,10 @@ export const AddDigiCard = {
   PricingOnlyNumber: 'Pricing should contain only numbers!'
 };
 export const AddUnit = {
-  
-  UnittitleRequired: 'Unit title is required!',
-  UnittitleTooShort: 'Unit title is too short!',
-  UnittitleTooLong: "Unit title is too long!",
+
+  UnittitleRequired: 'Unit Title is required!',
+  UnittitleTooShort: 'Unit Title is too short!',
+  UnittitleTooLong: "Unit Title is too long!",
   DescriptionRequired: "Unit Description is required!",
 };
 
@@ -90,13 +90,64 @@ export const AddClasses = {
   ClasstitleTooLong: 'Class Title is too Long',
   ClasstitleRequired: 'Class Title is required!',
 };
+
 export const AddTopic = {
-  
-  TopictitleRequired: 'Topic title is required!',
+
+  TopictitleRequired: 'Topic Title is required!',
   QuizMinutesRequired: 'Quiz Minutes are required!',
-  TopictitleTooShort: 'Topic title is too short!',
-  TopictitleTooLong: "Topic title is too long!",
-  DescriptionRequired:" Topic Description is required!"
+  TopictitleTooShort: 'Topic Title is too short!',
+  TopictitleTooLong: "Topic Title is too long!",
+  DescriptionRequired: " Topic Description is required!"
+};
+
+export const cmsRole = {
+
+  FirstName: 'First Name is required!',
+  FirstNameTooShort: 'First Name is too short!',
+  FirstNameTooLong: "First Name is too long!",
+
+  UserName: 'User Name is required!',
+  UserNameTooShort: 'User Name is too short!',
+  UserNameTooLong: "User Name is too long!",
+
+  LastName: 'Last Name is required!',
+  LastNameTooShort: 'Last Name is too short!',
+  LastNameTooLong: "Last Name is too long!",
+
+  userEmail: 'Email is required!',
+  userEmailTooShort: 'Email is too short!',
+  userEmailTooLong: "Email is too long!",
+
+  phoneRegExp: /^(\+91[\-\s]?)?[0]?(91)?[6789]\d{9}$/,
+  phoneNumVali:"Phone number is not valid",
+  phoneNumTooShort: 'Phone Number Have Less Then 10 Digits!',
+  phoneNumTooLong: "Phone Number is too long!",
+  phoneNum: "Phone Number is required!",
+
+  userDOB: "DOB is required!",
+
+
+};
+
+export const AddConcepts = {
+  ConceptTitleRequired: 'Concept Title required!',
+  ConceptTitleTooShort: 'Concept Title is too short!',
+  ConceptTitleTooLong: "Concept Title is too long!"
+};
+
+export const AddSubjects = {
+  SubjectTitleRequired: 'Subject Title required!',
+  SubjectTitleTooShort: 'Subject Title is too short!',
+  SubjectTitleTooLong: "Subject Title is too long!"
+};
+
+export const AddSection = {
+
+  SectionTitleRequired: 'Section name is required!',
+  QuizMinutesRequired: 'Quiz Minutes are required!',
+  TopictitleTooShort: 'Topic Title is too short!',
+  TopictitleTooLong: "Topic Title is too long!",
+  DescriptionRequired: " Topic Description is required!"
 };
 
 export const AddressForm = {

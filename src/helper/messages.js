@@ -17,7 +17,9 @@ const MESSAGES = {
     AddingClient: 'Error in adding Client',
     AddingUser: 'Error in adding User',
     UpdatingUser: 'Error in updating User',
+    UpdatingGroup: 'Error in updating Group',
     DeletingUser: 'Error in deleting User',
+    DeletingGroup: 'Error in deleting Group',
     DeletingConcept: 'Error in deleting Concept',
     DeletingSubject: 'Error in deleting Subject',
     UpdatingClient: 'Error in updating Client',
@@ -36,7 +38,7 @@ const MESSAGES = {
   },
   SUCCESS: {
     RestoredSuccessfully: 'Restored Successfully!',
-
+    UpdatingQuizConfiguration: 'Updated Quiz configuration settings successfully!',
     AddingDigiCard: 'Added DigiCard Successfully',
     EditDigiCard: 'DigiCard Updated Successfully',
 
@@ -57,6 +59,7 @@ const MESSAGES = {
     AddingClient: 'Added Client Successfully',
     AddingUser: 'Added User Successfully',
     UpdatingUser: 'Updated User Successfully',
+    UpdatingGroup: 'Updated Group Successfully',
     UpdatingClient: 'Updated Client Successfully',
     AssignUsers: 'Users assigned successfully',
     VerificationDone: 'Verified successfully',
@@ -92,6 +95,10 @@ const MESSAGES = {
     SCHOOL_DELETED: 'School deleted successfully!',
     SUBJECT_RESTORED: 'The subject has been restored!',
     SUBJECT_DELETED: 'The subject has been deleted!',
+    QUESTION_RESTORED: 'Question has been restored!',
+    QUESTION_DELETED: 'Question has been deleted!',
+    GROUP_RESTORED: 'Group has been restored!',
+    GROUP_DELETED: 'Group has been deleted!',
   },
   VALIDATION: {
     MUST_BE_A_VALID_EMAIL_ADDRESS: 'Must be a valid email address',

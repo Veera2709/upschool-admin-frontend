@@ -1,15 +1,13 @@
 import React from "react";
-import "../digicard/Styles/article.css";
-import SunEditor from "suneditor-react";
+import "./Styles/article.css";
+import SunEditor from "./suneditor-react/dist/SunEditor";
 import "../digicard/Styles/suneditor.min.css";
-
 import katex from 'katex'
 import 'katex/dist/katex.min.css'
-
-import 'suneditor/dist/css/suneditor.min.css';
+import './suneditor/dist/suneditor.css';
 // import EditTable from './Table'
 
-import plugins from 'suneditor/src/plugins'
+import plugins from './suneditor/src/plugins'
 
 function ArticleRTE({
   setArticleSize,
@@ -32,7 +30,6 @@ function ArticleRTE({
 
   return (
     <div>
-      {/* <EditTable> </EditTable> */}
       <SunEditor placeholder="Please type here..."
         disable={sessionStorage.getItem("user_role") == "Viewer"}
         setContents={articleData}
@@ -40,10 +37,11 @@ function ArticleRTE({
         onChange={handleEditorChange}
         setDefaultStyle="height: 80vh; font-size: 16px;font-family: Cerebri Sans Pro;"
         setOptions={{
-          // imageUploadSizeLimit: "250000",
+          imageUploadSizeLimit: "250000",
           katex: katex,
-          plugins: plugins,
-          font : [
+          plugins:plugins,
+          // plugins:[listType],
+          font: [
             'Arial',
             'tohoma',
             'Courier New,Courier',
@@ -57,11 +55,20 @@ function ArticleRTE({
             'Times',
             'Helvetica',
             'Geneva',
-            'Courier New',
-
-        ],
-        preview :[{pathpath : '/admin-portal/admin-dashboard'}
-        ],
+            "sans-serif",
+            "cursive",
+            "Mogra",
+            "monospace",
+            "Impact",
+            "trebuchet ms",
+            "comic sans ms",
+            "verdana",
+            "arial black",
+            "tahoma",
+            "Lucida Console",
+          ],
+          preview: [{ pathpath: '/admin-portal/admin-dashboard' }
+          ],
           buttonList: [
             ['undo', 'redo'],
             ['font', 'fontSize', 'formatBlock'],
@@ -73,11 +80,9 @@ function ArticleRTE({
             ['outdent', 'indent'],
             ['align', 'horizontalRule', 'list', 'lineHeight'],
             ['table', 'link', 'image', 'video', 'audio' /** ,'math' */], // You must add the 'katex' library at options to use the 'math' plugin.
-            /** ['imageGallery'] */ // You must add the "imageGalleryUrl".
-            ['fullScreen', 'showBlocks', 'codeView'],
-            ['preview', 'print'],
-            ['save', 'template'],
-            ['math']
+            ['fullScreen'],
+            ['preview'],
+            ['math'],
           ],
         }}
       />

@@ -13,22 +13,40 @@ import dynamicUrl from '../../../../helper/dynamicUrls';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import { SessionStorage } from '../../../../util/SessionStorage';
 import BasicSpinner from '../../../../helper/BasicSpinner';
+import * as Constants from '../../../../helper/constants';
 
-const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEditConcept, fetchAllConceptsData }) => {
+const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEditConcept, fetchAllConceptsData, _basicGroups, _intermediateGroups, _advancedGroups }) => {
 
     const history = useHistory();
     const [isLoading, setIsLoading] = useState(false);
     const [loader, showLoader, hideLoader] = useFullPageLoader();
+
     const [selectedDigicards, setSelectedDigicards] = useState([]);
     const [selectedRelatedConcepts, setSelectedRelatedConcepts] = useState([]);
     const [selectedKeywords, setSelectedKeywords] = useState([]);
+    const [selectedBasicGroups, setSelectedBasicGroups] = useState([]);
+    const [selectedIntermediateGroups, setSelectedIntermediateGroups] = useState([]);
+    const [selectedAdvancedGroups, setSelectedAdvancedGroups] = useState([]);
+
     const [dropdownDigicards, setDropdownDigicards] = useState([]);
-    const [previousDigicards, setPreviousDigicards] = useState([]);
-    const [previousConcepts, setPreviousConcepts] = useState([]);
+    const [dropdownBasicGroups, setDropdownBasicGroups] = useState([]);
+    const [dropdownIntermediateGroups, setDropdownIntermediateGroups] = useState([]);
+    const [dropdownAdvancedGroups, setDropdownAdvancedGroups] = useState([]);
     const [dropdownRelatedConcepts, setDropdownRelatedConcepts] = useState([]);
+
+    const [previousDigicards, setPreviousDigicards] = useState([]);
+    const [previousBasicGroups, setPreviousBasicGroups] = useState([]);
+    const [previousIntermediateGroups, setPreviousIntermediateGroups] = useState([]);
+    const [previousAdvancedGroups, setPreviousAdvancedGroups] = useState([]);
+    const [previousConcepts, setPreviousConcepts] = useState([]);
+
     const [showDigicardErr, setShowDigicardErr] = useState(false);
+    const [showBasicGroupErr, setShowBasicGroupErr] = useState(false);
+    const [showIntermediateGroupErr, setShowIntermediateGroupErr] = useState(false);
+    const [showAdvancedGroupErr, setShowAdvancedGroupErr] = useState(false);
     const [conceptTitleErr, setConceptTitleErr] = useState(false);
     const [conceptTitleErrMessage, setConceptTitleErrMessage] = useState('');
+
     const [previousData, setPreviousData] = useState([]);
     const [tags, setTags] = useState([]);
 
@@ -64,17 +82,43 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
             setDropdownDigicards(valuesArr);
         }
 
-        if (_relatedConcepts) {
+        if (_basicGroups) {
 
             let valuesArr = [];
 
-            for (let index = 0; index < _relatedConcepts.length; index++) {
+            for (let index = 0; index < _basicGroups.length; index++) {
 
-                if (_relatedConcepts[index]) {
-                    valuesArr.push({ value: _relatedConcepts[index].concept_id, label: _relatedConcepts[index].concept_title })
+                if (_basicGroups[index]) {
+                    valuesArr.push({ value: _basicGroups[index].group_id, label: _basicGroups[index].group_name })
                 }
             }
-            setDropdownRelatedConcepts(valuesArr)
+            setDropdownBasicGroups(valuesArr);
+        }
+
+        if (_intermediateGroups) {
+
+            let valuesArr = [];
+
+            for (let index = 0; index < _intermediateGroups.length; index++) {
+
+                if (_intermediateGroups[index]) {
+                    valuesArr.push({ value: _intermediateGroups[index].group_id, label: _intermediateGroups[index].group_name })
+                }
+            }
+            setDropdownIntermediateGroups(valuesArr);
+        }
+
+        if (_advancedGroups) {
+
+            let valuesArr = [];
+
+            for (let index = 0; index < _advancedGroups.length; index++) {
+
+                if (_advancedGroups[index]) {
+                    valuesArr.push({ value: _advancedGroups[index].group_id, label: _advancedGroups[index].group_name })
+                }
+            }
+            setDropdownAdvancedGroups(valuesArr);
         }
 
         axios
@@ -146,7 +190,127 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
                             setSelectedDigicards(selectedArr);
                         }
 
-                    } getPreviousDigicards(0)
+                    } getPreviousDigicards(0);
+
+                    // ------------------------------
+
+                    let previousBasicGroupsArr = [];
+                    let getDataBasicGroups;
+
+                    function getPreviousBasicGroups(i) {
+
+                        if (i < response.data.Items[0].concept_group_id.basic.length) {
+
+                            console.log(_basicGroups.filter(p => p.group_id === response.data.Items[0].concept_group_id.basic[i])[0]);
+
+                            getDataBasicGroups = _basicGroups.filter(p => p.group_id === response.data.Items[0].concept_group_id.basic[i]);
+                            previousBasicGroupsArr.push(getDataBasicGroups[0]);
+                            console.log(previousBasicGroupsArr);
+                            i++;
+                            getPreviousBasicGroups(i);
+
+                        } else {
+
+                            let setArr = [];
+                            let setTempArr;
+                            let selectedArr = [];
+
+                            console.log(previousBasicGroupsArr);
+
+                            for (let j = 0; j < previousBasicGroupsArr.length; j++) {
+
+                                setTempArr = [{ label: previousBasicGroupsArr[j].group_name, value: previousBasicGroupsArr[j].group_id }];
+
+                                console.log(setTempArr);
+                                setArr.push(setTempArr[0]);
+                                selectedArr.push(previousBasicGroupsArr[j].group_id);
+                            }
+                            console.log(setArr);
+                            setPreviousBasicGroups(setArr);
+                            setSelectedBasicGroups(selectedArr);
+                        }
+
+                    } getPreviousBasicGroups(0);
+
+                    // ------------------------------
+
+                    let previousIntermediateGroupsArr = [];
+                    let getDataIntermediateGroups;
+
+                    function getPreviousIntermediateGroups(i) {
+
+                        if (i < response.data.Items[0].concept_group_id.intermediate.length) {
+
+                            console.log(_intermediateGroups.filter(p => p.group_id === response.data.Items[0].concept_group_id.intermediate[i])[0]);
+
+                            getDataIntermediateGroups = _intermediateGroups.filter(p => p.group_id === response.data.Items[0].concept_group_id.intermediate[i]);
+                            previousIntermediateGroupsArr.push(getDataIntermediateGroups[0]);
+                            console.log(previousIntermediateGroupsArr);
+                            i++;
+                            getPreviousIntermediateGroups(i);
+
+                        } else {
+
+                            let setArr = [];
+                            let setTempArr;
+                            let selectedArr = [];
+
+                            console.log(previousIntermediateGroupsArr);
+
+                            for (let j = 0; j < previousIntermediateGroupsArr.length; j++) {
+
+                                setTempArr = [{ label: previousIntermediateGroupsArr[j].group_name, value: previousIntermediateGroupsArr[j].group_id }];
+
+                                console.log(setTempArr);
+                                setArr.push(setTempArr[0]);
+                                selectedArr.push(previousIntermediateGroupsArr[j].group_id);
+                            }
+                            console.log(setArr);
+                            setPreviousIntermediateGroups(setArr);
+                            setSelectedIntermediateGroups(selectedArr);
+                        }
+
+                    } getPreviousIntermediateGroups(0);
+
+                    // ------------------------------
+
+                    let previousAdvancedGroupsArr = [];
+                    let getDataAdvancedGroups;
+
+                    function getPreviousAdvancedGroups(i) {
+
+                        if (i < response.data.Items[0].concept_group_id.advanced.length) {
+
+                            console.log(_advancedGroups.filter(p => p.group_id === response.data.Items[0].concept_group_id.advanced[i])[0]);
+
+                            getDataAdvancedGroups = _advancedGroups.filter(p => p.group_id === response.data.Items[0].concept_group_id.advanced[i]);
+                            previousAdvancedGroupsArr.push(getDataAdvancedGroups[0]);
+                            console.log(previousAdvancedGroupsArr);
+                            i++;
+                            getPreviousAdvancedGroups(i);
+
+                        } else {
+
+                            let setArr = [];
+                            let setTempArr;
+                            let selectedArr = [];
+
+                            console.log(previousAdvancedGroupsArr);
+
+                            for (let j = 0; j < previousAdvancedGroupsArr.length; j++) {
+
+                                setTempArr = [{ label: previousAdvancedGroupsArr[j].group_name, value: previousAdvancedGroupsArr[j].group_id }];
+
+                                console.log(setTempArr);
+                                setArr.push(setTempArr[0]);
+                                selectedArr.push(previousAdvancedGroupsArr[j].group_id);
+                            }
+                            console.log(setArr);
+                            setPreviousAdvancedGroups(setArr);
+                            setSelectedAdvancedGroups(selectedArr);
+                        }
+
+                    } getPreviousAdvancedGroups(0);
 
                     // ------------------------------
 
@@ -192,7 +356,7 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
                             setIsLoading(false);
                         }
 
-                    } getPreviousConcepts(0)
+                    } getPreviousConcepts(0);
 
                 } else {
 
@@ -236,7 +400,26 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
 
     }, []);
 
+    useEffect(() => {
 
+        console.log(previousData.concept_title);
+
+        if (_relatedConcepts) {
+
+            let valuesArr = [];
+
+            for (let index = 0; index < _relatedConcepts.length; index++) {
+
+                console.log(_relatedConcepts[index].concept_title !== previousData.concept_title);
+                console.log(_relatedConcepts[index].concept_title, previousData.concept_title);
+
+                if (_relatedConcepts[index] && _relatedConcepts[index].concept_title !== previousData.concept_title) {
+                    valuesArr.push({ value: _relatedConcepts[index].concept_id, label: _relatedConcepts[index].concept_title })
+                }
+            }
+            setDropdownRelatedConcepts(valuesArr);
+        }
+    }, [previousData]);
 
     const handleDeleteKeywords = (i, states) => {
         const newTags = tags.slice(0);
@@ -282,6 +465,48 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
         setSelectedDigicards(valuesArr);
     }
 
+    const handleBasicGroupChange = (event) => {
+
+        setShowBasicGroupErr(false);
+        console.log(event);
+
+        let valuesArr = [];
+        for (let i = 0; i < event.length; i++) {
+            valuesArr.push(event[i].value)
+        }
+
+        console.log(valuesArr);
+        setSelectedBasicGroups(valuesArr);
+    }
+
+    const handleIntermediateGroupChange = (event) => {
+
+        setShowIntermediateGroupErr(false);
+        console.log(event);
+
+        let valuesArr = [];
+        for (let i = 0; i < event.length; i++) {
+            valuesArr.push(event[i].value)
+        }
+
+        console.log(valuesArr);
+        setSelectedIntermediateGroups(valuesArr);
+    }
+
+    const handleAdvancedGroupChange = (event) => {
+
+        setShowAdvancedGroupErr(false);
+        console.log(event);
+
+        let valuesArr = [];
+        for (let i = 0; i < event.length; i++) {
+            valuesArr.push(event[i].value)
+        }
+
+        console.log(valuesArr);
+        setSelectedAdvancedGroups(valuesArr);
+    }
+
     const handleRelatedConcepts = (event) => {
 
         console.log(event);
@@ -321,7 +546,11 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
                                             }
                                             validationSchema={
                                                 Yup.object().shape({
-                                                    conceptTitle: Yup.string().max(255).required('Concept Title is required')
+                                                    conceptTitle: Yup.string()
+                                                        .trim()
+                                                        .min(2, Constants.AddConcepts.ConceptTitleTooShort)
+                                                        .max(32, Constants.AddConcepts.ConceptTitleTooLong)
+                                                        .required(Constants.AddConcepts.ConceptTitleRequired),
 
                                                 })
                                             }
@@ -338,7 +567,12 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
                                                         concept_title: values.conceptTitle,
                                                         concept_digicard_id: selectedDigicards,
                                                         concept_keywords: selectedKeywords,
-                                                        related_concept: selectedRelatedConcepts
+                                                        related_concept: selectedRelatedConcepts,
+                                                        concept_group_id: {
+                                                            basic: selectedBasicGroups,
+                                                            intermediate: selectedIntermediateGroups,
+                                                            advanced: selectedAdvancedGroups
+                                                        }
 
                                                     }
                                                 };
@@ -346,68 +580,93 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
                                                 console.log('form Data: ', formData);
 
                                                 if (selectedDigicards.length > 0) {
-                                                    console.log("Proceed");
-                                                    showLoader();
+                                                    console.log("Digicard selected");
 
-                                                    axios
-                                                        .post(
-                                                            dynamicUrl.updateConcept,
-                                                            formData,
-                                                            {
-                                                                headers: { Authorization: sessionStorage.getItem('user_jwt') }
-                                                            }
-                                                        )
-                                                        .then((response) => {
+                                                    if (selectedBasicGroups.length > 0) {
 
-                                                            console.log({ response });
+                                                        if (selectedIntermediateGroups.length > 0) {
 
-                                                            let result = response.status === 200;
-                                                            hideLoader();
+                                                            if (selectedAdvancedGroups.length > 0) {
 
-                                                            if (result) {
+                                                                showLoader();
 
-                                                                console.log('inside res edit');
-                                                                hideLoader();
-                                                                setIsOpenEditConcept(false);
-                                                                sweetAlertHandler({ title: 'Success', type: 'success', text: 'Concept updated successfully!' });
-                                                                fetchAllConceptsData();
-                                                                // window.location.reload();
+                                                                axios
+                                                                    .post(
+                                                                        dynamicUrl.updateConcept,
+                                                                        formData,
+                                                                        {
+                                                                            headers: { Authorization: sessionStorage.getItem('user_jwt') }
+                                                                        }
+                                                                    )
+                                                                    .then((response) => {
 
+                                                                        console.log({ response });
+
+                                                                        let result = response.status === 200;
+                                                                        hideLoader();
+
+                                                                        if (result) {
+
+                                                                            console.log('inside res edit');
+                                                                            hideLoader();
+                                                                            setIsOpenEditConcept(false);
+                                                                            sweetAlertHandler({ title: 'Success', type: 'success', text: 'Concept updated successfully!' });
+                                                                            fetchAllConceptsData();
+                                                                            // window.location.reload();
+
+                                                                        } else {
+
+                                                                            console.log('else res');
+                                                                            hideLoader();
+                                                                            // Request made and server responded
+                                                                            setConceptTitleErr(true);
+                                                                            setConceptTitleErrMessage("err");
+                                                                            // window.location.reload();
+
+
+                                                                        }
+                                                                    })
+                                                                    .catch((error) => {
+                                                                        if (error.response) {
+                                                                            hideLoader();
+                                                                            // Request made and server responded
+                                                                            console.log(error.response.data);
+                                                                            setConceptTitleErr(true);
+                                                                            setConceptTitleErrMessage(error.response.data);
+
+                                                                        } else if (error.request) {
+                                                                            // The request was made but no response was received
+                                                                            console.log(error.request);
+                                                                            hideLoader();
+                                                                            setConceptTitleErr(true);
+                                                                            setConceptTitleErrMessage(error.request);
+                                                                        } else {
+                                                                            // Something happened in setting up the request that triggered an Error
+                                                                            console.log('Error', error.message);
+                                                                            hideLoader();
+                                                                            setConceptTitleErr(true);
+                                                                            setConceptTitleErrMessage(error.request);
+
+                                                                        }
+                                                                    })
                                                             } else {
 
-                                                                console.log('else res');
-                                                                hideLoader();
-                                                                // Request made and server responded
-                                                                setConceptTitleErr(true);
-                                                                setConceptTitleErrMessage("err");
-                                                                // window.location.reload();
-
+                                                                console.log("Advanced Groups empty");
+                                                                setShowAdvancedGroupErr(true);
 
                                                             }
-                                                        })
-                                                        .catch((error) => {
-                                                            if (error.response) {
-                                                                hideLoader();
-                                                                // Request made and server responded
-                                                                console.log(error.response.data);
-                                                                setConceptTitleErr(true);
-                                                                setConceptTitleErrMessage(error.response.data);
+                                                        } else {
 
-                                                            } else if (error.request) {
-                                                                // The request was made but no response was received
-                                                                console.log(error.request);
-                                                                hideLoader();
-                                                                setConceptTitleErr(true);
-                                                                setConceptTitleErrMessage(error.request);
-                                                            } else {
-                                                                // Something happened in setting up the request that triggered an Error
-                                                                console.log('Error', error.message);
-                                                                hideLoader();
-                                                                setConceptTitleErr(true);
-                                                                setConceptTitleErrMessage(error.request);
+                                                            console.log("Intermediate Groups empty");
+                                                            setShowIntermediateGroupErr(true);
 
-                                                            }
-                                                        })
+                                                        }
+                                                    } else {
+
+                                                        console.log("Basic Groups empty");
+                                                        setShowBasicGroupErr(true);
+                                                    }
+
 
                                                 } else {
 
@@ -480,7 +739,6 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
                                                                             <small className="text-danger">* </small>
                                                                             Digicards
                                                                         </label>
-                                                                        {console.log(previousDigicards)}
                                                                         <Select
                                                                             defaultValue={previousDigicards}
                                                                             isMulti
@@ -490,7 +748,7 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
                                                                             classNamePrefix="Select"
                                                                             onChange={event => handleDigicardChange(event)}
                                                                         />
-                                                                        {showDigicardErr && <small className="text-danger form-text">{'Please select a digicard'}</small>}
+                                                                        {showDigicardErr && <small className="text-danger form-text">{'Please, select Digicards!'}</small>}
                                                                     </div>
                                                                 </Col>
                                                                 <Col>
@@ -534,6 +792,71 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
                                                                         }
 
 
+                                                                    </div>
+                                                                </Col>
+                                                            </Row>
+                                                            <br />
+                                                            <Row>
+                                                                <Col>
+                                                                    <div className="form-group fill">
+
+                                                                        <label className="floating-label">
+                                                                            <small className="text-danger">* </small>
+                                                                            Basic Groups
+                                                                        </label>
+
+                                                                        <Select
+                                                                            defaultValue={previousBasicGroups}
+                                                                            isMulti
+                                                                            name="basicGroups"
+                                                                            options={dropdownBasicGroups}
+                                                                            className="basic-multi-select"
+                                                                            classNamePrefix="Select"
+                                                                            onChange={event => handleBasicGroupChange(event)}
+                                                                        />
+                                                                        {showBasicGroupErr && <small className="text-danger form-text">{'Please, select Basic Groups!'}</small>}
+                                                                    </div>
+                                                                </Col>
+                                                                <Col>
+                                                                    <div className="form-group fill">
+
+                                                                        <label className="floating-label">
+                                                                            <small className="text-danger">* </small>
+                                                                            Intermediate Groups
+                                                                        </label>
+
+                                                                        <Select
+                                                                            defaultValue={previousIntermediateGroups}
+                                                                            isMulti
+                                                                            name="intermediateGroups"
+                                                                            options={dropdownIntermediateGroups}
+                                                                            className="basic-multi-select"
+                                                                            classNamePrefix="Select"
+                                                                            onChange={event => handleIntermediateGroupChange(event)}
+                                                                        />
+                                                                        {showIntermediateGroupErr && <small className="text-danger form-text">{'Please, select Intermediate Groups!'}</small>}
+                                                                    </div>
+                                                                </Col>
+                                                            </Row>
+                                                            <Row>
+                                                                <Col xs={6} >
+                                                                    <div className="form-group fill">
+
+                                                                        <label className="floating-label">
+                                                                            <small className="text-danger">* </small>
+                                                                            Advanced Groups
+                                                                        </label>
+
+                                                                        <Select
+                                                                            defaultValue={previousAdvancedGroups}
+                                                                            isMulti
+                                                                            name="advancedGroups"
+                                                                            options={dropdownAdvancedGroups}
+                                                                            className="basic-multi-select"
+                                                                            classNamePrefix="Select"
+                                                                            onChange={event => handleAdvancedGroupChange(event)}
+                                                                        />
+                                                                        {showAdvancedGroupErr && <small className="text-danger form-text">{'Please, select Advanced Groups!'}</small>}
                                                                     </div>
                                                                 </Col>
                                                             </Row>

@@ -17,18 +17,15 @@ import Select from 'react-select';
 import Multiselect from 'multiselect-react-dropdown';
 import { fetchIndividualChapter, fetchPostLearningTopics, fetchPreLearningTopics } from '../../../api/CommonApi'
 import { useHistory } from 'react-router-dom';
+import BasicSpinner from '../../../../helper/BasicSpinner';
 
 const EditChapter = ({ setOpenEditChapter, chapterId }) => {
 
 
     const postLeraning = [];
     const preLeraning = [];
-    const DefaultisLockedOption = [];
 
-    const isLocked = [
-        { value: 'Yes', label: 'Yes' },
-        { value: 'No', label: 'No' },
-    ]
+
 
 
 
@@ -45,7 +42,6 @@ const EditChapter = ({ setOpenEditChapter, chapterId }) => {
     const [topicDigiCardIds, setTopicDigiCardIds] = useState([]);
 
     const [isLockedOption, setValue] = useState();
-    const [defaulIslocked, setDefaulIslocked] = useState();
     const [defauleDescription, setDefauleDescription] = useState();
     const [topicTitles, setTopicTitles] = useState([]);
     const [topicTitlesPre, setTopicTitlesPre] = useState([]);
@@ -54,6 +50,7 @@ const EditChapter = ({ setOpenEditChapter, chapterId }) => {
     const [individualChapterdata, setIndividualChapterdata] = useState([]);
     const [isShownPre, setIsShownPre] = useState(true);
     const [isShownDes, setIsShownDes] = useState(true);
+    const [isLoading, setIsLoading] = useState(false)
     let history = useHistory();
 
 
@@ -75,14 +72,11 @@ const EditChapter = ({ setOpenEditChapter, chapterId }) => {
     };
 
 
-    const isLockedOPtion = (e) => {
-        setValue(e.value);
-    };
 
 
 
     const fetchAllData = async () => {
-
+        setIsLoading(true)
         const allTopicdData = await fetchPostLearningTopics();
         console.log("allTopicdData", allTopicdData.Items);
         if (allTopicdData.Error) {
@@ -162,18 +156,11 @@ const EditChapter = ({ setOpenEditChapter, chapterId }) => {
                 });
                 setDefaultPostleraing(tempArr2)
                 setPostlearningOption(individual_Chapter_data.postlearning_topic_id)
-
-
-                individual_Chapter_data.is_locked === 'Yes' ? DefaultisLockedOption.push({ value: individual_Chapter_data.is_locked, label: individual_Chapter_data.is_locked }) : DefaultisLockedOption.push({ value: 'No', label: 'No' })
-                setDefaulIslocked(DefaultisLockedOption)
-                setValue(DefaultisLockedOption[0].value)
                 setIndividualChapterdata(individual_Chapter_data)
                 setDefauleDescription(individual_Chapter_data.chapter_description);
             }
         }
-
-
-
+        setIsLoading(false)
     }
 
 
@@ -203,264 +190,262 @@ const EditChapter = ({ setOpenEditChapter, chapterId }) => {
 
 
     return (
-        <React.Fragment>
-            <Formik
-                enableReinitialize
-                initialValues={{
-                    chaptertitle: individualChapterdata.chapter_title,
-                    postlearning_topic: '',
-                    prelearning_topic: '',
-                    isLocked: '',
-                    chapter_description: individualChapterdata.chapter_description,
-                }}
-                validationSchema={Yup.object().shape({
-                    chaptertitle: Yup.string()
-                        .trim()
-                        .min(2, Constants.AddDigiCard.ChaptertitleTooShort)
-                        .max(30, Constants.AddDigiCard.ChaptertitleTooLong)
-                        .required(Constants.AddDigiCard.ChaptertitleRequired),
-                    chapter_description: Yup.string()
-                        .required(Constants.AddUnit.DescriptionRequired),
-                })}
+        <div>
+            {
+                isLoading ? (
+                    <BasicSpinner />
+                ) : (
+                    <React.Fragment>
+                        <Formik
+                            enableReinitialize
+                            initialValues={{
+                                chaptertitle: individualChapterdata.chapter_title,
+                                postlearning_topic: '',
+                                prelearning_topic: '',
+                                isLocked: '',
+                                chapter_description: individualChapterdata.chapter_description,
+                            }}
+                            validationSchema={Yup.object().shape({
+                                chaptertitle: Yup.string()
+                                    .trim()
+                                    .min(2, Constants.AddDigiCard.ChaptertitleTooShort)
+                                    .max(32, Constants.AddDigiCard.ChaptertitleTooLong)
+                                    .required(Constants.AddDigiCard.ChaptertitleRequired),
+                                chapter_description: Yup.string()
+                                    .required(Constants.AddUnit.DescriptionRequired),
+                            })}
 
-
-
-                onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-                    if (postlearningOption == '') {
-                        setIsShown(false)
-                    } else if (prelearningOptions == '') {
-                        setIsShownPre(false)
-                    }
-                    else if (values.chapter_description == undefined || values.chapter_description.trim() == '') {
-                        setIsShownDes(false)
-                    } else {
-                        setOpenEditChapter(false)
-                        console.log("on submit");
-                        var formData = {
-                            chapter_id: chapterId,
-                            chapter_title: values.chaptertitle,
-                            chapter_description: values.chapter_description,
-                            prelearning_topic_id: prelearningOptions,
-                            postlearning_topic_id: postlearningOption,
-                            is_locked: isLockedOption,
-                        };
-
-                        console.log("formdata", formData);
-
-                        axios
-                            .post(dynamicUrl.editChapter, { data: formData }, { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
-                            .then(async (response) => {
-                                console.log({ response });
-                                if (response.Error) {
-                                    console.log('Error');
-                                    hideLoader();
-                                    setDisableButton(false);
-                                } else {
-                                    // sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.EditChapter });
-                                    MySwal.fire({
-
-                                        title: 'Chapter Updated successfully!',
-                                        icon: 'success',
-                                    }).then((willDelete) => {
-                                        history.push('/admin-portal/chapters/active-chapter');
-                                        window.location.reload();
-
-                                    })
-                                    hideLoader();
-                                    setDisableButton(false);
-                                    // fetchClientData();
-                                    setIsOpen(false);
+                            onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
+                                if (postlearningOption == '') {
+                                    setIsShown(false)
+                                } else if (prelearningOptions == '') {
+                                    setIsShownPre(false)
                                 }
-                            })
-                            .catch((error) => {
-                                if (error.response) {
-                                    // Request made and server responded
-                                    console.log(error.response.data);
-
-                                    console.log(error.response.data);
-                                    if (error.response.status === 400) {
-                                        console.log();
-                                        hideLoader();
-                                        // setIsClientExists(true);
-                                        sweetAlertHandler({ title: 'Error', type: 'error', text: MESSAGES.ERROR.DigiCardNameExists });
-
-                                    } else {
-                                        sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
-                                    }
-                                } else if (error.request) {
-                                    // The request was made but no response was received
-                                    console.log(error.request);
-                                    setDisableButton(false);
-                                    hideLoader();
+                                else if (values.chapter_description == undefined || values.chapter_description.trim() == '') {
+                                    setIsShownDes(false)
                                 } else {
-                                    // Something happened in setting up the request that triggered an Error
-                                    console.log('Error', error.message);
-                                    setDisableButton(false);
-                                    hideLoader();
+                                    setOpenEditChapter(false)
+                                    console.log("on submit");
+                                    var formData = {
+                                        chapter_id: chapterId,
+                                        chapter_title: values.chaptertitle,
+                                        chapter_description: values.chapter_description,
+                                        prelearning_topic_id: prelearningOptions,
+                                        postlearning_topic_id: postlearningOption,
+                                    };
+
+                                    console.log("formdata", formData);
+
+                                    axios
+                                        .post(dynamicUrl.editChapter, { data: formData }, { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
+                                        .then(async (response) => {
+                                            console.log({ response });
+                                            if (response.Error) {
+                                                console.log('Error');
+                                                hideLoader();
+                                                setDisableButton(false);
+                                            } else {
+                                                // sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.EditChapter });
+                                                MySwal.fire({
+
+                                                    title: 'Chapter Updated successfully!',
+                                                    icon: 'success',
+                                                }).then((willDelete) => {
+                                                    history.push('/admin-portal/chapters/active-chapter');
+                                                    window.location.reload();
+
+                                                })
+                                                hideLoader();
+                                                setDisableButton(false);
+                                                // fetchClientData();
+                                                setIsOpen(false);
+                                            }
+                                        })
+                                        .catch((error) => {
+                                            if (error.response) {
+                                                // Request made and server responded
+                                                console.log(error.response.data);
+
+                                                console.log(error.response.data);
+                                                if (error.response.status === 400) {
+                                                    console.log();
+                                                    hideLoader();
+                                                    // setIsClientExists(true);
+                                                    sweetAlertHandler({ title: 'Error', type: 'error', text: MESSAGES.ERROR.DigiCardNameExists });
+
+                                                } else {
+                                                    sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+                                                }
+                                            } else if (error.request) {
+                                                // The request was made but no response was received
+                                                console.log(error.request);
+                                                setDisableButton(false);
+                                                hideLoader();
+                                            } else {
+                                                // Something happened in setting up the request that triggered an Error
+                                                console.log('Error', error.message);
+                                                setDisableButton(false);
+                                                hideLoader();
+                                            }
+                                        });
                                 }
-                            });
-                    }
-                }}
-            >
-                {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
-                    <form noValidate onSubmit={handleSubmit}>
-                        <Row>
-                            {/* {edit1Toggle && <Loader />} */}
-                            <Col sm={6}>
-                                <div className="form-group fill">
-                                    <label className="floating-label" htmlFor="chaptertitle">
-                                        <small className="text-danger">* </small>Chapter Title
-                                    </label>
-                                    <input
-                                        className="form-control"
-                                        error={touched.chaptertitle && errors.chaptertitle}
-                                        name="chaptertitle"
-                                        onBlur={handleBlur}
-                                        onChange={handleChange}
-                                        type="text"
-                                        value={values.chaptertitle}
-                                        id='title'
-                                    />
-                                    {touched.chaptertitle && errors.chaptertitle && <small className="text-danger form-text">{errors.chaptertitle}</small>}
-                                </div><br />
-                                <div className="form-group fill" style={{ position: "relative", zIndex: 20 }}>
-                                    <label className="floating-label" htmlFor="postlearning_topic">
-                                        <small className="text-danger">* </small> Post-learning Topic
-                                    </label>
-                                    {defaultPostleraing.length === 0 ? (
-
-                                        <Select
-                                            className="basic-single"
-                                            classNamePrefix="select"
-                                            name="color"
-                                            isMulti
-                                            closeMenuOnSelect={false}
-                                            onChange={postlerningOtions}
-                                            options={topicTitles}
-                                            placeholder="Select"
-                                        />
-
-                                    ) : (
-                                        <>
-                                            {defaultPostleraing && (
-
-                                                <Select
-                                                    defaultValue={defaultPostleraing}
-                                                    className="basic-single"
-                                                    classNamePrefix="select"
-                                                    name="color"
-                                                    isMulti
-                                                    closeMenuOnSelect={false}
-                                                    onChange={(e) => { postlerningOtions(e); setIsShown(true) }}
-                                                    options={topicTitles}
-                                                    placeholder="Select"
+                            }}
+                        >
+                            {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
+                                <form noValidate onSubmit={handleSubmit}>
+                                    <Row>
+                                        {/* {edit1Toggle && <Loader />} */}
+                                        <Col sm={6}>
+                                            <div className="form-group fill">
+                                                <label className="floating-label" htmlFor="chaptertitle">
+                                                    <small className="text-danger">* </small>Chapter Title
+                                                </label>
+                                                <input
+                                                    className="form-control"
+                                                    error={touched.chaptertitle && errors.chaptertitle}
+                                                    name="chaptertitle"
+                                                    onBlur={handleBlur}
+                                                    onChange={handleChange}
+                                                    type="text"
+                                                    value={values.chaptertitle}
+                                                    id='title'
                                                 />
+                                                {touched.chaptertitle && errors.chaptertitle && <small className="text-danger form-text">{errors.chaptertitle}</small>}
+                                            </div><br />
+                                            <div className="form-group fill" style={{ position: "relative", zIndex: 20 }}>
+                                                <label className="floating-label" htmlFor="postlearning_topic">
+                                                    <small className="text-danger">* </small> Post-learning Topic
+                                                </label>
+                                                {defaultPostleraing.length === 0 ? (
 
-                                            )}
-                                        </>
+                                                    <Select
+                                                        className="basic-single"
+                                                        classNamePrefix="select"
+                                                        name="color"
+                                                        isMulti
+                                                        closeMenuOnSelect={false}
+                                                        onChange={postlerningOtions}
+                                                        options={topicTitles}
+                                                        placeholder="Select"
+                                                        menuPortalTarget={document.body}
+                                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                                                    />
 
-                                    )}
-                                    <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>Postlearning Topic Required</small>
-                                </div>
-                                <div className="form-group fill" >
-                                    <Form.Label htmlFor="chapter_description"> <small className="text-danger">* </small>Chapter Description</Form.Label>
-                                    <Form.Control
-                                        as="textarea"
-                                        onChange={(e) => { handleChange(e); setIsShownDes(true) }}
-                                        rows="4"
-                                        onBlur={handleBlur}
-                                        name="chapter_description"
-                                        value={values.chapter_description}
-                                        type='text'
-                                    />
-                                    <br />
-                                    {touched.chapter_description && errors.chapter_description && <small className="text-danger form-text">{errors.chapter_description}</small>}
-                                    <small className="text-danger form-text" style={{ display: isShownDes ? 'none' : 'block' }}>Chapter Description Required</small>
-                                </div>
-                            </Col>
-                            <Col sm={6}>
-                                <div className="form-group fill" style={{ position: "relative", zIndex: 20 }}>
-                                    <label className="floating-label" htmlFor="prelearning_topic">
-                                        <small className="text-danger">* </small>Pre-learning Topic
-                                    </label>
-                                    {defaultPrelearning.length === 0 ? (
+                                                ) : (
+                                                    <>
+                                                        {defaultPostleraing && (
 
-                                        <Select
-                                            className="basic-single"
-                                            classNamePrefix="select"
-                                            name="color"
-                                            isMulti
-                                            closeMenuOnSelect={false}
-                                            onChange={prelerningOtions}
-                                            options={topicTitlesPre}
-                                            placeholder="Select"
-                                        />
+                                                            <Select
+                                                                defaultValue={defaultPostleraing}
+                                                                className="basic-single"
+                                                                classNamePrefix="select"
+                                                                name="color"
+                                                                isMulti
+                                                                closeMenuOnSelect={false}
+                                                                onChange={(e) => { postlerningOtions(e); setIsShown(true) }}
+                                                                options={topicTitles}
+                                                                placeholder="Select"
+                                                                menuPortalTarget={document.body}
+                                                                styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                                                            />
 
-                                    ) : (
-                                        <>
-                                            {defaultPrelearning && (
+                                                        )}
+                                                    </>
 
-                                                <Select
-                                                    defaultValue={defaultPrelearning}
-                                                    className="basic-single"
-                                                    classNamePrefix="select"
-                                                    name="color"
-                                                    isMulti
-                                                    closeMenuOnSelect={false}
-                                                    onChange={(e) => { prelerningOtions(e); setIsShownPre(true) }}
-                                                    options={topicTitlesPre}
-                                                    placeholder="Select"
+                                                )}
+                                                <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>Postlearning Topic Required</small>
+                                            </div>
+
+
+                                            <div className="form-group fill" style={{ position: "relative", zIndex: 20 }}>
+                                                <label className="floating-label" htmlFor="prelearning_topic">
+                                                    <small className="text-danger">* </small>Pre-learning Topic
+                                                </label>
+                                                {defaultPrelearning.length === 0 ? (
+
+                                                    <Select
+                                                        className="basic-single"
+                                                        classNamePrefix="select"
+                                                        name="color"
+                                                        isMulti
+                                                        closeMenuOnSelect={false}
+                                                        onChange={prelerningOtions}
+                                                        options={topicTitlesPre}
+                                                        placeholder="Select"
+                                                        menuPortalTarget={document.body}
+                                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                                                    />
+
+                                                ) : (
+                                                    <>
+                                                        {defaultPrelearning && (
+
+                                                            <Select
+                                                                defaultValue={defaultPrelearning}
+                                                                className="basic-single"
+                                                                classNamePrefix="select"
+                                                                name="color"
+                                                                isMulti
+                                                                closeMenuOnSelect={false}
+                                                                onChange={(e) => { prelerningOtions(e); setIsShownPre(true) }}
+                                                                options={topicTitlesPre}
+                                                                placeholder="Select"
+                                                                menuPortalTarget={document.body}
+                                                                styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                                                            />
+
+                                                        )}
+                                                    </>
+
+                                                )}
+                                                <br />
+                                                <small className="text-danger form-text" style={{ display: isShownPre ? 'none' : 'block' }}>Prelearning Topic Required</small>
+                                            </div>
+
+                                            <div className="form-group fill" >
+                                                <Form.Label htmlFor="chapter_description"> <small className="text-danger">* </small>Chapter Description</Form.Label>
+                                                <Form.Control
+                                                    as="textarea"
+                                                    onChange={(e) => { handleChange(e); setIsShownDes(true) }}
+                                                    rows="4"
+                                                    onBlur={handleBlur}
+                                                    name="chapter_description"
+                                                    value={values.chapter_description}
+                                                    type='text'
                                                 />
+                                                <br />
+                                                {touched.chapter_description && errors.chapter_description && <small className="text-danger form-text">{errors.chapter_description}</small>}
+                                                <small className="text-danger form-text" style={{ display: isShownDes ? 'none' : 'block' }}>Chapter Description Required</small>
+                                            </div>
+                                        </Col>
 
-                                            )}
-                                        </>
+                                    </Row>
+                                    <br></br>
+                                    <Row>
+                                        <Col sm={10}>
+                                        </Col>
+                                        <div className="form-group fill float-end" >
+                                            <Col sm={12} className="center">
+                                                <Button
+                                                    className="btn-block"
+                                                    color="success"
+                                                    size="large"
+                                                    type="submit"
+                                                    variant="success"
+                                                >
+                                                    Submit
+                                                </Button>
+                                            </Col>
+                                        </div>
+                                    </Row>
+                                </form>
+                            )}
+                        </Formik>
+                    </React.Fragment>
+                )
+            }
+        </div>
 
-                                    )}
-                                    <br />
-                                    <small className="text-danger form-text" style={{ display: isShownPre ? 'none' : 'block' }}>Prelearning Topic Required</small>
-                                </div>
-                                <div className="form-group fill" style={{ position: "relative", zIndex: 10 }}>
-                                    <label className="floating-label" htmlFor="isLocked">
-                                        <small className="text-danger">* </small> Is Locked
-                                    </label>
-                                    <Select
-                                        className="basic-single"
-                                        classNamePrefix="select"
-                                        defaultValue={DefaultisLockedOption}
-                                        name="color"
-                                        options={isLocked}
-                                        onChange={isLockedOPtion}
-                                    />
-                                    <br />
-                                    {touched.isLocked && errors.isLocked && (
-                                        <small className="text-danger form-text">{errors.isLocked}</small>
-                                    )}
-                                </div>
-                            </Col>
-                        </Row>
-                        <br></br>
-                        <Row>
-                            <Col sm={10}>
-                            </Col>
-                            <div className="form-group fill float-end" >
-                                <Col sm={12} className="center">
-                                    <Button
-                                        className="btn-block"
-                                        color="success"
-                                        size="large"
-                                        type="submit"
-                                        variant="success"
-                                    >
-                                        Submit
-                                    </Button>
-                                </Col>
-                            </div>
-                        </Row>
-                    </form>
-                )}
-
-            </Formik>
-        </React.Fragment>
     )
 
 };

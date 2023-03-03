@@ -11,12 +11,15 @@ import { useHistory } from 'react-router-dom';
 
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import dynamicUrl from '../../../../helper/dynamicUrls';
+import * as Constants from '../../../../helper/constants';
 
-const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchAllConceptsData, setDigicardsAndConcepts }) => {
+const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchAllConceptsData, setDigicardsAndConcepts, _basicGroups, _intermediateGroups, _advancedGroups }) => {
 
     console.log(_digicards);
     console.log(_relatedConcepts);
-    console.log(fetchAllConceptsData);
+    console.log("basic", _basicGroups);
+    console.log("intermediate", _intermediateGroups);
+    console.log("advanced", _advancedGroups);
 
     const MySwal = withReactContent(Swal);
 
@@ -30,12 +33,24 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
 
     const history = useHistory();
     const [loader, showLoader, hideLoader] = useFullPageLoader();
+
     const [selectedDigicards, setSelectedDigicards] = useState([]);
     const [selectedRelatedConcepts, setSelectedRelatedConcepts] = useState([]);
     const [selectedKeywords, setSelectedKeywords] = useState([]);
+    const [selectedBasicGroups, setSelectedBasicGroups] = useState([]);
+    const [selectedIntermediateGroups, setSelectedIntermediateGroups] = useState([]);
+    const [selectedAdvancedGroups, setSelectedAdvancedGroups] = useState([]);
+
     const [dropdownDigicards, setDropdownDigicards] = useState([]);
     const [dropdownRelatedConcepts, setDropdownRelatedConcepts] = useState([]);
+    const [dropdownBasicGroups, setDropdownBasicGroups] = useState([]);
+    const [dropdownIntermediateGroups, setDropdownIntermediateGroups] = useState([]);
+    const [dropdownAdvancedGroups, setDropdownAdvancedGroups] = useState([]);
+
     const [showDigicardErr, setShowDigicardErr] = useState(false);
+    const [showBasicGroupErr, setShowBasicGroupErr] = useState(false);
+    const [showIntermediateGroupErr, setShowIntermediateGroupErr] = useState(false);
+    const [showAdvancedGroupErr, setShowAdvancedGroupErr] = useState(false);
     const [conceptTitleErr, setConceptTitleErr] = useState(false);
     const [conceptTitleErrMessage, setConceptTitleErrMessage] = useState('');
 
@@ -67,7 +82,42 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
             setDropdownRelatedConcepts(valuesArr)
         }
 
-        // setIsOpenAddConcept(false);
+        if (_basicGroups) {
+            let valuesArr = [];
+
+            for (let index = 0; index < _basicGroups.length; index++) {
+
+                if (_basicGroups[index]) {
+                    valuesArr.push({ value: _basicGroups[index].group_id, label: _basicGroups[index].group_name })
+                }
+            }
+            setDropdownBasicGroups(valuesArr)
+        }
+
+        if (_intermediateGroups) {
+            let valuesArr = [];
+
+            for (let index = 0; index < _intermediateGroups.length; index++) {
+
+                if (_intermediateGroups[index]) {
+                    valuesArr.push({ value: _intermediateGroups[index].group_id, label: _intermediateGroups[index].group_name })
+                }
+            }
+            setDropdownIntermediateGroups(valuesArr)
+        }
+
+        if (_advancedGroups) {
+            let valuesArr = [];
+
+            for (let index = 0; index < _advancedGroups.length; index++) {
+
+                if (_advancedGroups[index]) {
+                    valuesArr.push({ value: _advancedGroups[index].group_id, label: _advancedGroups[index].group_name })
+                }
+            }
+            setDropdownAdvancedGroups(valuesArr)
+        }
+
     }, []);
 
     const [tags, setTags] = useState([]);
@@ -106,6 +156,48 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
         setSelectedDigicards(valuesArr);
     }
 
+    const handleBasicGroupChange = (event) => {
+
+        setShowBasicGroupErr(false);
+        console.log(event);
+
+        let valuesArr = [];
+        for (let i = 0; i < event.length; i++) {
+            valuesArr.push(event[i].value)
+        }
+
+        console.log(valuesArr);
+        setSelectedBasicGroups(valuesArr);
+    }
+
+    const handleIntermediateGroupChange = (event) => {
+
+        setShowIntermediateGroupErr(false);
+        console.log(event);
+
+        let valuesArr = [];
+        for (let i = 0; i < event.length; i++) {
+            valuesArr.push(event[i].value)
+        }
+
+        console.log(valuesArr);
+        setSelectedIntermediateGroups(valuesArr);
+    }
+
+    const handleAdvancedGroupChange = (event) => {
+
+        setShowAdvancedGroupErr(false);
+        console.log(event);
+
+        let valuesArr = [];
+        for (let i = 0; i < event.length; i++) {
+            valuesArr.push(event[i].value)
+        }
+
+        console.log(valuesArr);
+        setSelectedAdvancedGroups(valuesArr);
+    }
+
     const handleRelatedConcepts = (event) => {
 
         console.log(event);
@@ -119,11 +211,10 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
         setSelectedRelatedConcepts(valuesArr);
     }
 
-
     return (
 
         <>
-            {_digicards && _relatedConcepts && (
+            {_digicards && _relatedConcepts && _basicGroups && _intermediateGroups && _advancedGroups && (
 
                 <>
                     <React.Fragment>
@@ -138,7 +229,11 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
                             }
                             validationSchema={
                                 Yup.object().shape({
-                                    conceptTitle: Yup.string().max(255).required('Concept Title is required')
+                                    conceptTitle: Yup.string()
+                                        .trim()
+                                        .min(2, Constants.AddConcepts.ConceptTitleTooShort)
+                                        .max(32, Constants.AddConcepts.ConceptTitleTooLong)
+                                        .required(Constants.AddConcepts.ConceptTitleRequired),
 
                                 })
                             }
@@ -146,103 +241,132 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
 
                                 setStatus({ success: true });
                                 setSubmitting(true);
-
-                                console.log("Submit clicked")
+                                console.log("Submit clicked");
 
                                 const formData = {
                                     data: {
                                         concept_title: values.conceptTitle,
                                         concept_digicard_id: selectedDigicards,
                                         concept_keywords: selectedKeywords,
-                                        related_concept: selectedRelatedConcepts
-
+                                        related_concept: selectedRelatedConcepts,
+                                        concept_group_id: {
+                                            basic: selectedBasicGroups,
+                                            intermediate: selectedIntermediateGroups,
+                                            advanced: selectedAdvancedGroups
+                                        }
                                     }
                                 };
 
                                 console.log('form Data: ', formData);
 
                                 if (selectedDigicards.length > 0) {
-                                    console.log("Proceed");
-                                    showLoader();
 
-                                    axios
-                                        .post(
-                                            dynamicUrl.addConcepts,
-                                            formData
-                                            ,
-                                            {
-                                                headers: { Authorization: sessionStorage.getItem('user_jwt') }
-                                            }
-                                        )
-                                        .then((response) => {
+                                    console.log("Digicards selected!");
 
-                                            console.log({ response });
+                                    if (selectedBasicGroups.length > 0) {
 
-                                            let result = response.status === 200;
-                                            hideLoader();
+                                        if (selectedIntermediateGroups.length > 0) {
 
-                                            if (result) {
+                                            if (selectedAdvancedGroups.length > 0) {
 
-                                                console.log('inside res edit');
-                                                hideLoader();
-                                                setIsOpenAddConcept(false);
-                                                // fetchAllConceptsData();
-                                                // sweetAlertHandler({ title: 'Success', type: 'success', text: 'Concept added successfully!' });
+                                                showLoader();
 
-                                                MySwal.fire({
+                                                axios
+                                                    .post(
+                                                        dynamicUrl.addConcepts,
+                                                        formData
+                                                        ,
+                                                        {
+                                                            headers: { Authorization: sessionStorage.getItem('user_jwt') }
+                                                        }
+                                                    )
+                                                    .then((response) => {
 
-                                                    title: 'Concept added successfully!',
-                                                    icon: 'success',
-                                                }).then((willDelete) => {
-                                                    window.location.reload();
-                                                });
-                                                setDigicardsAndConcepts(true);
+                                                        console.log({ response });
 
+                                                        let result = response.status === 200;
+                                                        hideLoader();
+
+                                                        if (result) {
+
+                                                            console.log('inside res edit');
+                                                            hideLoader();
+                                                            setIsOpenAddConcept(false);
+                                                            // fetchAllConceptsData();
+                                                            // sweetAlertHandler({ title: 'Success', type: 'success', text: 'Concept added successfully!' });
+
+                                                            MySwal.fire({
+
+                                                                title: 'Concept added successfully!',
+                                                                icon: 'success',
+                                                            }).then((willDelete) => {
+                                                                window.location.reload();
+                                                            });
+                                                            setDigicardsAndConcepts(true);
+
+                                                        } else {
+
+                                                            console.log('else res');
+                                                            hideLoader();
+                                                            // Request made and server responded
+                                                            setConceptTitleErr(true);
+                                                            setConceptTitleErrMessage("err");
+                                                            // window.location.reload();
+
+                                                        }
+                                                    })
+                                                    .catch((error) => {
+                                                        if (error.response) {
+                                                            hideLoader();
+                                                            // Request made and server responded
+                                                            console.log(error.response.data);
+
+                                                            if (error.response.data === 'Invalid Token') {
+
+                                                                sessionStorage.clear();
+                                                                localStorage.clear();
+
+                                                                history.push('/auth/signin-1');
+                                                                window.location.reload();
+
+                                                            } else {
+
+                                                                setConceptTitleErr(true);
+                                                                setConceptTitleErrMessage(error.response.data);
+                                                            }
+
+                                                        } else if (error.request) {
+                                                            // The request was made but no response was received
+                                                            console.log(error.request);
+                                                            hideLoader();
+                                                            setConceptTitleErr(true);
+                                                            setConceptTitleErrMessage(error.request);
+                                                        } else {
+                                                            // Something happened in setting up the request that triggered an Error
+                                                            console.log('Error', error.message);
+                                                            hideLoader();
+                                                            setConceptTitleErr(true);
+                                                            setConceptTitleErrMessage(error.request);
+                                                        }
+                                                    })
                                             } else {
 
-                                                console.log('else res');
-                                                hideLoader();
-                                                // Request made and server responded
-                                                setConceptTitleErr(true);
-                                                setConceptTitleErrMessage("err");
-                                                // window.location.reload();
+                                                console.log("Advanced Groups empty");
+                                                setShowAdvancedGroupErr(true);
 
                                             }
-                                        })
-                                        .catch((error) => {
-                                            if (error.response) {
-                                                hideLoader();
-                                                // Request made and server responded
-                                                console.log(error.response.data);
 
-                                                if (error.response.data === 'Invalid Token') {
+                                        } else {
+                                            console.log("Intermediate Groups empty");
+                                            setShowIntermediateGroupErr(true);
+                                        }
 
-                                                    sessionStorage.clear();
-                                                    localStorage.clear();
+                                    } else {
+                                        console.log("Basic Groups empty");
+                                        setShowBasicGroupErr(true);
+                                    }
 
-                                                    history.push('/auth/signin-1');
-                                                    window.location.reload();
 
-                                                } else {
-
-                                                    setConceptTitleErr(true);
-                                                    setConceptTitleErrMessage(error.response.data);
-                                                }
-
-                                            } else if (error.request) {
-                                                // The request was made but no response was received
-                                                console.log(error.request);
-                                                hideLoader();
-                                                setConceptTitleErr(true);
-                                                setConceptTitleErrMessage(error.request);
-                                            } else {
-                                                // Something happened in setting up the request that triggered an Error
-                                                console.log('Error', error.message);
-                                                hideLoader();
-                                                setConceptTitleErr(true);
-                                                setConceptTitleErrMessage(error.request);
-                                            }
-                                        })
                                 } else {
                                     console.log("Digicard empty");
                                     setShowDigicardErr(true);
@@ -324,7 +448,7 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
                                                             classNamePrefix="Select"
                                                             onChange={event => handleDigicardChange(event)}
                                                         />
-                                                        {showDigicardErr && <small className="text-danger form-text">{'Please select a digicard'}</small>}
+                                                        {showDigicardErr && <small className="text-danger form-text">{'Please, select Digicards!'}</small>}
                                                     </div>
                                                 </Col>
                                                 <Col>
@@ -344,6 +468,70 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
                                                             classNamePrefix="Select"
                                                             onChange={event => handleRelatedConcepts(event)}
                                                         />
+                                                    </div>
+                                                </Col>
+                                            </Row>
+                                            <Row>
+                                                <Col>
+                                                    <div className="form-group fill">
+
+                                                        <label className="floating-label">
+                                                            <small className="text-danger">* </small>
+                                                            Basic Groups
+                                                        </label>
+                                                        {/* {console.log(previousBoards)} */}
+                                                        <Select
+                                                            // defaultValue={previousBoards}
+                                                            isMulti
+                                                            name="basicGroups"
+                                                            options={dropdownBasicGroups}
+                                                            className="basic-multi-select"
+                                                            classNamePrefix="Select"
+                                                            onChange={event => handleBasicGroupChange(event)}
+                                                        />
+                                                        {showBasicGroupErr && <small className="text-danger form-text">{'Please, select Basic Groups!'}</small>}
+                                                    </div>
+                                                </Col>
+                                                <Col>
+                                                    <div className="form-group fill">
+
+                                                        <label className="floating-label">
+                                                            <small className="text-danger">* </small>
+                                                            Intermediate Groups
+                                                        </label>
+                                                        {/* {console.log(previousBoards)} */}
+                                                        <Select
+                                                            // defaultValue={previousBoards}
+                                                            isMulti
+                                                            name="intermediateGroups"
+                                                            options={dropdownIntermediateGroups}
+                                                            className="basic-multi-select"
+                                                            classNamePrefix="Select"
+                                                            onChange={event => handleIntermediateGroupChange(event)}
+                                                        />
+                                                        {showIntermediateGroupErr && <small className="text-danger form-text">{'Please, select Intermediate Groups!'}</small>}
+                                                    </div>
+                                                </Col>
+                                            </Row>
+                                            <Row>
+                                                <Col xs={6} >
+                                                    <div className="form-group fill">
+
+                                                        <label className="floating-label">
+                                                            <small className="text-danger">* </small>
+                                                            Advanced Groups
+                                                        </label>
+                                                        {/* {console.log(previousBoards)} */}
+                                                        <Select
+                                                            // defaultValue={previousBoards}
+                                                            isMulti
+                                                            name="advancedGroups"
+                                                            options={dropdownAdvancedGroups}
+                                                            className="basic-multi-select"
+                                                            classNamePrefix="Select"
+                                                            onChange={event => handleAdvancedGroupChange(event)}
+                                                        />
+                                                        {showAdvancedGroupErr && <small className="text-danger form-text">{'Please, select Advanced Groups!'}</small>}
                                                     </div>
                                                 </Col>
                                             </Row>

@@ -1,20 +1,16 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Row, Col, Card, Pagination, Button, Modal, ModalBody, Form, Alert } from 'react-bootstrap';
-import useFullPageLoader from '../../../../helper/useFullPageLoader';
+import { Row, Col, Card, Button, CloseButton } from 'react-bootstrap';
 import * as Yup from 'yup';
-import Board from 'react-trello';
-import { FieldArray, Formik } from 'formik';
-import { areFilesInvalid } from '../../../../util/utils';
-import * as Constants from '../../../../config/constant'
+import { Formik } from 'formik';
 import withReactContent from 'sweetalert2-react-content';
 import Swal from 'sweetalert2';
 import axios from 'axios';
+
 import dynamicUrl from "../../../../helper/dynamicUrls";
-import { useHistory } from 'react-router-dom';
 import { isEmptyObject } from '../../../../util/utils';
-import CloseButton from 'react-bootstrap/CloseButton';
 import { isEmptyArray } from '../../../../util/utils';
-import Select from 'react-select';
+import useFullPageLoader from '../../../../helper/useFullPageLoader';
+import MESSAGES from "../../../../helper/messages";
 
 const SubscribeClass = ({ className, rest, id, setIsOpenSubscribeClass }) => {
 
@@ -62,7 +58,6 @@ const SubscribeClass = ({ className, rest, id, setIsOpenSubscribeClass }) => {
     const subscribeClass = (e) => {
         e.preventDefault();
         console.log(formFields);
-
         showLoader();
 
         let sendData = {
@@ -72,7 +67,7 @@ const SubscribeClass = ({ className, rest, id, setIsOpenSubscribeClass }) => {
 
         console.log(sendData);
 
-        let emptyFieldValidation = formFields.find(o => o.client_class_name === "" || o.upschool_class_id === "" || o.upschool_class_id === "Select Class")
+        let emptyFieldValidation = formFields.find(o => o.client_class_name.trim() === "" || o.upschool_class_id === "" || o.upschool_class_id === "Select Class")
 
         console.log(emptyFieldValidation);
 
@@ -103,11 +98,17 @@ const SubscribeClass = ({ className, rest, id, setIsOpenSubscribeClass }) => {
                     hideLoader();
 
                     if (result) {
-                        console.log('inside res');
+                        console.log('inside res');                      
 
-                        setIsOpenSubscribeClass(false);
                         const MySwal = withReactContent(Swal);
-                        MySwal.fire('', 'School subscrption successful!', 'success');
+                        MySwal.fire({
+                            title: MESSAGES.TTTLES.Goodjob,
+                            type: 'success',
+                            text: 'School subscrption successful!',
+                            icon: 'success',
+                        }).then((willDelete) => {
+                            window.location.reload();
+                        });
 
                     } else {
                         console.log('else res');
@@ -128,7 +129,7 @@ const SubscribeClass = ({ className, rest, id, setIsOpenSubscribeClass }) => {
 
                         displayErrorMessage = displayErrorMessage.startsWith("REPEATED") ? error.response.data : (
                             "MULTIPLE SUBSCRIPTION FOR : " +
-                            previousData.upschoolClassItems.find(o => o.class_id === matchID).class_name
+                            previousData.upschoolClassItems.find(o => o.class_id.trim() === matchID).class_name
 
                         )
 
@@ -199,7 +200,8 @@ const SubscribeClass = ({ className, rest, id, setIsOpenSubscribeClass }) => {
 
                             object = {
                                 client_class_name: uploadParams[index].client_class_name,
-                                upschool_class_id: uploadParams[index].upschool_class_id
+                                upschool_class_id: uploadParams[index].upschool_class_id,
+                                setTrue: true
                             }
 
                             tempArray.push(object);
@@ -214,7 +216,7 @@ const SubscribeClass = ({ className, rest, id, setIsOpenSubscribeClass }) => {
                             upschool_class_id: ""
                         })
 
-                    ) : (console.log("Not empty"))
+                    ) : (console.log(""))
 
                     console.log("tempArray", tempArray);
                     setdropDownValues(responseData.upschoolClassItems);
@@ -298,24 +300,30 @@ const SubscribeClass = ({ className, rest, id, setIsOpenSubscribeClass }) => {
                                                                     < br />
 
                                                                     {console.log(formFields)}
-                                                                    
-                                                                    {formFields.length >1 && (
-                                                                        <Row>
-                                                                            <Col></Col>
-                                                                            <Col>
-                                                                                <CloseButton onClick={() => {
-                                                                                    removeFields(index)
-                                                                                }} variant="white" />
-                                                                            </Col>
-                                                                        </Row>
-                                                                    )}
+                                                                    {console.log(form)}
+                                                                    {console.log(form.client_class_name)}
+                                                                    {console.log(form.upschool_class_id)}
+
+                                                                    {
+                                                                        form.setTrue === true ? (<></>) : (
+                                                                            <Row>
+                                                                                <Col></Col>
+                                                                                <Col>
+                                                                                    <CloseButton onClick={() => {
+                                                                                        setErrorMessage()
+                                                                                        removeFields(index)
+                                                                                    }} variant="white" />
+                                                                                </Col>
+                                                                            </Row>
+                                                                        )
+                                                                    }
 
                                                                     <Row key={index}>
 
                                                                         <Col>
                                                                             <label className="floating-label">
                                                                                 <small className="text-danger">* </small>
-                                                                                New Class
+                                                                                Class to be mapped with UpSchool
                                                                             </label>
                                                                             <input
                                                                                 className="form-control"
@@ -347,7 +355,7 @@ const SubscribeClass = ({ className, rest, id, setIsOpenSubscribeClass }) => {
                                                                                     error={touched.upschool_class_id && errors.upschool_class_id}
                                                                                     name="upschool_class_id"
                                                                                     onBlur={handleBlur}
-
+                                                                                    disabled={form.setTrue}
                                                                                     type="text"
                                                                                     ref={classNameRef}
                                                                                     value={form.upschool_class_id}
@@ -398,8 +406,16 @@ const SubscribeClass = ({ className, rest, id, setIsOpenSubscribeClass }) => {
                                                         {errorMessage &&
                                                             <div style={{ color: 'red' }} className="error"> {errorMessage} </div>}
                                                     </Col>
-                                                    <Col>
-                                                        <Button onClick={subscribeClass} className="btn-block" color="success" size="large" type="submit" variant="success">
+                                                    <Col xs={3}>
+                                                        <Button
+                                                            onClick={(event) => {
+                                                                subscribeClass(event);
+                                                            }}
+                                                            className="btn-block"
+                                                            color="success"
+                                                            size="large"
+                                                            type="submit"
+                                                            variant="success">
                                                             Submit
                                                         </Button>
                                                     </Col>

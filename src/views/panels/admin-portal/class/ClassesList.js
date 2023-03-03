@@ -415,25 +415,32 @@ const StandardList = (props) => {
             {
               classData.length <= 0 ? (
                 <>
-                  < React.Fragment >
-                    <div>
-                      <h3 style={{ textAlign: 'center' }}>No Class Found</h3>
-                      <div className="form-group fill text-center">
-                        <br></br>
-                        <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={handelAddClass}>
-                          <i className="feather icon-plus" /> Add Class
-                        </Button>
-                      </div>
-                    </div>
-                    <Modal dialogClassName="my-modal" show={isOpenAddClass} onHide={() => setOpenAddClass(false)}>
-                      <Modal.Header closeButton>
-                        <Modal.Title as="h5">Add Class</Modal.Title>
-                      </Modal.Header>
-                      <Modal.Body>
-                        <AddClass setOpenAddClass={setOpenAddClass} />
-                      </Modal.Body>
-                    </Modal>
-                  </React.Fragment>
+                  {
+                    pageLocation === 'active-classes' ? (
+                      < React.Fragment >
+                        <div>
+                          <h3 style={{ textAlign: 'center' }}>No {pageLocation === "active-classes" ? 'Active Classes' : 'Archived Classes'} Found</h3>
+                          <div className="form-group fill text-center">
+                            <br></br>
+                            <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={handelAddClass}>
+                              <i className="feather icon-plus" /> Add Class
+                            </Button>
+                          </div>
+                        </div>
+                        <Modal dialogClassName="my-modal" show={isOpenAddClass} onHide={() => setOpenAddClass(false)}>
+                          <Modal.Header closeButton>
+                            <Modal.Title as="h5">Add Class</Modal.Title>
+                          </Modal.Header>
+                          <Modal.Body>
+                            <AddClass setOpenAddClass={setOpenAddClass} />
+                          </Modal.Body>
+                        </Modal>
+                      </React.Fragment>
+                    ) : (
+                      <h3 style={{ textAlign: 'center' }}>No {pageLocation === "active-classes" ? 'Active Classes' : 'Archived Classes'} Found</h3>
+                    )
+                  }
+
                 </>
               ) : (
                 <>

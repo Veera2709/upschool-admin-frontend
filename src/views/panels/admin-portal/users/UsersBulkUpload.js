@@ -20,11 +20,10 @@ const UsersBulkUpload = ({ className, ...rest }) => {
   const history = useHistory();
   const schoolNameRef = useRef('');
   const [schoolName_ID, setSchoolName_ID] = useState({});
-  const [schoolID, setSchoolID] = useState('');
   const [disableButton, setDisableButton] = useState(false);
   const [loader, showLoader, hideLoader] = useFullPageLoader();
   const [displayHeader, setDisplayHeader] = useState(true);
-  const [displayHeading, setDisplayHeading] = useState(sessionStorage.getItem('user_type'));
+  const displayHeading = sessionStorage.getItem('user_type');
   const threadLinks = document.getElementsByClassName('page-header');
 
   const sweetAlertHandler = (alert) => {
@@ -265,9 +264,11 @@ const UsersBulkUpload = ({ className, ...rest }) => {
 
                     let excelFile = document.getElementById('excelFileUploadUrl').files[0];
 
-                    const filteredResult = schoolName_ID.Items.find((e) => e.school_name == schoolNameRef.current.value);
+                    const filteredResult = schoolName_ID.Items.find((e) => e.school_name.trim() === schoolNameRef.current.value.trim());
 
-                    console.log(filteredResult.school_id);
+                    console.log(filteredResult);
+                    console.log(schoolName_ID.Items);
+                    console.log(schoolNameRef.current.value);
 
                     let sendData = {
                       school_id: '',
@@ -358,7 +359,14 @@ const UsersBulkUpload = ({ className, ...rest }) => {
 
                           <Row className="my-3">
                             <Col sm={12}>
-                              <Button className="btn-block" color="success" size="large" type="submit" variant="success" disabled={disableButton === true}>
+                              <Button
+                                className="btn-block"
+                                color="success"
+                                size="large"
+                                type="submit"
+                                variant="success"
+                                disabled={disableButton === true}
+                              >
                                 Upload
                               </Button>
                             </Col>

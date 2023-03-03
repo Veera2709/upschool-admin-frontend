@@ -1,7 +1,7 @@
 
 import React, { useState, useCallback } from 'react';
 // import './style.css'
-import { Row, Col, Card, Button, Modal, Dropdown, Form } from 'react-bootstrap';
+import { Row, Col, Card, Button, OverlayTrigger, Tooltip, Form } from 'react-bootstrap';
 // import CkDecoupledEditor from '../../../components/CK-Editor/CkDecoupledEditor';
 import * as Constants from '../../../../helper/constants';
 import { Formik } from 'formik';
@@ -134,7 +134,16 @@ const EditUnit = ({ setOpenEditUnit, unitId }) => {
 
 
     useEffect(() => {
-        fetchAllChaptersList();
+        let userJWT = sessionStorage.getItem('user_jwt');
+        console.log("jwt", userJWT);
+        if (userJWT === "" || userJWT === undefined || userJWT === "undefined" || userJWT === null) {
+            sessionStorage.clear();
+            localStorage.clear();
+            history.push('/auth/signin-1');
+            window.location.reload();
+        } else {
+            fetchAllChaptersList();
+        }
     }, [])
 
 
@@ -203,7 +212,6 @@ const EditUnit = ({ setOpenEditUnit, unitId }) => {
                                     }).then((willDelete) => {
                                         history.push('/admin-portal/units/active-units');
                                         window.location.reload();
-
                                     })
                                     hideLoader();
                                     setDisableButton(false);
@@ -266,45 +274,48 @@ const EditUnit = ({ setOpenEditUnit, unitId }) => {
                                     />
                                     {touched.unittitle && errors.unittitle && <small className="text-danger form-text">{errors.unittitle}</small>}
                                 </div>
-                                {defaultOptions && (<div className="form-group fill" style={{ position: "relative", zIndex: 20 }}>
-                                    <label className="floating-label" htmlFor="chapter">
-                                        <small className="text-danger">* </small> Chapter
-                                    </label>
-                                    {defaultOptions.length === 0 ? (
+                                <OverlayTrigger placement="top" overlay={<Tooltip id={`tooltip-top`} style={{zIndex:1151 }}>The selected order will be the index of chapter!</Tooltip>}>
+                                    {defaultOptions && (<div className="form-group fill" style={{ position: "relative", zIndex: 20 }}>
+                                        <label className="floating-label" htmlFor="chapter">
+                                            <small className="text-danger">* </small> Chapter
+                                        </label>
+                                        {defaultOptions.length === 0 ? (
 
-                                        <Select
-                                            className="basic-single"
-                                            classNamePrefix="select"
-                                            name="color"
-                                            isMulti
-                                            closeMenuOnSelect={false}
-                                            onChange={getMultiOptions}
-                                            options={topicTitles}
-                                            placeholder="Select"
-                                        />
+                                            <Select
+                                                className="basic-single"
+                                                classNamePrefix="select"
+                                                name="color"
+                                                isMulti
+                                                closeMenuOnSelect={false}
+                                                onChange={getMultiOptions}
+                                                options={topicTitles}
+                                                placeholder="Select"
+                                            />
 
-                                    ) : (
-                                        <>
-                                            {defaultOptions && (
+                                        ) : (
+                                            <>
+                                                {defaultOptions && (
 
-                                                <Select
-                                                    defaultValue={defaultOptions}
-                                                    className="basic-single"
-                                                    classNamePrefix="select"
-                                                    name="color"
-                                                    isMulti
-                                                    closeMenuOnSelect={false}
-                                                    onChange={(e) => { getMultiOptions(e); setIsShown(true) }}
-                                                    options={topicTitles}
-                                                    placeholder="Select"
-                                                />
+                                                    <Select
+                                                        defaultValue={defaultOptions}
+                                                        className="basic-single"
+                                                        classNamePrefix="select"
+                                                        name="color"
+                                                        isMulti
+                                                        closeMenuOnSelect={false}
+                                                        onChange={(e) => { getMultiOptions(e); setIsShown(true) }}
+                                                        options={topicTitles}
+                                                        placeholder="Select"
+                                                    />
 
-                                            )}
-                                        </>
+                                                )}
+                                            </>
 
-                                    )}
-                                    <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>Chapter Required</small>
-                                </div>)}
+                                        )}
+                                        <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>Chapter Required</small>
+                                    </div>)}
+                                </OverlayTrigger>
+
                                 <div className="form-group fill" >
                                     <Form.Label htmlFor="unit_description"> <small className="text-danger">* </small>Unit Description</Form.Label>
                                     <Form.Control

@@ -196,6 +196,7 @@ const UnitList = (props) => {
     // const data = React.useMemo(() => makeData(80), []);
     const [unitData, setUnitData] = useState([]);
     const [reloadAllData, setReloadAllData] = useState('Fetched');
+    const [statusUrl, setStatusUrl] = useState('');
     const [loader, showLoader, hideLoader] = useFullPageLoader();
     const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[3]);
     const [isLoading, setIsLoading] = useState(false);
@@ -247,6 +248,7 @@ const UnitList = (props) => {
                             hideLoader();
                             sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
                         } else {
+                            allUnitsList()
                             setReloadAllData("Deleted");
                             return MySwal.fire('', 'The ' + unit_title + ' is Deleted', 'success');
                         }
@@ -307,6 +309,7 @@ const UnitList = (props) => {
                                 hideLoader();
                                 sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
                             } else {
+                                allUnitsList()
                                 setReloadAllData("Deleted");
                                 return MySwal.fire('', 'The ' + unit_title + ' is Restored', 'success')
                             }
@@ -341,8 +344,8 @@ const UnitList = (props) => {
     }
 
 
-    const allUnitsList = async (UnitStatus) => {
-
+    const allUnitsList = async () => {
+        const UnitStatus = pageLocation === "active-units" ? 'Active' : 'Archived';
         let userJWT = sessionStorage.getItem('user_jwt');
         console.log("jwt", userJWT);
 
@@ -424,21 +427,20 @@ const UnitList = (props) => {
                 console.log('resultData: ', finalDataArray);
                 setIsLoading(false)
             }
-
         }
-
-
-
     }
 
     useEffect(() => {
-
-        if (pageLocation) {
-            console.log("--", pageLocation);
-            const url = pageLocation === "active-units" ? 'Active' : 'Archived';
-            allUnitsList(url);
+        let userJWT = sessionStorage.getItem('user_jwt');
+        console.log("jwt", userJWT);
+        if (userJWT === "" || userJWT === undefined || userJWT === "undefined" || userJWT === null) {
+            sessionStorage.clear();
+            localStorage.clear();
+            history.push('/auth/signin-1');
+            window.location.reload();
+        } else {
+            allUnitsList();
         }
-
     }, [reloadAllData])
 
     return (
@@ -451,25 +453,32 @@ const UnitList = (props) => {
                         {
                             unitData.length <= 0 ? (
                                 <>
-                                    < React.Fragment >
-                                        <div>
-                                            <h3 style={{ textAlign: 'center' }}>No Units Found</h3>
-                                            <div className="form-group fill text-center">
-                                                <br></br>
-                                                <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={(e)=>{handleAddUnit(e)}}>
-                                                    <i className="feather icon-plus" /> Add Units
-                                                </Button>
-                                            </div>
-                                        </div>
-                                        <Modal dialogClassName="my-modal" show={isOpenAddUnit} onHide={() => setOpenAddUnit(false)}>
-                                            <Modal.Header closeButton>
-                                                <Modal.Title as="h5">Add Unit</Modal.Title>
-                                            </Modal.Header>
-                                            <Modal.Body>
-                                                <AddUnit setOpenAddUnit={setOpenAddUnit} />
-                                            </Modal.Body>
-                                        </Modal>
-                                    </React.Fragment>
+                                    {
+                                        pageLocation === 'active-units' ? (
+                                            < React.Fragment >
+                                                <div>
+                                                    <h3 style={{ textAlign: 'center' }}>No {pageLocation === "active-units" ? 'Active Units' : 'Archived Units'} Found</h3>
+                                                    <div className="form-group fill text-center">
+                                                        <br></br>
+                                                        <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={(e) => { handleAddUnit(e) }}>
+                                                            <i className="feather icon-plus" /> Add Units
+                                                        </Button>
+                                                    </div>
+                                                </div>
+                                                <Modal dialogClassName="my-modal" show={isOpenAddUnit} onHide={() => setOpenAddUnit(false)}>
+                                                    <Modal.Header closeButton>
+                                                        <Modal.Title as="h5">Add Unit</Modal.Title>
+                                                    </Modal.Header>
+                                                    <Modal.Body>
+                                                        <AddUnit setOpenAddUnit={setOpenAddUnit} />
+                                                    </Modal.Body>
+                                                </Modal>
+                                            </React.Fragment>
+                                        ) : (
+                                            <h3 style={{ textAlign: 'center' }}>No {pageLocation === "active-units" ? 'Active Units' : 'Archived Units'} Found</h3>
+                                        )
+                                    }
+
                                 </>
                             ) : (
                                 <>

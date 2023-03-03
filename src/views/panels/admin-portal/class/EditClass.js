@@ -134,13 +134,13 @@ const EditClass = ({setOpenEditClass,classId}) => {
               enableReinitialize
               initialValues={{
                 classTitle: individualClassdata.class_name,
-                class_subject_id: subjectOption,
+                // class_subject_id: subjectOption,
               }}
               validationSchema={Yup.object().shape({
                 classTitle: Yup.string()
                   .trim()
                   .min(2, Constants.AddClasses.ClasstitleTooShort)
-                  .max(30, Constants.AddClasses.ClasstitleTooLong)
+                  .max(32, Constants.AddClasses.ClasstitleTooLong)
                   .required(Constants.AddClasses.ClasstitleRequired),
               })}
               onSubmit={async (

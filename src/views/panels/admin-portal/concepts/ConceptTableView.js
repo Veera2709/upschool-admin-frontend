@@ -26,8 +26,12 @@ function Table({ columns, data }) {
     const [loader, showLoader, hideLoader] = useFullPageLoader();
     const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
     const [digicardsAndConcepts, setDigicardsAndConcepts] = useState(false);
+    const [fetchAllGroups, setFetchAllGroups] = useState(false);
     const [_relatedConcepts, _setRelatedConcepts] = useState([]);
     const [_digicards, _setDigicards] = useState([]);
+    const [_basicGroups, _setBasicGroups] = useState([]);
+    const [_intermediateGroups, _setIntermediateGroups] = useState([]);
+    const [_advancedGroups, _setAdvancedGroups] = useState([]);
     const [editConceptID, setEditConceptID] = useState('');
 
     const [isOpenAddConcept, setIsOpenAddConcept] = useState(false);
@@ -118,6 +122,77 @@ function Table({ columns, data }) {
 
     }, [digicardsAndConcepts])
 
+    useEffect(() => {
+
+        axios
+            .post(
+                dynamicUrl.fetchAllTypesOfGroups,
+                {},
+                {
+                    headers: { Authorization: sessionStorage.getItem('user_jwt') }
+                }
+            )
+            .then((response) => {
+
+                let result = response.status === 200;
+                hideLoader();
+
+                if (result) {
+
+                    console.log('inside res fetchAllTypesOfGroups');
+
+                    let responseData = response.data;
+                    console.log(responseData);
+                    // setDisableButton(false);
+                    hideLoader();
+                    _setBasicGroups(responseData.Basic);
+                    _setIntermediateGroups(responseData.Intermediate);
+                    _setAdvancedGroups(responseData.Advanced);
+
+                } else {
+
+                    console.log('else res');
+
+                    hideLoader();
+
+
+                }
+            })
+            .catch((error) => {
+                if (error.response) {
+                    hideLoader();
+                    // Request made and server responded
+                    console.log(error.response.data);
+
+                    if (error.response.data === 'Invalid Token') {
+
+                        sessionStorage.clear();
+                        localStorage.clear();
+
+                        history.push('/auth/signin-1');
+                        window.location.reload();
+
+                    } else {
+
+                        sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+                        fetchAllConceptsData();
+                    }
+
+
+                } else if (error.request) {
+                    // The request was made but no response was received
+                    console.log(error.request);
+                    hideLoader();
+                    fetchAllConceptsData();
+                } else {
+                    // Something happened in setting up the request that triggered an Error
+                    console.log('Error', error.message);
+                    hideLoader();
+                    fetchAllConceptsData();
+                }
+            })
+
+    }, [fetchAllGroups]);
 
     const sweetConfirmHandler = (alert, concept_id, updateStatus) => {
         MySwal.fire({
@@ -179,6 +254,7 @@ function Table({ columns, data }) {
                 hideLoader();
 
                 setDigicardsAndConcepts(true);
+                setFetchAllGroups(true);
 
                 if (response.data.Items) {
 
@@ -520,7 +596,7 @@ function Table({ columns, data }) {
 
                         <Modal.Body>
 
-                            <AddConcepts _digicards={_digicards} _relatedConcepts={_relatedConcepts} setIsOpenAddConcept={setIsOpenAddConcept} fetchAllConceptsData={fetchAllConceptsData} setDigicardsAndConcepts={setDigicardsAndConcepts} />
+                            <AddConcepts _digicards={_digicards} _relatedConcepts={_relatedConcepts} setIsOpenAddConcept={setIsOpenAddConcept} fetchAllConceptsData={fetchAllConceptsData} setDigicardsAndConcepts={setDigicardsAndConcepts} setFetchAllGroups={setFetchAllGroups} _basicGroups={_basicGroups} _intermediateGroups={_intermediateGroups} _advancedGroups={_advancedGroups} />
 
                         </Modal.Body>
 
@@ -536,7 +612,7 @@ function Table({ columns, data }) {
 
                         <Modal.Body>
 
-                            <EditConcepts _digicards={_digicards} _relatedConcepts={_relatedConcepts} editConceptID={editConceptID} setIsOpenEditConcept={setIsOpenEditConcept} fetchAllConceptsData={fetchAllConceptsData} />
+                            <EditConcepts _digicards={_digicards} _relatedConcepts={_relatedConcepts} editConceptID={editConceptID} setIsOpenEditConcept={setIsOpenEditConcept} fetchAllConceptsData={fetchAllConceptsData} _basicGroups={_basicGroups} _intermediateGroups={_intermediateGroups} _advancedGroups={_advancedGroups} />
 
                         </Modal.Body>
 
@@ -579,8 +655,13 @@ const ConceptTableView = ({ userStatus }) => {
     const [loader, showLoader, hideLoader] = useFullPageLoader();
     const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
     const [digicardsAndConcepts, setDigicardsAndConcepts] = useState(false);
+    const [fetchAllGroups, setFetchAllGroups] = useState(false);
     const [_relatedConcepts, _setRelatedConcepts] = useState([]);
     const [_digicards, _setDigicards] = useState([]);
+    const [_basicGroups, _setBasicGroups] = useState([]);
+    const [_intermediateGroups, _setIntermediateGroups] = useState([]);
+    const [_advancedGroups, _setAdvancedGroups] = useState([]);
+
 
     const [isOpenAddConcept, setIsOpenAddConcept] = useState(false);
     const [isEditAddConcept, setIsOpenEditConcept] = useState(false);
@@ -667,7 +748,79 @@ const ConceptTableView = ({ userStatus }) => {
                 }
             })
 
-    }, [digicardsAndConcepts])
+    }, [digicardsAndConcepts]);
+
+    useEffect(() => {
+
+        axios
+            .post(
+                dynamicUrl.fetchAllTypesOfGroups,
+                {},
+                {
+                    headers: { Authorization: sessionStorage.getItem('user_jwt') }
+                }
+            )
+            .then((response) => {
+
+                let result = response.status === 200;
+                hideLoader();
+
+                if (result) {
+
+                    console.log('inside res fetchAllTypesOfGroups');
+
+                    let responseData = response.data;
+                    console.log(responseData);
+                    // setDisableButton(false);
+                    hideLoader();
+                    _setBasicGroups(responseData.Basic);
+                    _setIntermediateGroups(responseData.Intermediate);
+                    _setAdvancedGroups(responseData.Advanced);
+
+                } else {
+
+                    console.log('else res');
+
+                    hideLoader();
+
+
+                }
+            })
+            .catch((error) => {
+                if (error.response) {
+                    hideLoader();
+                    // Request made and server responded
+                    console.log(error.response.data);
+
+                    if (error.response.data === 'Invalid Token') {
+
+                        sessionStorage.clear();
+                        localStorage.clear();
+
+                        history.push('/auth/signin-1');
+                        window.location.reload();
+
+                    } else {
+
+                        sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+                        fetchAllConceptsData();
+                    }
+
+
+                } else if (error.request) {
+                    // The request was made but no response was received
+                    console.log(error.request);
+                    hideLoader();
+                    fetchAllConceptsData();
+                } else {
+                    // Something happened in setting up the request that triggered an Error
+                    console.log('Error', error.message);
+                    hideLoader();
+                    fetchAllConceptsData();
+                }
+            })
+
+    }, [fetchAllGroups]);
 
     const sweetConfirmHandler = (alert, concept_id, updateStatus) => {
         MySwal.fire({
@@ -727,6 +880,7 @@ const ConceptTableView = ({ userStatus }) => {
                 hideLoader();
 
                 setDigicardsAndConcepts(true);
+                setFetchAllGroups(true);
 
                 if (response.data.Items) {
 
@@ -922,45 +1076,52 @@ const ConceptTableView = ({ userStatus }) => {
 
                     {conceptData.length <= 0 ? (
                         <>
-                            < React.Fragment >
-                                <div>
+                            {
+                                pageLocation === 'active-concepts' ? (
+                                    < React.Fragment >
+                                        <div>
 
-                                    <h3 style={{ textAlign: 'center' }}>No Concepts Found</h3>
-                                    <div className="form-group fill text-center">
-                                        <br></br>
+                                            <h3 style={{ textAlign: 'center' }}>No {pageLocation === 'active-concepts' ? 'Active Concepts' : 'Archived Concepts'} Found</h3>
+                                            <div className="form-group fill text-center">
+                                                <br></br>
 
-                                        <Button
-                                            variant="success"
-                                            className="btn-sm btn-round has-ripple ml-2"
-                                            onClick={(e) => {
-                                                handleAddConcepts(e);
-                                            }}
-                                        >
-                                            <i className="feather icon-plus" /> Add Concepts
-                                        </Button>
+                                                <Button
+                                                    variant="success"
+                                                    className="btn-sm btn-round has-ripple ml-2"
+                                                    onClick={(e) => {
+                                                        handleAddConcepts(e);
+                                                    }}
+                                                >
+                                                    <i className="feather icon-plus" /> Add Concepts
+                                                </Button>
 
 
-                                    </div>
+                                            </div>
 
-                                </div>
+                                        </div>
 
-                                <Modal dialogClassName="my-modal" show={isOpenAddConcept} onHide={() => setIsOpenAddConcept(false)}>
+                                        <Modal dialogClassName="my-modal" show={isOpenAddConcept} onHide={() => setIsOpenAddConcept(false)}>
 
-                                    <Modal.Header closeButton>
+                                            <Modal.Header closeButton>
 
-                                        <Modal.Title as="h5">Add Concept</Modal.Title>
+                                                <Modal.Title as="h5">Add Concept</Modal.Title>
 
-                                    </Modal.Header>
+                                            </Modal.Header>
 
-                                    <Modal.Body>
+                                            <Modal.Body>
 
-                                        <AddConcepts _digicards={_digicards} _relatedConcepts={_relatedConcepts} setIsOpenAddConcept={setIsOpenAddConcept} fetchAllConceptsData={fetchAllConceptsData} setDigicardsAndConcepts={setDigicardsAndConcepts} />
+                                                <AddConcepts _digicards={_digicards} _relatedConcepts={_relatedConcepts} setIsOpenAddConcept={setIsOpenAddConcept} fetchAllConceptsData={fetchAllConceptsData} setDigicardsAndConcepts={setDigicardsAndConcepts} setFetchAllGroups={setFetchAllGroups} _basicGroups={_basicGroups} _intermediateGroups={_intermediateGroups} _advancedGroups={_advancedGroups} />
 
-                                    </Modal.Body>
+                                            </Modal.Body>
 
-                                </Modal>
+                                        </Modal>
 
-                            </React.Fragment>
+                                    </React.Fragment>
+                                ) : (
+                                    <h3 style={{ textAlign: 'center' }}>No {pageLocation === 'active-concepts' ? 'Active Concepts' : 'Archived Concepts'} Found</h3>
+                                )
+                            }
+
                         </>
                     ) : (
 
@@ -992,7 +1153,7 @@ const ConceptTableView = ({ userStatus }) => {
 
                                 <Modal.Body>
 
-                                    <AddConcepts _digicards={_digicards} _relatedConcepts={_relatedConcepts} setIsOpenAddConcept={setIsOpenAddConcept} fetchAllConceptsData={fetchAllConceptsData} setDigicardsAndConcepts={setDigicardsAndConcepts} />
+                                    <AddConcepts _digicards={_digicards} _relatedConcepts={_relatedConcepts} setIsOpenAddConcept={setIsOpenAddConcept} fetchAllConceptsData={fetchAllConceptsData} setDigicardsAndConcepts={setDigicardsAndConcepts} setFetchAllGroups={setFetchAllGroups} _basicGroups={_basicGroups} _intermediateGroups={_intermediateGroups} _advancedGroups={_advancedGroups} />
 
                                 </Modal.Body>
 
@@ -1008,7 +1169,7 @@ const ConceptTableView = ({ userStatus }) => {
 
                                 <Modal.Body>
 
-                                    <EditConcepts _digicards={_digicards} _relatedConcepts={_relatedConcepts} editConceptID={editConceptID} setIsOpenEditConcept={setIsOpenEditConcept} fetchAllConceptsData={fetchAllConceptsData} />
+                                    <EditConcepts _digicards={_digicards} _relatedConcepts={_relatedConcepts} editConceptID={editConceptID} setIsOpenEditConcept={setIsOpenEditConcept} fetchAllConceptsData={fetchAllConceptsData} _basicGroups={_basicGroups} _intermediateGroups={_intermediateGroups} _advancedGroups={_advancedGroups} />
 
                                 </Modal.Body>
 

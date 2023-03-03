@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 // import './style.css'
 import { Row, Col, Card, Button, Modal } from 'react-bootstrap';
 // import CkDecoupledEditor from '../../../components/CK-Editor/CkDecoupledEditor';
@@ -56,28 +56,21 @@ const AddDigiCard = (
   const [imageCount, setImageCount] = useState(0);
   const [multiOptions, setMultiOptions] = useState([]);
   const [tags, setTags] = useState([]);
-  const [index, setIndex] = useState(0);
   const [ImgURL, setImgURL] = useState([]);
-  const [display, setDisplay] = useState('none');
   const [imgFile, setImgFile] = useState([]);
   const [articleData, setArticleData] = useState("");
   const [articleDataTitle, setArticleDataTtitle] = useState("");
   const [digitalTitles, setDigitalTitles] = useState([]);
   const [imgValidation, setImgValidation] = useState(true);
   const [voiceError, setVoiceError] = useState(true);
-  const [topicDigiCardIds, setTopicDigiCardIds] = useState([]);
   const [displayHeading, setDisplayHeading] = useState(sessionStorage.getItem('digicard_type'));
   const [displayHeader, setDisplayHeader] = useState(true);
+  const [imagePre, setImage] = useState();
+  const [voiceNotePre, setVoiceNote] = useState("");
+
   const threadLinks = document.getElementsByClassName('page-header');
 
   let history = useHistory();
-
-
-
-
-
-
-
 
 
   const handleDelete = (i, states) => {
@@ -88,19 +81,25 @@ const AddDigiCard = (
 
   const handleAddition = (tag, state) => {
     const newTags = [].concat(tags, tag);
-
     setTags(newTags);
   };
 
+  const previewVoiceNote = (e) => {
+    setVoiceNote(URL.createObjectURL(e.target.files[0]));
+  }
 
-  function encodeImageFileAsURL() {
-    var file = document.getElementById('digicard_image').files[0];
-    var reader = new FileReader();
-    reader.onloadend = function () {
-      console.log('RESULT', reader.result)
-      setImgURL(reader.result)
+
+  function encodeImageFileAsURL(e) {
+    let FileLength = e.target.files.length
+    if (FileLength === 1) {
+      var file = document.getElementById('digicard_image').files[0];
+      var reader = new FileReader();
+      reader.onloadend = function () {
+        // console.log('RESULT', reader.result)
+        setImgURL(reader.result)
+      }
+      reader.readAsDataURL(file);
     }
-    reader.readAsDataURL(file);
   }
   const sweetAlertHandler = (alert) => {
     MySwal.fire({
@@ -112,22 +111,16 @@ const AddDigiCard = (
 
 
   const previewImage = (e) => {
-    setImgFile(URL.createObjectURL(e.target.files[0]));
+    let FileLength = e.target.files.length
+    setImage(e.target)
+    console.log("FileLength", FileLength);
+    FileLength === 1 ? setImgFile(URL.createObjectURL(e.target.files[0])) : setImgFile()
+    console.log(URL.createObjectURL(e.target.files[0]));
   }
 
 
 
-  // const previewData = () => {
-  //   var data = {
-  //     imgUrl: ImgURL,
-  //     articleData: articleData,
-  //     digi_card_name: document.getElementById('name').value,
-  //     digi_card_title: document.getElementById('title').value
-  //   }
 
-  //   sessionStorage.setItem("data", JSON.stringify(data))
-  //   history.push(`/admin-portal/preview`)
-  // }
 
 
   const fetchAllData = async () => {
@@ -190,6 +183,8 @@ const AddDigiCard = (
   }
 
 
+
+
   return (
     <>
       <React.Fragment>
@@ -234,7 +229,7 @@ const AddDigiCard = (
                 digicardtitle: Yup.string()
                   .trim()
                   .min(2, Constants.AddDigiCard.DigiCardtitleTooShort)
-                  .max(50, Constants.AddDigiCard.DigiCardtitleTooLong)
+                  .max(32, Constants.AddDigiCard.DigiCardtitleTooLong)
                   .matches(Constants.AddDigiCard.DigiCardtitleRegex, Constants.AddDigiCard.DigiCardtitleValidation)
                   .required(Constants.AddDigiCard.DigiCardtitleRequired),
                 digicard_image: Yup.string()
@@ -278,7 +273,6 @@ const AddDigiCard = (
                 } else {
 
                   var formData = {
-                    // digi_card_name: values.digicardname,
                     digi_card_title: values.digicardtitle,
                     digi_card_files: [values.digicard_image],
                     digicard_image: values.digicard_image,
@@ -289,7 +283,6 @@ const AddDigiCard = (
                     related_digi_cards: multiOptions,
                   };
                   console.log("formData", formData);
-
                   axios
                     .post(dynamicUrl.insertDigicard, { data: formData }, { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
                     .then(async (response) => {
@@ -417,15 +410,14 @@ const AddDigiCard = (
                         </label>
                         <input
                           className="form-control"
-                          error={touched.digicard_image && errors.digicard_image}
                           name="digicard_image"
                           id="digicard_image"
                           onBlur={handleBlur}
                           onChange={(e) => {
                             handleChange(e);
-                            previewImage(e);
                             encodeImageFileAsURL(e);
-                            setImgValidation(true)
+                            setImgValidation(true);
+                            previewImage(e);
                           }}
                           type="file"
                           value={values.digicard_image}
@@ -434,6 +426,7 @@ const AddDigiCard = (
                         {touched.digicard_image && errors.digicard_image && (
                           <small className="text-danger form-text">{errors.digicard_image}</small>
                         )}
+
                         <small className="text-danger form-text" style={{ display: imgValidation ? 'none' : 'block' }}>Invalid File Type or File size is Exceed More Than 1MB</small>
                       </div>
                       <div className="form-group fill">
@@ -446,7 +439,11 @@ const AddDigiCard = (
                           name="digicard_voice_note"
                           id="digicard_voice_note"
                           onBlur={handleBlur}
+                          onClick={(e) => {
+                            setVoiceNote('');
+                          }}
                           onChange={(e) => {
+                            previewVoiceNote(e)
                             handleChange(e);
                             setVoiceError(true)
                           }
@@ -466,7 +463,6 @@ const AddDigiCard = (
                           <small className="text-danger"> </small>KeyWords
                         </label>
                         <ReactTags
-                          // error={touched.digicardKeywords && errors.digicardKeywords}
                           classNames={{ root: 'react-tags bootstrap-tagsinput', selectedTag: 'react-tags__selected-tag btn-primary' }}
                           allowNew={true}
                           addOnBlur={true}
@@ -475,20 +471,11 @@ const AddDigiCard = (
                           onAddition={(e) => handleAddition(e)}
                           name='digicardKeywords'
                         />
-                        {/* {touched.digicardKeywords && errors.digicardKeywords && (<small className="text-danger form-text">{errors.digicardKeywords}</small>)} */}
                       </div><br />
-                      <div className="form-group fill" style={{ position: "relative", zIndex: 10 }}>
+                      <div className="form-group fill">
                         <label className="floating-label" htmlFor="clientComponents">
                           <small className="text-danger"> </small>Related DigiCard Titles
                         </label>
-                        {/* <Multiselect
-                        options={digitalTitles}
-                        displayValue="value"
-                        selectionLimit="25"
-                        // selectedValues={defaultOptions}
-                        onSelect={(e) => { handleOnSelect(e) }}
-                        onRemove={handleOnRemove}
-                      /> */}
                         <Select
                           className="basic-single"
                           classNamePrefix="select"
@@ -498,6 +485,8 @@ const AddDigiCard = (
                           onChange={getMultiOptions}
                           options={digitalTitles}
                           placeholder="Select"
+                          menuPortalTarget={document.body}
+                          styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                         />
                         <br />
                         {touched.clientComponents && errors.clientComponents && (
@@ -506,13 +495,24 @@ const AddDigiCard = (
                       </div>
                     </Col>
                     <Col sm={6}><br />
-
-                      <div className="form-group fill">
+                      <div className="form-group fill" style={{ marginTop: '60px' }}>
                         <label className="floating-label" htmlFor="digicardtitle">
                           <small className="text-danger">* </small>Logo preview
                         </label><br />
-                        <img width={150} src={imgFile} alt="" className="img-fluid mb-3" />
+                        {console.log("url", imgFile)}
+                        <img width={100} src={imgFile} alt="" className="img-fluid mb-3" />
                       </div>
+                      {voiceNotePre && (
+                        <div>
+                          <label className="floating-label" htmlFor="digicardtitle">
+                            <small className="text-danger">* </small>Voice Note preview
+                          </label><br />
+                          <audio controls>
+                            <source src={voiceNotePre} alt="Audio" type="audio/mp3" />
+                          </audio>
+                        </div>
+                      )}
+
 
                     </Col>
                   </Row>
@@ -527,7 +527,8 @@ const AddDigiCard = (
                         imageCount={imageCount}
                         articleData={articleDataTitle}
                         setArticleData={setArticleDataTtitle}
-
+                        menuPortalTarget={document.body}
+                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                       />
                     </Col>
                     <br />
@@ -545,64 +546,40 @@ const AddDigiCard = (
                         setArticleData={setArticleData}
                         onChange={handleChange}
                         name="digicardcontent"
-
+                        menuPortalTarget={document.body}
+                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                       />
                     </Col>
-                    {/* {touched.digicardcontent && errors.digicardcontent && <small className="text-danger form-text">{errors.digicardcontent}</small>} */}
-
-                    <br />
-                    {/* <small className="text-danger form-text" >Select DigiCard Titles</small> */}
                   </Row><br></br>
-                  <Row>
-                    <Col sm={10}>
+                  <Row >
+                    <Col sm={8}>
                     </Col>
-                    <div className="form-group fill float-end" >
-                      <Col sm={12} className="center">
-                        <Button
-                          className="btn-block"
-                          color="success"
-                          size="large"
-                          type="submit"
-                          variant="success"
-                        // disabled={disableButton === true}
-                        >
-                          Submit
-                        </Button>
-                      </Col>
-                    </div>
+                    <Col>
+                      <Row>
+                        <Col></Col>
+                        <Col>
+                          <Button
+                            className="btn-block"
+                            color="success"
+                            size="large"
+                            type="submit"
+                            variant="success"
+                          >
+                            Submit
+                          </Button>
+                        </Col>
+                      </Row>
+                    </Col>
                   </Row>
                 </form>
               )}
 
             </Formik>
-            <Row>
-              <Col sm={10}>
-              </Col>
-              {/* <div className="form-group fill float-end" >
-              <Col sm={12} className="center">
-                <Button
-                  className="btn-block"
-                  color="success"
-                  size="large"
-                  type="submit"
-                  variant="success"
-                  onClick={previewData}
-                >
-                  preview
-                </Button>
-              </Col>
-            </div> */}
-            </Row>
           </Card.Body>
 
         </Card>
       </React.Fragment>
     </>
-
-
-
-
-
   )
 
 };

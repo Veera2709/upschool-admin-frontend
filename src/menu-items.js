@@ -16,7 +16,7 @@ const menuItems = {
         {
           id: 'sch-addSchool',
           title: 'School',
-          icon: 'feather icon-book',
+          icon: 'fas fa-building',
           type: 'collapse',
           children: [
             {
@@ -29,11 +29,10 @@ const menuItems = {
               id: 'archived-schools',
               title: 'Archived Schools',
               type: 'item',
-              url: '/admin-porttal/archived-schools'
+              url: '/admin-portal/archived-schools'
             }
           ]
         },
-
         {
           id: 'users',
           title: 'Users',
@@ -54,12 +53,31 @@ const menuItems = {
             }
           ]
         },
-
+        {
+          id: 'upSchoolUsers',
+          title: 'CMS Users',
+          type: 'collapse',
+          icon: 'fas fa-users',
+          children: [
+            {
+              id: 'active-upSchoolUsers',
+              title: 'Active Users',
+              type: 'item',
+              url: '/admin-portal/active-upSchoolUsers'
+            },
+            {
+              id: 'archived-upSchoolUsers',
+              title: 'Archived Users',
+              type: 'item',
+              url: '/admin-portal/archived-upSchoolUsers'
+            }
+          ]
+        },
         {
           id: 'digicard',
           title: 'DigiCard',
           type: 'collapse',
-          icon: 'feather icon-layout',
+          icon: 'fab fa-react',
 
           children: [
             {
@@ -121,7 +139,7 @@ const menuItems = {
           id: 'chapters',
           title: 'Chapters',
           type: 'collapse',
-          icon: 'fas fa-book',
+          icon: 'fas fa-passport',
           children: [
 
             {
@@ -162,7 +180,7 @@ const menuItems = {
           id: 'subjects',
           title: 'Subjects',
           type: 'collapse',
-          icon: 'feather icon-box',
+          icon: 'fas fa-book-open',
           children: [
             {
               id: 'active-subjects',
@@ -182,7 +200,8 @@ const menuItems = {
           id: 'Class',
           title: 'Class',
           type: 'collapse',
-          icon: 'feather icon-package',
+          // icon: 'feather icon-package',
+          icon: 'fas fa-warehouse',
           children: [
             {
               id: 'active-classes',
@@ -198,6 +217,66 @@ const menuItems = {
             }
           ]
         },
+        {
+          id: 'questions',
+          title: 'Questions',
+          type: 'collapse',
+          icon: 'feather icon-check-square',
+          children: [
+            {
+              id: 'active-questions',
+              title: 'Active Questions',
+              type: 'item',
+              url: '/admin-portal/active-questions'
+            },
+            {
+              id: 'archived-questions',
+              title: 'Archived Questions',
+              type: 'item',
+              url: '/admin-portal/archived-questions'
+            }
+          ]
+        },
+        {
+          id: 'groups',
+          title: 'Groups',
+          type: 'collapse',
+          icon: 'feather icon-folder',
+          children: [
+            {
+              id: 'active-groups',
+              title: 'Active Groups',
+              type: 'item',
+              url: '/admin-portal/active-groups'
+            },
+            {
+              id: 'archived-groups',
+              title: 'Archived Groups',
+              type: 'item',
+              url: '/admin-portal/archived-groups'
+            }
+          ]
+        },
+        // {
+        //   id: 'boards',
+        //   title: 'Boards',
+        //   type: 'collapse',
+        //   icon: 'feather icon-file',
+        //   children: [
+        //     {
+        //       id: 'active-boards',
+        //       title: 'Active Boards',
+        //       type: 'item',
+        //       url: '/admin-portal/active-boards'
+        //     },
+        //     {
+        //       id: 'archived-boards',
+        //       title: 'Archived Boards',
+        //       type: 'item',
+        //       url: '/admin-portal/archived-boards'
+        //     }
+        //   ]
+        // },
       ]
     }
 
