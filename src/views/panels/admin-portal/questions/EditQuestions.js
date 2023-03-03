@@ -218,9 +218,16 @@ const EditQuestions = () => {
         } else {
             data[index][event.target.name] = event.target.value;
         }
-        data[index]["answer_type"] = selectedAnswerType;
 
-        setAnswerOptionsForm(data);
+        if (toggleNumbersInput && event.target.name === 'answer_range_from') {
+            data[index][event.target.name] = Number(event.target.value);
+        }
+
+        if (toggleNumbersInput && event.target.name === 'answer_range_to') {
+            data[index][event.target.name] = Number(event.target.value);
+        }
+
+        data[index]["answer_type"] = selectedAnswerType;
 
         if (event.target.name === 'answer_weightage') {
             setAnsWeightageErrMsg(false);
@@ -234,37 +241,69 @@ const EditQuestions = () => {
         }
 
         if (toggleImageInput && event.target.name === 'answer_content') {
-            let tempPreviewImg = [...previewImages];
-            tempPreviewImg[index] = URL.createObjectURL(event.target.files[0]);
-            setPreviewImages(tempPreviewImg);
 
-            let tempFileValue = [...fileValues];
-            tempFileValue[count] = event.target.files[0];
-            setFileValues(tempFileValue);
+            data[index][event.target.name] = '';
 
-            let tempCount = count + 1;
-            setCount(tempCount);
+            if (areFilesInvalid([event.target.files[0]]) !== 0) {
+                sweetAlertHandler(
+                    {
+                        title: 'Invalid Image File(s)!',
+                        type: 'warning',
+                        text: 'Supported file formats are .png, .jpg, .jpeg. Uploaded files should be less than 2MB. '
+                    }
+                );
+            } else {
+
+                let tempPreviewImg = [...previewImages];
+                tempPreviewImg[index] = event.target.files.length === 0 ? '' : URL.createObjectURL(event.target.files[0]);
+                setPreviewImages(tempPreviewImg);
+
+                let tempFileValue = [...fileValues];
+                tempFileValue[count] = event.target.files.length === 0 ? '' : event.target.files[0];
+                setFileValues(tempFileValue);
+
+                let tempCount = count + 1;
+                setCount(tempCount);
+            }
+
         }
 
         if (toggleAudioInput && event.target.name === 'answer_content') {
-            let tempPreviewAudio = [...previewAudios];
-            tempPreviewAudio[index] = URL.createObjectURL(event.target.files[0]);
-            setPreviewAudios(tempPreviewAudio);
 
-            let tempFileValue = [...fileValues];
-            tempFileValue[count] = event.target.files[0];
-            setFileValues(tempFileValue);
+            data[index][event.target.name] = '';
 
-            let tempCount = count + 1;
-            setCount(tempCount);
+            if (voiceInvalid([event.target.files[0]]) !== 0) {
+                sweetAlertHandler({
+                    title: 'Invalid Audio File(s)!',
+                    type: 'warning',
+                    text: 'Supported file formats are .mp3, .mpeg, .wav. Uploaded files should be less than 10MB. '
+                });
+            } else {
+
+                let tempPreviewAudio = [...previewAudios];
+                tempPreviewAudio[index] = event.target.files.length === 0 ? '' : URL.createObjectURL(event.target.files[0]);
+                setPreviewAudios(tempPreviewAudio);
+
+                let tempFileValue = [...fileValues];
+                tempFileValue[count] = event.target.files.length === 0 ? '' : event.target.files[0];
+                setFileValues(tempFileValue);
+
+                let tempCount = event.target.files.length === 0 ? count : count + 1;
+                setCount(tempCount);
+
+            }
         }
+
+        setAnswerOptionsForm(data);
     }
 
     const previewQuestionVoiceNote = (e) => {
 
-        setQuestionVoiceNote(URL.createObjectURL(e.target.files[0]));
+        let tempUrl = e.target.files.length === 0 ? '' : URL.createObjectURL(e.target.files[0]);
+        let tempVoiceNoteFileValues = e.target.files.length === 0 ? '' : e.target.files[0];
+        setQuestionVoiceNote(tempUrl);
         setSelectedQuestionVoiceNote(e.target.value);
-        setVoiceNoteFileValues(e.target.files[0]);
+        setVoiceNoteFileValues(tempVoiceNoteFileValues);
     }
 
     const handleAnswerType = (event) => {
@@ -433,15 +472,32 @@ const EditQuestions = () => {
 
                                 if (index < uploadParams.length) {
 
-                                    object = {
-                                        answer_type: individual_user_data.answer_type,
-                                        answer_content: uploadParams[index].answer_content,
-                                        answer_display: uploadParams[index].answer_display,
-                                        answer_option: uploadParams[index].answer_option,
-                                        answer_weightage: uploadParams[index].answer_weightage
-                                    }
+                                    if (individual_user_data.answer_type === 'Numbers') {
 
-                                    tempArray.push(object);
+                                        object = {
+                                            answer_type: individual_user_data.answer_type,
+                                            answer_content: uploadParams[index].answer_content,
+                                            answer_display: uploadParams[index].answer_display,
+                                            answer_option: uploadParams[index].answer_option,
+                                            answer_weightage: uploadParams[index].answer_weightage,
+                                            answer_range_from: Number(uploadParams[index].answer_range_from),
+                                            answer_range_to: Number(uploadParams[index].answer_range_to)
+                                        }
+
+                                        tempArray.push(object);
+
+                                    } else {
+
+                                        object = {
+                                            answer_type: individual_user_data.answer_type,
+                                            answer_content: uploadParams[index].answer_content,
+                                            answer_display: uploadParams[index].answer_display,
+                                            answer_option: uploadParams[index].answer_option,
+                                            answer_weightage: uploadParams[index].answer_weightage
+                                        }
+
+                                        tempArray.push(object);
+                                    }
 
                                     if (individual_user_data.answer_type === 'Image') {
 
@@ -483,7 +539,7 @@ const EditQuestions = () => {
 
                                     ) : (console.log("Not empty"));
 
-                                    tempArray.length > 1 ? setAddAnswerOptions(true) : setAddAnswerOptions(false);
+                                    tempArray.length >= 1 ? setAddAnswerOptions(true) : setAddAnswerOptions(false);
 
                                     setAnswerOptionsForm(tempArray);
 
@@ -998,7 +1054,7 @@ const EditQuestions = () => {
                                     );
                                 } else {
 
-    
+
                                     setnNewDigicard(true)
 
 
@@ -1035,7 +1091,7 @@ const EditQuestions = () => {
                                     });
                                 } else {
 
-    
+
                                     setnNewDigicard(true)
 
 
@@ -1073,7 +1129,7 @@ const EditQuestions = () => {
 
                                 if (allFilesData.length === 0) {
 
-    
+
                                     setnNewDigicard(true)
 
 
@@ -1088,7 +1144,7 @@ const EditQuestions = () => {
                                         );
                                     } else {
 
-        
+
                                         setnNewDigicard(true)
 
 
@@ -1110,7 +1166,7 @@ const EditQuestions = () => {
 
                                 if (allFilesData.length === 0) {
 
-    
+
                                     setnNewDigicard(true)
 
 
@@ -1125,7 +1181,7 @@ const EditQuestions = () => {
                                         });
                                     } else {
 
-        
+
                                         setnNewDigicard(true)
 
 
@@ -1886,7 +1942,7 @@ const EditQuestions = () => {
                                                     }}
 
                                                 >
-                                                    {({ errors, handleBlur, handleChange, handleSubmit, touched, values, setFieldValue,setFieldTouched }) => (
+                                                    {({ errors, handleBlur, handleChange, handleSubmit, touched, values, setFieldValue, setFieldTouched }) => (
                                                         <form noValidate onSubmit={handleSubmit} >
 
                                                             <Row>
@@ -1942,10 +1998,13 @@ const EditQuestions = () => {
                                                                         name="question_voice_note"
                                                                         id="question_voice_note"
                                                                         onBlur={handleBlur}
+                                                                        onClick={() => {
+                                                                            setQuestionVoiceNote('');
+                                                                        }}
                                                                         onChange={(e) => {
                                                                             handleChange(e);
-                                                                            setQuestionVoiceError(true)
-                                                                            previewQuestionVoiceNote(e)
+                                                                            setQuestionVoiceError(true);
+                                                                            previewQuestionVoiceNote(e);
                                                                         }
                                                                         }
                                                                         type="file"
@@ -2321,11 +2380,11 @@ const EditQuestions = () => {
                                                                         {toggleEquationsInput && answerBlanksOptions && (
 
                                                                             <>
-
                                                                                 <br />
 
                                                                                 {answerOptionsForm.length > 1 && (
-                                                                                    <Row>
+
+                                                                                    < Row >
                                                                                         <Col></Col>
                                                                                         <Col>
                                                                                             <CloseButton onClick={() => {
@@ -2533,6 +2592,7 @@ const EditQuestions = () => {
 
                                                                                 <Row key={index}>
 
+                                                                                    {console.log(form)}
                                                                                     <Col xs={3}>
                                                                                         <label className="floating-label">
                                                                                             <small className="text-danger"></small>
@@ -2602,7 +2662,7 @@ const EditQuestions = () => {
                                                                                             name="answer_content"
                                                                                             onBlur={handleBlur}
                                                                                             type="number"
-                                                                                            value={values.answer_content}
+                                                                                            value={form.answer_content}
                                                                                             onChange={event => handleAnswerBlanks(event, index)}
                                                                                             placeholder="Enter Answer"
                                                                                         />
@@ -2689,7 +2749,7 @@ const EditQuestions = () => {
                                                                                                         name="answer_range_from"
                                                                                                         onBlur={handleBlur}
                                                                                                         type="number"
-                                                                                                        value={values.answer_range_from}
+                                                                                                        value={form.answer_range_from}
                                                                                                         onChange={event => handleAnswerBlanks(event, index)}
                                                                                                         placeholder="From"
                                                                                                     />
@@ -2707,7 +2767,7 @@ const EditQuestions = () => {
                                                                                                         name="answer_range_to"
                                                                                                         onBlur={handleBlur}
                                                                                                         type="number"
-                                                                                                        value={values.answer_range_to}
+                                                                                                        value={form.answer_range_to}
                                                                                                         onChange={event => handleAnswerBlanks(event, index)}
                                                                                                         placeholder="To"
                                                                                                     />
@@ -2872,6 +2932,7 @@ const EditQuestions = () => {
                                                                                         </label>
                                                                                         <div>
                                                                                             <input
+                                                                                                class="hidden"
                                                                                                 className="form-control"
                                                                                                 error={touched.answer_content && errors.answer_content}
                                                                                                 label="answer_content"
@@ -2881,6 +2942,12 @@ const EditQuestions = () => {
                                                                                                 type="file"
                                                                                                 // value={form.answer_content}
                                                                                                 title="&nbsp;"
+                                                                                                onClick={() => {
+                                                                                                    let tempPreviewImg = [...previewImages];
+                                                                                                    tempPreviewImg[index] = '';
+                                                                                                    setPreviewImages(tempPreviewImg);
+
+                                                                                                }}
                                                                                                 onChange={event => {
                                                                                                     handleAnswerBlanks(event, index);
                                                                                                 }}
@@ -2896,9 +2963,8 @@ const EditQuestions = () => {
                                                                                         </label>
 
 
-                                                                                        {previewImages[index] &&
-
-                                                                                            (
+                                                                                        {previewImages[index] && previewImages[index] !== ""
+                                                                                            && (
 
                                                                                                 <>
                                                                                                     <br />
@@ -3087,11 +3153,17 @@ const EditQuestions = () => {
                                                                                             name="answer_content"
                                                                                             id="answer_content"
                                                                                             onBlur={handleBlur}
+                                                                                            // value={form.answer_content}
+                                                                                            onClick={() => {
+                                                                                                let tempPreviewAudio = [...previewAudios];
+                                                                                                tempPreviewAudio[index] = '';
+                                                                                                setPreviewAudios(tempPreviewAudio);
+
+                                                                                            }}
                                                                                             onChange={event => {
                                                                                                 handleAnswerBlanks(event, index)
                                                                                             }}
                                                                                             type="file"
-                                                                                            // value={form.answer_content}
                                                                                             accept=".mp3,audio/*"
                                                                                         />
                                                                                     </Col>
