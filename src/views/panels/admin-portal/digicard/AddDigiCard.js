@@ -66,6 +66,8 @@ const AddDigiCard = (
   const [displayHeading, setDisplayHeading] = useState(sessionStorage.getItem('digicard_type'));
   const [displayHeader, setDisplayHeader] = useState(true);
   const [imagePre, setImage] = useState();
+  const [voiceNotePre, setVoiceNote] = useState("");
+
   const threadLinks = document.getElementsByClassName('page-header');
 
   let history = useHistory();
@@ -81,6 +83,10 @@ const AddDigiCard = (
     const newTags = [].concat(tags, tag);
     setTags(newTags);
   };
+
+  const previewVoiceNote = (e) => {
+    setVoiceNote(URL.createObjectURL(e.target.files[0]));
+  }
 
 
   function encodeImageFileAsURL(e) {
@@ -114,7 +120,7 @@ const AddDigiCard = (
 
 
 
- 
+
 
 
   const fetchAllData = async () => {
@@ -433,7 +439,11 @@ const AddDigiCard = (
                           name="digicard_voice_note"
                           id="digicard_voice_note"
                           onBlur={handleBlur}
+                          onClick={(e) => {
+                            setVoiceNote('');
+                          }}
                           onChange={(e) => {
+                            previewVoiceNote(e)
                             handleChange(e);
                             setVoiceError(true)
                           }
@@ -453,7 +463,6 @@ const AddDigiCard = (
                           <small className="text-danger"> </small>KeyWords
                         </label>
                         <ReactTags
-                          // error={touched.digicardKeywords && errors.digicardKeywords}
                           classNames={{ root: 'react-tags bootstrap-tagsinput', selectedTag: 'react-tags__selected-tag btn-primary' }}
                           allowNew={true}
                           addOnBlur={true}
@@ -462,20 +471,11 @@ const AddDigiCard = (
                           onAddition={(e) => handleAddition(e)}
                           name='digicardKeywords'
                         />
-                        {/* {touched.digicardKeywords && errors.digicardKeywords && (<small className="text-danger form-text">{errors.digicardKeywords}</small>)} */}
                       </div><br />
                       <div className="form-group fill">
                         <label className="floating-label" htmlFor="clientComponents">
                           <small className="text-danger"> </small>Related DigiCard Titles
                         </label>
-                        {/* <Multiselect
-                        options={digitalTitles}
-                        displayValue="value"
-                        selectionLimit="25"
-                        // selectedValues={defaultOptions}
-                        onSelect={(e) => { handleOnSelect(e) }}
-                        onRemove={handleOnRemove}
-                      /> */}
                         <Select
                           className="basic-single"
                           classNamePrefix="select"
@@ -495,13 +495,25 @@ const AddDigiCard = (
                       </div>
                     </Col>
                     <Col sm={6}><br />
-                      <div className="form-group fill">
+                      <div className="form-group fill" style={{ marginTop: '60px' }}>
                         <label className="floating-label" htmlFor="digicardtitle">
                           <small className="text-danger">* </small>Logo preview
                         </label><br />
-                        {console.log("url",imgFile)}
-                        <img width={150} src={imgFile} alt="" className="img-fluid mb-3" />
+                        {console.log("url", imgFile)}
+                        <img width={100} src={imgFile} alt="" className="img-fluid mb-3" />
                       </div>
+                      {voiceNotePre && (
+                        <div>
+                          <label className="floating-label" htmlFor="digicardtitle">
+                            <small className="text-danger">* </small>Voice Note preview
+                          </label><br />
+                          <audio controls>
+                            <source src={voiceNotePre} alt="Audio" type="audio/mp3" />
+                          </audio>
+                        </div>
+                      )}
+
+
                     </Col>
                   </Row>
                   <Row>
@@ -538,10 +550,6 @@ const AddDigiCard = (
                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                       />
                     </Col>
-                    {/* {touched.digicardcontent && errors.digicardcontent && <small className="text-danger form-text">{errors.digicardcontent}</small>} */}
-
-                    <br />
-                    {/* <small className="text-danger form-text" >Select DigiCard Titles</small> */}
                   </Row><br></br>
                   <Row >
                     <Col sm={8}>

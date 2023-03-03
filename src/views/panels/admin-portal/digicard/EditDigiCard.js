@@ -714,7 +714,7 @@ const EditDigiCard = () => {
                                                 </Col>
                                                 <Col sm={6}>
 
-                                                    <div className="form-group fill">
+                                                    <div className="form-group fill" style={{marginTop:'60px'}}>
                                                         <label className="floating-label" htmlFor="digicardtitle">
                                                             <small className="text-danger">* </small>Logo preview
                                                         </label><br />
