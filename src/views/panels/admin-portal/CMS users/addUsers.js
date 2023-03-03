@@ -54,7 +54,6 @@ const AddUsers = ({ setOpenAddTopic }) => {
     const [isDateReq, setIsDateReq] = useState(false)
     const [displayHeading, setDisplayHeading] = useState(sessionStorage.getItem('Upusers_type'));
     const [displayHeader, setDisplayHeader] = useState(true);
-    const [isNoSelection, setNoSelection] = useState(0);
     const [isSelected, setIsSelected] = useState(false);
     const [isSelectedEntity, setIsSelectedEntity] = useState(false);
     const threadLinks = document.getElementsByClassName('page-header');
