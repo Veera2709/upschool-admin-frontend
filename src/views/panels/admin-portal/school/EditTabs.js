@@ -23,10 +23,6 @@ const SectionAdd = () => {
 
     const { school_id } = useParams();
 
-    const handleUserChange = (key) => {
-
-    }
-
     useEffect(() => {
         if (threadLinks.length === 2) {
             setDisplayHeader(false);
@@ -64,23 +60,23 @@ const SectionAdd = () => {
                         )
                     }
                     <Tabs
-                        onSelect={handleUserChange}
+                        // onSelect={handleUserChange}
                         defaultActiveKey={1}
                         className="mb-3"
                     >
                         <Tab eventKey={1} title="General" >
                             <EditSchoolForm id={school_id} />
                         </Tab>
-                        <Tab eventKey={2} title="Subscription Features">
+                        {/* <Tab eventKey={2} title="Subscription Features">
                             <SubscriptionFeatures id={school_id} />
-                        </Tab>
-                        <Tab eventKey={3} title="Quiz Configuration">
+                        </Tab> */}
+                        <Tab eventKey={2} title="Quiz Configuration">
                             <QuizConfiguration id={school_id} />
                         </Tab>
-                        <Tab eventKey={4} title="Subscribe Class">
+                        <Tab eventKey={3} title="Subscribe Class">
                             <SubscribeClass id={school_id} />
                         </Tab>
-                        <Tab eventKey={5} title="Add Section">
+                        <Tab eventKey={4} title="Add Section">
                             <SectionList id={school_id} />
                         </Tab>
                     </Tabs>
