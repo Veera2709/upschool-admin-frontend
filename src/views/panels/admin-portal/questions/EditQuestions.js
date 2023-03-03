@@ -243,37 +243,63 @@ const EditQuestions = () => {
         }
 
         if (toggleImageInput && event.target.name === 'answer_content') {
-            let tempPreviewImg = [...previewImages];
-            tempPreviewImg[index] = URL.createObjectURL(event.target.files[0]);
-            setPreviewImages(tempPreviewImg);
 
-            let tempFileValue = [...fileValues];
-            tempFileValue[count] = event.target.files[0];
-            setFileValues(tempFileValue);
+            if (areFilesInvalid([event.target.files[0]]) !== 0) {
+                sweetAlertHandler(
+                    {
+                        title: 'Invalid Image File(s)!',
+                        type: 'warning',
+                        text: 'Supported file formats are .png, .jpg, .jpeg. Uploaded files should be less than 2MB. '
+                    }
+                );
+            } else {
 
-            let tempCount = count + 1;
-            setCount(tempCount);
+                let tempPreviewImg = [...previewImages];
+                tempPreviewImg[index] = event.target.files.length === 0 ? '' : URL.createObjectURL(event.target.files[0]);
+                setPreviewImages(tempPreviewImg);
+
+                let tempFileValue = [...fileValues];
+                tempFileValue[count] = event.target.files.length === 0 ? '' : event.target.files[0];
+                setFileValues(tempFileValue);
+
+                let tempCount = count + 1;
+                setCount(tempCount);
+            }
+
         }
 
         if (toggleAudioInput && event.target.name === 'answer_content') {
-            let tempPreviewAudio = [...previewAudios];
-            tempPreviewAudio[index] = URL.createObjectURL(event.target.files[0]);
-            setPreviewAudios(tempPreviewAudio);
 
-            let tempFileValue = [...fileValues];
-            tempFileValue[count] = event.target.files[0];
-            setFileValues(tempFileValue);
+            if (voiceInvalid([event.target.files[0]]) !== 0) {
+                sweetAlertHandler({
+                    title: 'Invalid Audio File(s)!',
+                    type: 'warning',
+                    text: 'Supported file formats are .mp3, .mpeg, .wav. Uploaded files should be less than 10MB. '
+                });
+            } else {
 
-            let tempCount = count + 1;
-            setCount(tempCount);
+                let tempPreviewAudio = [...previewAudios];
+                tempPreviewAudio[index] = event.target.files.length === 0 ? '' : URL.createObjectURL(event.target.files[0]);
+                setPreviewAudios(tempPreviewAudio);
+
+                let tempFileValue = [...fileValues];
+                tempFileValue[count] = event.target.files.length === 0 ? '' : event.target.files[0];
+                setFileValues(tempFileValue);
+
+                let tempCount = event.target.files.length === 0 ? count : count + 1;
+                setCount(tempCount);
+
+            }
         }
     }
 
     const previewQuestionVoiceNote = (e) => {
 
-        setQuestionVoiceNote(URL.createObjectURL(e.target.files[0]));
+        let tempUrl = e.target.files.length === 0 ? '' : URL.createObjectURL(e.target.files[0]);
+        let tempVoiceNoteFileValues = e.target.files.length === 0 ? '' : e.target.files[0];
+        setQuestionVoiceNote(tempUrl);
         setSelectedQuestionVoiceNote(e.target.value);
-        setVoiceNoteFileValues(e.target.files[0]);
+        setVoiceNoteFileValues(tempVoiceNoteFileValues);
     }
 
     const handleAnswerType = (event) => {
@@ -509,7 +535,7 @@ const EditQuestions = () => {
 
                                     ) : (console.log("Not empty"));
 
-                                    tempArray.length > 1 ? setAddAnswerOptions(true) : setAddAnswerOptions(false);
+                                    tempArray.length >= 1 ? setAddAnswerOptions(true) : setAddAnswerOptions(false);
 
                                     setAnswerOptionsForm(tempArray);
 
@@ -1968,10 +1994,13 @@ const EditQuestions = () => {
                                                                         name="question_voice_note"
                                                                         id="question_voice_note"
                                                                         onBlur={handleBlur}
+                                                                        onClick={() => {
+                                                                            setQuestionVoiceNote('');
+                                                                        }}
                                                                         onChange={(e) => {
                                                                             handleChange(e);
-                                                                            setQuestionVoiceError(true)
-                                                                            previewQuestionVoiceNote(e)
+                                                                            setQuestionVoiceError(true);
+                                                                            previewQuestionVoiceNote(e);
                                                                         }
                                                                         }
                                                                         type="file"
@@ -2907,7 +2936,14 @@ const EditQuestions = () => {
                                                                                                 // onChange={handleChange}
                                                                                                 type="file"
                                                                                                 // value={form.answer_content}
+                                                                                                // value={form.answer_content}
                                                                                                 title="&nbsp;"
+                                                                                                onClick={() => {
+                                                                                                    let tempPreviewImg = [...previewImages];
+                                                                                                    tempPreviewImg[index] = '';
+                                                                                                    setPreviewImages(tempPreviewImg);
+
+                                                                                                }}
                                                                                                 onChange={event => {
                                                                                                     handleAnswerBlanks(event, index);
                                                                                                 }}
@@ -3114,11 +3150,16 @@ const EditQuestions = () => {
                                                                                             name="answer_content"
                                                                                             id="answer_content"
                                                                                             onBlur={handleBlur}
+                                                                                            onClick={() => {
+                                                                                                let tempPreviewAudio = [...previewAudios];
+                                                                                                tempPreviewAudio[index] = '';
+                                                                                                setPreviewAudios(tempPreviewAudio);
+
+                                                                                            }}
                                                                                             onChange={event => {
                                                                                                 handleAnswerBlanks(event, index)
                                                                                             }}
                                                                                             type="file"
-                                                                                            // value={form.answer_content}
                                                                                             accept=".mp3,audio/*"
                                                                                         />
                                                                                     </Col>
