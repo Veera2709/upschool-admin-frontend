@@ -229,8 +229,6 @@ const EditQuestions = () => {
 
         data[index]["answer_type"] = selectedAnswerType;
 
-        setAnswerOptionsForm(data);
-
         if (event.target.name === 'answer_weightage') {
             setAnsWeightageErrMsg(false);
         }
@@ -243,6 +241,8 @@ const EditQuestions = () => {
         }
 
         if (toggleImageInput && event.target.name === 'answer_content') {
+
+            data[index][event.target.name] = '';
 
             if (areFilesInvalid([event.target.files[0]]) !== 0) {
                 sweetAlertHandler(
@@ -270,6 +270,8 @@ const EditQuestions = () => {
 
         if (toggleAudioInput && event.target.name === 'answer_content') {
 
+            data[index][event.target.name] = '';
+
             if (voiceInvalid([event.target.files[0]]) !== 0) {
                 sweetAlertHandler({
                     title: 'Invalid Audio File(s)!',
@@ -291,6 +293,8 @@ const EditQuestions = () => {
 
             }
         }
+
+        setAnswerOptionsForm(data);
     }
 
     const previewQuestionVoiceNote = (e) => {
@@ -2928,6 +2932,7 @@ const EditQuestions = () => {
                                                                                         </label>
                                                                                         <div>
                                                                                             <input
+                                                                                                class="hidden"
                                                                                                 className="form-control"
                                                                                                 error={touched.answer_content && errors.answer_content}
                                                                                                 label="answer_content"
@@ -2935,7 +2940,6 @@ const EditQuestions = () => {
                                                                                                 onBlur={handleBlur}
                                                                                                 // onChange={handleChange}
                                                                                                 type="file"
-                                                                                                // value={form.answer_content}
                                                                                                 // value={form.answer_content}
                                                                                                 title="&nbsp;"
                                                                                                 onClick={() => {
@@ -2959,9 +2963,8 @@ const EditQuestions = () => {
                                                                                         </label>
 
 
-                                                                                        {previewImages[index] &&
-
-                                                                                            (
+                                                                                        {previewImages[index] && previewImages[index] !== ""
+                                                                                            && (
 
                                                                                                 <>
                                                                                                     <br />
@@ -3150,6 +3153,7 @@ const EditQuestions = () => {
                                                                                             name="answer_content"
                                                                                             id="answer_content"
                                                                                             onBlur={handleBlur}
+                                                                                            // value={form.answer_content}
                                                                                             onClick={() => {
                                                                                                 let tempPreviewAudio = [...previewAudios];
                                                                                                 tempPreviewAudio[index] = '';
