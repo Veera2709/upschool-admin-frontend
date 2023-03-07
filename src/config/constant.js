@@ -62,6 +62,7 @@ export const Common = {
   marksWeightageRegex: /^\d*[1-9]\d*$/,
   passPercentageRegex: /^(100|[1-9][0-9]?)$/,
   numOfAttemptsRegex: /^(100|[0-9][0-9]?)$/,
+  numOfWorksheetsAndTestPapersRegex: /^(?!0+$)\d+$/,
   // 
   // UserNameRegex: /^([a-zA-Z]+\s)*[a-zA-Z]+$/, //accepts numbers
   UserNameRegex: "/^[a-zA-Z ]+$/", //accepts numbers

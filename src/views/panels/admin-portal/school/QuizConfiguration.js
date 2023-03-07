@@ -654,37 +654,37 @@ const QuizConfiguration = ({ className, rest, id }) => {
                                                                 >
                                                                     Based on classroom pre assesement results
                                                                 </Tooltip>}> */}
-                                                            <Row>
-                                                                <Col>
-                                                                    <label className="floating-label">
-                                                                        <small className="text-danger">* </small>Recommend teachers on focus areas?
-                                                                    </label>
-                                                                </Col>
-                                                                <Col xs={3}>
-                                                                    <div className="row profile-view-radio-button-view">
-                                                                        <Form.Check
-                                                                            id={`radio-recommendTeachersPre`}
-                                                                            // label="Yes"
-                                                                            error={touched.recommendTeachersPre && errors.recommendTeachersPre}
-                                                                            type="switch"
-                                                                            variant={'outline-primary'}
-                                                                            name="radio-recommendTeachersPre"
-                                                                            checked={_radioRecommendTeachersPre}
-                                                                            onChange={(e) => {
+                                                        <Row>
+                                                            <Col>
+                                                                <label className="floating-label">
+                                                                    <small className="text-danger">* </small>Recommend teachers on focus areas?
+                                                                </label>
+                                                            </Col>
+                                                            <Col xs={3}>
+                                                                <div className="row profile-view-radio-button-view">
+                                                                    <Form.Check
+                                                                        id={`radio-recommendTeachersPre`}
+                                                                        // label="Yes"
+                                                                        error={touched.recommendTeachersPre && errors.recommendTeachersPre}
+                                                                        type="switch"
+                                                                        variant={'outline-primary'}
+                                                                        name="radio-recommendTeachersPre"
+                                                                        checked={_radioRecommendTeachersPre}
+                                                                        onChange={(e) => {
 
-                                                                                console.log("_radioRecommendTeachersPre", _radioRecommendTeachersPre);
-                                                                                _radioRecommendTeachersPre === false ? setFieldValue('percentageOfStudentsPre', '') : setFieldValue('percentageOfStudentsPre', '')
-                                                                                handleRecommendTeachersPre(e)
-                                                                            }
-                                                                            }
-                                                                        // className='ml-3 col-md-6'
-                                                                        />
-                                                                        <Form.Label className="profile-view-question" id={`radio-recommendTeachersPre`}>
-                                                                            {_radioRecommendTeachersPre === true ? 'Yes' : 'No'}
-                                                                        </Form.Label>
-                                                                    </div>
-                                                                </Col>
-                                                            </Row>
+                                                                            console.log("_radioRecommendTeachersPre", _radioRecommendTeachersPre);
+                                                                            _radioRecommendTeachersPre === false ? setFieldValue('percentageOfStudentsPre', '') : setFieldValue('percentageOfStudentsPre', '')
+                                                                            handleRecommendTeachersPre(e)
+                                                                        }
+                                                                        }
+                                                                    // className='ml-3 col-md-6'
+                                                                    />
+                                                                    <Form.Label className="profile-view-question" id={`radio-recommendTeachersPre`}>
+                                                                        {_radioRecommendTeachersPre === true ? 'Yes' : 'No'}
+                                                                    </Form.Label>
+                                                                </div>
+                                                            </Col>
+                                                        </Row>
                                                         {/* </OverlayTrigger> */}
 
                                                     </Col>
@@ -924,31 +924,31 @@ const QuizConfiguration = ({ className, rest, id }) => {
                                                                     Based on classroom post-assesement results
                                                                 </Tooltip>}> */}
 
-                                                            <Row>
-                                                                <Col>
-                                                                    <label className="floating-label">
-                                                                        <small className="text-danger">* </small>Recommend teachers on focus areas?
-                                                                    </label>
-                                                                </Col>
-                                                                <Col xs={3}>
-                                                                    <div className="row profile-view-radio-button-view">
-                                                                        <Form.Check
-                                                                            id={`radio-recommendTeachersPost`}
-                                                                            // label="Yes"
-                                                                            error={touched.recommendTeachersPost && errors.recommendTeachersPost}
-                                                                            type="switch"
-                                                                            variant={'outline-primary'}
-                                                                            name="radio-recommendTeachersPost"
-                                                                            checked={_radioRecommendTeachersPost}
-                                                                            onChange={(e) => handleRecommendTeachersPost(e)}
-                                                                        // className='ml-3 col-md-6'
-                                                                        />
-                                                                        <Form.Label className="profile-view-question" id={`radio-recommendTeachersPost`}>
-                                                                            {_radioRecommendTeachersPost === true ? 'Yes' : 'No'}
-                                                                        </Form.Label>
-                                                                    </div>
-                                                                </Col>
-                                                            </Row>
+                                                        <Row>
+                                                            <Col>
+                                                                <label className="floating-label">
+                                                                    <small className="text-danger">* </small>Recommend teachers on focus areas?
+                                                                </label>
+                                                            </Col>
+                                                            <Col xs={3}>
+                                                                <div className="row profile-view-radio-button-view">
+                                                                    <Form.Check
+                                                                        id={`radio-recommendTeachersPost`}
+                                                                        // label="Yes"
+                                                                        error={touched.recommendTeachersPost && errors.recommendTeachersPost}
+                                                                        type="switch"
+                                                                        variant={'outline-primary'}
+                                                                        name="radio-recommendTeachersPost"
+                                                                        checked={_radioRecommendTeachersPost}
+                                                                        onChange={(e) => handleRecommendTeachersPost(e)}
+                                                                    // className='ml-3 col-md-6'
+                                                                    />
+                                                                    <Form.Label className="profile-view-question" id={`radio-recommendTeachersPost`}>
+                                                                        {_radioRecommendTeachersPost === true ? 'Yes' : 'No'}
+                                                                    </Form.Label>
+                                                                </div>
+                                                            </Col>
+                                                        </Row>
 
                                                         {/* </OverlayTrigger> */}
 
@@ -1002,7 +1002,7 @@ const QuizConfiguration = ({ className, rest, id }) => {
                                                 <Row className="my-3">
                                                     <Col> </Col>
                                                     <Col> </Col>
-                                                    <Col xs={3}>
+                                                    <Col xs={2}>
                                                         <Button
                                                             className="btn-block"
                                                             color="success"
