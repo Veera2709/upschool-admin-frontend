@@ -406,7 +406,7 @@ const SubscribeClass = ({ className, rest, id, setIsOpenSubscribeClass }) => {
                                                         {errorMessage &&
                                                             <div style={{ color: 'red' }} className="error"> {errorMessage} </div>}
                                                     </Col>
-                                                    <Col xs={3}>
+                                                    <Col xs={2}>
                                                         <Button
                                                             onClick={(event) => {
                                                                 subscribeClass(event);
