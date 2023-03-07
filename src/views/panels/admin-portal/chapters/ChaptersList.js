@@ -352,7 +352,11 @@ const ChaptersListChild = (props) => {
         const chapterStatus = pageLocation === "active-chapter" ? 'Active' : 'Archived';
 
         setIsLoading(true);
-        axios.post(dynamicUrl.fetchAllChapters, {}, {
+        axios.post(dynamicUrl.fetchAllChapters, {
+            data:{
+                chapter_status:chapterStatus
+            }
+        }, {
             headers: { Authorization: sessionStorage.getItem('user_jwt') }
         })
             .then((response) => {
@@ -361,20 +365,17 @@ const ChaptersListChild = (props) => {
                 let finalDataArray = [];
 
                 if (chapterStatus === 'Active') {
-                    let ActiveresultData = (dataResponse && dataResponse.filter(e => e.chapter_status === 'Active'))
-                    console.log("ActiveresultData", ActiveresultData);
-
-                    for (let index = 0; index < ActiveresultData.length; index++) {
-                        ActiveresultData[index].index_no = index + 1;
-                        ActiveresultData[index]['actions'] = (
+                    for (let index = 0; index < dataResponse.length; index++) {
+                        dataResponse[index].index_no = index + 1;
+                        dataResponse[index]['actions'] = (
                             <>
                                 <>
                                     <Button
                                         size="sm"
                                         className="btn btn-icon btn-rounded btn-primary"
-                                        // onClick={(e) => history.push(`/admin-portal/editChapter/${ActiveresultData[index].chapter_id}`)}
+                                        // onClick={(e) => history.push(`/admin-portal/editChapter/${dataResponse[index].chapter_id}`)}
                                         onClick={(e) => {
-                                            setChapterId(ActiveresultData[index].chapter_id);
+                                            setChapterId(dataResponse[index].chapter_id);
                                             setOpenEditChapter(true)
                                         }}
                                     >
@@ -385,7 +386,7 @@ const ChaptersListChild = (props) => {
                                     <Button
                                         size="sm"
                                         className="btn btn-icon btn-rounded btn-danger"
-                                        onClick={(e) => deleteChapter(ActiveresultData[index].chapter_id, ActiveresultData[index].chapter_title)}
+                                        onClick={(e) => deleteChapter(dataResponse[index].chapter_id, dataResponse[index].chapter_title)}
                                     >
                                         <i className="feather icon-trash-2 " /> &nbsp; Delete
                                     </Button>
@@ -393,7 +394,7 @@ const ChaptersListChild = (props) => {
                                 </>
                             </>
                         );
-                        finalDataArray.push(ActiveresultData[index]);
+                        finalDataArray.push(dataResponse[index]);
                         console.log('finalDataArray: ', finalDataArray)
                     }
                 } else {

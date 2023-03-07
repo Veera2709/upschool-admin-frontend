@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
-import Select from 'react-select';
+import Select from 'react-draggable-multi-select';
 import { Button, Card, Col, Form, Row } from 'react-bootstrap';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 // import dynamicUrl from '../../../helper/dynamicUrl';
@@ -61,10 +61,10 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
         });
     };
 
-  
 
 
-    
+
+
 
 
     const onDynamicFormChange = (e, index, fieldType) => {
@@ -127,10 +127,7 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
             let resultConceptData = allConceptsData.Items
 
             resultConceptData.forEach((item, index) => {
-                if (item.concept_status === 'Active') {
-                    console.log();
-                    conceptArr.push({ value: item.concept_id, label: item.concept_title })
-                }
+                conceptArr.push({ value: item.concept_id, label: item.concept_title })
             }
             );
             console.log("conceptArr", conceptArr);
@@ -205,7 +202,7 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                 result.pre_post_learning === 'Pre-Learning' ?
                     setTopicQuiz([
                         {
-                            label: 'Level-1',   duration: result.Level_1.duration
+                            label: 'Level-1', duration: result.Level_1.duration
                         },
                         {
                             label: 'Level-2', duration: result.Level_2.duration
@@ -214,7 +211,7 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                     ) :
                     setTopicQuiz([
                         {
-                            label: 'Level-1',  duration: result.Level_1.duration
+                            label: 'Level-1', duration: result.Level_1.duration
                         },
                         {
                             label: 'Level-2', duration: result.Level_2.duration
@@ -257,16 +254,20 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
 
     const getconceptId = (event) => {
         let valuesArr = [];
-        for (let i = 0; i < event.length; i++) {
-            valuesArr.push(event[i].value)
+        if (event) {
+            for (let i = 0; i < event.length; i++) {
+                valuesArr.push(event[i].value)
+            }
         }
         setTopicConceptId(valuesArr);
     }
 
     const gettopicId = (event) => {
         let topicArr = [];
-        for (let i = 0; i < event.length; i++) {
-            topicArr.push(event[i].value)
+        if (event) {
+            for (let i = 0; i < event.length; i++) {
+                topicArr.push(event[i].value)
+            }
         }
         setRelatedTopicsId(topicArr);
     }

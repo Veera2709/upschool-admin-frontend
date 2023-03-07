@@ -357,7 +357,7 @@ const ActiveTopics = (props) => {
             window.location.reload();
         } else {
             setIsLoading(true)
-            const allUnitsData = await fetchAllTopics();
+            const allUnitsData = await fetchAllTopics(TopicStatus);
             if (allUnitsData.ERROR) {
                 console.log("allUnitsData.ERROR", allUnitsData.ERROR);
             } else {
@@ -365,19 +365,16 @@ const ActiveTopics = (props) => {
                 console.log("dataResponse", dataResponse);
                 let finalDataArray = [];
                 if (TopicStatus === 'Active') {
-                    let ActiveresultData = (dataResponse && dataResponse.filter(e => e.topic_status === 'Active'))
-                    console.log("ActiveresultData", ActiveresultData);
-
-                    for (let index = 0; index < ActiveresultData.length; index++) {
-                        ActiveresultData[index].index_no = index + 1;
-                        ActiveresultData[index]['actions'] = (
+                    for (let index = 0; index < dataResponse.length; index++) {
+                        dataResponse[index].index_no = index + 1;
+                        dataResponse[index]['actions'] = (
                             <>
                                 <>
                                     <Button
                                         size="sm"
                                         className="btn btn-icon btn-rounded btn-primary"
-                                        // onClick={(e) => history.push(`/admin-portal/Topics/editTopic/${ActiveresultData[index].topic_id}`)}
-                                        onClick={(e) => { setTopicId(ActiveresultData[index].topic_id); setOpenEditTopic(true) }}
+                                        // onClick={(e) => history.push(`/admin-portal/Topics/editTopic/${dataResponse[index].topic_id}`)}
+                                        onClick={(e) => { setTopicId(dataResponse[index].topic_id); setOpenEditTopic(true) }}
                                     >
                                         <i className="feather icon-edit" /> &nbsp; Edit
                                     </Button>
@@ -386,7 +383,7 @@ const ActiveTopics = (props) => {
                                     <Button
                                         size="sm"
                                         className="btn btn-icon btn-rounded btn-danger"
-                                        onClick={(e) => confirmHandler(ActiveresultData[index].topic_id, ActiveresultData[index].topic_title)}
+                                        onClick={(e) => confirmHandler(dataResponse[index].topic_id, dataResponse[index].topic_title)}
                                     >
                                         <i className="feather icon-trash-2 " /> &nbsp; Delete
                                     </Button>
@@ -394,7 +391,7 @@ const ActiveTopics = (props) => {
                                 </>
                             </>
                         );
-                        finalDataArray.push(ActiveresultData[index]);
+                        finalDataArray.push(dataResponse[index]);
                         console.log('finalDataArray: ', finalDataArray)
                     }
                 } else {

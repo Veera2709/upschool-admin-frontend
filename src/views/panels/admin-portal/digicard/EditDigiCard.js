@@ -17,7 +17,7 @@ import { areFilesInvalid, voiceInvalid } from '../../../../util/utils';
 import Multiselect from 'multiselect-react-dropdown';
 import { fetchIndividualDigiCard, fetchAllDigiCards } from '../../../api/CommonApi'
 import { Link, useHistory, useParams } from 'react-router-dom';
-import Select from 'react-select';
+import Select from 'react-draggable-multi-select';
 import BasicSpinner from '../../../../helper/BasicSpinner';
 
 
@@ -84,7 +84,7 @@ const EditDigiCard = () => {
         });
     };
 
-    
+
 
     const previewImage = (e) => {
         // setImgFile(URL.createObjectURL(e.target.files[0]));
@@ -195,8 +195,10 @@ const EditDigiCard = () => {
 
     const getMultiOptions = (event) => {
         let valuesArr = [];
-        for (let i = 0; i < event.length; i++) {
-            valuesArr.push(event[i].value)
+        if (event) {
+            for (let i = 0; i < event.length; i++) {
+                valuesArr.push(event[i].value)
+            }
         }
         selectedOption(valuesArr);
     }
@@ -714,7 +716,7 @@ const EditDigiCard = () => {
                                                 </Col>
                                                 <Col sm={6}>
 
-                                                    <div className="form-group fill" style={{marginTop:'60px'}}>
+                                                    <div className="form-group fill" style={{ marginTop: '60px' }}>
                                                         <label className="floating-label" htmlFor="digicardtitle">
                                                             <small className="text-danger">* </small>Logo preview
                                                         </label><br />

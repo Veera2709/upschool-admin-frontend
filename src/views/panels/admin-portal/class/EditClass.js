@@ -17,7 +17,7 @@ import withReactContent from "sweetalert2-react-content";
 import { areFilesInvalid, isEmptyObject } from "../../../../util/utils";
 import { useEffect } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import Select from "react-select";
+import Select from "multiselect-react-dropdown";
 
 
 import {
@@ -26,7 +26,7 @@ import {
   editClass,
 } from "../../../api/CommonApi";
 
-const EditClass = ({setOpenEditClass,classId}) => {
+const EditClass = ({ setOpenEditClass, classId }) => {
   const colourOptions = [];
 
   const isLocked = [
@@ -44,7 +44,7 @@ const EditClass = ({setOpenEditClass,classId}) => {
   const [individualClassdata, setIndividualClassdata] = useState([]);
   const [toggle, setToggle] = useState(false);
 
-  console.log("classId",classId);
+  console.log("classId", classId);
 
   const sweetAlertHandler = (alert) => {
     MySwal.fire({
@@ -118,8 +118,10 @@ const EditClass = ({setOpenEditClass,classId}) => {
   const handleDigicardChange = (event) => {
     console.log("event- ", event);
     let valuesArr = [];
-    for (let i = 0; i < event.length; i++) {
-      valuesArr.push(event[i].subject_id);
+    if (event) {
+      for (let i = 0; i < event.length; i++) {
+        valuesArr.push(event[i].subject_id);
+      }
     }
     console.log(valuesArr);
     setSubjectOption(valuesArr);
@@ -147,7 +149,7 @@ const EditClass = ({setOpenEditClass,classId}) => {
                 values,
                 { setErrors, setStatus, setSubmitting }
               ) => {
-                
+
                 if (subjectOption == "") {
                   setIsShown(false);
                 } else {

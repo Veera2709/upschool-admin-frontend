@@ -17,7 +17,7 @@ import withReactContent from 'sweetalert2-react-content';
 import { areFilesInvalid, isEmptyObject } from '../../../../util/utils';
 import { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import Select from 'react-select';
+import Select from 'react-draggable-multi-select';
 import Multiselect from 'multiselect-react-dropdown';
 import { fetchAllTopics, fetchPostLearningTopics, fetchPreLearningTopics } from '../../../api/CommonApi'
 
@@ -109,10 +109,8 @@ const AddChapter = ({ setOpenAddChapter }) => {
             let resultData = allPostLeraningData.Items
             console.log("resultData", resultData);
             resultData.forEach((item, index) => {
-                if (item.topic_status === 'Active') {
                     console.log();
-                    postLeraning.push({ value: item.topic_id, label: item.topic_title })
-                }
+                    postLeraning.push({ value: item.topic_id, label: item.topic_title })  
             }
             );
             console.log("postLeraning", postLeraning);
@@ -130,10 +128,8 @@ const AddChapter = ({ setOpenAddChapter }) => {
             } else {
                 let preData = allPreLerningdData.Items
                 preData.forEach((itempre, index) => {
-                    if (itempre.topic_status === 'Active') {
                         console.log();
-                        preLeraning.push({ value: itempre.topic_id, label: itempre.topic_title })
-                    }
+                        preLeraning.push({ value: itempre.topic_id, label: itempre.topic_title }) 
                 });
                 setTopicTitlesPre(preLeraning)
             }
@@ -157,16 +153,20 @@ const AddChapter = ({ setOpenAddChapter }) => {
 
     const handleOnSelect = (event) => {
         let valuesArr = [];
-        for (let i = 0; i < event.length; i++) {
-            valuesArr.push(event[i].value)
+        if(event){
+            for (let i = 0; i < event.length; i++) {
+                valuesArr.push(event[i].value)
+            }
         }
         setPostlearningOption(valuesArr);
     }
 
     const handleOnSelectPre = (event) => {
         let valuesArr = [];
-        for (let i = 0; i < event.length; i++) {
-            valuesArr.push(event[i].value)
+        if(event){
+            for (let i = 0; i < event.length; i++) {
+                valuesArr.push(event[i].value)
+            }
         }
         setPrelearningOptions(valuesArr);
     }
@@ -222,7 +222,6 @@ const AddChapter = ({ setOpenAddChapter }) => {
                                     setDisableButton(false);
                                 } else {
                                     setOpenAddChapter(false)
-
                                     // sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingChapter });
                                     MySwal.fire({
                                         title: 'Chapter added successfully!',
