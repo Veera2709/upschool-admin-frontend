@@ -17,6 +17,8 @@ const dynamicUrl = {
     fetchIndividualDigiCard: baseUrl + '/fetchIndividualDigiCard',
     editDigiCard: baseUrl + '/editDigiCard',
     toggleDigiCardStatus: baseUrl + '/toggleDigiCardStatus',
+    bulkToggleDigiCardStatuss: baseUrl + '/bulkToggleDigiCardStatus',
+    
 
     // School
     insertSchool: baseUrl + '/insertSchool',

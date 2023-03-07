@@ -94,8 +94,6 @@ const AddUsers = ({ setOpenAddTopic }) => {
                 const i = data[index]['roles'].indexOf(type);
                 data[index]['roles'].splice(i, 1);
             }
-
-
         }
     }
 
@@ -119,7 +117,7 @@ const AddUsers = ({ setOpenAddTopic }) => {
                         title: 'User added successfully!',
                         icon: 'success',
                     }).then((willDelete) => {
-
+                        history.push('/admin-portal/active-upSchoolUsers')
                         window.location.reload();
 
                     })

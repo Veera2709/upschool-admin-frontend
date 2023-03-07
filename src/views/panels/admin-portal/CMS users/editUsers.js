@@ -271,45 +271,62 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                         })}
                                         // validationSchema
                                         onSubmit={(values, { setErrors, setStatus, setSubmitting }) => {
-                                            console.log("userRoles", userRoles);
-                                            const unique = new Set();
-                                            const showError = userRoles.some(element => unique.size === unique.add(element.entity).size);
-                                            let validateRole = userRoles.find(o => o.entity === '' || o.entity === 0 || o.entity === undefined)
-                                            var validator = userRoles.filter((e) => (e.roles).length <= 0)
-                                            console.log("validator : ", validator);
+                                            if (userRoles !== 'admin') {
+                                                console.log("userRoles", userRoles);
+                                                const unique = new Set();
+                                                const showError = userRoles.some(element => unique.size === unique.add(element.entity).size);
+                                                let validateRole = userRoles.find(o => o.entity === '' || o.entity === 0 || o.entity === undefined)
+                                                var validator = userRoles.filter((e) => (e.roles).length <= 0)
+                                                console.log("validator : ", validator);
 
 
-                                            if (showError) {
-                                                setIsRoleRep(true)
-                                            } else if (isDate === '' || isDate === undefined) {
-                                                setIsDateReq(true)
-                                            } else if (validateRole) {
-                                                setIsSelectedEntity(true)
-                                            } else if (validator.length > 0) {
-                                                setIsSelected(true)
-                                            } else {
-                                                var formData = {
-                                                    user_id: id,
-                                                    user_name: values.userName,
-                                                    first_name: values.firstName,
-                                                    last_name: values.lastName,
-                                                    user_email: values.userEmail,
-                                                    user_phone_no: `${values.phoneNumber}`,
-                                                    user_dob: isDate,
-                                                    user_role: userRoles
+                                                if (showError) {
+                                                    setIsRoleRep(true)
+                                                } else if (isDate === '' || isDate === undefined) {
+                                                    setIsDateReq(true)
+                                                } else if (validateRole) {
+                                                    setIsSelectedEntity(true)
+                                                } else if (validator.length > 0) {
+                                                    setIsSelected(true)
+                                                } else {
+                                                    var formData = {
+                                                        user_id: id,
+                                                        user_name: values.userName,
+                                                        first_name: values.firstName,
+                                                        last_name: values.lastName,
+                                                        user_email: values.userEmail,
+                                                        user_phone_no: `${values.phoneNumber}`,
+                                                        user_dob: isDate,
+                                                        user_role: userRoles
+                                                    }
+                                                    console.log('formData: ', formData)
+                                                    inserUser(formData)
                                                 }
-                                                console.log('formData: ', formData)
-                                                inserUser(formData)
-                                            }
+                                            } else {
 
+                                                if (isDate === '' || isDate === undefined) {
+                                                    setIsDateReq(true)
+                                                } else {
+                                                    var formData = {
+                                                        user_id: id,
+                                                        user_name: values.userName,
+                                                        first_name: values.firstName,
+                                                        last_name: values.lastName,
+                                                        user_email: values.userEmail,
+                                                        user_phone_no: `${values.phoneNumber}`,
+                                                        user_dob: isDate,
+                                                        user_role: userRoles
+                                                    }
+                                                    console.log('formData: ', formData)
+                                                    inserUser(formData)
+                                                }
+                                            }
                                         }
 
                                         }
                                     >
                                         {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
                                             <Form onSubmit={handleSubmit} >
-
-
                                                 <Row>
                                                     <Col>
                                                         <div className="form-group fill">
@@ -409,7 +426,6 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                                             <label className="floating-label" htmlFor="user_dob">
                                                                 <small className="text-danger">* </small>DOB
                                                             </label>
-                                                            {console.log("dob", isDate)}
                                                             <input
                                                                 className="form-control"
                                                                 error={touched.user_dob && errors.user_dob}
@@ -434,9 +450,9 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                                 <br />
                                                 {indidvidualData[0].user_role != 'admin' && (
                                                     <>
-                                                    <br/>
-                                                    <Form.Label className="floating-label" ><small className="text-danger">* </small>CMS Role Allocation</Form.Label>
-                                                    <hr/>
+                                                        <br />
+                                                        <Form.Label className="floating-label" ><small className="text-danger">* </small>CMS Role Allocation</Form.Label>
+                                                        <hr />
                                                         <Row>
                                                             <Col sm={4}>
                                                                 <Form.Label className="floating-label" ><small className="text-danger">* </small>Entities</Form.Label>
@@ -479,16 +495,7 @@ const AddUsers = ({ setOpenAddTopic }) => {
 
                                                                 </Col>
                                                                 <Col sm={6} >
-                                                                    {
 
-                                                                        // topic.roles.map((e) => {
-                                                                        //     if (e === 'creator') {
-                                                                        //         true
-                                                                        //     } else {
-                                                                        //         false
-                                                                        //     }
-                                                                        // })
-                                                                    }
                                                                     <div className="form-group fill d-flex justify-content-between">
                                                                         <div>
                                                                             <Form.Control
@@ -542,12 +549,6 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                                                     </div>
                                                                 </Col>
                                                                 <Col sm={2}>
-                                                                    {/* <CloseButton
-                                                    onClick={(e) => { removeRole(index) }}
-                                                    variant="white"
-                                                    style={{ marginRight: "80px" }}
-                                                    key={index}
-                                                /> */}
                                                                     <Button className="btn btn-icon btn-rounded btn-danger"
                                                                         onClick={(e) => { removeRole(index) }}
                                                                         style={{ marginLeft: "40px", paddingTop: '2px', paddingBottom: '2px', marginTop: '4px' }}

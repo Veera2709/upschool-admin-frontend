@@ -624,7 +624,7 @@ const EditDigiCard = () => {
                                                         {imageErr && (
                                                             <small className="text-danger form-text">Digicard Image is required!</small>
                                                         )}
-                                                        {imgValidation && (<small className="text-danger form-text">Invalid File Type or File size is Exceed More Than 1MB</small>)}
+                                                        {imgValidation && (<small className="text-danger form-text">Invalid File Type or File size is Exceed More Than 2MB</small>)}
                                                     </div>
                                                     <div className="form-group fill">
                                                         <label className="floating-label" htmlFor="digicard_voice_note">

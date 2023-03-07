@@ -339,12 +339,14 @@ const AllocateClass = ({ schoolId, user_id }) => {
                                                                         <Row>
                                                                             <Col></Col>
                                                                             <Col>
-                                                                                <CloseButton onClick={() => {
-                                                                                    removeFields(index);
-                                                                                    SetSecctionRepeat(false)
-                                                                                    // SetSelectSectionErr(false)
-                                                                                    SectionErr(index)
-                                                                                }} variant="white" />
+                                                                                <CloseButton
+                                                                                    onClick={() => {
+                                                                                        removeFields(index);
+                                                                                        SetSecctionRepeat(false)
+                                                                                        // SetSelectSectionErr(false)
+                                                                                        SectionErr(index)
+                                                                                    }}
+                                                                                    variant="white" />
                                                                             </Col>
                                                                         </Row>
                                                                     )}
