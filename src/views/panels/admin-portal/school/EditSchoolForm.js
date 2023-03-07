@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import Select from 'react-select';
+// import Select from 'react-select';
+import Select from "react-draggable-multi-select";
 import { useHistory } from 'react-router-dom';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
@@ -54,8 +55,10 @@ const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive 
         console.log(event);
 
         let valuesArr = [];
-        for (let i = 0; i < event.length; i++) {
-            valuesArr.push(event[i].value)
+        if (event) {
+            for (let i = 0; i < event.length; i++) {
+                valuesArr.push(event[i].value)
+            }
         }
 
         console.log(valuesArr);

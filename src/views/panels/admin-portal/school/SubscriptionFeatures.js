@@ -394,7 +394,7 @@ const SubscriptionFeatures = ({ className, rest, id }) => {
                                                 <br />
                                                 <Row>
                                                     <Col xs={6}>
-                                                        <div className="form-group fill">
+                                                        <div className="form-group fill" style={{ position: "relative", zIndex: 20 }}>
                                                             <label className="floating-label">
                                                                 <small className="text-danger">* </small>
                                                                 Types of Reports
