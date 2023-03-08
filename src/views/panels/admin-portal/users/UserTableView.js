@@ -13,7 +13,7 @@ import MESSAGES from '../../../../helper/messages';
 import { isEmptyArray, decodeJWT } from '../../../../util/utils';
 
 import { GlobalFilter } from '../../../common-ui-components/tables/GlobalFilter';
-import { useTable, useSortBy, usePagination, useGlobalFilter } from 'react-table';
+import { useTable, useSortBy, usePagination, useGlobalFilter, useRowSelect } from 'react-table';
 import dynamicUrl from '../../../../helper/dynamicUrls';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import BasicSpinner from '../../../../helper/BasicSpinner';
@@ -25,11 +25,11 @@ function Table({ columns, data, modalOpen, userRole }) {
   console.log("_userRole in Table", userRole);
 
   const [stateUser, setStateUser] = useState([])
-  const [users, setUsers] = useState([])
+  const [check, setCheck] = useState(false)
 
   const [loader, showLoader, hideLoader] = useFullPageLoader();
   const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
-
+  const initiallySelectedRows = React.useMemo(() => new Set(["1"]), []);
   const MySwal = withReactContent(Swal);
   const history = useHistory();
 
@@ -59,22 +59,64 @@ function Table({ columns, data, modalOpen, userRole }) {
     nextPage,
     previousPage,
     setPageSize,
-    state: { pageIndex, pageSize }
+    selectedFlatRows,
+    toggleAllRowsSelected,
+    state: { pageIndex, pageSize, selectedRowPaths }
   } = useTable(
     {
       columns,
       data,
-      initialState: { pageIndex: 0, pageSize: 10 },
+      initialState: { pageIndex: 0, pageSize: 10, selectedRowPaths: initiallySelectedRows },
       userRole
     },
     useGlobalFilter,
     useSortBy,
-    usePagination
+    usePagination,
+    useRowSelect
   );
   const user_status = pageLocation === 'active-users' ? "Active" : "Archived"
   console.log("user_status : ", user_status);
 
-  const deleteUserById = () => {
+  // const MySwal = withReactContent(Swal);
+  const conformDelete = () => {
+
+    MySwal.fire({
+      title: 'Are you sure?',
+      text: 'Confirm deleting User',
+      type: 'warning',
+      showCloseButton: true,
+      showCancelButton: true
+    }).then((willDelete) => {
+      if (willDelete.value) {
+        console.log("api calling");
+        deleteUsersById();
+      } else {
+        return MySwal.fire('', 'User is safe!', 'error');
+      }
+    });
+  }
+
+
+  const restoreData = () => {
+
+    MySwal.fire({
+      title: 'Are you sure?',
+      text: 'Confirm Restore User',
+      type: 'warning',
+      showCloseButton: true,
+      showCancelButton: true
+    }).then((willDelete) => {
+      if (willDelete.value) {
+        console.log("api calling");
+        deleteUsersById();
+      } else {
+        return MySwal.fire('', 'User is archieved!', 'error');
+      }
+    });
+  }
+
+
+  const deleteUsersById = () => {
     // let tempArr;
     // tempArr = users.map(user => user.id === id ? { ...user, isChecked: checked } : user)
 
@@ -131,6 +173,8 @@ function Table({ columns, data, modalOpen, userRole }) {
       }
       )
       .then(async (response) => {
+        console.log("response : ", response);
+
         if (response.Error) {
           hideLoader();
           sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
@@ -139,13 +183,139 @@ function Table({ columns, data, modalOpen, userRole }) {
         } else {
           console.log("response : ", response);
           if (response.data === 200) {
-            sweetAlertHandler({ title: MESSAGES.INFO.USERS_DELETED, type: 'success' });
+            // sweetAlertHandler({ title: MESSAGES.INFO.USERS_DELETED, type: 'success' });
+            window.location.reload()
             hideLoader();
-            history.push('/admin-portal/' + pageLocation)
+            // window.location.reload();
+            // setCheck(true);
+            // history.push('/admin-portal/' + pageLocation)
           }
         }
       }
       )
+  }
+  const getAlldata = () => {
+    console.log("selectedFlatRows", selectedFlatRows);
+    let arrayWithUserIds = [];
+
+    let userRolePayload = (userRole === "Teachers") ? "Teacher" : (userRole === "Students") ? "Student" : (userRole === "Parents") ? "Parent" : "N.A.";
+
+    console.log("ROLE : ", userRolePayload);
+
+    selectedFlatRows.map((items) => {
+      console.log("Teacher Id : ", items.original.teacher_id);
+      if (userRolePayload === "Teacher") {
+        console.log("Teacher Id : ", items.original.teacher_id);
+        arrayWithUserIds.push(items.original.teacher_id);
+      }
+      else if (userRolePayload === "Parent") {
+        console.log("Parent Id : ", items.original.parent_id);
+        arrayWithUserIds.push(items.original.parent_id);
+      }
+    })
+
+    console.log("CHECKED IDS : ", arrayWithUserIds);
+
+    // if (response.status === 200) {
+
+    // const MySwal = withReactContent(Swal);
+    // MySwal.fire({
+    //   title: MESSAGES.TTTLES.Goodjob,
+    //   type: 'success',
+    //   text: MESSAGES.SUCCESS.UpdatingQuizConfiguration, icon: 'success',
+    const MySwal = withReactContent(Swal);
+    MySwal.fire({
+      title: 'Are you sure?',
+      text: pageLocation === 'active-users' ? 'Confirm deleting' : 'Confirm restoring',
+      type: 'warning',
+      showCloseButton: true,
+      showCancelButton: true,
+
+
+    }).then((willDelete) => {
+      if (willDelete.value) {
+        console.log("api calling");
+        // changeStatus(digi_card_id, digi_card_title);
+        axios
+          .post(
+            dynamicUrl.bulkToggleUsersStatus,
+            {
+              data: {
+                userIdArray: arrayWithUserIds,  // selectedFlatRows
+                user_role: userRolePayload,
+                user_status: user_status === "Active" ? "Archived" : "Active"
+              }
+            }, {
+            headers: { Authorization: sessionStorage.getItem('user_jwt') }
+          }
+          )
+          .then(async (response) => {
+            console.log("response : ", response);
+
+            if (response.Error) {
+              hideLoader();
+              // sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
+              pageLocation === "active-users"
+                ? sweetAlertHandler({
+                  title: MESSAGES.TTTLES.Sorry,
+                  type: "error",
+                  text:
+                    userRole === "Teachers"
+                      ? MESSAGES.ERROR.DeletingTeachers
+                      : userRole === "Parents"
+                        ? MESSAGES.ERROR.DeletingParents
+                        : MESSAGES.ERROR.InvalidUser,
+                })
+                : sweetAlertHandler({
+                  title: MESSAGES.TTTLES.Sorry,
+                  type: "error",
+                  text:
+                    userRole === "Teachers"
+                      ? MESSAGES.ERROR.RestoringTeachers
+                      : userRole === "Parents"
+                        ? MESSAGES.ERROR.RestoringParents
+                        : MESSAGES.ERROR.InvalidUser,
+                });
+
+              history.push('/admin-portal/' + pageLocation)
+              // fetchUserData();
+            } else {
+              console.log("response : ", response);
+              if (response.data === 200) {
+                MySwal.fire({
+                  // title: ((userRole === "Teachers" && pageLocation === 'active-users') ? 'Teachers Deleted' : 'Teachers Restored') || ((userRole === "Parents" && pageLocation === 'active-users') ? 'Parents Deleted' : 'Parents Restored'),
+
+                  title: (userRole === "Teachers" && pageLocation === 'active-users') ? 'Teachers Deleted' :
+                    (userRole === "Parents" && pageLocation === 'active-users') ? 'Parents Deleted' :
+                      'Users Restored',
+
+
+                  icon: "success",
+                  text: pageLocation === 'active-users' ? 'User Deleted' : 'User Restored',
+                  // type: 'success',
+                }).then((willDelete) => {
+
+                  window.location.reload()
+
+                })
+                // window.location.reload()
+
+                // hideLoader();
+
+              }
+            }
+          }
+          )
+
+      } else {
+        return MySwal.fire('', pageLocation === 'active-users' ? 'User is safe!' : "User remains Archived", 'error');
+      }
+
+    });
+    // } else {
+    //   setStatus({ success: false }); setErrors({ submit: 'Error in Editing School' });
+    // }
+
   }
 
   return (
@@ -154,9 +324,9 @@ function Table({ columns, data, modalOpen, userRole }) {
 
         {user_status === "Active" ?
 
-          <Button onClick={deleteUserById} variant="danger" className="btn-sm btn-round has-ripple ml-2" style={{ marginLeft: "1.5rem" }} >Delete</Button> :
+          <Button onClick={(e) => { getAlldata() }} variant="danger" className="btn-sm btn-round has-ripple ml-2" style={{ marginLeft: "1.5rem" }} >Delete</Button> :
 
-          <Button onClick={deleteUserById} variant="primary" className="btn-sm btn-round has-ripple ml-2" style={{ marginLeft: "1.5rem" }} >Restore</Button>
+          <Button onClick={getAlldata} variant="primary" className="btn-sm btn-round has-ripple ml-2" style={{ marginLeft: "1.5rem" }} >Restore</Button>
         }
 
         <Col className="d-flex align-items-center">
@@ -292,10 +462,16 @@ const UserTableView = ({ _userRole }) => {
   const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
   const [selectClassErr, setSelectClassErr] = useState(false);
   const [_data, _setData] = useState([]);
+  const [checkBoxId, _setAllCheckId] = useState([]);
   const classNameRef = useRef('');
   const schoolNameRef = useRef('');
 
   const [check, setCheck] = useState(false);
+
+  const [selectAllCheckbox, setSelectAllCheckbox] = useState(false);
+  // const [outPutData, setOutPutData] = useState(response.data);
+
+  const [tempData, setTemData] = useState([]);
 
   console.log("check : ", check);
 
@@ -303,12 +479,67 @@ const UserTableView = ({ _userRole }) => {
 
   const MySwal = withReactContent(Swal);
 
-  const columns = React.useMemo(() => [
-    {
-      Header: <input type="checkbox"></input>,
-      accessor: 'actn'
-    },
 
+  const handleSelectAll = (allId) => {
+
+
+
+
+    console.log("ALL CEHCK IDS : ", checkBoxId);
+    if (document.getElementById(allId).checked === true) {
+      alert("Checked");
+    }
+    else {
+      alert("Un checked");
+    }
+    // const checked = event.target.checked;
+    // const updatedData = outPutData.map(data => ({ ...data, checked }));
+    // setOutPutData(updatedData);
+    // setSelectAllCheckbox(checked);
+  };
+  // console.log("------------", outPutData)
+
+  console.log("type of response data", typeof responseData);
+
+
+  const handleCheckboxChange = event => {
+    // let userId = (_userRole === "Teacher") ? "teacher_id" : "N.A.";
+
+    // let userId = (_userRole === "Teachers") ? "teacher_id" : (_userRole === "Students") ? "student_id" : (_userRole === "Parents") ? "parent_id" : "N.A.";
+    // const id = event.target.id;
+    // const updatedData = outPutData.map(data =>
+    //   data[userId] === id ? { ...data, checked: event.target.checked } : data
+    // );
+    // setOutPutData(updatedData);
+  };
+
+
+
+  const columns = React.useMemo(() => [
+    // {
+    //   Header:
+    //     <input
+    //       className="selectAllCheck"
+    //       type="checkbox"
+    //       id="chooseAll"
+    //       // checked={selectAllCheckbox}
+    //       onChange={() => handleSelectAll("chooseAll")}
+    //     />,
+    //   accessor: 'actn'
+    // },
+    {
+      id: "selection",
+      Header: ({ getToggleAllRowsSelectedProps }) => (
+        <div>
+          <input type="checkbox" {...getToggleAllRowsSelectedProps()} />
+        </div>
+      ),
+      Cell: ({ row }) => (
+        <div>
+          <input type="checkbox" {...row.getToggleRowSelectedProps()} />
+        </div>
+      )
+    },
     {
       Header: '#',
       accessor: 'id'
@@ -362,7 +593,7 @@ const UserTableView = ({ _userRole }) => {
       } else {
 
         // const returnValue = pageLocation === 'active-users' ? (
-        //   MySwal.fire('', MESSAGES.INFO.DATA_SAFE, 'success')
+        //   MySwal.fire('',  .DATA_SAFE, 'success')
         // ) : (
         //   MySwal.fire('', MESSAGES.INFO.FAILED_TO_RESTORE, 'error')
         // )
@@ -565,7 +796,7 @@ const UserTableView = ({ _userRole }) => {
     setIsOpen(true);
   };
 
-  const updateValues = (_data) => {
+  const updateValues = async (_data) => {
     let responseData = _data;
 
     console.log("updateValues responseData", responseData);
@@ -591,22 +822,30 @@ const UserTableView = ({ _userRole }) => {
     console.log("while setting", userId);
     console.log("responseData : ", responseData);
 
+    let allCheckBoxIds = [];
     for (let index = 0; index < responseData.length; index++) {
       console.log("responseData[index][userId] : ", responseData[index][userId]);
 
+      allCheckBoxIds.push(responseData[index][userId]);
+
       responseData[index].id = index + 1;
 
-      responseData[index]['actn'] = (
-        <>
-          <input type="checkbox"
-            name={responseData[index]["id"]}
-            id={responseData[index][userId]}
-          // defaultChecked={check}
-          // value={check}
-          // checkboxName
-          />
-        </>
-      )
+      // responseData[index]['actn'] = (
+      //   <>
+      //     <input type="checkbox"
+      //       name={responseData[index]["id"]}
+      //       id={responseData[index][userId]}
+      //     // checked={data.checked}
+      //     // onChange={handleCheckboxChange}
+
+      //     // checked={selectAllCheckbox}
+      //     // defaultChecked={check}
+      //     // value={selectAllCheckbox}
+      //     // checkboxName
+      //     />
+      //   </>
+      // )
+
       //checkbox teacher
 
       responseData[index]['action'] = (
@@ -706,6 +945,9 @@ const UserTableView = ({ _userRole }) => {
     }
     console.log(finalDataArray);
     setUserData(finalDataArray);
+    console.log("ALL N SET : ", allCheckBoxIds, checkBoxId);
+    _setAllCheckId(allCheckBoxIds);
+    console.log("ALL N SET 2 : ", allCheckBoxIds, checkBoxId);
     setIsLoading(false);
   }
 
@@ -735,6 +977,7 @@ const UserTableView = ({ _userRole }) => {
 
           setIsLoading(false);
           updateValues(resultData);
+          setTemData(resultData)
 
         }
 
@@ -842,7 +1085,7 @@ const UserTableView = ({ _userRole }) => {
                                 <Card.Title as="h5">User List</Card.Title>
                               </Card.Header>
                               <Card.Body>
-                                <Table columns={columns} data={userData} modalOpen={openHandler} userRole={_userRole} />
+                                <Table columns={columns} data={userData} modalOpen={openHandler} userRole={_userRole} selectAllCheckbox={selectAllCheckbox} />
                               </Card.Body>
                             </Card>
 

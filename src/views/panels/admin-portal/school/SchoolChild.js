@@ -49,8 +49,8 @@ function Table({ columns, data, modalOpen }) {
     return (
         <>
             <Row className="mb-3">
-
-                <Button onClick={deleteSchoolById} variant="danger" className="btn-sm btn-round has-ripple ml-2" style={{ marginLeft: "1.5rem" }} >Delete</Button>
+                {/* 
+                <Button onClick={deleteSchoolById} variant="danger" className="btn-sm btn-round has-ripple ml-2" style={{ marginLeft: "1.5rem" }} >Delete</Button> */}
 
                 <Col className="d-flex align-items-center">
                     Show
@@ -163,10 +163,7 @@ const SchoolChild = (props) => {
 
     const columns = React.useMemo(
         () => [
-            {
-                Header: 'Option',
-                accessor: 'action'
-            },
+
             {
                 Header: 'School Logo',
                 accessor: 'school_avatar'
@@ -206,15 +203,15 @@ const SchoolChild = (props) => {
     let history = useHistory();
 
 
-        const MySwal = withReactContent(Swal);
+    const MySwal = withReactContent(Swal);
 
-        const sweetAlertHandler = (alert) => {
-            MySwal.fire({
-                title: alert.title,
-                text: alert.text,
-                icon: alert.type
-            });
-        };
+    const sweetAlertHandler = (alert) => {
+        MySwal.fire({
+            title: alert.title,
+            text: alert.text,
+            icon: alert.type
+        });
+    };
 
     const handleDeleteSchool = (e, school_id, Archieved) => {
         e.preventDefault();
@@ -322,12 +319,12 @@ const SchoolChild = (props) => {
             console.log('status: ', resultData[index]['school_status'])
 
 
-            resultData[index]['action'] = (
+            // resultData[index]['action'] = (
 
-                <input type="checkbox" name="checkboxName" id="checkboxID" value="checkboxValue"
-                // checked={this.state.checked} onChange={this.handleChange}
-                />
-            )
+            //     <input type="checkbox" name="checkboxName" id="checkboxID" value="checkboxValue"
+            //     // checked={this.state.checked} onChange={this.handleChange}
+            //     />
+            // )
 
             resultData[index]['school_name'] = <p>{resultData[index].school_name}</p>
             resultData[index]['school_avatar'] = <img className='img-fluid img-radius wid-50 circle-image' src={resultData[index].school_logoURL} alt="school_image" />

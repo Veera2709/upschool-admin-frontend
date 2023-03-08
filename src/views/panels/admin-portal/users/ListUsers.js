@@ -56,7 +56,7 @@ const ListUsers = () => {
             {state && (
                 <>
                     <Tabs
-                        defaultActiveKey={1}
+                        defaultActiveKey={0}
                         onSelect={handleUserChange}
                         className="mb-3"
                     >
