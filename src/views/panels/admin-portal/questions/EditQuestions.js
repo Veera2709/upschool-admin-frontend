@@ -5,9 +5,10 @@ import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import Select from 'react-select';
 import * as Yup from 'yup';
-import { Row, Col, Card, CloseButton, Form, Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { Row, Col, Card, CloseButton, Form, Button, OverlayTrigger, Tooltip, Modal } from 'react-bootstrap';
 import { useHistory, useParams } from 'react-router-dom';
 import MathJax from "react-mathjax";
+import * as Constants from '../../../../helper/constants';
 
 import ArticleRTE from './ArticleRTE';
 import dynamicUrl from '../../../../helper/dynamicUrls';
@@ -47,6 +48,8 @@ const EditQuestions = () => {
     const [articleSize, setArticleSize] = useState(10);
     const [imageCount, setImageCount] = useState(0);
     const [articleDataTitle, setArticleDataTtitle] = useState("");
+    const [newDigicard, setnNewDigicard] = useState(false);
+
 
     const [addAnserOptions, setAddAnswerOptions] = useState(false);
     const [toggleWordsInput, setToggleWordsInput] = useState(false);
@@ -65,6 +68,13 @@ const EditQuestions = () => {
     const [_radio, _setRadio] = useState(false);
     const [previousData, setPreviousData] = useState([]);
     const [count, setCount] = useState(0);
+
+    const [newdIgicardErrMax, setNewDigicardErrMax] = useState(false);
+    const [newdIgicardErrMin, setNewDigicardErrMin] = useState(false);
+    const [newdIgicardErrReq, setNewDigicardErrReq] = useState(false);
+    const [newdIgicardErrRegex, setNewDigicardErrRegex] = useState(false);
+
+    const [questionLabelAlreadyExists, setQuestionLabelAlreadyExists] = useState(false);
 
     const [answerOptionsForm, setAnswerOptionsForm] = useState([
         {
@@ -96,6 +106,7 @@ const EditQuestions = () => {
 
         setQuestionLabelValue(e.target.value);
         setQuestionLabelErr(false);
+        setQuestionLabelAlreadyExists(false);
     }
 
     const removeSelectedImg = (index) => {
@@ -202,10 +213,21 @@ const EditQuestions = () => {
     const handleAnswerBlanks = (event, index) => {
 
         let data = [...answerOptionsForm];
-        data[index][event.target.name] = event.target.value;
-        data[index]["answer_type"] = selectedAnswerType;
+        if (toggleNumbersInput && event.target.name === 'answer_content') {
+            data[index][event.target.name] = Number(event.target.value);
+        } else {
+            data[index][event.target.name] = event.target.value;
+        }
 
-        setAnswerOptionsForm(data);
+        if (toggleNumbersInput && event.target.name === 'answer_range_from') {
+            data[index][event.target.name] = Number(event.target.value);
+        }
+
+        if (toggleNumbersInput && event.target.name === 'answer_range_to') {
+            data[index][event.target.name] = Number(event.target.value);
+        }
+
+        data[index]["answer_type"] = selectedAnswerType;
 
         if (event.target.name === 'answer_weightage') {
             setAnsWeightageErrMsg(false);
@@ -219,37 +241,69 @@ const EditQuestions = () => {
         }
 
         if (toggleImageInput && event.target.name === 'answer_content') {
-            let tempPreviewImg = [...previewImages];
-            tempPreviewImg[index] = URL.createObjectURL(event.target.files[0]);
-            setPreviewImages(tempPreviewImg);
 
-            let tempFileValue = [...fileValues];
-            tempFileValue[count] = event.target.files[0];
-            setFileValues(tempFileValue);
+            data[index][event.target.name] = '';
 
-            let tempCount = count + 1;
-            setCount(tempCount);
+            if (areFilesInvalid([event.target.files[0]]) !== 0) {
+                sweetAlertHandler(
+                    {
+                        title: 'Invalid Image File(s)!',
+                        type: 'warning',
+                        text: 'Supported file formats are .png, .jpg, .jpeg. Uploaded files should be less than 2MB. '
+                    }
+                );
+            } else {
+
+                let tempPreviewImg = [...previewImages];
+                tempPreviewImg[index] = event.target.files.length === 0 ? '' : URL.createObjectURL(event.target.files[0]);
+                setPreviewImages(tempPreviewImg);
+
+                let tempFileValue = [...fileValues];
+                tempFileValue[count] = event.target.files.length === 0 ? '' : event.target.files[0];
+                setFileValues(tempFileValue);
+
+                let tempCount = count + 1;
+                setCount(tempCount);
+            }
+
         }
 
         if (toggleAudioInput && event.target.name === 'answer_content') {
-            let tempPreviewAudio = [...previewAudios];
-            tempPreviewAudio[index] = URL.createObjectURL(event.target.files[0]);
-            setPreviewAudios(tempPreviewAudio);
 
-            let tempFileValue = [...fileValues];
-            tempFileValue[count] = event.target.files[0];
-            setFileValues(tempFileValue);
+            data[index][event.target.name] = '';
 
-            let tempCount = count + 1;
-            setCount(tempCount);
+            if (voiceInvalid([event.target.files[0]]) !== 0) {
+                sweetAlertHandler({
+                    title: 'Invalid Audio File(s)!',
+                    type: 'warning',
+                    text: 'Supported file formats are .mp3, .mpeg, .wav. Uploaded files should be less than 10MB. '
+                });
+            } else {
+
+                let tempPreviewAudio = [...previewAudios];
+                tempPreviewAudio[index] = event.target.files.length === 0 ? '' : URL.createObjectURL(event.target.files[0]);
+                setPreviewAudios(tempPreviewAudio);
+
+                let tempFileValue = [...fileValues];
+                tempFileValue[count] = event.target.files.length === 0 ? '' : event.target.files[0];
+                setFileValues(tempFileValue);
+
+                let tempCount = event.target.files.length === 0 ? count : count + 1;
+                setCount(tempCount);
+
+            }
         }
+
+        setAnswerOptionsForm(data);
     }
 
     const previewQuestionVoiceNote = (e) => {
 
-        setQuestionVoiceNote(URL.createObjectURL(e.target.files[0]));
+        let tempUrl = e.target.files.length === 0 ? '' : URL.createObjectURL(e.target.files[0]);
+        let tempVoiceNoteFileValues = e.target.files.length === 0 ? '' : e.target.files[0];
+        setQuestionVoiceNote(tempUrl);
         setSelectedQuestionVoiceNote(e.target.value);
-        setVoiceNoteFileValues(e.target.files[0]);
+        setVoiceNoteFileValues(tempVoiceNoteFileValues);
     }
 
     const handleAnswerType = (event) => {
@@ -418,15 +472,32 @@ const EditQuestions = () => {
 
                                 if (index < uploadParams.length) {
 
-                                    object = {
-                                        answer_type: individual_user_data.answer_type,
-                                        answer_content: uploadParams[index].answer_content,
-                                        answer_display: uploadParams[index].answer_display,
-                                        answer_option: uploadParams[index].answer_option,
-                                        answer_weightage: uploadParams[index].answer_weightage
-                                    }
+                                    if (individual_user_data.answer_type === 'Numbers') {
 
-                                    tempArray.push(object);
+                                        object = {
+                                            answer_type: individual_user_data.answer_type,
+                                            answer_content: uploadParams[index].answer_content,
+                                            answer_display: uploadParams[index].answer_display,
+                                            answer_option: uploadParams[index].answer_option,
+                                            answer_weightage: uploadParams[index].answer_weightage,
+                                            answer_range_from: Number(uploadParams[index].answer_range_from),
+                                            answer_range_to: Number(uploadParams[index].answer_range_to)
+                                        }
+
+                                        tempArray.push(object);
+
+                                    } else {
+
+                                        object = {
+                                            answer_type: individual_user_data.answer_type,
+                                            answer_content: uploadParams[index].answer_content,
+                                            answer_display: uploadParams[index].answer_display,
+                                            answer_option: uploadParams[index].answer_option,
+                                            answer_weightage: uploadParams[index].answer_weightage
+                                        }
+
+                                        tempArray.push(object);
+                                    }
 
                                     if (individual_user_data.answer_type === 'Image') {
 
@@ -468,7 +539,7 @@ const EditQuestions = () => {
 
                                     ) : (console.log("Not empty"));
 
-                                    tempArray.length > 1 ? setAddAnswerOptions(true) : setAddAnswerOptions(false);
+                                    tempArray.length >= 1 ? setAddAnswerOptions(true) : setAddAnswerOptions(false);
 
                                     setAnswerOptionsForm(tempArray);
 
@@ -604,6 +675,7 @@ const EditQuestions = () => {
                 if (result) {
 
                     console.log('inside res');
+                    setnNewDigicard(false)
 
                     let uploadParamsQuestionsNote = response.data.question_voice_note;
                     let uploadParamsAnswerOptions = response.data.answers_options;
@@ -720,7 +792,8 @@ const EditQuestions = () => {
             .catch((error) => {
                 if (error.response) {
                     hideLoader();
-
+                    setnNewDigicard(false)
+                    sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
                     console.log(error.response.data);
 
                 } else if (error.request) {
@@ -874,6 +947,9 @@ const EditQuestions = () => {
                     hideLoader();
 
                     console.log(error.response.data);
+                    if (error.response.data === "Question Label Already Exist!") {
+                        setQuestionLabelAlreadyExists(true);
+                    }
 
                 } else if (error.request) {
 
@@ -887,6 +963,324 @@ const EditQuestions = () => {
                 }
             });
 
+    }
+
+    const newQuestion = () => {
+        let name = document.getElementById('newQuestionLabel').value;
+        if ((name.length <= 2 && name.length > 0) || name.length > 32) {
+            name.length > 32 ? setNewDigicardErrMax(true) : setNewDigicardErrMin(true)
+            setnNewDigicard(true)
+        } else if (name.trim().length === 0) {
+            setNewDigicardErrReq(true)
+            setnNewDigicard(true)
+        } else {
+            let payLoad = {
+
+                question_type: selectedQuestionType,
+                question_voice_note: selectedQuestionVoiceNote,
+                question_content: articleDataTitle,
+                answer_type: selectedAnswerType,
+                answers_of_question: answerOptionsForm,
+                question_status: 'Save',
+                question_disclaimer: document.getElementById('question_disclaimer').value === "" ? "" : document.getElementById('question_disclaimer').value,
+                show_math_keyboard: showMathKeyboard,
+                question_label: document.getElementById('newQuestionLabel').value
+            }
+
+            _addQuestions(payLoad)
+        }
+    }
+
+    const addnewQuestion = () => {
+        let DigiCardtitleRegex = Constants.AddDigiCard.DigiCardtitleRegex;
+        if (questionLabelValue === "" || questionLabelValue === undefined || questionLabelValue === "undefined") {
+            setQuestionLabelErr(true);
+        } else if (isEmptyArray(selectedQuestionType)) {
+            setQuestionTypeErrMsg(true);
+        } else if (articleDataTitle === "" || articleDataTitle === undefined || articleDataTitle === 'undefined' || articleDataTitle === "<p><br></p>" || articleDataTitle === "<p></p>" || articleDataTitle === "<br>") {
+            setQuestionEmptyErrMsg(true);
+        } else if (answerOptionsForm) {
+
+            let tempWeightage = answerOptionsForm.filter(value => value.answer_weightage < 0);
+
+            if (tempWeightage.length !== 0) {
+                setAnsWeightageErrMsg(true);
+            } else {
+
+                console.log('Data inserted!');
+
+                let allFilesData = [];
+                let questionsVoiceNoteFilesData = [];
+
+                if (selectedQuestionVoiceNote) {
+
+                    let selectedFileVoiceNote = voiceNoteFileValues;
+                    console.log('File is here!');
+                    console.log(selectedFileVoiceNote);
+
+                    if (selectedFileVoiceNote) {
+                        questionsVoiceNoteFilesData.push(selectedFileVoiceNote);
+                    }
+
+                    if (questionsVoiceNoteFilesData.length === 0) {
+
+                        if (selectedAnswerType === "Image") {
+
+                            fileValues.forEach((fileName) => {
+                                let selectedFile = fileName;
+                                console.log('File is here!');
+                                console.log(selectedFile);
+                                if (selectedFile) {
+                                    allFilesData.push(selectedFile);
+                                }
+                            });
+
+                            console.log(allFilesData);
+
+                            if (allFilesData.length === 0) {
+
+
+                                setnNewDigicard(true)
+
+
+                            } else {
+                                if (areFilesInvalid(allFilesData) !== 0) {
+                                    sweetAlertHandler(
+                                        {
+                                            title: 'Invalid Image File(s)!',
+                                            type: 'warning',
+                                            text: 'Supported file formats are .png, .jpg, .jpeg. Uploaded files should be less than 2MB. '
+                                        }
+                                    );
+                                } else {
+
+
+                                    setnNewDigicard(true)
+
+
+                                }
+                            }
+
+                        } else if (selectedAnswerType === "Audio File") {
+
+                            fileValues.forEach((fileName) => {
+                                let selectedFile = fileName;
+                                console.log('File is here!');
+                                console.log(selectedFile);
+                                if (selectedFile) {
+                                    allFilesData.push(selectedFile);
+                                }
+                            });
+
+                            console.log(allFilesData);
+
+                            if (allFilesData.length === 0) {
+
+
+                                setnNewDigicard(true)
+
+
+
+                            } else {
+
+                                if (voiceInvalid(allFilesData) !== 0) {
+                                    sweetAlertHandler({
+                                        title: 'Invalid Audio File(s)!',
+                                        type: 'warning',
+                                        text: 'Supported file formats are .mp3, .mpeg, .wav. Uploaded files should be less than 10MB. '
+                                    });
+                                } else {
+
+
+                                    setnNewDigicard(true)
+
+
+                                }
+                            }
+                        } else {
+
+                            setnNewDigicard(true)
+
+
+                        }
+
+                    } else {
+
+                        if (voiceInvalid(questionsVoiceNoteFilesData) !== 0) {
+                            sweetAlertHandler({
+                                title: 'Invalid Question Voice Note File!',
+                                type: 'warning',
+                                text: 'Supported file formats are .mp3, .mpeg, .wav. Uploaded files should be less than 10MB. '
+                            });
+                        } else {
+
+                            if (selectedAnswerType === "Image") {
+
+                                fileValues.forEach((fileName) => {
+                                    let selectedFile = fileName;
+                                    console.log('File is here!');
+                                    console.log(selectedFile);
+                                    if (selectedFile) {
+                                        allFilesData.push(selectedFile);
+                                    }
+                                });
+
+                                console.log(allFilesData);
+
+                                if (allFilesData.length === 0) {
+
+
+                                    setnNewDigicard(true)
+
+
+                                } else {
+                                    if (areFilesInvalid(allFilesData) !== 0) {
+                                        sweetAlertHandler(
+                                            {
+                                                title: 'Invalid Image File(s)!',
+                                                type: 'warning',
+                                                text: 'Supported file formats are .png, .jpg, .jpeg. Uploaded files should be less than 2MB. '
+                                            }
+                                        );
+                                    } else {
+
+
+                                        setnNewDigicard(true)
+
+
+                                    }
+                                }
+
+                            } else if (selectedAnswerType === "Audio File") {
+
+                                fileValues.forEach((fileName) => {
+                                    let selectedFile = fileName;
+                                    console.log('File is here!');
+                                    console.log(selectedFile);
+                                    if (selectedFile) {
+                                        allFilesData.push(selectedFile);
+                                    }
+                                });
+
+                                console.log(allFilesData);
+
+                                if (allFilesData.length === 0) {
+
+
+                                    setnNewDigicard(true)
+
+
+
+                                } else {
+
+                                    if (voiceInvalid(allFilesData) !== 0) {
+                                        sweetAlertHandler({
+                                            title: 'Invalid Audio File(s)!',
+                                            type: 'warning',
+                                            text: 'Supported file formats are .mp3, .mpeg, .wav. Uploaded files should be less than 10MB. '
+                                        });
+                                    } else {
+
+
+                                        setnNewDigicard(true)
+
+
+                                    }
+                                }
+                            } else {
+
+
+                                setnNewDigicard(true)
+
+
+                            }
+
+                        }
+                    }
+
+                }
+                else {
+
+                    if (selectedAnswerType === "Image") {
+
+                        fileValues.forEach((fileName) => {
+                            let selectedFile = fileName;
+                            console.log('File is here!');
+                            console.log(selectedFile);
+                            if (selectedFile) {
+                                allFilesData.push(selectedFile);
+                            }
+                        });
+
+                        console.log(allFilesData);
+
+                        if (allFilesData.length === 0) {
+
+                            setnNewDigicard(true)
+
+
+                        } else {
+                            if (areFilesInvalid(allFilesData) !== 0) {
+                                sweetAlertHandler(
+                                    {
+                                        title: 'Invalid Image File(s)!',
+                                        type: 'warning',
+                                        text: 'Supported file formats are .png, .jpg, .jpeg. Uploaded files should be less than 2MB. '
+                                    }
+                                );
+                            } else {
+
+
+                                setnNewDigicard(true)
+
+
+                            }
+                        }
+
+                    } else if (selectedAnswerType === "Audio File") {
+
+                        fileValues.forEach((fileName) => {
+                            let selectedFile = fileName;
+                            console.log('File is here!');
+                            console.log(selectedFile);
+                            if (selectedFile) {
+                                allFilesData.push(selectedFile);
+                            }
+                        });
+
+                        console.log(allFilesData);
+
+                        if (allFilesData.length === 0) {
+
+                            setnNewDigicard(true)
+
+
+
+                        } else {
+
+                            if (voiceInvalid(allFilesData) !== 0) {
+                                sweetAlertHandler({
+                                    title: 'Invalid Audio File(s)!',
+                                    type: 'warning',
+                                    text: 'Supported file formats are .mp3, .mpeg, .wav. Uploaded files should be less than 10MB. '
+                                });
+                            } else {
+
+
+                                setnNewDigicard(true)
+
+
+                            }
+                        }
+                    } else {
+                        setnNewDigicard(true)
+
+
+                    }
+
+                }
+            }
+        }
     }
 
     return (
@@ -1548,7 +1942,7 @@ const EditQuestions = () => {
                                                     }}
 
                                                 >
-                                                    {({ errors, handleBlur, handleChange, handleSubmit, touched, values, setFieldValue }) => (
+                                                    {({ errors, handleBlur, handleChange, handleSubmit, touched, values, setFieldValue, setFieldTouched }) => (
                                                         <form noValidate onSubmit={handleSubmit} >
 
                                                             <Row>
@@ -1604,10 +1998,13 @@ const EditQuestions = () => {
                                                                         name="question_voice_note"
                                                                         id="question_voice_note"
                                                                         onBlur={handleBlur}
+                                                                        onClick={() => {
+                                                                            setQuestionVoiceNote('');
+                                                                        }}
                                                                         onChange={(e) => {
                                                                             handleChange(e);
-                                                                            setQuestionVoiceError(true)
-                                                                            previewQuestionVoiceNote(e)
+                                                                            setQuestionVoiceError(true);
+                                                                            previewQuestionVoiceNote(e);
                                                                         }
                                                                         }
                                                                         type="file"
@@ -1675,7 +2072,6 @@ const EditQuestions = () => {
                                                                                 name="question_label"
                                                                                 onBlur={handleBlur}
                                                                                 type="question_label"
-                                                                                // onChange={e => handleQuestionLabel(e)}
                                                                                 onChange={e => {
                                                                                     handleQuestionLabel(e)
                                                                                     handleChange(e)
@@ -1691,6 +2087,11 @@ const EditQuestions = () => {
                                                                     {
                                                                         questionLabelErr && (
                                                                             <small className="text-danger form-text">{'Question Label is required!'}</small>
+                                                                        )
+                                                                    }
+                                                                    {
+                                                                        questionLabelAlreadyExists && (
+                                                                            <small className="text-danger form-text">{'Question Label already exists!'}</small>
                                                                         )
                                                                     }
                                                                 </Col>
@@ -1709,6 +2110,7 @@ const EditQuestions = () => {
                                                                         error={touched.question_disclaimer && errors.question_disclaimer}
                                                                         label="question_disclaimer"
                                                                         name="question_disclaimer"
+                                                                        id='question_disclaimer'
                                                                         onBlur={handleBlur}
                                                                         type="textarea"
                                                                         onChange={handleChange}
@@ -1978,11 +2380,11 @@ const EditQuestions = () => {
                                                                         {toggleEquationsInput && answerBlanksOptions && (
 
                                                                             <>
-
                                                                                 <br />
 
                                                                                 {answerOptionsForm.length > 1 && (
-                                                                                    <Row>
+
+                                                                                    < Row >
                                                                                         <Col></Col>
                                                                                         <Col>
                                                                                             <CloseButton onClick={() => {
@@ -2190,6 +2592,7 @@ const EditQuestions = () => {
 
                                                                                 <Row key={index}>
 
+                                                                                    {console.log(form)}
                                                                                     <Col xs={3}>
                                                                                         <label className="floating-label">
                                                                                             <small className="text-danger"></small>
@@ -2259,7 +2662,7 @@ const EditQuestions = () => {
                                                                                             name="answer_content"
                                                                                             onBlur={handleBlur}
                                                                                             type="number"
-                                                                                            value={values.answer_content}
+                                                                                            value={form.answer_content}
                                                                                             onChange={event => handleAnswerBlanks(event, index)}
                                                                                             placeholder="Enter Answer"
                                                                                         />
@@ -2346,7 +2749,7 @@ const EditQuestions = () => {
                                                                                                         name="answer_range_from"
                                                                                                         onBlur={handleBlur}
                                                                                                         type="number"
-                                                                                                        value={values.answer_range_from}
+                                                                                                        value={form.answer_range_from}
                                                                                                         onChange={event => handleAnswerBlanks(event, index)}
                                                                                                         placeholder="From"
                                                                                                     />
@@ -2364,7 +2767,7 @@ const EditQuestions = () => {
                                                                                                         name="answer_range_to"
                                                                                                         onBlur={handleBlur}
                                                                                                         type="number"
-                                                                                                        value={values.answer_range_to}
+                                                                                                        value={form.answer_range_to}
                                                                                                         onChange={event => handleAnswerBlanks(event, index)}
                                                                                                         placeholder="To"
                                                                                                     />
@@ -2529,6 +2932,7 @@ const EditQuestions = () => {
                                                                                         </label>
                                                                                         <div>
                                                                                             <input
+                                                                                                class="hidden"
                                                                                                 className="form-control"
                                                                                                 error={touched.answer_content && errors.answer_content}
                                                                                                 label="answer_content"
@@ -2538,6 +2942,12 @@ const EditQuestions = () => {
                                                                                                 type="file"
                                                                                                 // value={form.answer_content}
                                                                                                 title="&nbsp;"
+                                                                                                onClick={() => {
+                                                                                                    let tempPreviewImg = [...previewImages];
+                                                                                                    tempPreviewImg[index] = '';
+                                                                                                    setPreviewImages(tempPreviewImg);
+
+                                                                                                }}
                                                                                                 onChange={event => {
                                                                                                     handleAnswerBlanks(event, index);
                                                                                                 }}
@@ -2553,9 +2963,8 @@ const EditQuestions = () => {
                                                                                         </label>
 
 
-                                                                                        {previewImages[index] &&
-
-                                                                                            (
+                                                                                        {previewImages[index] && previewImages[index] !== ""
+                                                                                            && (
 
                                                                                                 <>
                                                                                                     <br />
@@ -2574,6 +2983,7 @@ const EditQuestions = () => {
 
                                                                                                                 onClick={() => {
                                                                                                                     setFieldValue("answer_content", "")
+                                                                                                                    setFieldTouched("answer_content", false, false);
                                                                                                                     removeSelectedImg(index)
                                                                                                                 }}
                                                                                                                 style={
@@ -2743,11 +3153,17 @@ const EditQuestions = () => {
                                                                                             name="answer_content"
                                                                                             id="answer_content"
                                                                                             onBlur={handleBlur}
+                                                                                            // value={form.answer_content}
+                                                                                            onClick={() => {
+                                                                                                let tempPreviewAudio = [...previewAudios];
+                                                                                                tempPreviewAudio[index] = '';
+                                                                                                setPreviewAudios(tempPreviewAudio);
+
+                                                                                            }}
                                                                                             onChange={event => {
                                                                                                 handleAnswerBlanks(event, index)
                                                                                             }}
                                                                                             type="file"
-                                                                                            // value={form.answer_content}
                                                                                             accept=".mp3,audio/*"
                                                                                         />
                                                                                     </Col>
@@ -2779,6 +3195,7 @@ const EditQuestions = () => {
                                                                                                             <CloseButton
                                                                                                                 onClick={() => {
                                                                                                                     setFieldValue("answer_content", "")
+                                                                                                                    setFieldTouched("answer_content", false, false);
                                                                                                                     removeSelectedAudio(index)
                                                                                                                 }}
                                                                                                                 style={
@@ -2842,12 +3259,16 @@ const EditQuestions = () => {
                                                                             <Row>
                                                                                 <Col xs={5}>
                                                                                     <Button
+                                                                                        type="button"
                                                                                         className="btn-block"
                                                                                         color="secondary"
                                                                                         size="large"
-                                                                                        type="submit"
                                                                                         variant="secondary"
-                                                                                        onClick={() => sessionStorage.setItem('click_event', 'SaveAsNew')}>
+                                                                                        onClick={() => {
+                                                                                            sessionStorage.setItem('click_event', 'SaveAsNew');
+                                                                                            addnewQuestion()
+                                                                                        }
+                                                                                        }>
                                                                                         Save As New
                                                                                     </Button>
                                                                                 </Col>
@@ -2963,9 +3384,12 @@ const EditQuestions = () => {
                                                                                         className="btn-block"
                                                                                         color="secondary"
                                                                                         size="large"
-                                                                                        type="submit"
+                                                                                        type="button"
                                                                                         variant="secondary"
-                                                                                        onClick={() => sessionStorage.setItem('click_event', 'SaveAsNew')}>
+                                                                                        onClick={(e) => {
+                                                                                            sessionStorage.setItem('click_event', 'SaveAsNew');
+                                                                                            addnewQuestion()
+                                                                                        }}>
                                                                                         Save As New
                                                                                     </Button>
                                                                                 </Col>
@@ -3056,6 +3480,54 @@ const EditQuestions = () => {
                                                     )}
                                                 </Formik>
                                             </Card.Body>
+                                            <Modal dialogClassName="my-modal" show={newDigicard} onHide={() => setnNewDigicard(false)}>
+                                                <Modal.Header closeButton>
+                                                    <Modal.Title as="h5">New Question Label</Modal.Title>
+                                                </Modal.Header>
+                                                <Modal.Body>
+                                                    <Row>
+                                                        <Col sm={9} >
+                                                            <OverlayTrigger placement="top" overlay={<Tooltip id={`tooltip-top`} style={{ zIndex: 1151 }} >This will be treated as the Question Title!</Tooltip>}>
+                                                                <div className="form-group fill">
+                                                                    <label className="floating-label" htmlFor="questionLabel">
+                                                                        <small className="text-danger">* </small>Question Label
+                                                                    </label>
+                                                                    <input
+                                                                        className="form-control"
+                                                                        id="newQuestionLabel"
+                                                                        type="text"
+                                                                        onChange={(e) => {
+                                                                            setNewDigicardErrMin(false)
+                                                                            setNewDigicardErrMax(false)
+                                                                            setNewDigicardErrReq(false)
+                                                                        }}
+                                                                    />
+                                                                </div>
+                                                            </OverlayTrigger>
+
+                                                        </Col>
+                                                    </Row>
+                                                    <Row>
+                                                        <Col sm={10}>
+                                                            {newdIgicardErrMin && (
+                                                                <small className="text-danger form-text">Question Label  is too short!</small>
+                                                            )}
+                                                            {newdIgicardErrMax && (
+                                                                <small className="text-danger form-text">Question Label is too long!</small>
+                                                            )}
+                                                            {newdIgicardErrReq && (
+                                                                <small className="text-danger form-text">Question Label is required!</small>
+                                                            )}
+
+                                                        </Col>
+                                                        <Col sm={2}>
+                                                            <Button variant="primary" onClick={(e) => {
+                                                                newQuestion()
+                                                            }}>Create</Button>
+                                                        </Col>
+                                                    </Row>
+                                                </Modal.Body>
+                                            </Modal>
                                         </Card>
 
 

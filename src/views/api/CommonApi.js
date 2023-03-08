@@ -110,6 +110,22 @@ export const fetchAllUnits = () => {
     });
 }
 
+export const fetchCMSUsersBasedonRoleStatus1  = (payLoad) => {
+    console.log("payload",payLoad);
+    return new Promise((resolve, reject) => {
+        axios.post(url.fetchCMSUsersBasedonRoleStatus , {data:payLoad}, {
+            headers: { Authorization: sessionStorage.getItem('user_jwt') }
+        })
+            .then((response) => {
+                console.log("fetchCMSUsersBasedonRoleStatusr",response.data);
+                resolve(response.data);
+            })
+            .catch((error) => {
+                resolve({ Error: error });
+            })
+    });
+}
+
 export const fetchAllChapters = () => {
     return new Promise((resolve, reject) => {
         axios.post(url.fetchAllChapters, {}, {
@@ -204,6 +220,27 @@ export const fetchIndividualUnit = (unit_id) => {
             })
     });
 }
+
+
+export const fetchIndividualUser = (user_id) => {
+    console.log("user_id",user_id);
+    return new Promise((resolve, reject) => {
+        axios.post(url.fetchIndividualCMSUser, {
+            data: { user_id: user_id }
+        }, {
+            headers: { Authorization: sessionStorage.getItem('user_jwt') }
+        })
+            .then((response) => {
+                console.log(response);
+                resolve(response.data);
+            })
+            .catch((error) => {
+                resolve({ Error: error });
+            })
+    });
+}
+
+
 
 export const getIndividualTopic = (topic_id) => {
     return new Promise((resolve, reject) => {
@@ -415,6 +452,25 @@ export const fetchTeacherInfoDetails = (teacher_id) => {
     return new Promise((resolve, reject) => {
         axios.post(url.fetchTeacherInfoDetails, {
             data: { teacher_id: teacher_id }
+        }, {
+            headers: { Authorization: sessionStorage.getItem('user_jwt') }
+        })
+            .then((response) => {
+                console.log(response);
+                resolve(response.data);
+            })
+            .catch((error) => {
+                resolve({ Error: error });
+            })
+    });
+}
+
+export const toggleUserStatus = (payLoad) => {
+    console.log("payLoad : ", payLoad);
+
+    return new Promise((resolve, reject) => {
+        axios.post(url.toggleCMSUserStatus, {
+            data:payLoad
         }, {
             headers: { Authorization: sessionStorage.getItem('user_jwt') }
         })

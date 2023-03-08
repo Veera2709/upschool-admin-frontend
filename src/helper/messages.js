@@ -39,7 +39,8 @@ const MESSAGES = {
   },
   SUCCESS: {
     RestoredSuccessfully: 'Restored Successfully!',
-
+    UpdatingQuizConfiguration: 'Updated Quiz Configuration settings successfully!',
+    UpdatingSubscriptionFeatures: 'Updated Subscription Features successfully!',
     AddingDigiCard: 'Added DigiCard Successfully',
     EditDigiCard: 'DigiCard Updated Successfully',
 

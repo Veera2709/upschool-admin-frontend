@@ -146,8 +146,8 @@ const routes = [
       },
       {
         exact: true,
-        path: '/admin-portal/addSection/:school_id',
-        component: lazy(() => import('./views/panels/admin-portal/school/SectionAdd'))
+        path: '/admin-portal/editSchool/:school_id',
+        component: lazy(() => import('./views/panels/admin-portal/school/EditTabs'))
       },
       {
         exact: true,
@@ -348,6 +348,29 @@ const routes = [
         path: '/admin-portal/classes/archived-classes',
         component: lazy(() => import('./views/panels/admin-portal/class/ClassesList'))
       },
+      
+      //UpSchool_useers
+      {
+        exact: true,
+        path: '/admin-portal/active-upSchoolUsers',
+        component: lazy(() => import('./views/panels/admin-portal/CMS users/userTable'))
+      },
+      {
+        exact: true,
+        path: '/admin-portal/archived-upSchoolUsers',
+        component: lazy(() => import('./views/panels/admin-portal/CMS users/userTable'))
+      },
+      {
+        exact: true,
+        path: '/admin-portal/editCMSUser/:id',
+        component: lazy(() => import('./views/panels/admin-portal/CMS users/editUsers'))
+      },
+      {
+        exact: true,
+        path: '/admin-portal/add_UpSchoolusers',
+        component: lazy(() => import('./views/panels/admin-portal/CMS users/addUsers'))
+      },
+
       // Add Standards
       // {
       //   exact: true,

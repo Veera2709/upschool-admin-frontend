@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Row, Col, Button, Card, CloseButton, Form ,OverlayTrigger,Tooltip} from 'react-bootstrap';
+import { Row, Col, Button, Card, CloseButton, Form, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import Select from 'react-select';
 import Swal from 'sweetalert2';
 import axios from 'axios';
@@ -62,6 +62,9 @@ const AddQuestions = ({ className, ...rest }) => {
     const [voiceNoteFileValues, setVoiceNoteFileValues] = useState('');
     const [previewAudios, setPreviewAudios] = useState([]);
     const [_radio, _setRadio] = useState(false);
+    const [count, setCount] = useState(0);
+
+    const [questionLabelAlreadyExists, setQuestionLabelAlreadyExists] = useState(false);
 
     const [answerOptionsForm, setAnswerOptionsForm] = useState([
         {
@@ -167,7 +170,20 @@ const AddQuestions = ({ className, ...rest }) => {
         console.log(event.target);
 
         let data = [...answerOptionsForm];
-        data[index][event.target.name] = event.target.value;
+        if (toggleNumbersInput && event.target.name === 'answer_content') {
+            data[index][event.target.name] = Number(event.target.value);
+        } else {
+            data[index][event.target.name] = event.target.value;
+        }
+
+        if (toggleNumbersInput && event.target.name === 'answer_range_from') {
+            data[index][event.target.name] = Number(event.target.value);
+        }
+
+        if (toggleNumbersInput && event.target.name === 'answer_range_to') {
+            data[index][event.target.name] = Number(event.target.value);
+        }
+
         data[index]["answer_type"] = selectedAnswerType;
 
         console.log(data);
@@ -186,30 +202,52 @@ const AddQuestions = ({ className, ...rest }) => {
             setEquation(tempEquation);
         }
 
-        if (toggleImageInput && event.target.files) {
-            let tempPreviewImg = [...previewImages];
-            tempPreviewImg[index] = URL.createObjectURL(event.target.files[0]);
-            setPreviewImages(tempPreviewImg);
+        if (toggleImageInput && event.target.files && event.target.name === 'answer_content') {
 
-            let tempFileValue = [...fileValues];
-            tempFileValue[index] = event.target.files[0];
-            setFileValues(tempFileValue);
+            if (areFilesInvalid([event.target.files[0]]) !== 0) {
+                sweetAlertHandler(
+                    {
+                        title: 'Invalid Image File(s)!',
+                        type: 'warning',
+                        text: 'Supported file formats are .png, .jpg, .jpeg. Uploaded files should be less than 2MB. '
+                    }
+                );
+            } else {
+                let tempPreviewImg = [...previewImages];
+                tempPreviewImg[index] = event.target.files.length === 0 ? '' : URL.createObjectURL(event.target.files[0]);
+                setPreviewImages(tempPreviewImg);
+
+                let tempFileValue = [...fileValues];
+                tempFileValue[index] = event.target.files[0];
+                setFileValues(tempFileValue);
+            }
         }
 
-        if (toggleAudioInput && event.target.files) {
-            let tempPreviewAudio = [...previewAudios];
-            tempPreviewAudio[index] = URL.createObjectURL(event.target.files[0]);
-            setPreviewAudios(tempPreviewAudio);
+        if (toggleAudioInput && event.target.files && event.target.name === 'answer_content') {
 
-            let tempFileValue = [...fileValues];
-            tempFileValue[index] = event.target.files[0];
-            setFileValues(tempFileValue);
+            if (voiceInvalid([event.target.files[0]]) !== 0) {
+                sweetAlertHandler({
+                    title: 'Invalid Audio File(s)!',
+                    type: 'warning',
+                    text: 'Supported file formats are .mp3, .mpeg, .wav. Uploaded files should be less than 10MB. '
+                });
+            } else {
+
+                let tempPreviewAudio = [...previewAudios];
+                tempPreviewAudio[index] = event.target.files.length === 0 ? '' : URL.createObjectURL(event.target.files[0]);
+                setPreviewAudios(tempPreviewAudio);
+
+                let tempFileValue = [...fileValues];
+                tempFileValue[index] = event.target.files[0];
+                setFileValues(tempFileValue);
+            }
         }
     }
 
     const previewQuestionVoiceNote = (e) => {
-        console.log(e.target)
-        setQuestionVoiceNote(URL.createObjectURL(e.target.files[0]));
+        console.log(e.target);
+        let tempUrl = e.target.files.length === 0 ? '' : URL.createObjectURL(e.target.files[0]);
+        setQuestionVoiceNote(tempUrl);
         setSelectedQuestionVoiceNote(e.target.value);
         setVoiceNoteFileValues(e.target.files[0]);
     }
@@ -327,6 +365,7 @@ const AddQuestions = ({ className, ...rest }) => {
 
         setQuestionLabelValue(e.target.value);
         setQuestionLabelErr(false);
+        setQuestionLabelAlreadyExists(false);
     }
 
     useEffect(() => {
@@ -496,6 +535,9 @@ const AddQuestions = ({ className, ...rest }) => {
                     hideLoader();
 
                     console.log(error.response.data);
+                    if (error.response.data === "Question Label Already Exist!") {
+                        setQuestionLabelAlreadyExists(true);
+                    }
 
                 } else if (error.request) {
 
@@ -871,6 +913,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                 <form noValidate onSubmit={handleSubmit} className={className} {...rest}>
 
                                     <Row>
+
                                         <Col xs={6}>
                                             <label className="floating-label">
                                                 <small className="text-danger">* </small>
@@ -908,6 +951,9 @@ const AddQuestions = ({ className, ...rest }) => {
                                                 name="question_voice_note"
                                                 id="question_voice_note"
                                                 onBlur={handleBlur}
+                                                onClick={() => {
+                                                    setQuestionVoiceNote('');
+                                                }}
                                                 onChange={(e) => {
                                                     handleChange(e);
                                                     setQuestionVoiceError(true)
@@ -1000,6 +1046,12 @@ const AddQuestions = ({ className, ...rest }) => {
                                             {
                                                 questionLabelErr && (
                                                     <small className="text-danger form-text">{'Question Label is required!'}</small>
+                                                )
+                                            }
+
+                                            {
+                                                questionLabelAlreadyExists && (
+                                                    <small className="text-danger form-text">{'Question Label already exists!'}</small>
                                                 )
                                             }
 
@@ -1848,7 +1900,23 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                     // onChange={handleChange}
                                                                     type="file"
                                                                     value={form.answer_content}
+                                                                    onClick={() => {
+                                                                        let tempPreviewImg = [...previewImages];
+                                                                        tempPreviewImg[index] = '';
+                                                                        setPreviewImages(tempPreviewImg);
 
+                                                                        // let tempFileValue = [...fileValues];
+                                                                        // tempFileValue[count] = '';
+                                                                        // setFileValues(tempFileValue);
+
+                                                                        // let data = [...answerOptionsForm];
+                                                                        // data[index]["answer_content"] = "";
+                                                                        // console.log(data);
+                                                                        // setAnswerOptionsForm(data);
+
+                                                                        // let tempCount = count - 1;
+                                                                        // setCount(tempCount);
+                                                                    }}
                                                                     onChange={event => {
 
                                                                         handleAnswerBlanks(event, index);
@@ -2051,6 +2119,23 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                     onBlur={handleBlur}
                                                                     onChange={event => handleAnswerBlanks(event, index)}
                                                                     type="file"
+                                                                    onClick={() => {
+                                                                        let tempPreviewAudio = [...previewAudios];
+                                                                        tempPreviewAudio[index] = '';
+                                                                        setPreviewAudios(tempPreviewAudio);
+
+                                                                        // let tempFileValue = [...fileValues];
+                                                                        // tempFileValue[count] = '';
+                                                                        // setFileValues(tempFileValue);
+
+                                                                        // let data = [...answerOptionsForm];
+                                                                        // data[index]["answer_content"] = "";
+                                                                        // console.log(data);
+                                                                        // setAnswerOptionsForm(data);
+
+                                                                        // let tempCount = count - 1;
+                                                                        // setCount(tempCount);
+                                                                    }}
                                                                     value={form.answer_content}
                                                                     accept=".mp3,audio/*"
                                                                 />

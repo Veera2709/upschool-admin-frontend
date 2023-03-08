@@ -1,6 +1,5 @@
-const baseUrl = 'https://n4w2247vsi.execute-api.ap-south-1.amazonaws.com/dev/v1'; // Dev env URL
-// const baseUrl = 'https://dssqy2gip2.execute-api.ap-south-1.amazonaws.com/testing/v1'; // testing env URL
-// const baseUrl = process.env.REACT_APP_LAMBDA_URL;
+const baseUrl = 'https://w72a5si42a.execute-api.ap-south-1.amazonaws.com/dev/v1'; // Dev env URL// const baseUrl = 'https://n4w2247vsi.execute-api.ap-south-1.amazonaws.com/dev/v1'; // Old Dev env URL// const baseUrl = 'https://dssqy2gip2.execute-api.ap-south-1.amazonaws.com/testing/v1'; // testing env URL// const baseUrl = process.env.REACT_APP_LAMBDA_URL;
+
 
 const dynamicUrl = {
 
@@ -25,6 +24,8 @@ const dynamicUrl = {
     deleteSchool: baseUrl + '/deleteSchool',
     fetchUpschoolAndClientClasses: baseUrl + '/fetchUpschoolAndClientClasses',
     classSubscribe: baseUrl + '/classSubscribe',
+    setQuizConfiguration: baseUrl + '/setQuizConfiguration',
+    schoolubscriptionFeatures: baseUrl + '/schoolubscriptionFeatures',
 
     //chapters
     fetchAllChapters: baseUrl + '/fetchAllChapters',
@@ -117,8 +118,14 @@ const dynamicUrl = {
     fetchIndividualGroupData: baseUrl + '/fetchIndividualGroupData',
     toggleGroupStatus: baseUrl + '/toggleGroupStatus',
     editGroup: baseUrl + '/editGroup',
-    fetchDigicardIdAndName: baseUrl + '/fetchDigicardIdAndName'
+    fetchDigicardIdAndName: baseUrl + '/fetchDigicardIdAndName',
 
+    //CMS users
+    addCMSUser: baseUrl + '/addCMSUser',
+    fetchCMSUsersBasedonRoleStatus: baseUrl + '/fetchCMSUsersBasedonRoleStatus',
+    fetchIndividualCMSUser: baseUrl + '/fetchIndividualCMSUser',
+    toggleCMSUserStatus: baseUrl + '/toggleCMSUserStatus',
+    editCMSUser: baseUrl + '/editCMSUser',
 }
 
 export default dynamicUrl;
