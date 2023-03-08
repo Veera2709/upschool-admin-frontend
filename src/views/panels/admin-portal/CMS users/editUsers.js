@@ -52,7 +52,7 @@ const AddUsers = ({ setOpenAddTopic }) => {
     const [indidvidualData, setIndidvidualData] = useState()
     const [isRoleRep, setIsRoleRep] = useState(false)
     const [isDateReq, setIsDateReq] = useState(false)
-    const [displayHeading, setDisplayHeading] = useState(sessionStorage.getItem('Upusers_type'));
+    const [displayHeading, setDisplayHeading] = useState(sessionStorage.getItem('upUsers_status'));
     const [displayHeader, setDisplayHeader] = useState(true);
     const [isSelected, setIsSelected] = useState(false);
     const [isSelectedEntity, setIsSelectedEntity] = useState(false);
@@ -458,7 +458,7 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                                             <Col sm={6}>
                                                                 <div className='d-flex justify-content-between'>
                                                                     <Form.Label className="floating-label" ><small className="text-danger">* </small>Creator</Form.Label>
-                                                                    <Form.Label className="floating-label" ><small className="text-danger">* </small>Previewer</Form.Label>
+                                                                    <Form.Label className="floating-label" ><small className="text-danger">* </small>Reviewer</Form.Label>
                                                                     <Form.Label className="floating-label" style={{ marginRight: '-15px' }} ><small className="text-danger">* </small>Publisher</Form.Label>
                                                                 </div>
 

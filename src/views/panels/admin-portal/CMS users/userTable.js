@@ -24,7 +24,7 @@ const UserTable = () => {
         }
         else {
 
-            let storeValue = pageLocation === 'active-upSchoolUsers' ? 'Active Groups' : 'Archived Groups';
+            let storeValue = pageLocation === 'active-upSchoolUsers' ? 'Active Users' : 'Archived Users';
             sessionStorage.setItem('upSchoolUsers_status', storeValue);
             setState(true);
         }
