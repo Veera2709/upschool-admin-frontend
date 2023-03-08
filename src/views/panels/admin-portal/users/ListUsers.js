@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import { useLocation, useHistory } from 'react-router-dom';
+import { userRolesArray } from '../../../../helper/constants';
 import UserTableView from './UserTableView';
 import UserTableViewStudent from './UserTableViewStudent';
 
@@ -55,12 +56,23 @@ const ListUsers = () => {
             {state && (
                 <>
                     <Tabs
-                        defaultActiveKey={1}
+                        defaultActiveKey={0}
                         onSelect={handleUserChange}
                         className="mb-3"
                     >
+                        {userRolesArray.map((userRole, userRoleIndex) => {
 
-                        <Tab eventKey={1} title="Teachers" >
+                            return userRole === "Students" ? <Tab eventKey={userRoleIndex} title={userRole} >
+                                {sessionStorage.setItem('user_role', userRole)}
+                                <UserTableViewStudent _userRole={userRole} />
+                            </Tab>
+                                :
+                                <Tab eventKey={userRoleIndex} title={userRole} >
+                                    {sessionStorage.setItem('user_role', userRole)}
+                                    <UserTableView _userRole={userRole} />
+                                </Tab>
+                        })}
+                        {/* <Tab eventKey={1} title="Teachers" >
                             {sessionStorage.setItem('user_role', _userRole)}
                             <UserTableView _userRole={_userRole} />
                         </Tab>
@@ -71,7 +83,7 @@ const ListUsers = () => {
                         <Tab eventKey={3} title="Parents">
                             {sessionStorage.setItem('user_role', _userRole)}
                             <UserTableView _userRole={_userRole} />
-                        </Tab>
+                        </Tab> */}
                     </Tabs>
                 </>
             )}

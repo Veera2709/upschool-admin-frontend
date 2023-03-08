@@ -54,6 +54,7 @@ const dynamicUrl = {
     fetchSubjectForClientClass: baseUrl + '/fetchSubjectForClientClass',
     mappingSubjectToTeacher: baseUrl + '/mappingSubjectToTeacher',
     fetchMappedSubjectForTeacher: baseUrl + '/fetchMappedSubjectForTeacher',
+    bulkToggleUsersStatus: baseUrl + "/bulkToggleUsersStatus",
 
     //units
     fetchAllUnits: baseUrl + '/fetchAllUnits',
@@ -123,7 +124,7 @@ const dynamicUrl = {
 
     //CMS users
     addCMSUser: baseUrl + '/addCMSUser',
-    fetchCMSUsersBasedonRoleStatus  : baseUrl + '/fetchCMSUsersBasedonRoleStatus',
+    fetchCMSUsersBasedonRoleStatus: baseUrl + '/fetchCMSUsersBasedonRoleStatus',
     fetchIndividualCMSUser: baseUrl + '/fetchIndividualCMSUser',
     toggleCMSUserStatus: baseUrl + '/toggleCMSUserStatus',
     editCMSUser: baseUrl + '/editCMSUser',
