@@ -52,7 +52,7 @@ const AddUsers = ({ setOpenAddTopic }) => {
     const [isDate, setDate] = useState()
     const [isRoleRep, setIsRoleRep] = useState(false)
     const [isDateReq, setIsDateReq] = useState(false)
-    const [displayHeading, setDisplayHeading] = useState(sessionStorage.getItem('upSchoolUsers_status'));
+    const [displayHeading, setDisplayHeading] = useState(sessionStorage.getItem('upUsers_status'));
     const [displayHeader, setDisplayHeader] = useState(true);
     const [isSelected, setIsSelected] = useState(false);
     const [isSelectedEntity, setIsSelectedEntity] = useState(false);
