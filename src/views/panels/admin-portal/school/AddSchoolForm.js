@@ -3,6 +3,7 @@ import axios from 'axios'
 import Select from 'react-select';
 import Multiselect from 'multiselect-react-dropdown';
 import { Row, Col, Card, Pagination, Button, Modal, ModalBody, Form } from 'react-bootstrap';
+// import Form from 'react-bootstrap/Form';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 // import dynamicUrl from '../../../helper/dynamicUrl';
 import * as Yup from 'yup';
@@ -22,7 +23,9 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
     const [data, setData] = useState({});
     const [_radio, _setRadio] = useState(false);
     const [previousBoards, setPreviousBoards] = useState([]);
+    const [previousLabel, setPreviousLabel] = useState([])
     const [selectedBoards, setSelectedBoards] = useState([]);
+    const [schoolLabel, setSchoolLabel] = useState('Upschool');
     const [showBoardErr, setShowBoardErr] = useState(false);
     const [scbscription_active, setScbscription_active] = useState('No');
     const [copy, setCopy] = useState(false);
@@ -44,6 +47,8 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
     const pincodeRef = useRef('');
     const phoneNumberRef = useRef('');
     const gst_numberRef = useRef('');
+
+
 
     const phoneRegExp = /^(\+91[\-\s]?)?[0]?(91)?[789]\d{9}$/;
 
@@ -89,6 +94,17 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
         { value: 'NIOS', label: 'NIOS' },
         { value: 'IB', label: 'IB' }
     ];
+    const schoolLabelling = [
+        { value: 'Upschool', label: 'Upschool' },
+        { value: 'Co-brand', label: 'Co-brand' },
+        { value: 'White-label', label: 'White-label' }
+
+    ]
+
+
+
+
+
 
 
     const handleSelectChange = (event) => {
@@ -115,6 +131,11 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
         console.log('remove selectedList: ', selectedList);
 
         setSelectedBoards(selectedList.map(skillId => skillId.id));
+    }
+
+    const handleSchoolLabelling = (selectedSchoolLabel) => {
+        console.log("--------------", selectedSchoolLabel.value);
+        setSchoolLabel(selectedSchoolLabel.value)
     }
 
     return (
@@ -193,6 +214,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                     const formData = {
                         school_name: values.school_name,
                         school_board: selectedBoards,
+                        school_labelling: schoolLabel,
                         // school_logo: "testImg.png",
                         school_logo: values.school_logo,
                         subscription_active: scbscription_active,
@@ -429,7 +451,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                                                 handleSelectChange(event)
                                             }}
                                             onSelect={handleSelectBoard}
-                                            onRemove={handleOnRemove}
+                                        // onRemove={handleOnRemove}
                                         />
 
                                         {schoolBoardErrMsg && (
@@ -440,8 +462,9 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
 
+
+                        <div class="row">
                             <div className='col-sm-6'>
                                 <div class="form-group fill">
 
@@ -471,6 +494,8 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                                         </div>
                                     </div>
                                 </div>
+
+
                             </div>
                         </div>
 
@@ -503,9 +528,88 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                             <div className="col-md-6">
                                 <img width={150} src={imgFile} alt="" className="img-fluid mb-3" />
                             </div>
-
-
                         </div>
+
+                        <div class="row">
+                            <div className='col-sm-6'>
+                                <div className="form-group fill">
+
+                                    <label className="floating-label">
+                                        School labelling
+                                    </label>
+                                    {console.log("HERE : ", previousLabel)}
+
+                                    <Select
+                                        defaultValue={{ label: "Upschool", value: "Upschool" }}
+                                        name="boards"
+                                        options={schoolLabelling}
+
+
+                                        className="basic-select"
+                                        classNamePrefix="Select"
+                                        onBlur={handleBlur}
+                                        // onChange={handleChange}
+                                        onChange={(e) => {
+                                            handleSchoolLabelling(e)
+                                        }}
+                                    />
+
+                                    {schoolBoardErrMsg && (
+                                        <small className="text-danger form-text">{'Please select an option'}</small>
+                                    )}
+
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* <Row className="my-3">
+                            <Col sm={12}>
+                                <label>School labelling</label>
+                            </Col>
+                            <Col sm={12}>
+                                <select
+                                    className="form-control"
+                                    // error={touched.schoolName && errors.schoolName}
+                                    name="schoolLabelling"
+                                    options={schoolLabelling}
+                                    onBlur={handleBlur}
+                                    onChange={handleChange}
+                                    type="text"
+                                    // ref={schoolNameRef}
+                                    value={values.schoolLabelling}
+                                >
+
+                                    {/* {schoolName_ID.Items.map((schoolData) => {
+
+                                  return <option key={schoolData.school_id}>
+                                    {schoolData.school_name}
+                                  </option>
+
+                                })} */}
+
+                        {/* </select>
+                                {touched.schoolName && errors.schoolName && (
+                                    <small className="text-danger form-text">{errors.schoolName}</small>
+                                )}
+                            </Col>
+                        </Row> */}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
                         <div className="row">
                             <div className='col-md-6'>
@@ -840,7 +944,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                                             onChange={handlesetCopyInputs}
                                         />
                                     </Row>
-                                </div>  
+                                </div>
                             </div>
                         </div>
 
@@ -855,7 +959,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                         </div>
                     </form>
                 )}
-            </Formik >
+            </Formik>
             {loader}
         </>
     )

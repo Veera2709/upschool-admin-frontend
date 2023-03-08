@@ -119,7 +119,7 @@ export const cmsRole = {
   userEmailTooLong: "Email is too long!",
 
   phoneRegExp: /^(\+91[\-\s]?)?[0]?(91)?[6789]\d{9}$/,
-  phoneNumVali:"Phone number is not valid",
+  phoneNumVali: "Phone number is not valid",
   phoneNumTooShort: 'Phone Number Have Less Then 10 Digits!',
   phoneNumTooLong: "Phone Number is too long!",
   phoneNum: "Phone Number is required!",
@@ -886,3 +886,6 @@ export const componentsListArray = [
 export const EmailInitiation = {
   EmailsRequired: 'Recipients are required!'
 };
+
+
+export const userRolesArray = ["Teachers", "Students", "Parents"];
