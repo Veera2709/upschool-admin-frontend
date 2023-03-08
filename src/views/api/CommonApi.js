@@ -95,9 +95,13 @@ export const fetchIndividualChapter = (chapter_id) => {
     });
 }
 
-export const fetchAllUnits = () => {
+export const fetchAllUnits = (UnitStatus) => {
     return new Promise((resolve, reject) => {
-        axios.post(url.fetchAllUnits, {}, {
+        axios.post(url.fetchAllUnits, {
+            data: {
+                unit_status: UnitStatus
+            }
+        }, {
             headers: { Authorization: sessionStorage.getItem('user_jwt') }
         })
             .then((response) => {
@@ -110,14 +114,14 @@ export const fetchAllUnits = () => {
     });
 }
 
-export const fetchCMSUsersBasedonRoleStatus1  = (payLoad) => {
-    console.log("payload",payLoad);
+export const fetchCMSUsersBasedonRoleStatus1 = (payLoad) => {
+    console.log("payload", payLoad);
     return new Promise((resolve, reject) => {
-        axios.post(url.fetchCMSUsersBasedonRoleStatus , {data:payLoad}, {
+        axios.post(url.fetchCMSUsersBasedonRoleStatus, { data: payLoad }, {
             headers: { Authorization: sessionStorage.getItem('user_jwt') }
         })
             .then((response) => {
-                console.log("fetchCMSUsersBasedonRoleStatusr",response.data);
+                console.log("fetchCMSUsersBasedonRoleStatusr", response.data);
                 resolve(response.data);
             })
             .catch((error) => {
@@ -128,7 +132,11 @@ export const fetchCMSUsersBasedonRoleStatus1  = (payLoad) => {
 
 export const fetchAllChapters = () => {
     return new Promise((resolve, reject) => {
-        axios.post(url.fetchAllChapters, {}, {
+        axios.post(url.fetchAllChapters, {
+            data: {
+                chapter_status: "Active"
+            }
+        }, {
             headers: { Authorization: sessionStorage.getItem('user_jwt') }
         })
             .then((response) => {
@@ -145,9 +153,7 @@ export const fetchAllConcepts = () => {
     return new Promise((resolve, reject) => {
         axios.post(url.fetchAllConcepts, {
             data: {
-
                 concept_status: "Active"
-
             }
         }, {
             headers: { Authorization: sessionStorage.getItem('user_jwt') }
@@ -166,9 +172,7 @@ export const fetchPostLearningTopics = () => {
     return new Promise((resolve, reject) => {
         axios.post(url.fetchPostLearningTopics, {
             data: {
-
                 concept_status: "Active"
-
             }
         }, {
             headers: { Authorization: sessionStorage.getItem('user_jwt') }
@@ -187,9 +191,7 @@ export const fetchPreLearningTopics = () => {
     return new Promise((resolve, reject) => {
         axios.post(url.fetchPreLearningTopics, {
             data: {
-
                 concept_status: "Active"
-
             }
         }, {
             headers: { Authorization: sessionStorage.getItem('user_jwt') }
@@ -223,7 +225,7 @@ export const fetchIndividualUnit = (unit_id) => {
 
 
 export const fetchIndividualUser = (user_id) => {
-    console.log("user_id",user_id);
+    console.log("user_id", user_id);
     return new Promise((resolve, reject) => {
         axios.post(url.fetchIndividualCMSUser, {
             data: { user_id: user_id }
@@ -470,7 +472,7 @@ export const toggleUserStatus = (payLoad) => {
 
     return new Promise((resolve, reject) => {
         axios.post(url.toggleCMSUserStatus, {
-            data:payLoad
+            data: payLoad
         }, {
             headers: { Authorization: sessionStorage.getItem('user_jwt') }
         })
@@ -479,6 +481,25 @@ export const toggleUserStatus = (payLoad) => {
                 resolve(response.data);
             })
             .catch((error) => {
+                resolve({ Error: error });
+            })
+    });
+}
+
+export const toggleMultiDigicardStatus = (payLoad) => {
+    console.log("payLoad : ", payLoad);
+    return new Promise((resolve, reject) => {
+        axios.post(url.bulkToggleDigiCardStatuss, {
+            data: payLoad
+        }, {
+            headers: { Authorization: sessionStorage.getItem('user_jwt') }
+        })
+            .then((response) => {
+                console.log(response);
+                resolve(response.data);
+            })
+            .catch((error) => {
+                console.log("Error", error);
                 resolve({ Error: error });
             })
     });

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
-import Select from 'react-select';
+import Select from 'react-draggable-multi-select';
 import ReactTags from 'react-tag-autocomplete';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
@@ -98,10 +98,11 @@ const AddSubjects = ({ _units, _relatedSubjects, setIsOpenAddSubject, fetchAllSu
         console.log(event);
 
         let valuesArr = [];
-        for (let i = 0; i < event.length; i++) {
-            valuesArr.push(event[i].value)
+        if (event) {
+            for (let i = 0; i < event.length; i++) {
+                valuesArr.push(event[i].value)
+            }
         }
-
         console.log(valuesArr);
         setSelectedUnits(valuesArr);
     }
@@ -111,10 +112,11 @@ const AddSubjects = ({ _units, _relatedSubjects, setIsOpenAddSubject, fetchAllSu
         console.log(event);
 
         let valuesArr = [];
-        for (let i = 0; i < event.length; i++) {
-            valuesArr.push(event[i].value)
+        if (event) {
+            for (let i = 0; i < event.length; i++) {
+                valuesArr.push(event[i].value)
+            }
         }
-
         console.log(valuesArr);
         setSelectedRelatedSubjects(valuesArr);
     }
