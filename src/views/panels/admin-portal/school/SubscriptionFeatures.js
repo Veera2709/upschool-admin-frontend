@@ -246,7 +246,7 @@ const SubscriptionFeatures = ({ className, rest, id }) => {
 
                                             console.log(formData);
 
-                                            if (selectedtypeOfReports.length > 1) {
+                                            if (selectedtypeOfReports.length >= 1) {
                                                 showLoader();
                                                 axios
                                                     .post(
@@ -271,7 +271,7 @@ const SubscriptionFeatures = ({ className, rest, id }) => {
 
                                                                 const MySwal = withReactContent(Swal);
                                                                 MySwal.fire({
-                                                                    title: MESSAGES.TTTLES.Goodjob,
+                                                                    // title: MESSAGES.TTTLES.Goodjob,
                                                                     type: 'success',
                                                                     text: MESSAGES.SUCCESS.UpdatingSubscriptionFeatures,
                                                                     icon: 'success',

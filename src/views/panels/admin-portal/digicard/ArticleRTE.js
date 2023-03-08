@@ -39,7 +39,7 @@ function ArticleRTE({
         setOptions={{
           imageUploadSizeLimit: "250000",
           katex: katex,
-          plugins:plugins,
+          plugins: plugins,
           // plugins:[listType],
           font: [
             'Arial',
@@ -66,6 +66,8 @@ function ArticleRTE({
             "arial black",
             "tahoma",
             "Lucida Console",
+            "CONCLUSSION",
+            // "\"<p>Conclussion</p>\""
           ],
           preview: [{ pathpath: '/admin-portal/admin-dashboard' }
           ],
@@ -83,6 +85,7 @@ function ArticleRTE({
             ['fullScreen'],
             ['preview'],
             ['math'],
+            ['print']
           ],
         }}
       />

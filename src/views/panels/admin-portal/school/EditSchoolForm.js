@@ -357,7 +357,7 @@ const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive 
 
                                                                                 const MySwal = withReactContent(Swal);
                                                                                 MySwal.fire({
-                                                                                    title: MESSAGES.TTTLES.Goodjob,
+                                                                                    // title: MESSAGES.TTTLES.Goodjob,
                                                                                     type: 'success',
                                                                                     text: 'Your school has been updated!',
                                                                                     icon: 'success',
@@ -475,7 +475,7 @@ const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive 
                                                                             // setIsOpenEditSchool(false);
                                                                             const MySwal = withReactContent(Swal);
                                                                             MySwal.fire({
-                                                                                title: MESSAGES.TTTLES.Goodjob,
+                                                                                // title: MESSAGES.TTTLES.Goodjob,
                                                                                 type: 'success',
                                                                                 text: 'Your school has been updated!',
                                                                                 icon: 'success',
@@ -593,7 +593,7 @@ const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive 
 
                                                                         const MySwal = withReactContent(Swal);
                                                                         MySwal.fire({
-                                                                            title: MESSAGES.TTTLES.Goodjob,
+                                                                            // title: MESSAGES.TTTLES.Goodjob,
                                                                             type: 'success',
                                                                             text: 'Your school has been updated!',
                                                                             icon: 'success',

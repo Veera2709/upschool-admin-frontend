@@ -404,7 +404,7 @@ const QuizConfiguration = ({ className, rest, id }) => {
 
                                                             const MySwal = withReactContent(Swal);
                                                             MySwal.fire({
-                                                                title: MESSAGES.TTTLES.Goodjob,
+                                                                // title: MESSAGES.TTTLES.Goodjob,
                                                                 type: 'success',
                                                                 text: MESSAGES.SUCCESS.UpdatingQuizConfiguration,
                                                                 icon: 'success',
