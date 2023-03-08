@@ -125,7 +125,7 @@ function Preview() {
                                     </audio>
                                 </div>
                                 <br />
-                                <Button className='float-right' variant="primary" onClick={(e) => { setIsShown(true); reloadPage() }}>Close</Button>
+                                <Button  className='float-right' variant="primary" onClick={(e) => { setIsShown(true); reloadPage() }}>Close</Button>
                             </div>
                         </Scrollbars>
                     </DeviceFrameset>

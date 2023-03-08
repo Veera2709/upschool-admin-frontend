@@ -242,12 +242,12 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                         validationSchema={Yup.object().shape({
                                             firstName: Yup.string()
                                                 .trim()
-                                                .min(2, Constants.cmsRole.FirstNameTooShort)
+                                                .min(1, Constants.cmsRole.FirstNameTooShort)
                                                 .max(32, Constants.cmsRole.FirstNameTooLong)
                                                 .required(Constants.cmsRole.FirstName),
                                             lastName: Yup.string()
                                                 .trim()
-                                                .min(2, Constants.cmsRole.LastNameTooShort)
+                                                .min(1, Constants.cmsRole.LastNameTooShort)
                                                 .max(32, Constants.cmsRole.LastNameTooLong)
                                                 .required(Constants.cmsRole.LastName),
                                             userEmail: Yup.string()
@@ -278,8 +278,6 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                                 let validateRole = userRoles.find(o => o.entity === '' || o.entity === 0 || o.entity === undefined)
                                                 var validator = userRoles.filter((e) => (e.roles).length <= 0)
                                                 console.log("validator : ", validator);
-
-
                                                 if (showError) {
                                                     setIsRoleRep(true)
                                                 } else if (isDate === '' || isDate === undefined) {
@@ -517,17 +515,17 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                                                         <div>
                                                                             <Form.Control
                                                                                 className="form-control"
-                                                                                name="previewer"
+                                                                                name="reviewer"
                                                                                 onBlur={handleBlur}
                                                                                 onChange={(e) => {
-                                                                                    getUserRole(e, 'previewer', index);
+                                                                                    getUserRole(e, 'reviewer', index);
                                                                                     setIsSelected(false);
                                                                                 }}
                                                                                 type="checkbox"
-                                                                                value={values.previewer}
+                                                                                value={values.reviewer}
                                                                                 style={{ width: '25px' }}
                                                                                 key={index}
-                                                                                defaultChecked={topic.roles.filter(e => e === 'previewer').length > 0 ? true : false}
+                                                                                defaultChecked={topic.roles.filter(e => e === 'reviewer').length > 0 ? true : false}
                                                                             />
                                                                         </div>
                                                                         <div>

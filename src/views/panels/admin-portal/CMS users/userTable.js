@@ -42,7 +42,7 @@ const UserTable = () => {
             _setUserType('creator');
         }
         else if (key === '3') {
-            _setUserType('previewer');
+            _setUserType('reviewer');
         }
         else if (key === '4') {
             _setUserType('publisher');
@@ -69,7 +69,7 @@ const UserTable = () => {
                             {sessionStorage.setItem('user_type', _userType)}
                             <UsersList _userType={_userType} />
                         </Tab>
-                        <Tab eventKey={3} title="Previewer" >
+                        <Tab eventKey={3} title="Reviewer" >
                             {sessionStorage.setItem('user_type', _userType)}
                             <UsersList _userType={_userType} />
                         </Tab>
