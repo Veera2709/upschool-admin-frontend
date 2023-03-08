@@ -69,6 +69,7 @@
     "react-datepicker": "^4.7.0",
     "react-datetime": "^3.1.1",
     "react-dom": "^18.2.0",
+    "react-draggable-multi-select": "^1.1.8",
     "react-dropzone-component": "^3.2.0",
     "react-dual-listbox": "^2.2.0",
     "react-google-maps": "^9.4.5",

@@ -14233,6 +14233,20 @@
     "object-assign" "^4.1.1"
     "prop-types" "^15.6.0"
 
+"react-draggable-multi-select@^1.1.8":
+  "integrity" "sha512-03BvKlsi6loAVmdtP5MQecJInuVfv5p8i8VOmF3Ad+GJQMcER4gCgxi9/vw/gGQnUz1tzkDKwxAwSkoV8rOM0Q=="
+  "resolved" "https://registry.npmjs.org/react-draggable-multi-select/-/react-draggable-multi-select-1.1.8.tgz"
+  "version" "1.1.8"
+  dependencies:
+    "@babel/runtime" "^7.4.4"
+    "@emotion/cache" "^10.0.9"
+    "@emotion/core" "^10.0.9"
+    "@emotion/css" "^10.0.9"
+    "memoize-one" "^5.0.0"
+    "prop-types" "^15.7.2"
+    "react-input-autosize" "^2.2.2"
+    "react-transition-group" "^4.3.0"
+
 "react-dropzone-component@^3.2.0":
   "integrity" "sha512-QwopN2GgzHCKcMyJvBZuYCeqnU9F/Uiq1hD94/JmFdLmkzU1rw7SbNjLNUad864YoAEvcx93uHUItv0NUwlTxw=="
   "resolved" "https://registry.npmjs.org/react-dropzone-component/-/react-dropzone-component-3.2.0.tgz"
@@ -14432,6 +14446,13 @@
     "react-full-screen" "^0.2.4"
     "react-transition-group" "^2.9.0"
     "react-view-pager" "^0.6.0"
+
+"react-input-autosize@^2.2.2":
+  "integrity" "sha512-jQJgYCA3S0j+cuOwzuCd1OjmBmnZLdqQdiLKRYrsMMzbjUrVDS5RvJUDwJqA7sKuksDuzFtm6hZGKFu7Mjk5aw=="
+  "resolved" "https://registry.npmjs.org/react-input-autosize/-/react-input-autosize-2.2.2.tgz"
+  "version" "2.2.2"
+  dependencies:
+    "prop-types" "^15.5.8"
 
 "react-input-autosize@^3.0.0":
   "integrity" "sha512-nL9uS7jEs/zu8sqwFE5MAPx6pPkNAriACQ2rGLlqmKr2sPGtN7TXTyDdQt4lbNXVx7Uzadb40x8qotIuru6Rhg=="
