@@ -359,7 +359,7 @@ const SubscriptionFeatures = ({ className, rest, id }) => {
                                                             }))}
                                                         </select>
                                                         {touched.testTypePre && errors.testTypePre ? (
-                                                            <small style={{ color: 'red' }}>{errors.testTypePre}</small>
+                                                            <small className="text-danger form-text">{errors.testTypePre}</small>
                                                         ) : null}
                                                     </Col>
 
@@ -385,7 +385,7 @@ const SubscriptionFeatures = ({ className, rest, id }) => {
                                                             }))}
                                                         </select>
                                                         {touched.testTypePost && errors.testTypePost ? (
-                                                            <small style={{ color: 'red' }}>{errors.testTypePost}</small>
+                                                            <small className="text-danger form-text">{errors.testTypePost}</small>
                                                         ) : null}
                                                     </Col>
 
@@ -394,7 +394,7 @@ const SubscriptionFeatures = ({ className, rest, id }) => {
                                                 <br />
                                                 <Row>
                                                     <Col xs={6}>
-                                                        <div className="form-group fill">
+                                                        <div className="form-group fill" style={{ position: "relative", zIndex: 20 }}>
                                                             <label className="floating-label">
                                                                 <small className="text-danger">* </small>
                                                                 Types of Reports

@@ -8,12 +8,17 @@ import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import MESSAGES from '../../../../helper/messages';
 import { GlobalFilter } from '../../../common-ui-components/tables/GlobalFilter';
-import { useTable, useSortBy, usePagination, useGlobalFilter } from 'react-table';
+import { useTable, useSortBy, usePagination, useGlobalFilter, useRowSelect } from 'react-table';
 import dynamicUrl from '../../../../helper/dynamicUrls';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import BasicSpinner from '../../../../helper/BasicSpinner';
 
-function Table({ columns, data }) {
+function Table({ columns, data, modalOpen, userRole }) {
+
+    console.log("_userRole in Table", userRole);
+    const initiallySelectedRows = React.useMemo(() => new Set(["1"]), []);
+
+    const [stateStudent, setStateStudent] = useState([])
     const {
         getTableProps,
         getTableBodyProps,
@@ -32,21 +37,250 @@ function Table({ columns, data }) {
         nextPage,
         previousPage,
         setPageSize,
-        state: { pageIndex, pageSize }
+        selectedFlatRows,
+        toggleAllRowsSelected,
+        state: { pageIndex, pageSize, selectedRowPaths }
     } = useTable(
         {
             columns,
             data,
-            initialState: { pageIndex: 0, pageSize: 10 }
+            initialState: { pageIndex: 0, pageSize: 10, selectedRowPaths: initiallySelectedRows },
+            userRole
         },
         useGlobalFilter,
         useSortBy,
-        usePagination
+        usePagination,
+        useRowSelect
     );
+
+    const [loader, showLoader, hideLoader] = useFullPageLoader();
+    const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
+
+
+    const MySwal = withReactContent(Swal);
+    const history = useHistory();
+    const sweetAlertHandler = (alert) => {
+        MySwal.fire({
+            title: alert.title,
+            text: alert.text,
+            icon: alert.type
+        });
+    };
+    const user_status = pageLocation === 'active-users' ? "Active" : "Archived"
+    console.log("user_status : ", user_status);
+
+    // const conformDelete = () => {
+
+    //     MySwal.fire({
+    //         title: 'Are you sure?',
+    //         text: 'Confirm deleting User',
+    //         type: 'warning',
+    //         showCloseButton: true,
+    //         showCancelButton: true
+    //     }).then((willDelete) => {
+    //         if (willDelete.value) {
+    //             console.log("api calling");
+    //             deleteStudentById();
+    //         } else {
+    //             return MySwal.fire('', 'User is safe!', 'error');
+    //         }
+    //     });
+    // }
+    const restoreData = () => {
+
+        MySwal.fire({
+            title: 'Are you sure?',
+            text: 'Confirm restore User',
+            type: 'warning',
+            showCloseButton: true,
+            showCancelButton: true
+        }).then((willDelete) => {
+            if (willDelete.value) {
+                console.log("api calling");
+                deleteStudentById();
+            } else {
+                return MySwal.fire('', 'User is archieved!', 'error');
+            }
+        });
+    }
+
+    const deleteStudentById = () => {
+        // let arrIds = [];
+        // stateStudent.forEach(d => {
+        //     if (d.select) {
+        //         arrIds.push(d.id)
+        //     }
+        // })
+        // console.log(arrIds)
+
+        console.log("data check: ", data);
+        console.log("userRole : ", userRole);
+
+        let arrIds = [];
+        let userId = (userRole === "Students") ? "student_id" : "N.A.";
+
+        let userRolePayload = (userRole === "Students") ? "Student" : "N.A.";
+
+        console.log(userId);
+        for (let k = 0; k < data.length; k++) {
+
+            console.log(data[k][userId]);
+
+            // console.log("document.getElementById(data[k][userId]).checked ", document.getElementById(data[k][userId]).checked, "---", data[k][userId]);
+
+            if (document.getElementById(data[k][userId]).checked) {
+                console.log("Inside Condition");
+
+                arrIds.push(data[k][userId]);
+            }
+        }
+        console.log("CHECK ROWS : ", arrIds);
+        // Call API : 
+        axios
+            .post(
+                dynamicUrl.bulkToggleUsersStatus,
+                {
+                    data: {
+                        userIdArray: arrIds,
+                        user_role: userRolePayload,
+                        user_status: user_status === "Active" ? "Archived" : "Active"
+                    }
+                }, {
+                headers: { Authorization: sessionStorage.getItem('user_jwt') }
+            }
+            )
+            .then(async (response) => {
+                console.log("response : ", response);
+
+                if (response.Error) {
+                    hideLoader();
+                    sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
+                    history.push('/admin-portal/' + pageLocation)
+                    // fetchUserData();
+                } else {
+                    console.log("response : ", response);
+
+                    if (response.data === 200) {
+
+                        window.location.reload()
+                        hideLoader();
+
+                    }
+
+                    // sweetAlertHandler({ title: MESSAGES.INFO.STUDENT_DELETED, type: 'success' });
+                    // hideLoader();
+                    // history.push('/admin-portal/' + pageLocation)
+
+                    // fetchSchoolData();
+                    // setInactive(false);
+                    // _fetchSchoolData();
+                }
+            }
+            )
+
+    }
+    const deleteAllStudent = () => {
+
+        console.log("selectedFlatRows", selectedFlatRows);
+        let arrayWithStudentIds = [];
+
+        let userRolePayload = (userRole === "Students") ? "Student" : "N.A.";
+
+        console.log("ROLE : ", userRolePayload);
+
+        selectedFlatRows.map((items) => {
+            console.log("Student Id : ", items.original.student_id);
+            if (userRole === "Students") {
+                console.log("Student Id : ", items.original.student_id);
+                arrayWithStudentIds.push(items.original.student_id);
+            }
+
+        })
+
+        console.log("CHECKED IDS : ", arrayWithStudentIds);
+
+        const MySwal = withReactContent(Swal);
+        MySwal.fire({
+            title: 'Are you sure?',
+            text: pageLocation === 'active-users' ? 'Confirm deleting' : 'Confirm restoring',
+            type: 'warning',
+            showCloseButton: true,
+            showCancelButton: true,
+        }).then((willDelete) => {
+
+            if (willDelete.value) {
+                console.log("api calling");
+                // changeStatus(digi_card_id, digi_card_title);
+                axios
+                    .post(
+                        dynamicUrl.bulkToggleUsersStatus,
+                        {
+                            data: {
+                                userIdArray: arrayWithStudentIds,  // selectedFlatRows
+                                user_role: userRolePayload,
+                                user_status: user_status === "Active" ? "Archived" : "Active"
+                            }
+                        }, {
+                        headers: { Authorization: sessionStorage.getItem('user_jwt') }
+                    }
+                    )
+                    .then(async (response) => {
+                        console.log("response : ", response);
+
+                        if (response.Error) {
+                            hideLoader();
+                            // sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
+                            pageLocation === 'active-users' ?
+                                sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: (userRole === "Students") ? MESSAGES.ERROR.DeletingStudents : MESSAGES.ERROR.InvalidUser })
+                                :
+                                sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: (userRole === "Students") ? MESSAGES.ERROR.RestoringStudents : MESSAGES.ERROR.InvalidUser });
+
+                            history.push('/admin-portal/' + pageLocation)
+                            // fetchUserData();
+                        } else {
+                            console.log("response : ", response);
+                            if (response.data === 200) {
+                                // hideLoader();
+                                MySwal.fire({
+                                    title: (userRole === "Students") && pageLocation === 'active-users' ? 'Students Deleted' : 'Students Restored',
+                                    icon: "success",
+                                    text: pageLocation === 'active-users' ? 'User Deleted' : 'User Restored',
+                                    // type: 'success',
+                                }).then((willDelete) => {
+
+                                    window.location.reload()
+
+                                })
+                            }
+                        }
+                    }
+                    )
+            } else {
+                return MySwal.fire('', pageLocation === 'active-users' ? 'User is safe!' : "User remains Archived", 'error')
+
+
+            }
+
+
+
+
+
+        })
+    }
 
     return (
         <>
             <Row className="mb-3">
+
+                {user_status === "Active" ?
+                    <Button onClick={(e) => { deleteAllStudent() }} variant="danger" className="btn-sm btn-round has-ripple ml-2" style={{ marginLeft: "1.5rem" }} >Delete</Button>
+
+                    :
+
+                    <Button onClick={deleteAllStudent} variant="primary" className="btn-sm btn-round has-ripple ml-2" style={{ marginLeft: "1.5rem" }} >Restores</Button>
+
+                }
+
                 <Col className="d-flex align-items-center">
                     Show
                     <select
@@ -157,6 +391,20 @@ const UserTableViewStudent = ({ _userRole }) => {
     console.log(_userRole);
 
     const columns = React.useMemo(() => [
+
+        {
+            id: "selection",
+            Header: ({ getToggleAllRowsSelectedProps }) => (
+                <div>
+                    <input type="checkbox" {...getToggleAllRowsSelectedProps()} />
+                </div>
+            ),
+            Cell: ({ row }) => (
+                <div>
+                    <input type="checkbox" {...row.getToggleRowSelectedProps()} />
+                </div>
+            )
+        },
         {
             Header: '#',
             accessor: 'id'
@@ -195,6 +443,8 @@ const UserTableViewStudent = ({ _userRole }) => {
 
     console.log("options", options);
     console.log("multiDropOptions", multiDropOptions);
+    const [tempData, setTemData] = useState([]);
+    const [selectAllCheckbox, setSelectAllCheckbox] = useState(false);
 
 
     const phoneRegExp = /^(\+91[\-\s]?)?[0]?(91)?[6789]\d{9}$/;
@@ -220,7 +470,7 @@ const UserTableViewStudent = ({ _userRole }) => {
             if (willDelete.value) {
                 showLoader();
                 deleteUser(user_id, user_role, updateStatus);
-            } 
+            }
         });
     };
 
@@ -416,20 +666,26 @@ const UserTableViewStudent = ({ _userRole }) => {
         let responseData = _data;
         // let responseData = [];
 
+        let userId = (_userRole === "Students") ? "student_id" : "N.A.";
+
         console.log("responseData", responseData);
 
         let finalDataArray = [];
         for (let index = 0; index < responseData.length; index++) {
             responseData[index].id = index + 1;
 
+            //     responseData[index]['activity'] = (
+            //         <input type="checkbox"
+            //             name={responseData[index]["id"]}
+            //             id={responseData[index][userId]}
+            //         />
+            //     )
+
 
             responseData[index]['action'] = (
                 <>
-
                     {pageLocation === 'active-users' ? (
-
                         <>
-
                             <Button
                                 size="sm"
                                 className="btn btn-icon btn-rounded btn-info"
@@ -499,6 +755,7 @@ const UserTableViewStudent = ({ _userRole }) => {
 
                     setIsLoading(false);
                     updateValues(resultData);
+                    setTemData(resultData)
 
                 }
 
@@ -605,7 +862,7 @@ const UserTableViewStudent = ({ _userRole }) => {
                                                                 <Card.Title as="h5">User List</Card.Title>
                                                             </Card.Header>
                                                             <Card.Body>
-                                                                <Table columns={columns} data={userData} />
+                                                                <Table columns={columns} data={userData} userRole={_userRole} selectAllCheckbox={selectAllCheckbox} />
                                                             </Card.Body>
                                                         </Card>
 
@@ -627,7 +884,7 @@ const UserTableViewStudent = ({ _userRole }) => {
 
 
 
-            </div >
+            </div>
             {loader}
         </React.Fragment>
     );
