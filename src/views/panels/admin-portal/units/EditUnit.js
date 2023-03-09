@@ -15,7 +15,7 @@ import withReactContent from 'sweetalert2-react-content';
 import { areFilesInvalid, isEmptyObject } from '../../../../util/utils';
 import { useEffect } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
-import Select from 'react-select';
+import Select from 'react-draggable-multi-select';
 import { isEmptyArray } from '../../../../util/utils';
 import Multiselect from 'multiselect-react-dropdown';
 import { fetchAllChapters, fetchIndividualUnit } from '../../../api/CommonApi'
@@ -150,8 +150,10 @@ const EditUnit = ({ setOpenEditUnit, unitId }) => {
 
     const getMultiOptions = (event) => {
         let valuesArr = [];
-        for (let i = 0; i < event.length; i++) {
-            valuesArr.push(event[i].value)
+        if(event){
+            for (let i = 0; i < event.length; i++) {
+                valuesArr.push(event[i].value)
+            }
         }
         setChapterOption(valuesArr);
     }

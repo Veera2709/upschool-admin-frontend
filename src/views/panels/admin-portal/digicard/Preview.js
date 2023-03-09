@@ -88,6 +88,7 @@ function Preview() {
                             <Button id='primary' variant="primary" onClick={(e) => { setDevice("HTC One"); setId('card1'); sessionStorage.setItem('Device', 'HTC One') }}>HTC One </Button> <br />
                             <Button id='primary' variant="primary" onClick={(e) => { setDevice("Samsung Galaxy S5"); setId('card1'); sessionStorage.setItem('Device', 'Samsung Galaxy S5') }}>Samsung Galaxy S5</Button><br />
                             <Button id='primary' variant="primary" onClick={() => { setDevice("iPad Mini"); setId('ipad'); sessionStorage.setItem('Device', 'iPad Mini') }}>Ipad</Button><br />
+                            <Button id='primary' variant="primary" onClick={() => { setDevice("MacBook Pro"); setId('MacBook Pro'); sessionStorage.setItem('Device', 'MacBook Pro') }}>MacBook Pro</Button><br />
                         </Col>
                     </Row>
                 </Col>
@@ -124,7 +125,7 @@ function Preview() {
                                     </audio>
                                 </div>
                                 <br />
-                                <Button className='float-right' variant="primary" onClick={(e) => { setIsShown(true); reloadPage() }}>Close</Button>
+                                <Button  className='float-right' variant="primary" onClick={(e) => { setIsShown(true); reloadPage() }}>Close</Button>
                             </div>
                         </Scrollbars>
                     </DeviceFrameset>

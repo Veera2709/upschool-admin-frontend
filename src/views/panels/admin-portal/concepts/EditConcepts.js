@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Formik } from 'formik';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
-import Select from 'react-select';
+import Select from 'react-draggable-multi-select';
 import ReactTags from 'react-tag-autocomplete';
 import * as Yup from 'yup';
 import { Row, Col } from 'react-bootstrap';
@@ -457,10 +457,11 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
         console.log(event);
 
         let valuesArr = [];
-        for (let i = 0; i < event.length; i++) {
-            valuesArr.push(event[i].value)
+        if(event){
+            for (let i = 0; i < event.length; i++) {
+                valuesArr.push(event[i].value)
+            }
         }
-
         console.log(valuesArr);
         setSelectedDigicards(valuesArr);
     }
@@ -471,10 +472,12 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
         console.log(event);
 
         let valuesArr = [];
-        for (let i = 0; i < event.length; i++) {
-            valuesArr.push(event[i].value)
+        if(event){
+            for (let i = 0; i < event.length; i++) {
+                valuesArr.push(event[i].value)
+            }
+    
         }
-
         console.log(valuesArr);
         setSelectedBasicGroups(valuesArr);
     }
@@ -485,9 +488,12 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
         console.log(event);
 
         let valuesArr = [];
-        for (let i = 0; i < event.length; i++) {
-            valuesArr.push(event[i].value)
+        if(event){
+            for (let i = 0; i < event.length; i++) {
+                valuesArr.push(event[i].value)
+            }
         }
+      
 
         console.log(valuesArr);
         setSelectedIntermediateGroups(valuesArr);
@@ -499,9 +505,12 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
         console.log(event);
 
         let valuesArr = [];
-        for (let i = 0; i < event.length; i++) {
-            valuesArr.push(event[i].value)
+        if(event){
+            for (let i = 0; i < event.length; i++) {
+                valuesArr.push(event[i].value)
+            }
         }
+        
 
         console.log(valuesArr);
         setSelectedAdvancedGroups(valuesArr);
@@ -512,10 +521,11 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
         console.log(event);
 
         let valuesArr = [];
-        for (let i = 0; i < event.length; i++) {
-            valuesArr.push(event[i].value)
+        if(event){
+            for (let i = 0; i < event.length; i++) {
+                valuesArr.push(event[i].value)
+            }
         }
-
         console.log(valuesArr);
         setSelectedRelatedConcepts(valuesArr);
     }

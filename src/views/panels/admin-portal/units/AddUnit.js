@@ -18,7 +18,7 @@ import { areFilesInvalid, isEmptyObject } from '../../../../util/utils';
 import { useEffect } from 'react';
 import Multiselect from 'multiselect-react-dropdown';
 import { fetchAllChapters } from '../../../api/CommonApi'
-import Select from 'react-select';
+import Select from 'react-draggable-multi-select';
 import { useHistory, useParams } from 'react-router-dom';
 
 
@@ -55,8 +55,10 @@ const AddUnit = ({ setOpenAddUnit }) => {
 
     const getMultiOptions = (event) => {
         let valuesArr = [];
-        for (let i = 0; i < event.length; i++) {
-            valuesArr.push(event[i].value)
+        if (event) {
+            for (let i = 0; i < event.length; i++) {
+                valuesArr.push(event[i].value)
+            }
         }
         setChapterOption(valuesArr);
     }
@@ -226,26 +228,26 @@ const AddUnit = ({ setOpenAddUnit }) => {
                                     />
                                     {touched.unittitle && errors.unittitle && <small className="text-danger form-text">{errors.unittitle}</small>}
                                 </div><br />
-                                <OverlayTrigger placement="top" overlay={<Tooltip id={`tooltip-top`} style={{zIndex:1151 }}>The selected order will be the index of chapter!</Tooltip>}>
-                                <div className="form-group fill">
-                                    <label className="floating-label" htmlFor="chapter">
-                                        <small className="text-danger">* </small> Chapters
-                                    </label>
-                                    <Select
-                                        className="basic-single"
-                                        classNamePrefix="select"
-                                        name="color"
-                                        isMulti
-                                        closeMenuOnSelect={false}
-                                        onChange={(e) => { getMultiOptions(e); setIsShown(true) }}
-                                        options={topicTitles}
-                                        placeholder="Select"
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                    />
-                                    <br />
-                                    <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>Field Required</small>
-                                </div>
+                                <OverlayTrigger placement="top" overlay={<Tooltip id={`tooltip-top`} style={{ zIndex: 1151 }}>The selected order will be the index of chapter!</Tooltip>}>
+                                    <div className="form-group fill">
+                                        <label className="floating-label" htmlFor="chapter">
+                                            <small className="text-danger">* </small> Chapters
+                                        </label>
+                                        <Select
+                                            className="basic-single"
+                                            classNamePrefix="select"
+                                            name="color"
+                                            isMulti
+                                            closeMenuOnSelect={false}
+                                            onChange={(e) => { getMultiOptions(e); setIsShown(true) }}
+                                            options={topicTitles}
+                                            placeholder="Select"
+                                            menuPortalTarget={document.body}
+                                            styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                                        />
+                                        <br />
+                                        <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>Field Required</small>
+                                    </div>
                                 </OverlayTrigger>
                                 <div className="form-group fill" htmlFor="unit_description">
                                     <Form.Label> <small className="text-danger">* </small>Unit Description</Form.Label>
