@@ -78,7 +78,6 @@ const ListQuestions = () => {
                             >
 
                                 <Tab eventKey={1} title="Saved" >
-                                   
                                     {sessionStorage.setItem('question_status', _questionStatus)}
                                     <QuestionsTableView _questionStatus={_questionStatus} />
                                 </Tab>

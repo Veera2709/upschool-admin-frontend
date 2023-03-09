@@ -8485,10 +8485,10 @@
     "domhandler" "2.4.2"
     "htmlparser2" "3.10.1"
 
-"html-dom-parser@3.1.2":
-  "integrity" "sha512-mLTtl3pVn3HnqZSZzW3xVs/mJAKrG1yIw3wlp+9bdoZHHLaBRvELdpfShiPVLyjPypq1Fugv2KMDoGHW4lVXnw=="
-  "resolved" "https://registry.npmjs.org/html-dom-parser/-/html-dom-parser-3.1.2.tgz"
-  "version" "3.1.2"
+"html-dom-parser@3.1.5":
+  "integrity" "sha512-9KTy2C7G7OcDDvnJ3Y7np84RF3OuO7X0PE5ZXyrNdOTI9NYam8thaUtxGEIM5lUqJkJR8T1aVe+zlN6H4PCtuA=="
+  "resolved" "https://registry.npmjs.org/html-dom-parser/-/html-dom-parser-3.1.5.tgz"
+  "version" "3.1.5"
   dependencies:
     "domhandler" "5.0.3"
     "htmlparser2" "8.0.1"
@@ -8533,15 +8533,15 @@
     "react-property" "1.0.1"
     "style-to-object" "0.3.0"
 
-"html-react-parser@^3.0.4":
-  "integrity" "sha512-va68PSmC7uA6PbOEc9yuw5Mu3OHPXmFKUpkLGvUPdTuNrZ0CJZk1s/8X/FaHjswK/6uZghu2U02tJjussT8+uw=="
-  "resolved" "https://registry.npmjs.org/html-react-parser/-/html-react-parser-3.0.4.tgz"
-  "version" "3.0.4"
+"html-react-parser@^3.0.12":
+  "integrity" "sha512-eOXg0EvKhXjYjljd8gtBPzL8Pqf49uRrb9JAjYLlqYFr95E+HoCvGt0/w0J1E/fR1ArsEMWY+K6M4/wUuvaQ5Q=="
+  "resolved" "https://registry.npmjs.org/html-react-parser/-/html-react-parser-3.0.12.tgz"
+  "version" "3.0.12"
   dependencies:
     "domhandler" "5.0.3"
-    "html-dom-parser" "3.1.2"
+    "html-dom-parser" "3.1.5"
     "react-property" "2.0.0"
-    "style-to-js" "1.1.1"
+    "style-to-js" "1.1.3"
 
 "html-webpack-plugin@4.5.0":
   "integrity" "sha512-MouoXEYSjTzCrjIxWwg8gxL5fE2X2WZJLmBYXlaJhQUH5K/b5OrqmV7T4dB7iu0xkmJ6JlUuV6fFVtnqbPopZw=="
@@ -12505,6 +12505,13 @@
     "json-parse-even-better-errors" "^2.3.0"
     "lines-and-columns" "^1.1.6"
 
+"parse5@^3.0.2":
+  "integrity" "sha512-rgO9Zg5LLLkfJF9E6CCmXlSE4UVceloys8JrFqCcHloC3usd/kJCyPDwH2SOlzix2j3xaP9sUX3e8+kvkuleAA=="
+  "resolved" "https://registry.npmjs.org/parse5/-/parse5-3.0.3.tgz"
+  "version" "3.0.3"
+  dependencies:
+    "@types/node" "*"
+
 "parse5@6.0.1":
   "integrity" "sha512-Ofn/CTFzRGTTxwpNEs9PP93gXShHcTq255nzRYSKe8AkVpZY7e1fpmTfOyoIvjP5HG7Z2ZM7VS9PPhQGW2pOpw=="
   "resolved" "https://registry.npmjs.org/parse5/-/parse5-6.0.1.tgz"
@@ -14044,6 +14051,11 @@
     "regenerator-runtime" "^0.13.7"
     "whatwg-fetch" "^3.4.1"
 
+"react-attr-converter@^0.3.1":
+  "integrity" "sha512-dSxo2Mn6Zx4HajeCeQNLefwEO4kNtV/0E682R1+ZTyFRPqxDa5zYb5qM/ocqw9Bxr/kFQO0IUiqdV7wdHw+Cdg=="
+  "resolved" "https://registry.npmjs.org/react-attr-converter/-/react-attr-converter-0.3.1.tgz"
+  "version" "0.3.1"
+
 "react-bootstrap@^1.4.0":
   "integrity" "sha512-z3BhBD4bEZuLP8VrYqAD7OT7axdcSkkyvWBWnS2U/4MhyabUihrUyucPWkan7aMI1XIHbmH4LCpEtzWGfx/yfA=="
   "resolved" "https://registry.npmjs.org/react-bootstrap/-/react-bootstrap-1.6.4.tgz"
@@ -14733,6 +14745,14 @@
     "tslib" "^1.0.0"
     "use-callback-ref" "^1.2.3"
     "use-sidecar" "^1.0.1"
+
+"react-render-html@^0.6.0":
+  "integrity" "sha512-F9Xn8Iy2oJvepMdDrN+XUPOwqv3ni856ikuvu/dyJ2guozN01vF0C55Ja+CQfnziQNlLevSVXzuQKYa/mhyjAQ=="
+  "resolved" "https://registry.npmjs.org/react-render-html/-/react-render-html-0.6.0.tgz"
+  "version" "0.6.0"
+  dependencies:
+    "parse5" "^3.0.2"
+    "react-attr-converter" "^0.3.1"
 
 "react-resize-detector@^6.6.3":
   "integrity" "sha512-0FaEcUBAbn+pq3PT5a9hHRebUfuS1SRLGLpIw8LydU7zX429I6XJgKerKAMPsJH0qWAl6o5bVKNqFJqr6tGPYw=="
@@ -16882,17 +16902,24 @@
     "loader-utils" "^2.0.0"
     "schema-utils" "^2.7.0"
 
-"style-to-js@1.1.1":
-  "integrity" "sha512-RJ18Z9t2B02sYhZtfWKQq5uplVctgvjTfLWT7+Eb1zjUjIrWzX5SdlkwLGQozrqarTmEzJJ/YmdNJCUNI47elg=="
-  "resolved" "https://registry.npmjs.org/style-to-js/-/style-to-js-1.1.1.tgz"
-  "version" "1.1.1"
+"style-to-js@1.1.3":
+  "integrity" "sha512-zKI5gN/zb7LS/Vm0eUwjmjrXWw8IMtyA8aPBJZdYiQTXj4+wQ3IucOLIOnF7zCHxvW8UhIGh/uZh/t9zEHXNTQ=="
+  "resolved" "https://registry.npmjs.org/style-to-js/-/style-to-js-1.1.3.tgz"
+  "version" "1.1.3"
   dependencies:
-    "style-to-object" "0.3.0"
+    "style-to-object" "0.4.1"
 
 "style-to-object@0.3.0":
   "integrity" "sha512-CzFnRRXhzWIdItT3OmF8SQfWyahHhjq3HwcMNCNLn+N7klOOqPjMeG/4JSu77D7ypZdGvSzvkrbyeTMizz2VrA=="
   "resolved" "https://registry.npmjs.org/style-to-object/-/style-to-object-0.3.0.tgz"
   "version" "0.3.0"
+  dependencies:
+    "inline-style-parser" "0.1.1"
+
+"style-to-object@0.4.1":
+  "integrity" "sha512-HFpbb5gr2ypci7Qw+IOhnP2zOU7e77b+rzM+wTzXzfi1PrtBCX0E7Pk4wL4iTLnhzZ+JgEGAhX81ebTg/aYjQw=="
+  "resolved" "https://registry.npmjs.org/style-to-object/-/style-to-object-0.4.1.tgz"
+  "version" "0.4.1"
   dependencies:
     "inline-style-parser" "0.1.1"
 

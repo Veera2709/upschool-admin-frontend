@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Row, Col, Button, Card, } from 'react-bootstrap';
-import Select from 'react-select';
+import Select from 'react-draggable-multi-select';
 import Swal from 'sweetalert2';
 import axios from 'axios';
 import * as Yup from 'yup';
@@ -58,10 +58,11 @@ const AddGroups = ({ className, ...rest }) => {
         console.log(event);
 
         let valuesArr = [];
-        for (let i = 0; i < event.length; i++) {
-            valuesArr.push(event[i].value)
+        if(event){
+            for (let i = 0; i < event.length; i++) {
+                valuesArr.push(event[i].value)
+            }
         }
-
         console.log(valuesArr);
         setSelectedQuestions(valuesArr);
     }
@@ -71,10 +72,12 @@ const AddGroups = ({ className, ...rest }) => {
         console.log(event);
 
         let valuesArr = [];
-        for (let i = 0; i < event.length; i++) {
-            valuesArr.push(event[i].value)
+        if(event){
+            for (let i = 0; i < event.length; i++) {
+                valuesArr.push(event[i].value)
+            }
+    
         }
-
         console.log(valuesArr);
         setSelectedDigicards(valuesArr);
     }
@@ -85,10 +88,11 @@ const AddGroups = ({ className, ...rest }) => {
         console.log(event);
 
         let valuesArr = [];
-        for (let i = 0; i < event.length; i++) {
-            valuesArr.push(event[i].value)
+        if(event){
+            for (let i = 0; i < event.length; i++) {
+                valuesArr.push(event[i].value)
+            }
         }
-
         console.log(valuesArr);
         setSelectedLevels(valuesArr);
     }

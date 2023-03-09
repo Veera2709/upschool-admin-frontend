@@ -52,7 +52,7 @@ const AddUsers = ({ setOpenAddTopic }) => {
     const [isDate, setDate] = useState()
     const [isRoleRep, setIsRoleRep] = useState(false)
     const [isDateReq, setIsDateReq] = useState(false)
-    const [displayHeading, setDisplayHeading] = useState(sessionStorage.getItem('Upusers_type'));
+    const [displayHeading, setDisplayHeading] = useState(sessionStorage.getItem('upUsers_status'));
     const [displayHeader, setDisplayHeader] = useState(true);
     const [isSelected, setIsSelected] = useState(false);
     const [isSelectedEntity, setIsSelectedEntity] = useState(false);
@@ -94,8 +94,6 @@ const AddUsers = ({ setOpenAddTopic }) => {
                 const i = data[index]['roles'].indexOf(type);
                 data[index]['roles'].splice(i, 1);
             }
-
-
         }
     }
 
@@ -119,7 +117,7 @@ const AddUsers = ({ setOpenAddTopic }) => {
                         title: 'User added successfully!',
                         icon: 'success',
                     }).then((willDelete) => {
-
+                        history.push('/admin-portal/active-upSchoolUsers')
                         window.location.reload();
 
                     })
@@ -218,12 +216,12 @@ const AddUsers = ({ setOpenAddTopic }) => {
                         validationSchema={Yup.object().shape({
                             firstName: Yup.string()
                                 .trim()
-                                .min(2, Constants.cmsRole.FirstNameTooShort)
+                                .min(1, Constants.cmsRole.FirstNameTooShort)
                                 .max(32, Constants.cmsRole.FirstNameTooLong)
                                 .required(Constants.cmsRole.FirstName),
                             lastName: Yup.string()
                                 .trim()
-                                .min(2, Constants.cmsRole.LastNameTooShort)
+                                .min(1, Constants.cmsRole.LastNameTooShort)
                                 .max(32, Constants.cmsRole.LastNameTooLong)
                                 .required(Constants.cmsRole.LastName),
                             userEmail: Yup.string()
@@ -413,7 +411,7 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                     <Col sm={6}>
                                         <div className='d-flex justify-content-between'>
                                             <Form.Label className="floating-label" ><small className="text-danger">* </small>Creator</Form.Label>
-                                            <Form.Label className="floating-label" ><small className="text-danger">* </small>Previewer</Form.Label>
+                                            <Form.Label className="floating-label" ><small className="text-danger">* </small>Reviewer</Form.Label>
                                             <Form.Label className="floating-label" style={{ marginRight: '-15px' }} ><small className="text-danger">* </small>Publisher</Form.Label>
                                         </div>
 
@@ -465,14 +463,14 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                                 <div>
                                                     <Form.Control
                                                         className="form-control"
-                                                        name="previewer"
+                                                        name="reviewer"
                                                         onBlur={handleBlur}
                                                         onChange={(e) => {
-                                                            getUserRole(e, 'previewer', index);
+                                                            getUserRole(e, 'reviewer', index);
                                                             setIsSelected(false);
                                                         }}
                                                         type="checkbox"
-                                                        value={values.previewer}
+                                                        value={values.reviewer}
                                                         style={{ width: '25px' }}
                                                         key={index}
                                                     // defaultChecked={true}
