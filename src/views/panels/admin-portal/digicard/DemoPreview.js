@@ -10,14 +10,14 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import ReactHtmlParser from 'react-html-parser'
 import { Scrollbars } from 'react-custom-scrollbars';
 import { Link, useHistory, useParams } from 'react-router-dom';
-import { fetchIndividualDigiCard, fetchDigiCardAudioContent } from '../../../api/CommonApi'
+import { fetchIndividualDigiCard, fetchAllDigiCards } from '../../../api/CommonApi'
 import dynamicUrl from '../../../../helper/dynamicUrls';
 
 
 
 
 
-function Preview() {
+function DemoPreview() {
 
     const [device, setDevice] = useState();
     const [data, setData] = useState();
@@ -115,7 +115,6 @@ function Preview() {
                             <div style={{ display: isShown ? 'none' : 'block', whiteSpace: 'pre-wrap', overflowWrap: 'break-word', marginLeft: '20px', marginRight: '20px' }} id='digicardText'>
                                 <h3 id='digicardTitle'>{previewData[0].digi_card_title}</h3><br />
                                 {ReactHtmlParser(previewData[0].digi_card_content)}
-                                {/* <p><i className='fas fa-volume-up' onClick={() => { document.getElementById('audio0').play() }} style={{}}><audio id='audio0'><source src={'http://codeskulptor-demos.commondatastorage.googleapis.com/GalaxyInvaders/theme_01.mp3'}/></audio></i></p> */}
                                 <br />
                                 <div>
                                     <label className="floating-label" htmlFor="digicard">
@@ -137,4 +136,4 @@ function Preview() {
     )
 }
 
-export default Preview;
+export default DemoPreview;

@@ -286,6 +286,8 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                                     setIsSelectedEntity(true)
                                                 } else if (validator.length > 0) {
                                                     setIsSelected(true)
+                                                } else if (userRoles.length <= 0) {
+                                                    setIsSelected(true)
                                                 } else {
                                                     var formData = {
                                                         user_id: id,
@@ -548,7 +550,12 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                                                 </Col>
                                                                 <Col sm={2}>
                                                                     <Button className="btn btn-icon btn-rounded btn-danger"
-                                                                        onClick={(e) => { removeRole(index) }}
+                                                                        onClick={(e) => {
+                                                                            removeRole(index);
+                                                                            setIsRoleRep(false);
+                                                                            setIsSelected(false);
+                                                                            setIsSelectedEntity(false)
+                                                                        }}
                                                                         style={{ marginLeft: "40px", paddingTop: '2px', paddingBottom: '2px', marginTop: '4px' }}
                                                                     >
                                                                         <i className='feather icon-trash-2'></i>
@@ -568,7 +575,7 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                                                     <small className="text-danger form-text">Entity Not selected!</small>
                                                                 )}
                                                                 <br />
-                                                                <button type='button' onClick={addOneRole}>+</button>
+                                                                <button type='button' onClick={(e)=>{addOneRole(e);setIsSelected(false)}}>+</button>
                                                             </Col>
 
                                                         </Row>
