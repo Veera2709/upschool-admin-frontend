@@ -30,6 +30,33 @@ export const fetchIndividualDigiCard = async (url, digi_card_id) => {
     });
 };
 
+
+export const fetchDigiCardAudioContent = async ( digi_card_id) => {
+    return new Promise((resolve, reject) => {
+        axios
+            .post(
+                url.fetchDigiCardAudioContent,
+                {
+                    data: { digi_card_id: digi_card_id }
+                },
+                {
+                    headers: {
+                        Authorization: SessionStorage.getItem('user_jwt')
+                    }
+                }
+            )
+            .then((response) => {
+                console.log(response);
+                resolve(response.data);
+            })
+            .catch((error) => {
+                console.log(error);
+                resolve({ Error: error });
+
+            });
+    });
+};
+
 export const fetchAllDigiCards = (url) => {
     return new Promise((resolve, reject) => {
         axios.post(url, {}, {
@@ -63,9 +90,13 @@ export const changeStatusID = (url, payload) => {
     });
 }
 
-export const fetchAllTopics = () => {
+export const fetchAllTopics = (topicStatus) => {
     return new Promise((resolve, reject) => {
-        axios.post(url.fetchAllTopics, {}, {
+        axios.post(url.fetchAllTopics, {
+            data:{
+                topic_status:topicStatus
+            }
+        }, {
             headers: { Authorization: sessionStorage.getItem('user_jwt') }
         })
             .then((response) => {

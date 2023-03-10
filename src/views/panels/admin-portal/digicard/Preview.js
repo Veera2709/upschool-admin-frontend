@@ -10,7 +10,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import ReactHtmlParser from 'react-html-parser'
 import { Scrollbars } from 'react-custom-scrollbars';
 import { Link, useHistory, useParams } from 'react-router-dom';
-import { fetchIndividualDigiCard, fetchAllDigiCards } from '../../../api/CommonApi'
+import { fetchIndividualDigiCard, fetchDigiCardAudioContent } from '../../../api/CommonApi'
 import dynamicUrl from '../../../../helper/dynamicUrls';
 
 
@@ -115,7 +115,6 @@ function Preview() {
                                 <h3 id='digicardTitle'>{previewData[0].digi_card_title}</h3><br />
                                 {/* {ReactHtmlParser(previewData[0].digi_card_content)} */}
                                 {ReactHtmlParser(previewData[0].preview_content)}
-
                                 <br />
                                 <div>
                                     <label className="floating-label" htmlFor="digicard">
