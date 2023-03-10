@@ -587,7 +587,7 @@ const QuizConfiguration = ({ className, rest, id }) => {
                                                         <Row>
                                                             <Col>
                                                                 <label className="floating-label">
-                                                                    <small className="text-danger">* </small>Is Level 2 Mandatory?
+                                                                    <small className="text-danger"></small>Is Level 2 Mandatory?
                                                                 </label>
                                                             </Col>
                                                             <Col xs={3}>
@@ -615,7 +615,7 @@ const QuizConfiguration = ({ className, rest, id }) => {
                                                         <Row>
                                                             <Col>
                                                                 <label className="floating-label">
-                                                                    <small className="text-danger">* </small>Is reading a Digicard Mandatory?
+                                                                    <small className="text-danger"></small>Is reading a Digicard Mandatory?
                                                                 </label>
                                                             </Col>
                                                             <Col xs={3}>
@@ -657,7 +657,7 @@ const QuizConfiguration = ({ className, rest, id }) => {
                                                         <Row>
                                                             <Col>
                                                                 <label className="floating-label">
-                                                                    <small className="text-danger">* </small>Recommend teachers on focus areas?
+                                                                    <small className="text-danger"></small>Recommend teachers on focus areas?
                                                                 </label>
                                                             </Col>
                                                             <Col xs={3}>
@@ -889,7 +889,7 @@ const QuizConfiguration = ({ className, rest, id }) => {
                                                         <Row >
                                                             <Col>
                                                                 <label className="floating-label">
-                                                                    <small className="text-danger">* </small>Is reading a Digicard Mandatory?
+                                                                    <small className="text-danger"></small>Is reading a Digicard Mandatory?
                                                                 </label>
                                                             </Col>
                                                             <Col xs={3}>
@@ -927,7 +927,7 @@ const QuizConfiguration = ({ className, rest, id }) => {
                                                         <Row>
                                                             <Col>
                                                                 <label className="floating-label">
-                                                                    <small className="text-danger">* </small>Recommend teachers on focus areas?
+                                                                    <small className="text-danger"></small>Recommend teachers on focus areas?
                                                                 </label>
                                                             </Col>
                                                             <Col xs={3}>

@@ -731,7 +731,7 @@ const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive 
                                                                         <div className="col">
                                                                             <label className="floating-label" >
                                                                                 <small className="text-danger">
-                                                                                    * </small>
+                                                                                </small>
                                                                                 Subscription Active
                                                                             </label>
                                                                         </div>

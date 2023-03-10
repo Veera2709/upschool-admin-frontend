@@ -66,8 +66,6 @@ function ArticleRTE({
             "arial black",
             "tahoma",
             "Lucida Console",
-            "CONCLUSSION",
-            // "\"<p>Conclussion</p>\""
           ],
           preview: [{ pathpath: '/admin-portal/admin-dashboard' }
           ],

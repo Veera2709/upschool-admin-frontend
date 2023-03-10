@@ -76,7 +76,6 @@ function Preview() {
 
     return isEmptyObject(previewData) ? null : (
 
-
         <div>
             <Row>
                 <Col sm={2}>
@@ -114,7 +113,9 @@ function Preview() {
                             </div>
                             <div style={{ display: isShown ? 'none' : 'block', whiteSpace: 'pre-wrap', overflowWrap: 'break-word', marginLeft: '20px', marginRight: '20px' }} id='digicardText'>
                                 <h3 id='digicardTitle'>{previewData[0].digi_card_title}</h3><br />
-                                {ReactHtmlParser(previewData[0].digi_card_content)}
+                                {/* {ReactHtmlParser(previewData[0].digi_card_content)} */}
+                                {ReactHtmlParser(previewData[0].preview_content)}
+
                                 <br />
                                 <div>
                                     <label className="floating-label" htmlFor="digicard">

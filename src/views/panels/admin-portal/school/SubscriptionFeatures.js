@@ -480,7 +480,7 @@ const SubscriptionFeatures = ({ className, rest, id }) => {
                                                         <Row>
                                                             <Col>
                                                                 <label className="floating-label">
-                                                                    <small className="text-danger">* </small>
+                                                                    <small className="text-danger"></small>
                                                                     Enable Library feature on Student App?
                                                                 </label>
                                                             </Col>
@@ -512,7 +512,7 @@ const SubscriptionFeatures = ({ className, rest, id }) => {
                                                         <Row>
                                                             <Col>
                                                                 <label className="floating-label">
-                                                                    <small className="text-danger">* </small>Automate evaluation of worksheets or test papers?
+                                                                    <small className="text-danger"></small>Automate evaluation of worksheets or test papers?
                                                                 </label>
                                                             </Col>
                                                             <Col xs={2}>
