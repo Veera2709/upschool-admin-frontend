@@ -39,7 +39,7 @@ function ArticleRTE({
         setOptions={{
           imageUploadSizeLimit: "250000",
           katex: katex,
-          plugins:plugins,
+          plugins: plugins,
           // plugins:[listType],
           font: [
             'Arial',
@@ -83,6 +83,7 @@ function ArticleRTE({
             ['fullScreen'],
             ['preview'],
             ['math'],
+            ['print']
           ],
         }}
       />
