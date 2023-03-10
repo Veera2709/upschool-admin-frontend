@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Formik } from 'formik';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
-import Select from 'react-select';
+import Select from 'react-draggable-multi-select';
 import ReactTags from 'react-tag-autocomplete';
 import * as Yup from 'yup';
 import { Row, Col } from 'react-bootstrap';
@@ -280,10 +280,11 @@ const EditSubjects = ({ _units, _relatedSubjects, editSubjectID, setIsOpenEditSu
         console.log(event);
 
         let valuesArr = [];
-        for (let i = 0; i < event.length; i++) {
-            valuesArr.push(event[i].value)
+        if(event){
+            for (let i = 0; i < event.length; i++) {
+                valuesArr.push(event[i].value)
+            }
         }
-
         console.log(valuesArr);
         setSelectedUnits(valuesArr);
     }
@@ -293,10 +294,11 @@ const EditSubjects = ({ _units, _relatedSubjects, editSubjectID, setIsOpenEditSu
         console.log(event);
 
         let valuesArr = [];
-        for (let i = 0; i < event.length; i++) {
-            valuesArr.push(event[i].value)
+        if(event){
+            for (let i = 0; i < event.length; i++) {
+                valuesArr.push(event[i].value)
+            }
         }
-
         console.log(valuesArr);
         setSelectedRelatedSubjects(valuesArr);
     }

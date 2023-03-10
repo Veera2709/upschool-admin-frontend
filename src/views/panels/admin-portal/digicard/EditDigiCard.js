@@ -17,7 +17,7 @@ import { areFilesInvalid, voiceInvalid } from '../../../../util/utils';
 import Multiselect from 'multiselect-react-dropdown';
 import { fetchIndividualDigiCard, fetchAllDigiCards } from '../../../api/CommonApi'
 import { Link, useHistory, useParams } from 'react-router-dom';
-import Select from 'react-select';
+import Select from 'react-draggable-multi-select';
 import BasicSpinner from '../../../../helper/BasicSpinner';
 
 
@@ -202,8 +202,10 @@ const EditDigiCard = () => {
 
     const getMultiOptions = (event) => {
         let valuesArr = [];
-        for (let i = 0; i < event.length; i++) {
-            valuesArr.push(event[i].value)
+        if (event) {
+            for (let i = 0; i < event.length; i++) {
+                valuesArr.push(event[i].value)
+            }
         }
         selectedOption(valuesArr);
     }
@@ -655,7 +657,7 @@ const EditDigiCard = () => {
                                                         {imageErr && (
                                                             <small className="text-danger form-text">Digicard Image is required!</small>
                                                         )}
-                                                        {imgValidation && (<small className="text-danger form-text">Invalid File Type or File size is Exceed More Than 1MB</small>)}
+                                                        {imgValidation && (<small className="text-danger form-text">Invalid File Type or File size is Exceed More Than 2MB</small>)}
                                                     </div>
 
                                                     <div className="form-group fill">

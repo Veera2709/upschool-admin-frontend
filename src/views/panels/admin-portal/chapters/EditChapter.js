@@ -13,7 +13,7 @@ import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import withReactContent from 'sweetalert2-react-content';
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import Select from 'react-select';
+import Select from 'react-draggable-multi-select';
 import Multiselect from 'multiselect-react-dropdown';
 import { fetchIndividualChapter, fetchPostLearningTopics, fetchPreLearningTopics } from '../../../api/CommonApi'
 import { useHistory } from 'react-router-dom';
@@ -91,10 +91,7 @@ const EditChapter = ({ setOpenEditChapter, chapterId }) => {
             let resultData = allTopicdData.Items
             console.log("resultData", resultData);
             resultData.forEach((item, index) => {
-                if (item.topic_status === 'Active') {
-                    console.log();
-                    postLeraning.push({ value: item.topic_id, label: item.topic_title })
-                }
+                postLeraning.push({ value: item.topic_id, label: item.topic_title })
             }
             );
             console.log("postLeraning", postLeraning);
@@ -112,10 +109,7 @@ const EditChapter = ({ setOpenEditChapter, chapterId }) => {
             } else {
                 let preData = allPreLerningdData.Items
                 preData.forEach((itempre, index) => {
-                    if (itempre.topic_status === 'Active') {
-                        console.log();
-                        preLeraning.push({ value: itempre.topic_id, label: itempre.topic_title })
-                    }
+                    preLeraning.push({ value: itempre.topic_id, label: itempre.topic_title })
                 });
                 setTopicTitlesPre(preLeraning)
             }
@@ -173,16 +167,20 @@ const EditChapter = ({ setOpenEditChapter, chapterId }) => {
 
     const prelerningOtions = (event_pre) => {
         let values_pre = [];
-        for (let i = 0; i < event_pre.length; i++) {
-            values_pre.push(event_pre[i].value)
+        if (event_pre) {
+            for (let i = 0; i < event_pre.length; i++) {
+                values_pre.push(event_pre[i].value)
+            }
         }
         setPrelearningOptions(values_pre);
     }
 
     const postlerningOtions = (event) => {
         let valuesArr = [];
-        for (let i = 0; i < event.length; i++) {
-            valuesArr.push(event[i].value)
+        if (event) {
+            for (let i = 0; i < event.length; i++) {
+                valuesArr.push(event[i].value)
+            }
         }
         setPostlearningOption(valuesArr);
     }
@@ -224,7 +222,6 @@ const EditChapter = ({ setOpenEditChapter, chapterId }) => {
                                 else if (values.chapter_description == undefined || values.chapter_description.trim() == '') {
                                     setIsShownDes(false)
                                 } else {
-                                    setOpenEditChapter(false)
                                     console.log("on submit");
                                     var formData = {
                                         chapter_id: chapterId,
@@ -245,6 +242,7 @@ const EditChapter = ({ setOpenEditChapter, chapterId }) => {
                                                 hideLoader();
                                                 setDisableButton(false);
                                             } else {
+                                                setOpenEditChapter(false)
                                                 // sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.EditChapter });
                                                 MySwal.fire({
 

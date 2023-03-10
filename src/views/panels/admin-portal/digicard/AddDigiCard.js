@@ -19,7 +19,7 @@ import ArticleRTE from './ArticleRTE'
 import { areFilesInvalid, voiceInvalid } from '../../../../util/utils';
 import logo from './img/logo.png'
 import Multiselect from 'multiselect-react-dropdown';
-import Select from 'react-select';
+import Select from 'react-draggable-multi-select';
 
 import { fetchAllDigiCards } from '../../../api/CommonApi'
 import { Link, useHistory } from 'react-router-dom';
@@ -58,8 +58,8 @@ const AddDigiCard = (
   const [tags, setTags] = useState([]);
   const [ImgURL, setImgURL] = useState([]);
   const [imgFile, setImgFile] = useState([]);
-  const [articleData, setArticleData] = useState("");
-  const [articleDataTitle, setArticleDataTtitle] = useState("");
+  const [articleData, setArticleData] = useState();
+  const [articleDataTitle, setArticleDataTtitle] = useState();
   const [digitalTitles, setDigitalTitles] = useState([]);
   const [imgValidation, setImgValidation] = useState(true);
   const [voiceError, setVoiceError] = useState(true);
@@ -175,8 +175,10 @@ const AddDigiCard = (
 
   const getMultiOptions = (event) => {
     let valuesArr = [];
-    for (let i = 0; i < event.length; i++) {
-      valuesArr.push(event[i].value)
+    if(event){
+      for (let i = 0; i < event.length; i++) {
+        valuesArr.push(event[i].value)
+      }
     }
     setMultiOptions(valuesArr);
   }
@@ -442,7 +444,7 @@ const AddDigiCard = (
                           <small className="text-danger form-text">{errors.digicard_image}</small>
                         )}
 
-                        <small className="text-danger form-text" style={{ display: imgValidation ? 'none' : 'block' }}>Invalid File Type or File size is Exceed More Than 1MB</small>
+                        <small className="text-danger form-text" style={{ display: imgValidation ? 'none' : 'block' }}>Invalid File Type or File size is Exceed More Than 2MB</small>
                       </div>
 
 

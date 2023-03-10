@@ -10,7 +10,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import ReactHtmlParser from 'react-html-parser'
 import { Scrollbars } from 'react-custom-scrollbars';
 import { Link, useHistory, useParams } from 'react-router-dom';
-import { fetchIndividualDigiCard, fetchAllDigiCards } from '../../../api/CommonApi'
+import { fetchIndividualDigiCard, fetchDigiCardAudioContent } from '../../../api/CommonApi'
 import dynamicUrl from '../../../../helper/dynamicUrls';
 
 
@@ -76,7 +76,6 @@ function Preview() {
 
     return isEmptyObject(previewData) ? null : (
 
-
         <div>
             <Row>
                 <Col sm={2}>
@@ -88,6 +87,7 @@ function Preview() {
                             <Button id='primary' variant="primary" onClick={(e) => { setDevice("HTC One"); setId('card1'); sessionStorage.setItem('Device', 'HTC One') }}>HTC One </Button> <br />
                             <Button id='primary' variant="primary" onClick={(e) => { setDevice("Samsung Galaxy S5"); setId('card1'); sessionStorage.setItem('Device', 'Samsung Galaxy S5') }}>Samsung Galaxy S5</Button><br />
                             <Button id='primary' variant="primary" onClick={() => { setDevice("iPad Mini"); setId('ipad'); sessionStorage.setItem('Device', 'iPad Mini') }}>Ipad</Button><br />
+                            <Button id='primary' variant="primary" onClick={() => { setDevice("MacBook Pro"); setId('MacBook Pro'); sessionStorage.setItem('Device', 'MacBook Pro') }}>MacBook Pro</Button><br />
                         </Col>
                     </Row>
                 </Col>
@@ -113,7 +113,8 @@ function Preview() {
                             </div>
                             <div style={{ display: isShown ? 'none' : 'block', whiteSpace: 'pre-wrap', overflowWrap: 'break-word', marginLeft: '20px', marginRight: '20px' }} id='digicardText'>
                                 <h3 id='digicardTitle'>{previewData[0].digi_card_title}</h3><br />
-                                {ReactHtmlParser(previewData[0].digi_card_content)}
+                                {/* {ReactHtmlParser(previewData[0].digi_card_content)} */}
+                                {ReactHtmlParser(previewData[0].preview_content)}
                                 <br />
                                 <div>
                                     <label className="floating-label" htmlFor="digicard">
@@ -124,7 +125,7 @@ function Preview() {
                                     </audio>
                                 </div>
                                 <br />
-                                <Button className='float-right' variant="primary" onClick={(e) => { setIsShown(true); reloadPage() }}>Close</Button>
+                                <Button  className='float-right' variant="primary" onClick={(e) => { setIsShown(true); reloadPage() }}>Close</Button>
                             </div>
                         </Scrollbars>
                     </DeviceFrameset>

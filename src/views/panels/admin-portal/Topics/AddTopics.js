@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import Select from 'react-select';
+import Select from 'react-draggable-multi-select';
 import { Button, Card, Col, Form, Row } from 'react-bootstrap';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 // import dynamicUrl from '../../../helper/dynamicUrl';
@@ -122,16 +122,13 @@ const AddTopics = ({ setOpenAddTopic }) => {
             let resultConceptData = allConceptsData.Items
             let conceptArr = [];
             resultConceptData.forEach((item, index) => {
-                if (item.concept_status === 'Active') {
-                    console.log();
-                    conceptArr.push({ value: item.concept_id, label: item.concept_title })
-                }
+                conceptArr.push({ value: item.concept_id, label: item.concept_title })
             }
             );
             console.log("conceptArr", conceptArr);
             setConceptTitles(conceptArr)
 
-            const allTopicsData = await fetchAllTopics();
+            const allTopicsData = await fetchAllTopics('Active');
             if (allTopicsData.Error) {
                 console.log("allTopicsData,Error", allTopicsData, Error);
                 if (allTopicsData.Error.response.data == 'Invalid Token') {
@@ -145,10 +142,7 @@ const AddTopics = ({ setOpenAddTopic }) => {
                 let resultTopicData = allTopicsData.Items
                 let topicArr = [];
                 resultTopicData.forEach((item, index) => {
-                    if (item.topic_status === 'Active') {
-                        console.log();
-                        topicArr.push({ value: item.topic_id, label: item.topic_title })
-                    }
+                    topicArr.push({ value: item.topic_id, label: item.topic_title })
                 }
                 );
                 console.log("topicArr", topicArr);
@@ -186,16 +180,20 @@ const AddTopics = ({ setOpenAddTopic }) => {
 
     const getconceptId = (event) => {
         let valuesArr = [];
-        for (let i = 0; i < event.length; i++) {
-            valuesArr.push(event[i].value)
+        if (event) {
+            for (let i = 0; i < event.length; i++) {
+                valuesArr.push(event[i].value)
+            }
         }
         setTopicConceptId(valuesArr);
     }
 
     const gettopicId = (event) => {
         let topicArr = [];
-        for (let i = 0; i < event.length; i++) {
-            topicArr.push(event[i].value)
+        if (event) {
+            for (let i = 0; i < event.length; i++) {
+                topicArr.push(event[i].value)
+            }
         }
         setRelatedTopicsId(topicArr);
     }
@@ -370,8 +368,8 @@ const AddTopics = ({ setOpenAddTopic }) => {
                             </Col>
                         </Row>
                         {topicQuiz.map((topic, index) => (
-                            <div className='row ml-1 mb-2' >
-                                <div className='col-md-4'  >
+                            <div className='row ml-1 mb-2' key={index}>
+                                <div className='col-md-4'>
                                     <Form.Control
                                         type='text'
                                         name='topic_level'
@@ -380,6 +378,7 @@ const AddTopics = ({ setOpenAddTopic }) => {
                                         autoComplete='off'
                                         onBlur={handleBlur}
                                         disabled={"disabled"}
+                                        key={index}
                                     />
                                 </div>
                                 <p></p>
@@ -399,6 +398,7 @@ const AddTopics = ({ setOpenAddTopic }) => {
                                                 }}
                                                 autoComplete='off'
                                                 onBlur={handleBlur}
+                                                key={index}
                                             />
                                         </div>
                                     </div>

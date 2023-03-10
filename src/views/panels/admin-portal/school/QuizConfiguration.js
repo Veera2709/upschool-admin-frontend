@@ -22,7 +22,7 @@ const QuizConfiguration = ({ className, rest, id }) => {
     const [previousDataPostQuiz, setPreviousDataPostQuiz] = useState([]);
     const [_radioL2MandatoryPre, _setRadioL2MandatoryPre] = useState(false);
     const [_radioReadDigicardPre, _setRadioReadDigicardPre] = useState(false);
-    const [_radioRecommendTeachersPre, _setRadioRecommendTeachersPre] = useState(false);
+    const [_radioRecommendTeachersPre, _setRadioRecommendTeachersPre] = useState(true);
 
     const [_radioReadDigicardPost, _setRadioReadDigicardPost] = useState(false);
     const [_radioRecommendTeachersPost, _setRadioRecommendTeachersPost] = useState(false);
@@ -64,6 +64,7 @@ const QuizConfiguration = ({ className, rest, id }) => {
 
     const handleRecommendTeachersPre = (e) => {
 
+        console.log("T");
         _setRadioRecommendTeachersPre(!_radioRecommendTeachersPre);
         _radioRecommendTeachersPre === true ? setSlectedRecommendTeachersPre('No') : setSlectedRecommendTeachersPre('Yes');
     }
@@ -404,7 +405,7 @@ const QuizConfiguration = ({ className, rest, id }) => {
 
                                                             const MySwal = withReactContent(Swal);
                                                             MySwal.fire({
-                                                                title: MESSAGES.TTTLES.Goodjob,
+                                                                // title: MESSAGES.TTTLES.Goodjob,
                                                                 type: 'success',
                                                                 text: MESSAGES.SUCCESS.UpdatingQuizConfiguration,
                                                                 icon: 'success',
@@ -587,7 +588,7 @@ const QuizConfiguration = ({ className, rest, id }) => {
                                                         <Row>
                                                             <Col>
                                                                 <label className="floating-label">
-                                                                    <small className="text-danger">* </small>Is Level 2 Mandatory?
+                                                                    <small className="text-danger"></small>Is Level 2 Mandatory?
                                                                 </label>
                                                             </Col>
                                                             <Col xs={3}>
@@ -615,7 +616,7 @@ const QuizConfiguration = ({ className, rest, id }) => {
                                                         <Row>
                                                             <Col>
                                                                 <label className="floating-label">
-                                                                    <small className="text-danger">* </small>Is reading a Digicard Mandatory?
+                                                                    <small className="text-danger"></small>Is reading a Digicard Mandatory?
                                                                 </label>
                                                             </Col>
                                                             <Col xs={3}>
@@ -657,33 +658,30 @@ const QuizConfiguration = ({ className, rest, id }) => {
                                                         <Row>
                                                             <Col>
                                                                 <label className="floating-label">
-                                                                    <small className="text-danger">* </small>Recommend teachers on focus areas?
+                                                                    <small className="text-danger"></small>Recommend teachers on focus areas?
                                                                 </label>
                                                             </Col>
                                                             <Col xs={3}>
                                                                 <div className="row profile-view-radio-button-view">
                                                                     <Form.Check
-                                                                        id={`radio-recommendTeachersPre`}
-                                                                        // label="Yes"
+                                                                        id={`radio-recommendTeachersPre1`}
                                                                         error={touched.recommendTeachersPre && errors.recommendTeachersPre}
                                                                         type="switch"
                                                                         variant={'outline-primary'}
-                                                                        name="radio-recommendTeachersPre"
+                                                                        name="radio-recommendTeachersPre1"
                                                                         checked={_radioRecommendTeachersPre}
                                                                         onChange={(e) => {
-
-                                                                            console.log("_radioRecommendTeachersPre", _radioRecommendTeachersPre);
-                                                                            _radioRecommendTeachersPre === false ? setFieldValue('percentageOfStudentsPre', '') : setFieldValue('percentageOfStudentsPre', '')
-                                                                            handleRecommendTeachersPre(e)
-                                                                        }
-                                                                        }
-                                                                    // className='ml-3 col-md-6'
+                                                                            setFieldValue('percentageOfStudentsPre', '');
+                                                                            handleRecommendTeachersPre(e);
+                                                                        }}
                                                                     />
-                                                                    <Form.Label className="profile-view-question" id={`radio-recommendTeachersPre`}>
+                                                                    <Form.Label className="profile-view-question" id={`radio-recommendTeachersPre1`}>
                                                                         {_radioRecommendTeachersPre === true ? 'Yes' : 'No'}
                                                                     </Form.Label>
                                                                 </div>
                                                             </Col>
+
+
                                                         </Row>
                                                         {/* </OverlayTrigger> */}
 
@@ -889,7 +887,7 @@ const QuizConfiguration = ({ className, rest, id }) => {
                                                         <Row >
                                                             <Col>
                                                                 <label className="floating-label">
-                                                                    <small className="text-danger">* </small>Is reading a Digicard Mandatory?
+                                                                    <small className="text-danger"></small>Is reading a Digicard Mandatory?
                                                                 </label>
                                                             </Col>
                                                             <Col xs={3}>
@@ -927,7 +925,7 @@ const QuizConfiguration = ({ className, rest, id }) => {
                                                         <Row>
                                                             <Col>
                                                                 <label className="floating-label">
-                                                                    <small className="text-danger">* </small>Recommend teachers on focus areas?
+                                                                    <small className="text-danger"></small>Recommend teachers on focus areas?
                                                                 </label>
                                                             </Col>
                                                             <Col xs={3}>
@@ -940,7 +938,10 @@ const QuizConfiguration = ({ className, rest, id }) => {
                                                                         variant={'outline-primary'}
                                                                         name="radio-recommendTeachersPost"
                                                                         checked={_radioRecommendTeachersPost}
-                                                                        onChange={(e) => handleRecommendTeachersPost(e)}
+                                                                        onChange={(e) => {
+                                                                            setFieldValue('percentageOfStudentsPost', "");
+                                                                            handleRecommendTeachersPost(e);
+                                                                        }}
                                                                     // className='ml-3 col-md-6'
                                                                     />
                                                                     <Form.Label className="profile-view-question" id={`radio-recommendTeachersPost`}>

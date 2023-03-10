@@ -1,7 +1,7 @@
 import React from "react";
 import "./Styles/article.css";
 import SunEditor from "./suneditor-react/dist/SunEditor";
-import "../digicard/Styles/suneditor.min.css";
+// import "../digicard/Styles/suneditor.min.css";
 import katex from 'katex'
 import 'katex/dist/katex.min.css'
 import './suneditor/dist/suneditor.css';
@@ -39,7 +39,7 @@ function ArticleRTE({
         setOptions={{
           imageUploadSizeLimit: "250000",
           katex: katex,
-          plugins:plugins,
+          plugins: plugins,
           // plugins:[listType],
           font: [
             'Arial',
@@ -83,6 +83,7 @@ function ArticleRTE({
             ['fullScreen'],
             ['preview'],
             ['math'],
+            ['print']
           ],
         }}
       />

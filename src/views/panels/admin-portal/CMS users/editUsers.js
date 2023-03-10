@@ -25,9 +25,7 @@ const AddUsers = ({ setOpenAddTopic }) => {
     let history = useHistory();
     const MySwal = withReactContent(Swal);
     const { id } = useParams();
-
-
-
+    const today = new Date().toISOString().split("T")[0];
 
     const sweetAlertHandler = (alert) => {
         const MySwal = withReactContent(Swal);
@@ -52,7 +50,7 @@ const AddUsers = ({ setOpenAddTopic }) => {
     const [indidvidualData, setIndidvidualData] = useState()
     const [isRoleRep, setIsRoleRep] = useState(false)
     const [isDateReq, setIsDateReq] = useState(false)
-    const [displayHeading, setDisplayHeading] = useState(sessionStorage.getItem('Upusers_type'));
+    const [displayHeading, setDisplayHeading] = useState(sessionStorage.getItem('upUsers_status'));
     const [displayHeader, setDisplayHeader] = useState(true);
     const [isSelected, setIsSelected] = useState(false);
     const [isSelectedEntity, setIsSelectedEntity] = useState(false);
@@ -242,12 +240,12 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                         validationSchema={Yup.object().shape({
                                             firstName: Yup.string()
                                                 .trim()
-                                                .min(2, Constants.cmsRole.FirstNameTooShort)
+                                                .min(1, Constants.cmsRole.FirstNameTooShort)
                                                 .max(32, Constants.cmsRole.FirstNameTooLong)
                                                 .required(Constants.cmsRole.FirstName),
                                             lastName: Yup.string()
                                                 .trim()
-                                                .min(2, Constants.cmsRole.LastNameTooShort)
+                                                .min(1, Constants.cmsRole.LastNameTooShort)
                                                 .max(32, Constants.cmsRole.LastNameTooLong)
                                                 .required(Constants.cmsRole.LastName),
                                             userEmail: Yup.string()
@@ -271,45 +269,62 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                         })}
                                         // validationSchema
                                         onSubmit={(values, { setErrors, setStatus, setSubmitting }) => {
-                                            console.log("userRoles", userRoles);
-                                            const unique = new Set();
-                                            const showError = userRoles.some(element => unique.size === unique.add(element.entity).size);
-                                            let validateRole = userRoles.find(o => o.entity === '' || o.entity === 0 || o.entity === undefined)
-                                            var validator = userRoles.filter((e) => (e.roles).length <= 0)
-                                            console.log("validator : ", validator);
-
-
-                                            if (showError) {
-                                                setIsRoleRep(true)
-                                            } else if (isDate === '' || isDate === undefined) {
-                                                setIsDateReq(true)
-                                            } else if (validateRole) {
-                                                setIsSelectedEntity(true)
-                                            } else if (validator.length > 0) {
-                                                setIsSelected(true)
-                                            } else {
-                                                var formData = {
-                                                    user_id: id,
-                                                    user_name: values.userName,
-                                                    first_name: values.firstName,
-                                                    last_name: values.lastName,
-                                                    user_email: values.userEmail,
-                                                    user_phone_no: `${values.phoneNumber}`,
-                                                    user_dob: isDate,
-                                                    user_role: userRoles
+                                            if (userRoles !== 'admin') {
+                                                console.log("userRoles", userRoles);
+                                                const unique = new Set();
+                                                const showError = userRoles.some(element => unique.size === unique.add(element.entity).size);
+                                                let validateRole = userRoles.find(o => o.entity === '' || o.entity === 0 || o.entity === undefined)
+                                                var validator = userRoles.filter((e) => (e.roles).length <= 0)
+                                                console.log("validator : ", validator);
+                                                if (showError) {
+                                                    setIsRoleRep(true)
+                                                } else if (isDate === '' || isDate === undefined) {
+                                                    setIsDateReq(true)
+                                                } else if (validateRole) {
+                                                    setIsSelectedEntity(true)
+                                                } else if (validator.length > 0) {
+                                                    setIsSelected(true)
+                                                } else if (userRoles.length <= 0) {
+                                                    setIsSelected(true)
+                                                } else {
+                                                    var formData = {
+                                                        user_id: id,
+                                                        user_name: values.userName,
+                                                        first_name: values.firstName,
+                                                        last_name: values.lastName,
+                                                        user_email: values.userEmail,
+                                                        user_phone_no: `${values.phoneNumber}`,
+                                                        user_dob: isDate,
+                                                        user_role: userRoles
+                                                    }
+                                                    console.log('formData: ', formData)
+                                                    inserUser(formData)
                                                 }
-                                                console.log('formData: ', formData)
-                                                inserUser(formData)
-                                            }
+                                            } else {
 
+                                                if (isDate === '' || isDate === undefined) {
+                                                    setIsDateReq(true)
+                                                } else {
+                                                    var formData = {
+                                                        user_id: id,
+                                                        user_name: values.userName,
+                                                        first_name: values.firstName,
+                                                        last_name: values.lastName,
+                                                        user_email: values.userEmail,
+                                                        user_phone_no: `${values.phoneNumber}`,
+                                                        user_dob: isDate,
+                                                        user_role: userRoles
+                                                    }
+                                                    console.log('formData: ', formData)
+                                                    inserUser(formData)
+                                                }
+                                            }
                                         }
 
                                         }
                                     >
                                         {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
                                             <Form onSubmit={handleSubmit} >
-
-
                                                 <Row>
                                                     <Col>
                                                         <div className="form-group fill">
@@ -409,7 +424,6 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                                             <label className="floating-label" htmlFor="user_dob">
                                                                 <small className="text-danger">* </small>DOB
                                                             </label>
-                                                            {console.log("dob", isDate)}
                                                             <input
                                                                 className="form-control"
                                                                 error={touched.user_dob && errors.user_dob}
@@ -421,6 +435,8 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                                                 }}
                                                                 type="date"
                                                                 value={isDate && isDate}
+                                                max={today}
+
 
                                                             />
                                                             {isDateReq && (
@@ -434,9 +450,9 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                                 <br />
                                                 {indidvidualData[0].user_role != 'admin' && (
                                                     <>
-                                                    <br/>
-                                                    <Form.Label className="floating-label" ><small className="text-danger">* </small>CMS Role Allocation</Form.Label>
-                                                    <hr/>
+                                                        <br />
+                                                        <Form.Label className="floating-label" ><small className="text-danger">* </small>CMS Role Allocation</Form.Label>
+                                                        <hr />
                                                         <Row>
                                                             <Col sm={4}>
                                                                 <Form.Label className="floating-label" ><small className="text-danger">* </small>Entities</Form.Label>
@@ -444,7 +460,7 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                                             <Col sm={6}>
                                                                 <div className='d-flex justify-content-between'>
                                                                     <Form.Label className="floating-label" ><small className="text-danger">* </small>Creator</Form.Label>
-                                                                    <Form.Label className="floating-label" ><small className="text-danger">* </small>Previewer</Form.Label>
+                                                                    <Form.Label className="floating-label" ><small className="text-danger">* </small>Reviewer</Form.Label>
                                                                     <Form.Label className="floating-label" style={{ marginRight: '-15px' }} ><small className="text-danger">* </small>Publisher</Form.Label>
                                                                 </div>
 
@@ -479,16 +495,7 @@ const AddUsers = ({ setOpenAddTopic }) => {
 
                                                                 </Col>
                                                                 <Col sm={6} >
-                                                                    {
 
-                                                                        // topic.roles.map((e) => {
-                                                                        //     if (e === 'creator') {
-                                                                        //         true
-                                                                        //     } else {
-                                                                        //         false
-                                                                        //     }
-                                                                        // })
-                                                                    }
                                                                     <div className="form-group fill d-flex justify-content-between">
                                                                         <div>
                                                                             <Form.Control
@@ -510,17 +517,17 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                                                         <div>
                                                                             <Form.Control
                                                                                 className="form-control"
-                                                                                name="previewer"
+                                                                                name="reviewer"
                                                                                 onBlur={handleBlur}
                                                                                 onChange={(e) => {
-                                                                                    getUserRole(e, 'previewer', index);
+                                                                                    getUserRole(e, 'reviewer', index);
                                                                                     setIsSelected(false);
                                                                                 }}
                                                                                 type="checkbox"
-                                                                                value={values.previewer}
+                                                                                value={values.reviewer}
                                                                                 style={{ width: '25px' }}
                                                                                 key={index}
-                                                                                defaultChecked={topic.roles.filter(e => e === 'previewer').length > 0 ? true : false}
+                                                                                defaultChecked={topic.roles.filter(e => e === 'reviewer').length > 0 ? true : false}
                                                                             />
                                                                         </div>
                                                                         <div>
@@ -542,14 +549,13 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                                                     </div>
                                                                 </Col>
                                                                 <Col sm={2}>
-                                                                    {/* <CloseButton
-                                                    onClick={(e) => { removeRole(index) }}
-                                                    variant="white"
-                                                    style={{ marginRight: "80px" }}
-                                                    key={index}
-                                                /> */}
                                                                     <Button className="btn btn-icon btn-rounded btn-danger"
-                                                                        onClick={(e) => { removeRole(index) }}
+                                                                        onClick={(e) => {
+                                                                            removeRole(index);
+                                                                            setIsRoleRep(false);
+                                                                            setIsSelected(false);
+                                                                            setIsSelectedEntity(false)
+                                                                        }}
                                                                         style={{ marginLeft: "40px", paddingTop: '2px', paddingBottom: '2px', marginTop: '4px' }}
                                                                     >
                                                                         <i className='feather icon-trash-2'></i>
@@ -569,7 +575,7 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                                                     <small className="text-danger form-text">Entity Not selected!</small>
                                                                 )}
                                                                 <br />
-                                                                <button type='button' onClick={addOneRole}>+</button>
+                                                                <button type='button' onClick={(e)=>{addOneRole(e);setIsSelected(false)}}>+</button>
                                                             </Col>
 
                                                         </Row>

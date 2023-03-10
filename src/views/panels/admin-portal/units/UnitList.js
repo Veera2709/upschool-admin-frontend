@@ -358,7 +358,7 @@ const UnitList = (props) => {
         } else {
 
             setIsLoading(true)
-            const allUnitsData = await fetchAllUnits();
+            const allUnitsData = await fetchAllUnits(UnitStatus);
             if (allUnitsData.ERROR) {
                 console.log("allUnitsData.ERROR", allUnitsData.ERROR);
             } else {
@@ -366,20 +366,19 @@ const UnitList = (props) => {
                 console.log("dataResponse", dataResponse);
                 let finalDataArray = [];
                 if (UnitStatus === 'Active') {
-                    let ActiveresultData = (dataResponse && dataResponse.filter(e => e.unit_status === 'Active'))
-                    console.log("ActiveresultData", ActiveresultData);
+                  
 
-                    for (let index = 0; index < ActiveresultData.length; index++) {
-                        ActiveresultData[index].index_no = index + 1;
-                        ActiveresultData[index]['actions'] = (
+                    for (let index = 0; index < dataResponse.length; index++) {
+                        dataResponse[index].index_no = index + 1;
+                        dataResponse[index]['actions'] = (
                             <>
                                 <>
                                     <Button
                                         size="sm"
                                         className="btn btn-icon btn-rounded btn-primary"
-                                        // onClick={(e) => history.push(`/admin-portal/editunit/${ActiveresultData[index].unit_id}`)}
+                                        // onClick={(e) => history.push(`/admin-portal/editunit/${dataResponse[index].unit_id}`)}
                                         onClick={(e) => {
-                                            setUnitId(ActiveresultData[index].unit_id);
+                                            setUnitId(dataResponse[index].unit_id);
                                             setOpenEditUnit(true)
                                         }}
                                     >
@@ -390,7 +389,7 @@ const UnitList = (props) => {
                                     <Button
                                         size="sm"
                                         className="btn btn-icon btn-rounded btn-danger"
-                                        onClick={(e) => deleteUnit(ActiveresultData[index].unit_id, ActiveresultData[index].unit_title)}
+                                        onClick={(e) => deleteUnit(dataResponse[index].unit_id, dataResponse[index].unit_title)}
                                     >
                                         <i className="feather icon-trash-2 " /> &nbsp; Delete
                                     </Button>
@@ -398,7 +397,7 @@ const UnitList = (props) => {
                                 </>
                             </>
                         );
-                        finalDataArray.push(ActiveresultData[index]);
+                        finalDataArray.push(dataResponse[index]);
                         console.log('finalDataArray: ', finalDataArray)
                     }
                 } else {
