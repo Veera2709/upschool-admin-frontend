@@ -798,7 +798,7 @@ const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive 
 
 
 
-                                                        <div class="row">
+                                                        <div className="row">
                                                             <div className='col-sm-6'>
                                                                 <div className="form-group fill">
 
