@@ -18,11 +18,10 @@ import * as Constants from '../../../../helper/constants';
 import MESSAGES from '../../../../helper/messages';
 import { setDate } from 'date-fns';
 
-
-
 const AddUsers = ({ setOpenAddTopic }) => {
     let history = useHistory();
     const MySwal = withReactContent(Swal);
+    const today = new Date().toISOString().split("T")[0];
 
 
 
@@ -276,9 +275,7 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                 console.log('formData: ', formData)
                                 inserUser(formData)
                             }
-
                         }
-
                         }
                     >
                         {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
@@ -394,7 +391,7 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                                 }}
                                                 type="date"
                                                 value={isDate}
-
+                                                max={today}
                                             />
                                             {isDateReq && (
                                                 <small className="text-danger form-text">DOB is required!</small>

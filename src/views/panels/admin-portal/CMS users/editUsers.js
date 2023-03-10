@@ -25,9 +25,7 @@ const AddUsers = ({ setOpenAddTopic }) => {
     let history = useHistory();
     const MySwal = withReactContent(Swal);
     const { id } = useParams();
-
-
-
+    const today = new Date().toISOString().split("T")[0];
 
     const sweetAlertHandler = (alert) => {
         const MySwal = withReactContent(Swal);
@@ -437,6 +435,8 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                                                 }}
                                                                 type="date"
                                                                 value={isDate && isDate}
+                                                max={today}
+
 
                                                             />
                                                             {isDateReq && (
