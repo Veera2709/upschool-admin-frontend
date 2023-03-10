@@ -795,16 +795,6 @@ const EditDigiCard = () => {
                                                         </audio>
                                                     </div>)}
 
-                                                    {voiceNotePre && (<div className="form-group fill">
-                                                        <label className="floating-label" htmlFor="digicard">
-                                                            <small className="text-danger">* </small>Voice Note Preview
-                                                        </label><br />
-                                                        {/* <img width={150} src={voiceNote} alt="" className="img-fluid mb-3" /> */}
-                                                        <audio controls>
-                                                            <source src={voiceNotePre} alt="Audio" type="audio/mp3" />
-                                                        </audio>
-                                                    </div>)}
-
 
                                                 </Col>
                                             </Row>
