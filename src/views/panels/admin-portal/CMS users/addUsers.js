@@ -18,11 +18,10 @@ import * as Constants from '../../../../helper/constants';
 import MESSAGES from '../../../../helper/messages';
 import { setDate } from 'date-fns';
 
-
-
 const AddUsers = ({ setOpenAddTopic }) => {
     let history = useHistory();
     const MySwal = withReactContent(Swal);
+    const today = new Date().toISOString().split("T")[0];
 
 
 
@@ -245,7 +244,7 @@ const AddUsers = ({ setOpenAddTopic }) => {
                         })}
                         // validationSchema
                         onSubmit={(values, { setErrors, setStatus, setSubmitting }) => {
-                            console.log("userRoles", userRoles);
+                            console.log("userRoles", userRoles.length);
                             const unique = new Set();
                             const showError = userRoles.some(element => unique.size === unique.add(element.entity).size);
                             let validateRole = userRoles.find(o => o.entity === '' || o.entity === 0 || o.entity === undefined)
@@ -261,6 +260,8 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                 setIsSelectedEntity(true)
                             } else if (validator.length > 0) {
                                 setIsSelected(true)
+                            } else if (userRoles.length <= 0) {
+                                setIsSelected(true)
                             } else {
                                 var formData = {
                                     user_name: values.userName,
@@ -274,9 +275,7 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                 console.log('formData: ', formData)
                                 inserUser(formData)
                             }
-
                         }
-
                         }
                     >
                         {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
@@ -392,7 +391,7 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                                 }}
                                                 type="date"
                                                 value={isDate}
-
+                                                max={today}
                                             />
                                             {isDateReq && (
                                                 <small className="text-danger form-text">DOB is required!</small>
@@ -414,11 +413,7 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                             <Form.Label className="floating-label" ><small className="text-danger">* </small>Reviewer</Form.Label>
                                             <Form.Label className="floating-label" style={{ marginRight: '-15px' }} ><small className="text-danger">* </small>Publisher</Form.Label>
                                         </div>
-
                                     </Col>
-                                    {/* <Col sm={6}>
-                                        <Form.Label className="floating-label" ><small className="text-danger">* </small>Topic Quiz Minutes</Form.Label>
-                                    </Col> */}
                                 </Row>
                                 {userRoles.map((topic, index) => (
                                     <Row>
@@ -494,14 +489,13 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                             </div>
                                         </Col>
                                         <Col sm={2}>
-                                            {/* <CloseButton
-                                                onClick={(e) => { removeRole(index) }}
-                                                variant="white"
-                                                style={{ marginRight: "80px" }}
-                                                key={index}
-                                            /> */}
                                             <Button className="btn btn-icon btn-rounded btn-danger"
-                                                onClick={(e) => { removeRole(index) }}
+                                                onClick={(e) => {
+                                                    removeRole(index);
+                                                    setIsRoleRep(false);
+                                                    setIsSelected(false);
+                                                    setIsSelectedEntity(false)
+                                                }}
                                                 style={{ marginLeft: "40px", paddingTop: '2px', paddingBottom: '2px', marginTop: '4px' }}
                                             >
                                                 <i className='feather icon-trash-2'></i>
@@ -521,9 +515,8 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                             <small className="text-danger form-text">Entity Not selected!</small>
                                         )}
                                         <br />
-                                        <button type='button' onClick={addOneRole}>+</button>
+                                        <button type='button' onClick={(e) => { addOneRole(e); setIsSelected(false) }}>+</button>
                                     </Col>
-
                                 </Row>
                                 <p></p>
                                 {/* <button type="button" className="btn btn-primary" onClick={addTopic} >Add another Quiz</button> */}

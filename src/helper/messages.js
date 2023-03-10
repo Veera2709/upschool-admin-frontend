@@ -56,7 +56,7 @@ const MESSAGES = {
     ComponentAdded: 'added successfully!',
     EmailSentSuccessfully: 'Email sent successfully!',
     ComponentEdited: 'edited successfully!',
-    FilesUploaded: 'Files uploaded successfully',
+    FilesUploaded: 'File uploaded successfully',
     FilesDownloaded: 'Files downloaded successfully',
     AddingClient: 'Added Client Successfully',
     AddingUser: 'Added User Successfully',
