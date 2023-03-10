@@ -102,7 +102,7 @@ const SubscribeClass = ({ className, rest, id, setIsOpenSubscribeClass }) => {
 
                         const MySwal = withReactContent(Swal);
                         MySwal.fire({
-                            title: MESSAGES.TTTLES.Goodjob,
+                            // title: MESSAGES.TTTLES.Goodjob,
                             type: 'success',
                             text: 'School subscrption successful!',
                             icon: 'success',
