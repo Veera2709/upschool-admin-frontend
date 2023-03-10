@@ -269,28 +269,14 @@ const DigiCard = () => {
 
     const [data, setData] = useState([]);
     console.log('data: ', data)
-    const [isOpen, setIsOpen] = useState(false);
     const [loader, showLoader, hideLoader] = useFullPageLoader();
     const [isLoading, setIsLoading] = useState(false);
-
-    const [isSelectedAll, setSelectedAll] = useState(false);
     const [reloadAllData, setReloadAllData] = useState('Fetched');
-    const [statusUrl, setStatusUrl] = useState('');
     const MySwal = withReactContent(Swal);
-    const [digiCardId, setDigiCardId] = useState([]);
     const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
     let history = useHistory();
 
 
-    function getDigiCardId(e, id) {
-        console.log("digiCardId", id);
-        if (e.target.checked === true) {
-            digiCardId.push(id)
-        } else {
-            const i = digiCardId.indexOf(id);
-            digiCardId.splice(i, 1);
-        }
-    }
 
     const sweetConfirmHandler = (alert) => {
         MySwal.fire({
@@ -299,12 +285,6 @@ const DigiCard = () => {
             icon: alert.type
         });
     }
-
-
-    const openHandler = () => {
-        setIsOpen(true);
-    };
-
 
 
     function deleteDigicard(digi_card_id, digi_card_title) {
@@ -397,11 +377,6 @@ const DigiCard = () => {
                                 fetchAllDigiCards()
                                 setReloadAllData("Deleted");
                                 return MySwal.fire('', 'The ' + digi_card_title + ' is Restored', 'success');
-                                // window. location. reload() 
-                                //  MySwal.fire('', MESSAGES.INFO.CLIENT_DELETED, 'success');
-
-
-
                             }
                         })
                         .catch((error) => {
@@ -451,11 +426,6 @@ const DigiCard = () => {
                     console.log("ActiveresultData", ActiveresultData);
 
                     for (let index = 0; index < ActiveresultData.length; index++) {
-                        // ActiveresultData[index]['check_box'] = <input
-                        //     type="checkbox"
-                        //     onChange={(e) => { getDigiCardId(e, ActiveresultData[index].digi_card_id) }}
-                        //     defaultChecked={isSelectedAll&&isSelectedAll}
-                        // />
                         ActiveresultData[index]['digicard_image'] = <img className="img-fluid img-radius wid-40" alt="Poison regulate" src={ActiveresultData[index].digicard_imageURL} />
                         ActiveresultData[index]['actions'] = (
                             <>
@@ -463,7 +433,6 @@ const DigiCard = () => {
                                     size="sm"
                                     className="btn btn-icon btn-rounded btn-primary"
                                     onClick={(e) => history.push(`/admin-portal/editDigiCard/${ActiveresultData[index].digi_card_id}`)}
-                                // onClick={(e) => history.push(`/admin-portal/admin-casedetails/${resultData[index].client_id}/all_cases`)}
                                 >
                                     <i className="feather icon-edit" /> &nbsp; Edit
                                 </Button>
@@ -476,9 +445,6 @@ const DigiCard = () => {
                                     <i className="feather icon-trash-2 " /> &nbsp; Delete
                                 </Button>
                                 &nbsp;
-                                {/* <Button size='sm' className="btn btn-icon btn-rounded btn-danger" onClick={(e) => saveClientIdDelete(e, responseData[index].client_id)}>
-                                <i className="feather icon-delete" /> &nbsp; Delete
-                              </Button> */}
                             </>
                         );
                         finalDataArray.push(ActiveresultData[index]);
@@ -583,16 +549,6 @@ const DigiCard = () => {
                                                 <Card>
                                                     <Card.Header>
                                                         <Card.Title as="h5">DigiCard List</Card.Title>
-                                                        <Row>
-                                                            <Col className='d-flex justify-content-end'>
-                                                                {/* <Button className='btn-sm btn-round has-ripple ml-2 btn-danger'
-                                                                    style={{ paddingRight: '18px' }}
-                                                                    onClick={() => { console.log('digicardId', digiCardId) }}
-                                                                > <i className="feather icon-trash-2 " />&nbsp;
-                                                                    Multi Delete
-                                                                </Button> */}
-                                                            </Col>
-                                                        </Row>
                                                     </Card.Header>
                                                     <Card.Body>
                                                         <Table columns={columns} data={data} />
