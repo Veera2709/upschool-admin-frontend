@@ -313,12 +313,12 @@ function Table({ columns, data, modalOpen, userRole }) {
     <>
       <Row className="mb-3">
 
-        {user_status === "Active" ?
+        {/* {user_status === "Active" ?
 
           <Button onClick={(e) => { getAlldata() }} variant="danger" className="btn-sm btn-round has-ripple ml-2" style={{ marginLeft: "1.5rem" }} >Delete</Button> :
 
           <Button onClick={getAlldata} variant="primary" className="btn-sm btn-round has-ripple ml-2" style={{ marginLeft: "1.5rem" }} >Restore</Button>
-        }
+        } */}
 
         <Col className="d-flex align-items-center">
           Show
@@ -341,10 +341,31 @@ function Table({ columns, data, modalOpen, userRole }) {
           <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
 
           <Link to={'/admin-portal/add-users'}>
-            <Button variant="success" className="btn-sm btn-round has-ripple ml-2">
+            <Button
+              style={{ whiteSpace: "nowrap" }}
+              variant="success"
+              className="btn-sm btn-round has-ripple ml-2">
               <i className="feather icon-plus" /> Add Users
             </Button>
           </Link>
+
+          {user_status === "Active" ?
+            <Button
+              variant="danger"
+              className="btn-sm btn-round has-ripple ml-2"
+              // style={{ marginLeft: "1.5rem" }}
+              style={{ whiteSpace: "nowrap" }}
+              onClick={(e) => { getAlldata() }}
+            >Multi Delete</Button> :
+
+            <Button onClick={getAlldata}
+              variant="primary"
+              className="btn-sm btn-round has-ripple ml-2"
+              // style={{ marginLeft: "1.5rem" }}
+              style={{ whiteSpace: "nowrap" }}
+            >Multi Restore</Button>
+          }
+
         </Col>
       </Row>
 

@@ -280,15 +280,6 @@ function Table({ columns, data, modalOpen, userRole }) {
         <>
             <Row className="mb-3">
 
-                {user_status === "Active" ?
-                    <Button onClick={(e) => { deleteAllStudent() }} variant="danger" className="btn-sm btn-round has-ripple ml-2" style={{ marginLeft: "1.5rem" }} >Delete</Button>
-
-                    :
-
-                    <Button onClick={deleteAllStudent} variant="primary" className="btn-sm btn-round has-ripple ml-2" style={{ marginLeft: "1.5rem" }} >Restores</Button>
-
-                }
-
                 <Col className="d-flex align-items-center">
                     Show
                     <select
@@ -310,10 +301,14 @@ function Table({ columns, data, modalOpen, userRole }) {
                     <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
 
                     <Link to={'/admin-portal/add-users'}>
-                        <Button variant="success" className="btn-sm btn-round has-ripple ml-2">
-                            <i className="feather icon-plus" /> Add Users
-                        </Button>
+                        <Button style={{ whiteSpace: "nowrap" }} variant="success" className="btn-sm btn-round has-ripple ml-2">
+                            <i className="feather icon-plus" /> Add Users</Button>
                     </Link>
+                    {user_status === "Active" ?
+                        <Button onClick={(e) => { deleteAllStudent() }} variant="danger" className="btn-sm btn-round has-ripple ml-2" style={{ whiteSpace: "nowrap" }} >Multi Delete</Button>
+                        :
+                        <Button onClick={deleteAllStudent} variant="primary" className="btn-sm btn-round has-ripple ml-2" style={{ whiteSpace: "nowrap" }} >Multi Restores</Button>
+                    }
                 </Col>
             </Row>
 
