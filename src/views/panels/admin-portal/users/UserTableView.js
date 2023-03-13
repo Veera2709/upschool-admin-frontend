@@ -213,16 +213,16 @@ function Table({ columns, data, modalOpen, userRole }) {
         arrayWithUserIds.push(items.original.parent_id);
       }
     })
-
     console.log("CHECKED IDS : ", arrayWithUserIds);
 
-    // if (response.status === 200) {
+    if (arrayWithUserIds.length === 0) {
+      const MySwal = withReactContent(Swal);
+      return MySwal.fire('Sorry', 'No User Selected!', 'warning').then(() => {
+        window.location.reload();
+      });
+    }
 
-    // const MySwal = withReactContent(Swal);
-    // MySwal.fire({
-    //   title: MESSAGES.TTTLES.Goodjob,
-    //   type: 'success',
-    //   text: MESSAGES.SUCCESS.UpdatingQuizConfiguration, icon: 'success',
+
     const MySwal = withReactContent(Swal);
     MySwal.fire({
       title: 'Are you sure?',
@@ -283,13 +283,9 @@ function Table({ columns, data, modalOpen, userRole }) {
               console.log("response : ", response);
               if (response.data === 200) {
                 MySwal.fire({
-                  // title: ((userRole === "Teachers" && pageLocation === 'active-users') ? 'Teachers Deleted' : 'Teachers Restored') || ((userRole === "Parents" && pageLocation === 'active-users') ? 'Parents Deleted' : 'Parents Restored'),
-
                   title: (userRole === "Teachers" && pageLocation === 'active-users') ? 'Teachers Deleted' :
                     (userRole === "Parents" && pageLocation === 'active-users') ? 'Parents Deleted' :
                       'Users Restored',
-
-
                   icon: "success",
                   text: pageLocation === 'active-users' ? 'User Deleted' : 'User Restored',
                   // type: 'success',
@@ -298,9 +294,6 @@ function Table({ columns, data, modalOpen, userRole }) {
                   window.location.reload()
 
                 })
-                // window.location.reload()
-
-                // hideLoader();
 
               }
             }
@@ -312,9 +305,7 @@ function Table({ columns, data, modalOpen, userRole }) {
       }
 
     });
-    // } else {
-    //   setStatus({ success: false }); setErrors({ submit: 'Error in Editing School' });
-    // }
+
 
   }
 

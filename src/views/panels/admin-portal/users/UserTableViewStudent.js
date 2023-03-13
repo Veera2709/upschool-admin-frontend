@@ -199,6 +199,14 @@ function Table({ columns, data, modalOpen, userRole }) {
 
         console.log("CHECKED IDS : ", arrayWithStudentIds);
 
+
+        if (arrayWithStudentIds.length === 0) {
+            const MySwal = withReactContent(Swal);
+            return MySwal.fire('Sorry', 'No user Selected!', 'warning').then(() => {
+                window.location.reload();
+            });
+        }
+
         const MySwal = withReactContent(Swal);
         MySwal.fire({
             title: 'Are you sure?',
