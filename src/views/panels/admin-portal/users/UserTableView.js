@@ -213,16 +213,16 @@ function Table({ columns, data, modalOpen, userRole }) {
         arrayWithUserIds.push(items.original.parent_id);
       }
     })
-
     console.log("CHECKED IDS : ", arrayWithUserIds);
 
-    // if (response.status === 200) {
+    if (arrayWithUserIds.length === 0) {
+      const MySwal = withReactContent(Swal);
+      return MySwal.fire('Sorry', 'No User Selected!', 'warning').then(() => {
+        window.location.reload();
+      });
+    }
 
-    // const MySwal = withReactContent(Swal);
-    // MySwal.fire({
-    //   title: MESSAGES.TTTLES.Goodjob,
-    //   type: 'success',
-    //   text: MESSAGES.SUCCESS.UpdatingQuizConfiguration, icon: 'success',
+
     const MySwal = withReactContent(Swal);
     MySwal.fire({
       title: 'Are you sure?',
@@ -283,13 +283,9 @@ function Table({ columns, data, modalOpen, userRole }) {
               console.log("response : ", response);
               if (response.data === 200) {
                 MySwal.fire({
-                  // title: ((userRole === "Teachers" && pageLocation === 'active-users') ? 'Teachers Deleted' : 'Teachers Restored') || ((userRole === "Parents" && pageLocation === 'active-users') ? 'Parents Deleted' : 'Parents Restored'),
-
                   title: (userRole === "Teachers" && pageLocation === 'active-users') ? 'Teachers Deleted' :
                     (userRole === "Parents" && pageLocation === 'active-users') ? 'Parents Deleted' :
                       'Users Restored',
-
-
                   icon: "success",
                   text: pageLocation === 'active-users' ? 'User Deleted' : 'User Restored',
                   // type: 'success',
@@ -298,9 +294,6 @@ function Table({ columns, data, modalOpen, userRole }) {
                   window.location.reload()
 
                 })
-                // window.location.reload()
-
-                // hideLoader();
 
               }
             }
@@ -312,9 +305,7 @@ function Table({ columns, data, modalOpen, userRole }) {
       }
 
     });
-    // } else {
-    //   setStatus({ success: false }); setErrors({ submit: 'Error in Editing School' });
-    // }
+
 
   }
 
@@ -322,12 +313,12 @@ function Table({ columns, data, modalOpen, userRole }) {
     <>
       <Row className="mb-3">
 
-        {user_status === "Active" ?
+        {/* {user_status === "Active" ?
 
           <Button onClick={(e) => { getAlldata() }} variant="danger" className="btn-sm btn-round has-ripple ml-2" style={{ marginLeft: "1.5rem" }} >Delete</Button> :
 
           <Button onClick={getAlldata} variant="primary" className="btn-sm btn-round has-ripple ml-2" style={{ marginLeft: "1.5rem" }} >Restore</Button>
-        }
+        } */}
 
         <Col className="d-flex align-items-center">
           Show
@@ -350,10 +341,31 @@ function Table({ columns, data, modalOpen, userRole }) {
           <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
 
           <Link to={'/admin-portal/add-users'}>
-            <Button variant="success" className="btn-sm btn-round has-ripple ml-2">
+            <Button
+              style={{ whiteSpace: "nowrap" }}
+              variant="success"
+              className="btn-sm btn-round has-ripple ml-2">
               <i className="feather icon-plus" /> Add Users
             </Button>
           </Link>
+
+          {user_status === "Active" ?
+            <Button
+              variant="danger"
+              className="btn-sm btn-round has-ripple ml-2"
+              // style={{ marginLeft: "1.5rem" }}
+              style={{ whiteSpace: "nowrap" }}
+              onClick={(e) => { getAlldata() }}
+            >Multi Delete</Button> :
+
+            <Button onClick={getAlldata}
+              variant="primary"
+              className="btn-sm btn-round has-ripple ml-2"
+              // style={{ marginLeft: "1.5rem" }}
+              style={{ whiteSpace: "nowrap" }}
+            >Multi Restore</Button>
+          }
+
         </Col>
       </Row>
 

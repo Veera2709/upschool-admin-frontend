@@ -68,6 +68,7 @@
     "react-custom-scrollbars": "^4.2.1",
     "react-datepicker": "^4.10.0",
     "react-datetime": "^3.1.1",
+    "react-doc-viewer": "^0.1.5",
     "react-dom": "^18.2.0",
     "react-draggable-multi-select": "^1.1.8",
     "react-dropzone-component": "^3.2.0",
