@@ -20,7 +20,7 @@ const dynamicUrl = {
     toggleDigiCardStatus: baseUrl + '/toggleDigiCardStatus',
     bulkToggleDigiCardStatuss: baseUrl + '/bulkToggleDigiCardStatus',
     fetchDigiCardAudioContent: baseUrl + '/fetchDigiCardAudioContent',
-    
+
 
 
     // School
