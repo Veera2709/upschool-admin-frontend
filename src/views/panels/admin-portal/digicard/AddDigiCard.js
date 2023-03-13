@@ -58,8 +58,8 @@ const AddDigiCard = (
   const [tags, setTags] = useState([]);
   const [ImgURL, setImgURL] = useState([]);
   const [imgFile, setImgFile] = useState([]);
-  const [articleData, setArticleData] = useState();
-  const [articleDataTitle, setArticleDataTtitle] = useState();
+  const [articleData, setArticleData] = useState('');
+  const [articleDataTitle, setArticleDataTtitle] = useState('');
   const [digitalTitles, setDigitalTitles] = useState([]);
   const [imgValidation, setImgValidation] = useState(true);
   const [voiceError, setVoiceError] = useState(true);
@@ -114,7 +114,6 @@ const AddDigiCard = (
     setImage(e.target)
     console.log("FileLength", FileLength);
     FileLength === 1 ? setImgFile(URL.createObjectURL(e.target.files[0])) : setImgFile()
-    console.log(URL.createObjectURL(e.target.files[0]));
   }
 
 
@@ -560,7 +559,6 @@ const AddDigiCard = (
                         <label className="floating-label" htmlFor="digicardtitle">
                           <small className="text-danger">* </small>Logo preview
                         </label><br />
-                        {console.log("url", imgFile)}
                         <img width={100} src={imgFile} alt="" className="img-fluid mb-3" />
                       </div>
                       {voiceNotePre && (
