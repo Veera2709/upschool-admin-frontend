@@ -97,6 +97,41 @@ export const voiceInvalid = (filesArray) => {
   }
 };
 
+
+export const documentInvalid = (filesArray) => {
+  console.log("filesArray in voice note",filesArray);
+  let invalidFileCount = 0;
+  if (filesArray[0].values=='false') {
+    return invalidFileCount
+  }else{
+    filesArray.forEach((oneFile) => {
+      if (
+        oneFile.type === 'application/pdf' ||
+        oneFile.type === 'application/doc'||
+        oneFile.type === 'application/ppt'||
+        oneFile.type === 'application/docx'||
+        oneFile.type === 'application/xml'||
+        oneFile.type === 'application/txt'||
+        oneFile.type === 'application/xls'||
+        oneFile.type === 'application/xlsx'||
+        oneFile.type === 'application/xps' 
+      ) {
+        if (oneFile.size > 100000000) {
+          console.log('File is too large');
+          invalidFileCount++;
+        } else {
+          console.log('File upload success voice note');
+        }
+      } else {
+        console.log('Invalid file type');
+        invalidFileCount++;
+      }
+    });
+    console.log('invalidCount', invalidFileCount);
+    return invalidFileCount;
+  }
+};
+
 export const areFilesInvalidBulkUpload = (filesArray) => {
   let invalidFileCount = 0;
   filesArray.forEach((oneFile) => {

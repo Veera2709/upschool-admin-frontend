@@ -16,7 +16,7 @@ import Swal from 'sweetalert2';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import withReactContent from 'sweetalert2-react-content';
 import ArticleRTE from './ArticleRTE'
-import { areFilesInvalid, voiceInvalid } from '../../../../util/utils';
+import { areFilesInvalid, voiceInvalid,documentInvalid } from '../../../../util/utils';
 import logo from './img/logo.png'
 import Multiselect from 'multiselect-react-dropdown';
 import Select from 'react-draggable-multi-select';
@@ -68,6 +68,7 @@ const AddDigiCard = (
   const [displayHeader, setDisplayHeader] = useState(true);
   const [imagePre, setImage] = useState();
   const [voiceNotePre, setVoiceNote] = useState("");
+  const [isDocumentErr, setDocumentErr] = useState(false);
 
   const threadLinks = document.getElementsByClassName('page-header');
 
@@ -184,7 +185,14 @@ const AddDigiCard = (
 
   //doc
   const handleFileInput = (e) => {
-    setSelectedFile(e.target.files[0]);
+    console.log("e",e.target.files[0]);
+    let data = [e.target.files[0]]
+    
+    if (documentInvalid(data) !== 0) {
+      setDocumentErr(true)
+    }else{
+      setSelectedFile(e.target.files[0]);
+    }
   };
   //button 
   // const handleUpload = () => {
@@ -285,7 +293,9 @@ const AddDigiCard = (
                 } else if (voiceInvalid(voiceData) !== 0) {
                   setVoiceError(false)
                   console.log("voice note not a mp3");
-                } else {
+                } else if(isDocumentErr === true){
+                  setDocumentErr(true)
+                }else {
 
                   var formData = {
                     digi_card_title: values.digicardtitle,
@@ -494,7 +504,11 @@ const AddDigiCard = (
                             name="digicard_document"
                             id="digicard_document"
                             onBlur={handleBlur}
-                            onChange={(e) => { handleFileInput(e); handleChange(e); }}
+                            onChange={(e) => { 
+                              handleFileInput(e); 
+                              handleChange(e);
+                              setDocumentErr(false) 
+                            }}
                             type="file"
                             accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx"
                           />
@@ -507,10 +521,8 @@ const AddDigiCard = (
 
                         {selectedFile && <p style={{ color: "blue" }}>Selected file: {selectedFile.name}</p>}
 
-                        {touched.digicard_document && errors.digicard_document && (
-                          <small className="text-danger form-text">{errors.digicard_document}</small>
-                        )}
-                        <small className="text-danger form-text" style={{ display: docError ? 'none' : 'block' }}>Invalid File Type or File size is Exceed More Than 10MB</small>
+                        {isDocumentErr&&(<small className="text-danger form-text">Invalid File Type</small>)}
+                        
                       </div>
 
 
