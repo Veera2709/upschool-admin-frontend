@@ -487,8 +487,8 @@ const AddDigiCard = (
 
 
                       <div className="form-group fill">
-                        <label className="floating-label" htmlFor="digicard_document">
-                          <small className="text-danger"> </small>  
+                        <label className="floating-label" htmlFor="digicard_document"> Upload Document
+                          <small className="text-danger"></small>
                         </label>
                         <InputGroup>
                           <input
@@ -505,6 +505,12 @@ const AddDigiCard = (
 
 
                         {selectedFile && <p style={{ color: "blue" }}>Selected file: {selectedFile.name}</p>}
+
+                        {/* {selectedFile && (
+                          <small className="text-muted form-text">
+                            Selected file: {selectedFile.name}
+                          </small>
+                        )} */}
 
                         {touched.digicard_document && errors.digicard_document && (
                           <small className="text-danger form-text">{errors.digicard_document}</small>
