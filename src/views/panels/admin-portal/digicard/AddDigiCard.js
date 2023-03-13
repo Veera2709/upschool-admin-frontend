@@ -498,7 +498,7 @@ const AddDigiCard = (
 
                       <div className="form-group fill">
                         <label className="floating-label" htmlFor="digicard_document">
-                          <small className="text-danger"> </small>  
+                          <small className="text-danger"> </small>  Upload Document
                         </label>
                         <InputGroup>
                           <input

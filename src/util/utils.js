@@ -97,7 +97,6 @@ export const voiceInvalid = (filesArray) => {
   }
 };
 
-
 export const documentInvalid = (filesArray) => {
   console.log("filesArray in voice note",filesArray);
   let invalidFileCount = 0;
