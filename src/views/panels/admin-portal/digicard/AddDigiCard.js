@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 // import { InputGroup, FormControl, Button } from 'react-bootstrap';
 // import './style.css'
-// import DocViewer from 'react-doc-viewer';
 import { InputGroup, Row, Col, Card, Button, Modal } from 'react-bootstrap';
 // import CkDecoupledEditor from '../../../components/CK-Editor/CkDecoupledEditor';
 import * as Constants from '../../../../helper/constants';
@@ -17,7 +16,7 @@ import Swal from 'sweetalert2';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import withReactContent from 'sweetalert2-react-content';
 import ArticleRTE from './ArticleRTE'
-import { areFilesInvalid, voiceInvalid,documentInvalid } from '../../../../util/utils';
+import { areFilesInvalid, voiceInvalid } from '../../../../util/utils';
 import logo from './img/logo.png'
 import Multiselect from 'multiselect-react-dropdown';
 import Select from 'react-draggable-multi-select';
@@ -69,7 +68,6 @@ const AddDigiCard = (
   const [displayHeader, setDisplayHeader] = useState(true);
   const [imagePre, setImage] = useState();
   const [voiceNotePre, setVoiceNote] = useState("");
-  const [isDocumentErr, setDocumentErr] = useState(false);
 
   const threadLinks = document.getElementsByClassName('page-header');
 
@@ -176,7 +174,7 @@ const AddDigiCard = (
 
   const getMultiOptions = (event) => {
     let valuesArr = [];
-    if (event) {
+    if(event){
       for (let i = 0; i < event.length; i++) {
         valuesArr.push(event[i].value)
       }
@@ -186,29 +184,20 @@ const AddDigiCard = (
 
   //doc
   const handleFileInput = (e) => {
-    console.log("e",e.target.files[0]);
-    let data = [e.target.files[0]]
-    
-    if (documentInvalid(data) !== 0) {
-      setDocumentErr(true)
-    }else{
-      setSelectedFile(e.target.files[0]);
-    }
+    setSelectedFile(e.target.files[0]);
   };
+  //button 
+  // const handleUpload = () => {
+  //   const formData = new FormData();
+  //   formData.append("file", selectedFile);
+
+  //   // Call the API to upload the file
+  //   // ...
+
+  //   setSelectedFile(null);
+  // };
 
 
-  // const documents = [
-  //   { uri: 'https://example.com/document1.pdf' },
-  //   { uri: 'https://example.com/document2.docx' },
-  //   { uri: 'https://example.com/document3.pptx' },
-  //   { uri: 'https://example.com/document3.doc' },
-  //   { uri: 'https://example.com/document3.ppt' },
-  //   { uri: 'https://example.com/document3.xls' },
-  //   { uri: 'https://example.com/document3.xlsx' },
-
-
-
-  // ];
 
   return (
     <>
@@ -296,9 +285,7 @@ const AddDigiCard = (
                 } else if (voiceInvalid(voiceData) !== 0) {
                   setVoiceError(false)
                   console.log("voice note not a mp3");
-                } else if(isDocumentErr === true){
-                  setDocumentErr(true)
-                }else {
+                } else {
 
                   var formData = {
                     digi_card_title: values.digicardtitle,
@@ -498,7 +485,7 @@ const AddDigiCard = (
 
                       <div className="form-group fill">
                         <label className="floating-label" htmlFor="digicard_document">
-                          <small className="text-danger"> </small>  Upload Document
+                          <small className="text-danger"> </small> Upload Document
                         </label>
                         <InputGroup>
                           <input
@@ -507,21 +494,23 @@ const AddDigiCard = (
                             name="digicard_document"
                             id="digicard_document"
                             onBlur={handleBlur}
-                            onChange={(e) => { 
-                              handleFileInput(e); 
-                              handleChange(e);
-                              setDocumentErr(false) 
-                            }}
+                            onChange={(e) => { handleFileInput(e); handleChange(e); }}
                             type="file"
                             accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx"
                           />
+
+                          {/* <button onClick={handleUpload} className="btn btn-primary btn-msg-send" type="button">
+                            Upload
+                          </button> */}
                         </InputGroup>
 
 
                         {selectedFile && <p style={{ color: "blue" }}>Selected file: {selectedFile.name}</p>}
 
-                        {isDocumentErr&&(<small className="text-danger form-text">Invalid File Type</small>)}
-                        
+                        {touched.digicard_document && errors.digicard_document && (
+                          <small className="text-danger form-text">{errors.digicard_document}</small>
+                        )}
+                        <small className="text-danger form-text" style={{ display: docError ? 'none' : 'block' }}>Invalid File Type or File size is Exceed More Than 10MB</small>
                       </div>
 
 
@@ -572,8 +561,6 @@ const AddDigiCard = (
                         </label><br />
                         <img width={100} src={imgFile} alt="" className="img-fluid mb-3" />
                       </div>
-
-
                       {voiceNotePre && (
                         <div>
                           <label className="floating-label" htmlFor="digicardtitle">
@@ -584,13 +571,6 @@ const AddDigiCard = (
                           </audio>
                         </div>
                       )}
-
-
-
-                      {/* <a href="https://dev-upschool.s3.ap-south-1.amazonaws.com/uploads/502dbed2-0be5-511b-bef1-ff53ddd7267c.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAQREMEI3P6FAX67SB%2F20230313%2Fap-south-1%2Fs3%2Faws4_request&X-Amz-Date=20230313T092534Z&X-Amz-Expires=300&X-Amz-Signature=c6bf2c833fa720c7ecb22305da655ef58dcabf22e8edcaefcf391ca5ebfcc2da&X-Amz-SignedHeaders=host"></a> */}
-
-
-
 
 
                     </Col>
