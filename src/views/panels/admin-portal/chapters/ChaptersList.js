@@ -6,7 +6,7 @@ import withReactContent from 'sweetalert2-react-content';
 import Swal from 'sweetalert2';
 import { GlobalFilter } from './GlobalFilter';
 
-import { useTable, useSortBy, usePagination, useGlobalFilter } from 'react-table';
+import { useTable, useSortBy, usePagination, useGlobalFilter, useRowSelect } from 'react-table';
 
 import dynamicUrl from '../../../../helper/dynamicUrls';
 
@@ -20,9 +20,21 @@ import { useLocation } from "react-router-dom";
 import BasicSpinner from '../../../../helper/BasicSpinner';
 import AddChapter from './AddChapters';
 import EditChapter from './EditChapter';
+import { toggleMultiChapterStatus } from '../../../api/CommonApi'
+
+
 
 
 function Table({ columns, data, modalOpen }) {
+    const [isOpenAddChapter, setOpenAddChapter] = useState(false);
+    const initiallySelectedRows = React.useMemo(() => new Set(["1"]), []);
+    const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[3]);
+    const chapterStatus = pageLocation === "active-chapter" ? 'Active' : 'Archived';
+    const MySwal = withReactContent(Swal);
+    let history = useHistory();
+
+
+
     const {
         getTableProps,
         getTableBodyProps,
@@ -41,26 +53,95 @@ function Table({ columns, data, modalOpen }) {
         nextPage,
         previousPage,
         setPageSize,
-        state: { pageIndex, pageSize }
+        selectedFlatRows,
+        state: { pageIndex, pageSize, selectedRowPaths }
     } = useTable(
         {
             columns,
             data,
-            initialState: { pageIndex: 0, pageSize: 10 }
+            initialState: { pageIndex: 0, pageSize: 10, selectedRowPaths: initiallySelectedRows }
         },
         useGlobalFilter,
         useSortBy,
-        usePagination
+        usePagination,
+        useRowSelect,
+        (hooks) => {
+            hooks.visibleColumns.push((columns) => [
+              {
+                id: "selection",
+                Header: ({ getToggleAllPageRowsSelectedProps }) => (
+                  <div>
+                    <IndeterminateCheckbox {...getToggleAllPageRowsSelectedProps()} />
+                  </div>
+                ),
+                Cell: ({ row }) => (
+                  <div>
+                    <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
+                  </div>
+                )
+              },
+              ...columns
+            ]);
+          }
     );
 
-    const [isOpen, setIsOpen] = useState(false);
-    const [isOpenAddChapter, setOpenAddChapter] = useState(false);
-    let history = useHistory();
+   
+    const IndeterminateCheckbox = React.forwardRef(
+        ({ indeterminate, ...rest }, ref) => {
+            const defaultRef = React.useRef();
+            const resolvedRef = ref || defaultRef;
 
-    const addingChapter = () => {
-        history.push('/admin-portal/addChapters');
-        setIsOpen(true);
+            React.useEffect(() => {
+                resolvedRef.current.indeterminate = indeterminate;
+            }, [resolvedRef, indeterminate]);
+
+            return (
+                <>
+                    <input type="checkbox" ref={resolvedRef} {...rest} />
+                </>
+            );
+        }
+    );
+
+
+
+    const multiDelete =async (status) =>{
+        console.log("selectedFlatRows",selectedFlatRows);
+        const chapterIds=[];
+        selectedFlatRows.map((item) => {
+            chapterIds.push(item.original.chapter_id)
+        })
+        if(chapterIds.length>0){
+            var payload = {
+                "chapter_status": status,
+                "chapter_array": chapterIds
+            }
+
+            const ResultData = await toggleMultiChapterStatus(payload)
+            if (ResultData.Error) {
+                if (ResultData.Error.response.data == 'Invalid Token') {
+                    sessionStorage.clear();
+                    localStorage.clear();
+                    history.push('/auth/signin-1');
+                    window.location.reload();
+                }else{
+                    return MySwal.fire('Error',ResultData.Error.response.data, 'error').then(() => {
+                        window.location.reload();
+                    });
+                }
+            } else {
+                return MySwal.fire('success', `Chapters ${status === 'Active' ? 'Restored' : "Deleted"} Successfully`, 'success').then(() => {
+                    window.location.reload();
+                });
+            }
+        }else{
+            return MySwal.fire('Sorry', 'No Chapters Selected!', 'warning').then(() => {
+                // window.location.reload();
+            });
+        }
     }
+
+
 
     return (
         <>
@@ -83,11 +164,21 @@ function Table({ columns, data, modalOpen }) {
                     Entries
                 </Col>
 
-                <Col className="d-flex justify-content-end">
+                <Col className="mb-3" style={{ display: 'contents' }}>
                     <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
                     <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={() => { setOpenAddChapter(true) }}>
                         <i className="feather icon-plus" /> Add Chapter
                     </Button>
+                    {chapterStatus === 'Active'?(
+                          <Button variant="success" className='btn-sm btn-round has-ripple ml-2 btn btn-danger' onClick={() => { multiDelete("Archived") }}>
+                          <i className="feather icon-trash-2" />  Multi Delete
+                      </Button>
+                    ):(
+                        <Button  className='btn-sm btn-round has-ripple ml-2 btn btn-primary' onClick={() => { multiDelete("Active") }}>
+                        <i className="feather icon-plus" />   Multi Restore
+                    </Button>
+                    )}
+                  
                 </Col>
             </Row>
 
@@ -350,11 +441,11 @@ const ChaptersListChild = (props) => {
 
     const allChaptersList = () => {
         const chapterStatus = pageLocation === "active-chapter" ? 'Active' : 'Archived';
-
+        console.log("chapterStatus",chapterStatus);
         setIsLoading(true);
-        axios.post(dynamicUrl.fetchAllChapters, {
-            data:{
-                chapter_status:chapterStatus
+        axios.post(dynamicUrl.fetchChaptersBasedonStatus, {
+            data: {
+                chapter_status: chapterStatus
             }
         }, {
             headers: { Authorization: sessionStorage.getItem('user_jwt') }
@@ -365,6 +456,7 @@ const ChaptersListChild = (props) => {
                 let finalDataArray = [];
 
                 if (chapterStatus === 'Active') {
+                    let resultData = (dataResponse && dataResponse.filter(e => e.chapter_status === 'Archived'))
                     for (let index = 0; index < dataResponse.length; index++) {
                         dataResponse[index].index_no = index + 1;
                         dataResponse[index]['actions'] = (
@@ -398,16 +490,15 @@ const ChaptersListChild = (props) => {
                         console.log('finalDataArray: ', finalDataArray)
                     }
                 } else {
-                    let resultData = (dataResponse && dataResponse.filter(e => e.chapter_status === 'Archived'))
-                    for (let index = 0; index < resultData.length; index++) {
-                        resultData[index].index_no = index + 1;
-                        resultData[index]['actions'] = (
+                    for (let index = 0; index < dataResponse.length; index++) {
+                        dataResponse[index].index_no = index + 1;
+                        dataResponse[index]['actions'] = (
                             <>
                                 <>
                                     <Button
                                         size="sm"
                                         className="btn btn-icon btn-rounded btn-primary"
-                                        onClick={(e) => restoreChapter(resultData[index].chapter_id, resultData[index].chapter_title)}
+                                        onClick={(e) => restoreChapter(dataResponse[index].chapter_id, dataResponse[index].chapter_title)}
                                     >
                                         <i className="feather icon-plus" /> &nbsp; Restore
                                     </Button>
@@ -415,12 +506,12 @@ const ChaptersListChild = (props) => {
                                 </>
                             </>
                         );
-                        finalDataArray.push(resultData[index]);
+                        finalDataArray.push(dataResponse[index]);
                         console.log('finalDataArray: ', finalDataArray)
                     }
                 }
                 setChapterData(finalDataArray);
-                console.log('resultData: ', finalDataArray);
+                console.log('dataResponse: ', finalDataArray);
                 setIsLoading(false);
 
             })

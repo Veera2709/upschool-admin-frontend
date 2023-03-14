@@ -21,7 +21,7 @@ import logo from './img/logo.png'
 import Multiselect from 'multiselect-react-dropdown';
 import Select from 'react-draggable-multi-select';
 
-import { fetchAllDigiCards } from '../../../api/CommonApi'
+import { fetchDigiCardsBasedonStatus } from '../../../api/CommonApi'
 import { Link, useHistory } from 'react-router-dom';
 
 
@@ -127,7 +127,7 @@ const AddDigiCard = (
     } else {
       setDisplayHeader(true);
     }
-    const allDigicardData = await fetchAllDigiCards(dynamicUrl.fetchAllDigiCards);
+    const allDigicardData = await fetchDigiCardsBasedonStatus("Active");
     if (allDigicardData.error) {
       console.log(allDigicardData.error);
       if (allDigicardData.Error.response.data == 'Invalid Token') {
@@ -140,9 +140,7 @@ const AddDigiCard = (
       console.log("allDigicardData", allDigicardData.Items);
       let resultData = allDigicardData.Items;
       resultData.forEach((item, index) => {
-        if (item.digicard_status === 'Active') {
           colourOptions.push({ value: item.digi_card_id, label: item.digi_card_title })
-        }
       })
       setDigitalTitles(colourOptions);
     }
@@ -347,7 +345,7 @@ const AddDigiCard = (
                             title: 'Digicard added successfully!',
                             icon: 'success',
                           }).then((willDelete) => {
-
+                            history.push('/admin-portal/active-digiCard');
                             window.location.reload();
 
                           })

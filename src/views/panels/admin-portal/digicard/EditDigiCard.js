@@ -15,7 +15,7 @@ import withReactContent from 'sweetalert2-react-content';
 import ArticleRTE from './ArticleRTE'
 import { areFilesInvalid, voiceInvalid } from '../../../../util/utils';
 import Multiselect from 'multiselect-react-dropdown';
-import { fetchIndividualDigiCard, fetchAllDigiCards } from '../../../api/CommonApi'
+import { fetchIndividualDigiCard, fetchDigiCardsBasedonStatus } from '../../../api/CommonApi'
 import { Link, useHistory, useParams } from 'react-router-dom';
 import Select from 'react-draggable-multi-select';
 import BasicSpinner from '../../../../helper/BasicSpinner';
@@ -145,7 +145,7 @@ const EditDigiCard = () => {
         } else {
             setDisplayHeader(true);
         }
-        const allDigicardData = await fetchAllDigiCards(dynamicUrl.fetchAllDigiCards);
+        const allDigicardData = await fetchDigiCardsBasedonStatus("Active");
         if (allDigicardData.error) {
             console.log(allDigicardData.error);
             if (allDigicardData.Error.response.data == 'Invalid Token') {
@@ -158,8 +158,8 @@ const EditDigiCard = () => {
             console.log("allDigicardData", allDigicardData.Items);
             let resultData = allDigicardData.Items;
             resultData.forEach((item, index) => {
-                if (item.digicard_status === 'Active' && item.digi_card_id != digi_card_id) {
-                    colourOptions.push({ value: item.digi_card_id, label: item.digi_card_title })
+                if(item.digi_card_id!==digi_card_id){
+                    colourOptions.push({ value: item.digi_card_id, label: item.digi_card_title }) 
                 }
             })
             setDigitalTitles(colourOptions);
