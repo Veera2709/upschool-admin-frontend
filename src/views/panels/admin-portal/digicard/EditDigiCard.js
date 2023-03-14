@@ -314,13 +314,11 @@ const EditDigiCard = () => {
                     digi_card_excerpt: articleDataTitle,
                     digi_card_content: articleData,
                     digi_card_keywords: tags,
-                    digicard_document: selectedFile,//upload doc
-
+                    digicard_document: individualDigiCardData[0].digicard_document === '' ? '' : individualDigiCardData[0].digicard_document,//upload doc
                     digicard_voice_note: individualDigiCardData[0].digicard_voice_note === '' ? '' : individualDigiCardData[0].digicard_voice_note,
                     related_digi_cards: multiOptions,
                 };
             } else {
-                console.log("else condition");
                 formData = {
                     digi_card_title: name,
                     digi_card_files: [document.getElementById("digicard_image").value],
@@ -329,7 +327,6 @@ const EditDigiCard = () => {
                     digi_card_content: articleData,
                     digi_card_keywords: tags,
                     digicard_document: selectedFile,//upload doc
-
                     digicard_voice_note: document.getElementById("digicard_voice_note").value === undefined || '' ? "" : document.getElementById("digicard_voice_note").value,
                     related_digi_cards: multiOptions,
                 };
@@ -440,15 +437,7 @@ const EditDigiCard = () => {
         setSelectedFile(e.target.files[0]);
     };
 
-    // const handleUpload = () => {
-    //     const formData = new FormData();
-    //     formData.append("file", selectedFile);
-
-    //     // Call the API to upload the file
-    //     // ...
-
-    //     setSelectedFile(null);
-    // };
+ 
 
     return (
         <div>
@@ -524,37 +513,35 @@ const EditDigiCard = () => {
                                             hideLoader();
                                         } else {
                                             var formData;
-                                            if (values.digicard_image === '' || voiceNotePre !== undefined) {
+                                            // if (values.digicard_image === '' ||values.digicard_image === undefined || voiceNotePre !== undefined) {
                                                 console.log("if condition");
                                                 formData = {
                                                     digi_card_id: individualDigiCardData[0].digi_card_id,
                                                     digi_card_title: values.digicardtitle,
                                                     digi_card_files: [values.digicard_image],
-                                                    digicard_image: imgFile,
-                                                    digicard_document: values.digicard_document,//upload doc
-                                                    // digicard_voice_note: voiceNotePre === undefined ? values.digicard_voice_note
-                                                    digicard_voice_note: values.digicard_voice_note,
-                                                    // documentPre
+                                                    digicard_image: values.digicard_image === '' || values.digicard_image === undefined ? '' : values.digicard_image ,
+                                                    digicard_document: values.digicard_document === '' || values.digicard_document === undefined ? '' : values.digicard_document ,//upload doc
+                                                    digicard_voice_note: values.digicard_voice_note === '' || values.digicard_voice_note === undefined ? '' : values.digicard_voice_note ,
                                                     digi_card_excerpt: articleDataTitle,
                                                     digi_card_content: articleData,
                                                     digi_card_keywords: tags,
                                                     related_digi_cards: multiOptions
                                                 };
-                                            } else {
-                                                console.log("else condition");
-                                                formData = {
-                                                    digi_card_id: individualDigiCardData[0].digi_card_id,
-                                                    digi_card_title: values.digicardtitle,
-                                                    digi_card_files: [values.digicard_image],
-                                                    digicard_image: values.digicard_image,
-                                                    digicard_document: selectedFile,//upload doc
-                                                    digicard_voice_note: values.digicard_voice_note,
-                                                    digi_card_excerpt: articleDataTitle,
-                                                    digi_card_content: articleData,
-                                                    digi_card_keywords: tags,
-                                                    related_digi_cards: multiOptions
-                                                };
-                                            }
+                                            // } else {
+                                            //     console.log("else condition");
+                                            //     formData = {
+                                            //         digi_card_id: individualDigiCardData[0].digi_card_id,
+                                            //         digi_card_title: values.digicardtitle,
+                                            //         digi_card_files: [values.digicard_image],
+                                            //         digicard_image: values.digicard_image,
+                                            //         digicard_document: selectedFile,//upload doc
+                                            //         digicard_voice_note: values.digicard_voice_note,
+                                            //         digi_card_excerpt: articleDataTitle,
+                                            //         digi_card_content: articleData,
+                                            //         digi_card_keywords: tags,
+                                            //         related_digi_cards: multiOptions
+                                            //     };
+                                            // }
 
                                             console.log("formData", formData);
 
