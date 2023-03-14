@@ -159,8 +159,10 @@ const EditDigiCard = () => {
     }
 
     const fetchAllData = async () => {
+       
         setIsLoading(true)
-        if (threadLinks.length === 2) {
+        console.log("threadLinks",threadLinks.length);
+        if (threadLinks.length === 1) {
             setDisplayHeader(false);
         } else {
             setDisplayHeader(true);
@@ -227,6 +229,7 @@ const EditDigiCard = () => {
     useEffect(() => {
         let userJWT = sessionStorage.getItem('user_jwt');
         console.log("jwt", userJWT);
+     
         if (userJWT === "" || userJWT === undefined || userJWT === "undefined" || userJWT === null) {
             sessionStorage.clear();
             localStorage.clear();
