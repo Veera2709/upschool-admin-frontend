@@ -209,18 +209,10 @@ const AddDigiCard = (
   };
 
 
-  // const documents = [
-  //   { uri: 'https://example.com/document1.pdf' },
-  //   { uri: 'https://example.com/document2.docx' },
-  //   { uri: 'https://example.com/document3.pptx' },
-  //   { uri: 'https://example.com/document3.doc' },
-  //   { uri: 'https://example.com/document3.ppt' },
-  //   { uri: 'https://example.com/document3.xls' },
-  //   { uri: 'https://example.com/document3.xlsx' },
 
 
 
-  // ];
+
 
   return (
     <>
