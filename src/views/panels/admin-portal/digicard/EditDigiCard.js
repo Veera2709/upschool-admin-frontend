@@ -731,7 +731,7 @@ const EditDigiCard = () => {
 
                                                         {selectedFile && (
                                                             <small className="text-muted form-text">
-                                                                {/* Selected file: {selectedFile.name} */}
+                                                                Selected file: {selectedFile.name}
                                                             </small>
                                                         )}
 

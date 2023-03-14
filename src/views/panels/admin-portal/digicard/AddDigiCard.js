@@ -507,6 +507,12 @@ const AddDigiCard = (
 
                         {selectedFile && <p style={{ color: "blue" }}>Selected file: {selectedFile.name}</p>}
 
+                        {/* {selectedFile && (
+                          <small className="text-muted form-text">
+                            Selected file: {selectedFile.name}
+                          </small>
+                        )} */}
+
                         {touched.digicard_document && errors.digicard_document && (
                           <small className="text-danger form-text">{errors.digicard_document}</small>
                         )}
