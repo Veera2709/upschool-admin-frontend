@@ -17,7 +17,7 @@ import { SessionStorage } from '../../../../util/SessionStorage';
 import MESSAGES from '../../../../helper/messages';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import { useLocation } from "react-router-dom";
-import { fetchAllTopics } from '../../../api/CommonApi'
+import { fetchTopicsBasedonStatus } from '../../../api/CommonApi'
 import BasicSpinner from '../../../../helper/BasicSpinner';
 import AddTopics from './AddTopics';
 import EditTopics from './EditTopics';
@@ -357,7 +357,7 @@ const ActiveTopics = (props) => {
             window.location.reload();
         } else {
             setIsLoading(true)
-            const allUnitsData = await fetchAllTopics(TopicStatus);
+            const allUnitsData = await fetchTopicsBasedonStatus(TopicStatus);
             if (allUnitsData.ERROR) {
                 console.log("allUnitsData.ERROR", allUnitsData.ERROR);
             } else {
@@ -373,13 +373,11 @@ const ActiveTopics = (props) => {
                                     <Button
                                         size="sm"
                                         className="btn btn-icon btn-rounded btn-primary"
-                                        // onClick={(e) => history.push(`/admin-portal/Topics/editTopic/${dataResponse[index].topic_id}`)}
                                         onClick={(e) => { setTopicId(dataResponse[index].topic_id); setOpenEditTopic(true) }}
                                     >
                                         <i className="feather icon-edit" /> &nbsp; Edit
                                     </Button>
                                     &nbsp;
-                                    {/* if(resultData[index].chapter_status=='Active') */}
                                     <Button
                                         size="sm"
                                         className="btn btn-icon btn-rounded btn-danger"
@@ -395,16 +393,15 @@ const ActiveTopics = (props) => {
                         console.log('finalDataArray: ', finalDataArray)
                     }
                 } else {
-                    let resultData = (dataResponse && dataResponse.filter(e => e.topic_status === 'Archived'))
-                    for (let index = 0; index < resultData.length; index++) {
-                        resultData[index].index_no = index + 1;
-                        resultData[index]['actions'] = (
+                    for (let index = 0; index < dataResponse.length; index++) {
+                        dataResponse[index].index_no = index + 1;
+                        dataResponse[index]['actions'] = (
                             <>
                                 <>
                                     <Button
                                         size="sm"
                                         className="btn btn-icon btn-rounded btn-primary"
-                                        onClick={(e) => restoreChapter(resultData[index].topic_id, resultData[index].topic_title)}
+                                        onClick={(e) => restoreChapter(dataResponse[index].topic_id, dataResponse[index].topic_title)}
                                     >
                                         <i className="feather icon-plus" /> &nbsp; Restore
                                     </Button>
@@ -412,12 +409,11 @@ const ActiveTopics = (props) => {
                                 </>
                             </>
                         );
-                        finalDataArray.push(resultData[index]);
-                        console.log('finalDataArray: ', finalDataArray)
+                        finalDataArray.push(dataResponse[index]);
                     }
                 }
                 setTopicData(finalDataArray);
-                console.log('resultData: ', finalDataArray);
+                console.log('finalDataArray: ', finalDataArray);
                 setIsLoading(false)
             }
 

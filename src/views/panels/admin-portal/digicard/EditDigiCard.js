@@ -15,7 +15,7 @@ import withReactContent from 'sweetalert2-react-content';
 import ArticleRTE from './ArticleRTE'
 import { areFilesInvalid, voiceInvalid } from '../../../../util/utils';
 import Multiselect from 'multiselect-react-dropdown';
-import { fetchIndividualDigiCard, fetchAllDigiCards } from '../../../api/CommonApi'
+import { fetchIndividualDigiCard, fetchDigiCardsBasedonStatus } from '../../../api/CommonApi'
 import { Link, useHistory, useParams } from 'react-router-dom';
 import Select from 'react-draggable-multi-select';
 import BasicSpinner from '../../../../helper/BasicSpinner';
@@ -57,7 +57,13 @@ const EditDigiCard = () => {
     const [newDigicard, setnNewDigicard] = useState(false);
     const [voiceError, setVoiceError] = useState(true);
     const [docError, setDocError] = useState(true);//upload doc err
-    const [isLoading, setIsLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(false);
+    const threadLinks = document.getElementsByClassName('page-header');
+    console.log('individualDigiCardData initial', individualDigiCardData);
+    console.log("defaultOptions", defaultOptions);
+    let history = useHistory();
+
+    const { digi_card_id } = useParams();
 
 
 
@@ -86,6 +92,8 @@ const EditDigiCard = () => {
             setSelectedFile(file);
         }
     }
+    
+
 
     function getPreviewLink(e) {
         console.log("getPreviewLink");
@@ -100,12 +108,7 @@ const EditDigiCard = () => {
 
     }
 
-    const threadLinks = document.getElementsByClassName('page-header');
-    console.log('individualDigiCardData initial', individualDigiCardData);
-    console.log("defaultOptions", defaultOptions);
-    let history = useHistory();
-
-    const { digi_card_id } = useParams();
+   
 
     const handleDelete = (i, states) => {
         const newTags = tags.slice(0);
@@ -129,13 +132,11 @@ const EditDigiCard = () => {
 
 
     const previewImage = (e) => {
-        // setImgFile(URL.createObjectURL(e.target.files[0]));
         let FileLength = e.target.files.length
         console.log("FileLength", FileLength);
         FileLength === 1 ? setImgFile(URL.createObjectURL(e.target.files[0])) : setImgFile()
     }
     const previewDocument = (e) => {
-        // setImgFile(URL.createObjectURL(e.target.files[0]));
         let FileLength = e.target.files.length
         console.log("FileLength", FileLength);
         FileLength === 1 ? setImgFile(URL.createObjectURL(e.target.files[0])) : setImgFile()
@@ -164,7 +165,7 @@ const EditDigiCard = () => {
         } else {
             setDisplayHeader(true);
         }
-        const allDigicardData = await fetchAllDigiCards(dynamicUrl.fetchAllDigiCards);
+        const allDigicardData = await fetchDigiCardsBasedonStatus("Active");
         if (allDigicardData.error) {
             console.log(allDigicardData.error);
             if (allDigicardData.Error.response.data == 'Invalid Token') {
@@ -177,8 +178,8 @@ const EditDigiCard = () => {
             console.log("allDigicardData", allDigicardData.Items);
             let resultData = allDigicardData.Items;
             resultData.forEach((item, index) => {
-                if (item.digicard_status === 'Active' && item.digi_card_id != digi_card_id) {
-                    colourOptions.push({ value: item.digi_card_id, label: item.digi_card_title })
+                if(item.digi_card_id!==digi_card_id){
+                    colourOptions.push({ value: item.digi_card_id, label: item.digi_card_title }) 
                 }
             })
             setDigitalTitles(colourOptions);
@@ -200,7 +201,6 @@ const EditDigiCard = () => {
                 let previousVoiceNote = indidvidualDigicard.Items[0].digicard_voice_noteURL;
 
                 setIndividualDigiCardData(indidvidualDigicard.Items);
-                setDigiCardDataTitel(indidvidualDigicard.Items[0].digi_card_title)
                 setImgFile(previousImage);
                 setVoiceNote(previousVoiceNote);
                 setArticleData(indidvidualDigicard.Items[0].digi_card_content)
@@ -485,8 +485,7 @@ const EditDigiCard = () => {
                                 <Formik
                                     enableReinitialize
                                     initialValues={{
-                                        // digicardname: individualDigiCardData.digi_card_name,
-                                        digicardtitle: digiCardDataTitel,
+                                        digicardtitle: individualDigiCardData[0].digi_card_title,
                                         digicard_image: '',
                                         digicard_voice_note: '',
                                         digicard_document: '',
@@ -711,6 +710,9 @@ const EditDigiCard = () => {
                                                             name="digicard_voice_note"
                                                             id="digicard_voice_note"
                                                             onBlur={handleBlur}
+                                                            onClick={(e) => {
+                                                                setVoiceNote('');
+                                                              }}
                                                             onChange={(e) => {
                                                                 handleChange(e);
                                                                 previewVoiceNote(e);

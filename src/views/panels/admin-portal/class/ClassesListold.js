@@ -19,7 +19,7 @@ import MESSAGES from "../../../../helper/messages";
 import useFullPageLoader from "../../../../helper/useFullPageLoader";
 import { useLocation } from "react-router-dom";
 import {
-  fetchAllClass,
+  fetchClassesBasedonStatus,
   toggleClassStatus,
 } from "../../../api/CommonApi";
 
@@ -270,7 +270,7 @@ const StandardList = (props) => {
     ClassStatus == "Active"
       ? (class_status = "Active")
       : (class_status = "Archived");
-    const allClassesData = await fetchAllClass(class_status);
+    const allClassesData = await fetchClassesBasedonStatus(class_status);
     if (allClassesData.ERROR) {
       console.log("allClassesData.ERROR", allClassesData.ERROR);
        if (allClassesData.Error.response.data == 'Invalid Token') {

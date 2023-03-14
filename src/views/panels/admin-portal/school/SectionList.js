@@ -224,7 +224,7 @@ const SectionList = ({ id }) => {
         setOpenEditSection(true)
     }
 
-    const fetchAllDigiCards = async () => {
+    const fetchAllSchoolS = async () => {
         const allSectionData = await fetchSchoolSection(id);
         console.log("allSectionData", allSectionData);
         if (allSectionData.Error) {
@@ -257,7 +257,7 @@ const SectionList = ({ id }) => {
 
     useEffect(() => {
 
-        fetchAllDigiCards();
+        fetchAllSchoolS();
     }, [])
 
     return (
