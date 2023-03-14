@@ -1,13 +1,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useHistory } from 'react-router-dom';
+import { useHistory, Link } from 'react-router-dom';
 import { Row, Col, Button, Alert } from 'react-bootstrap';
 
 import * as Yup from 'yup';
 import { Formik } from 'formik';
-
-// import useAuth from '../../../hooks/useAuth';
-// import useScriptRef from '../../../hooks/useScriptRef';
 
 import jwt from 'jwt-decode';
 
@@ -18,10 +15,21 @@ import useFullPageLoader from '../../../helper/useFullPageLoader';
 const Login = ({ className, handleLogin, ...rest }) => {
 
   let history = useHistory();
+  const [typeValueConfirmPass, setTypeValueConfirmPass] = useState('password');
+  const [eyeValueConfirmPass, setEyeValueConfirmPass] = useState('feather icon-eye-off');
 
   const handleLoginWithOTP = () => {
     history.push('/auth/loginWithOTP');
     handleLogin();
+  }
+
+  const handleHideShowConfirmPassword = () => {
+    typeValueConfirmPass === 'password' ? setTypeValueConfirmPass('text') : setTypeValueConfirmPass('password');
+    eyeValueConfirmPass === 'feather icon-eye-off' ? setEyeValueConfirmPass('feather icon-eye') : setEyeValueConfirmPass('feather icon-eye-off');
+  }
+
+  const handleCreateResetPassword = () => {
+    history.push('/auth/createOrResetPassword');
   }
 
   const [loader, showLoader, hideLoader] = useFullPageLoader();
@@ -65,7 +73,6 @@ const Login = ({ className, handleLogin, ...rest }) => {
                 console.log({ response });
                 hideLoader();
 
-                // alert(JSON.stringify(response));
                 let user_data = jwt(response.data[0].jwt);
 
                 if (user_data.length !== 0) {
@@ -111,7 +118,9 @@ const Login = ({ className, handleLogin, ...rest }) => {
         >
           {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
             <form noValidate onSubmit={handleSubmit} className={className} {...rest}>
+
               <div className="form-group mb-3">
+
                 <input
                   className="form-control"
                   error={touched.email && errors.email}
@@ -123,21 +132,51 @@ const Login = ({ className, handleLogin, ...rest }) => {
                   value={values.email}
                   placeholder="Email Id/Username"
                 />
-                {touched.email && errors.email && <small class="text-danger form-text">{errors.email}</small>}
+
+                {touched.email && errors.email &&
+                  <small
+                    style={{ textAlign: 'initial' }}
+                    class="text-danger form-text">
+                    {errors.email}
+                  </small>
+                }
               </div>
               <div className="form-group mb-4">
-                <input
-                  className="form-control"
-                  error={touched.password && errors.password}
-                  label="Password"
-                  name="password"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  type="password"
-                  value={values.password}
-                  placeholder="Password"
-                />
-                {touched.password && errors.password && <small class="text-danger form-text">{errors.password}</small>}
+                <Row>
+                  <Col>
+                    <input
+                      className="form-control"
+                      error={touched.password && errors.password}
+                      label="Password"
+                      name="password"
+                      onBlur={handleBlur}
+                      onChange={handleChange}
+                      type={typeValueConfirmPass}
+                      value={values.password}
+                      placeholder="Password"
+                    />
+                    {
+                      touched.password && errors.password &&
+                      <small
+                        style={{ textAlign: 'initial' }}
+                        class="text-danger form-text">
+                        {errors.password}
+                      </small>
+                    }
+                  </Col>
+
+                  <Link
+                    to="#"
+                    onClick={handleHideShowConfirmPassword}>
+                    <i
+                      style={{
+                        position: 'absolute',
+                        marginTop: '10px',
+                        marginLeft: '-40px'
+                      }}
+                      className={eyeValueConfirmPass} />
+                  </Link>
+                </Row>
               </div>
 
               {errors.submit && (
@@ -162,14 +201,21 @@ const Login = ({ className, handleLogin, ...rest }) => {
 
         <hr />
 
+        <p
+          style={{ cursor: 'pointer', textAlign: 'center' }}
+          className="mb-2 text-muted"
+          onClick={() => {
+            handleCreateResetPassword();
+          }}>
+          Create/Forgot password{' '}
+        </p>
+
         <p onClick={() => {
           handleLoginWithOTP();
         }} style={{ cursor: 'pointer' }} className="mb-0 text-muted f-w-400">
           Login with OTP
         </p>
       </>
-
-
     </React.Fragment >
   );
 };
