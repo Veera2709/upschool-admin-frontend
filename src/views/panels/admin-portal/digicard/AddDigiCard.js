@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 // import { InputGroup, FormControl, Button } from 'react-bootstrap';
 // import './style.css'
+// import DocViewer from 'react-doc-viewer';
 import { InputGroup, Row, Col, Card, Button, Modal } from 'react-bootstrap';
 // import CkDecoupledEditor from '../../../components/CK-Editor/CkDecoupledEditor';
 import * as Constants from '../../../../helper/constants';
@@ -72,6 +73,26 @@ const AddDigiCard = (
   const threadLinks = document.getElementsByClassName('page-header');
 
   let history = useHistory();
+
+  const allowedFileTypes = ['.pdf', '.doc', '.docx', '.jpg', '.jpeg', '.png', '.gif'];
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+
+    if (!allowedFileTypes.includes(fileExtension)) {
+
+      MySwal.fire('Sorry', 'Invalid file type. Only PDF, DOC, DOCX, JPG, JPEG, PNG, and GIF files are allowed.', 'warning')
+      event.target.value = null;
+      setSelectedFile(null);
+      return;
+    }
+
+    setSelectedFile(file);
+  };
+
+
+
 
 
   const handleDelete = (i, states) => {
@@ -174,7 +195,7 @@ const AddDigiCard = (
 
   const getMultiOptions = (event) => {
     let valuesArr = [];
-    if(event){
+    if (event) {
       for (let i = 0; i < event.length; i++) {
         valuesArr.push(event[i].value)
       }
@@ -186,16 +207,10 @@ const AddDigiCard = (
   const handleFileInput = (e) => {
     setSelectedFile(e.target.files[0]);
   };
-  //button 
-  // const handleUpload = () => {
-  //   const formData = new FormData();
-  //   formData.append("file", selectedFile);
 
-  //   // Call the API to upload the file
-  //   // ...
 
-  //   setSelectedFile(null);
-  // };
+
+
 
 
 
@@ -484,8 +499,8 @@ const AddDigiCard = (
 
 
                       <div className="form-group fill">
-                        <label className="floating-label" htmlFor="digicard_document">
-                          <small className="text-danger"> </small> Upload Document
+                        <label className="floating-label" htmlFor="digicard_document"> Upload Document
+                          <small className="text-danger"></small>
                         </label>
                         <InputGroup>
                           <input
@@ -494,18 +509,20 @@ const AddDigiCard = (
                             name="digicard_document"
                             id="digicard_document"
                             onBlur={handleBlur}
-                            onChange={(e) => { handleFileInput(e); handleChange(e); }}
+                            onChange={(e) => { handleFileInput(e); handleChange(e); handleFileChange(e) }}
                             type="file"
-                            accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx"
+                            accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif"
                           />
-
-                          {/* <button onClick={handleUpload} className="btn btn-primary btn-msg-send" type="button">
-                            Upload
-                          </button> */}
                         </InputGroup>
 
 
                         {selectedFile && <p style={{ color: "blue" }}>Selected file: {selectedFile.name}</p>}
+
+                        {/* {selectedFile && (
+                          <small className="text-muted form-text">
+                            Selected file: {selectedFile.name}
+                          </small>
+                        )} */}
 
                         {touched.digicard_document && errors.digicard_document && (
                           <small className="text-danger form-text">{errors.digicard_document}</small>
@@ -561,6 +578,8 @@ const AddDigiCard = (
                         </label><br />
                         <img width={100} src={imgFile} alt="" className="img-fluid mb-3" />
                       </div>
+
+
                       {voiceNotePre && (
                         <div>
                           <label className="floating-label" htmlFor="digicardtitle">
@@ -571,6 +590,13 @@ const AddDigiCard = (
                           </audio>
                         </div>
                       )}
+
+
+
+                      {/* <a href="https://dev-upschool.s3.ap-south-1.amazonaws.com/uploads/502dbed2-0be5-511b-bef1-ff53ddd7267c.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAQREMEI3P6FAX67SB%2F20230313%2Fap-south-1%2Fs3%2Faws4_request&X-Amz-Date=20230313T092534Z&X-Amz-Expires=300&X-Amz-Signature=c6bf2c833fa720c7ecb22305da655ef58dcabf22e8edcaefcf391ca5ebfcc2da&X-Amz-SignedHeaders=host"></a> */}
+
+
+
 
 
                     </Col>

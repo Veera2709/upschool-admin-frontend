@@ -25,6 +25,7 @@ const EditDigiCard = () => {
 
     const colourOptions = [];
     const [selectedFile, setSelectedFile] = useState(null);//doc selected
+
     const [loader, showLoader, hideLoader] = useFullPageLoader();
     const [disableButton, setDisableButton] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
@@ -59,6 +60,45 @@ const EditDigiCard = () => {
     const [isLoading, setIsLoading] = useState(false)
 
 
+
+    const allowedFileTypes = ['.pdf', '.doc', '.docx', '.jpg', '.jpeg', '.png', '.gif'];
+
+    const handleFileChange = (event) => {
+        const file = event.target.files[0];
+        const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+
+        if (!allowedFileTypes.includes(fileExtension)) {
+            console.log('Invalid file type');
+            MySwal.fire('Sorry', 'Invalid file type. Only PDF, DOC, DOCX, JPG, JPEG, PNG, and GIF files are allowed.', 'warning').then(() => {
+                window.location.reload();
+            });
+            event.target.value = null;
+            setSelectedFile(null);
+            return;
+        }
+
+        setSelectedFile(file);
+    };
+
+    function handleChange(event) {
+        const file = event.target.files[0];
+        if (file) {
+            setSelectedFile(file);
+        }
+    }
+
+    function getPreviewLink(e) {
+        console.log("getPreviewLink");
+        console.log("URL.createObjectURL(selectedFile) : ", URL.createObjectURL(e.target.files[0]));
+        individualDigiCardData[0].digicard_documentURL = URL.createObjectURL(e.target.files[0])
+        // if (selectedFile) {
+
+        //     return URL.createObjectURL(selectedFile);
+        // } else {
+        //     return "";
+        // }
+
+    }
 
     const threadLinks = document.getElementsByClassName('page-header');
     console.log('individualDigiCardData initial', individualDigiCardData);
@@ -412,7 +452,8 @@ const EditDigiCard = () => {
             {isLoading ? (
                 <BasicSpinner />
             ) : (
-                <>
+                <>{
+                    individualDigiCardData.length > 0 &&
                     <React.Fragment>
                         {
                             displayHeader && (
@@ -691,22 +732,36 @@ const EditDigiCard = () => {
                                                         </label>
                                                         <InputGroup>
                                                             <input
+
                                                                 className="form-control"
                                                                 error={touched.digicard_document && errors.digicard_document}
                                                                 name="digicard_document"
                                                                 id="digicard_document"
-                                                                onBlur={handleBlur}
-                                                                onChange={(e) => { handleFileInput(e); handleChange(e); }}
-                                                                type="file"
-                                                                accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx"
-                                                            />
+                                                                value={values.digicard_document}
 
-                                                            {/* <button onClick={handleUpload} className="btn btn-primary btn-msg-send" type="button">
-                                                                Upload
-                                                            </button> */}
+                                                                onBlur={handleBlur}
+                                                                onChange={(e) => { handleFileInput(e); handleChange(e); getPreviewLink(e); handleFileChange(e) }}
+                                                                type="file"
+                                                                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif"
+                                                            />
                                                         </InputGroup>
 
-                                                        {selectedFile && <p style={{ color: "blue" }}>Selected file: {selectedFile.name}</p>}
+
+                                                        {selectedFile && (
+                                                            <small className="text-muted form-text">
+                                                                Selected file: {selectedFile.name}
+                                                            </small>
+                                                        )}
+
+                                                        {<a href={individualDigiCardData[0].digicard_documentURL} target="_blank" >Click here to Preview Document</a>}
+
+
+
+
+                                                        <small className="text-danger form-text" style={{ display: docError ? 'none' : 'block' }}>Invalid File Type or File size is Exceed More Than 10MB</small>
+
+
+
 
                                                         {touched.digicard_document && errors.digicard_document && (
                                                             <small className="text-danger form-text">{errors.digicard_document}</small>
@@ -927,6 +982,7 @@ const EditDigiCard = () => {
                             </Modal.Body>
                         </Modal>
                     </React.Fragment>
+                }
                 </>
             )}
         </div>
