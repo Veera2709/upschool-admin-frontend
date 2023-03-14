@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
+// import { InputGroup, FormControl, Button } from 'react-bootstrap';
 // import './style.css'
-import { Row, Col, Card, Button, Modal } from 'react-bootstrap';
+// import DocViewer from 'react-doc-viewer';
+import { InputGroup, Row, Col, Card, Button, Modal } from 'react-bootstrap';
 // import CkDecoupledEditor from '../../../components/CK-Editor/CkDecoupledEditor';
 import * as Constants from '../../../../helper/constants';
 import { Formik } from 'formik';
@@ -46,8 +48,7 @@ const AddDigiCard = (
 
 
   const colourOptions = [];
-
-
+  const [selectedFile, setSelectedFile] = useState(null);//doc selected
   const [loader, showLoader, hideLoader] = useFullPageLoader();
   const [disableButton, setDisableButton] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -58,11 +59,12 @@ const AddDigiCard = (
   const [tags, setTags] = useState([]);
   const [ImgURL, setImgURL] = useState([]);
   const [imgFile, setImgFile] = useState([]);
-  const [articleData, setArticleData] = useState();
-  const [articleDataTitle, setArticleDataTtitle] = useState();
+  const [articleData, setArticleData] = useState('');
+  const [articleDataTitle, setArticleDataTtitle] = useState('');
   const [digitalTitles, setDigitalTitles] = useState([]);
   const [imgValidation, setImgValidation] = useState(true);
   const [voiceError, setVoiceError] = useState(true);
+  const [docError, setDocError] = useState(true);//upload doc
   const [displayHeading, setDisplayHeading] = useState(sessionStorage.getItem('digicard_type'));
   const [displayHeader, setDisplayHeader] = useState(true);
   const [imagePre, setImage] = useState();
@@ -88,7 +90,6 @@ const AddDigiCard = (
     setVoiceNote(URL.createObjectURL(e.target.files[0]));
   }
 
-
   function encodeImageFileAsURL(e) {
     let FileLength = e.target.files.length
     if (FileLength === 1) {
@@ -109,13 +110,11 @@ const AddDigiCard = (
     });
   };
 
-
   const previewImage = (e) => {
     let FileLength = e.target.files.length
     setImage(e.target)
     console.log("FileLength", FileLength);
     FileLength === 1 ? setImgFile(URL.createObjectURL(e.target.files[0])) : setImgFile()
-    console.log(URL.createObjectURL(e.target.files[0]));
   }
 
 
@@ -176,7 +175,7 @@ const AddDigiCard = (
 
   const getMultiOptions = (event) => {
     let valuesArr = [];
-    if(event){
+    if (event) {
       for (let i = 0; i < event.length; i++) {
         valuesArr.push(event[i].value)
       }
@@ -184,8 +183,24 @@ const AddDigiCard = (
     setMultiOptions(valuesArr);
   }
 
+  //doc
+  const handleFileInput = (e) => {
+    setSelectedFile(e.target.files[0]);
+  };
 
 
+  // const documents = [
+  //   { uri: 'https://example.com/document1.pdf' },
+  //   { uri: 'https://example.com/document2.docx' },
+  //   { uri: 'https://example.com/document3.pptx' },
+  //   { uri: 'https://example.com/document3.doc' },
+  //   { uri: 'https://example.com/document3.ppt' },
+  //   { uri: 'https://example.com/document3.xls' },
+  //   { uri: 'https://example.com/document3.xlsx' },
+
+
+
+  // ];
 
   return (
     <>
@@ -225,6 +240,7 @@ const AddDigiCard = (
                 digicardcontent: '',
                 digicardtitleExcerpt: '',
                 digicard_voice_note: '',
+                digicard_document: '',
                 clientComponents: multiOptions
               }}
               validationSchema={Yup.object().shape({
@@ -281,6 +297,7 @@ const AddDigiCard = (
                     digi_card_excerpt: articleDataTitle,
                     digi_card_content: articleData,
                     digi_card_keywords: tags,
+                    digicard_document: values.digicard_document,//upload doc
                     digicard_voice_note: values.digicard_voice_note === undefined ? "" : values.digicard_voice_note,
                     related_digi_cards: multiOptions,
                   };
@@ -431,7 +448,13 @@ const AddDigiCard = (
 
                         <small className="text-danger form-text" style={{ display: imgValidation ? 'none' : 'block' }}>Invalid File Type or File size is Exceed More Than 2MB</small>
                       </div>
-                      <div className="form-group fill">
+
+
+
+
+                      <div
+                        className="form-group fill"
+                      >
                         <label className="floating-label" htmlFor="digicard_voice_note">
                           <small className="text-danger"> </small>Voice Note
                         </label>
@@ -459,6 +482,46 @@ const AddDigiCard = (
                         )}
                         <small className="text-danger form-text" style={{ display: voiceError ? 'none' : 'block' }}>Invalid File Type or File size is Exceed More Than 10MB</small>
                       </div>
+
+
+
+
+                      <div className="form-group fill">
+                        <label className="floating-label" htmlFor="digicard_document"> Upload Document
+                          <small className="text-danger"></small>
+                        </label>
+                        <InputGroup>
+                          <input
+                            className="form-control"
+                            error={touched.digicard_document && errors.digicard_document}
+                            name="digicard_document"
+                            id="digicard_document"
+                            onBlur={handleBlur}
+                            onChange={(e) => { handleFileInput(e); handleChange(e); }}
+                            type="file"
+                            accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx"
+                          />
+                        </InputGroup>
+
+
+                        {selectedFile && <p style={{ color: "blue" }}>Selected file: {selectedFile.name}</p>}
+
+                        {/* {selectedFile && (
+                          <small className="text-muted form-text">
+                            Selected file: {selectedFile.name}
+                          </small>
+                        )} */}
+
+                        {touched.digicard_document && errors.digicard_document && (
+                          <small className="text-danger form-text">{errors.digicard_document}</small>
+                        )}
+                        <small className="text-danger form-text" style={{ display: docError ? 'none' : 'block' }}>Invalid File Type or File size is Exceed More Than 10MB</small>
+                      </div>
+
+
+
+
+
 
                       <div className='ReactTags'>
                         <label className="floating-label">
@@ -501,9 +564,10 @@ const AddDigiCard = (
                         <label className="floating-label" htmlFor="digicardtitle">
                           <small className="text-danger">* </small>Logo preview
                         </label><br />
-                        {console.log("url", imgFile)}
                         <img width={100} src={imgFile} alt="" className="img-fluid mb-3" />
                       </div>
+
+
                       {voiceNotePre && (
                         <div>
                           <label className="floating-label" htmlFor="digicardtitle">
@@ -514,6 +578,13 @@ const AddDigiCard = (
                           </audio>
                         </div>
                       )}
+
+
+
+                      {/* <a href="https://dev-upschool.s3.ap-south-1.amazonaws.com/uploads/502dbed2-0be5-511b-bef1-ff53ddd7267c.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAQREMEI3P6FAX67SB%2F20230313%2Fap-south-1%2Fs3%2Faws4_request&X-Amz-Date=20230313T092534Z&X-Amz-Expires=300&X-Amz-Signature=c6bf2c833fa720c7ecb22305da655ef58dcabf22e8edcaefcf391ca5ebfcc2da&X-Amz-SignedHeaders=host"></a> */}
+
+
+
 
 
                     </Col>
