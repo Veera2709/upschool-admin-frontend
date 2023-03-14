@@ -74,6 +74,26 @@ const AddDigiCard = (
 
   let history = useHistory();
 
+  const allowedFileTypes = ['.pdf', '.doc', '.docx', '.jpg', '.jpeg', '.png', '.gif'];
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+
+    if (!allowedFileTypes.includes(fileExtension)) {
+
+      MySwal.fire('Sorry', 'Invalid file type. Only PDF, DOC, DOCX, JPG, JPEG, PNG, and GIF files are allowed.', 'warning')
+      event.target.value = null;
+      setSelectedFile(null);
+      return;
+    }
+
+    setSelectedFile(file);
+  };
+
+
+
+
 
   const handleDelete = (i, states) => {
     const newTags = tags.slice(0);
@@ -497,9 +517,9 @@ const AddDigiCard = (
                             name="digicard_document"
                             id="digicard_document"
                             onBlur={handleBlur}
-                            onChange={(e) => { handleFileInput(e); handleChange(e); }}
+                            onChange={(e) => { handleFileInput(e); handleChange(e); handleFileChange(e) }}
                             type="file"
-                            accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx"
+                            accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif"
                           />
                         </InputGroup>
 
