@@ -3,7 +3,6 @@
 // const baseUrl = 'https://dssqy2gip2.execute-api.ap-south-1.amazonaws.com/testing/v1'; // testing env URL
 const baseUrl = process.env.REACT_APP_LAMBDA_URL;
 
-
 const dynamicUrl = {
 
     // Login
@@ -11,6 +10,7 @@ const dynamicUrl = {
     loginWithOTP: baseUrl + '/loginWithOTP',
     validateOTP: baseUrl + '/validateOTP',
     logout: baseUrl + '/logout',
+    resetOrCreatePassword: baseUrl + '/resetOrCreatePassword',
 
     // Digicard
     insertDigicard: baseUrl + '/addDigiCard',
@@ -20,8 +20,6 @@ const dynamicUrl = {
     toggleDigiCardStatus: baseUrl + '/toggleDigiCardStatus',
     bulkToggleDigiCardStatuss: baseUrl + '/bulkToggleDigiCardStatus',
     fetchDigiCardAudioContent: baseUrl + '/fetchDigiCardAudioContent',
-
-
 
     // School
     insertSchool: baseUrl + '/insertSchool',

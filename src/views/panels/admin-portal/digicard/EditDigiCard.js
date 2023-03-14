@@ -66,6 +66,26 @@ const EditDigiCard = () => {
     const { digi_card_id } = useParams();
 
 
+
+    const allowedFileTypes = ['.pdf', '.doc', '.docx', '.jpg', '.jpeg', '.png', '.gif'];
+
+    const handleFileChange = (event) => {
+        const file = event.target.files[0];
+        const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+
+        if (!allowedFileTypes.includes(fileExtension)) {
+            console.log('Invalid file type');
+            MySwal.fire('Sorry', 'Invalid file type. Only PDF, DOC, DOCX, JPG, JPEG, PNG, and GIF files are allowed.', 'warning').then(() => {
+                window.location.reload();
+            });
+            event.target.value = null;
+            setSelectedFile(null);
+            return;
+        }
+
+        setSelectedFile(file);
+    };
+
     function handleChange(event) {
         const file = event.target.files[0];
         if (file) {
@@ -722,9 +742,9 @@ const EditDigiCard = () => {
                                                                 value={values.digicard_document}
 
                                                                 onBlur={handleBlur}
-                                                                onChange={(e) => { handleFileInput(e); handleChange(e); getPreviewLink(e) }}
+                                                                onChange={(e) => { handleFileInput(e); handleChange(e); getPreviewLink(e); handleFileChange(e) }}
                                                                 type="file"
-                                                                accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx"
+                                                                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif"
                                                             />
                                                         </InputGroup>
 
