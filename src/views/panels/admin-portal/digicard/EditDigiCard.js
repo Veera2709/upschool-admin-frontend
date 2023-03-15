@@ -890,8 +890,10 @@ const EditDigiCard = () => {
                                                     setNewDigicardErrReq(false)
                                                 }}
                                             />
-                                        </div>
+                                        </div><br/>
+                                        {loader}
                                     </Col>
+                                    
                                 </Row>
                                 <Row>
                                     <Col sm={9}>
