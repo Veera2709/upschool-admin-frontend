@@ -3,6 +3,7 @@ const baseUrl = 'https://w72a5si42a.execute-api.ap-south-1.amazonaws.com/dev/v1'
 // const baseUrl = 'https://dssqy2gip2.execute-api.ap-south-1.amazonaws.com/testing/v1'; // testing env URL
 // const baseUrl = process.env.REACT_APP_LAMBDA_URL;
 
+
 const dynamicUrl = {
 
     // Login
@@ -14,13 +15,13 @@ const dynamicUrl = {
 
     // Digicard
     insertDigicard: baseUrl + '/addDigiCard',
-    fetchAllDigiCards: baseUrl + '/fetchAllDigiCards',
+    fetchDigiCardsBasedonStatus: baseUrl + '/fetchDigiCardsBasedonStatus',
     fetchIndividualDigiCard: baseUrl + '/fetchIndividualDigiCard',
     editDigiCard: baseUrl + '/editDigiCard',
     toggleDigiCardStatus: baseUrl + '/toggleDigiCardStatus',
     bulkToggleDigiCardStatuss: baseUrl + '/bulkToggleDigiCardStatus',
     fetchDigiCardAudioContent: baseUrl + '/fetchDigiCardAudioContent',
-    
+
     // School
     insertSchool: baseUrl + '/insertSchool',
     fetchAllSchool: baseUrl + '/fetchAllSchool',
@@ -33,14 +34,15 @@ const dynamicUrl = {
     schoolubscriptionFeatures: baseUrl + '/schoolubscriptionFeatures',
 
     //chapters
-    fetchAllChapters: baseUrl + '/fetchAllChapters',
-    fetchAllTopics: baseUrl + '/fetchAllTopics',
+    fetchChaptersBasedonStatus: baseUrl + '/fetchChaptersBasedonStatus',
+    fetchTopicsBasedonStatus: baseUrl + '/fetchTopicsBasedonStatus',
     addChapter: baseUrl + '/addChapter',
     toggleChapterStatus: baseUrl + '/toggleChapterStatus',
     fetchIndividualChapter: baseUrl + '/fetchIndividualChapter',
     editChapter: baseUrl + '/editChapter',
     fetchPreLearningTopics: baseUrl + '/fetchPreLearningTopics',
     fetchPostLearningTopics: baseUrl + '/fetchPostLearningTopics',
+    bulkToggleChapterStatus: baseUrl + '/bulkToggleChapterStatus',
 
     // Users
     fetchSchoolIdNames: baseUrl + '/fetchSchoolIdNames',
@@ -60,7 +62,7 @@ const dynamicUrl = {
     bulkToggleUsersStatus: baseUrl + "/bulkToggleUsersStatus",
 
     //units
-    fetchAllUnits: baseUrl + '/fetchAllUnits',
+    fetchUnitsBasedonStatus: baseUrl + '/fetchUnitsBasedonStatus',
     addUnit: baseUrl + '/addUnit',
     fetchIndividualUnit: baseUrl + '/fetchIndividualUnit',
     editUnit: baseUrl + '/editUnit',
@@ -77,7 +79,6 @@ const dynamicUrl = {
 
     // Topics
     addTopic: baseUrl + '/addTopic',
-    getTopics: baseUrl + '/fetchAllTopics',
     getIndividualTopic: baseUrl + '/fetchIndividualTopic',
     editTopic: baseUrl + '/editTopic',
     toggleTopicStatus: baseUrl + '/toggleTopicStatus',
@@ -96,7 +97,7 @@ const dynamicUrl = {
 
     // Classes
     addClass: baseUrl + '/addClass',
-    fetchAllClass: baseUrl + '/fetchAllClass',
+    fetchClassesBasedonStatus: baseUrl + '/fetchClassesBasedonStatus',
     fetchSubjectIdName: baseUrl + '/fetchSubjectIdName',
     fetchIndividualClass: baseUrl + '/fetchIndividualClass',
     toggleClassStatus: baseUrl + '/toggleClassStatus',

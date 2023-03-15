@@ -13,7 +13,7 @@ import Swal from 'sweetalert2';
 import dynamicUrl from '../../../../helper/dynamicUrls';
 import { Label } from 'recharts';
 import axios from 'axios';
-import { fetchAllConcepts, fetchAllTopics, getIndividualTopic } from '../../../api/CommonApi'
+import { fetchAllConcepts, fetchTopicsBasedonStatus, getIndividualTopic } from '../../../api/CommonApi'
 import MESSAGES from '../../../../helper/messages';
 import BasicSpinner from '../../../../helper/BasicSpinner';
 
@@ -133,7 +133,7 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
             console.log("conceptArr", conceptArr);
             setConceptTitles(conceptArr)
 
-            const allTopicsData = await fetchAllTopics();
+            const allTopicsData = await fetchTopicsBasedonStatus('Active');
             if (allTopicsData.Error) {
                 console.log("allTopicsData,Error", allTopicsData, Error);
                 if (allTopicsData.Error.response.data == 'Invalid Token') {
@@ -146,7 +146,7 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                 console.log("allTopicsData", allTopicsData.Items);
                 let resultTopicData = allTopicsData.Items
                 resultTopicData.forEach((item, index) => {
-                    if (item.topic_status === 'Active' && item.topic_id != topicId) {
+                    if (item.topic_id != topicId) {
                         topicArr.push({ value: item.topic_id, label: item.topic_title })
                     }
                 }
@@ -159,13 +159,8 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
             if (topicData.Error) {
                 console.log("topicData.Error", topicData.Error);
             } else {
-
                 const result = topicData.Items[0];
                 console.log("result", result);
-                // setEditTopicData(result);
-                // setTopicQuiz(result.topic_quiz_config)
-
-
                 result.pre_post_learning === 'Pre-Learning' ? DefaultisLockedOption.push({ value: result.pre_post_learning, label: result.pre_post_learning }) : DefaultisLockedOption.push({ value: 'Post-Learning', label: 'Post-Learning' })
                 console.log("DefaultisLockedOption", DefaultisLockedOption);
                 setprePostLearning(DefaultisLockedOption[0].value)

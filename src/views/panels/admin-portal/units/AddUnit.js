@@ -17,7 +17,7 @@ import withReactContent from 'sweetalert2-react-content';
 import { areFilesInvalid, isEmptyObject } from '../../../../util/utils';
 import { useEffect } from 'react';
 import Multiselect from 'multiselect-react-dropdown';
-import { fetchAllChapters } from '../../../api/CommonApi'
+import { fetchChaptersBasedonStatus } from '../../../api/CommonApi'
 import Select from 'react-draggable-multi-select';
 import { useHistory, useParams } from 'react-router-dom';
 
@@ -71,7 +71,7 @@ const AddUnit = ({ setOpenAddUnit }) => {
     }
 
     const fetchAllChapterList = async () => {
-        const allChapterData = await fetchAllChapters();
+        const allChapterData = await fetchChaptersBasedonStatus();
         console.log("allTopicdData", allChapterData.Items);
         if (allChapterData.Error) {
             console.log("allChapterData", allChapterData.Error);
@@ -86,10 +86,7 @@ const AddUnit = ({ setOpenAddUnit }) => {
             let resultData = allChapterData.Items
             console.log("resultData", resultData);
             resultData.forEach((item, index) => {
-                if (item.chapter_status === 'Active') {
-                    console.log();
-                    colourOptions.push({ value: item.chapter_id, label: item.chapter_title })
-                }
+                colourOptions.push({ value: item.chapter_id, label: item.chapter_title })
             }
             );
             console.log("colourOptions", colourOptions);
@@ -136,7 +133,6 @@ const AddUnit = ({ setOpenAddUnit }) => {
                         setIsShownDes(false)
                     }
                     else {
-                        setOpenAddUnit(false)
                         console.log("on submit");
                         var formData = {
                             unit_title: values.unittitle,
@@ -155,10 +151,9 @@ const AddUnit = ({ setOpenAddUnit }) => {
                                     hideLoader();
                                     setDisableButton(false);
                                 } else {
-                                    // sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingUnit });
+                                    setOpenAddUnit(false)
                                     hideLoader();
                                     setDisableButton(false);
-                                    // fetchClientData();
                                     setIsOpen(false);
 
                                     MySwal.fire({
@@ -210,7 +205,6 @@ const AddUnit = ({ setOpenAddUnit }) => {
                 {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
                     <form noValidate onSubmit={handleSubmit}>
                         <Row>
-                            {/* {edit1Toggle && <Loader />} */}
                             <Col sm={6}>
                                 <div className="form-group fill">
                                     <label className="floating-label" htmlFor="unittitle">
@@ -279,15 +273,6 @@ const AddUnit = ({ setOpenAddUnit }) => {
                 )}
             </Formik>
         </React.Fragment>
-
-
-
-
-
-
-
-
-
     )
 
 };
