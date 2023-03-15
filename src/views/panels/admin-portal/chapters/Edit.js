@@ -127,7 +127,7 @@ const EditChapter = (
 
 
     const fetchAllChapters = () => {
-        axios.post(dynamicUrl.fetchAllTopics, {}, {
+        axios.post(dynamicUrl.fetchTopicsBasedonStatus, {}, {
             headers: { Authorization: sessionStorage.getItem('user_jwt') }
         })
             .then((response) => {

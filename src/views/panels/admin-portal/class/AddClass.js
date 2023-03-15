@@ -17,7 +17,7 @@ import withReactContent from "sweetalert2-react-content";
 import { areFilesInvalid, isEmptyObject } from "../../../../util/utils";
 import { useEffect } from "react";
 import { useHistory } from "react-router-dom";
-import Select from "react-select";
+import Select from "react-draggable-multi-select";
 import Multiselect from "multiselect-react-dropdown";
 import {
   addClass,
@@ -111,8 +111,10 @@ const AddClass = ({ setOpenAddClass }) => {
 
     console.log("event : ", event);
     let valuesArr = [];
-    for (let i = 0; i < event.length; i++) {
-      valuesArr.push(event[i].subject_id);
+    if (event) {
+      for (let i = 0; i < event.length; i++) {
+        valuesArr.push(event[i].subject_id);
+      }
     }
     console.log(valuesArr);
     setSubjectOption(valuesArr);
@@ -145,7 +147,6 @@ const AddClass = ({ setOpenAddClass }) => {
               class_name: values.classTitle,
               class_subject_id: subjectOption,
             };
-            setOpenAddClass(false)
             console.log("formdata", formData);
 
             const addClassRes = await addClass(formData);
@@ -180,6 +181,7 @@ const AddClass = ({ setOpenAddClass }) => {
               }
 
             } else {
+              setOpenAddClass(false)
               MySwal.fire({
                 title: "Class is Created",
                 icon: "success",
@@ -241,7 +243,7 @@ const AddClass = ({ setOpenAddClass }) => {
                     options={topicSubjects}
                     className="basic-multi-select"
                     classNamePrefix="Select"
-                    onChange={(event) => {handleDigicardChange(event);setIsShown(true)}}
+                    onChange={(event) => { handleDigicardChange(event); setIsShown(true) }}
                   />
                   <br />
                   <small

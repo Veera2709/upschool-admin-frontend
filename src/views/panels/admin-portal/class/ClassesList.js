@@ -25,7 +25,7 @@ import MESSAGES from "../../../../helper/messages";
 import useFullPageLoader from "../../../../helper/useFullPageLoader";
 import { useLocation } from "react-router-dom";
 import {
-  fetchAllClass,
+  fetchClassesBasedonStatus,
   toggleClassStatus,
 } from "../../../api/CommonApi";
 import AddClass from "./AddClass";
@@ -297,7 +297,7 @@ const StandardList = (props) => {
     ClassStatus == "Active"
       ? (class_status = "Active")
       : (class_status = "Archived");
-    const allClassesData = await fetchAllClass(class_status);
+    const allClassesData = await fetchClassesBasedonStatus(class_status);
 
     if (allClassesData.ERROR || allClassesData.Items === undefined) {
       console.log("allClassesData.ERROR", allClassesData.ERROR);
@@ -312,14 +312,11 @@ const StandardList = (props) => {
       console.log("dataResponse", dataResponse);
       let finalDataArray = [];
       if (ClassStatus === "Active") {
-        let ActiveresultData =
-          dataResponse &&
-          dataResponse.filter((e) => e.class_status === "Active");
-        console.log("ActiveresultData", ActiveresultData);
+       
 
-        for (let index = 0; index < ActiveresultData.length; index++) {
-          ActiveresultData[index].index_no = index + 1;
-          ActiveresultData[index]["actions"] = (
+        for (let index = 0; index < dataResponse.length; index++) {
+          dataResponse[index].index_no = index + 1;
+          dataResponse[index]["actions"] = (
             <>
               <>
                 <Button
@@ -327,11 +324,11 @@ const StandardList = (props) => {
                   className="btn btn-icon btn-rounded btn-primary"
                   // onClick={(e) =>
                   //   history.push(
-                  //     `/admin-portal/Classes/editClass/${ActiveresultData[index].class_id}`
+                  //     `/admin-portal/Classes/editClass/${dataResponse[index].class_id}`
                   //   )
                   // }
                   onClick={(e) => {
-                    setClassId(ActiveresultData[index].class_id);
+                    setClassId(dataResponse[index].class_id);
                     setOpenEditClass(true)
                   }}
                 >
@@ -344,8 +341,8 @@ const StandardList = (props) => {
                   className="btn btn-icon btn-rounded btn-danger"
                   onClick={(e) =>
                     toggleStatus(
-                      ActiveresultData[index].class_id,
-                      ActiveresultData[index].class_name,
+                      dataResponse[index].class_id,
+                      dataResponse[index].class_name,
                       "Archived",
                       "Delete"
                     )
@@ -357,16 +354,14 @@ const StandardList = (props) => {
               </>
             </>
           );
-          finalDataArray.push(ActiveresultData[index]);
+          finalDataArray.push(dataResponse[index]);
           console.log("finalDataArray: ", finalDataArray);
         }
       } else {
-        let resultData =
-          dataResponse &&
-          dataResponse.filter((e) => e.class_status === "Archived");
-        for (let index = 0; index < resultData.length; index++) {
-          resultData[index].index_no = index + 1;
-          resultData[index]["actions"] = (
+        
+        for (let index = 0; index < dataResponse.length; index++) {
+          dataResponse[index].index_no = index + 1;
+          dataResponse[index]["actions"] = (
             <>
               <>
                 <Button
@@ -374,8 +369,8 @@ const StandardList = (props) => {
                   className="btn btn-icon btn-rounded btn-primary"
                   onClick={(e) =>
                     toggleStatus(
-                      resultData[index].class_id,
-                      resultData[index].class_name,
+                      dataResponse[index].class_id,
+                      dataResponse[index].class_name,
                       "Active",
                       "Restore"
                     )
@@ -387,12 +382,12 @@ const StandardList = (props) => {
               </>
             </>
           );
-          finalDataArray.push(resultData[index]);
+          finalDataArray.push(dataResponse[index]);
           console.log("finalDataArray: ", finalDataArray);
         }
       }
       setClassData(finalDataArray);
-      console.log("resultData: ", finalDataArray);
+      console.log("dataResponse: ", finalDataArray);
       setIsLoading(false)
     }
   };

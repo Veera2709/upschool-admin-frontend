@@ -14,7 +14,7 @@ import dynamicUrl from '../../../../helper/dynamicUrls';
 import { Label } from 'recharts';
 import Multiselect from 'multiselect-react-dropdown';
 import axios from 'axios';
-import { fetchAllConcepts, fetchAllTopics, getIndividualTopic } from '../../../api/CommonApi'
+import { fetchAllConcepts, fetchTopicsBasedonStatus, getIndividualTopic } from '../../../api/CommonApi'
 import MESSAGES from '../../../../helper/messages';
 import BasicSpinner from '../../../../helper/BasicSpinner';
 
@@ -146,7 +146,7 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
             console.log("conceptArr", conceptArr);
             setConceptTitles(conceptArr)
 
-            const allTopicsData = await fetchAllTopics();
+            const allTopicsData = await fetchTopicsBasedonStatus();
             if (allTopicsData.Error) {
                 console.log("allTopicsData,Error", allTopicsData, Error);
                 if (allTopicsData.Error.response.data == 'Invalid Token') {
@@ -563,7 +563,7 @@ import dynamicUrl from '../../../../helper/dynamicUrls';
 import { Label } from 'recharts';
 import Multiselect from 'multiselect-react-dropdown';
 import axios from 'axios';
-import { fetchAllConcepts, fetchAllTopics } from '../../../api/CommonApi'
+import { fetchAllConcepts, fetchTopicsBasedonStatus } from '../../../api/CommonApi'
 import * as Constants from '../../../../helper/constants';
 import MESSAGES from '../../../../helper/messages';
 
@@ -690,7 +690,7 @@ const AddTopics = ({ setOpenAddTopic }) => {
             console.log("conceptArr", conceptArr);
             setConceptTitles(conceptArr)
 
-            const allTopicsData = await fetchAllTopics();
+            const allTopicsData = await fetchTopicsBasedonStatus();
             if (allTopicsData.Error) {
                 console.log("allTopicsData,Error", allTopicsData, Error);
                 if (allTopicsData.Error.response.data == 'Invalid Token') {

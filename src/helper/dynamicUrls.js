@@ -14,7 +14,7 @@ const dynamicUrl = {
 
     // Digicard
     insertDigicard: baseUrl + '/addDigiCard',
-    fetchAllDigiCards: baseUrl + '/fetchAllDigiCards',
+    fetchDigiCardsBasedonStatus: baseUrl + '/fetchDigiCardsBasedonStatus',
     fetchIndividualDigiCard: baseUrl + '/fetchIndividualDigiCard',
     editDigiCard: baseUrl + '/editDigiCard',
     toggleDigiCardStatus: baseUrl + '/toggleDigiCardStatus',
@@ -33,14 +33,15 @@ const dynamicUrl = {
     schoolubscriptionFeatures: baseUrl + '/schoolubscriptionFeatures',
 
     //chapters
-    fetchAllChapters: baseUrl + '/fetchAllChapters',
-    fetchAllTopics: baseUrl + '/fetchAllTopics',
+    fetchChaptersBasedonStatus: baseUrl + '/fetchChaptersBasedonStatus',
+    fetchTopicsBasedonStatus: baseUrl + '/fetchTopicsBasedonStatus',
     addChapter: baseUrl + '/addChapter',
     toggleChapterStatus: baseUrl + '/toggleChapterStatus',
     fetchIndividualChapter: baseUrl + '/fetchIndividualChapter',
     editChapter: baseUrl + '/editChapter',
     fetchPreLearningTopics: baseUrl + '/fetchPreLearningTopics',
     fetchPostLearningTopics: baseUrl + '/fetchPostLearningTopics',
+    bulkToggleChapterStatus: baseUrl + '/bulkToggleChapterStatus',
 
     // Users
     fetchSchoolIdNames: baseUrl + '/fetchSchoolIdNames',
@@ -60,7 +61,7 @@ const dynamicUrl = {
     bulkToggleUsersStatus: baseUrl + "/bulkToggleUsersStatus",
 
     //units
-    fetchAllUnits: baseUrl + '/fetchAllUnits',
+    fetchUnitsBasedonStatus: baseUrl + '/fetchUnitsBasedonStatus',
     addUnit: baseUrl + '/addUnit',
     fetchIndividualUnit: baseUrl + '/fetchIndividualUnit',
     editUnit: baseUrl + '/editUnit',
@@ -77,14 +78,14 @@ const dynamicUrl = {
 
     // Topics
     addTopic: baseUrl + '/addTopic',
-    getTopics: baseUrl + '/fetchAllTopics',
     getIndividualTopic: baseUrl + '/fetchIndividualTopic',
     editTopic: baseUrl + '/editTopic',
     toggleTopicStatus: baseUrl + '/toggleTopicStatus',
     getConcepts: baseUrl + '/fetchAllConcepts',
     toggleSchoolStatus: baseUrl + '/toggleSchoolStatus',
     fetchInactiveSchool: baseUrl + '/fetchInactiveSchool',
-
+    bulkToggleTopicStatus: baseUrl + '/bulkToggleTopicStatus',
+    
     // Subjects
     fetchUnitAndSubject: baseUrl + '/fetchUnitAndSubject',
     fetchAllSubjects: baseUrl + '/fetchAllSubjects',
@@ -95,7 +96,7 @@ const dynamicUrl = {
 
     // Classes
     addClass: baseUrl + '/addClass',
-    fetchAllClass: baseUrl + '/fetchAllClass',
+    fetchClassesBasedonStatus: baseUrl + '/fetchClassesBasedonStatus',
     fetchSubjectIdName: baseUrl + '/fetchSubjectIdName',
     fetchIndividualClass: baseUrl + '/fetchIndividualClass',
     toggleClassStatus: baseUrl + '/toggleClassStatus',

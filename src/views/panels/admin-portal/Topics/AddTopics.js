@@ -13,7 +13,7 @@ import dynamicUrl from '../../../../helper/dynamicUrls';
 import { Label } from 'recharts';
 import Multiselect from 'multiselect-react-dropdown';
 import axios from 'axios';
-import { fetchAllConcepts, fetchAllTopics } from '../../../api/CommonApi'
+import { fetchAllConcepts, fetchTopicsBasedonStatus } from '../../../api/CommonApi'
 import * as Constants from '../../../../helper/constants';
 import MESSAGES from '../../../../helper/messages';
 
@@ -128,7 +128,7 @@ const AddTopics = ({ setOpenAddTopic }) => {
             console.log("conceptArr", conceptArr);
             setConceptTitles(conceptArr)
 
-            const allTopicsData = await fetchAllTopics('Active');
+            const allTopicsData = await fetchTopicsBasedonStatus('Active');
             if (allTopicsData.Error) {
                 console.log("allTopicsData,Error", allTopicsData, Error);
                 if (allTopicsData.Error.response.data == 'Invalid Token') {

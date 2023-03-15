@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 // import { InputGroup, FormControl, Button } from 'react-bootstrap';
 // import './style.css'
-// import DocViewer from 'react-doc-viewer';
 import { InputGroup, Row, Col, Card, Button, Modal } from 'react-bootstrap';
 // import CkDecoupledEditor from '../../../components/CK-Editor/CkDecoupledEditor';
 import * as Constants from '../../../../helper/constants';
@@ -22,7 +21,7 @@ import logo from './img/logo.png'
 import Multiselect from 'multiselect-react-dropdown';
 import Select from 'react-draggable-multi-select';
 
-import { fetchAllDigiCards } from '../../../api/CommonApi'
+import { fetchDigiCardsBasedonStatus } from '../../../api/CommonApi'
 import { Link, useHistory } from 'react-router-dom';
 
 
@@ -148,7 +147,7 @@ const AddDigiCard = (
     } else {
       setDisplayHeader(true);
     }
-    const allDigicardData = await fetchAllDigiCards(dynamicUrl.fetchAllDigiCards);
+    const allDigicardData = await fetchDigiCardsBasedonStatus("Active");
     if (allDigicardData.error) {
       console.log(allDigicardData.error);
       if (allDigicardData.Error.response.data == 'Invalid Token') {
@@ -161,9 +160,7 @@ const AddDigiCard = (
       console.log("allDigicardData", allDigicardData.Items);
       let resultData = allDigicardData.Items;
       resultData.forEach((item, index) => {
-        if (item.digicard_status === 'Active') {
-          colourOptions.push({ value: item.digi_card_id, label: item.digi_card_title })
-        }
+        colourOptions.push({ value: item.digi_card_id, label: item.digi_card_title })
       })
       setDigitalTitles(colourOptions);
     }
@@ -207,10 +204,16 @@ const AddDigiCard = (
   const handleFileInput = (e) => {
     setSelectedFile(e.target.files[0]);
   };
+  //button 
+  // const handleUpload = () => {
+  //   const formData = new FormData();
+  //   formData.append("file", selectedFile);
 
+  //   // Call the API to upload the file
+  //   // ...
 
-
-
+  //   setSelectedFile(null);
+  // };
 
 
 
@@ -269,6 +272,7 @@ const AddDigiCard = (
               })}
 
               onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
+                showLoader()
                 console.log("multiOptions", multiOptions);
                 console.log("on submit");
                 let allFilesData = [];
@@ -324,8 +328,6 @@ const AddDigiCard = (
                         setDisableButton(false);
                       } else {
                         let uploadParams = response.data;
-                        hideLoader();
-                        setDisableButton(false);
                         console.log('Proceeding with file upload');
 
                         if (Array.isArray(uploadParams)) {
@@ -353,16 +355,11 @@ const AddDigiCard = (
                           }
                           // sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingDigiCard });
                           hideLoader();
-                          setDisableButton(false);
-                          // fetchClientData();
-                          setIsOpen(false);
-
                           MySwal.fire({
-
                             title: 'Digicard added successfully!',
                             icon: 'success',
                           }).then((willDelete) => {
-
+                            history.push('/admin-portal/active-digiCard');
                             window.location.reload();
 
                           })
@@ -370,9 +367,8 @@ const AddDigiCard = (
                           console.log('No files uploaded');
                           sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingDigiCard });
                           hideLoader();
-                          setDisableButton(false);
-                          // fetchClientData();
-                          setIsOpen(false);
+                          history.push('/admin-portal/active-digiCard');
+                          window.location.reload();
                         }
                       }
                     })
@@ -499,8 +495,8 @@ const AddDigiCard = (
 
 
                       <div className="form-group fill">
-                        <label className="floating-label" htmlFor="digicard_document"> Upload Document
-                          <small className="text-danger"></small>
+                        <label className="floating-label" htmlFor="digicard_document">
+                          <small className="text-danger"> </small> Upload Document
                         </label>
                         <InputGroup>
                           <input
@@ -513,6 +509,10 @@ const AddDigiCard = (
                             type="file"
                             accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif"
                           />
+
+                          {/* <button onClick={handleUpload} className="btn btn-primary btn-msg-send" type="button">
+                            Upload
+                          </button> */}
                         </InputGroup>
 
 
@@ -578,8 +578,6 @@ const AddDigiCard = (
                         </label><br />
                         <img width={100} src={imgFile} alt="" className="img-fluid mb-3" />
                       </div>
-
-
                       {voiceNotePre && (
                         <div>
                           <label className="floating-label" htmlFor="digicardtitle">
@@ -590,13 +588,6 @@ const AddDigiCard = (
                           </audio>
                         </div>
                       )}
-
-
-
-                      {/* <a href="https://dev-upschool.s3.ap-south-1.amazonaws.com/uploads/502dbed2-0be5-511b-bef1-ff53ddd7267c.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAQREMEI3P6FAX67SB%2F20230313%2Fap-south-1%2Fs3%2Faws4_request&X-Amz-Date=20230313T092534Z&X-Amz-Expires=300&X-Amz-Signature=c6bf2c833fa720c7ecb22305da655ef58dcabf22e8edcaefcf391ca5ebfcc2da&X-Amz-SignedHeaders=host"></a> */}
-
-
-
 
 
                     </Col>
@@ -635,6 +626,7 @@ const AddDigiCard = (
                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                       />
                     </Col>
+                    {loader}
                   </Row><br></br>
                   <Row >
                     <Col sm={8}>
