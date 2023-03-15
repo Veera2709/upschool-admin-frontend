@@ -31,7 +31,7 @@ export const fetchIndividualDigiCard = async (url, digi_card_id) => {
 };
 
 
-export const fetchDigiCardAudioContent = async ( digi_card_id) => {
+export const fetchDigiCardAudioContent = async (digi_card_id) => {
     return new Promise((resolve, reject) => {
         axios
             .post(
@@ -60,8 +60,8 @@ export const fetchDigiCardAudioContent = async ( digi_card_id) => {
 export const fetchDigiCardsBasedonStatus = (status) => {
     return new Promise((resolve, reject) => {
         axios.post(url.fetchDigiCardsBasedonStatus, {
-            data:{
-                digicard_status:status
+            data: {
+                digicard_status: status
             }
         }, {
             headers: { Authorization: sessionStorage.getItem('user_jwt') }
@@ -97,8 +97,8 @@ export const changeStatusID = (url, payload) => {
 export const fetchTopicsBasedonStatus = (topicStatus) => {
     return new Promise((resolve, reject) => {
         axios.post(url.fetchTopicsBasedonStatus, {
-            data:{
-                topic_status:topicStatus
+            data: {
+                topic_status: topicStatus
             }
         }, {
             headers: { Authorization: sessionStorage.getItem('user_jwt') }
@@ -540,10 +540,10 @@ export const toggleMultiDigicardStatus = (payLoad) => {
     });
 }
 
-export const toggleMultiChapterStatus = (payLoad) => {
+export const toggleMultipleTopicStatus = (payLoad) => {
     console.log("payLoad : ", payLoad);
     return new Promise((resolve, reject) => {
-        axios.post(url.bulkToggleChapterStatus, {
+        axios.post(url.bulkToggleTopicStatus, {
             data: payLoad
         }, {
             headers: { Authorization: sessionStorage.getItem('user_jwt') }
@@ -559,6 +559,19 @@ export const toggleMultiChapterStatus = (payLoad) => {
     });
 }
 
-
-
-
+export const toggleMultiChapterStatus = (payLoad) => {
+    console.log("payLoad : ", payLoad);
+    return new Promise((resolve, reject) => {
+        axios.post(url.bulkToggleChapterStatus,
+            { data: payLoad },
+            { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
+            .then((response) => {
+                console.log(response);
+                resolve(response.data);
+            })
+            .catch((error) => {
+                console.log("Error", error);
+                resolve({ Error: error });
+            })
+    });
+}
