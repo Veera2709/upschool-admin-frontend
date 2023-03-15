@@ -19,7 +19,7 @@ import { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import Select from 'react-draggable-multi-select';
 import Multiselect from 'multiselect-react-dropdown';
-import { fetchAllTopics, fetchPostLearningTopics, fetchPreLearningTopics } from '../../../api/CommonApi'
+import { fetchTopicsBasedonStatus, fetchPostLearningTopics, fetchPreLearningTopics } from '../../../api/CommonApi'
 
 
 
@@ -115,7 +115,6 @@ const AddChapter = ({ setOpenAddChapter }) => {
             );
             console.log("postLeraning", postLeraning);
             setTopicTitles(postLeraning)
-
             const allPreLerningdData = await fetchPreLearningTopics();
             if (allPreLerningdData.Error) {
                 console.log("allPreLerningdData.Error", allPreLerningdData.Error);
@@ -127,6 +126,7 @@ const AddChapter = ({ setOpenAddChapter }) => {
                 }
             } else {
                 let preData = allPreLerningdData.Items
+                console.log("preLeraningTopics",preData)
                 preData.forEach((itempre, index) => {
                         console.log();
                         preLeraning.push({ value: itempre.topic_id, label: itempre.topic_title }) 

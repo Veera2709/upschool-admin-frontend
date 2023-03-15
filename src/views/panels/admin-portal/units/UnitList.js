@@ -15,7 +15,7 @@ import { SessionStorage } from '../../../../util/SessionStorage';
 import MESSAGES from '../../../../helper/messages';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import { useLocation } from "react-router-dom";
-import { fetchAllUnits } from '../../../api/CommonApi';
+import { fetchUnitsBasedonStatus } from '../../../api/CommonApi';
 import BasicSpinner from '../../../../helper/BasicSpinner';
 import AddUnit from './AddUnit';
 import EditUnit from './EditUnit';
@@ -358,7 +358,7 @@ const UnitList = (props) => {
         } else {
 
             setIsLoading(true)
-            const allUnitsData = await fetchAllUnits(UnitStatus);
+            const allUnitsData = await fetchUnitsBasedonStatus(UnitStatus);
             if (allUnitsData.ERROR) {
                 console.log("allUnitsData.ERROR", allUnitsData.ERROR);
             } else {

@@ -31,7 +31,7 @@ export const fetchIndividualDigiCard = async (url, digi_card_id) => {
 };
 
 
-export const fetchDigiCardAudioContent = async ( digi_card_id) => {
+export const fetchDigiCardAudioContent = async (digi_card_id) => {
     return new Promise((resolve, reject) => {
         axios
             .post(
@@ -57,9 +57,13 @@ export const fetchDigiCardAudioContent = async ( digi_card_id) => {
     });
 };
 
-export const fetchAllDigiCards = (url) => {
+export const fetchDigiCardsBasedonStatus = (status) => {
     return new Promise((resolve, reject) => {
-        axios.post(url, {}, {
+        axios.post(url.fetchDigiCardsBasedonStatus, {
+            data: {
+                digicard_status: status
+            }
+        }, {
             headers: { Authorization: sessionStorage.getItem('user_jwt') }
         })
             .then((response) => {
@@ -90,11 +94,11 @@ export const changeStatusID = (url, payload) => {
     });
 }
 
-export const fetchAllTopics = (topicStatus) => {
+export const fetchTopicsBasedonStatus = (topicStatus) => {
     return new Promise((resolve, reject) => {
-        axios.post(url.fetchAllTopics, {
-            data:{
-                topic_status:topicStatus
+        axios.post(url.fetchTopicsBasedonStatus, {
+            data: {
+                topic_status: topicStatus
             }
         }, {
             headers: { Authorization: sessionStorage.getItem('user_jwt') }
@@ -126,9 +130,9 @@ export const fetchIndividualChapter = (chapter_id) => {
     });
 }
 
-export const fetchAllUnits = (UnitStatus) => {
+export const fetchUnitsBasedonStatus = (UnitStatus) => {
     return new Promise((resolve, reject) => {
-        axios.post(url.fetchAllUnits, {
+        axios.post(url.fetchUnitsBasedonStatus, {
             data: {
                 unit_status: UnitStatus
             }
@@ -161,9 +165,9 @@ export const fetchCMSUsersBasedonRoleStatus1 = (payLoad) => {
     });
 }
 
-export const fetchAllChapters = () => {
+export const fetchChaptersBasedonStatus = () => {
     return new Promise((resolve, reject) => {
-        axios.post(url.fetchAllChapters, {
+        axios.post(url.fetchChaptersBasedonStatus, {
             data: {
                 chapter_status: "Active"
             }
@@ -203,7 +207,7 @@ export const fetchPostLearningTopics = () => {
     return new Promise((resolve, reject) => {
         axios.post(url.fetchPostLearningTopics, {
             data: {
-                concept_status: "Active"
+                topic_status: "Active"
             }
         }, {
             headers: { Authorization: sessionStorage.getItem('user_jwt') }
@@ -222,7 +226,7 @@ export const fetchPreLearningTopics = () => {
     return new Promise((resolve, reject) => {
         axios.post(url.fetchPreLearningTopics, {
             data: {
-                concept_status: "Active"
+                topic_status: "Active"
             }
         }, {
             headers: { Authorization: sessionStorage.getItem('user_jwt') }
@@ -349,11 +353,11 @@ export const toggleClassStatus = (data) => {
     });
 }
 
-export const fetchAllClass = (class_status) => {
+export const fetchClassesBasedonStatus = (class_status) => {
     console.log("class_status : ", class_status);
 
     return new Promise((resolve, reject) => {
-        axios.post(url.fetchAllClass, {
+        axios.post(url.fetchClassesBasedonStatus, {
             data: { class_status: class_status }
         }, {
             headers: { Authorization: sessionStorage.getItem('user_jwt') }
@@ -536,6 +540,38 @@ export const toggleMultiDigicardStatus = (payLoad) => {
     });
 }
 
+export const toggleMultipleTopicStatus = (payLoad) => {
+    console.log("payLoad : ", payLoad);
+    return new Promise((resolve, reject) => {
+        axios.post(url.bulkToggleTopicStatus, {
+            data: payLoad
+        }, {
+            headers: { Authorization: sessionStorage.getItem('user_jwt') }
+        })
+            .then((response) => {
+                console.log(response);
+                resolve(response.data);
+            })
+            .catch((error) => {
+                console.log("Error", error);
+                resolve({ Error: error });
+            })
+    });
+}
 
-
-
+export const toggleMultiChapterStatus = (payLoad) => {
+    console.log("payLoad : ", payLoad);
+    return new Promise((resolve, reject) => {
+        axios.post(url.bulkToggleChapterStatus,
+            { data: payLoad },
+            { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
+            .then((response) => {
+                console.log(response);
+                resolve(response.data);
+            })
+            .catch((error) => {
+                console.log("Error", error);
+                resolve({ Error: error });
+            })
+    });
+}
