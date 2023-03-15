@@ -17,7 +17,7 @@ import withReactContent from "sweetalert2-react-content";
 import { areFilesInvalid, isEmptyObject } from "../../../../util/utils";
 import { useEffect } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import Select from "multiselect-react-dropdown";
+import Select from "react-draggable-multi-select";
 
 
 import {
