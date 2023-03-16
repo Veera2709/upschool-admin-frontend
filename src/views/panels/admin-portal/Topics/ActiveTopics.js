@@ -8,7 +8,7 @@ import { useTable, useSortBy, usePagination, useGlobalFilter, useRowSelect } fro
 
 import { GlobalFilter } from '../units/GlobalFilter';
 import dynamicUrl from '../../../../helper/dynamicUrls';
-import { Link, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { SessionStorage } from '../../../../util/SessionStorage';
 import MESSAGES from '../../../../helper/messages';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
@@ -81,14 +81,16 @@ function Table({ columns, data, modalOpen }) {
                     history.push('/auth/signin-1');
                     window.location.reload();
                 } else {
-                    return MySwal.fire('Error', ResultData.Error.response.data, 'error').then(() => {
-                        window.location.reload();
-                    });
+                    return MySwal.fire('Sorry', ResultData.Error.response.data, 'warning')
+                        .then(() => {
+                            window.location.reload();
+                        });
                 }
             } else {
-                return MySwal.fire('', `Topics have been ${TopicStatus === 'Active' ? 'Restored' : "Deleted"} Successfully`, 'success').then(() => {
-                    window.location.reload();
-                });
+                return MySwal.fire('', `Topics have been ${TopicStatus === 'Active' ? 'Restored' : "Deleted"} Successfully`, 'success')
+                    .then(() => {
+                        window.location.reload();
+                    });
             }
         } else {
             return MySwal.fire('Sorry', 'No Topics are selected!', 'warning').then(() => {
@@ -118,7 +120,7 @@ function Table({ columns, data, modalOpen }) {
                     Entries
                 </Col>
 
-                <Col className="d-flex justify-content-end">
+                <Col className="mb-3" style={{ display: 'contents' }}>
                     <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
                     <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={() => { setOpenAddTopic(true) }}>
                         <i className="feather icon-plus" /> Add Topic
@@ -127,12 +129,14 @@ function Table({ columns, data, modalOpen }) {
                     {TopicStatus === "Active" ? (
                         <Button className='btn-sm btn-round has-ripple ml-2 btn btn-danger'
                             onClick={() => { getIDFromData("Archived") }}
+                            style={{marginRight:'15px'}}
                         > <i className="feather icon-trash-2" />&nbsp;
-                            Multi Delete
+                            Multi Delete    
                         </Button>
                     ) : (
                         <Button className='btn-sm btn-round has-ripple ml-2 btn btn-primary'
                             onClick={() => { getIDFromData("Active") }}
+                            style={{marginRight:'15px'}}
                         > <i className="feather icon-plus" />&nbsp;
                             Multi Restore
                         </Button>
@@ -271,7 +275,6 @@ const ActiveTopics = (props) => {
     const [isOpenEditTopic, setOpenEditTopic] = useState(false);
     const [topicId, setTopicId] = useState();
 
-
     let history = useHistory();
 
     const MySwal = withReactContent(Swal);
@@ -282,7 +285,6 @@ const ActiveTopics = (props) => {
             icon: alert.type
         });
     }
-
 
     const handleAddTopic = () => {
         setOpenAddTopic(true)
@@ -302,11 +304,15 @@ const ActiveTopics = (props) => {
         }).then((willDelete) => {
             if (willDelete.value) {
                 axios
-                    .post(dynamicUrl.toggleTopicStatus, { data: data }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
+                    .post(dynamicUrl.toggleTopicStatus,
+                        { data: data },
+                        {
+                            headers: { Authorization: SessionStorage.getItem('user_jwt') }
+                        })
                     .then((response) => {
                         if (response.Error) {
                             hideLoader();
-                            sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
+                            sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'warning', text: MESSAGES.ERROR.DeletingUser });
                         } else {
                             allTopicList()
                             setReloadAllData("Deleted");

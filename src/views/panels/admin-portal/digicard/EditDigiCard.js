@@ -92,7 +92,7 @@ const EditDigiCard = () => {
             setSelectedFile(file);
         }
     }
-    
+
 
 
     function getPreviewLink(e) {
@@ -108,7 +108,7 @@ const EditDigiCard = () => {
 
     }
 
-   
+
 
     const handleDelete = (i, states) => {
         const newTags = tags.slice(0);
@@ -159,10 +159,10 @@ const EditDigiCard = () => {
     }
 
     const fetchAllData = async () => {
-       
+
         setIsLoading(true)
-        console.log("threadLinks",threadLinks.length);
-        if (threadLinks.length === 1) {
+        console.log("threadLinks", threadLinks.length);
+        if (threadLinks.length === 1 || threadLinks.length === 2) {
             setDisplayHeader(false);
         } else {
             setDisplayHeader(true);
@@ -180,8 +180,8 @@ const EditDigiCard = () => {
             console.log("allDigicardData", allDigicardData.Items);
             let resultData = allDigicardData.Items;
             resultData.forEach((item, index) => {
-                if(item.digi_card_id!==digi_card_id){
-                    colourOptions.push({ value: item.digi_card_id, label: item.digi_card_title }) 
+                if (item.digi_card_id !== digi_card_id) {
+                    colourOptions.push({ value: item.digi_card_id, label: item.digi_card_title })
                 }
             })
             setDigitalTitles(colourOptions);
@@ -229,7 +229,7 @@ const EditDigiCard = () => {
     useEffect(() => {
         let userJWT = sessionStorage.getItem('user_jwt');
         console.log("jwt", userJWT);
-     
+
         if (userJWT === "" || userJWT === undefined || userJWT === "undefined" || userJWT === null) {
             sessionStorage.clear();
             localStorage.clear();
@@ -254,6 +254,7 @@ const EditDigiCard = () => {
     }
 
     const inserNewDigicard = () => {
+        showLoader()
         let DigiCardtitleRegex = Constants.AddDigiCard.DigiCardtitleRegex;
         let name = document.getElementById("newdigicardtitle").value;
         console.log("nameLength", name.length);
@@ -302,39 +303,23 @@ const EditDigiCard = () => {
             setImageErr(true)
             setnNewDigicard(false)
         } else {
-            setnNewDigicard(false)
-            var formData;
-            console.log("------------------------------------------------------");
-            if (img === '' || voiceNote === '') {
-                console.log("if condition");
-                formData = {
-                    digi_card_title: name,
-                    digi_card_files: [document.getElementById("digicard_image").value],
-                    digicard_image: individualDigiCardData[0].digicard_image,
-                    digi_card_excerpt: articleDataTitle,
-                    digi_card_content: articleData,
-                    digi_card_keywords: tags,
-                    digicard_document: selectedFile,//upload doc
-
-                    digicard_voice_note: individualDigiCardData[0].digicard_voice_note === '' ? '' : individualDigiCardData[0].digicard_voice_note,
-                    related_digi_cards: multiOptions,
-                };
-            } else {
-                console.log("else condition");
-                formData = {
-                    digi_card_title: name,
-                    digi_card_files: [document.getElementById("digicard_image").value],
-                    digicard_image: document.getElementById("digicard_image").value,
-                    digi_card_excerpt: articleDataTitle,
-                    digi_card_content: articleData,
-                    digi_card_keywords: tags,
-                    digicard_document: selectedFile,//upload doc
-
-                    digicard_voice_note: document.getElementById("digicard_voice_note").value === undefined || '' ? "" : document.getElementById("digicard_voice_note").value,
-                    related_digi_cards: multiOptions,
-                };
-            }
-
+            var formData = {
+                digi_card_title: name,
+                digi_card_files: [document.getElementById("digicard_image").value],
+                digicard_image: document.getElementById("digicard_image").value === '' ?
+                    (individualDigiCardData[0].digicard_image === '' ? '' : individualDigiCardData[0].digicard_image)
+                    : document.getElementById("digicard_image").value,
+                digi_card_excerpt: articleDataTitle,
+                digi_card_content: articleData,
+                digi_card_keywords: tags,
+                digicard_document: document.getElementById("digicard_document").value === '' ?
+                    (individualDigiCardData[0].digicard_document === '' ? '' : individualDigiCardData[0].digicard_document)
+                    : individualDigiCardData[0].digicard_document,//upload doc
+                digicard_voice_note: document.getElementById("digicard_voice_note").value === '' ?
+                    (individualDigiCardData[0].digicard_voice_note === '' ? '' : individualDigiCardData[0].digicard_voice_note)
+                    : document.getElementById("digicard_voice_note").value,
+                related_digi_cards: multiOptions,
+            };
             console.log("formData", formData);
             axios
                 .post(dynamicUrl.insertDigicard, { data: formData }, { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
@@ -346,8 +331,6 @@ const EditDigiCard = () => {
                         setDisableButton(false);
                     } else {
                         let uploadParams = response.data;
-                        hideLoader();
-                        setDisableButton(false);
                         console.log('Proceeding with file upload');
 
                         if (Array.isArray(uploadParams)) {
@@ -373,45 +356,34 @@ const EditDigiCard = () => {
                                     result
                                 });
                             }
-                            // sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingDigiCard });
-                            hideLoader();
-                            setDisableButton(false);
-                            // fetchClientData();
-                            setIsOpen(false);
-
+                            hideLoader()
+                            setnNewDigicard(false)
                             MySwal.fire({
-
                                 title: 'Digicard added successfully!',
                                 icon: 'success',
                             }).then((willDelete) => {
                                 history.push('/admin-portal/active-digiCard');
                                 window.location.reload();
-
                             })
                         } else {
                             console.log('No files uploaded');
+                            hideLoader()
+                            setnNewDigicard(false)
                             sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingDigiCard });
-                            hideLoader();
-                            setDisableButton(false);
-                            // fetchClientData();
-                            setIsOpen(false);
+                            history.push('/admin-portal/active-digiCard');
+                            window.location.reload();
                         }
                     }
                 })
                 .catch((error) => {
                     if (error.response) {
-                        // Request made and server responded
                         console.log(error.response.data);
-
                         console.log(error.response.data);
                         if (error.response.status === 401) {
                             console.log();
                             hideLoader();
-                            // setIsClientExists(true);
                             sweetAlertHandler({ title: 'Error', type: 'error', text: MESSAGES.ERROR.DigiCardNameExists });
-
                         } else if (error.response.data === 'Invalid Token') {
-
                             sessionStorage.clear();
                             localStorage.clear();
                             history.push('/auth/signin-1');
@@ -421,14 +393,10 @@ const EditDigiCard = () => {
                         }
 
                     } else if (error.request) {
-                        // The request was made but no response was received
                         console.log(error.request);
-                        setDisableButton(false);
                         hideLoader();
                     } else {
-                        // Something happened in setting up the request that triggered an Error
                         console.log('Error', error.message);
-                        setDisableButton(false);
                         hideLoader();
                     }
                 });
@@ -440,15 +408,7 @@ const EditDigiCard = () => {
         setSelectedFile(e.target.files[0]);
     };
 
-    // const handleUpload = () => {
-    //     const formData = new FormData();
-    //     formData.append("file", selectedFile);
 
-    //     // Call the API to upload the file
-    //     // ...
-
-    //     setSelectedFile(null);
-    // };
 
     return (
         <div>
@@ -505,11 +465,10 @@ const EditDigiCard = () => {
 
 
                                     onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
+                                        showLoader()
                                         console.log("multiOptions in submitting time", multiOptions);
                                         let allFilesData = [];
-
                                         const fileNameArray = ['digicard_image'];
-
                                         fileNameArray.forEach((fileName) => {
                                             let selectedFile = document.getElementById(fileName).files[0];
                                             console.log('File is here!');
@@ -523,39 +482,18 @@ const EditDigiCard = () => {
                                             setImgValidation(true)
                                             hideLoader();
                                         } else {
-                                            var formData;
-                                            if (values.digicard_image === '' || voiceNotePre !== undefined) {
-                                                console.log("if condition");
-                                                formData = {
-                                                    digi_card_id: individualDigiCardData[0].digi_card_id,
-                                                    digi_card_title: values.digicardtitle,
-                                                    digi_card_files: [values.digicard_image],
-                                                    digicard_image: imgFile,
-                                                    digicard_document: values.digicard_document,//upload doc
-                                                    // digicard_voice_note: voiceNotePre === undefined ? values.digicard_voice_note
-                                                    digicard_voice_note: values.digicard_voice_note,
-                                                    // documentPre
-                                                    digi_card_excerpt: articleDataTitle,
-                                                    digi_card_content: articleData,
-                                                    digi_card_keywords: tags,
-                                                    related_digi_cards: multiOptions
-                                                };
-                                            } else {
-                                                console.log("else condition");
-                                                formData = {
-                                                    digi_card_id: individualDigiCardData[0].digi_card_id,
-                                                    digi_card_title: values.digicardtitle,
-                                                    digi_card_files: [values.digicard_image],
-                                                    digicard_image: values.digicard_image,
-                                                    digicard_document: selectedFile,//upload doc
-                                                    digicard_voice_note: values.digicard_voice_note,
-                                                    digi_card_excerpt: articleDataTitle,
-                                                    digi_card_content: articleData,
-                                                    digi_card_keywords: tags,
-                                                    related_digi_cards: multiOptions
-                                                };
-                                            }
-
+                                            const formData = {
+                                                digi_card_id: individualDigiCardData[0].digi_card_id,
+                                                digi_card_title: values.digicardtitle,
+                                                digi_card_files: [values.digicard_image],
+                                                digicard_image: values.digicard_image === '' || values.digicard_image === undefined ? '' : values.digicard_image,
+                                                digicard_document: values.digicard_document === '' || values.digicard_document === undefined ? '' : values.digicard_document,//upload doc
+                                                digicard_voice_note: values.digicard_voice_note === '' || values.digicard_voice_note === undefined ? '' : values.digicard_voice_note,
+                                                digi_card_excerpt: articleDataTitle,
+                                                digi_card_content: articleData,
+                                                digi_card_keywords: tags,
+                                                related_digi_cards: multiOptions
+                                            };
                                             console.log("formData", formData);
 
                                             axios
@@ -568,10 +506,7 @@ const EditDigiCard = () => {
                                                         setDisableButton(false);
                                                     } else {
                                                         let uploadParams = response.data;
-                                                        hideLoader();
-                                                        setDisableButton(false);
                                                         console.log('Proceeding with file upload');
-
                                                         if (Array.isArray(uploadParams)) {
                                                             for (let index = 0; index < uploadParams.length; index++) {
                                                                 let keyNameArr = Object.keys(uploadParams[index]);
@@ -605,16 +540,10 @@ const EditDigiCard = () => {
 
                                                             })
                                                             hideLoader();
-                                                            setDisableButton(false);
-                                                            // fetchClientData();
-                                                            setIsOpen(false);
                                                         } else {
                                                             console.log('No files uploaded');
                                                             sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.EditDigiCard });
                                                             hideLoader();
-                                                            setDisableButton(false);
-                                                            // fetchClientData();
-                                                            setIsOpen(false);
                                                         }
                                                     }
                                                 })
@@ -715,7 +644,7 @@ const EditDigiCard = () => {
                                                             onBlur={handleBlur}
                                                             onClick={(e) => {
                                                                 setVoiceNote('');
-                                                              }}
+                                                            }}
                                                             onChange={(e) => {
                                                                 handleChange(e);
                                                                 previewVoiceNote(e);
@@ -887,6 +816,7 @@ const EditDigiCard = () => {
                                                         setArticleData={setArticleData}
                                                     />
                                                 </Col>
+                                                {loader}
                                             </Row><br></br>
                                             <Row >
                                                 <Col sm={6}>
@@ -960,8 +890,10 @@ const EditDigiCard = () => {
                                                     setNewDigicardErrReq(false)
                                                 }}
                                             />
-                                        </div>
+                                        </div><br/>
+                                        {loader}
                                     </Col>
+                                    
                                 </Row>
                                 <Row>
                                     <Col sm={9}>
