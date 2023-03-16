@@ -26,12 +26,25 @@ const AddQuestions = ({ className, ...rest }) => {
         { value: 'Objective', label: 'Objective' },
         { value: 'Subjective', label: 'Subjective' }
     ]);
+
+    const [questionCategoryOptions, setQquestionCategoryOptions] = useState([
+        { value: 'Voice based', label: 'Voice based' },
+        { value: 'Picture based', label: 'Picture based' },
+        { value: 'Case Study based', label: 'Case Study based' },
+        { value: 'Comprehension based', label: 'Comprehension based' },
+        { value: 'Fill in the blank', label: 'Fill in the blank' },
+        { value: 'True or False', label: 'True or False' },
+        { value: 'Numerical problem', label: 'Numerical problem' }
+    ]);
+
     const [questionTypeErrMsg, setQuestionTypeErrMsg] = useState(false);
+    const [questionCategoryErrMsg, setQuestionCategoryErrMsg] = useState(false);
     const [questionEmptyErrMsg, setQuestionEmptyErrMsg] = useState(false);
     const [ansWeightageErrMsg, setAnsWeightageErrMsg] = useState(false);
     const [answerTypeErrMsg, setAnswerTypeErrMsg] = useState(false);
 
     const [selectedQuestionType, setSelectedQuestionType] = useState([]);
+    const [selectedQuestionCategory, setSelectedQuestionCategory] = useState([]);
     const [loader, showLoader, hideLoader] = useFullPageLoader();
     const [displayHeader, setDisplayHeader] = useState(true);
     const [displayHeading, setDisplayHeading] = useState(sessionStorage.getItem('question_active_status'));
@@ -75,8 +88,6 @@ const AddQuestions = ({ className, ...rest }) => {
             answer_weightage: ''
         }
     ]);
-
-    const questionTypeRef = useRef(null);
 
     const removeSelectedImg = (index) => {
 
@@ -125,15 +136,23 @@ const AddQuestions = ({ className, ...rest }) => {
 
     const selectedArr = [{ label: 'Options', value: 'Options' }];
 
+    const handleQuestionCategory = (event) => {
+        setQuestionCategoryErrMsg(false);
+        setSelectedQuestionCategory(event.value);
+
+    }
+
     const handleQuestionType = (event) => {
 
         setAnswerTypeOptions((currentOptions) => currentOptions.filter((currentOption) => !selectedAnswerType.includes(currentOption)));
+        setSelectedQuestionCategory([]);
 
         console.log(answerTypeOptions);
         // setAnswerTypeOptions([]);
         setSelectedAnswerType([]);
         setAnswerOptionsForm([]);
         setQuestionTypeErrMsg(false);
+        setQuestionCategoryErrMsg(false);
         setQuestionEmptyErrMsg(false);
         setAnsWeightageErrMsg(false);
 
@@ -620,6 +639,8 @@ const AddQuestions = ({ className, ...rest }) => {
 
                                     } else if (isEmptyArray(selectedQuestionType)) {
                                         setQuestionTypeErrMsg(true);
+                                    } else if (isEmptyArray(selectedQuestionCategory)) {
+                                        setQuestionCategoryErrMsg(true);
                                     } else if (articleDataTitle === "" || articleDataTitle === undefined || articleDataTitle === 'undefined' || articleDataTitle === "<p><br></p>" || articleDataTitle === "<p></p>" || articleDataTitle === "<br>") {
                                         setQuestionEmptyErrMsg(true);
                                     } else if (answerOptionsForm) {
@@ -635,6 +656,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                             let payLoad = {
 
                                                 question_type: selectedQuestionType,
+                                                question_category: selectedQuestionCategory,
                                                 question_voice_note: selectedQuestionVoiceNote,
                                                 question_content: articleDataTitle,
                                                 answer_type: selectedAnswerType,
@@ -921,7 +943,6 @@ const AddQuestions = ({ className, ...rest }) => {
                                             </label>
 
                                             <Select
-                                                ref={questionTypeRef}
                                                 name="questionType"
                                                 options={questionTypeOptions}
                                                 className="basic-multi-select"
@@ -1055,6 +1076,31 @@ const AddQuestions = ({ className, ...rest }) => {
                                                 )
                                             }
 
+                                        </Col>
+
+                                        <Col xs={6}>
+                                            <label className="floating-label">
+                                                <small className="text-danger">* </small>
+                                                Question Category
+                                            </label>
+
+                                            <Select
+                                                name="questionCategory"
+                                                options={questionCategoryOptions}
+                                                className="basic-multi-select"
+                                                classNamePrefix="Select"
+                                                onChange={(event) => {
+                                                    handleQuestionCategory(event);
+                                                }}
+                                                menuPortalTarget={document.body}
+                                                styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                                            />
+
+                                            {questionCategoryErrMsg && (
+                                                <>
+                                                    <small className="text-danger form-text">{'Please select Question Category'}</small>
+                                                </>
+                                            )}
                                         </Col>
                                     </Row>
 

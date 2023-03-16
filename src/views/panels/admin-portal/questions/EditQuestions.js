@@ -33,11 +33,24 @@ const EditQuestions = () => {
         { value: 'Objective', label: 'Objective' },
         { value: 'Subjective', label: 'Subjective' }
     ]);
+
+    const [questionCategoryOptions, setQquestionCategoryOptions] = useState([
+        { value: 'Voice based', label: 'Voice based' },
+        { value: 'Picture based', label: 'Picture based' },
+        { value: 'Case Study based', label: 'Case Study based' },
+        { value: 'Comprehension based', label: 'Comprehension based' },
+        { value: 'Fill in the blank', label: 'Fill in the blank' },
+        { value: 'True or False', label: 'True or False' },
+        { value: 'Numerical problem', label: 'Numerical problem' }
+    ]);
+
     const [questionTypeErrMsg, setQuestionTypeErrMsg] = useState(false);
+    const [questionCategoryErrMsg, setQuestionCategoryErrMsg] = useState(false);
     const [questionEmptyErrMsg, setQuestionEmptyErrMsg] = useState(false);
     const [ansWeightageErrMsg, setAnsWeightageErrMsg] = useState(false);
 
     const [selectedQuestionType, setSelectedQuestionType] = useState([]);
+    const [selectedQuestionCategory, setSelectedQuestionCategory] = useState([]);
     const [showMathKeyboard, setShowMathKeyboard] = useState('No');
     const [answerTypeOptions, setAnswerTypeOptions] = useState([]);
     const [selectedAnswerType, setSelectedAnswerType] = useState([]);
@@ -86,20 +99,12 @@ const EditQuestions = () => {
         }
     ]);
 
-    if (_questionStatus === 'Save') {
-        displaySuccessMsg = 'Question Saved!';
-    } else if (_questionStatus === 'Submit') {
-        displaySuccessMsg = 'Question Submitted!';
-    } else if (_questionStatus === 'Accept') {
-        displaySuccessMsg = 'Question Accepted!';
-    } else if (_questionStatus === 'Reject') {
-        displaySuccessMsg = 'Question Rejected!';
-    } else if (_questionStatus === 'Revisit') {
-        displaySuccessMsg = 'Question set as Revisit!';
-    } else if (_questionStatus === 'DesignReady') {
-        displaySuccessMsg = 'Question set as Design Ready!';
-    } else if (_questionStatus === 'Publish') {
-        displaySuccessMsg = 'Question Published!';
+    displaySuccessMsg = _questionStatus === 'Save' ? 'Question Saved!' : _questionStatus === 'Submit' ? 'Question Submitted!' : _questionStatus === 'Accept' ? 'Question Accepted!' : _questionStatus === 'Reject' ? 'Question Rejected!' : _questionStatus === 'Revisit' ? 'Question set as Revisit!' : _questionStatus === 'DesignReady' ? 'Question set as Design Ready!' : _questionStatus === 'Publish' ? 'Question Published!' : 'Question Updated!';
+
+    const handleQuestionCategory = (event) => {
+        setQuestionCategoryErrMsg(false);
+        setSelectedQuestionCategory(event.target.value);
+
     }
 
     const handleQuestionLabel = (e) => {
@@ -164,12 +169,14 @@ const EditQuestions = () => {
     const handleQuestionType = (event) => {
 
         setAnswerTypeOptions((currentOptions) => currentOptions.filter((currentOption) => !selectedAnswerType.includes(currentOption)));
+        setSelectedQuestionCategory([]);
 
         console.log(answerTypeOptions);
         // setAnswerTypeOptions([]);
         setSelectedAnswerType([]);
         setAnswerOptionsForm([]);
         setQuestionTypeErrMsg(false);
+        setQuestionCategoryErrMsg(false);
         setQuestionEmptyErrMsg(false);
         setAnsWeightageErrMsg(false);
 
@@ -439,11 +446,12 @@ const EditQuestions = () => {
 
                         setIsLoading(false);
 
-                        setShowMathKeyboard(individual_user_data.show_math_keyboard)
+                        setShowMathKeyboard(individual_user_data.show_math_keyboard);
                         _setRadio(radioValue);
 
                         setSelectedQuestionType(individual_user_data.question_type);
                         setQuestionLabelValue(individual_user_data.question_label);
+                        setSelectedQuestionCategory(individual_user_data.question_category);
 
                         individual_user_data.question_type === 'Subjective' ? setAnswerTypeOptions([
                             { value: 'Words', label: 'Words' },
@@ -977,6 +985,7 @@ const EditQuestions = () => {
             let payLoad = {
 
                 question_type: selectedQuestionType,
+                question_category: selectedQuestionCategory,
                 question_voice_note: selectedQuestionVoiceNote,
                 question_content: articleDataTitle,
                 answer_type: selectedAnswerType,
@@ -997,6 +1006,8 @@ const EditQuestions = () => {
             setQuestionLabelErr(true);
         } else if (isEmptyArray(selectedQuestionType)) {
             setQuestionTypeErrMsg(true);
+        } else if (isEmptyArray(selectedQuestionCategory) || selectedQuestionCategory === 'Select...') {
+            setQuestionCategoryErrMsg(true);
         } else if (articleDataTitle === "" || articleDataTitle === undefined || articleDataTitle === 'undefined' || articleDataTitle === "<p><br></p>" || articleDataTitle === "<p></p>" || articleDataTitle === "<br>") {
             setQuestionEmptyErrMsg(true);
         } else if (answerOptionsForm) {
@@ -1359,6 +1370,8 @@ const EditQuestions = () => {
 
                                                             } else if (isEmptyArray(selectedQuestionType)) {
                                                                 setQuestionTypeErrMsg(true);
+                                                            } else if (isEmptyArray(selectedQuestionCategory) || selectedQuestionCategory === 'Select...') {
+                                                                setQuestionCategoryErrMsg(true);
                                                             } else if (articleDataTitle === "" || articleDataTitle === undefined || articleDataTitle === 'undefined' || articleDataTitle === "<p><br></p>" || articleDataTitle === "<p></p>" || articleDataTitle === "<br>") {
                                                                 setQuestionEmptyErrMsg(true);
                                                             } else if (answerOptionsForm) {
@@ -1374,6 +1387,7 @@ const EditQuestions = () => {
                                                                     let payLoad = {
 
                                                                         question_type: selectedQuestionType,
+                                                                        question_category: selectedQuestionCategory,
                                                                         question_voice_note: selectedQuestionVoiceNote,
                                                                         question_content: articleDataTitle,
                                                                         answer_type: selectedAnswerType,
@@ -1660,6 +1674,8 @@ const EditQuestions = () => {
 
                                                             } else if (isEmptyArray(selectedQuestionType)) {
                                                                 setQuestionTypeErrMsg(true);
+                                                            } else if (isEmptyArray(selectedQuestionCategory) || selectedQuestionCategory === 'Select...') {
+                                                                setQuestionCategoryErrMsg(true);
                                                             } else if (articleDataTitle === "" || articleDataTitle === undefined || articleDataTitle === 'undefined' || articleDataTitle === "<p><br></p>" || articleDataTitle === "<p></p>" || articleDataTitle === "<br>") {
                                                                 setQuestionEmptyErrMsg(true);
                                                             } else if (answerOptionsForm) {
@@ -1676,6 +1692,7 @@ const EditQuestions = () => {
 
                                                                         question_id: question_id,
                                                                         question_type: selectedQuestionType,
+                                                                        question_category: selectedQuestionCategory,
                                                                         question_voice_note: selectedQuestionVoiceNote,
                                                                         question_content: articleDataTitle,
                                                                         answer_type: selectedAnswerType,
@@ -2094,6 +2111,59 @@ const EditQuestions = () => {
                                                                             <small className="text-danger form-text">{'Question Label already exists!'}</small>
                                                                         )
                                                                     }
+                                                                </Col>
+
+                                                                <Col xs={6}>
+                                                                    <label className="floating-label">
+                                                                        <small className="text-danger">* </small>
+                                                                        Question Category
+                                                                    </label>
+
+                                                                    {/* <Select
+                                                                        name="questionCategory"
+                                                                        options={questionCategoryOptions}
+                                                                        className="basic-multi-select"
+                                                                        classNamePrefix="Select"
+                                                                        onChange={(event) => {
+                                                                            handleQuestionCategory(event);
+                                                                        }}
+                                                                        menuPortalTarget={document.body}
+                                                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                                                                    /> */}
+
+                                                                    <select
+                                                                        className="form-control"
+                                                                        error={touched.questionCategory && errors.questionCategory}
+                                                                        name="questionCategory"
+                                                                        onBlur={handleBlur}
+                                                                        type="text"
+                                                                        value={selectedQuestionCategory}
+                                                                        onChange={(event) => {
+                                                                            handleQuestionCategory(event)
+                                                                        }}
+                                                                    >
+
+                                                                        <option>
+                                                                            Select...
+                                                                        </option>
+                                                                        {questionCategoryOptions.map((optionsData) => {
+
+                                                                            return <option
+                                                                                value={optionsData.value}
+                                                                                key={optionsData.value}
+                                                                            >
+                                                                                {optionsData.value}
+                                                                            </option>
+
+                                                                        })}
+
+                                                                    </select>
+
+                                                                    {questionCategoryErrMsg && (
+                                                                        <>
+                                                                            <small className="text-danger form-text">{'Please select Question Category'}</small>
+                                                                        </>
+                                                                    )}
                                                                 </Col>
                                                             </Row>
 
