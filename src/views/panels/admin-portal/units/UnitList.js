@@ -159,7 +159,6 @@ function Table({ columns, data, modalOpen }) {
                                     window.location.reload()
 
                                 })
-
                             }
                         }
                         //new
