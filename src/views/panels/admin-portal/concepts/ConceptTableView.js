@@ -10,7 +10,7 @@ import MESSAGES from '../../../../helper/messages';
 import { useHistory } from 'react-router-dom';
 
 import { GlobalFilter } from '../../../common-ui-components/tables/GlobalFilter';
-import { useTable, useSortBy, usePagination, useGlobalFilter } from 'react-table';
+import { useTable, useSortBy, usePagination, useGlobalFilter, useRowSelect } from 'react-table';
 import dynamicUrl from '../../../../helper/dynamicUrls';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import AddConcepts from './AddConcepts';
@@ -36,6 +36,8 @@ function Table({ columns, data }) {
 
     const [isOpenAddConcept, setIsOpenAddConcept] = useState(false);
     const [isEditAddConcept, setIsOpenEditConcept] = useState(false);
+
+    const concept_status = pageLocation === 'active-concepts' ? "Active" : "Archived"
 
     const MySwal = withReactContent(Swal);
 
@@ -291,11 +293,8 @@ function Table({ columns, data }) {
                                             <i className="feather icon-trash-2" /> &nbsp;Delete
                                         </Button>
                                     </>
-
                                 ) : (
-
                                     <>
-
                                         <Button
                                             size="sm"
                                             className="btn btn-icon btn-rounded btn-primary"
@@ -469,9 +468,118 @@ function Table({ columns, data }) {
         },
         useGlobalFilter,
         useSortBy,
-        usePagination
+        usePagination,
+        useRowSelect
     );
 
+    const toggleFunction = (param) => {
+
+            let arrayWithConcepts = [];
+            page.map(e => {
+                e.isSelected === true && arrayWithConcepts.push(e.original.concept_id)
+            })
+    
+            console.log("arrayWithConcepts.length", arrayWithConcepts.length)
+            console.log("CHECKED IDS : ", arrayWithConcepts);
+    
+            if (arrayWithConcepts.length === 0) {
+                const MySwal = withReactContent(Swal);
+                return MySwal.fire('Sorry', 'No Concepts Selected!', 'warning').then(() => {
+                    window.location.reload();
+                });
+            }
+    
+            const MySwal = withReactContent(Swal);
+            MySwal.fire({
+                title: 'Are you sure?',
+                text: pageLocation === 'active-concepts' ? 'Confirm deleting' : 'Confirm restoring',
+                type: 'warning',
+                showCloseButton: true,
+                showCancelButton: true,
+    
+            }).then((willDelete) => {
+                if (willDelete.value) {
+                    console.log("api calling");
+                    // changeStatus(digi_card_id, digi_card_title);
+                    console.log("Request : ", {
+                        concept_status: concept_status === "Active" ? "Archived" : "Active",
+                        concept_array: arrayWithConcepts,
+                    });
+    
+                    axios
+                        .post(
+                            dynamicUrl.bulkToggleConceptStatus,
+                            {
+                                data: {
+                                    concept_status: concept_status === "Active" ? "Archived" : "Active",
+                                    concept_array: arrayWithConcepts,
+                                }
+                            }, {
+                            headers: { Authorization: sessionStorage.getItem('user_jwt') }
+                        })
+                        .then(async (response) => {
+                            console.log("response : ", response);
+                            if (response.Error) {
+                                console.log("Error");
+                                hideLoader();
+                                // sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
+                                pageLocation === "active-concepts"
+                                    ? sweetAlertHandler({
+                                        title: MESSAGES.TTTLES.Sorry,
+                                        type: "error",
+                                        text: MESSAGES.ERROR.DeletingConcept
+                                    })
+                                    : sweetAlertHandler({
+                                        title: MESSAGES.TTTLES.Sorry,
+                                        type: "error",
+                                        text: MESSAGES.ERROR.RestoringConcept
+                                    });
+                                history.push('/admin-portal/' + pageLocation)
+                            }
+                            else {
+                                console.log("response : ", response);
+                                if (response.data === 200) {
+                                    MySwal.fire({
+                                        title: (pageLocation === 'active-concepts') ? 'Concepts Deleted' : "Concepts Restored",
+                                        icon: "success",
+                                        // text: (pageLocation === 'active-concepts') ? 'Unit Deleted' : 'Unit Restored',
+                                        // type: 'success',
+                                    }).then((willDelete) => {
+    
+                                        window.location.reload()
+    
+                                    })
+    
+                                }
+                            }
+                            //new
+    
+                        }
+                        ).catch(async (errorResponse) => {
+                            console.log("errorResponse : ", errorResponse);
+                            if (errorResponse.response.data) {
+                                MySwal.fire({
+                                    title: MESSAGES.TTTLES.Sorry,
+                                    icon: "error",
+                                    text: errorResponse.response.data,
+                                    // type: 'success',
+                                }).then((willDelete) => {
+    
+                                    window.location.reload()
+    
+                                })
+                            }
+    
+                        }
+    
+                        )
+    
+                } else {
+                    return MySwal.fire('', pageLocation === 'active-concepts' ? 'Concept is safe!' : "Concept remains Archived", 'error');
+                }
+    
+            })
+    }
     return (
         <>
 
@@ -508,6 +616,35 @@ function Table({ columns, data }) {
                             >
                                 <i className="feather icon-plus" /> Add Concepts
                             </Button>
+                            {
+                                pageLocation === "active-concepts" ? 
+                                <Button
+                                    // variant="danger"
+                                    className="btn-sm btn-round has-ripple ml-2 btn btn-danger"
+                                    style={{ whiteSpace: "no-wrap" }}
+
+                                    onClick={(e) => {
+                                        // handleAddConcepts(e);
+                                        toggleFunction("Archived"); 
+                                    }}
+                                >
+                                    <i className="feather icon-trash-2" /> Multi Delete
+                                </Button>
+                                : 
+                                <Button
+                                    // variant="success"
+                                    className="btn-sm btn-round has-ripple ml-2 btn btn-primary"
+                                    style={{ whiteSpace: "no-wrap" }}
+                                    onClick={(e) => {
+                                        // handleAddConcepts(e);
+                                        toggleFunction("Active"); 
+
+                                    }}
+                                >
+                                    <i className="feather icon-plus" /> Multi Restore
+                                </Button>
+                            }
+                            
 
                         </Col>
                     </Row>
@@ -630,6 +767,20 @@ const ConceptTableView = ({ userStatus }) => {
 
     const columns = React.useMemo(
         () => [
+            {
+                id: "selection",
+
+                Header: ({ getToggleAllRowsSelectedProps }) => (
+                    <div>
+                        <input type="checkbox" {...getToggleAllRowsSelectedProps()} />
+                    </div>
+                ),
+                Cell: ({ row }) => (
+                    <div>
+                        <input type="checkbox" {...row.getToggleRowSelectedProps()} />
+                    </div>
+                )
+            },
             {
                 Header: '#',
                 accessor: 'id'

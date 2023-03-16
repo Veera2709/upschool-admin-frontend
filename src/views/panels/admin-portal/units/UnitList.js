@@ -85,16 +85,10 @@ function Table({ columns, data, modalOpen }) {
         let arrayWithUnits = [];
         page.map(e => {
             e.isSelected === true && arrayWithUnits.push(e.original.unit_id)
-            // e.isSelected === true && unitTitles.push(e.original.unit_title)
         })
 
-        // selectedFlatRows.map((item) => {
-        //     console.log("item.original.unit_chapter_id", item.original.unit_title);
-        //     arrayWithUnits.push(item.original.unit_id)
-        // })
         console.log("arrayWithUnits.length", arrayWithUnits.length)
         console.log("CHECKED IDS : ", arrayWithUnits);
-        console.log("unitTitles : ", unitTitles);
 
         if (arrayWithUnits.length === 0) {
             const MySwal = withReactContent(Swal);
@@ -111,7 +105,6 @@ function Table({ columns, data, modalOpen }) {
             showCloseButton: true,
             showCancelButton: true,
 
-
         }).then((willDelete) => {
             if (willDelete.value) {
                 console.log("api calling");
@@ -119,7 +112,6 @@ function Table({ columns, data, modalOpen }) {
                 console.log("Request : ", {
                     unit_status: unit_status === "Active" ? "Archived" : "Active",
                     unit_array: arrayWithUnits,
-
                 });
 
                 axios
@@ -144,12 +136,12 @@ function Table({ columns, data, modalOpen }) {
                                 ? sweetAlertHandler({
                                     title: MESSAGES.TTTLES.Sorry,
                                     type: "error",
-                                    text: MESSAGES.ERROR.DeletingParents
+                                    text: MESSAGES.ERROR.DeletingUnit
                                 })
                                 : sweetAlertHandler({
                                     title: MESSAGES.TTTLES.Sorry,
                                     type: "error",
-                                    text: MESSAGES.ERROR.RestoringParents
+                                    text: MESSAGES.ERROR.RestoringUnit
                                 });
 
                             history.push('/admin-portal/' + pageLocation)
@@ -158,7 +150,7 @@ function Table({ columns, data, modalOpen }) {
                             console.log("response : ", response);
                             if (response.data === 200) {
                                 MySwal.fire({
-                                    title: (pageLocation === 'active-units') ? 'units Deleted' : "units restored",
+                                    title: (pageLocation === 'active-units') ? 'Units Deleted' : "Units Restored",
                                     icon: "success",
                                     // text: (pageLocation === 'active-units') ? 'Unit Deleted' : 'Unit Restored',
                                     // type: 'success',
@@ -171,10 +163,6 @@ function Table({ columns, data, modalOpen }) {
                             }
                         }
                         //new
-
-
-
-
                     }
                     ).catch(async (errorResponse) => {
                         console.log("errorResponse : ", errorResponse);
@@ -345,8 +333,6 @@ const UnitList = (props) => {
     const [isOpenEditUnit, setOpenEditUnit] = useState(false);
     const [isOpenAddUnit, setOpenAddUnit] = useState(false);
     const [unitId, setUnitId] = useState()
-
-
 
     const columns = React.useMemo(
         () => [
