@@ -134,12 +134,14 @@ function Table({ columns, data, modalOpen }) {
                     {digicardStatus === "Active" ? (
                         <Button className='btn-sm btn-round has-ripple ml-2 btn btn-danger'
                             onClick={() => { getIDFromData("Archived") }}
+                            style={{marginRight:'15px'}}
                         > <i className="feather icon-trash-2" />&nbsp;
                             Multi Delete
                         </Button>
                     ) : (
                         <Button className='btn-sm btn-round has-ripple ml-2 btn btn-primary'
                             onClick={() => { getIDFromData("Active") }}
+                            style={{marginRight:'15px'}}
                         > <i className="feather icon-plus" />&nbsp;
                             Multi Restore
                         </Button>
