@@ -82,16 +82,17 @@ function Table({ columns, data, modalOpen }) {
     }
 
     const getUnitsFromData = () => {
-        console.log("selectedFlatRows", selectedFlatRows);
         let arrayWithUnits = [];
+        let unitTitles = []; 
 
+        page.map(e => {
 
-        selectedFlatRows.map((item) => {
-            console.log("item.original.unit_chapter_id", item.original.unit_title);
-            arrayWithUnits.push(item.original.unit_id)
+            e.isSelected === true && arrayWithUnits.push(e.original.unit_id)
+            e.isSelected === true && unitTitles.push(e.original.unit_title)
         })
-        console.log("arrayWithUnits.length", arrayWithUnits.length)
+
         console.log("CHECKED IDS : ", arrayWithUnits);
+        console.log("unitTitles : ", unitTitles);
 
         if (arrayWithUnits.length === 0) {
             const MySwal = withReactContent(Swal);
@@ -99,7 +100,6 @@ function Table({ columns, data, modalOpen }) {
                 window.location.reload();
             });
         }
-
 
         const MySwal = withReactContent(Swal);
         MySwal.fire({
@@ -200,8 +200,6 @@ function Table({ columns, data, modalOpen }) {
         })
     }
 
-
-
     return (
         <>
             <Row className="mb-3">
@@ -278,6 +276,7 @@ function Table({ columns, data, modalOpen }) {
                     ))}
                 </thead>
                 <tbody {...getTableBodyProps()}>
+                    {console.log("page : ", page)}
                     {page.map((row, i) => {
                         prepareRow(row);
                         return (
