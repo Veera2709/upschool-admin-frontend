@@ -8,8 +8,6 @@ import { GlobalFilter } from './GlobalFilter';
 import { useTable, useSortBy, usePagination, useGlobalFilter, useRowSelect } from 'react-table';
 // import makeData from '../../../data/schoolData';
 import { Link, useHistory } from 'react-router-dom';
-
-
 import dynamicUrl from '../../../../helper/dynamicUrls';
 import MESSAGES from '../../../../helper/messages';
 import { SessionStorage } from '../../../../util/SessionStorage';
@@ -18,12 +16,8 @@ import withReactContent from 'sweetalert2-react-content';
 import { useLocation } from "react-router-dom";
 import BasicSpinner from '../../../../helper/BasicSpinner';
 import { toggleMultiDigicardStatus } from '../../../api/CommonApi'
-
-
-
-
 import Swal from 'sweetalert2';
-import { async } from 'q';
+
 
 function Table({ columns, data, modalOpen }) {
     const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
@@ -64,14 +58,12 @@ function Table({ columns, data, modalOpen }) {
         useRowSelect
     );
 
-    const [isOpen, setIsOpen] = useState(false);
 
 
     let history = useHistory();
 
     const adddigicard = () => {
         history.push('/admin-portal/add-digicard');
-        setIsOpen(true);
     }
 
     const getIDFromData = async (DigicardStatus) => {
@@ -89,14 +81,14 @@ function Table({ columns, data, modalOpen }) {
             }
 
             const ResultData = await toggleMultiDigicardStatus(payload)
-            if (ResultData.Error) {
+            if (ResultData.Error) { 
                 if (ResultData.Error.response.data == 'Invalid Token') {
                     sessionStorage.clear();
                     localStorage.clear();
                     history.push('/auth/signin-1');
                     window.location.reload();
-                }else{
-                    return MySwal.fire('Error',ResultData.Error.response.data, 'error').then(() => {
+                } else {
+                    return MySwal.fire('Error', ResultData.Error.response.data, 'error').then(() => {
                         window.location.reload();
                     });
                 }
@@ -110,8 +102,6 @@ function Table({ columns, data, modalOpen }) {
                 window.location.reload();
             });
         }
-
-
     }
 
     return (
@@ -144,12 +134,14 @@ function Table({ columns, data, modalOpen }) {
                     {digicardStatus === "Active" ? (
                         <Button className='btn-sm btn-round has-ripple ml-2 btn btn-danger'
                             onClick={() => { getIDFromData("Archived") }}
+                            style={{marginRight:'15px'}}
                         > <i className="feather icon-trash-2" />&nbsp;
                             Multi Delete
                         </Button>
                     ) : (
                         <Button className='btn-sm btn-round has-ripple ml-2 btn btn-primary'
                             onClick={() => { getIDFromData("Active") }}
+                            style={{marginRight:'15px'}}
                         > <i className="feather icon-plus" />&nbsp;
                             Multi Restore
                         </Button>
@@ -269,28 +261,14 @@ const DigiCard = () => {
 
     const [data, setData] = useState([]);
     console.log('data: ', data)
-    const [isOpen, setIsOpen] = useState(false);
     const [loader, showLoader, hideLoader] = useFullPageLoader();
     const [isLoading, setIsLoading] = useState(false);
-
-    const [isSelectedAll, setSelectedAll] = useState(false);
     const [reloadAllData, setReloadAllData] = useState('Fetched');
-    const [statusUrl, setStatusUrl] = useState('');
     const MySwal = withReactContent(Swal);
-    const [digiCardId, setDigiCardId] = useState([]);
     const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
     let history = useHistory();
 
 
-    function getDigiCardId(e, id) {
-        console.log("digiCardId", id);
-        if (e.target.checked === true) {
-            digiCardId.push(id)
-        } else {
-            const i = digiCardId.indexOf(id);
-            digiCardId.splice(i, 1);
-        }
-    }
 
     const sweetConfirmHandler = (alert) => {
         MySwal.fire({
@@ -299,12 +277,6 @@ const DigiCard = () => {
             icon: alert.type
         });
     }
-
-
-    const openHandler = () => {
-        setIsOpen(true);
-    };
-
 
 
     function deleteDigicard(digi_card_id, digi_card_title) {
@@ -397,11 +369,6 @@ const DigiCard = () => {
                                 fetchAllDigiCards()
                                 setReloadAllData("Deleted");
                                 return MySwal.fire('', 'The ' + digi_card_title + ' is Restored', 'success');
-                                // window. location. reload() 
-                                //  MySwal.fire('', MESSAGES.INFO.CLIENT_DELETED, 'success');
-
-
-
                             }
                         })
                         .catch((error) => {
@@ -439,7 +406,11 @@ const DigiCard = () => {
         let digicardStatus = pageLocation === "active-digiCard" ? 'Active' : 'Archived';
         let DigicardTyle = digicardStatus === "Active" ? "Active Digicards" : "Archived Digicards"
         sessionStorage.setItem('digicard_type', DigicardTyle)
-        axios.post(dynamicUrl.fetchAllDigiCards, {}, {
+        axios.post(dynamicUrl.fetchDigiCardsBasedonStatus, {
+            data: {
+                digicard_status: digicardStatus
+            }
+        }, {
             headers: { Authorization: sessionStorage.getItem('user_jwt') }
         })
             .then((response) => {
@@ -447,23 +418,14 @@ const DigiCard = () => {
                 let dataResponse = response.data.Items
                 let finalDataArray = [];
                 if (digicardStatus === 'Active') {
-                    let ActiveresultData = (dataResponse && dataResponse.filter(e => e.digicard_status === 'Active'))
-                    console.log("ActiveresultData", ActiveresultData);
-
-                    for (let index = 0; index < ActiveresultData.length; index++) {
-                        // ActiveresultData[index]['check_box'] = <input
-                        //     type="checkbox"
-                        //     onChange={(e) => { getDigiCardId(e, ActiveresultData[index].digi_card_id) }}
-                        //     defaultChecked={isSelectedAll&&isSelectedAll}
-                        // />
-                        ActiveresultData[index]['digicard_image'] = <img className="img-fluid img-radius wid-40" alt="Poison regulate" src={ActiveresultData[index].digicard_imageURL} />
-                        ActiveresultData[index]['actions'] = (
+                    for (let index = 0; index < dataResponse.length; index++) {
+                        dataResponse[index]['digicard_image'] = <img className="img-fluid img-radius wid-40" alt="Poison regulate" src={dataResponse[index].digicard_imageURL} />
+                        dataResponse[index]['actions'] = (
                             <>
                                 <Button
                                     size="sm"
                                     className="btn btn-icon btn-rounded btn-primary"
-                                    onClick={(e) => history.push(`/admin-portal/editDigiCard/${ActiveresultData[index].digi_card_id}`)}
-                                // onClick={(e) => history.push(`/admin-portal/admin-casedetails/${resultData[index].client_id}/all_cases`)}
+                                    onClick={(e) => history.push(`/admin-portal/editDigiCard/${dataResponse[index].digi_card_id}`)}
                                 >
                                     <i className="feather icon-edit" /> &nbsp; Edit
                                 </Button>
@@ -471,42 +433,36 @@ const DigiCard = () => {
                                 <Button
                                     size="sm"
                                     className="btn btn-icon btn-rounded btn-danger"
-                                    onClick={(e) => deleteDigicard(ActiveresultData[index].digi_card_id, ActiveresultData[index].digi_card_title)}
+                                    onClick={(e) => deleteDigicard(dataResponse[index].digi_card_id, dataResponse[index].digi_card_title)}
                                 >
                                     <i className="feather icon-trash-2 " /> &nbsp; Delete
                                 </Button>
                                 &nbsp;
-                                {/* <Button size='sm' className="btn btn-icon btn-rounded btn-danger" onClick={(e) => saveClientIdDelete(e, responseData[index].client_id)}>
-                                <i className="feather icon-delete" /> &nbsp; Delete
-                              </Button> */}
                             </>
                         );
-                        finalDataArray.push(ActiveresultData[index]);
+                        finalDataArray.push(dataResponse[index]);
                         console.log('finalDataArray: ', finalDataArray)
                     }
                 } else {
-                    let resultData = (dataResponse && dataResponse.filter(e => e.digicard_status === 'Archived'))
-                    for (let index = 0; index < resultData.length; index++) {
-                        resultData[index]['digicard_image'] = <img className="img-fluid img-radius wid-40" alt="Poison regulate" src={resultData[index].digicard_imageURL} />
-                        resultData[index]['actions'] = (
+                    for (let index = 0; index < dataResponse.length; index++) {
+                        dataResponse[index]['digicard_image'] = <img className="img-fluid img-radius wid-40" alt="Poison regulate" src={dataResponse[index].digicard_imageURL} />
+                        dataResponse[index]['actions'] = (
                             <>
                                 <>
                                     <Button
                                         size="sm"
                                         className="btn btn-icon btn-rounded btn-primary"
-                                        onClick={(e) => digicardRestore(resultData[index].digi_card_id, resultData[index].digi_card_title)}
+                                        onClick={(e) => digicardRestore(dataResponse[index].digi_card_id, dataResponse[index].digi_card_title)}
                                     >
                                         <i className="feather icon-plus" /> &nbsp; Restore
                                     </Button>
                                 </>
                             </>
                         );
-                        finalDataArray.push(resultData[index]);
+                        finalDataArray.push(dataResponse[index]);
                         console.log('finalDataArray: ', finalDataArray)
                     }
                 }
-
-
                 setData(finalDataArray);
                 console.log('resultData: ', finalDataArray);
                 setIsLoading(false);
@@ -583,16 +539,6 @@ const DigiCard = () => {
                                                 <Card>
                                                     <Card.Header>
                                                         <Card.Title as="h5">DigiCard List</Card.Title>
-                                                        <Row>
-                                                            <Col className='d-flex justify-content-end'>
-                                                                {/* <Button className='btn-sm btn-round has-ripple ml-2 btn-danger'
-                                                                    style={{ paddingRight: '18px' }}
-                                                                    onClick={() => { console.log('digicardId', digiCardId) }}
-                                                                > <i className="feather icon-trash-2 " />&nbsp;
-                                                                    Multi Delete
-                                                                </Button> */}
-                                                            </Col>
-                                                        </Row>
                                                     </Card.Header>
                                                     <Card.Body>
                                                         <Table columns={columns} data={data} />

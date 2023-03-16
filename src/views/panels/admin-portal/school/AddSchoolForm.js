@@ -48,8 +48,6 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
     const phoneNumberRef = useRef('');
     const gst_numberRef = useRef('');
 
-
-
     const phoneRegExp = /^(\+91[\-\s]?)?[0]?(91)?[789]\d{9}$/;
 
     // console.log('data: ', data);
@@ -101,17 +99,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
 
     ]
 
-
-
-
-
-
-
     const handleSelectChange = (event) => {
-        // setSelectedBoards(false);
-        // setSchoolBoardErrMsg(false);
-        console.log(event);
-        console.log("======================================");
 
         let valuesArr = [];
         for (let i = 0; i < event.length; i++) {
@@ -164,8 +152,6 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                     GST_no: data === {} ? '' : data.GST_no,
                 }}
 
-
-
                 validationSchema={
                     Yup.object().shape({
                         school_name: Yup.string().matches(Constants.Common.alphabetsWithSpaceRegex, 'School Name must contain only alphabets!').max(255).required('School Name is required'),
@@ -204,6 +190,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                         // })
                     })
                 }
+
                 onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
                     setSubmitting(true);
 
@@ -227,7 +214,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                                 pincode: Number(values.pincode),
                                 phone_no: Number(values.phone_no),
                             },
-                            ///////
+
                             billing_address: {
                                 contact_name: copy === true ? values.contact_name : values.contact_name2,
                                 address_line1: copy === true ? values.address_line1 : values.addres_line1_2,
@@ -371,12 +358,9 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                                             console.log("School board empty");
                                             setShowBoardErr(true);
                                         }
-                                    }
-                                    );
-
-
-
+                                    });
                             }
+
                         } else {
                             console.log("No IMG!");
                             setImgEmptyErr(true);
@@ -395,6 +379,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                         });
                     }
                     else {
+                        
                         console.log("CHOOSE SCHOOL BOARD");
                         setSchoolBoardErrMsg(true);
                         if (!imageFile) {

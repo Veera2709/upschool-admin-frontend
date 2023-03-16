@@ -21,7 +21,7 @@ import logo from './img/logo.png'
 import Multiselect from 'multiselect-react-dropdown';
 import Select from 'react-draggable-multi-select';
 
-import { fetchAllDigiCards } from '../../../api/CommonApi'
+import { fetchDigiCardsBasedonStatus } from '../../../api/CommonApi'
 import { Link, useHistory } from 'react-router-dom';
 
 
@@ -58,8 +58,8 @@ const AddDigiCard = (
   const [tags, setTags] = useState([]);
   const [ImgURL, setImgURL] = useState([]);
   const [imgFile, setImgFile] = useState([]);
-  const [articleData, setArticleData] = useState();
-  const [articleDataTitle, setArticleDataTtitle] = useState();
+  const [articleData, setArticleData] = useState('');
+  const [articleDataTitle, setArticleDataTtitle] = useState('');
   const [digitalTitles, setDigitalTitles] = useState([]);
   const [imgValidation, setImgValidation] = useState(true);
   const [voiceError, setVoiceError] = useState(true);
@@ -72,6 +72,26 @@ const AddDigiCard = (
   const threadLinks = document.getElementsByClassName('page-header');
 
   let history = useHistory();
+
+  const allowedFileTypes = ['.pdf', '.doc', '.docx', '.jpg', '.jpeg', '.png', '.gif'];
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+
+    if (!allowedFileTypes.includes(fileExtension)) {
+
+      MySwal.fire('Sorry', 'Invalid file type. Only PDF, DOC, DOCX, JPG, JPEG, PNG, and GIF files are allowed.', 'warning')
+      event.target.value = null;
+      setSelectedFile(null);
+      return;
+    }
+
+    setSelectedFile(file);
+  };
+
+
+
 
 
   const handleDelete = (i, states) => {
@@ -114,7 +134,6 @@ const AddDigiCard = (
     setImage(e.target)
     console.log("FileLength", FileLength);
     FileLength === 1 ? setImgFile(URL.createObjectURL(e.target.files[0])) : setImgFile()
-    console.log(URL.createObjectURL(e.target.files[0]));
   }
 
 
@@ -128,7 +147,7 @@ const AddDigiCard = (
     } else {
       setDisplayHeader(true);
     }
-    const allDigicardData = await fetchAllDigiCards(dynamicUrl.fetchAllDigiCards);
+    const allDigicardData = await fetchDigiCardsBasedonStatus("Active");
     if (allDigicardData.error) {
       console.log(allDigicardData.error);
       if (allDigicardData.Error.response.data == 'Invalid Token') {
@@ -141,9 +160,7 @@ const AddDigiCard = (
       console.log("allDigicardData", allDigicardData.Items);
       let resultData = allDigicardData.Items;
       resultData.forEach((item, index) => {
-        if (item.digicard_status === 'Active') {
-          colourOptions.push({ value: item.digi_card_id, label: item.digi_card_title })
-        }
+        colourOptions.push({ value: item.digi_card_id, label: item.digi_card_title })
       })
       setDigitalTitles(colourOptions);
     }
@@ -175,7 +192,7 @@ const AddDigiCard = (
 
   const getMultiOptions = (event) => {
     let valuesArr = [];
-    if(event){
+    if (event) {
       for (let i = 0; i < event.length; i++) {
         valuesArr.push(event[i].value)
       }
@@ -255,6 +272,7 @@ const AddDigiCard = (
               })}
 
               onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
+                showLoader()
                 console.log("multiOptions", multiOptions);
                 console.log("on submit");
                 let allFilesData = [];
@@ -310,8 +328,6 @@ const AddDigiCard = (
                         setDisableButton(false);
                       } else {
                         let uploadParams = response.data;
-                        hideLoader();
-                        setDisableButton(false);
                         console.log('Proceeding with file upload');
 
                         if (Array.isArray(uploadParams)) {
@@ -339,16 +355,11 @@ const AddDigiCard = (
                           }
                           // sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingDigiCard });
                           hideLoader();
-                          setDisableButton(false);
-                          // fetchClientData();
-                          setIsOpen(false);
-
                           MySwal.fire({
-
                             title: 'Digicard added successfully!',
                             icon: 'success',
                           }).then((willDelete) => {
-
+                            history.push('/admin-portal/active-digiCard');
                             window.location.reload();
 
                           })
@@ -356,9 +367,8 @@ const AddDigiCard = (
                           console.log('No files uploaded');
                           sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingDigiCard });
                           hideLoader();
-                          setDisableButton(false);
-                          // fetchClientData();
-                          setIsOpen(false);
+                          history.push('/admin-portal/active-digiCard');
+                          window.location.reload();
                         }
                       }
                     })
@@ -495,9 +505,9 @@ const AddDigiCard = (
                             name="digicard_document"
                             id="digicard_document"
                             onBlur={handleBlur}
-                            onChange={(e) => { handleFileInput(e); handleChange(e); }}
+                            onChange={(e) => { handleFileInput(e); handleChange(e); handleFileChange(e) }}
                             type="file"
-                            accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx"
+                            accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif"
                           />
 
                           {/* <button onClick={handleUpload} className="btn btn-primary btn-msg-send" type="button">
@@ -507,6 +517,12 @@ const AddDigiCard = (
 
 
                         {selectedFile && <p style={{ color: "blue" }}>Selected file: {selectedFile.name}</p>}
+
+                        {/* {selectedFile && (
+                          <small className="text-muted form-text">
+                            Selected file: {selectedFile.name}
+                          </small>
+                        )} */}
 
                         {touched.digicard_document && errors.digicard_document && (
                           <small className="text-danger form-text">{errors.digicard_document}</small>
@@ -560,7 +576,6 @@ const AddDigiCard = (
                         <label className="floating-label" htmlFor="digicardtitle">
                           <small className="text-danger">* </small>Logo preview
                         </label><br />
-                        {console.log("url", imgFile)}
                         <img width={100} src={imgFile} alt="" className="img-fluid mb-3" />
                       </div>
                       {voiceNotePre && (
@@ -611,6 +626,7 @@ const AddDigiCard = (
                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                       />
                     </Col>
+                    {loader}
                   </Row><br></br>
                   <Row >
                     <Col sm={8}>

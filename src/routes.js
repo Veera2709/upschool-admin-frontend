@@ -55,6 +55,12 @@ const routes = [
   },
   {
     exact: true,
+    // guard: GuestGuard,
+    path: '/auth/createOrResetPassword',
+    component: lazy(() => import('./views/auth/signin/CreateOrResetPassword'))
+  },
+  {
+    exact: true,
     path: '/404',
     component: lazy(() => import('./views/errors/NotFound404'))
   },
@@ -252,12 +258,12 @@ const routes = [
         exact: true,
         path: '/admin-portal/edit-questions/:question_id',
         component: lazy(() => import('./views/panels/admin-portal/questions/EditQuestions'))
-      }, 
+      },
       {
         exact: true,
         path: '/admin-portal/active-groups',
         component: lazy(() => import('./views/panels/admin-portal/groups/ListGroups'))
-      }, 
+      },
       {
         exact: true,
         path: '/admin-portal/edit-groups/:group_id',
@@ -348,7 +354,7 @@ const routes = [
         path: '/admin-portal/classes/archived-classes',
         component: lazy(() => import('./views/panels/admin-portal/class/ClassesList'))
       },
-      
+
       //UpSchool_useers
       {
         exact: true,

@@ -397,15 +397,18 @@ export default {
             if (/image/i.test(fileList[i].type)) {
                 files.push(fileList[i]);
                 fileSize += fileList[i].size;
+                console.log("fileSize",fileSize);
             }
         }
 
         const limitSize = this.options.imageUploadSizeLimit;
+        console.log("limitSize",limitSize);
         if (limitSize > 0) {
             let infoSize = 0;
             const imagesInfo = this.context.image._infoList;
             for (let i = 0, len = imagesInfo.length; i < len; i++) {
                 infoSize += imagesInfo[i].size * 1;
+                console.log("infoSize",infoSize);
             }
 
             if ((fileSize + infoSize) > limitSize) {

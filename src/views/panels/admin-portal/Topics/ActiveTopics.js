@@ -1,29 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios'
+import axios from 'axios';
 import { Row, Col, Card, Pagination, Button, Modal } from 'react-bootstrap';
 import BTable from 'react-bootstrap/Table';
 import withReactContent from 'sweetalert2-react-content';
 import Swal from 'sweetalert2';
+import { useTable, useSortBy, usePagination, useGlobalFilter, useRowSelect } from 'react-table';
+
 import { GlobalFilter } from '../units/GlobalFilter';
-
-import { useTable, useSortBy, usePagination, useGlobalFilter } from 'react-table';
-
 import dynamicUrl from '../../../../helper/dynamicUrls';
-
-import { isEmptyArray } from '../../../../util/utils';
-
-import { Link, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { SessionStorage } from '../../../../util/SessionStorage';
 import MESSAGES from '../../../../helper/messages';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import { useLocation } from "react-router-dom";
-import { fetchAllTopics } from '../../../api/CommonApi'
+import { fetchTopicsBasedonStatus } from '../../../api/CommonApi'
 import BasicSpinner from '../../../../helper/BasicSpinner';
 import AddTopics from './AddTopics';
 import EditTopics from './EditTopics';
-
-
-
+import { toggleMultipleTopicStatus } from '../../../api/CommonApi'
 
 function Table({ columns, data, modalOpen }) {
     const {
@@ -43,6 +37,7 @@ function Table({ columns, data, modalOpen }) {
         gotoPage,
         nextPage,
         previousPage,
+        selectedFlatRows,
         setPageSize,
         state: { pageIndex, pageSize }
     } = useTable(
@@ -53,14 +48,56 @@ function Table({ columns, data, modalOpen }) {
         },
         useGlobalFilter,
         useSortBy,
-        usePagination
+        usePagination,
+        useRowSelect
     );
 
-    const [isOpen, setIsOpen] = useState(false);
     const [isOpenAddTopic, setOpenAddTopic] = useState(false);
     let history = useHistory();
 
+    const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[3]);
+    const TopicStatus = pageLocation === "active-topics" ? 'Active' : 'Archived';
+    const MySwal = withReactContent(Swal);
 
+    const getIDFromData = async (TopicStatus) => {
+        var topicIDs = [];
+        selectedFlatRows.map((item) => {
+            console.log("item.original.topic_id", item.original.topic_id);
+            topicIDs.push(item.original.topic_id)
+        })
+
+        console.log("topicIDs", topicIDs.length);
+        if (topicIDs.length > 0) {
+            var payload = {
+                "topic_status": TopicStatus,
+                "topic_array": topicIDs
+            }
+
+            const ResultData = await toggleMultipleTopicStatus(payload)
+            if (ResultData.Error) {
+                if (ResultData.Error.response.data == 'Invalid Token') {
+                    sessionStorage.clear();
+                    localStorage.clear();
+                    history.push('/auth/signin-1');
+                    window.location.reload();
+                } else {
+                    return MySwal.fire('Sorry', ResultData.Error.response.data, 'warning')
+                        .then(() => {
+                            window.location.reload();
+                        });
+                }
+            } else {
+                return MySwal.fire('', `Topics have been ${TopicStatus === 'Active' ? 'Restored' : "Deleted"} Successfully`, 'success')
+                    .then(() => {
+                        window.location.reload();
+                    });
+            }
+        } else {
+            return MySwal.fire('Sorry', 'No Topics are selected!', 'warning').then(() => {
+                window.location.reload();
+            });
+        }
+    }
 
     return (
         <>
@@ -83,11 +120,28 @@ function Table({ columns, data, modalOpen }) {
                     Entries
                 </Col>
 
-                <Col className="d-flex justify-content-end">
+                <Col className="mb-3" style={{ display: 'contents' }}>
                     <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
                     <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={() => { setOpenAddTopic(true) }}>
                         <i className="feather icon-plus" /> Add Topic
                     </Button>
+
+                    {TopicStatus === "Active" ? (
+                        <Button className='btn-sm btn-round has-ripple ml-2 btn btn-danger'
+                            onClick={() => { getIDFromData("Archived") }}
+                            style={{marginRight:'15px'}}
+                        > <i className="feather icon-trash-2" />&nbsp;
+                            Multi Delete    
+                        </Button>
+                    ) : (
+                        <Button className='btn-sm btn-round has-ripple ml-2 btn btn-primary'
+                            onClick={() => { getIDFromData("Active") }}
+                            style={{marginRight:'15px'}}
+                        > <i className="feather icon-plus" />&nbsp;
+                            Multi Restore
+                        </Button>
+                    )}
+
                 </Col>
             </Row>
 
@@ -176,6 +230,21 @@ const ActiveTopics = (props) => {
     const columns = React.useMemo(
         () => [
             {
+                id: "selection",
+
+                Header: ({ getToggleAllRowsSelectedProps }) => (
+                    <div>
+                        <input type="checkbox" {...getToggleAllRowsSelectedProps()} />
+                    </div>
+                ),
+
+                Cell: ({ row }) => (
+                    <div>
+                        <input type="checkbox" {...row.getToggleRowSelectedProps()} />
+                    </div>
+                )
+            },
+            {
                 Header: '#',
                 accessor: "index_no"
             },
@@ -206,12 +275,6 @@ const ActiveTopics = (props) => {
     const [isOpenEditTopic, setOpenEditTopic] = useState(false);
     const [topicId, setTopicId] = useState();
 
-
-
-
-    // console.log('data: ', data)
-
-
     let history = useHistory();
 
     const MySwal = withReactContent(Swal);
@@ -222,7 +285,6 @@ const ActiveTopics = (props) => {
             icon: alert.type
         });
     }
-
 
     const handleAddTopic = () => {
         setOpenAddTopic(true)
@@ -242,11 +304,15 @@ const ActiveTopics = (props) => {
         }).then((willDelete) => {
             if (willDelete.value) {
                 axios
-                    .post(dynamicUrl.toggleTopicStatus, { data: data }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
+                    .post(dynamicUrl.toggleTopicStatus,
+                        { data: data },
+                        {
+                            headers: { Authorization: SessionStorage.getItem('user_jwt') }
+                        })
                     .then((response) => {
                         if (response.Error) {
                             hideLoader();
-                            sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
+                            sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'warning', text: MESSAGES.ERROR.DeletingUser });
                         } else {
                             allTopicList()
                             setReloadAllData("Deleted");
@@ -357,7 +423,7 @@ const ActiveTopics = (props) => {
             window.location.reload();
         } else {
             setIsLoading(true)
-            const allUnitsData = await fetchAllTopics(TopicStatus);
+            const allUnitsData = await fetchTopicsBasedonStatus(TopicStatus);
             if (allUnitsData.ERROR) {
                 console.log("allUnitsData.ERROR", allUnitsData.ERROR);
             } else {
@@ -373,13 +439,11 @@ const ActiveTopics = (props) => {
                                     <Button
                                         size="sm"
                                         className="btn btn-icon btn-rounded btn-primary"
-                                        // onClick={(e) => history.push(`/admin-portal/Topics/editTopic/${dataResponse[index].topic_id}`)}
                                         onClick={(e) => { setTopicId(dataResponse[index].topic_id); setOpenEditTopic(true) }}
                                     >
                                         <i className="feather icon-edit" /> &nbsp; Edit
                                     </Button>
                                     &nbsp;
-                                    {/* if(resultData[index].chapter_status=='Active') */}
                                     <Button
                                         size="sm"
                                         className="btn btn-icon btn-rounded btn-danger"
@@ -395,16 +459,15 @@ const ActiveTopics = (props) => {
                         console.log('finalDataArray: ', finalDataArray)
                     }
                 } else {
-                    let resultData = (dataResponse && dataResponse.filter(e => e.topic_status === 'Archived'))
-                    for (let index = 0; index < resultData.length; index++) {
-                        resultData[index].index_no = index + 1;
-                        resultData[index]['actions'] = (
+                    for (let index = 0; index < dataResponse.length; index++) {
+                        dataResponse[index].index_no = index + 1;
+                        dataResponse[index]['actions'] = (
                             <>
                                 <>
                                     <Button
                                         size="sm"
                                         className="btn btn-icon btn-rounded btn-primary"
-                                        onClick={(e) => restoreChapter(resultData[index].topic_id, resultData[index].topic_title)}
+                                        onClick={(e) => restoreChapter(dataResponse[index].topic_id, dataResponse[index].topic_title)}
                                     >
                                         <i className="feather icon-plus" /> &nbsp; Restore
                                     </Button>
@@ -412,12 +475,11 @@ const ActiveTopics = (props) => {
                                 </>
                             </>
                         );
-                        finalDataArray.push(resultData[index]);
-                        console.log('finalDataArray: ', finalDataArray)
+                        finalDataArray.push(dataResponse[index]);
                     }
                 }
                 setTopicData(finalDataArray);
-                console.log('resultData: ', finalDataArray);
+                console.log('finalDataArray: ', finalDataArray);
                 setIsLoading(false)
             }
 

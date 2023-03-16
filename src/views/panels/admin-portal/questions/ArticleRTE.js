@@ -52,7 +52,7 @@ function ArticleRTE({ setArticleSize, articleData, setArticleData, imageCount, s
         onChange={handleEditorChange}
         setDefaultStyle="height: 40vh; font-size: 16px;font-family: Cerebri Sans Pro;"
         setOptions={{
-          // imageUploadSizeLimit: "250000",
+          imageUploadSizeLimit: "25000000",
           katex: katex,
           plugins: plugins,
           font: [
