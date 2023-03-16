@@ -540,6 +540,9 @@ export const toggleMultiDigicardStatus = (payLoad) => {
     });
 }
 
+
+
+
 export const toggleMultipleTopicStatus = (payLoad) => {
     console.log("payLoad : ", payLoad);
     return new Promise((resolve, reject) => {

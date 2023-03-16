@@ -75,6 +75,7 @@ function Table({ columns, data, modalOpen, userRole }) {
     useRowSelect
   );
   const user_status = pageLocation === 'active-users' ? "Active" : "Archived"
+
   console.log("user_status : ", user_status);
 
   // const MySwal = withReactContent(Swal);
