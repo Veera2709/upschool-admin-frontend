@@ -83,14 +83,16 @@ function Table({ columns, data, modalOpen }) {
 
     const getUnitsFromData = () => {
         let arrayWithUnits = [];
-        let unitTitles = []; 
-
         page.map(e => {
-
             e.isSelected === true && arrayWithUnits.push(e.original.unit_id)
-            e.isSelected === true && unitTitles.push(e.original.unit_title)
+            // e.isSelected === true && unitTitles.push(e.original.unit_title)
         })
 
+        // selectedFlatRows.map((item) => {
+        //     console.log("item.original.unit_chapter_id", item.original.unit_title);
+        //     arrayWithUnits.push(item.original.unit_id)
+        // })
+        console.log("arrayWithUnits.length", arrayWithUnits.length)
         console.log("CHECKED IDS : ", arrayWithUnits);
         console.log("unitTitles : ", unitTitles);
 
