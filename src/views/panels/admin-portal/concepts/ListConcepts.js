@@ -22,7 +22,6 @@ const ListUsers = () => {
 
     }, [pageLocation]);
 
-
     return (
         <ConceptTableView userStatus={userStatus} />
     )
