@@ -65,25 +65,25 @@ function Table({ columns, data, modalOpen }) {
         useRowSelect,
         (hooks) => {
             hooks.visibleColumns.push((columns) => [
-              {
-                id: "selection",
-                Header: ({ getToggleAllPageRowsSelectedProps }) => (
-                  <div>
-                    <IndeterminateCheckbox {...getToggleAllPageRowsSelectedProps()} />
-                  </div>
-                ),
-                Cell: ({ row }) => (
-                  <div>
-                    <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
-                  </div>
-                )
-              },
-              ...columns
+                {
+                    id: "selection",
+                    Header: ({ getToggleAllPageRowsSelectedProps }) => (
+                        <div>
+                            <IndeterminateCheckbox {...getToggleAllPageRowsSelectedProps()} />
+                        </div>
+                    ),
+                    Cell: ({ row }) => (
+                        <div>
+                            <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
+                        </div>
+                    )
+                },
+                ...columns
             ]);
-          }
+        }
     );
 
-   
+
     const IndeterminateCheckbox = React.forwardRef(
         ({ indeterminate, ...rest }, ref) => {
             const defaultRef = React.useRef();
@@ -103,13 +103,13 @@ function Table({ columns, data, modalOpen }) {
 
 
 
-    const multiDelete =async (status) =>{
-        console.log("selectedFlatRows",selectedFlatRows);
-        const chapterIds=[];
+    const multiDelete = async (status) => {
+        console.log("selectedFlatRows", selectedFlatRows);
+        const chapterIds = [];
         selectedFlatRows.map((item) => {
             chapterIds.push(item.original.chapter_id)
         })
-        if(chapterIds.length>0){
+        if (chapterIds.length > 0) {
             var payload = {
                 "chapter_status": status,
                 "chapter_array": chapterIds
@@ -122,8 +122,8 @@ function Table({ columns, data, modalOpen }) {
                     localStorage.clear();
                     history.push('/auth/signin-1');
                     window.location.reload();
-                }else{
-                    return MySwal.fire('Error',ResultData.Error.response.data, 'error').then(() => {
+                } else {
+                    return MySwal.fire('Error', ResultData.Error.response.data, 'error').then(() => {
                         window.location.reload();
                     });
                 }
@@ -132,7 +132,7 @@ function Table({ columns, data, modalOpen }) {
                     window.location.reload();
                 });
             }
-        }else{
+        } else {
             return MySwal.fire('Sorry', 'No Chapters Selected!', 'warning').then(() => {
                 // window.location.reload();
             });
@@ -167,16 +167,22 @@ function Table({ columns, data, modalOpen }) {
                     <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={() => { setOpenAddChapter(true) }}>
                         <i className="feather icon-plus" /> Add Chapter
                     </Button>
-                    {chapterStatus === 'Active'?(
-                          <Button variant="success" className='btn-sm btn-round has-ripple ml-2 btn btn-danger' onClick={() => { multiDelete("Archived") }}>
-                          <i className="feather icon-trash-2" />  Multi Delete
-                      </Button>
-                    ):(
-                        <Button  className='btn-sm btn-round has-ripple ml-2 btn btn-primary' onClick={() => { multiDelete("Active") }}>
-                        <i className="feather icon-plus" />   Multi Restore
-                    </Button>
+                    {chapterStatus === 'Active' ? (
+                        <Button variant="success" className='btn-sm btn-round has-ripple ml-2 btn btn-danger'
+                            onClick={() => { multiDelete("Archived") }}
+                            style={{ marginRight: '15px' }}
+                        >
+                            <i className="feather icon-trash-2" />  Multi Delete
+                        </Button>
+                    ) : (
+                        <Button className='btn-sm btn-round has-ripple ml-2 btn btn-primary'
+                            onClick={() => { multiDelete("Active") }}
+                            style={{ marginRight: '15px' }}
+                        >
+                            <i className="feather icon-plus" />   Multi Restore
+                        </Button>
                     )}
-                  
+
                 </Col>
             </Row>
 
@@ -439,7 +445,7 @@ const ChaptersListChild = (props) => {
 
     const allChaptersList = () => {
         const chapterStatus = pageLocation === "active-chapter" ? 'Active' : 'Archived';
-        console.log("chapterStatus",chapterStatus);
+        console.log("chapterStatus", chapterStatus);
         setIsLoading(true);
         axios.post(dynamicUrl.fetchChaptersBasedonStatus, {
             data: {

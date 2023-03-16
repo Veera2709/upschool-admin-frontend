@@ -120,7 +120,7 @@ function Table({ columns, data, modalOpen }) {
                     Entries
                 </Col>
 
-                <Col className="d-flex justify-content-end">
+                <Col className="mb-3" style={{ display: 'contents' }}>
                     <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
                     <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={() => { setOpenAddTopic(true) }}>
                         <i className="feather icon-plus" /> Add Topic
@@ -129,12 +129,14 @@ function Table({ columns, data, modalOpen }) {
                     {TopicStatus === "Active" ? (
                         <Button className='btn-sm btn-round has-ripple ml-2 btn btn-danger'
                             onClick={() => { getIDFromData("Archived") }}
+                            style={{marginRight:'15px'}}
                         > <i className="feather icon-trash-2" />&nbsp;
-                            Multi Delete
+                            Multi Delete    
                         </Button>
                     ) : (
                         <Button className='btn-sm btn-round has-ripple ml-2 btn btn-primary'
                             onClick={() => { getIDFromData("Active") }}
+                            style={{marginRight:'15px'}}
                         > <i className="feather icon-plus" />&nbsp;
                             Multi Restore
                         </Button>
