@@ -9,12 +9,13 @@ import withReactContent from 'sweetalert2-react-content';
 import MESSAGES from '../../../../helper/messages';
 
 import { GlobalFilter } from '../../../common-ui-components/tables/GlobalFilter';
-import { useTable, useSortBy, usePagination, useGlobalFilter } from 'react-table';
+import { useTable, useSortBy, usePagination, useGlobalFilter, useRowSelect } from 'react-table';
 import dynamicUrl from '../../../../helper/dynamicUrls';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import AddSubjects from './AddSubjects';
 import EditSubjects from './EditSubjects';
 import BasicSpinner from '../../../../helper/BasicSpinner';
+import { toggleMultiSubjectStatus } from '../../../api/CommonApi';
 
 function Table({ columns, data }) {
 
@@ -367,6 +368,7 @@ function Table({ columns, data }) {
         nextPage,
         previousPage,
         setPageSize,
+        selectedFlatRows,
         state: { pageIndex, pageSize }
     } = useTable(
         {
@@ -376,8 +378,80 @@ function Table({ columns, data }) {
         },
         useGlobalFilter,
         useSortBy,
-        usePagination
+        usePagination,
+        useRowSelect,
+        (hooks) => {
+            hooks.visibleColumns.push((columns) => [
+                {
+                    id: "selection",
+                    Header: ({ getToggleAllPageRowsSelectedProps }) => (
+                        <div>
+                            <IndeterminateCheckbox {...getToggleAllPageRowsSelectedProps()} />
+                        </div>
+                    ),
+                    Cell: ({ row }) => (
+                        <div>
+                            <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
+                        </div>
+                    )
+                },
+                ...columns
+            ]);
+        }
     );
+
+    const IndeterminateCheckbox = React.forwardRef(
+        ({ indeterminate, ...rest }, ref) => {
+            const defaultRef = React.useRef();
+            const resolvedRef = ref || defaultRef;
+
+            React.useEffect(() => {
+                resolvedRef.current.indeterminate = indeterminate;
+            }, [resolvedRef, indeterminate]);
+
+            return (
+                <>
+                    <input type="checkbox" ref={resolvedRef} {...rest} />
+                </>
+            );
+        }
+    );
+
+    const multiDelete = async (status) => {
+        console.log("selectedFlatRows", selectedFlatRows);
+        const subjectIDs = [];
+        selectedFlatRows.map((item) => {
+            subjectIDs.push(item.original.subject_id)
+        })
+        if (subjectIDs.length > 0) {
+            var payload = {
+                "subject_status": status,
+                "subject_array": subjectIDs
+            }
+
+            const ResultData = await toggleMultiSubjectStatus(payload)
+            if (ResultData.Error) {
+                if (ResultData.Error.response.data == 'Invalid Token') {
+                    sessionStorage.clear();
+                    localStorage.clear();
+                    history.push('/auth/signin-1');
+                    window.location.reload();
+                } else {
+                    return MySwal.fire('Sorry', ResultData.Error.response.data, 'warning').then(() => {
+                        window.location.reload();
+                    });
+                }
+            } else {
+                return MySwal.fire('Success', `All the chosen Subjects have been ${status === 'Active' ? 'Restored' : "Deleted"} successfully!`, 'success').then(() => {
+                    window.location.reload();
+                });
+            }
+        } else {
+            return MySwal.fire('Sorry', 'No Subjects are selected!', 'warning').then(() => {
+                // window.location.reload();
+            });
+        }
+    }
 
     return (
         <>
@@ -411,6 +485,16 @@ function Table({ columns, data }) {
                     >
                         <i className="feather icon-plus" /> Add Subjects
                     </Button>
+
+                    {pageLocation === 'active-subjects' ? (
+                        <Button variant="success" className='btn-sm btn-round has-ripple ml-2 btn btn-danger' onClick={() => { multiDelete("Archived") }}>
+                            <i className="feather icon-trash-2" />  Multi Delete
+                        </Button>
+                    ) : (
+                        <Button className='btn-sm btn-round has-ripple ml-2 btn btn-primary' onClick={() => { multiDelete("Active") }}>
+                            <i className="feather icon-plus" />   Multi Restore
+                        </Button>
+                    )}
 
                 </Col>
             </Row>

@@ -94,6 +94,7 @@ const dynamicUrl = {
     addSubject: baseUrl + '/addSubject',
     fetchIndividualSubject: baseUrl + '/fetchIndividualSubject',
     updateSubject: baseUrl + '/updateSubject',
+    bulkToggleSubjectStatus: baseUrl + '/bulkToggleSubjectStatus',
 
     // Classes
     addClass: baseUrl + '/addClass',

@@ -20,9 +20,7 @@ import { useLocation } from "react-router-dom";
 import BasicSpinner from '../../../../helper/BasicSpinner';
 import AddChapter from './AddChapters';
 import EditChapter from './EditChapter';
-import { toggleMultiChapterStatus } from '../../../api/CommonApi'
-
-
+import { toggleMultiChapterStatus } from '../../../api/CommonApi';
 
 
 function Table({ columns, data, modalOpen }) {
