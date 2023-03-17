@@ -10,12 +10,36 @@ import withReactContent from 'sweetalert2-react-content';
 import MESSAGES from '../../../../helper/messages';
 import { decodeJWT } from '../../../../util/utils';
 import { GlobalFilter } from '../../../common-ui-components/tables/GlobalFilter';
-import { useTable, useSortBy, usePagination, useGlobalFilter } from 'react-table';
+import { useTable, useSortBy, usePagination, useGlobalFilter,useRowSelect } from 'react-table';
 import dynamicUrl from '../../../../helper/dynamicUrls';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import BasicSpinner from '../../../../helper/BasicSpinner';
+import {toggleMultiChapterStatus} from '../../../api/CommonApi'
 
 function Table({ columns, data, modalOpen }) {
+    const initiallySelectedRows = React.useMemo(() => new Set(["1"]), []);
+    const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
+    const payLoadStatus = pageLocation === "active-groups" ? 'Active' : 'Archived';
+    const MySwal = withReactContent(Swal);
+    let history = useHistory();
+
+    const IndeterminateCheckbox = React.forwardRef(
+        ({ indeterminate, ...rest }, ref) => {
+            const defaultRef = React.useRef();
+            const resolvedRef = ref || defaultRef;
+
+            React.useEffect(() => {
+                resolvedRef.current.indeterminate = indeterminate;
+            }, [resolvedRef, indeterminate]);
+
+            return (
+                <>
+                    <input type="checkbox" ref={resolvedRef} {...rest} />
+                </>
+            );
+        }
+    );
+
     const {
         getTableProps,
         getTableBodyProps,
@@ -34,17 +58,71 @@ function Table({ columns, data, modalOpen }) {
         nextPage,
         previousPage,
         setPageSize,
-        state: { pageIndex, pageSize }
+        selectedFlatRows,
+        state: { pageIndex, pageSize,selectedRowPaths}
     } = useTable(
         {
             columns,
             data,
-            initialState: { pageIndex: 0, pageSize: 10 }
+            initialState: { pageIndex: 0, pageSize: 10,selectedRowPaths: initiallySelectedRows }
         },
         useGlobalFilter,
         useSortBy,
-        usePagination
+        usePagination, useRowSelect,
+        (hooks) => {
+            hooks.visibleColumns.push((columns) => [
+                {
+                    id: "selection",
+                    Header: ({ getToggleAllPageRowsSelectedProps }) => (
+                        <div>
+                            <IndeterminateCheckbox {...getToggleAllPageRowsSelectedProps()} />
+                        </div>
+                    ),
+                    Cell: ({ row }) => (
+                        <div>
+                            <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
+                        </div>
+                    )
+                },
+                ...columns
+            ]);
+        }
     );
+
+    const multiDelete = async(status)=>{
+        const chapterIds = [];
+        selectedFlatRows.map((item) => {
+            chapterIds.push(item.original.chapter_id)
+        })
+        if (chapterIds.length > 0) {
+            var payload = {
+                "chapter_status": status,
+                "chapter_array": chapterIds
+            }
+
+            const ResultData = await toggleMultiChapterStatus(payload)
+            if (ResultData.Error) {
+                if (ResultData.Error.response.data == 'Invalid Token') {
+                    sessionStorage.clear();
+                    localStorage.clear();
+                    history.push('/auth/signin-1');
+                    window.location.reload();
+                } else {
+                    return MySwal.fire('Error', ResultData.Error.response.data, 'error').then(() => {
+                        window.location.reload();
+                    });
+                }
+            } else {
+                return MySwal.fire('success', `Chapters ${status === 'Active' ? 'Restored' : "Deleted"} Successfully`, 'success').then(() => {
+                    window.location.reload();
+                });
+            }
+        } else {
+            return MySwal.fire('Sorry', 'No Chapters Selected!', 'warning').then(() => {
+                // window.location.reload();
+            });
+        }
+    }
 
     return (
         <>
@@ -66,13 +144,28 @@ function Table({ columns, data, modalOpen }) {
                     </select>
                     Entries
                 </Col>
-                <Col className="d-flex justify-content-end">
+                <Col className="mb-3" style={{ display: 'contents' }}>
                     <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
 
                     <Link to={'/admin-portal/add-groups'}>
                         <Button variant="success" className="btn-sm btn-round has-ripple ml-2">
                             <i className="feather icon-plus" /> Add Groups
                         </Button>
+                        {payLoadStatus === 'Active' ? (
+                        <Button variant="success" className='btn-sm btn-round has-ripple ml-2 btn btn-danger'
+                            onClick={() => { multiDelete("Archived") }}
+                            style={{ marginRight: '15px' }}
+                        >
+                            <i className="feather icon-trash-2" />  Multi Delete
+                        </Button>
+                    ) : (
+                        <Button className='btn-sm btn-round has-ripple ml-2 btn btn-primary'
+                            onClick={() => { multiDelete("Active") }}
+                            style={{ marginRight: '15px' }}
+                        >
+                            <i className="feather icon-plus" />   Multi Restore
+                        </Button>
+                    )}
                     </Link>
                 </Col>
             </Row>

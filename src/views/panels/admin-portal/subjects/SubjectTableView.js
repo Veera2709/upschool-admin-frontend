@@ -895,7 +895,7 @@ const SubjectTableView = ({ userStatus }) => {
                                             < React.Fragment >
                                                 <div>
 
-                                                    <h3 style={{ textAlign: 'center' }}>No {pageLocation === "active-subjects" ? 'Active Subjects' : 'Archived Subjects'} Found</h3>
+                                                    <h3 style={{ textAlign: 'center' }}>No Subjects Found</h3>
                                                     <div className="form-group fill text-center">
                                                         <br></br>
 
@@ -932,7 +932,7 @@ const SubjectTableView = ({ userStatus }) => {
 
                                             </React.Fragment>
                                         ) : (
-                                            <h3 style={{ textAlign: 'center' }}>No {pageLocation === "active-subjects" ? 'Active Subjects' : 'Archived Subjects'} Found</h3>
+                                            <h3 style={{ textAlign: 'center' }}>No Subjects Found</h3>
                                         )
                                     }
 
