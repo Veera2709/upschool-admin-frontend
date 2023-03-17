@@ -63,7 +63,7 @@ function Table({ columns, data, modalOpen }) {
     let history = useHistory();
 
     const adddigicard = () => {
-        history.push('/admin-portal/add-digicard'); 
+        history.push('/admin-portal/add-digicard');
     }
 
     const getIDFromData = async (DigicardStatus) => {
@@ -81,14 +81,14 @@ function Table({ columns, data, modalOpen }) {
             }
 
             const ResultData = await toggleMultiDigicardStatus(payload)
-            if (ResultData.Error) {
+            if (ResultData.Error) { 
                 if (ResultData.Error.response.data == 'Invalid Token') {
                     sessionStorage.clear();
                     localStorage.clear();
                     history.push('/auth/signin-1');
                     window.location.reload();
-                }else{
-                    return MySwal.fire('Error',ResultData.Error.response.data, 'error').then(() => {
+                } else {
+                    return MySwal.fire('Error', ResultData.Error.response.data, 'error').then(() => {
                         window.location.reload();
                     });
                 }
@@ -407,8 +407,8 @@ const DigiCard = () => {
         let DigicardTyle = digicardStatus === "Active" ? "Active Digicards" : "Archived Digicards"
         sessionStorage.setItem('digicard_type', DigicardTyle)
         axios.post(dynamicUrl.fetchDigiCardsBasedonStatus, {
-            data:{
-                digicard_status:digicardStatus
+            data: {
+                digicard_status: digicardStatus
             }
         }, {
             headers: { Authorization: sessionStorage.getItem('user_jwt') }

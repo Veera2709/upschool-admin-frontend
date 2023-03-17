@@ -66,6 +66,7 @@ const dynamicUrl = {
     fetchIndividualUnit: baseUrl + '/fetchIndividualUnit',
     editUnit: baseUrl + '/editUnit',
     toggleUnitStatus: baseUrl + '/toggleUnitStatus',
+    bulkToggleUnitStatus: baseUrl + '/bulkToggleUnitStatus',
 
     // Concepts
     fetchAllConcepts: baseUrl + '/fetchAllConcepts',
@@ -75,6 +76,7 @@ const dynamicUrl = {
     fetchIndividualConcept: baseUrl + '/fetchIndividualConcept',
     updateConcept: baseUrl + '/updateConcept',
     fetchAllTypesOfGroups: baseUrl + '/fetchAllTypesOfGroups',
+    bulkToggleConceptStatus: baseUrl + '/bulkToggleConceptStatus',
 
     // Topics
     addTopic: baseUrl + '/addTopic',
@@ -85,7 +87,7 @@ const dynamicUrl = {
     toggleSchoolStatus: baseUrl + '/toggleSchoolStatus',
     fetchInactiveSchool: baseUrl + '/fetchInactiveSchool',
     bulkToggleTopicStatus: baseUrl + '/bulkToggleTopicStatus',
-    
+
     // Subjects
     fetchUnitAndSubject: baseUrl + '/fetchUnitAndSubject',
     fetchAllSubjects: baseUrl + '/fetchAllSubjects',
