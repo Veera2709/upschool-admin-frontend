@@ -10,11 +10,11 @@ import withReactContent from 'sweetalert2-react-content';
 import MESSAGES from '../../../../helper/messages';
 import { decodeJWT } from '../../../../util/utils';
 import { GlobalFilter } from '../../../common-ui-components/tables/GlobalFilter';
-import { useTable, useSortBy, usePagination, useGlobalFilter,useRowSelect } from 'react-table';
+import { useTable, useSortBy, usePagination, useGlobalFilter, useRowSelect } from 'react-table';
 import dynamicUrl from '../../../../helper/dynamicUrls';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import BasicSpinner from '../../../../helper/BasicSpinner';
-import {toggleMultipleGroupStatus} from '../../../api/CommonApi'
+import { toggleMultipleGroupStatus } from '../../../api/CommonApi'
 
 function Table({ columns, data, modalOpen }) {
     const initiallySelectedRows = React.useMemo(() => new Set(["1"]), []);
@@ -59,12 +59,12 @@ function Table({ columns, data, modalOpen }) {
         previousPage,
         setPageSize,
         selectedFlatRows,
-        state: { pageIndex, pageSize,selectedRowPaths}
+        state: { pageIndex, pageSize, selectedRowPaths }
     } = useTable(
         {
             columns,
             data,
-            initialState: { pageIndex: 0, pageSize: 10,selectedRowPaths: initiallySelectedRows }
+            initialState: { pageIndex: 0, pageSize: 10, selectedRowPaths: initiallySelectedRows }
         },
         useGlobalFilter,
         useSortBy,
@@ -89,8 +89,8 @@ function Table({ columns, data, modalOpen }) {
         }
     );
 
-    const multiDelete = async(status)=>{
-        console.log("selectedFlatRows",selectedFlatRows);
+    const multiDelete = async (status) => {
+        console.log("selectedFlatRows", selectedFlatRows);
         const groupIds = [];
         selectedFlatRows.map((item) => {
             groupIds.push(item.original.group_id)
@@ -125,7 +125,7 @@ function Table({ columns, data, modalOpen }) {
         }
     }
 
-    const addingGroup = () =>{
+    const addingGroup = () => {
         history.push('/admin-portal/add-groups')
     }
 
@@ -151,16 +151,19 @@ function Table({ columns, data, modalOpen }) {
                 </Col>
                 <Col className="mb-3" style={{ display: 'contents' }}>
                     <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
-                        <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={(e)=>{addingGroup()}}>
-                            <i className="feather icon-plus" /> Add Groups
-                        </Button>
+
                     {payLoadStatus === 'Active' ? (
-                        <Button variant="success" className='btn-sm btn-round has-ripple ml-2 btn btn-danger'
-                            onClick={() => { multiDelete("Archived") }}
-                            style={{ marginRight: '15px' }}
-                        >
-                            <i className="feather icon-trash-2" />  Multi Delete
-                        </Button>
+                        <>
+                            <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={(e) => { addingGroup() }}>
+                                <i className="feather icon-plus" /> Add Groups
+                            </Button>
+                            <Button variant="success" className='btn-sm btn-round has-ripple ml-2 btn btn-danger'
+                                onClick={() => { multiDelete("Archived") }}
+                                style={{ marginRight: '15px' }}
+                            >
+                                <i className="feather icon-trash-2" />  Multi Delete
+                            </Button>
+                        </>
                     ) : (
                         <Button className='btn-sm btn-round has-ripple ml-2 btn btn-primary'
                             onClick={() => { multiDelete("Active") }}

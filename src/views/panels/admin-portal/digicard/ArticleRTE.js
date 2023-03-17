@@ -66,6 +66,7 @@ function ArticleRTE({
             "arial black",
             "tahoma",
             "Lucida Console",
+            "Poppins",
           ],
           preview: [{ pathpath: '/admin-portal/admin-dashboard' }
           ],
