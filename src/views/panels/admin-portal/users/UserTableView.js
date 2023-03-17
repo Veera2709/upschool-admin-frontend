@@ -91,9 +91,7 @@ function Table({ columns, data, modalOpen, userRole }) {
       if (willDelete.value) {
         console.log("api calling");
         deleteUsersById();
-      } else {
-        return MySwal.fire('', 'User is safe!', 'error');
-      }
+      } 
     });
   }
 
@@ -232,7 +230,6 @@ function Table({ columns, data, modalOpen, userRole }) {
       showCloseButton: true,
       showCancelButton: true,
 
-
     }).then((willDelete) => {
       if (willDelete.value) {
         console.log("api calling");
@@ -301,9 +298,7 @@ function Table({ columns, data, modalOpen, userRole }) {
           }
           )
 
-      } else {
-        return MySwal.fire('', pageLocation === 'active-users' ? 'User is safe!' : "User remains Archived", 'error');
-      }
+      } 
 
     });
 
@@ -341,31 +336,36 @@ function Table({ columns, data, modalOpen, userRole }) {
         <Col className="d-flex justify-content-end">
           <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
 
-          <Link to={'/admin-portal/add-users'}>
-            <Button
-              style={{ whiteSpace: "nowrap" }}
-              variant="success"
-              className="btn-sm btn-round has-ripple ml-2">
-              <i className="feather icon-plus" /> Add Users
-            </Button>
-          </Link>
+          {user_status === "Active" ? (
+            <>
+              <Link to={'/admin-portal/add-users'}>
+                <Button
+                  style={{ whiteSpace: "nowrap" }}
+                  variant="success"
+                  className="btn-sm btn-round has-ripple ml-2">
+                  <i className="feather icon-plus" /> Add Users
+                </Button>
+              </Link>
 
-          {user_status === "Active" ?
-            <Button
-              variant="danger"
-              className="btn-sm btn-round has-ripple ml-2"
-              // style={{ marginLeft: "1.5rem" }}
-              style={{ whiteSpace: "nowrap" }}
-              onClick={(e) => { getAlldata() }}
-            >Multi Delete</Button> :
+              <Button
+                variant="danger"
+                className="btn-sm btn-round has-ripple ml-2"
+                // style={{ marginLeft: "1.5rem" }}
+                style={{ whiteSpace: "nowrap" }}
+                onClick={() => { getAlldata() }}
+              >Multi Delete</Button>
+            </>
+          ) : (
 
             <Button onClick={getAlldata}
               variant="primary"
               className="btn-sm btn-round has-ripple ml-2"
               // style={{ marginLeft: "1.5rem" }}
               style={{ whiteSpace: "nowrap" }}
-            >Multi Restore</Button>
-          }
+            ><i className="feather icon-plus" /> &nbsp;
+              Multi Restore
+            </Button>
+          )}
 
         </Col>
       </Row>

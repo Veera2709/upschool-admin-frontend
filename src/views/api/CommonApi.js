@@ -578,6 +578,24 @@ export const toggleMultiChapterStatus = (payLoad) => {
             })
     });
 }
+
+export const toggleMultiSubjectStatus = (payLoad) => {
+    console.log("payLoad : ", payLoad);
+    return new Promise((resolve, reject) => {
+        axios.post(url.bulkToggleSubjectStatus,
+            { data: payLoad },
+            { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
+            .then((response) => {
+                console.log(response);
+                resolve(response.data);
+            })
+            .catch((error) => {
+                console.log("Error", error);
+                resolve({ Error: error });
+            })
+    });
+}
+
 export const bulkToggleQuestionStatus = (payLoad) => {
     console.log("payLoad : ", payLoad);
     return new Promise((resolve, reject) => {
@@ -587,6 +605,44 @@ export const bulkToggleQuestionStatus = (payLoad) => {
             .then((response) => {
                 console.log(response);
                 resolve(response.data);
+            })
+            .catch((error) => {
+                console.log("Error", error);
+                resolve({ Error: error });
+            })
+    });
+}
+
+export const toggleMultiClassStatus = (payLoad) => {
+    console.log("payLoad : ", payLoad);
+    return new Promise((resolve, reject) => {
+        axios.post(url.bulkToggleClassStatus,
+            { data: payLoad },
+            { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
+            .then((response) => {
+                console.log(response);
+                resolve(response.data);
+            })
+            .catch((error) => {
+                console.log("Error", error);
+                resolve({ Error: error });
+            })
+    });
+}
+
+export const fetchUnitAndSubject = () => {
+    return new Promise((resolve, reject) => {
+        axios.post(url.fetchUnitAndSubject,
+            {},
+            { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
+            .then((response) => {
+                console.log(response);
+
+                if (response.status === 200) {
+                    resolve(response.data);
+                }else{
+                    resolve(response)
+                }
             })
             .catch((error) => {
                 console.log("Error", error);
