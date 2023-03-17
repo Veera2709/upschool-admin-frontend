@@ -473,22 +473,20 @@ function Table({ columns, data }) {
     );
 
     const toggleFunction = (param) => {
+        let arrayWithConcepts = [];
+        page.map(e => {
+            e.isSelected === true && arrayWithConcepts.push(e.original.concept_id)
+        })
 
-            let arrayWithConcepts = [];
-            page.map(e => {
-                e.isSelected === true && arrayWithConcepts.push(e.original.concept_id)
-            })
-    
-            console.log("arrayWithConcepts.length", arrayWithConcepts.length)
-            console.log("CHECKED IDS : ", arrayWithConcepts);
-    
-            if (arrayWithConcepts.length === 0) {
-                const MySwal = withReactContent(Swal);
-                return MySwal.fire('Sorry', 'No Concepts Selected!', 'warning').then(() => {
-                    window.location.reload();
-                });
-            }
-    
+        console.log("arrayWithConcepts.length", arrayWithConcepts.length)
+        console.log("CHECKED IDS : ", arrayWithConcepts);
+
+        if (arrayWithConcepts.length === 0) {
+            const MySwal = withReactContent(Swal);
+            return MySwal.fire('Sorry', 'No Concepts Selected!', 'warning').then(() => {
+                window.location.reload();
+            });
+        } else {
             const MySwal = withReactContent(Swal);
             MySwal.fire({
                 title: 'Are you sure?',
@@ -496,7 +494,7 @@ function Table({ columns, data }) {
                 type: 'warning',
                 showCloseButton: true,
                 showCancelButton: true,
-    
+
             }).then((willDelete) => {
                 if (willDelete.value) {
                     console.log("api calling");
@@ -505,7 +503,7 @@ function Table({ columns, data }) {
                         concept_status: concept_status === "Active" ? "Archived" : "Active",
                         concept_array: arrayWithConcepts,
                     });
-    
+
                     axios
                         .post(
                             dynamicUrl.bulkToggleConceptStatus,
@@ -545,15 +543,15 @@ function Table({ columns, data }) {
                                         // text: (pageLocation === 'active-concepts') ? 'Unit Deleted' : 'Unit Restored',
                                         // type: 'success',
                                     }).then((willDelete) => {
-    
+
                                         window.location.reload()
-    
+
                                     })
-    
+
                                 }
                             }
                             //new
-    
+
                         }
                         ).catch(async (errorResponse) => {
                             console.log("errorResponse : ", errorResponse);
@@ -564,21 +562,22 @@ function Table({ columns, data }) {
                                     text: errorResponse.response.data,
                                     // type: 'success',
                                 }).then((willDelete) => {
-    
+
                                     window.location.reload()
-    
+
                                 })
                             }
-    
+
                         }
-    
+
                         )
-    
-                } else {
-                    return MySwal.fire('', pageLocation === 'active-concepts' ? 'Concept is safe!' : "Concept remains Archived", 'error');
+
                 }
-    
+
             })
+        }
+
+
     }
     return (
         <>
@@ -617,34 +616,34 @@ function Table({ columns, data }) {
                                 <i className="feather icon-plus" /> Add Concepts
                             </Button>
                             {
-                                pageLocation === "active-concepts" ? 
-                                <Button
-                                    // variant="danger"
-                                    className="btn-sm btn-round has-ripple ml-2 btn btn-danger"
-                                    style={{ whiteSpace: "no-wrap" }}
+                                pageLocation === "active-concepts" ?
+                                    <Button
+                                        // variant="danger"
+                                        className="btn-sm btn-round has-ripple ml-2 btn btn-danger"
+                                        style={{ whiteSpace: "no-wrap" }}
 
-                                    onClick={(e) => {
-                                        // handleAddConcepts(e);
-                                        toggleFunction("Archived"); 
-                                    }}
-                                >
-                                    <i className="feather icon-trash-2" /> Multi Delete
-                                </Button>
-                                : 
-                                <Button
-                                    // variant="success"
-                                    className="btn-sm btn-round has-ripple ml-2 btn btn-primary"
-                                    style={{ whiteSpace: "no-wrap" }}
-                                    onClick={(e) => {
-                                        // handleAddConcepts(e);
-                                        toggleFunction("Active"); 
+                                        onClick={(e) => {
+                                            // handleAddConcepts(e);
+                                            toggleFunction("Archived");
+                                        }}
+                                    >
+                                        <i className="feather icon-trash-2" /> Multi Delete
+                                    </Button>
+                                    :
+                                    <Button
+                                        // variant="success"
+                                        className="btn-sm btn-round has-ripple ml-2 btn btn-primary"
+                                        style={{ whiteSpace: "no-wrap" }}
+                                        onClick={(e) => {
+                                            // handleAddConcepts(e);
+                                            toggleFunction("Active");
 
-                                    }}
-                                >
-                                    <i className="feather icon-plus" /> Multi Restore
-                                </Button>
+                                        }}
+                                    >
+                                        <i className="feather icon-plus" /> Multi Restore
+                                    </Button>
                             }
-                            
+
 
                         </Col>
                     </Row>

@@ -562,12 +562,33 @@ export const toggleMultipleTopicStatus = (payLoad) => {
     });
 }
 
+
+
 export const toggleMultiChapterStatus = (payLoad) => {
     console.log("payLoad : ", payLoad);
     return new Promise((resolve, reject) => {
         axios.post(url.bulkToggleChapterStatus,
             { data: payLoad },
             { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
+            .then((response) => {
+                console.log(response);
+                resolve(response.data);
+            })
+            .catch((error) => {
+                console.log("Error", error);
+                resolve({ Error: error });
+            })
+    });
+}
+
+export const toggleMultipleGroupStatus = (payLoad) => {
+    console.log("payLoad : ", payLoad);
+    return new Promise((resolve, reject) => {
+        axios.post(url.bulkToggleGroupsStatus, {
+            data: payLoad
+        }, {
+            headers: { Authorization: sessionStorage.getItem('user_jwt') }
+        })
             .then((response) => {
                 console.log(response);
                 resolve(response.data);

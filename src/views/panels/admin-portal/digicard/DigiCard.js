@@ -67,6 +67,7 @@ function Table({ columns, data, modalOpen }) {
     }
 
     const getIDFromData = async (DigicardStatus) => {
+        console.log("page data",page);
         var DigicardIds = [];
         selectedFlatRows.map((item) => {
             console.log("item.original.digi_card_id", item.original.digi_card_id);

@@ -14,7 +14,7 @@ import { useTable, useSortBy, usePagination, useGlobalFilter,useRowSelect } from
 import dynamicUrl from '../../../../helper/dynamicUrls';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import BasicSpinner from '../../../../helper/BasicSpinner';
-import {toggleMultiChapterStatus} from '../../../api/CommonApi'
+import {toggleMultipleGroupStatus} from '../../../api/CommonApi'
 
 function Table({ columns, data, modalOpen }) {
     const initiallySelectedRows = React.useMemo(() => new Set(["1"]), []);
@@ -90,17 +90,18 @@ function Table({ columns, data, modalOpen }) {
     );
 
     const multiDelete = async(status)=>{
-        const chapterIds = [];
+        console.log("selectedFlatRows",selectedFlatRows);
+        const groupIds = [];
         selectedFlatRows.map((item) => {
-            chapterIds.push(item.original.chapter_id)
+            groupIds.push(item.original.group_id)
         })
-        if (chapterIds.length > 0) {
+        if (groupIds.length > 0) {
             var payload = {
-                "chapter_status": status,
-                "chapter_array": chapterIds
+                "group_status": status,
+                "group_array": groupIds
             }
 
-            const ResultData = await toggleMultiChapterStatus(payload)
+            const ResultData = await toggleMultipleGroupStatus(payload)
             if (ResultData.Error) {
                 if (ResultData.Error.response.data == 'Invalid Token') {
                     sessionStorage.clear();
@@ -113,7 +114,7 @@ function Table({ columns, data, modalOpen }) {
                     });
                 }
             } else {
-                return MySwal.fire('success', `Chapters ${status === 'Active' ? 'Restored' : "Deleted"} Successfully`, 'success').then(() => {
+                return MySwal.fire('success', `Groups have been ${status === 'Active' ? 'Restored' : "Deleted"} Successfully`, 'success').then(() => {
                     window.location.reload();
                 });
             }
@@ -122,6 +123,10 @@ function Table({ columns, data, modalOpen }) {
                 // window.location.reload();
             });
         }
+    }
+
+    const addingGroup = () =>{
+        history.push('/admin-portal/add-groups')
     }
 
     return (
@@ -146,12 +151,10 @@ function Table({ columns, data, modalOpen }) {
                 </Col>
                 <Col className="mb-3" style={{ display: 'contents' }}>
                     <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
-
-                    <Link to={'/admin-portal/add-groups'}>
-                        <Button variant="success" className="btn-sm btn-round has-ripple ml-2">
+                        <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={(e)=>{addingGroup()}}>
                             <i className="feather icon-plus" /> Add Groups
                         </Button>
-                        {payLoadStatus === 'Active' ? (
+                    {payLoadStatus === 'Active' ? (
                         <Button variant="success" className='btn-sm btn-round has-ripple ml-2 btn btn-danger'
                             onClick={() => { multiDelete("Archived") }}
                             style={{ marginRight: '15px' }}
@@ -166,7 +169,6 @@ function Table({ columns, data, modalOpen }) {
                             <i className="feather icon-plus" />   Multi Restore
                         </Button>
                     )}
-                    </Link>
                 </Col>
             </Row>
 
