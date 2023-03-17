@@ -25,8 +25,6 @@ function Table({ columns, data, modalOpen }) {
     const initiallySelectedRows = React.useMemo(() => new Set(["1"]), []);
     // let unit_status = pageLocation === "active-units" ? 'Active' : 'Archived';
 
-
-
     const {
         getTableProps,
         getTableBodyProps,
