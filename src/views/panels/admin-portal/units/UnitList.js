@@ -98,106 +98,110 @@ function Table({ columns, data, modalOpen }) {
             return MySwal.fire('Sorry', 'No units Selected!', 'warning').then(() => {
                 window.location.reload();
             });
-        }
+        } else {
+
+            const MySwal = withReactContent(Swal);
+            MySwal.fire({
+                title: 'Are you sure?',
+                text: pageLocation === 'active-units' ? 'Confirm deleting' : 'Confirm restoring',
+                type: 'warning',
+                showCloseButton: true,
+                showCancelButton: true,
 
 
-        const MySwal = withReactContent(Swal);
-        MySwal.fire({
-            title: 'Are you sure?',
-            text: pageLocation === 'active-units' ? 'Confirm deleting' : 'Confirm restoring',
-            type: 'warning',
-            showCloseButton: true,
-            showCancelButton: true,
+            }).then((willDelete) => {
+                if (willDelete.value) {
+                    console.log("api calling");
+                    // changeStatus(digi_card_id, digi_card_title);
+                    console.log("Request : ", {
+                        unit_status: unit_status === "Active" ? "Archived" : "Active",
+                        unit_array: arrayWithUnits,
 
+                    });
 
-        }).then((willDelete) => {
-            if (willDelete.value) {
-                console.log("api calling");
-                // changeStatus(digi_card_id, digi_card_title);
-                console.log("Request : ", {
-                    unit_status: unit_status === "Active" ? "Archived" : "Active",
-                    unit_array: arrayWithUnits,
+                    axios
+                        .post(
+                            dynamicUrl.bulkToggleUnitStatus,
+                            {
+                                data: {
+                                    unit_status: unit_status === "Active" ? "Archived" : "Active",
+                                    unit_array: arrayWithUnits,
 
-                });
-
-                axios
-                    .post(
-                        dynamicUrl.bulkToggleUnitStatus,
-                        {
-                            data: {
-                                unit_status: unit_status === "Active" ? "Archived" : "Active",
-                                unit_array: arrayWithUnits,
-
-                            }
-                        }, {
-                        headers: { Authorization: sessionStorage.getItem('user_jwt') }
-                    })
-                    .then(async (response) => {
-                        console.log("response : ", response);
-                        if (response.Error) {
-                            console.log("Error");
-                            hideLoader();
-                            // sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
-                            pageLocation === "active-units"
-                                ? sweetAlertHandler({
-                                    title: MESSAGES.TTTLES.Sorry,
-                                    type: "error",
-                                    text: MESSAGES.ERROR.DeletingParents
-                                })
-                                : sweetAlertHandler({
-                                    title: MESSAGES.TTTLES.Sorry,
-                                    type: "error",
-                                    text: MESSAGES.ERROR.RestoringParents
-                                });
-
-                            history.push('/admin-portal/' + pageLocation)
-                        }
-                        else {
+                                }
+                            }, {
+                            headers: { Authorization: sessionStorage.getItem('user_jwt') }
+                        })
+                        .then(async (response) => {
                             console.log("response : ", response);
-                            if (response.data === 200) {
+                            if (response.Error) {
+                                console.log("Error");
+                                hideLoader();
+                                // sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
+                                pageLocation === "active-units"
+                                    ? sweetAlertHandler({
+                                        title: MESSAGES.TTTLES.Sorry,
+                                        type: "error",
+                                        text: MESSAGES.ERROR.DeletingParents
+                                    })
+                                    : sweetAlertHandler({
+                                        title: MESSAGES.TTTLES.Sorry,
+                                        type: "error",
+                                        text: MESSAGES.ERROR.RestoringParents
+                                    });
+
+                                history.push('/admin-portal/' + pageLocation)
+                            }
+                            else {
+                                console.log("response : ", response);
+                                if (response.data === 200) {
+                                    MySwal.fire({
+                                        title: (pageLocation === 'active-units') ? 'units Deleted' : "units restored",
+                                        icon: "success",
+                                        // text: (pageLocation === 'active-units') ? 'Unit Deleted' : 'Unit Restored',
+                                        // type: 'success',
+                                    }).then((willDelete) => {
+
+                                        window.location.reload()
+
+                                    })
+
+                                }
+                            }
+                            //new
+
+
+
+
+                        }
+                        ).catch(async (errorResponse) => {
+                            console.log("errorResponse : ", errorResponse);
+                            if (errorResponse.response.data) {
                                 MySwal.fire({
-                                    title: (pageLocation === 'active-units') ? 'units Deleted' : "units restored",
-                                    icon: "success",
-                                    // text: (pageLocation === 'active-units') ? 'Unit Deleted' : 'Unit Restored',
+                                    title: MESSAGES.TTTLES.Sorry,
+                                    icon: "error",
+                                    text: errorResponse.response.data,
                                     // type: 'success',
                                 }).then((willDelete) => {
 
                                     window.location.reload()
 
                                 })
-
                             }
-                        }
-                        //new
 
-
-
-
-                    }
-                    ).catch(async (errorResponse) => {
-                        console.log("errorResponse : ", errorResponse);
-                        if (errorResponse.response.data) {
-                            MySwal.fire({
-                                title: MESSAGES.TTTLES.Sorry,
-                                icon: "error",
-                                text: errorResponse.response.data,
-                                // type: 'success',
-                            }).then((willDelete) => {
-
-                                window.location.reload()
-
-                            })
                         }
 
-                    }
+                        )
 
-                    )
+                } else {
+                    return MySwal.fire('', pageLocation === 'active-units' ? 'Unit is safe!' : "Unit remains Archived", 'error');
+                }
 
-            } else {
-                return MySwal.fire('', pageLocation === 'active-units' ? 'Unit is safe!' : "Unit remains Archived", 'error');
-            }
+            })
 
-        })
+        }
+
+
+
     }
 
 
@@ -226,20 +230,24 @@ function Table({ columns, data, modalOpen }) {
                 <Col className="d-flex justify-content-end">
                     <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
 
-                </Col>
-                <Col className="d-flex justify-content-end">
-                    <Button variant="success" style={{ whiteSpace: "no-wrap" }} className="btn-sm btn-round has-ripple ml-2" onClick={() => { setOpenAddUnit(true) }}>
-                        <i className="feather icon-plus" /> Add Unit
-                    </Button>
                     {unit_status === "Active" ? (
+                        <>
+                            <Button
+                                variant="success"
+                                style={{ whiteSpace: "no-wrap" }}
+                                className="btn-sm btn-round has-ripple ml-2"
+                                onClick={() => { setOpenAddUnit(true) }}>
+                                <i className="feather icon-plus" /> Add Unit
+                            </Button>
 
-                        <Button
-                            className='btn-sm btn-round has-ripple ml-2 btn btn-danger'
-                            style={{ whiteSpace: "no-wrap" }}
-                            onClick={() => { getUnitsFromData("Archived") }}
-                        > <i className="feather icon-trash-2" />&nbsp;
-                            Multi Delete
-                        </Button>
+                            <Button
+                                className='btn-sm btn-round has-ripple ml-2 btn btn-danger'
+                                style={{ whiteSpace: "no-wrap" }}
+                                onClick={() => { getUnitsFromData("Archived") }}
+                            > <i className="feather icon-trash-2" />&nbsp;
+                                Multi Delete
+                            </Button>
+                        </>
                     ) : (
                         <Button className='btn-sm btn-round has-ripple ml-2 btn btn-primary'
                             style={{ whiteSpace: "no-wrap" }}

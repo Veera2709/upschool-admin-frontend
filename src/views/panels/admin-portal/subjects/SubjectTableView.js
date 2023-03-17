@@ -3,19 +3,19 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { Row, Col, Card, Pagination, Button, Modal } from 'react-bootstrap';
 import BTable from 'react-bootstrap/Table';
 import axios from 'axios';
-import { SessionStorage } from '../../../../util/SessionStorage';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
-import MESSAGES from '../../../../helper/messages';
-
-import { GlobalFilter } from '../../../common-ui-components/tables/GlobalFilter';
 import { useTable, useSortBy, usePagination, useGlobalFilter, useRowSelect } from 'react-table';
+
+import MESSAGES from '../../../../helper/messages';
+import { GlobalFilter } from '../../../common-ui-components/tables/GlobalFilter';
 import dynamicUrl from '../../../../helper/dynamicUrls';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import AddSubjects from './AddSubjects';
 import EditSubjects from './EditSubjects';
 import BasicSpinner from '../../../../helper/BasicSpinner';
-import { toggleMultiSubjectStatus } from '../../../api/CommonApi';
+import { toggleMultiSubjectStatus, fetchUnitAndSubject } from '../../../api/CommonApi';
+import { SessionStorage } from '../../../../util/SessionStorage';
 
 function Table({ columns, data }) {
 
@@ -49,76 +49,44 @@ function Table({ columns, data }) {
 
     useEffect(() => {
 
-        axios
-            .post(
-                dynamicUrl.fetchUnitAndSubject,
-                {},
-                {
-                    headers: { Authorization: sessionStorage.getItem('user_jwt') }
-                }
-            )
-            .then((response) => {
+        async function fetchData() {
+            const ResultData = await fetchUnitAndSubject();
 
-                let result = response.status === 200;
+            if (ResultData.Error) {
+
+                if (ResultData.Error.response.data == 'Invalid Token') {
+
+                    sessionStorage.clear();
+                    localStorage.clear();
+
+                    history.push('/auth/signin-1');
+                    window.location.reload();
+
+                } else {
+
+                    return MySwal.fire('Sorry', ResultData.Error.response.data, 'warning').then(() => {
+                        window.location.reload();
+                    });
+
+                }
+            } else {
+
                 hideLoader();
 
-                if (result) {
+                console.log('inside res fetch Unit And Subject');
+                console.log(ResultData);
 
-                    console.log('inside res fetchUnitAndSubject');
+                _setRelatedSubjects(ResultData.subjectList);
+                _setUnits(ResultData.unitList);
 
-                    let responseData = response.data;
-                    console.log(responseData);
-                    // setDisableButton(false);
-                    hideLoader();
-                    _setRelatedSubjects(responseData.subjectList);
-                    _setUnits(responseData.unitList);
-
-                } else {
-
-                    console.log('else res');
-
-                    hideLoader();
-
-
-                }
-            })
-            .catch((error) => {
-                if (error.response) {
-                    hideLoader();
-                    // Request made and server responded
-                    console.log(error.response.data);
-
-                    if (error.response.data === 'Invalid Token') {
-
-                        sessionStorage.clear();
-                        localStorage.clear();
-
-                        history.push('/auth/signin-1');
-                        window.location.reload();
-
-                    } else {
-
-
-
-                    }
-
-
-                } else if (error.request) {
-                    // The request was made but no response was received
-                    console.log(error.request);
-                    hideLoader();
-
-                } else {
-                    // Something happened in setting up the request that triggered an Error
-                    console.log('Error', error.message);
-                    hideLoader();
-
-                }
-            })
+            }
+        }
+        fetchData();
 
     }, [unitsAndSubjects])
 
     const sweetConfirmHandler = (alert, subject_id, updateStatus) => {
+
         MySwal.fire({
             title: alert.title,
             text: alert.text,
@@ -418,34 +386,52 @@ function Table({ columns, data }) {
     );
 
     const multiDelete = async (status) => {
+
         console.log("selectedFlatRows", selectedFlatRows);
         const subjectIDs = [];
+
         selectedFlatRows.map((item) => {
             subjectIDs.push(item.original.subject_id)
         })
-        if (subjectIDs.length > 0) {
-            var payload = {
-                "subject_status": status,
-                "subject_array": subjectIDs
-            }
 
-            const ResultData = await toggleMultiSubjectStatus(payload)
-            if (ResultData.Error) {
-                if (ResultData.Error.response.data == 'Invalid Token') {
-                    sessionStorage.clear();
-                    localStorage.clear();
-                    history.push('/auth/signin-1');
-                    window.location.reload();
-                } else {
-                    return MySwal.fire('Sorry', ResultData.Error.response.data, 'warning').then(() => {
-                        window.location.reload();
-                    });
+        if (subjectIDs.length > 0) {
+
+            MySwal.fire({
+                title: 'Are you sure?',
+                text: `Confirm ${pageLocation === 'active-subjects' ? "deleting" : "restoring"} the selected Subject(s)!`,
+                type: 'warning',
+                showCloseButton: true,
+                showCancelButton: true
+            }).then(async (willDelete) => {
+            
+                if (willDelete.value) {
+            
+                    var payload = {
+                        "subject_status": status,
+                        "subject_array": subjectIDs
+                    }
+        
+                    const ResultData = await toggleMultiSubjectStatus(payload)
+                    if (ResultData.Error) {
+                        if (ResultData.Error.response.data == 'Invalid Token') {
+                            sessionStorage.clear();
+                            localStorage.clear();
+                            history.push('/auth/signin-1');
+                            window.location.reload();
+                        } else {
+                            return MySwal.fire('Sorry', ResultData.Error.response.data, 'warning').then(() => {
+                                window.location.reload();
+                            });
+                        }
+                    } else {
+                        return MySwal.fire('Success', `All the chosen Subjects have been ${status === 'Active' ? 'restored' : "deleted"} successfully!`, 'success').then(() => {
+                            window.location.reload();
+                        });
+                    }
                 }
-            } else {
-                return MySwal.fire('Success', `All the chosen Subjects have been ${status === 'Active' ? 'Restored' : "Deleted"} successfully!`, 'success').then(() => {
-                    window.location.reload();
-                });
-            }
+            })
+
+            
         } else {
             return MySwal.fire('Sorry', 'No Subjects are selected!', 'warning').then(() => {
                 // window.location.reload();
@@ -476,23 +462,37 @@ function Table({ columns, data }) {
                 <Col className="d-flex justify-content-end">
                     <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
 
-                    <Button
-                        variant="success"
-                        className="btn-sm btn-round has-ripple ml-2"
-                        onClick={(e) => {
-                            handleAddSubjects(e);
-                        }}
-                    >
-                        <i className="feather icon-plus" /> Add Subjects
-                    </Button>
+
 
                     {pageLocation === 'active-subjects' ? (
-                        <Button variant="success" className='btn-sm btn-round has-ripple ml-2 btn btn-danger' onClick={() => { multiDelete("Archived") }}>
-                            <i className="feather icon-trash-2" />  Multi Delete
-                        </Button>
+                        <>
+                            <Button
+                                variant="success"
+                                className="btn-sm btn-round has-ripple ml-2"
+                                onClick={(e) => {
+                                    handleAddSubjects(e);
+                                }}
+                            >
+                                <i className="feather icon-plus" /> Add Subjects
+                            </Button>
+
+                            <Button
+                                variant="success"
+                                className='btn-sm btn-round has-ripple ml-2 btn btn-danger'
+                                onClick={() => {
+                                    multiDelete("Archived")
+                                }}>
+                                <i className="feather icon-trash-2"
+                                />  Multi Delete
+                            </Button>
+                        </>
+
                     ) : (
-                        <Button className='btn-sm btn-round has-ripple ml-2 btn btn-primary' onClick={() => { multiDelete("Active") }}>
-                            <i className="feather icon-plus" />   Multi Restore
+                        <Button
+                            className='btn-sm btn-round has-ripple ml-2 btn btn-primary'
+                            onClick={() => { multiDelete("Active") }}>
+                            <i className="feather icon-plus"
+                            />   Multi Restore
                         </Button>
                     )}
 
@@ -628,8 +628,6 @@ const SubjectTableView = ({ userStatus }) => {
         []
     );
 
-    // const data = React.useMemo(() => makeData(50), []);
-
     const history = useHistory();
     const [isLoading, setIsLoading] = useState(false);
     const [subjectData, setSubjectData] = useState([]);
@@ -660,81 +658,53 @@ const SubjectTableView = ({ userStatus }) => {
 
     useEffect(() => {
 
-        axios
-            .post(
-                dynamicUrl.fetchUnitAndSubject,
-                {},
-                {
-                    headers: { Authorization: sessionStorage.getItem('user_jwt') }
-                }
-            )
-            .then((response) => {
+        async function fetchData() {
+            const ResultData = await fetchUnitAndSubject();
 
-                let result = response.status === 200;
+            if (ResultData.Error) {
+
+                if (ResultData.Error.response.data == 'Invalid Token') {
+
+                    sessionStorage.clear();
+                    localStorage.clear();
+
+                    history.push('/auth/signin-1');
+                    window.location.reload();
+
+                } else {
+
+                    return MySwal.fire('Sorry', ResultData.Error.response.data, 'warning').then(() => {
+                        window.location.reload();
+                    });
+
+                }
+            } else {
+
                 hideLoader();
 
-                if (result) {
+                console.log('inside res fetch Unit And Subject');
+                console.log(ResultData);
 
-                    console.log('inside res fetchUnitAndSubject');
+                _setRelatedSubjects(ResultData.subjectList);
+                _setUnits(ResultData.unitList);
 
-                    let responseData = response.data;
-                    console.log(responseData);
-                    // setDisableButton(false);
-                    hideLoader();
-                    _setRelatedSubjects(responseData.subjectList);
-                    _setUnits(responseData.unitList);
-
-                } else {
-
-                    console.log('else res');
-
-                    hideLoader();
-
-
-                }
-            })
-            .catch((error) => {
-                if (error.response) {
-                    hideLoader();
-                    // Request made and server responded
-                    console.log(error.response.data);
-
-                    if (error.response.data === 'Invalid Token') {
-
-                        sessionStorage.clear();
-                        localStorage.clear();
-
-                        history.push('/auth/signin-1');
-                        window.location.reload();
-
-                    } else {
-
-                    }
-
-
-                } else if (error.request) {
-                    // The request was made but no response was received
-                    console.log(error.request);
-                    hideLoader();
-
-                } else {
-                    // Something happened in setting up the request that triggered an Error
-                    console.log('Error', error.message);
-                    hideLoader();
-
-                }
-            })
+            }
+        }
+        fetchData();
 
     }, [unitsAndSubjects])
 
     const sweetConfirmHandler = (alert, subject_id, updateStatus) => {
+
         MySwal.fire({
+
             title: alert.title,
             text: alert.text,
             type: alert.type,
             showCloseButton: true,
             showCancelButton: true
         }).then((willDelete) => {
+
             if (willDelete.value) {
                 showLoader();
                 deleteSubject(subject_id, updateStatus);
@@ -750,7 +720,6 @@ const SubjectTableView = ({ userStatus }) => {
         });
     };
 
-
     const saveSubjectIdDelete = (e, subject_id, updateStatus) => {
         e.preventDefault();
 
@@ -758,7 +727,7 @@ const SubjectTableView = ({ userStatus }) => {
             sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: MESSAGES.INFO.ABLE_TO_RECOVER }, subject_id, updateStatus)
         ) : (
             sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: 'This will restore the subject!' }, subject_id, updateStatus)
-        )
+        );
 
     };
 
@@ -890,6 +859,7 @@ const SubjectTableView = ({ userStatus }) => {
     }
 
     const deleteSubject = (subject_id, updateStatus) => {
+
         const values = {
             subject_id: subject_id,
             subject_status: updateStatus
@@ -905,8 +875,11 @@ const SubjectTableView = ({ userStatus }) => {
                         subject_status: updateStatus
                     }
                 }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
+
             .then(async (response) => {
+
                 if (response.Error) {
+
                     hideLoader();
                     sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'warning', text: MESSAGES.ERROR.DeletingUser });
                     fetchAllSubjectsData();

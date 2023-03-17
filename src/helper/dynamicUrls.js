@@ -103,6 +103,7 @@ const dynamicUrl = {
     fetchIndividualClass: baseUrl + '/fetchIndividualClass',
     toggleClassStatus: baseUrl + '/toggleClassStatus',
     editClass: baseUrl + '/editClass',
+    bulkToggleClassStatus: baseUrl + '/bulkToggleClassStatus',
 
     // Questions
     fetchIndividualQuestionData: baseUrl + '/fetchIndividualQuestionData',
