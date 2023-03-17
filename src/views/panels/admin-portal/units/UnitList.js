@@ -17,15 +17,9 @@ import BasicSpinner from '../../../../helper/BasicSpinner';
 import AddUnit from './AddUnit';
 import EditUnit from './EditUnit';
 
-
-
-
 function Table({ columns, data, modalOpen }) {
     const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[3]);
     const initiallySelectedRows = React.useMemo(() => new Set(["1"]), []);
-    // let unit_status = pageLocation === "active-units" ? 'Active' : 'Archived';
-
-
 
     const {
         getTableProps,
@@ -82,20 +76,17 @@ function Table({ columns, data, modalOpen }) {
     }
 
     const getUnitsFromData = () => {
-        console.log("selectedFlatRows", selectedFlatRows);
         let arrayWithUnits = [];
-
-
-        selectedFlatRows.map((item) => {
-            console.log("item.original.unit_chapter_id", item.original.unit_title);
-            arrayWithUnits.push(item.original.unit_id)
+        page.map(e => {
+            e.isSelected === true && arrayWithUnits.push(e.original.unit_id)
         })
+
         console.log("arrayWithUnits.length", arrayWithUnits.length)
         console.log("CHECKED IDS : ", arrayWithUnits);
 
         if (arrayWithUnits.length === 0) {
             const MySwal = withReactContent(Swal);
-            return MySwal.fire('Sorry', 'No units Selected!', 'warning').then(() => {
+            return MySwal.fire('Sorry', 'No units are selected!', 'warning').then(() => {
                 window.location.reload();
             });
         } else {
@@ -108,15 +99,14 @@ function Table({ columns, data, modalOpen }) {
                 showCloseButton: true,
                 showCancelButton: true,
 
-
             }).then((willDelete) => {
+
                 if (willDelete.value) {
                     console.log("api calling");
                     // changeStatus(digi_card_id, digi_card_title);
                     console.log("Request : ", {
                         unit_status: unit_status === "Active" ? "Archived" : "Active",
                         unit_array: arrayWithUnits,
-
                     });
 
                     axios
@@ -141,45 +131,62 @@ function Table({ columns, data, modalOpen }) {
                                     ? sweetAlertHandler({
                                         title: MESSAGES.TTTLES.Sorry,
                                         type: "error",
-                                        text: MESSAGES.ERROR.DeletingParents
+                                        text: MESSAGES.ERROR.DeletingUnit
                                     })
                                     : sweetAlertHandler({
                                         title: MESSAGES.TTTLES.Sorry,
                                         type: "error",
-                                        text: MESSAGES.ERROR.RestoringParents
+                                        text: MESSAGES.ERROR.RestoringUnit
                                     });
 
                                 history.push('/admin-portal/' + pageLocation)
                             }
                             else {
                                 console.log("response : ", response);
-                                if (response.data === 200) {
-                                    MySwal.fire({
-                                        title: (pageLocation === 'active-units') ? 'units Deleted' : "units restored",
-                                        icon: "success",
-                                        // text: (pageLocation === 'active-units') ? 'Unit Deleted' : 'Unit Restored',
-                                        // type: 'success',
-                                    }).then((willDelete) => {
+                                if (response.Error) {
+                                    console.log("Error");
+                                    hideLoader();
+                                    // sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
+                                    pageLocation === "active-units"
+                                        ? sweetAlertHandler({
+                                            title: MESSAGES.TTTLES.Sorry,
+                                            type: "error",
+                                            text: MESSAGES.ERROR.DeletingParents
+                                        })
+                                        : sweetAlertHandler({
+                                            title: MESSAGES.TTTLES.Sorry,
+                                            type: "error",
+                                            text: MESSAGES.ERROR.RestoringParents
+                                        });
 
-                                        window.location.reload()
-
-                                    })
-
+                                    history.push('/admin-portal/' + pageLocation)
                                 }
+                                else {
+                                    console.log("response : ", response);
+                                    if (response.data === 200) {
+                                        MySwal.fire({
+                                            title: (pageLocation === 'active-units') ? 'units Deleted' : "units restored",
+                                            icon: "success",
+                                            // text: (pageLocation === 'active-units') ? 'Unit Deleted' : 'Unit Restored',
+                                            // type: 'success',
+                                        }).then((willDelete) => {
+
+                                            window.location.reload()
+
+                                        })
+
+                                    }
+                                }
+                                //new
                             }
-                            //new
-
-
-
-
                         }
                         ).catch(async (errorResponse) => {
                             console.log("errorResponse : ", errorResponse);
                             if (errorResponse.response.data) {
                                 MySwal.fire({
-                                    title: MESSAGES.TTTLES.Sorry,
-                                    icon: "error",
-                                    text: errorResponse.response.data,
+                                    title: (pageLocation === 'active-units') ? 'Units Deleted' : "Units Restored",
+                                    icon: "success",
+                                    // text: (pageLocation === 'active-units') ? 'Unit Deleted' : 'Unit Restored',
                                     // type: 'success',
                                 }).then((willDelete) => {
 
@@ -187,24 +194,11 @@ function Table({ columns, data, modalOpen }) {
 
                                 })
                             }
-
-                        }
-
-                        )
-
-                } else {
-                    return MySwal.fire('', pageLocation === 'active-units' ? 'Unit is safe!' : "Unit remains Archived", 'error');
+                        })
                 }
-
-            })
-
+            });
         }
-
-
-
     }
-
-
 
     return (
         <>
@@ -286,6 +280,7 @@ function Table({ columns, data, modalOpen }) {
                     ))}
                 </thead>
                 <tbody {...getTableBodyProps()}>
+                    {console.log("page : ", page)}
                     {page.map((row, i) => {
                         prepareRow(row);
                         return (
@@ -353,8 +348,6 @@ const UnitList = (props) => {
     const [isOpenAddUnit, setOpenAddUnit] = useState(false);
     const [unitId, setUnitId] = useState()
 
-
-
     const columns = React.useMemo(
         () => [
             {
@@ -388,13 +381,6 @@ const UnitList = (props) => {
         []
     );
 
-
-
-
-
-
-    // console.log('data: ', data)
-
     const handleAddUnit = (e) => {
 
         console.log("No subjects, add subjects")
@@ -411,8 +397,6 @@ const UnitList = (props) => {
         });
     }
     let history = useHistory();
-
-
 
     const deleteUnit = (unit_id, unit_title) => {
         var data = {
@@ -466,10 +450,6 @@ const UnitList = (props) => {
             }
         });
     };
-
-
-
-
 
     function restoreChapter(unit_id, unit_title) {
         console.log("unit_id", unit_id);
@@ -699,4 +679,5 @@ const UnitList = (props) => {
 
     );
 };
+
 export default UnitList;

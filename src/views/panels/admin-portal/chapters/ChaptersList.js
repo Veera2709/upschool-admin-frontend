@@ -80,7 +80,7 @@ function Table({ columns, data, modalOpen }) {
                 },
                 ...columns
             ]);
-        }
+        } 
     );
 
 
@@ -100,8 +100,6 @@ function Table({ columns, data, modalOpen }) {
             );
         }
     );
-
-
 
     const multiDelete = async (status) => {
 
