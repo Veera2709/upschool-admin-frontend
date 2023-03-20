@@ -32,6 +32,23 @@ function Table({ columns, data, modalOpen }) {
     let history = useHistory();
 
 
+    const IndeterminateCheckbox = React.forwardRef(
+        ({ indeterminate, ...rest }, ref) => {
+            const defaultRef = React.useRef();
+            const resolvedRef = ref || defaultRef;
+
+            React.useEffect(() => {
+                resolvedRef.current.indeterminate = indeterminate;
+            }, [resolvedRef, indeterminate]);
+
+            return (
+                <>
+                    <input type="checkbox" ref={resolvedRef} {...rest} />
+                </>
+            );
+        }
+    );
+
 
     const {
         getTableProps,
@@ -84,22 +101,7 @@ function Table({ columns, data, modalOpen }) {
     );
 
 
-    const IndeterminateCheckbox = React.forwardRef(
-        ({ indeterminate, ...rest }, ref) => {
-            const defaultRef = React.useRef();
-            const resolvedRef = ref || defaultRef;
-
-            React.useEffect(() => {
-                resolvedRef.current.indeterminate = indeterminate;
-            }, [resolvedRef, indeterminate]);
-
-            return (
-                <>
-                    <input type="checkbox" ref={resolvedRef} {...rest} />
-                </>
-            );
-        }
-    );
+    
 
     const multiDelete = async (status) => {
 

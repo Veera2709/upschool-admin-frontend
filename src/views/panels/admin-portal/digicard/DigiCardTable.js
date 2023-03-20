@@ -15,25 +15,18 @@ const DigicardList = () => {
         const validateJWT = sessionStorage.getItem('user_jwt');
 
         if (validateJWT === "" || validateJWT === null || validateJWT === undefined || validateJWT === "undefined") {
-
             sessionStorage.clear();
             localStorage.clear();
-
             history.push('/auth/signin-1');
             window.location.reload();
-
         }
         else {
-
             let digicardStatus = pageLocation === "active-digiCard" ? 'Active' : 'Archived';            ;
             sessionStorage.setItem('digicard_Status', digicardStatus);
             setState(true);
         }
     }, [])
-
-
     const [_digicardStatus, _setDigicardStatus] = useState('Save');
-
     const handleQuestionStatusTab = (key) => {
 
         if (key === '1') {
@@ -48,6 +41,7 @@ const DigicardList = () => {
             _setDigicardStatus('Accept');
         }
         else if (key === '4') {
+
             _setDigicardStatus('Reject');
         }
         else if (key === '5') {
@@ -59,12 +53,13 @@ const DigicardList = () => {
             _setDigicardStatus('DesignReady');
         }
         else if (key === '7') {
+
             _setDigicardStatus('Publish');
         } else {
+            
             console.log("Invalid Tab Option!");
         }
     }
-
     return (
         <>
             {state && (
@@ -115,16 +110,13 @@ const DigicardList = () => {
                             </Tabs>
                         )
                     }
-
                     {
                         pageLocation === 'archived-questions' && (
-
                             <Tabs
                                 defaultActiveKey={1}
                                 onSelect={handleQuestionStatusTab}
                                 className="mb-3"
                             >
-
                                 <Tab eventKey={1} title="Saved" >
                                     {sessionStorage.setItem('digicard_status', _digicardStatus)}
                                     <DigiCard _digicardStatus={_digicardStatus} />
@@ -136,8 +128,6 @@ const DigicardList = () => {
                             </Tabs>
                         )
                     }
-
-
                 </>
             )}
         </>

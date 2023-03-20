@@ -35,6 +35,7 @@ export default {
     },
 
     setSubmenu: function (core) {
+        console.log("sunmenu");
         const lang = core.lang;
         const listDiv = core.util.createElement('DIV');
 
@@ -61,6 +62,7 @@ export default {
      * @Override core
      */
     active: function (element) {
+        console.log("active");
         const target = this.context.font.targetText;
         const tooltip = this.context.font.targetTooltip;
 
@@ -82,6 +84,7 @@ export default {
      * @Override submenu
      */
     on: function () {
+        console.log("on");
         const fontContext = this.context.font;
         const fontList = fontContext._fontList;
         const currentFont = fontContext.targetText.textContent;
@@ -100,6 +103,7 @@ export default {
     },
 
     pickup: function (e) {
+        console.log("pickup");
         if (!/^BUTTON$/i.test(e.target.tagName)) return false;
 
         e.preventDefault();

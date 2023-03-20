@@ -562,6 +562,8 @@ export const toggleMultipleTopicStatus = (payLoad) => {
     });
 }
 
+
+
 export const toggleMultiChapterStatus = (payLoad) => {
     console.log("payLoad : ", payLoad);
     return new Promise((resolve, reject) => {
@@ -579,12 +581,14 @@ export const toggleMultiChapterStatus = (payLoad) => {
     });
 }
 
-export const toggleMultiSubjectStatus = (payLoad) => {
+export const toggleMultipleGroupStatus = (payLoad) => {
     console.log("payLoad : ", payLoad);
     return new Promise((resolve, reject) => {
-        axios.post(url.bulkToggleSubjectStatus,
-            { data: payLoad },
-            { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
+        axios.post(url.bulkToggleGroupsStatus, {
+            data: payLoad
+        }, {
+            headers: { Authorization: sessionStorage.getItem('user_jwt') }
+        })
             .then((response) => {
                 console.log(response);
                 resolve(response.data);

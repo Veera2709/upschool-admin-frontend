@@ -457,7 +457,7 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
         console.log(event);
 
         let valuesArr = [];
-        if(event){
+        if (event) {
             for (let i = 0; i < event.length; i++) {
                 valuesArr.push(event[i].value)
             }
@@ -472,11 +472,11 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
         console.log(event);
 
         let valuesArr = [];
-        if(event){
+        if (event) {
             for (let i = 0; i < event.length; i++) {
                 valuesArr.push(event[i].value)
             }
-    
+
         }
         console.log(valuesArr);
         setSelectedBasicGroups(valuesArr);
@@ -488,12 +488,12 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
         console.log(event);
 
         let valuesArr = [];
-        if(event){
+        if (event) {
             for (let i = 0; i < event.length; i++) {
                 valuesArr.push(event[i].value)
             }
         }
-      
+
 
         console.log(valuesArr);
         setSelectedIntermediateGroups(valuesArr);
@@ -505,12 +505,12 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
         console.log(event);
 
         let valuesArr = [];
-        if(event){
+        if (event) {
             for (let i = 0; i < event.length; i++) {
                 valuesArr.push(event[i].value)
             }
         }
-        
+
 
         console.log(valuesArr);
         setSelectedAdvancedGroups(valuesArr);
@@ -521,7 +521,7 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
         console.log(event);
 
         let valuesArr = [];
-        if(event){
+        if (event) {
             for (let i = 0; i < event.length; i++) {
                 valuesArr.push(event[i].value)
             }
