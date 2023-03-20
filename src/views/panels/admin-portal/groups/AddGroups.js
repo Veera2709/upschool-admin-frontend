@@ -476,29 +476,29 @@ const AddGroups = ({ className, ...rest }) => {
                                                     </Col>
 
                                                 </Row>
-                                                
-                                                <br/>
+
+                                                <br />
                                                 <Row>
                                                     <Col>
-                                                    
-                                                     <label className="floating-label">
-                                                        <small className="text-danger"></small>
-                                                        Group Description
-                                                    </label>
-                                                    <textarea
-                                                        value={values.group_description}
-                                                        className="form-control"
-                                                        error={touched.group_description && errors.group_description}
-                                                        label="group_description"
-                                                        name="group_description"
-                                                        onBlur={handleBlur}
-                                                        type="textarea"
-                                                        onChange={handleChange}
-                                                        placeholder="Description"
-                                                    />
+
+                                                        <label className="floating-label">
+                                                            <small className="text-danger"></small>
+                                                            Group Description
+                                                        </label>
+                                                        <textarea
+                                                            value={values.group_description}
+                                                            className="form-control"
+                                                            error={touched.group_description && errors.group_description}
+                                                            label="group_description"
+                                                            name="group_description"
+                                                            onBlur={handleBlur}
+                                                            type="textarea"
+                                                            onChange={handleChange}
+                                                            placeholder="Description"
+                                                        />
                                                     </Col>
                                                 </Row>
-                                               
+
                                                 <br />
                                                 <Row>
 
@@ -506,10 +506,16 @@ const AddGroups = ({ className, ...rest }) => {
                                                         {
                                                             questionsDropdown && (
                                                                 <>
-                                                                    <label className="floating-label">
-                                                                        Questions
-                                                                        <small>&nbsp;{`(${selectedQuestions.length})`}</small>
-                                                                    </label>
+                                                                    <Row>
+                                                                        <Col>
+                                                                            <label className="floating-label">
+                                                                                Questions
+                                                                            </label>
+                                                                        </Col>
+                                                                        <Col className='d-flex justify-content-end' style={{ marginRight: '10px' }}>
+                                                                            <label className="text-danger" >&nbsp;{`${selectedQuestions.length}`}</label>
+                                                                        </Col>
+                                                                    </Row>
 
                                                                     <Select
                                                                         isMulti

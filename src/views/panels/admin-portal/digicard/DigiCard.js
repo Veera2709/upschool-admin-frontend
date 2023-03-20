@@ -25,6 +25,22 @@ function Table({ columns, data, modalOpen }) {
     const MySwal = withReactContent(Swal);
     let digicardStatus = pageLocation === "active-digiCard" ? 'Active' : 'Archived';
 
+    const IndeterminateCheckbox = React.forwardRef(
+        ({ indeterminate, ...rest }, ref) => {
+            const defaultRef = React.useRef();
+            const resolvedRef = ref || defaultRef;
+
+            React.useEffect(() => {
+                resolvedRef.current.indeterminate = indeterminate;
+            }, [resolvedRef, indeterminate]);
+
+            return (
+                <>
+                    <input type="checkbox" ref={resolvedRef} {...rest} />
+                </>
+            );
+        }
+    );
 
     const {
         getTableProps,
@@ -55,7 +71,25 @@ function Table({ columns, data, modalOpen }) {
         useGlobalFilter,
         useSortBy,
         usePagination,
-        useRowSelect
+        useRowSelect,
+        (hooks) => {
+            hooks.visibleColumns.push((columns) => [
+                {
+                    id: "selection",
+                    Header: ({ getToggleAllPageRowsSelectedProps }) => (
+                        <div>
+                            <IndeterminateCheckbox {...getToggleAllPageRowsSelectedProps()} />
+                        </div>
+                    ),
+                    Cell: ({ row }) => (
+                        <div>
+                            <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
+                        </div>
+                    )
+                },
+                ...columns
+            ]);
+        }
     );
 
 
@@ -67,7 +101,7 @@ function Table({ columns, data, modalOpen }) {
     }
 
     const getIDFromData = async (DigicardStatus) => {
-        console.log("page data",page);
+        console.log("page data", page);
         var DigicardIds = [];
         selectedFlatRows.map((item) => {
             console.log("item.original.digi_card_id", item.original.digi_card_id);
@@ -79,7 +113,7 @@ function Table({ columns, data, modalOpen }) {
 
             MySwal.fire({
                 title: 'Are you sure?',
-                text: `Confirm ${pageLocation === 'active-digicards' ? "deleting" : "restoring"} the selected Digicard(s)!`,
+                text: `Confirm ${pageLocation === 'active-digicards' ? "deleting" : "restoring"} the selected Digicards!`,
                 type: 'warning',
                 showCloseButton: true,
                 showCancelButton: true
@@ -248,21 +282,6 @@ const DigiCard = () => {
 
     const columns = React.useMemo(
         () => [
-            {
-                id: "selection",
-
-                Header: ({ getToggleAllRowsSelectedProps }) => (
-                    <div>
-                        <input type="checkbox" {...getToggleAllRowsSelectedProps()} />
-                    </div>
-                ),
-
-                Cell: ({ row }) => (
-                    <div>
-                        <input type="checkbox" {...row.getToggleRowSelectedProps()} />
-                    </div>
-                )
-            },
             {
                 Header: 'DigiCard Logo',
                 accessor: 'digicard_image'
