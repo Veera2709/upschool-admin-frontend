@@ -3,7 +3,6 @@
 // const baseUrl = 'https://dssqy2gip2.execute-api.ap-south-1.amazonaws.com/testing/v1'; // testing env URL
 const baseUrl = process.env.REACT_APP_LAMBDA_URL;
 
-
 const dynamicUrl = {
 
     // Login
@@ -96,6 +95,7 @@ const dynamicUrl = {
     addSubject: baseUrl + '/addSubject',
     fetchIndividualSubject: baseUrl + '/fetchIndividualSubject',
     updateSubject: baseUrl + '/updateSubject',
+    bulkToggleSubjectStatus: baseUrl + '/bulkToggleSubjectStatus',
 
     // Classes
     addClass: baseUrl + '/addClass',
@@ -104,6 +104,7 @@ const dynamicUrl = {
     fetchIndividualClass: baseUrl + '/fetchIndividualClass',
     toggleClassStatus: baseUrl + '/toggleClassStatus',
     editClass: baseUrl + '/editClass',
+    bulkToggleClassStatus: baseUrl + '/bulkToggleClassStatus',
 
     // Questions
     fetchIndividualQuestionData: baseUrl + '/fetchIndividualQuestionData',
@@ -111,6 +112,7 @@ const dynamicUrl = {
     editQuestion: baseUrl + '/editQuestion',
     fetchAllQuestionsData: baseUrl + '/fetchAllQuestionsData',
     addQuestions: baseUrl + '/addQuestions',
+    bulkToggleQuestionStatus: baseUrl + '/bulkToggleQuestionStatus',
 
     // Sections
     addSection: baseUrl + '/addSection',

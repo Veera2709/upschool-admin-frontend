@@ -76,28 +76,44 @@ function Table({ columns, data, modalOpen }) {
 
         console.log("DigicardIds", DigicardIds.length);
         if (DigicardIds.length > 0) {
-            var payload = {
-                "digicard_status": DigicardStatus,
-                "digi_card_array": DigicardIds
-            }
 
-            const ResultData = await toggleMultiDigicardStatus(payload)
-            if (ResultData.Error) { 
-                if (ResultData.Error.response.data == 'Invalid Token') {
-                    sessionStorage.clear();
-                    localStorage.clear();
-                    history.push('/auth/signin-1');
-                    window.location.reload();
-                } else {
-                    return MySwal.fire('Error', ResultData.Error.response.data, 'error').then(() => {
-                        window.location.reload();
-                    });
+            MySwal.fire({
+                title: 'Are you sure?',
+                text: `Confirm ${pageLocation === 'active-digicards' ? "deleting" : "restoring"} the selected Digicard(s)!`,
+                type: 'warning',
+                showCloseButton: true,
+                showCancelButton: true
+            }).then(async (willDelete) => {
+
+                if (willDelete.value) {
+
+                    var payload = {
+                        "digicard_status": DigicardStatus,
+                        "digi_card_array": DigicardIds
+                    }
+
+                    const ResultData = await toggleMultiDigicardStatus(payload)
+                    if (ResultData.Error) {
+                        if (ResultData.Error.response.data == 'Invalid Token') {
+                            sessionStorage.clear();
+                            localStorage.clear();
+                            history.push('/auth/signin-1');
+                            window.location.reload();
+                        } else {
+                            return MySwal.fire('Error', ResultData.Error.response.data, 'error').then(() => {
+                                window.location.reload();
+                            });
+                        }
+                    } else {
+                        return MySwal.fire('', `Digicards ${DigicardStatus === 'Active' ? 'Restored' : "Deleted"} Successfully`, 'success').then(() => {
+                            window.location.reload();
+                        });
+                    }
+
                 }
-            } else {
-                return MySwal.fire('', `Digicards ${DigicardStatus === 'Active' ? 'Restored' : "Deleted"} Successfully`, 'success').then(() => {
-                    window.location.reload();
-                });
-            }
+            })
+
+
         } else {
             return MySwal.fire('Sorry', 'No Digicard Selected!', 'warning').then(() => {
                 window.location.reload();
@@ -127,22 +143,27 @@ function Table({ columns, data, modalOpen }) {
                 </Col>
                 <Col className="mb-3" style={{ display: 'contents' }}>
                     <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
-                    <Button className='btn-sm btn-round has-ripple ml-2 btn btn-success'
-                        onClick={() => { adddigicard(); }}
-                    > <i className="feather icon-plus" />&nbsp;
-                        Add DigiCard
-                    </Button>
+
                     {digicardStatus === "Active" ? (
-                        <Button className='btn-sm btn-round has-ripple ml-2 btn btn-danger'
-                            onClick={() => { getIDFromData("Archived") }}
-                            style={{marginRight:'15px'}}
-                        > <i className="feather icon-trash-2" />&nbsp;
-                            Multi Delete
-                        </Button>
+                        <>
+                            <Button className='btn-sm btn-round has-ripple ml-2 btn btn-success'
+                                onClick={() => { adddigicard(); }}
+                            > <i className="feather icon-plus" />&nbsp;
+                                Add DigiCard
+                            </Button>
+
+                            <Button className='btn-sm btn-round has-ripple ml-2 btn btn-danger'
+                                onClick={() => { getIDFromData("Archived") }}
+                                style={{ marginRight: '15px' }}
+                            > <i className="feather icon-trash-2" />&nbsp;
+                                Multi Delete
+                            </Button>
+                        </>
+
                     ) : (
                         <Button className='btn-sm btn-round has-ripple ml-2 btn btn-primary'
                             onClick={() => { getIDFromData("Active") }}
-                            style={{marginRight:'15px'}}
+                            style={{ marginRight: '15px' }}
                         > <i className="feather icon-plus" />&nbsp;
                             Multi Restore
                         </Button>

@@ -1,33 +1,17 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { Row, Col, Card, Pagination, Button, Modal } from "react-bootstrap";
 import BTable from "react-bootstrap/Table";
 import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
+import { useTable, useSortBy, usePagination, useGlobalFilter, useRowSelect } from "react-table";
+
 import { GlobalFilter } from '../units/GlobalFilter';
 import BasicSpinner from '../../../../helper/BasicSpinner';
-
-
-import {
-  useTable,
-  useSortBy,
-  usePagination,
-  useGlobalFilter,
-} from "react-table";
-
-import dynamicUrl from "../../../../helper/dynamicUrls";
-
-import { isEmptyArray } from "../../../../util/utils";
-
-import { Link, useHistory } from "react-router-dom";
-import { SessionStorage } from "../../../../util/SessionStorage";
-import MESSAGES from "../../../../helper/messages";
+import { toggleMultiClassStatus } from '../../../api/CommonApi';
+import { useHistory } from "react-router-dom";
 import useFullPageLoader from "../../../../helper/useFullPageLoader";
 import { useLocation } from "react-router-dom";
-import {
-  fetchClassesBasedonStatus,
-  toggleClassStatus,
-} from "../../../api/CommonApi";
+import { fetchClassesBasedonStatus, toggleClassStatus, } from "../../../api/CommonApi";
 import AddClass from "./AddClass";
 import EditClass from "./EditClass";
 
@@ -50,6 +34,7 @@ function Table({ columns, data, modalOpen }) {
     nextPage,
     previousPage,
     setPageSize,
+    selectedFlatRows,
     state: { pageIndex, pageSize },
   } = useTable(
     {
@@ -59,14 +44,103 @@ function Table({ columns, data, modalOpen }) {
     },
     useGlobalFilter,
     useSortBy,
-    usePagination
+    usePagination,
+    useRowSelect,
+    (hooks) => {
+      hooks.visibleColumns.push((columns) => [
+        {
+          id: "selection",
+          Header: ({ getToggleAllPageRowsSelectedProps }) => (
+            <div>
+              <IndeterminateCheckbox {...getToggleAllPageRowsSelectedProps()} />
+            </div>
+          ),
+          Cell: ({ row }) => (
+            <div>
+              <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
+            </div>
+          )
+        },
+        ...columns
+      ]);
+    }
+  );
+
+  const IndeterminateCheckbox = React.forwardRef(
+    ({ indeterminate, ...rest }, ref) => {
+      const defaultRef = React.useRef();
+      const resolvedRef = ref || defaultRef;
+
+      React.useEffect(() => {
+        resolvedRef.current.indeterminate = indeterminate;
+      }, [resolvedRef, indeterminate]);
+
+      return (
+        <>
+          <input type="checkbox" ref={resolvedRef} {...rest} />
+        </>
+      );
+    }
   );
 
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenAddClass, setOpenAddClass] = useState(false);
   let history = useHistory();
+  const MySwal = withReactContent(Swal);
+  const [pageLocation, setPageLocation] = useState(useLocation().pathname.split("/")[3]);
+
+  const multiDelete = async (status) => {
 
 
+    console.log("selectedFlatRows", selectedFlatRows);
+    const classIDs = [];
+    selectedFlatRows.map((item) => {
+      classIDs.push(item.original.class_id)
+    })
+    if (classIDs.length > 0) {
+
+      MySwal.fire({
+        title: 'Are you sure?',
+        text: `Confirm ${pageLocation === 'active-classes' ? "deleting" : "restoring"} the selected Class(es)!`,
+        type: 'warning',
+        showCloseButton: true,
+        showCancelButton: true
+      }).then(async (willDelete) => {
+
+        if (willDelete.value) {
+
+          var payload = {
+            "class_status": status,
+            "class_array": classIDs
+          }
+
+          const ResultData = await toggleMultiClassStatus(payload)
+          if (ResultData.Error) {
+            if (ResultData.Error.response.data == 'Invalid Token') {
+              sessionStorage.clear();
+              localStorage.clear();
+              history.push('/auth/signin-1');
+              window.location.reload();
+            } else {
+              return MySwal.fire('Sorry', ResultData.Error.response.data, 'warning').then(() => {
+                window.location.reload();
+              });
+            }
+          } else {
+            return MySwal.fire('Success', `All the chosen Classes have been ${status === 'Active' ? 'restored' : "deleted"} successfully!`, 'success').then(() => {
+              window.location.reload();
+            });
+          }
+
+        }
+      })
+
+    } else {
+      return MySwal.fire('Sorry', 'No Classes are selected!', 'warning').then(() => {
+        // window.location.reload();
+      });
+    }
+  }
 
   return (
     <>
@@ -91,15 +165,37 @@ function Table({ columns, data, modalOpen }) {
 
         <Col className="d-flex justify-content-end">
           <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
-          <Button
-            variant="success"
-            className="btn-sm btn-round has-ripple ml-2"
-            onClick={() => {
-              setOpenAddClass(true);
-            }}
-          >
-            <i className="feather icon-plus" /> Add Class
-          </Button>
+
+          {pageLocation === 'active-classes' ? (
+            <>
+              <Button
+                variant="success"
+                className="btn-sm btn-round has-ripple ml-2"
+                onClick={() => {
+                  setOpenAddClass(true);
+                }}
+              >
+                <i className="feather icon-plus" /> Add Class
+              </Button>
+
+              <Button
+                variant="success"
+                className='btn-sm btn-round has-ripple ml-2 btn btn-danger'
+                onClick={() => {
+                  multiDelete("Archived")
+                }}>
+                <i className="feather icon-trash-2"
+                />  Multi Delete
+              </Button>
+            </>
+          ) : (
+            <Button
+              className='btn-sm btn-round has-ripple ml-2 btn btn-primary'
+              onClick={() => { multiDelete("Active") }}>
+              <i className="feather icon-plus"
+              />   Multi Restore
+            </Button>
+          )}
         </Col>
       </Row>
 
@@ -312,7 +408,7 @@ const StandardList = (props) => {
       console.log("dataResponse", dataResponse);
       let finalDataArray = [];
       if (ClassStatus === "Active") {
-       
+
 
         for (let index = 0; index < dataResponse.length; index++) {
           dataResponse[index].index_no = index + 1;
@@ -358,7 +454,7 @@ const StandardList = (props) => {
           console.log("finalDataArray: ", finalDataArray);
         }
       } else {
-        
+
         for (let index = 0; index < dataResponse.length; index++) {
           dataResponse[index].index_no = index + 1;
           dataResponse[index]["actions"] = (
