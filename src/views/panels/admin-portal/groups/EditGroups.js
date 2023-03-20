@@ -140,7 +140,6 @@ const EditGroups = ({ className, ...rest }) => {
 
                             questionsArr.push(getQuestionsArr[0]);
                             console.log(questionsArr);
-
                         }
                     }
 
@@ -182,7 +181,6 @@ const EditGroups = ({ className, ...rest }) => {
 
                                 console.log(digicardsArr);
                                 setDigicardsDropdown(digicardsArr);
-
 
                                 axios
                                     .post(
@@ -416,7 +414,8 @@ const EditGroups = ({ className, ...rest }) => {
                                             <Formik
 
                                                 initialValues={{
-                                                    group_name: previousGroupData === {} ? '' : previousGroupData.group_name
+                                                    group_name: previousGroupData === {} ? '' : previousGroupData.group_name,
+                                                    group_description: previousGroupData === {} ? '' : previousGroupData.group_description
                                                 }}
 
                                                 validationSchema={
@@ -453,7 +452,8 @@ const EditGroups = ({ className, ...rest }) => {
                                                             group_type: selectedGroupType,
                                                             group_question_id: selectedQuestions,
                                                             group_levels: selectedLevels,
-                                                            group_related_digicard: selectedDigicards
+                                                            group_related_digicard: selectedDigicards,
+                                                            group_description: values.group_description
                                                         }
 
                                                         console.log("payLoad", payLoad);
@@ -598,6 +598,28 @@ const EditGroups = ({ className, ...rest }) => {
                                                         </Row>
 
                                                         <br />
+                                                        <Row>
+                                                    <Col>
+                                                    
+                                                     <label className="floating-label">
+                                                        <small className="text-danger"></small>
+                                                        Group Description
+                                                    </label>
+                                                    <textarea
+                                                        value={values.group_description}
+                                                        className="form-control"
+                                                        error={touched.group_description && errors.group_description}
+                                                        label="group_description"
+                                                        name="group_description"
+                                                        onBlur={handleBlur}
+                                                        type="textarea"
+                                                        onChange={handleChange}
+                                                        placeholder="Description"
+                                                    />
+                                                    </Col>
+                                                </Row>
+                                               
+                                                <br />
                                                         <Row>
 
                                                             <Col>
