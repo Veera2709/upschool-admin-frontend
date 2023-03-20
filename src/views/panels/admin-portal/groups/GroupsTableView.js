@@ -272,6 +272,10 @@ const GroupsTableView = ({ _groupType }) => {
             accessor: 'group_Questions'
         },
         {
+            Header: 'Description',
+            accessor: 'group_description'
+        },
+        {
             Header: 'Options',
             accessor: 'action'
         }
@@ -319,7 +323,6 @@ const GroupsTableView = ({ _groupType }) => {
             }
         });
     };
-
 
     const saveGroupIdDelete = (e, group_id, updateStatus) => {
         e.preventDefault();
@@ -392,7 +395,6 @@ const GroupsTableView = ({ _groupType }) => {
                         fetchGroupsData();
                     }
 
-
                 } else if (error.request) {
                     // The request was made but no response was received
                     hideLoader();
@@ -448,10 +450,20 @@ const GroupsTableView = ({ _groupType }) => {
                     }
                 </>
             );
+            
+            responseData[index].group_description = responseData[index].group_description === undefined ? "" : (responseData[index].group_description.length > 23 ? (responseData[index].group_description.substring(0,20) + "...") : responseData[index].group_description);
+            console.log("responseData[index].group_description.length : ", responseData[index].group_description);
 
+            responseData[index]['group_description'] = (
+                <>
+                 <span
+                    style={{ backgroundColor: "cadetblue" }}
+                    className="badge badge-warning inline-block mr-1"
+                >{responseData[index].group_description}</span>
+                </>
+            );
             responseData[index]['action'] = (
                 <>
-
                     {pageLocation === 'active-groups' ? (
 
                         <>
@@ -491,7 +503,9 @@ const GroupsTableView = ({ _groupType }) => {
 
                 </>
             );
-            finalDataArray.push(responseData[index]);
+            // Work on ...
+
+            finalDataArray.push(responseData[index]); 
         }
 
         setGroupData(finalDataArray);
