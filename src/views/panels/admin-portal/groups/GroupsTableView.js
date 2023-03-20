@@ -268,6 +268,10 @@ const GroupsTableView = ({ _groupType }) => {
             accessor: 'group_levels'
         },
         {
+            Header: 'No.Questions',
+            accessor: 'group_Questions'
+        },
+        {
             Header: 'Options',
             accessor: 'action'
         }
@@ -419,8 +423,11 @@ const GroupsTableView = ({ _groupType }) => {
         let levelNames;
 
         for (let index = 0; index < responseData.length; index++) {
-
             responseData[index].id = index + 1;
+            responseData[index]['group_Questions'] = <span
+                style={{ backgroundColor: "cadetblue" }}
+                className="badge badge-warning inline-block mr-1"
+            >{responseData[index].questions_count}</span>;
 
             levelNames = responseData[index]['group_levels'];
 

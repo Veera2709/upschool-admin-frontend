@@ -71,7 +71,7 @@ const EditGroups = ({ className, ...rest }) => {
             }
         }
         console.log(valuesArr);
-        setSelectedQuestions(valuesArr);
+        setPreviousQuestions(valuesArr);
     }
 
     const handleDigicardsChange = (event) => {
@@ -451,7 +451,7 @@ const EditGroups = ({ className, ...rest }) => {
                                                             group_id: group_id.group_id,
                                                             group_name: values.group_name,
                                                             group_type: selectedGroupType,
-                                                            group_question_id: selectedQuestions,
+                                                            group_question_id: previousQuestions,
                                                             group_levels: selectedLevels,
                                                             group_related_digicard: selectedDigicards
                                                         }
@@ -605,8 +605,8 @@ const EditGroups = ({ className, ...rest }) => {
                                                                     questionsDropdown && (
                                                                         <>
                                                                             <label className="floating-label">
-                                                                                <small className="text-danger"></small>
                                                                                 Questions
+                                                                                <small>&nbsp;{`(${previousQuestions.length})`}</small>
                                                                             </label>
 
                                                                             <Select

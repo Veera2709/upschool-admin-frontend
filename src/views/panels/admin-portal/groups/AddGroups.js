@@ -487,8 +487,8 @@ const AddGroups = ({ className, ...rest }) => {
                                                             questionsDropdown && (
                                                                 <>
                                                                     <label className="floating-label">
-                                                                        <small className="text-danger"></small>
                                                                         Questions
+                                                                        <small>&nbsp;{`(${selectedQuestions.length})`}</small>
                                                                     </label>
 
                                                                     <Select
