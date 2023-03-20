@@ -119,7 +119,7 @@ function Table({ columns, data, modalOpen }) {
                 });
             }
         } else {
-            return MySwal.fire('Sorry', 'No Chapters Selected!', 'warning').then(() => {
+            return MySwal.fire('Sorry', 'No Groups Selected!', 'warning').then(() => {
                 // window.location.reload();
             });
         }
