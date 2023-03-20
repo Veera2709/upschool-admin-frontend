@@ -581,7 +581,6 @@ export const toggleMultiChapterStatus = (payLoad) => {
     });
 }
 
-<<<<<<< HEAD
 export const toggleMultipleGroupStatus = (payLoad) => {
     console.log("payLoad : ", payLoad);
     return new Promise((resolve, reject) => {
@@ -590,14 +589,6 @@ export const toggleMultipleGroupStatus = (payLoad) => {
         }, {
             headers: { Authorization: sessionStorage.getItem('user_jwt') }
         })
-=======
-export const toggleMultiSubjectStatus = (payLoad) => {
-    console.log("payLoad : ", payLoad);
-    return new Promise((resolve, reject) => {
-        axios.post(url.bulkToggleSubjectStatus,
-            { data: payLoad },
-            { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
->>>>>>> origin/dev
             .then((response) => {
                 console.log(response);
                 resolve(response.data);
@@ -608,8 +599,6 @@ export const toggleMultiSubjectStatus = (payLoad) => {
             })
     });
 }
-<<<<<<< HEAD
-=======
 
 export const bulkToggleQuestionStatus = (payLoad) => {
     console.log("payLoad : ", payLoad);
@@ -665,4 +654,3 @@ export const fetchUnitAndSubject = () => {
             })
     });
 }
->>>>>>> origin/dev

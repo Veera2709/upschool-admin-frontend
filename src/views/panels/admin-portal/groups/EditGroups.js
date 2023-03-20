@@ -606,7 +606,7 @@ const EditGroups = ({ className, ...rest }) => {
                                                                         <>
                                                                             <label className="floating-label">
                                                                                 Questions
-                                                                                <small>&nbsp;{`(${previousQuestions.length})`}</small>
+                                                                                <small >&nbsp;{`(${previousQuestions.length})`}</small>
                                                                             </label>
 
                                                                             <Select
