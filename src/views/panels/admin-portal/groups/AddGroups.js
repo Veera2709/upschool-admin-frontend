@@ -58,7 +58,7 @@ const AddGroups = ({ className, ...rest }) => {
         console.log(event);
 
         let valuesArr = [];
-        if(event){
+        if (event) {
             for (let i = 0; i < event.length; i++) {
                 valuesArr.push(event[i].value)
             }
@@ -72,11 +72,11 @@ const AddGroups = ({ className, ...rest }) => {
         console.log(event);
 
         let valuesArr = [];
-        if(event){
+        if (event) {
             for (let i = 0; i < event.length; i++) {
                 valuesArr.push(event[i].value)
             }
-    
+
         }
         console.log(valuesArr);
         setSelectedDigicards(valuesArr);
@@ -88,7 +88,7 @@ const AddGroups = ({ className, ...rest }) => {
         console.log(event);
 
         let valuesArr = [];
-        if(event){
+        if (event) {
             for (let i = 0; i < event.length; i++) {
                 valuesArr.push(event[i].value)
             }
@@ -507,8 +507,8 @@ const AddGroups = ({ className, ...rest }) => {
                                                             questionsDropdown && (
                                                                 <>
                                                                     <label className="floating-label">
-                                                                        <small className="text-danger"></small>
                                                                         Questions
+                                                                        <small>&nbsp;{`(${selectedQuestions.length})`}</small>
                                                                     </label>
 
                                                                     <Select
