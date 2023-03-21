@@ -141,6 +141,20 @@ export const AddSubjects = {
   SubjectTitleTooLong: "Subject Title is too long!"
 };
 
+export const AddQuestionCategory = {
+  QuestionCategoryRequired: 'Question Category required!',
+  QuestionCategoryTooShort: 'Question Category is too short!',
+  QuestionCategoryTooLong: "Question Category is too long!"
+};
+
+export const AddQuestionDisclaimer = {
+  QuestionDisclaimerRequired: 'Question Disclaimer required!',
+  QuestionDisclaimerTooShort: 'Question Disclaimer is too short!',
+  QuestionDisclaimerLabelTooLong: "Question Disclaimer Title is too long!",
+  QuestionDisclaimerLabelRequired: 'Question Disclaimer Title required!',
+  QuestionDisclaimerLabelTooShort: 'Question Disclaimer Title is too short!',
+};
+
 export const AddSection = {
 
   SectionTitleRequired: 'Section name is required!',

@@ -453,7 +453,8 @@ const EditGroups = ({ className, ...rest }) => {
                                                             group_type: selectedGroupType,
                                                             group_question_id: selectedQuestions,
                                                             group_levels: selectedLevels,
-                                                            group_related_digicard: selectedDigicards
+                                                            group_related_digicard: selectedDigicards,
+                                                            group_description:''
                                                         }
 
                                                         console.log("payLoad", payLoad);

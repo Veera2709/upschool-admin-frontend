@@ -78,7 +78,7 @@ function Table({ columns, data, modalOpen }) {
 
             MySwal.fire({
                 title: 'Are you sure?',
-                text: `Confirm ${pageLocation === 'active-digicards' ? "deleting" : "restoring"} the selected Digicard(s)!`,
+                text: `The selected Digicard(s) will be ${pageLocation === 'active-digiCard' ? "deleted!" : "restored!"}`,
                 type: 'warning',
                 showCloseButton: true,
                 showCancelButton: true
