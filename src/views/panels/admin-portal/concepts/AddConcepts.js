@@ -148,7 +148,7 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
         console.log(event);
 
         let valuesArr = [];
-        if(event){
+        if (event) {
             for (let i = 0; i < event.length; i++) {
                 valuesArr.push(event[i].value)
             }
@@ -163,7 +163,7 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
         console.log(event);
 
         let valuesArr = [];
-        if(event){
+        if (event) {
             for (let i = 0; i < event.length; i++) {
                 valuesArr.push(event[i].value)
             }
@@ -178,7 +178,7 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
         console.log(event);
 
         let valuesArr = [];
-        if(event){
+        if (event) {
             for (let i = 0; i < event.length; i++) {
                 valuesArr.push(event[i].value)
             }
@@ -193,7 +193,7 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
         console.log(event);
 
         let valuesArr = [];
-        if(event){
+        if (event) {
             for (let i = 0; i < event.length; i++) {
                 valuesArr.push(event[i].value)
             }
@@ -207,7 +207,7 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
         console.log(event);
 
         let valuesArr = [];
-        if(event){
+        if (event) {
             for (let i = 0; i < event.length; i++) {
                 valuesArr.push(event[i].value)
             }

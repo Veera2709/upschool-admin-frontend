@@ -23,9 +23,6 @@ const AddUsers = ({ setOpenAddTopic }) => {
     const MySwal = withReactContent(Swal);
     const today = new Date().toISOString().split("T")[0];
 
-
-
-
     const sweetAlertHandler = (alert) => {
         const MySwal = withReactContent(Swal);
         MySwal.fire({
