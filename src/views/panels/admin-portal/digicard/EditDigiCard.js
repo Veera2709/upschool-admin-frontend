@@ -254,7 +254,6 @@ const EditDigiCard = () => {
     }
 
     const inserNewDigicard = () => {
-        showLoader()
         let DigiCardtitleRegex = Constants.AddDigiCard.DigiCardtitleRegex;
         let name = document.getElementById("newdigicardtitle").value;
         console.log("nameLength", name.length);
@@ -321,6 +320,7 @@ const EditDigiCard = () => {
                 related_digi_cards: multiOptions,
             };
             console.log("formData", formData);
+            showLoader()
             axios
                 .post(dynamicUrl.insertDigicard, { data: formData }, { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
                 .then(async (response) => {
@@ -890,10 +890,10 @@ const EditDigiCard = () => {
                                                     setNewDigicardErrReq(false)
                                                 }}
                                             />
-                                        </div><br/>
+                                        </div><br />
                                         {loader}
                                     </Col>
-                                    
+
                                 </Row>
                                 <Row>
                                     <Col sm={9}>
