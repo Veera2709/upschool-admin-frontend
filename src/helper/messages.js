@@ -20,6 +20,7 @@ const MESSAGES = {
     UpdatingUser: 'Error in updating User',
     UpdatingGroup: 'Error in updating Group',
     DeletingUser: 'Error in deleting User',
+    RestoringUser: 'Error in restoring User',
     DeletingGroup: 'Error in deleting Group',
     DeletingConcept: 'Error in deleting Concept',
     DeletingSubject: 'Error in deleting Subject',

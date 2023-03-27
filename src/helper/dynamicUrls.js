@@ -1,7 +1,7 @@
-// const baseUrl = 'https://w72a5si42a.execute-api.ap-south-1.amazonaws.com/dev/v1'; // Dev env URL
+const baseUrl = 'https://w72a5si42a.execute-api.ap-south-1.amazonaws.com/dev/v1'; // Dev env URL
 //const baseUrl = 'https://n4w2247vsi.execute-api.ap-south-1.amazonaws.com/dev/v1'; // Old Dev env URL
 // const baseUrl = 'https://dssqy2gip2.execute-api.ap-south-1.amazonaws.com/testing/v1'; // testing env URL
-const baseUrl = process.env.REACT_APP_LAMBDA_URL;
+// const baseUrl = process.env.REACT_APP_LAMBDA_URL;
 
 const dynamicUrl = {
 
@@ -59,6 +59,7 @@ const dynamicUrl = {
     mappingSubjectToTeacher: baseUrl + '/mappingSubjectToTeacher',
     fetchMappedSubjectForTeacher: baseUrl + '/fetchMappedSubjectForTeacher',
     bulkToggleUsersStatus: baseUrl + "/bulkToggleUsersStatus",
+    bulkToggleCMSUserStatus: baseUrl + "/bulkToggleCMSUserStatus",
 
     //units
     fetchUnitsBasedonStatus: baseUrl + '/fetchUnitsBasedonStatus',
@@ -109,6 +110,8 @@ const dynamicUrl = {
     editQuestion: baseUrl + '/editQuestion',
     fetchAllQuestionsData: baseUrl + '/fetchAllQuestionsData',
     addQuestions: baseUrl + '/addQuestions',
+    fetchAllQuestionCategories: baseUrl + '/fetchAllQuestionCategories',
+    fetchDisclaimersandCategories: baseUrl + '/fetchDisclaimersandCategories',
 
     // Sections
     addSection: baseUrl + '/addSection',
