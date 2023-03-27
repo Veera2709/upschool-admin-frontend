@@ -18,6 +18,7 @@ import * as Constants from '../../../../helper/constants';
 import MESSAGES from '../../../../helper/messages';
 import { setDate } from 'date-fns';
 import BasicSpinner from '../../../../helper/BasicSpinner';
+import CmsRoles from './cmsRoles';
 
 
 
@@ -496,7 +497,7 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                                                 </Col>
                                                                 <Col sm={6} >
 
-                                                                    <div className="form-group fill d-flex justify-content-between">
+                                                                    {/* <div className="form-group fill d-flex justify-content-between">
                                                                         <div>
                                                                             <Form.Control
                                                                                 className="form-control"
@@ -546,7 +547,8 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                                                                 defaultChecked={topic.roles.filter(e => e === 'publisher').length > 0 ? true : false}
                                                                             />
                                                                         </div>
-                                                                    </div>
+                                                                    </div> */}
+                                                                    <CmsRoles topic={topic} setIsSelected={setIsSelected} userRoles={userRoles} index={index} />
                                                                 </Col>
                                                                 <Col sm={2}>
                                                                     <Button className="btn btn-icon btn-rounded btn-danger"

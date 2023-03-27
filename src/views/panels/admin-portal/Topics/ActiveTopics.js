@@ -49,7 +49,42 @@ function Table({ columns, data, modalOpen }) {
         useGlobalFilter,
         useSortBy,
         usePagination,
-        useRowSelect
+        useRowSelect,
+        (hooks) => {
+            hooks.visibleColumns.push((columns) => [
+                {
+                    id: "selection",
+                    Header: ({ getToggleAllPageRowsSelectedProps }) => (
+                        <div>
+                            <IndeterminateCheckbox {...getToggleAllPageRowsSelectedProps()} />
+                        </div>
+                    ),
+                    Cell: ({ row }) => (
+                        <div>
+                            <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
+                        </div>
+                    )
+                },
+                ...columns
+            ]);
+        }
+    );
+
+    const IndeterminateCheckbox = React.forwardRef(
+        ({ indeterminate, ...rest }, ref) => {
+            const defaultRef = React.useRef();
+            const resolvedRef = ref || defaultRef;
+
+            React.useEffect(() => {
+                resolvedRef.current.indeterminate = indeterminate;
+            }, [resolvedRef, indeterminate]);
+
+            return (
+                <>
+                    <input type="checkbox" ref={resolvedRef} {...rest} />
+                </>
+            );
+        }
     );
 
     const [isOpenAddTopic, setOpenAddTopic] = useState(false);
@@ -68,33 +103,48 @@ function Table({ columns, data, modalOpen }) {
 
         console.log("topicIDs", topicIDs.length);
         if (topicIDs.length > 0) {
-            var payload = {
-                "topic_status": TopicStatus,
-                "topic_array": topicIDs
-            }
 
-            const ResultData = await toggleMultipleTopicStatus(payload)
-            if (ResultData.Error) {
-                if (ResultData.Error.response.data == 'Invalid Token') {
-                    sessionStorage.clear();
-                    localStorage.clear();
-                    history.push('/auth/signin-1');
-                    window.location.reload();
-                } else {
-                    return MySwal.fire('Sorry', ResultData.Error.response.data, 'warning')
-                        .then(() => {
+            MySwal.fire({
+                title: 'Are you sure?',
+                text: `Confirm ${pageLocation === 'active-topics' ? "deleting" : "restoring"} the selected Topic(s)!`,
+                type: 'warning',
+                showCloseButton: true,
+                showCancelButton: true
+            }).then(async (willDelete) => {
+
+                if (willDelete.value) {
+
+
+                    var payload = {
+                        "topic_status": TopicStatus,
+                        "topic_array": topicIDs
+                    }
+
+                    const ResultData = await toggleMultipleTopicStatus(payload)
+                    if (ResultData.Error) {
+                        if (ResultData.Error.response.data == 'Invalid Token') {
+                            sessionStorage.clear();
+                            localStorage.clear();
+                            history.push('/auth/signin-1');
                             window.location.reload();
-                        });
+                        } else {
+                            return MySwal.fire('Sorry', ResultData.Error.response.data, 'warning')
+                                .then(() => {
+                                    window.location.reload();
+                                });
+                        }
+                    } else {
+                        return MySwal.fire('Success', `The selected Topics have been ${TopicStatus === 'Active' ? 'restored' : "deleted"} Successfully`, 'success')
+                            .then(() => {
+                                window.location.reload();
+                            });
+                    }
                 }
-            } else {
-                return MySwal.fire('', `Topics have been ${TopicStatus === 'Active' ? 'Restored' : "Deleted"} Successfully`, 'success')
-                    .then(() => {
-                        window.location.reload();
-                    });
-            }
+            })
+
         } else {
             return MySwal.fire('Sorry', 'No Topics are selected!', 'warning').then(() => {
-                window.location.reload();
+                // window.location.reload();
             });
         }
     }
@@ -122,21 +172,25 @@ function Table({ columns, data, modalOpen }) {
 
                 <Col className="mb-3" style={{ display: 'contents' }}>
                     <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
-                    <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={() => { setOpenAddTopic(true) }}>
-                        <i className="feather icon-plus" /> Add Topic
-                    </Button>
 
                     {TopicStatus === "Active" ? (
-                        <Button className='btn-sm btn-round has-ripple ml-2 btn btn-danger'
-                            onClick={() => { getIDFromData("Archived") }}
-                            style={{marginRight:'15px'}}
-                        > <i className="feather icon-trash-2" />&nbsp;
-                            Multi Delete    
-                        </Button>
+                        <>
+                            <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={() => { setOpenAddTopic(true) }}>
+                                <i className="feather icon-plus" /> Add Topic
+                            </Button>
+
+                            <Button className='btn-sm btn-round has-ripple ml-2 btn btn-danger'
+                                onClick={() => { getIDFromData("Archived") }}
+                                style={{ marginRight: '15px' }}
+                            > <i className="feather icon-trash-2" />&nbsp;
+                                Multi Delete
+                            </Button>
+                        </>
+
                     ) : (
                         <Button className='btn-sm btn-round has-ripple ml-2 btn btn-primary'
                             onClick={() => { getIDFromData("Active") }}
-                            style={{marginRight:'15px'}}
+                            style={{ marginRight: '15px' }}
                         > <i className="feather icon-plus" />&nbsp;
                             Multi Restore
                         </Button>
@@ -229,21 +283,6 @@ function Table({ columns, data, modalOpen }) {
 const ActiveTopics = (props) => {
     const columns = React.useMemo(
         () => [
-            {
-                id: "selection",
-
-                Header: ({ getToggleAllRowsSelectedProps }) => (
-                    <div>
-                        <input type="checkbox" {...getToggleAllRowsSelectedProps()} />
-                    </div>
-                ),
-
-                Cell: ({ row }) => (
-                    <div>
-                        <input type="checkbox" {...row.getToggleRowSelectedProps()} />
-                    </div>
-                )
-            },
             {
                 Header: '#',
                 accessor: "index_no"
@@ -346,10 +385,6 @@ const ActiveTopics = (props) => {
             }
         });
     };
-
-
-
-
 
     function restoreChapter(topic_id, topic_title) {
         console.log("topic_id", topic_id);

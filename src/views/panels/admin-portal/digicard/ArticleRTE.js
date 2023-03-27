@@ -5,8 +5,7 @@ import SunEditor from "./suneditor-react/dist/SunEditor";
 import katex from 'katex'
 import 'katex/dist/katex.min.css'
 import './suneditor/dist/suneditor.css';
-// import EditTable from './Table'
-
+import fontList from "../../../../helper/fontList";
 import plugins from './suneditor/src/plugins'
 
 function ArticleRTE({
@@ -41,34 +40,7 @@ function ArticleRTE({
           katex: katex,
           plugins: plugins,
           // plugins:[listType],
-          font: [
-            'Arial',
-            'tohoma',
-            'Courier New,Courier',
-            'Verdana',
-            'Trebuchet MS',
-            'Times New Roman',
-            'Georgia',
-            'Garamond',
-            'Courier New',
-            'Brush Script MT',
-            'Times',
-            'Helvetica',
-            'Geneva',
-            "sans-serif",
-            "cursive",
-            "Mogra",
-            "monospace",
-            "Impact",
-            "trebuchet ms",
-            "comic sans ms",
-            "verdana",
-            "arial black",
-            "tahoma",
-            "Lucida Console",
-          ],
-          preview: [{ pathpath: '/admin-portal/admin-dashboard' }
-          ],
+          font: fontList,
           buttonList: [
             ['undo', 'redo'],
             ['font', 'fontSize', 'formatBlock'],
