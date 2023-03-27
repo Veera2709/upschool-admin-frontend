@@ -30,7 +30,6 @@ function ArticleRTE({
   return (
     <div>
       <SunEditor placeholder="Please type here..."
-        disable={sessionStorage.getItem("user_role") == "Viewer"}
         setContents={articleData}
         showToolbar={true}
         onChange={handleEditorChange}
@@ -39,7 +38,6 @@ function ArticleRTE({
           imageUploadSizeLimit: "250000",
           katex: katex,
           plugins: plugins,
-          // plugins:[listType],
           font: fontList,
           buttonList: [
             ['undo', 'redo'],
