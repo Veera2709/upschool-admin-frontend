@@ -25,6 +25,7 @@ function Table({ columns, data }) {
     const [questionDisclaimerData, setQuestionDisclaimerData] = useState([]);
     const [_questionDisclaimerID, _setQuestionDisclaimerID] = useState('');
     const [loader, showLoader, hideLoader] = useFullPageLoader();
+    const [_showLoader, _setShowLoader] = useState(false);
     const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[3]);
     const [editQuestionDisclaimerID, setEditQuestionDisclaimerID] = useState('');
 
@@ -37,7 +38,7 @@ function Table({ columns, data }) {
         fetchAllQuestionDisclaimerData();
     }, []);
 
-    const sweetConfirmHandler = (alert, question_disclaimer_id, updateStatus) => {
+    const sweetConfirmHandler = (alert, disclaimer_id, updateStatus) => {
 
         MySwal.fire({
             title: alert.title,
@@ -47,19 +48,20 @@ function Table({ columns, data }) {
             showCancelButton: true
         }).then((willDelete) => {
             if (willDelete.value) {
+                _setShowLoader(true);
                 showLoader();
-                deleteQuestionDisclaimer(question_disclaimer_id, updateStatus);
+                deleteQuestionDisclaimer(disclaimer_id, updateStatus);
             }
         });
     };
 
-    const saveQuestionDisclaimerIdDelete = (e, question_disclaimer_id, updateStatus) => {
+    const saveQuestionDisclaimerIdDelete = (e, disclaimer_id, updateStatus) => {
         e.preventDefault();
 
         pageLocation === 'active-questionDisclaimer' ? (
-            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: MESSAGES.INFO.ABLE_TO_RECOVER }, question_disclaimer_id, updateStatus)
+            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: MESSAGES.INFO.ABLE_TO_RECOVER }, disclaimer_id, updateStatus)
         ) : (
-            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: 'This will restore the Question Disclaimer!' }, question_disclaimer_id, updateStatus)
+            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: 'This will restore the Question Disclaimer!' }, disclaimer_id, updateStatus)
         )
 
     };
@@ -67,6 +69,7 @@ function Table({ columns, data }) {
     const fetchAllQuestionDisclaimerData = async () => {
 
         setIsLoading(true);
+        _setShowLoader(true);
         showLoader();
         console.log(pageLocation);
 
@@ -93,6 +96,7 @@ function Table({ columns, data }) {
             }
         } else {
 
+            _setShowLoader(false);
             hideLoader();
 
             if (ResultData.Items) {
@@ -113,7 +117,7 @@ function Table({ columns, data }) {
                                         size="sm"
                                         className="btn btn-icon btn-rounded btn-info"
                                         onClick={(e) => {
-                                            setEditQuestionDisclaimerID(responseData[index].question_disclaimer_id);
+                                            setEditQuestionDisclaimerID(responseData[index].disclaimer_id);
                                             setIsOpenEditQuestionDisclaimer(true);
                                         }}
                                     >
@@ -123,7 +127,7 @@ function Table({ columns, data }) {
                                     <Button
                                         size="sm"
                                         className="btn btn-icon btn-rounded btn-danger"
-                                        onClick={(e) => saveQuestionDisclaimerIdDelete(e, responseData[index].question_disclaimer_id, 'Archived')}
+                                        onClick={(e) => saveQuestionDisclaimerIdDelete(e, responseData[index].disclaimer_id, 'Archived')}
                                     >
                                         <i className="feather icon-trash-2" /> &nbsp; Delete
                                     </Button>
@@ -134,7 +138,7 @@ function Table({ columns, data }) {
                                     <Button
                                         size="sm"
                                         className="btn btn-icon btn-rounded btn-primary"
-                                        onClick={(e) => saveQuestionDisclaimerIdDelete(e, responseData[index].question_disclaimer_id, 'Active')}
+                                        onClick={(e) => saveQuestionDisclaimerIdDelete(e, responseData[index].disclaimer_id, 'Active')}
                                     >
                                         <i className="feather icon-plus" /> &nbsp;Restore
                                     </Button>
@@ -163,9 +167,9 @@ function Table({ columns, data }) {
         setIsOpenAddQuestionDisclaimer(true);
     }
 
-    const deleteQuestionDisclaimer = async (question_disclaimer_id, updateStatus) => {
+    const deleteQuestionDisclaimer = async (disclaimer_id, updateStatus) => {
         const values = {
-            question_disclaimer_id: question_disclaimer_id,
+            disclaimer_id: disclaimer_id,
             disclaimer_status: updateStatus
         };
 
@@ -185,6 +189,7 @@ function Table({ columns, data }) {
             }
         } else {
 
+            _setShowLoader(false);
             hideLoader()
             updateStatus === 'Active' ? (
                 MySwal.fire('', MESSAGES.INFO.QUESTION_DESCLAIMER_RESTORED, 'success')
@@ -269,7 +274,7 @@ function Table({ columns, data }) {
         const questionDisclaimerIDs = [];
 
         selectedFlatRows.map((item) => {
-            questionDisclaimerIDs.push(item.original.question_disclaimer_id)
+            questionDisclaimerIDs.push(item.original.disclaimer_id)
         })
 
         if (questionDisclaimerIDs.length > 0) {
@@ -283,6 +288,8 @@ function Table({ columns, data }) {
             }).then(async (willDelete) => {
 
                 if (willDelete.value) {
+
+                    showLoader();
 
                     var payload = {
                         "disclaimer_status": status,
@@ -354,7 +361,7 @@ function Table({ columns, data }) {
                                 variant="success"
                                 className='btn-sm btn-round has-ripple ml-2 btn btn-danger'
                                 onClick={() => {
-                                    multiDelete("Archived")
+                                    multiDelete("Archived");
                                 }}>
                                 <i className="feather icon-trash-2"
                                 />  Multi Delete
@@ -364,7 +371,7 @@ function Table({ columns, data }) {
                     ) : (
                         <Button
                             className='btn-sm btn-round has-ripple ml-2 btn btn-primary'
-                            onClick={() => { multiDelete("Active") }}>
+                            onClick={() => { multiDelete("Active"); }}>
                             <i className="feather icon-plus"
                             />   Multi Restore
                         </Button>
@@ -414,7 +421,6 @@ function Table({ columns, data }) {
                 </tbody>
             </BTable>
 
-
             <Row className="justify-content-between">
                 <Col>
                     <span className="d-flex align-items-center">
@@ -461,7 +467,12 @@ function Table({ columns, data }) {
                 </Modal.Body>
             </Modal>
 
-            <Modal dialogClassName="my-modal" show={isOpenEditQuestionDisclaimer} onHide={() => setIsOpenEditQuestionDisclaimer(false)}>
+            <Modal
+                size="md"
+                dialogClassName="my-modal"
+                show={isOpenEditQuestionDisclaimer}
+                onHide={() => setIsOpenEditQuestionDisclaimer(false)}
+            >
                 <Modal.Header closeButton>
                     <Modal.Title as="h5">Edit Question Disclaimer</Modal.Title>
                 </Modal.Header>
@@ -498,7 +509,8 @@ const QuestionsDisclaimerTableView = ({ userStatus }) => {
     const [questionDisclaimerData, setQuestionDisclaimerData] = useState([]);
     const [_questionDisclaimerID, _setQuestionDisclaimerID] = useState('');
     const [loader, showLoader, hideLoader] = useFullPageLoader();
-    const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[3]);
+    const [_showLoader, _setShowLoader] = useState(false);
+    const pageLocation = useLocation().pathname.split('/')[3];
 
     const [isOpenAddQuestionDisclaimer, setIsOpenAddQuestionDisclaimer] = useState(false);
     const [isOpenEditQuestionDisclaimer, setIsOpenEditQuestionDisclaimer] = useState(false);
@@ -510,7 +522,7 @@ const QuestionsDisclaimerTableView = ({ userStatus }) => {
         fetchAllQuestionDisclaimerData();
     }, []);
 
-    const sweetConfirmHandler = (alert, question_disclaimer_id, updateStatus) => {
+    const sweetConfirmHandler = (alert, disclaimer_id, updateStatus) => {
 
         MySwal.fire({
 
@@ -522,19 +534,20 @@ const QuestionsDisclaimerTableView = ({ userStatus }) => {
         }).then((willDelete) => {
 
             if (willDelete.value) {
+                _setShowLoader(true);
                 showLoader();
-                deleteQuestionDisclaimer(question_disclaimer_id, updateStatus);
+                deleteQuestionDisclaimer(disclaimer_id, updateStatus);
             }
         });
     };
 
-    const saveQuestionDisclaimerIdDelete = (e, question_disclaimer_id, updateStatus) => {
+    const saveQuestionDisclaimerIdDelete = (e, disclaimer_id, updateStatus) => {
         e.preventDefault();
 
         pageLocation === 'active-questionDisclaimer' ? (
-            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: MESSAGES.INFO.ABLE_TO_RECOVER }, question_disclaimer_id, updateStatus)
+            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: MESSAGES.INFO.ABLE_TO_RECOVER }, disclaimer_id, updateStatus)
         ) : (
-            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: 'This will restore the Question Disclaimer!' }, question_disclaimer_id, updateStatus)
+            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: 'This will restore the Question Disclaimer!' }, disclaimer_id, updateStatus)
         );
 
     };
@@ -542,6 +555,7 @@ const QuestionsDisclaimerTableView = ({ userStatus }) => {
     const fetchAllQuestionDisclaimerData = async () => {
 
         setIsLoading(true);
+        _setShowLoader(true);
         showLoader();
         console.log(pageLocation);
 
@@ -568,11 +582,10 @@ const QuestionsDisclaimerTableView = ({ userStatus }) => {
             }
         } else {
 
-            hideLoader();
-
             console.log('inside res fetch Unit And Question Disclaimer');
             console.log(ResultData);
 
+            _setShowLoader(false);
             hideLoader();
 
             if (ResultData.Items) {
@@ -595,7 +608,7 @@ const QuestionsDisclaimerTableView = ({ userStatus }) => {
                                         size="sm"
                                         className="btn btn-icon btn-rounded btn-info"
                                         onClick={(e) => {
-                                            setEditQuestionDisclaimerID(responseData[index].question_disclaimer_id);
+                                            setEditQuestionDisclaimerID(responseData[index].disclaimer_id);
                                             setIsOpenEditQuestionDisclaimer(true);
                                         }}>
                                         <i className="feather icon-edit" /> &nbsp; Edit
@@ -604,7 +617,7 @@ const QuestionsDisclaimerTableView = ({ userStatus }) => {
                                     <Button
                                         size="sm"
                                         className="btn btn-icon btn-rounded btn-danger"
-                                        onClick={(e) => saveQuestionDisclaimerIdDelete(e, responseData[index].question_disclaimer_id, 'Archived')}
+                                        onClick={(e) => saveQuestionDisclaimerIdDelete(e, responseData[index].disclaimer_id, 'Archived')}
                                     >
                                         <i className="feather icon-trash-2" /> &nbsp; Delete
                                     </Button>
@@ -616,7 +629,7 @@ const QuestionsDisclaimerTableView = ({ userStatus }) => {
                                     <Button
                                         size="sm"
                                         className="btn btn-icon btn-round btn-primary"
-                                        onClick={(e) => saveQuestionDisclaimerIdDelete(e, responseData[index].question_disclaimer_id, 'Active')}
+                                        onClick={(e) => saveQuestionDisclaimerIdDelete(e, responseData[index].disclaimer_id, 'Active')}
                                     >
                                         <i className="feather icon-plus" /> &nbsp;Restore
                                     </Button>
@@ -645,10 +658,10 @@ const QuestionsDisclaimerTableView = ({ userStatus }) => {
         setIsOpenAddQuestionDisclaimer(true);
     }
 
-    const deleteQuestionDisclaimer = async (question_disclaimer_id, updateStatus) => {
+    const deleteQuestionDisclaimer = async (disclaimer_id, updateStatus) => {
 
         const values = {
-            question_disclaimer_id: question_disclaimer_id,
+            disclaimer_id: disclaimer_id,
             disclaimer_status: updateStatus
         };
 
@@ -668,6 +681,7 @@ const QuestionsDisclaimerTableView = ({ userStatus }) => {
             }
         } else {
 
+            _setShowLoader(false);
             hideLoader()
             updateStatus === 'Active' ? (
                 MySwal.fire('', MESSAGES.INFO.QUESTION_DESCLAIMER_RESTORED, 'success')
@@ -740,6 +754,11 @@ const QuestionsDisclaimerTableView = ({ userStatus }) => {
                                                     <Card.Header>
                                                         <Card.Title as="h5">Question Disclaimer List</Card.Title>
                                                     </Card.Header>
+                                                    {
+                                                        _showLoader === true && (
+                                                            <div className="form-group fill text-center">{loader}</div>
+                                                        )
+                                                    }
                                                     <Card.Body>
                                                         <Table columns={columns} data={questionDisclaimerData} />
                                                     </Card.Body>
@@ -763,7 +782,12 @@ const QuestionsDisclaimerTableView = ({ userStatus }) => {
                                         </Modal.Body>
                                     </Modal>
 
-                                    <Modal dialogClassName="my-modal" show={isOpenEditQuestionDisclaimer} onHide={() => setIsOpenEditQuestionDisclaimer(false)}>
+                                    <Modal
+                                        size="md"
+                                        dialogClassName="my-modal"
+                                        show={isOpenEditQuestionDisclaimer}
+                                        onHide={() => setIsOpenEditQuestionDisclaimer(false)}
+                                    >
                                         <Modal.Header closeButton>
                                             <Modal.Title as="h5">Edit Question Disclaimer</Modal.Title>
                                         </Modal.Header>

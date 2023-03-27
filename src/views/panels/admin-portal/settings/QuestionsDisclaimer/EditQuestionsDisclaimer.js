@@ -3,8 +3,6 @@ import axios from 'axios';
 import { Formik } from 'formik';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
-import Select from 'react-draggable-multi-select';
-import ReactTags from 'react-tag-autocomplete';
 import * as Yup from 'yup';
 import { Row, Col } from 'react-bootstrap';
 
@@ -15,26 +13,17 @@ import { useHistory } from 'react-router-dom';
 import BasicSpinner from '../../../../../helper/BasicSpinner';
 import * as Constants from '../../../../../helper/constants';
 
-const EditSubjects = ({ _units, _relatedSubjects, editSubjectID, setIsOpenEditSubject, fetchAllSubjectsData }) => {
+const EditSubjects = ({ editQuestionDisclaimerID, setIsOpenEditQuestionDisclaimer }) => {
 
-    console.log(_units);
-    console.log(_relatedSubjects);
 
     const history = useHistory();
     const [isLoading, setIsLoading] = useState(false);
     const [loader, showLoader, hideLoader] = useFullPageLoader();
-    const [selectedUnits, setSelectedUnits] = useState([]);
-    const [selectedRelatedSubjects, setSelectedRelatedSubjects] = useState([]);
-    const [selectedKeywords, setSelectedKeywords] = useState([]);
-    const [dropdownUnits, setDropdownUnits] = useState([]);
-    const [previousUnits, setPreviousUnits] = useState([]);
-    const [previousSubjects, setPreviousSubjects] = useState([]);
-    const [dropdownRelatedSubjects, setDropdownRelatedSubjects] = useState([]);
-    const [showUnitErr, setShowUnitErr] = useState(false);
-    const [subjectTitleErr, setSubjectTitleErr] = useState(false);
-    const [subjectTitleErrMessage, setSubjectTitleErrMessage] = useState('');
+
+    const [questionDisclaimerLabelErr, setQuestionDisclaimerLabelErr] = useState(false);
+    const [questionDisclaimerLabelErrMessage, setQuestionDisclaimerLabelErrMessage] = useState('');
+
     const [previousData, setPreviousData] = useState([]);
-    const [tags, setTags] = useState([]);
 
     const MySwal = withReactContent(Swal);
 
@@ -52,25 +41,12 @@ const EditSubjects = ({ _units, _relatedSubjects, editSubjectID, setIsOpenEditSu
         showLoader();
 
         const payload = {
-            subject_id: editSubjectID
+            disclaimer_id: editQuestionDisclaimerID
         };
-
-        if (_units) {
-
-            let valuesArr = [];
-
-            for (let index = 0; index < _units.length; index++) {
-
-                if (_units[index]) {
-                    valuesArr.push({ value: _units[index].unit_id, label: _units[index].unit_title })
-                }
-            }
-            setDropdownUnits(valuesArr);
-        }
 
         axios
             .post(
-                dynamicUrl.fetchIndividualSubject,
+                dynamicUrl.fetchIndividualDisclaimer,
                 { data: payload },
                 {
                     headers: { Authorization: SessionStorage.getItem('user_jwt') }
@@ -84,110 +60,12 @@ const EditSubjects = ({ _units, _relatedSubjects, editSubjectID, setIsOpenEditSu
                 if (response.data.Items[0]) {
 
                     setPreviousData(response.data.Items[0]);
-
-                    // ------------------------------
-
-                    let previousTagsArr = [];
-                    let keywordsTempArr = [];
-
-                    for (let i = 0; i < response.data.Items[0].subject_keyword.length; i++) {
-                        previousTagsArr.push({ name: response.data.Items[0].subject_keyword[i] })
-                        keywordsTempArr.push(response.data.Items[0].subject_keyword[i])
-                    }
-
-                    setTags(previousTagsArr);
-                    setSelectedKeywords(keywordsTempArr);
-
-                    // ------------------------------
-
-                    let previousUnitsArr = [];
-                    let getData;
-
-                    function getPreviousUnits(i) {
-
-                        if (i < response.data.Items[0].subject_unit_id.length) {
-
-                            console.log(_units.filter(p => p.unit_id === response.data.Items[0].subject_unit_id[i])[0]);
-
-                            getData = _units.filter(p => p.unit_id === response.data.Items[0].subject_unit_id[i]);
-
-                            previousUnitsArr.push(getData[0]);
-                            console.log(previousUnitsArr);
-                            i++;
-                            getPreviousUnits(i);
-
-                        } else {
-
-                            let setArr = [];
-                            let setTempArr;
-                            let selectedArr = [];
-
-                            console.log(previousUnitsArr);
-
-                            for (let j = 0; j < previousUnitsArr.length; j++) {
-
-                                setTempArr = [{ label: previousUnitsArr[j].unit_title, value: previousUnitsArr[j].unit_id }];
-
-                                console.log(setTempArr);
-                                setArr.push(setTempArr[0]);
-                                selectedArr.push(previousUnitsArr[j].unit_id);
-                            }
-                            console.log(setArr);
-                            setPreviousUnits(setArr);
-                            setSelectedUnits(selectedArr);
-                        }
-
-                    } getPreviousUnits(0)
-
-                    // ------------------------------
-
-                    let previousSubjectsArr = [];
-                    let getDataSubjects;
-
-                    console.log(_relatedSubjects);
-                    console.log(response.data.Items[0].related_subject);
-                    console.log(response.data.Items[0].related_subject.length);
-
-                    function getPreviousSubjects(i) {
-
-                        if (i < response.data.Items[0].related_subject.length) {
-
-                            console.log(_relatedSubjects.filter(p => p.subject_id === response.data.Items[0].related_subject[i])[0]);
-
-                            getDataSubjects = _relatedSubjects.filter(p => p.subject_id === response.data.Items[0].related_subject[i]);
-
-                            previousSubjectsArr.push(getDataSubjects[0]);
-                            console.log(previousSubjectsArr);
-                            i++;
-                            getPreviousSubjects(i);
-
-                        } else {
-
-                            let setArr = [];
-                            let setTempArr;
-                            let selectedArr = [];
-
-                            console.log(previousSubjectsArr);
-
-                            for (let j = 0; j < previousSubjectsArr.length; j++) {
-
-                                setTempArr = [{ label: previousSubjectsArr[j].subject_title, value: previousSubjectsArr[j].subject_id }];
-
-                                console.log(setTempArr);
-                                setArr.push(setTempArr[0]);
-                                selectedArr.push(previousSubjectsArr[j].subject_id);
-                            }
-                            console.log(setArr);
-                            setPreviousSubjects(setArr);
-                            setSelectedRelatedSubjects(selectedArr);
-                            setIsLoading(false);
-                        }
-
-                    } getPreviousSubjects(0)
+                    setIsLoading(false);
 
                 } else {
 
-                    setIsOpenEditSubject(true);
+                    setIsOpenEditQuestionDisclaimer(true);
+                    setIsLoading(false);
                 }
 
             })
@@ -195,7 +73,7 @@ const EditSubjects = ({ _units, _relatedSubjects, editSubjectID, setIsOpenEditSu
                 if (error.response) {
                     // Request made and server responded
                     console.log(error.response.data);
-                    setIsOpenEditSubject(false);
+                    setIsOpenEditQuestionDisclaimer(false);
                     hideLoader();
 
                     if (error.response.data === 'Invalid Token') {
@@ -229,80 +107,6 @@ const EditSubjects = ({ _units, _relatedSubjects, editSubjectID, setIsOpenEditSu
 
     }, []);
 
-    useEffect(() => {
-        if (_relatedSubjects && previousData.subject_title) {
-
-            let valuesArr = [];
-
-            for (let index = 0; index < _relatedSubjects.length; index++) {
-
-                if (_relatedSubjects[index] && _relatedSubjects[index].subject_title !== previousData.subject_title) {
-                    valuesArr.push({ value: _relatedSubjects[index].subject_id, label: _relatedSubjects[index].subject_title })
-                }
-            }
-            setDropdownRelatedSubjects(valuesArr)
-        }
-    }, [previousData])
-
-    const handleDeleteKeywords = (i, states) => {
-        const newTags = tags.slice(0);
-        newTags.splice(i, 1);
-        setTags(newTags);
-
-        let valuesArr = [];
-        for (let i = 0; i < newTags.length; i++) {
-            valuesArr.push(newTags[i].name)
-        }
-
-        console.log(valuesArr);
-        setSelectedKeywords(valuesArr);
-    };
-
-    const handleAddKeywords = (tag, state) => {
-
-        console.log(tag);
-        const newTags = [].concat(tags, tag);
-        console.log(newTags);
-        setTags(newTags);
-
-        let valuesArr = [];
-        for (let i = 0; i < newTags.length; i++) {
-            valuesArr.push(newTags[i].name)
-        }
-
-        console.log(valuesArr);
-        setSelectedKeywords(valuesArr);
-    };
-
-    const handleUnitChange = (event) => {
-
-        setShowUnitErr(false);
-        console.log(event);
-
-        let valuesArr = [];
-        if(event){
-            for (let i = 0; i < event.length; i++) {
-                valuesArr.push(event[i].value)
-            }
-        }
-        console.log(valuesArr);
-        setSelectedUnits(valuesArr);
-    }
-
-    const handleRelatedSubjects = (event) => {
-
-        console.log(event);
-
-        let valuesArr = [];
-        if(event){
-            for (let i = 0; i < event.length; i++) {
-                valuesArr.push(event[i].value)
-            }
-        }
-        console.log(valuesArr);
-        setSelectedRelatedSubjects(valuesArr);
-    }
-
     return (
 
         <div>
@@ -312,334 +116,221 @@ const EditSubjects = ({ _units, _relatedSubjects, editSubjectID, setIsOpenEditSu
             ) : (
 
                 <>
-                    {previousData.length === 0 || previousUnits.length === 0 ? (<></>) : (
+                    {previousData.length === 0 ? <></> : (
+
                         <>
-                            {_units && _relatedSubjects && (
+                            <React.Fragment>
+                                < Formik
 
-                                <>
-                                    {console.log(previousData.subject_title)}
-                                    <React.Fragment>
-                                        < Formik
+                                    initialValues={
+                                        {
+                                            questionDisclaimer: previousData.disclaimer,
+                                            questionDisclaimerLabel: previousData.disclaimer_label,
+                                            submit: null
+                                        }
+                                    }
+                                    validationSchema={
+                                        Yup.object().shape({
+                                            questionDisclaimer: Yup.string()
+                                                .trim()
+                                                .min(2, Constants.AddQuestionDisclaimer.QuestionDisclaimerTooShort)
+                                                .required(Constants.AddQuestionDisclaimer.QuestionDisclaimerRequired),
+                                            questionDisclaimerLabel: Yup.string()
+                                                .trim()
+                                                .min(2, Constants.AddQuestionDisclaimer.QuestionDisclaimerLabelTooShort)
+                                                .max(32, Constants.AddQuestionDisclaimer.QuestionDisclaimerLabelTooLong)
+                                                .required(Constants.AddQuestionDisclaimer.QuestionDisclaimerLabelRequired),
+                                        })
+                                    }
 
-                                            initialValues={
+                                    onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
+
+                                        setStatus({ success: true });
+                                        setSubmitting(true);
+                                        showLoader(true);
+
+                                        console.log("Submit clicked");
+
+                                        const formData = {
+                                            data: {
+                                                disclaimer_id: editQuestionDisclaimerID,
+                                                disclaimer: values.questionDisclaimer,
+                                                disclaimer_label: values.questionDisclaimerLabel
+                                            }
+                                        };
+
+                                        console.log('form Data: ', formData);
+
+                                        axios
+                                            .post(
+                                                dynamicUrl.updateQuestionDisclaimer,
+                                                formData,
                                                 {
-                                                    subjectTitle: previousData.subject_title,
-                                                    description: previousData.subject_description,
-                                                    // submit: null
+                                                    headers: { Authorization: sessionStorage.getItem('user_jwt') }
                                                 }
-                                            }
-                                            validationSchema={
-                                                Yup.object().shape({
-                                                    subjectTitle: Yup.string()
-                                                        .trim()
-                                                        .min(2, Constants.AddSubjects.SubjectTitleTooShort)
-                                                        .max(32, Constants.AddSubjects.SubjectTitleTooLong)
-                                                        .required(Constants.AddSubjects.SubjectTitleRequired),
-                                                    description: Yup.string()
-                                                        .trim()
-                                                        .min(2, Constants.AddSubjects.SubjectTitleTooShort)
-                                                        .required(Constants.AddSubjects.SubjectTitleRequired),
+                                            )
+                                            .then((response) => {
 
-                                                })
-                                            }
-                                            onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
+                                                console.log({ response });
 
-                                                setStatus({ success: true });
-                                                setSubmitting(true);
+                                                let result = response.status === 200;
+                                                hideLoader();
 
-                                                console.log("Submit clicked")
+                                                if (result) {
 
-                                                const formData = {
-                                                    data: {
-                                                        subject_id: editSubjectID,
-                                                        subject_title: values.subjectTitle,
-                                                        subject_unit_id: selectedUnits,
-                                                        subject_keyword: selectedKeywords,
-                                                        related_subject: selectedRelatedSubjects,
-                                                        subject_description: values.description
+                                                    console.log('inside res edit');
+                                                    hideLoader();
+                                                    setIsOpenEditQuestionDisclaimer(false);
 
-                                                    }
-                                                };
+                                                    MySwal.fire({
+                                                        type: 'success',
+                                                        title: 'Question Disclaimer updated successfully!',
+                                                        icon: 'success',
+                                                    }).then((willDelete) => {
+                                                        window.location.reload();
+                                                    });
 
-                                                console.log('form Data: ', formData);
-
-                                                if (selectedUnits.length > 0) {
-                                                    console.log("Proceed");
-                                                    showLoader();
-
-                                                    axios
-                                                        .post(
-                                                            dynamicUrl.updateSubject,
-                                                            formData,
-                                                            {
-                                                                headers: { Authorization: sessionStorage.getItem('user_jwt') }
-                                                            }
-                                                        )
-                                                        .then((response) => {
-
-                                                            console.log({ response });
-
-                                                            let result = response.status === 200;
-                                                            hideLoader();
-
-                                                            if (result) {
-
-                                                                console.log('inside res edit');
-                                                                hideLoader();
-                                                                setIsOpenEditSubject(false);
-                                                                sweetAlertHandler({ title: 'Success', type: 'success', text: 'Subject updated successfully!' });
-                                                                fetchAllSubjectsData();
-                                                                // window.location.reload();
-
-                                                            } else {
-
-                                                                console.log('else res');
-                                                                hideLoader();
-                                                                // Request made and server responded
-                                                                setSubjectTitleErr(true);
-                                                                setSubjectTitleErrMessage("err");
-                                                                // window.location.reload();
-
-
-                                                            }
-                                                        })
-                                                        .catch((error) => {
-                                                            if (error.response) {
-                                                                hideLoader();
-                                                                // Request made and server responded
-                                                                console.log(error.response.data);
-
-                                                                if (error.response.data === 'Invalid Token') {
-
-                                                                    sessionStorage.clear();
-                                                                    localStorage.clear();
-
-                                                                    history.push('/auth/signin-1');
-                                                                    window.location.reload();
-
-                                                                } else {
-
-                                                                    setSubjectTitleErr(true);
-                                                                    setSubjectTitleErrMessage(error.response.data);
-
-                                                                }
-
-                                                            } else if (error.request) {
-                                                                // The request was made but no response was received
-                                                                console.log(error.request);
-                                                                hideLoader();
-                                                                setSubjectTitleErr(true);
-                                                                setSubjectTitleErrMessage(error.request);
-                                                            } else {
-                                                                // Something happened in setting up the request that triggered an Error
-                                                                console.log('Error', error.message);
-                                                                hideLoader();
-                                                                setSubjectTitleErr(true);
-                                                                setSubjectTitleErrMessage(error.request);
-
-                                                            }
-                                                        })
                                                 } else {
-                                                    console.log("Unit empty");
-                                                    setShowUnitErr(true);
+
+                                                    console.log('else res');
+                                                    hideLoader();
+                                                    setQuestionDisclaimerLabelErr(true);
+                                                    setQuestionDisclaimerLabelErrMessage("err");
+                                                }
+                                            })
+                                            .catch((error) => {
+                                                if (error.response) {
+                                                    hideLoader();
+                                                    // Request made and server responded
+                                                    console.log(error.response.data);
+
+                                                    if (error.response.data === 'Invalid Token') {
+
+                                                        sessionStorage.clear();
+                                                        localStorage.clear();
+
+                                                        history.push('/auth/signin-1');
+                                                        window.location.reload();
+
+                                                    } else {
+
+                                                        setQuestionDisclaimerLabelErr(true);
+                                                        setQuestionDisclaimerLabelErrMessage(error.response.data);
+                                                    }
+
+
+                                                } else if (error.request) {
+                                                    // The request was made but no response was received
+                                                    console.log(error.request);
+                                                    hideLoader();
+                                                    setQuestionDisclaimerLabelErr(true);
+                                                    setQuestionDisclaimerLabelErrMessage(error.request);
+                                                } else {
+                                                    // Something happened in setting up the request that triggered an Error
+                                                    console.log('Error', error.message);
+                                                    hideLoader();
+                                                    setQuestionDisclaimerLabelErr(true);
+                                                    setQuestionDisclaimerLabelErrMessage(error.request);
 
                                                 }
+                                            })
 
 
+                                    }}>
 
-                                            }}>
+                                    {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
+                                        <form noValidate onSubmit={handleSubmit} >
 
-                                            {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, setFieldValue }) => (
-                                                <form noValidate onSubmit={handleSubmit} >
+                                            <Row>
+                                                <Col>
+                                                    <Row>
+                                                        <Col xs={6}>
+                                                            <div className="form-group fill">
+                                                                <label className="floating-label" htmlFor="questionDisclaimerLabel">
+                                                                    <small className="text-danger">* </small>Question Disclaimer Label
+                                                                </label>
+                                                                <input
+                                                                    className="form-control"
+                                                                    error={touched.questionDisclaimerLabel && errors.questionDisclaimerLabel}
+                                                                    name="questionDisclaimerLabel"
+                                                                    onBlur={handleBlur}
+                                                                    // onChange={handleChange}
+                                                                    type="text"
+                                                                    value={values.questionDisclaimerLabel}
+                                                                    onChange={(e) => {
+                                                                        handleChange("questionDisclaimerLabel")(e);
+                                                                        setQuestionDisclaimerLabelErr(false);
+                                                                    }}
+
+                                                                />
+
+                                                                {touched.questionDisclaimerLabel && errors.questionDisclaimerLabel && <small className="text-danger form-text">{errors.questionDisclaimerLabel}</small>}
+
+                                                                {questionDisclaimerLabelErr && questionDisclaimerLabelErrMessage &&
+                                                                    <small className="text-danger form-text">{questionDisclaimerLabelErrMessage}</small>
+                                                                }
+                                                            </div>
+                                                        </Col>
+                                                    </Row>
 
                                                     <Row>
+                                                        <Col>
+                                                            <div className="form-group fill">
+                                                                <label className="floating-label" htmlFor="questionDisclaimer">
+                                                                    <small className="text-danger">* </small>Question Disclaimer
+                                                                </label>
+                                                                <textarea
+                                                                    className="form-control"
+                                                                    error={touched.questionDisclaimer && errors.questionDisclaimer}
+                                                                    name="questionDisclaimer"
+                                                                    onBlur={handleBlur}
+                                                                    onChange={handleChange}
+                                                                    type="text"
+                                                                    value={values.questionDisclaimer}
+                                                                    rows="8"
+                                                                    placeholder="Enter your comment"
+                                                                />
+                                                            </div>
+                                                            {touched.questionDisclaimer && errors.questionDisclaimer && (
+                                                                <small className="text-danger form-text">{errors.questionDisclaimer}</small>
+                                                            )}
+                                                        </Col>
+                                                    </Row>
 
+                                                    {loader}
+                                                    <br />
+                                                    <hr />
+                                                    <Row>
+                                                        <Col></Col>
                                                         <Col>
                                                             <Row>
-                                                                <Col>
-
-                                                                    <div className="form-group fill">
-                                                                        <label className="floating-label" htmlFor="subjectTitle">
-                                                                            <small className="text-danger">* </small>Subject Title
-                                                                        </label>
-                                                                        <input
-                                                                            className="form-control"
-                                                                            error={touched.subjectTitle && errors.subjectTitle}
-                                                                            name="subjectTitle"
-                                                                            onBlur={handleBlur}
-                                                                            // onChange={handleChange}
-                                                                            type="text"
-                                                                            value={values.subjectTitle}
-                                                                            onChange={(e) => {
-                                                                                handleChange("subjectTitle")(e);
-                                                                                setSubjectTitleErr(false);
-                                                                            }}
-
-                                                                        />
-
-                                                                        {touched.subjectTitle && errors.subjectTitle && <small className="text-danger form-text">{errors.subjectTitle}</small>}
-
-                                                                        {subjectTitleErr && subjectTitleErrMessage &&
-                                                                            <small className="text-danger form-text">{subjectTitleErrMessage}</small>
-                                                                        }
-
-                                                                    </div>
-
-                                                                </Col>
-                                                                <Col>
-
-                                                                    <label className="floating-label" htmlFor="keywords">
-                                                                        <small className="text-danger"></small>Keywords
-                                                                    </label>
-
-                                                                    <ReactTags
-                                                                        classNames={{ root: 'react-tags bootstrap-tagsinput', selectedTag: 'react-tags__selected-tag btn-primary' }}
-                                                                        allowNew={true}
-                                                                        addOnBlur={true}
-                                                                        tags={tags}
-                                                                        onDelete={handleDeleteKeywords}
-                                                                        onAddition={(e) => handleAddKeywords(e)}
-                                                                    />
-
-                                                                </Col>
-                                                            </Row>
-                                                            <br />
-
-                                                            <Row>
-                                                                <Col>
-
-                                                                    <div className="form-group fill">
-
-                                                                        <label className="floating-label">
-                                                                            <small className="text-danger">* </small>
-                                                                            Description
-                                                                        </label>
-
-                                                                        <textarea
-                                                                            className="form-control"
-                                                                            error={touched.description && errors.description}
-                                                                            label="description"
-                                                                            name="description"
-                                                                            id="description"
-                                                                            onBlur={handleBlur}
-                                                                            onChange={handleChange}
-                                                                            value={values.description}
-                                                                            placeholder="Enter description"
-                                                                            rows="6"
-                                                                        />
-                                                                        {touched.description && errors.description && (
-                                                                            <small className="text-danger form-text">{errors.description}</small>
-                                                                        )}
-
-                                                                    </div>
-
-                                                                </Col>
-                                                            </Row>
-
-                                                            <br />
-
-                                                            <Row>
-                                                                <Col>
-                                                                    <div className="form-group fill">
-
-                                                                        <label className="floating-label">
-                                                                            <small className="text-danger">* </small>
-                                                                            Units
-                                                                        </label>
-                                                                        {console.log(previousUnits)}
-                                                                        <Select
-                                                                            defaultValue={previousUnits}
-                                                                            isMulti
-                                                                            name="units"
-                                                                            options={dropdownUnits}
-                                                                            className="basic-multi-select"
-                                                                            classNamePrefix="Select"
-                                                                            onChange={event => handleUnitChange(event)}
-                                                                        />
-                                                                        {showUnitErr && <small className="text-danger form-text">{'Please select a unit'}</small>}
-                                                                    </div>
-                                                                </Col>
-                                                                <Col>
-                                                                    <div className="form-group fill">
-
-                                                                        <label className="floating-label">
-                                                                            <small className="text-danger"></small>
-                                                                            Related Subjects
-                                                                        </label>
-                                                                        {console.log(previousSubjects)}
-
-                                                                        {
-                                                                            previousSubjects.length === 0 ? (
-                                                                                <Select
-
-                                                                                    isMulti
-                                                                                    name="relatedSubjects"
-                                                                                    options={dropdownRelatedSubjects}
-                                                                                    className="basic-multi-select"
-                                                                                    classNamePrefix="Select"
-                                                                                    onChange={event => handleRelatedSubjects(event)}
-                                                                                />
-                                                                            ) : (
-                                                                                <>
-                                                                                    {previousSubjects && (
-                                                                                        < Select
-                                                                                            defaultValue={previousSubjects}
-                                                                                            isMulti
-                                                                                            name="relatedSubjects"
-                                                                                            options={dropdownRelatedSubjects}
-                                                                                            className="basic-multi-select"
-                                                                                            classNamePrefix="Select"
-                                                                                            onChange={event => handleRelatedSubjects(event)}
-                                                                                        />
-                                                                                    )
-
-                                                                                    }
-                                                                                </>
-
-                                                                            )
-                                                                        }
-
-
-                                                                    </div>
-                                                                </Col>
-                                                            </Row>
-                                                            {loader}
-                                                            <br />
-                                                            <hr />
-                                                            <Row>
-                                                                <Col>
-
-                                                                </Col>
-                                                                <Col>
-
-                                                                    <div className="row">
-                                                                        <div className="col-md-8"></div>
-                                                                        <div className="col-md-4">
-                                                                            <button color="success" disabled={isSubmitting} type="submit" className="btn-block btn btn-success btn-large">Save</button>
-                                                                        </div>
-                                                                    </div>
+                                                                <Col xs={6}></Col>
+                                                                <Col xs={6}>
+                                                                    <button
+                                                                        color="success"
+                                                                        disabled={isSubmitting}
+                                                                        type="submit"
+                                                                        className="btn-block btn-rounded btn btn-success btn-large"
+                                                                    >Submit
+                                                                    </button>
                                                                 </Col>
                                                             </Row>
                                                         </Col>
-
                                                     </Row>
+                                                </Col>
+                                            </Row>
+                                        </form>
+                                    )}
+                                </Formik>
 
-                                                </form>
-                                            )
-                                            }
-                                        </Formik>
-
-                                    </React.Fragment>
-                                </>
-                            )}
+                            </React.Fragment>
                         </>
+
                     )}
                 </>
-            )}
-
-        </div>
-
-
+            )
+            }
+        </div >
     )
 }
 
