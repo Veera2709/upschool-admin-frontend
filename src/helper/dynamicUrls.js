@@ -59,6 +59,7 @@ const dynamicUrl = {
     mappingSubjectToTeacher: baseUrl + '/mappingSubjectToTeacher',
     fetchMappedSubjectForTeacher: baseUrl + '/fetchMappedSubjectForTeacher',
     bulkToggleUsersStatus: baseUrl + "/bulkToggleUsersStatus",
+    bulkToggleCMSUserStatus: baseUrl + "/bulkToggleCMSUserStatus",
 
     // units
     fetchUnitsBasedonStatus: baseUrl + '/fetchUnitsBasedonStatus',
@@ -112,6 +113,8 @@ const dynamicUrl = {
     editQuestion: baseUrl + '/editQuestion',
     fetchAllQuestionsData: baseUrl + '/fetchAllQuestionsData',
     addQuestions: baseUrl + '/addQuestions',
+    fetchAllQuestionCategories: baseUrl + '/fetchAllQuestionCategories',
+    fetchDisclaimersandCategories: baseUrl + '/fetchDisclaimersandCategories',
     bulkToggleQuestionStatus: baseUrl + '/bulkToggleQuestionStatus',
 
     // Sections
@@ -144,16 +147,16 @@ const dynamicUrl = {
     fetchAllQuestionCategories: baseUrl + '/fetchAllQuestionCategories',
     toggleQuestionCategoryStatus: baseUrl + '/toggleQuestionCategoryStatus',
     addQuestionCategory: baseUrl + '/addQuestionCategory',
-    fetchIndividualCategory : baseUrl + '/fetchIndividualCategory',
-    updateQuestionCategory : baseUrl + '/updateQuestionCategory',
+    fetchIndividualCategory: baseUrl + '/fetchIndividualCategory',
+    updateQuestionCategory: baseUrl + '/updateQuestionCategory',
 
     // settings - Question Disclaimer
     bulkToggleQuestionDisclaimerStatus: baseUrl + '/bulkToggleQuestionDisclaimerStatus',
     toggleQuestionDisclaimerStatus: baseUrl + '/toggleQuestionDisclaimerStatus',
     fetchAllQuestionDisclaimers: baseUrl + '/fetchAllQuestionDisclaimers',
     addQuestionDisclaimer: baseUrl + '/addQuestionDisclaimer',
-    fetchIndividualDisclaimer : baseUrl + '/fetchIndividualDisclaimer',
-    updateQuestionDisclaimer : baseUrl + '/updateQuestionDisclaimer',
+    fetchIndividualDisclaimer: baseUrl + '/fetchIndividualDisclaimer',
+    updateQuestionDisclaimer: baseUrl + '/updateQuestionDisclaimer',
 }
 
 export default dynamicUrl;

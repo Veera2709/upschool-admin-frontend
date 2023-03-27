@@ -360,7 +360,7 @@ function Table({ columns, data, modalOpen, userRole }) {
             <Button onClick={getAlldata}
               variant="primary"
               className="btn-sm btn-round has-ripple ml-2"
-              // style={{ marginLeft: "1.5rem" }}
+              // style={{ marginLeft: "1.5rem" }} 
               style={{ whiteSpace: "nowrap" }}
             ><i className="feather icon-plus" /> &nbsp;
               Multi Restore
