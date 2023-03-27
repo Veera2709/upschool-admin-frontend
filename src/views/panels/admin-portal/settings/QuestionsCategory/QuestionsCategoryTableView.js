@@ -37,7 +37,7 @@ function Table({ columns, data }) {
         fetchAllQuestionCategoryData();
     }, []);
 
-    const sweetConfirmHandler = (alert, question_category_id, updateStatus) => {
+    const sweetConfirmHandler = (alert, category_id, updateStatus) => {
 
         MySwal.fire({
             title: alert.title,
@@ -48,18 +48,18 @@ function Table({ columns, data }) {
         }).then((willDelete) => {
             if (willDelete.value) {
                 showLoader();
-                deleteQuestionCategory(question_category_id, updateStatus);
+                deleteQuestionCategory(category_id, updateStatus);
             }
         });
     };
 
-    const saveQuestionCategoryIdDelete = (e, question_category_id, updateStatus) => {
+    const saveQuestionCategoryIdDelete = (e, category_id, updateStatus) => {
         e.preventDefault();
 
         pageLocation === 'active-questionCategory' ? (
-            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: MESSAGES.INFO.ABLE_TO_RECOVER }, question_category_id, updateStatus)
+            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: MESSAGES.INFO.ABLE_TO_RECOVER }, category_id, updateStatus)
         ) : (
-            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: 'This will restore the Question Category!' }, question_category_id, updateStatus)
+            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: 'This will restore the Question Category!' }, category_id, updateStatus)
         )
 
     };
@@ -113,7 +113,7 @@ function Table({ columns, data }) {
                                         size="sm"
                                         className="btn btn-icon btn-rounded btn-info"
                                         onClick={(e) => {
-                                            setEditQuestionCategoryID(responseData[index].question_category_id);
+                                            setEditQuestionCategoryID(responseData[index].category_id);
                                             setIsOpenEditQuestionCategory(true);
                                         }}
                                     >
@@ -123,7 +123,7 @@ function Table({ columns, data }) {
                                     <Button
                                         size="sm"
                                         className="btn btn-icon btn-rounded btn-danger"
-                                        onClick={(e) => saveQuestionCategoryIdDelete(e, responseData[index].question_category_id, 'Archived')}
+                                        onClick={(e) => saveQuestionCategoryIdDelete(e, responseData[index].category_id, 'Archived')}
                                     >
                                         <i className="feather icon-trash-2" /> &nbsp; Delete
                                     </Button>
@@ -134,7 +134,7 @@ function Table({ columns, data }) {
                                     <Button
                                         size="sm"
                                         className="btn btn-icon btn-rounded btn-primary"
-                                        onClick={(e) => saveQuestionCategoryIdDelete(e, responseData[index].question_category_id, 'Active')}
+                                        onClick={(e) => saveQuestionCategoryIdDelete(e, responseData[index].category_id, 'Active')}
                                     >
                                         <i className="feather icon-plus" /> &nbsp;Restore
                                     </Button>
@@ -163,10 +163,10 @@ function Table({ columns, data }) {
         setIsOpenAddQuestionCategory(true);
     }
 
-    const deleteQuestionCategory = async (question_category_id, updateStatus) => {
+    const deleteQuestionCategory = async (category_id, updateStatus) => {
         const values = {
-            question_category_id: question_category_id,
-            question_category_status: updateStatus
+            category_id: category_id,
+            category_status: updateStatus
         };
 
         console.log(values);
@@ -269,7 +269,7 @@ function Table({ columns, data }) {
         const questionCategoryIDs = [];
 
         selectedFlatRows.map((item) => {
-            questionCategoryIDs.push(item.original.question_category_id)
+            questionCategoryIDs.push(item.original.category_id)
         })
 
         if (questionCategoryIDs.length > 0) {
@@ -284,9 +284,11 @@ function Table({ columns, data }) {
 
                 if (willDelete.value) {
 
+                    showLoader();
+
                     var payload = {
-                        "question_category_status": status,
-                        "question_category_array": questionCategoryIDs
+                        "category_status": status,
+                        "category_array": questionCategoryIDs
                     }
 
                     const ResultData = await toggleMultiQuestionCategoryStatus(payload);
@@ -461,12 +463,16 @@ function Table({ columns, data }) {
                 </Modal.Body>
             </Modal>
 
-            <Modal dialogClassName="my-modal" show={isOpenEditQuestionCategory} onHide={() => setIsOpenEditQuestionCategory(false)}>
+            <Modal
+                size="sm"
+                dialogClassName="my-modal"
+                show={isOpenEditQuestionCategory}
+                onHide={() => setIsOpenEditQuestionCategory(false)}>
                 <Modal.Header closeButton>
                     <Modal.Title as="h5">Edit Questions Category</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <EditQuestionsCategory editQuestionCategoryID={editQuestionCategoryID} setIsOpenEditQuestionCategory={setIsOpenEditQuestionCategory} fetchAllQuestionCategoryData={fetchAllQuestionCategoryData} />
+                    <EditQuestionsCategory editQuestionCategoryID={editQuestionCategoryID} setIsOpenEditQuestionCategory={setIsOpenEditQuestionCategory} />
                 </Modal.Body>
             </Modal>
         </>
@@ -498,6 +504,7 @@ const QuestionCategoryTableView = ({ userStatus }) => {
     const [questionCategoryData, setQuestionCategoryData] = useState([]);
     const [_questionCategoryID, _setQuestionCategoryID] = useState('');
     const [loader, showLoader, hideLoader] = useFullPageLoader();
+    const [_showLoader, _setShowLoader] = useState(false);
     const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[3]);
 
     const [isOpenAddQuestionCategory, setIsOpenAddQuestionCategory] = useState(false);
@@ -510,7 +517,7 @@ const QuestionCategoryTableView = ({ userStatus }) => {
         fetchAllQuestionCategoryData();
     }, []);
 
-    const sweetConfirmHandler = (alert, question_category_id, updateStatus) => {
+    const sweetConfirmHandler = (alert, category_id, updateStatus) => {
 
         MySwal.fire({
 
@@ -523,18 +530,19 @@ const QuestionCategoryTableView = ({ userStatus }) => {
 
             if (willDelete.value) {
                 showLoader();
-                deleteQuestionCategory(question_category_id, updateStatus);
+                _setShowLoader(true);
+                deleteQuestionCategory(category_id, updateStatus);
             }
         });
     };
 
-    const saveQuestionCategoryIdDelete = (e, question_category_id, updateStatus) => {
+    const saveQuestionCategoryIdDelete = (e, category_id, updateStatus) => {
         e.preventDefault();
 
         pageLocation === 'active-questionCategory' ? (
-            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: MESSAGES.INFO.ABLE_TO_RECOVER }, question_category_id, updateStatus)
+            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: MESSAGES.INFO.ABLE_TO_RECOVER }, category_id, updateStatus)
         ) : (
-            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: 'This will restore the Question Category!' }, question_category_id, updateStatus)
+            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: 'This will restore the Question Category!' }, category_id, updateStatus)
         );
 
     };
@@ -543,6 +551,7 @@ const QuestionCategoryTableView = ({ userStatus }) => {
 
         setIsLoading(true);
         showLoader();
+        _setShowLoader(true);
         console.log(pageLocation);
 
         const questionCategoryStatus = pageLocation === 'active-questionCategory' ? 'Active' : 'Archived';
@@ -569,11 +578,10 @@ const QuestionCategoryTableView = ({ userStatus }) => {
         } else {
 
             hideLoader();
+            _setShowLoader(false);
 
             console.log('inside res fetch Unit And Questions Category');
             console.log(ResultData);
-
-            hideLoader();
 
             if (ResultData.Items) {
 
@@ -595,7 +603,7 @@ const QuestionCategoryTableView = ({ userStatus }) => {
                                         size="sm"
                                         className="btn btn-icon btn-rounded btn-info"
                                         onClick={(e) => {
-                                            setEditQuestionCategoryID(responseData[index].question_category_id);
+                                            setEditQuestionCategoryID(responseData[index].category_id);
                                             setIsOpenEditQuestionCategory(true);
                                         }}>
                                         <i className="feather icon-edit" /> &nbsp; Edit
@@ -604,7 +612,7 @@ const QuestionCategoryTableView = ({ userStatus }) => {
                                     <Button
                                         size="sm"
                                         className="btn btn-icon btn-rounded btn-danger"
-                                        onClick={(e) => saveQuestionCategoryIdDelete(e, responseData[index].question_category_id, 'Archived')}
+                                        onClick={(e) => saveQuestionCategoryIdDelete(e, responseData[index].category_id, 'Archived')}
                                     >
                                         <i className="feather icon-trash-2" /> &nbsp; Delete
                                     </Button>
@@ -616,7 +624,7 @@ const QuestionCategoryTableView = ({ userStatus }) => {
                                     <Button
                                         size="sm"
                                         className="btn btn-icon btn-round btn-primary"
-                                        onClick={(e) => saveQuestionCategoryIdDelete(e, responseData[index].question_category_id, 'Active')}
+                                        onClick={(e) => saveQuestionCategoryIdDelete(e, responseData[index].category_id, 'Active')}
                                     >
                                         <i className="feather icon-plus" /> &nbsp;Restore
                                     </Button>
@@ -645,11 +653,11 @@ const QuestionCategoryTableView = ({ userStatus }) => {
         setIsOpenAddQuestionCategory(true);
     }
 
-    const deleteQuestionCategory = async (question_category_id, updateStatus) => {
+    const deleteQuestionCategory = async (category_id, updateStatus) => {
 
         const values = {
-            question_category_id: question_category_id,
-            question_category_status: updateStatus
+            category_id: category_id,
+            category_status: updateStatus
         };
 
         console.log(values);
@@ -668,7 +676,8 @@ const QuestionCategoryTableView = ({ userStatus }) => {
             }
         } else {
 
-            hideLoader()
+            hideLoader();
+            _setShowLoader(false);
             updateStatus === 'Active' ? (
                 MySwal.fire('', MESSAGES.INFO.QUESTION_CATEGORY_RESTORED, 'success')
 
@@ -740,6 +749,11 @@ const QuestionCategoryTableView = ({ userStatus }) => {
                                                     <Card.Header>
                                                         <Card.Title as="h5">Questions Category List</Card.Title>
                                                     </Card.Header>
+                                                    {
+                                                        _showLoader === true && (
+                                                            <div className="form-group fill text-center">{loader}</div>
+                                                        )
+                                                    }
                                                     <Card.Body>
                                                         <Table columns={columns} data={questionCategoryData} />
                                                     </Card.Body>
@@ -763,12 +777,17 @@ const QuestionCategoryTableView = ({ userStatus }) => {
                                         </Modal.Body>
                                     </Modal>
 
-                                    <Modal dialogClassName="my-modal" show={isOpenEditQuestionCategory} onHide={() => setIsOpenEditQuestionCategory(false)}>
+                                    <Modal
+                                        size="sm"
+                                        dialogClassName="my-modal"
+                                        show={isOpenEditQuestionCategory}
+                                        onHide={() => setIsOpenEditQuestionCategory(false)}
+                                    >
                                         <Modal.Header closeButton>
                                             <Modal.Title as="h5">Edit Questions Category</Modal.Title>
                                         </Modal.Header>
                                         <Modal.Body>
-                                            <EditQuestionsCategory editQuestionCategoryID={editQuestionCategoryID} setIsOpenEditQuestionCategory={setIsOpenEditQuestionCategory} fetchAllQuestionCategoryData={fetchAllQuestionCategoryData} />
+                                            <EditQuestionsCategory editQuestionCategoryID={editQuestionCategoryID} setIsOpenEditQuestionCategory={setIsOpenEditQuestionCategory} />
                                         </Modal.Body>
                                     </Modal>
 

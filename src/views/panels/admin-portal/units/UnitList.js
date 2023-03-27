@@ -675,7 +675,7 @@ const UnitList = (props) => {
                     </>
                 )
             }
-        </div >
+        </div>
 
     );
 };
