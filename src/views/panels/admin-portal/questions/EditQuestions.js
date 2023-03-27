@@ -14,7 +14,7 @@ import ArticleRTE from './ArticleRTE';
 import dynamicUrl from '../../../../helper/dynamicUrls';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import { SessionStorage } from '../../../../util/SessionStorage';
-import { isEmptyArray, areFilesInvalid, voiceInvalid } from '../../../../util/utils';
+import { isEmptyArray, areFilesInvalid, voiceInvalid, isEmptyObject } from '../../../../util/utils';
 import BasicSpinner from '../../../../helper/BasicSpinner';
 
 const EditQuestions = () => {
@@ -47,7 +47,7 @@ const EditQuestions = () => {
     const [ansWeightageErrMsg, setAnsWeightageErrMsg] = useState(false);
 
     const [selectedQuestionType, setSelectedQuestionType] = useState([]);
-    const [selectedQuestionCategory, setSelectedQuestionCategory] = useState([]);
+    const [selectedQuestionCategory, setSelectedQuestionCategory] = useState({});
     const [selectedQuestionDisclaimer, setSelectedQuestionDisclaimer] = useState([]);
     const [showMathKeyboard, setShowMathKeyboard] = useState('No');
     const [answerTypeOptions, setAnswerTypeOptions] = useState([]);
@@ -117,7 +117,6 @@ const EditQuestions = () => {
     //     setSelectedQuestionDisclaimer(event.target.value);
 
     // }
-    console.log("selectedQuestionCategory : ", selectedQuestionCategory);
 
     useEffect(() => {
 
@@ -163,9 +162,11 @@ const EditQuestions = () => {
                 setErrorMessage("Error fetching data. Please try again later.")
             });
     }, []);
+
+
+
+
     const IndividualQuestionData = () => {
-
-
         console.log("Options : ", options, optionsDisclaimer);
 
         let userJWT = sessionStorage.getItem('user_jwt');
@@ -202,10 +203,10 @@ const EditQuestions = () => {
 
                         let individual_user_data = response.data.Items[0];
                         console.log({ individual_user_data });
-                        let selectedCategory = options.length > 0 && options.filter((e) => e.value === individual_user_data.question_category)
+                        let selectedCategory = options.length > 0 && options.filter((e) => e.value === individual_user_data.question_category.value)
                         console.log("selectedCategory ", selectedCategory);
 
-                        setSelectedQuestionCategory(selectedCategory[0]);
+                        setSelectedQuestionCategory(selectedCategory);
 
                         if (individual_user_data.question_disclaimer === "") {
                             console.log("Disclaimer is not selected");
@@ -224,10 +225,6 @@ const EditQuestions = () => {
 
                         setSelectedQuestionType(individual_user_data.question_type);
                         setQuestionLabelValue(individual_user_data.question_label);
-                        console.log("individual_user_data.question_category : ", individual_user_data.question_category);
-
-                        // setSelectedQuestionCategory(individual_user_data.question_category);
-                        // setSelectedQuestionDisclaimer(individual_user_data.question_disclaimer);
 
                         individual_user_data.question_type === 'Subjective' ? setAnswerTypeOptions([
                             { value: 'Words', label: 'Words' },
@@ -432,7 +429,7 @@ const EditQuestions = () => {
         }
     }
     useEffect(() => {
-        if (!isEmptyArray(optionsDisclaimer) && !isEmptyArray(options)) {
+        if (!isEmptyArray(optionsDisclaimer) && !isEmptyObject(options)) {
             console.log("Inside UE!", options, optionsDisclaimer);
 
             IndividualQuestionData();
@@ -442,11 +439,11 @@ const EditQuestions = () => {
     const handleQuestionCategory = (event) => {
         console.log(event);
         setQuestionCategoryErrMsg(false);
-        setSelectedQuestionCategory(event.value);
+        setSelectedQuestionCategory([event]);
     };
     const handleDisclaimerChange = (event) => {
         console.log(event);
-        // setErrorMessageDisclaimer(false)
+        setErrorMessageDisclaimer(false)
         setSelectedValueDisclaimer(event.value);
     };
 
@@ -512,7 +509,7 @@ const EditQuestions = () => {
     const handleQuestionType = (event) => {
 
         setAnswerTypeOptions((currentOptions) => currentOptions.filter((currentOption) => !selectedAnswerType.includes(currentOption)));
-        setSelectedQuestionCategory([]);
+        setSelectedQuestionCategory({});
 
         console.log(answerTypeOptions);
         // setAnswerTypeOptions([]);
@@ -907,158 +904,158 @@ const EditQuestions = () => {
 
         console.log("payLoad: ", payLoad);
 
-        // axios
-        //     .post(
-        //         dynamicUrl.editQuestion,
-        //         {
-        //             data: payLoad
-        //         },
-        //         {
-        //             headers: { Authorization: sessionStorage.getItem('user_jwt') }
-        //         }
-        //     )
-        //     .then((response) => {
+        axios
+            .post(
+                dynamicUrl.editQuestion,
+                {
+                    data: payLoad
+                },
+                {
+                    headers: { Authorization: sessionStorage.getItem('user_jwt') }
+                }
+            )
+            .then((response) => {
 
-        //         console.log(response.data);
+                console.log(response.data);
 
-        //         let result = response.status === 200;
+                let result = response.status === 200;
 
-        //         if (result) {
+                if (result) {
 
-        //             console.log('inside res');
+                    console.log('inside res');
 
-        //             let uploadParamsQuestionsNote = response.data.question_voice_note;
-        //             let uploadParamsAnswerOptions = response.data.answers_options;
+                    let uploadParamsQuestionsNote = response.data.question_voice_note;
+                    let uploadParamsAnswerOptions = response.data.answers_options;
 
-        //             hideLoader();
+                    hideLoader();
 
-        //             if (Array.isArray(uploadParamsQuestionsNote)) {
+                    if (Array.isArray(uploadParamsQuestionsNote)) {
 
-        //                 for (let index = 0; index < uploadParamsQuestionsNote.length; index++) {
+                        for (let index = 0; index < uploadParamsQuestionsNote.length; index++) {
 
-        //                     let keyNameArr = Object.keys(uploadParamsQuestionsNote[index]);
-        //                     let keyName = keyNameArr[1];
+                            let keyNameArr = Object.keys(uploadParamsQuestionsNote[index]);
+                            let keyName = keyNameArr[1];
 
-        //                     let blobField = voiceNoteFileValues;
-        //                     console.log({ blobField });
+                            let blobField = voiceNoteFileValues;
+                            console.log({ blobField });
 
-        //                     let tempObj = uploadParamsQuestionsNote[index];
-        //                     let result = fetch(tempObj[keyName], {
-        //                         method: 'PUT',
-        //                         body: blobField
-        //                     });
+                            let tempObj = uploadParamsQuestionsNote[index];
+                            let result = fetch(tempObj[keyName], {
+                                method: 'PUT',
+                                body: blobField
+                            });
 
-        //                     console.log({ result });
-        //                 }
-
-
-        //                 if (Array.isArray(uploadParamsAnswerOptions)) {
-
-        //                     for (let index = 0; index < uploadParamsAnswerOptions.length; index++) {
-
-        //                         let keyNameArr = Object.keys(uploadParamsAnswerOptions[index]);
-        //                         let keyName = keyNameArr[1];
-
-        //                         console.log(fileValues);
-
-        //                         let blobField = fileValues[index];
-        //                         console.log({ blobField });
-
-        //                         let tempObjFile = uploadParamsAnswerOptions[index];
-
-        //                         let result = fetch(tempObjFile[keyName], {
-        //                             method: 'PUT',
-        //                             body: blobField
-        //                         });
-
-        //                         console.log({ result });
-        //                     }
-
-        //                     const MySwal = withReactContent(Swal);
-
-        //                     MySwal.fire({
-
-        //                         title: sessionStorage.getItem('click_event') === 'Save' ? 'Question Saved!' : sessionStorage.getItem('click_event') === 'Submit' ? 'Question Submitted!' : sessionStorage.getItem('click_event') === 'Accept' ? "Question Accepted!" : sessionStorage.getItem('click_event') === 'Reject' ? "Question Rejected!" : sessionStorage.getItem('click_event') === 'Revisit' ? "Question marked as Revisit!" : sessionStorage.getItem('click_event') === 'DesignReady' ? "Question marked as Design Ready!" : "Question Published!",
-        //                         icon: 'success',
-        //                     }).then((willDelete) => {
-
-        //                         history.push('/admin-portal/active-questions');
-        //                         // window.location.reload();
-
-        //                     });
-
-        //                 } else {
-
-        //                     console.log('Answer option files not uploaded!');
-        //                 }
+                            console.log({ result });
+                        }
 
 
-        //             } else {
+                        if (Array.isArray(uploadParamsAnswerOptions)) {
 
-        //                 if (Array.isArray(uploadParamsAnswerOptions)) {
+                            for (let index = 0; index < uploadParamsAnswerOptions.length; index++) {
 
-        //                     for (let index = 0; index < uploadParamsAnswerOptions.length; index++) {
+                                let keyNameArr = Object.keys(uploadParamsAnswerOptions[index]);
+                                let keyName = keyNameArr[1];
 
-        //                         let keyNameArr = Object.keys(uploadParamsAnswerOptions[index]);
-        //                         let keyName = keyNameArr[1];
+                                console.log(fileValues);
 
-        //                         let blobField = fileValues[index];
-        //                         console.log({ blobField });
+                                let blobField = fileValues[index];
+                                console.log({ blobField });
 
-        //                         let tempObjFile = uploadParamsAnswerOptions[index];
+                                let tempObjFile = uploadParamsAnswerOptions[index];
 
-        //                         let result = fetch(tempObjFile[keyName], {
-        //                             method: 'PUT',
-        //                             body: blobField
-        //                         });
+                                let result = fetch(tempObjFile[keyName], {
+                                    method: 'PUT',
+                                    body: blobField
+                                });
 
-        //                         console.log({ result });
-        //                     }
+                                console.log({ result });
+                            }
 
-        //                     const MySwal = withReactContent(Swal);
-        //                     MySwal.fire({
+                            const MySwal = withReactContent(Swal);
 
-        //                         title: displaySuccessMsg,
-        //                         icon: 'success',
-        //                     }).then((willDelete) => {
+                            MySwal.fire({
 
-        //                         history.push('/admin-portal/active-questions');
-        //                         // window.location.reload();
+                                title: sessionStorage.getItem('click_event') === 'Save' ? 'Question Saved!' : sessionStorage.getItem('click_event') === 'Submit' ? 'Question Submitted!' : sessionStorage.getItem('click_event') === 'Accept' ? "Question Accepted!" : sessionStorage.getItem('click_event') === 'Reject' ? "Question Rejected!" : sessionStorage.getItem('click_event') === 'Revisit' ? "Question marked as Revisit!" : sessionStorage.getItem('click_event') === 'DesignReady' ? "Question marked as Design Ready!" : "Question Published!",
+                                icon: 'success',
+                            }).then((willDelete) => {
 
-        //                     })
+                                history.push('/admin-portal/active-questions');
+                                // window.location.reload();
 
-        //                     console.log('Question Voice Note not uploaded');
-        //                 }
-        //             }
+                            });
+
+                        } else {
+
+                            console.log('Answer option files not uploaded!');
+                        }
 
 
-        //         } else {
+                    } else {
 
-        //             console.log('else res');
-        //             hideLoader();
+                        if (Array.isArray(uploadParamsAnswerOptions)) {
 
-        //         }
-        //     })
-        //     .catch((error) => {
-        //         if (error.response) {
-        //             hideLoader();
+                            for (let index = 0; index < uploadParamsAnswerOptions.length; index++) {
 
-        //             console.log(error.response.data);
-        //             if (error.response.data === "Question Label Already Exist!") {
-        //                 setQuestionLabelAlreadyExists(true);
-        //             }
+                                let keyNameArr = Object.keys(uploadParamsAnswerOptions[index]);
+                                let keyName = keyNameArr[1];
 
-        //         } else if (error.request) {
+                                let blobField = fileValues[index];
+                                console.log({ blobField });
 
-        //             console.log(error.request);
-        //             hideLoader();
+                                let tempObjFile = uploadParamsAnswerOptions[index];
 
-        //         } else {
+                                let result = fetch(tempObjFile[keyName], {
+                                    method: 'PUT',
+                                    body: blobField
+                                });
 
-        //             console.log('Error', error.message);
-        //             hideLoader();
-        //         }
-        //     });
+                                console.log({ result });
+                            }
+
+                            const MySwal = withReactContent(Swal);
+                            MySwal.fire({
+
+                                title: displaySuccessMsg,
+                                icon: 'success',
+                            }).then((willDelete) => {
+
+                                history.push('/admin-portal/active-questions');
+                                // window.location.reload();
+
+                            })
+
+                            console.log('Question Voice Note not uploaded');
+                        }
+                    }
+
+
+                } else {
+
+                    console.log('else res');
+                    hideLoader();
+
+                }
+            })
+            .catch((error) => {
+                if (error.response) {
+                    hideLoader();
+
+                    console.log(error.response.data);
+                    if (error.response.data === "Question Label Already Exist!") {
+                        setQuestionLabelAlreadyExists(true);
+                    }
+
+                } else if (error.request) {
+
+                    console.log(error.request);
+                    hideLoader();
+
+                } else {
+
+                    console.log('Error', error.message);
+                    hideLoader();
+                }
+            });
 
     }
 
@@ -1074,7 +1071,7 @@ const EditQuestions = () => {
             let payLoad = {
 
                 question_type: selectedQuestionType,
-                question_category: selectedQuestionCategory,
+                question_category: selectedQuestionCategory[0],
                 question_voice_note: selectedQuestionVoiceNote,
                 question_content: articleDataTitle,
                 answer_type: selectedAnswerType,
@@ -1095,7 +1092,8 @@ const EditQuestions = () => {
             setQuestionLabelErr(true);
         } else if (isEmptyArray(selectedQuestionType)) {
             setQuestionTypeErrMsg(true);
-        } else if (isEmptyArray(selectedQuestionCategory) || selectedQuestionCategory === 'Select...') {
+        } else if (isEmptyObject(selectedQuestionCategory[0]) || selectedQuestionCategory[0] === 'Select...') {
+            console.log(selectedQuestionCategory[0]);
             setQuestionCategoryErrMsg(true);
         } else if (articleDataTitle === "" || articleDataTitle === undefined || articleDataTitle === 'undefined' || articleDataTitle === "<p><br></p>" || articleDataTitle === "<p></p>" || articleDataTitle === "<br>") {
             setQuestionEmptyErrMsg(true);
@@ -1431,7 +1429,8 @@ const EditQuestions = () => {
 
                                                     initialValues={{
                                                         question_label: previousData.question_label,
-                                                        question_disclaimer: previousData.question_disclaimer,
+                                                        question_disclaimer: selectedValueDisclaimer,
+                                                        question_category: selectedQuestionCategory[0],
                                                         answerType: '',
                                                         submit: null
                                                     }}
@@ -1460,7 +1459,9 @@ const EditQuestions = () => {
 
                                                             } else if (isEmptyArray(selectedQuestionType)) {
                                                                 setQuestionTypeErrMsg(true);
-                                                            } else if (isEmptyArray(selectedQuestionCategory) || selectedQuestionCategory === 'Select...') {
+                                                            } else if (isEmptyObject(selectedQuestionCategory[0]) || selectedQuestionCategory[0] === 'Select...') {
+                                                                console.log(selectedQuestionCategory[0]);
+
                                                                 setQuestionCategoryErrMsg(true);
                                                             } else if (articleDataTitle === "" || articleDataTitle === undefined || articleDataTitle === 'undefined' || articleDataTitle === "<p><br></p>" || articleDataTitle === "<p></p>" || articleDataTitle === "<br>") {
                                                                 setQuestionEmptyErrMsg(true);
@@ -1477,7 +1478,7 @@ const EditQuestions = () => {
                                                                     let payLoad = {
 
                                                                         question_type: selectedQuestionType,
-                                                                        question_category: selectedQuestionCategory,
+                                                                        question_category: selectedQuestionCategory[0],
                                                                         question_voice_note: selectedQuestionVoiceNote,
                                                                         question_content: articleDataTitle,
                                                                         answer_type: selectedAnswerType,
@@ -1765,7 +1766,9 @@ const EditQuestions = () => {
 
                                                             } else if (isEmptyArray(selectedQuestionType)) {
                                                                 setQuestionTypeErrMsg(true);
-                                                            } else if (isEmptyArray(selectedQuestionCategory) || selectedQuestionCategory === 'Select...') {
+                                                            } else if (isEmptyObject(selectedQuestionCategory[0]) || selectedQuestionCategory[0] === 'Select...') {
+                                                                console.log("selectedQuestionCategory : ", selectedQuestionCategory[0])
+
                                                                 setQuestionCategoryErrMsg(true);
                                                             } else if (articleDataTitle === "" || articleDataTitle === undefined || articleDataTitle === 'undefined' || articleDataTitle === "<p><br></p>" || articleDataTitle === "<p></p>" || articleDataTitle === "<br>") {
                                                                 setQuestionEmptyErrMsg(true);
@@ -1783,7 +1786,7 @@ const EditQuestions = () => {
 
                                                                         question_id: question_id,
                                                                         question_type: selectedQuestionType,
-                                                                        question_category: selectedQuestionCategory,
+                                                                        question_category: selectedQuestionCategory[0],
                                                                         question_voice_note: selectedQuestionVoiceNote,
                                                                         question_content: articleDataTitle,
                                                                         answer_type: selectedAnswerType,
@@ -2212,7 +2215,7 @@ const EditQuestions = () => {
 
 
                                                                     <Select
-                                                                        defaultValue={selectedQuestionCategory}
+                                                                        defaultValue={selectedQuestionCategory[0]}
                                                                         name="questionCategory"
                                                                         options={options}
                                                                         className="basic-multi-select"
@@ -2255,9 +2258,9 @@ const EditQuestions = () => {
                                                                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                                                     />
 
-                                                                    {questionCategoryErrMsg && (
+                                                                    {errorMessageDisclaimer && (
                                                                         <>
-                                                                            <small className="text-danger form-text">{'Please select Question Category'}</small>
+                                                                            <small className="text-danger form-text">{'Please select Question Disclaimer'}</small>
                                                                         </>
                                                                     )}
 

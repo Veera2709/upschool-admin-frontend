@@ -14,9 +14,8 @@ import MESSAGES from '../../../../helper/messages';
 import dynamicUrl from '../../../../helper/dynamicUrls';
 import { defaultPostApi } from '../../../common-ui-components/sow/bgv-api/BgvApi';
 import { bgvAlerts } from '../../../common-ui-components/sow/bgv-api/bgvAlerts';
-import { areFilesInvalidBulkUpload, isEmptyObject } from '../../../../util/utils';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
-import { isEmptyArray, areFilesInvalid, voiceInvalid } from '../../../../util/utils';
+import { isEmptyArray, areFilesInvalid, voiceInvalid, isEmptyObject } from '../../../../util/utils';
 import * as Constants from '../../../../config/constant';
 
 const AddQuestions = ({ className, ...rest }) => {
@@ -35,7 +34,7 @@ const AddQuestions = ({ className, ...rest }) => {
     const [answerTypeErrMsg, setAnswerTypeErrMsg] = useState(false);
 
     const [selectedQuestionType, setSelectedQuestionType] = useState([]);
-    const [selectedQuestionCategory, setSelectedQuestionCategory] = useState([]);
+    const [selectedQuestionCategory, setSelectedQuestionCategory] = useState({});
     const [loader, showLoader, hideLoader] = useFullPageLoader();
     const [displayHeader, setDisplayHeader] = useState(true);
     const [displayHeading, setDisplayHeading] = useState(sessionStorage.getItem('question_active_status'));
@@ -138,7 +137,7 @@ const AddQuestions = ({ className, ...rest }) => {
     const handleQuestionCategory = (event) => {
         console.log(event);
         setQuestionCategoryErrMsg(false);
-        setSelectedQuestionCategory(event.value);
+        setSelectedQuestionCategory(event);
     };
     const handleDisclaimerChange = (event) => {
         console.log(event);
@@ -197,7 +196,7 @@ const AddQuestions = ({ className, ...rest }) => {
     const handleQuestionType = (event) => {
 
         setAnswerTypeOptions((currentOptions) => currentOptions.filter((currentOption) => !selectedAnswerType.includes(currentOption)));
-        setSelectedQuestionCategory([]);
+        setSelectedQuestionCategory({});
 
         console.log(answerTypeOptions);
         // setAnswerTypeOptions([]);
@@ -700,7 +699,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                             } else if (isEmptyArray(selectedQuestionType)) {
 
                                                 setQuestionTypeErrMsg(true);
-                                            } else if (isEmptyArray(selectedQuestionCategory)) {
+                                            } else if (isEmptyObject(selectedQuestionCategory)) {
 
                                                 setQuestionCategoryErrMsg(true);
                                             } else if (articleDataTitle === "" || articleDataTitle === undefined || articleDataTitle === 'undefined' || articleDataTitle === "<p><br></p>" || articleDataTitle === "<p></p>" || articleDataTitle === "<br>") {
