@@ -13,12 +13,31 @@ import MESSAGES from '../../../../helper/messages';
 import { isEmptyArray, decodeJWT } from '../../../../util/utils';
 
 import { GlobalFilter } from '../../../common-ui-components/tables/GlobalFilter';
-import { useTable, useSortBy, usePagination, useGlobalFilter } from 'react-table';
+import { useTable, useSortBy, usePagination, useGlobalFilter, useRowSelect } from 'react-table';
 import dynamicUrl from '../../../../helper/dynamicUrls';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import BasicSpinner from '../../../../helper/BasicSpinner';
+import { bulkToggleQuestionStatus } from '../../../api/CommonApi'
+import { async } from 'q';
 
 function Table({ columns, data, modalOpen }) {
+
+  const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
+  const [loader, showLoader, hideLoader] = useFullPageLoader();
+  const initiallySelectedRows = React.useMemo(() => new Set(["1"]), []);
+
+  const history = useHistory();
+  
+  const MySwal = withReactContent(Swal);
+  
+  const sweetAlertHandler = (alert) => {
+    MySwal.fire({
+        title: alert.title,
+        text: alert.text,
+        icon: alert.type
+    });
+};
+
   const {
     getTableProps,
     getTableBodyProps,
@@ -37,18 +56,214 @@ function Table({ columns, data, modalOpen }) {
     nextPage,
     previousPage,
     setPageSize,
-    state: { pageIndex, pageSize }
+    selectedFlatRows,
+    state: { pageIndex, pageSize, selectedRowPaths }
   } = useTable(
     {
       columns,
       data,
-      initialState: { pageIndex: 0, pageSize: 10 }
+      initialState: { pageIndex: 0, pageSize: 10, selectedRowPaths: initiallySelectedRows }
     },
     useGlobalFilter,
     useSortBy,
-    usePagination
+    usePagination,
+    useRowSelect,
+    (hooks) => {
+      hooks.visibleColumns.push((columns) => [
+          {
+              id: "selection",
+              Header: ({ getToggleAllPageRowsSelectedProps }) => (
+                  <div>
+                      <IndeterminateCheckbox {...getToggleAllPageRowsSelectedProps()} />
+                  </div>
+              ),
+              Cell: ({ row }) => (
+                  <div>
+                      <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
+                  </div>
+              )
+          },
+          ...columns
+      ]);
+  } 
   );
+  const question_active_status = pageLocation === 'active-questions' ? "Active" : "Archived"
 
+//   const toggleFunction = () => {
+
+//     let arrayWithQuestions = [];
+//     page.map(e => {
+//         e.isSelected === true && arrayWithQuestions.push(e.original.question_id)
+//     })
+
+//     console.log("arrayWithQuestions.length", arrayWithQuestions.length)
+//     console.log("CHECKED IDS : ", arrayWithQuestions);
+
+//     if (arrayWithQuestions.length === 0) { 
+//         const MySwal = withReactContent(Swal); 
+//         return MySwal.fire('Sorry', 'No Questions Selected!', 'warning').then(() => {
+//         });
+//     }else{
+//       MySwal.fire({
+//           title: 'Are you sure?',
+//           text: pageLocation === 'active-questions' ? 'Confirm deleting' : 'Confirm restoring',
+//           type: 'warning',
+//           showCloseButton: true,
+//           showCancelButton: true,
+  
+//       }).then((willDelete) => {
+//           if (willDelete.value) {
+//               console.log("api calling");
+//               // changeStatus(digi_card_id, digi_card_title);
+//               console.log("Request : ", {
+//                   question_active_status: question_active_status === "Active" ? "Archived" : "Active",
+//                   question_array: arrayWithQuestions,
+//               });
+  
+//               axios
+//                   .post(
+//                       dynamicUrl.bulkToggleQuestionStatus,
+//                       {
+//                           data: {
+//                               question_active_status: question_active_status === "Active" ? "Archived" : "Active",
+//                               question_array: arrayWithQuestions,
+//                           }
+//                       }, {
+//                       headers: { Authorization: sessionStorage.getItem('user_jwt') }
+//                   })
+//                   .then(async (response) => {
+//                       console.log("response : ", response);
+//                       if (response.Error) {
+//                           console.log("Error");
+//                           hideLoader();
+//                           // sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
+//                           pageLocation === "active-questions"
+//                               ? sweetAlertHandler({
+//                                   title: MESSAGES.TTTLES.Sorry,
+//                                   type: "error",
+//                                   text: MESSAGES.ERROR.DeletingQuestion
+//                               })
+//                               : sweetAlertHandler({
+//                                   title: MESSAGES.TTTLES.Sorry,
+//                                   type: "error",
+//                                   text: MESSAGES.ERROR.RestoringQuestion
+//                               });
+//                           history.push('/admin-portal/' + pageLocation)
+//                       }
+//                       else {
+//                           console.log("response : ", response);
+//                           if (response.data === 200) {
+//                               MySwal.fire({
+//                                   title: (pageLocation === 'active-questions') ? 'Questions Deleted' : "Questions Restored",
+//                                   icon: "success",
+//                                   // text: (pageLocation === 'active-questions') ? 'Unit Deleted' : 'Unit Restored',
+//                                   // type: 'success',
+//                               }).then((willDelete) => {
+  
+//                                   window.location.reload()
+  
+//                               })
+  
+//                           }
+//                       }
+//                       //new
+  
+//                   }
+//                   ).catch(async (errorResponse) => {
+//                       console.log("errorResponse : ", errorResponse);
+//                       if (errorResponse.response.data) {
+//                           MySwal.fire({
+//                               title: MESSAGES.TTTLES.Sorry,
+//                               icon: "error",
+//                               text: errorResponse.response.data,
+//                               // type: 'success',
+//                           }).then((willDelete) => {
+  
+//                               window.location.reload()
+  
+//                           })
+//                       }
+  
+//                   }
+  
+//                   )
+  
+//           } 
+  
+//       })
+//     }
+
+// }
+
+const IndeterminateCheckbox = React.forwardRef(
+  ({ indeterminate, ...rest }, ref) => {
+      const defaultRef = React.useRef();
+      const resolvedRef = ref || defaultRef;
+
+      React.useEffect(() => {
+          resolvedRef.current.indeterminate = indeterminate;
+      }, [resolvedRef, indeterminate]);
+
+      return (
+          <>
+              <input type="checkbox" ref={resolvedRef} {...rest} />
+          </>
+      );
+  }
+);
+
+const multiDelete = async (status) => {
+
+  const questionIDs = [];
+
+  page.map(e => {
+      e.isSelected === true && questionIDs.push(e.original.question_id)
+  })
+
+  if (questionIDs.length > 0) {
+    const MySwal = withReactContent(Swal);
+    MySwal.fire({
+        title: 'Are you sure?',
+        text: pageLocation === 'active-units' ? 'Confirm deleting' : 'Confirm restoring',
+        type: 'warning',
+        showCloseButton: true,
+        showCancelButton: true,
+  
+    }).then( async (willDelete) => {
+        if (willDelete.value) {
+         
+              var payload = {
+                  "question_active_status": status,
+                  "question_array": questionIDs
+              }
+        
+              const ResultData = await bulkToggleQuestionStatus(payload)
+              if (ResultData.Error) {
+                  if (ResultData.Error.response.data == 'Invalid Token') {
+                      sessionStorage.clear();
+                      localStorage.clear();
+                      history.push('/auth/signin-1');
+                      window.location.reload();
+                  } else {
+                      return MySwal.fire('Error', ResultData.Error.response.data, 'error').then(() => {
+                          window.location.reload();
+                      });
+                  }
+              } else {
+                  return MySwal.fire('success', `Questions ${status === 'Active' ? 'Restored' : "Deleted"} Successfully`, 'success').then(() => {
+                      window.location.reload();
+                  });
+              }
+         
+        }
+      })
+  } else {
+    return MySwal.fire('Sorry', 'No Questions Selected!', 'warning').then(() => {
+        // window.location.reload();
+    });
+}
+ 
+}
   return (
     <>
       <Row className="mb-3">
@@ -72,11 +287,44 @@ function Table({ columns, data, modalOpen }) {
         <Col className="d-flex justify-content-end">
           <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
 
-          <Link to={'/admin-portal/add-questions'}>
-            <Button variant="success" className="btn-sm btn-round has-ripple ml-2">
-              <i className="feather icon-plus" /> Add Questions
-            </Button>
-          </Link>
+         
+          {
+              pageLocation === "active-questions" ? (<>
+              
+              <Link to={'/admin-portal/add-questions'}>
+                <Button variant="success" className="btn-sm btn-round has-ripple ml-2">
+                  <i className="feather icon-plus" /> Add Questions
+                </Button>
+              </Link>
+              
+              <Button
+                  // variant="danger"
+                  className="btn-sm btn-round has-ripple ml-2 btn btn-danger"
+                  style={{ whiteSpace: "no-wrap" }}
+
+                  onClick={(e) => {
+                      // handleAddConcepts(e);
+                      multiDelete("Archived"); 
+                  }}>
+                  <i className="feather icon-trash-2" /> Multi Delete
+              </Button>
+              </>)
+               : 
+               (<>
+                <Button
+                    // variant="success"
+                    className="btn-sm btn-round has-ripple ml-2 btn btn-primary"
+                    style={{ whiteSpace: "no-wrap" }}
+                    onClick={(e) => {
+                        // handleAddConcepts(e);
+                        multiDelete("Active"); 
+
+                    }}
+                >
+                    <i className="feather icon-plus" /> Multi Restore
+                </Button>
+               </>)
+          }
         </Col>
       </Row>
 
@@ -162,6 +410,20 @@ const QuestionsTableView = ({ _questionStatus }) => {
   console.log(_questionStatus);
 
   const columns = React.useMemo(() => [
+    //   {
+    //     id: "selection",
+
+    //     Header: ({ getToggleAllRowsSelectedProps }) => (
+    //         <div>
+    //             <input type="checkbox" {...getToggleAllRowsSelectedProps()} />
+    //         </div>
+    //     ),
+    //     Cell: ({ row }) => (
+    //         <div>
+    //             <input type="checkbox" {...row.getToggleRowSelectedProps()} />
+    //         </div>
+    //     )
+    // },
     {
       Header: '#',
       accessor: 'id'
@@ -496,7 +758,7 @@ const QuestionsTableView = ({ _questionStatus }) => {
 
       })
       .catch((error) => {
-        console.log(error.response.data);
+        console.log(error.response);
 
         if (error.response.data === 'Invalid Token') {
 

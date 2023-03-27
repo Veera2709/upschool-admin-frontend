@@ -25,6 +25,22 @@ function Table({ columns, data, modalOpen }) {
     const MySwal = withReactContent(Swal);
     let digicardStatus = pageLocation === "active-digiCard" ? 'Active' : 'Archived';
 
+    const IndeterminateCheckbox = React.forwardRef(
+        ({ indeterminate, ...rest }, ref) => {
+            const defaultRef = React.useRef();
+            const resolvedRef = ref || defaultRef;
+
+            React.useEffect(() => {
+                resolvedRef.current.indeterminate = indeterminate;
+            }, [resolvedRef, indeterminate]);
+
+            return (
+                <>
+                    <input type="checkbox" ref={resolvedRef} {...rest} />
+                </>
+            );
+        }
+    );
 
     const {
         getTableProps,
@@ -55,7 +71,25 @@ function Table({ columns, data, modalOpen }) {
         useGlobalFilter,
         useSortBy,
         usePagination,
-        useRowSelect
+        useRowSelect,
+        (hooks) => {
+            hooks.visibleColumns.push((columns) => [
+                {
+                    id: "selection",
+                    Header: ({ getToggleAllPageRowsSelectedProps }) => (
+                        <div>
+                            <IndeterminateCheckbox {...getToggleAllPageRowsSelectedProps()} />
+                        </div>
+                    ),
+                    Cell: ({ row }) => (
+                        <div>
+                            <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
+                        </div>
+                    )
+                },
+                ...columns
+            ]);
+        }
     );
 
 
@@ -63,10 +97,11 @@ function Table({ columns, data, modalOpen }) {
     let history = useHistory();
 
     const adddigicard = () => {
-        history.push('/admin-portal/add-digicard'); 
+        history.push('/admin-portal/add-digicard');
     }
 
     const getIDFromData = async (DigicardStatus) => {
+        console.log("page data", page);
         var DigicardIds = [];
         selectedFlatRows.map((item) => {
             console.log("item.original.digi_card_id", item.original.digi_card_id);
@@ -75,28 +110,44 @@ function Table({ columns, data, modalOpen }) {
 
         console.log("DigicardIds", DigicardIds.length);
         if (DigicardIds.length > 0) {
-            var payload = {
-                "digicard_status": DigicardStatus,
-                "digi_card_array": DigicardIds
-            }
 
-            const ResultData = await toggleMultiDigicardStatus(payload)
-            if (ResultData.Error) {
-                if (ResultData.Error.response.data == 'Invalid Token') {
-                    sessionStorage.clear();
-                    localStorage.clear();
-                    history.push('/auth/signin-1');
-                    window.location.reload();
-                }else{
-                    return MySwal.fire('Error',ResultData.Error.response.data, 'error').then(() => {
-                        window.location.reload();
-                    });
+            MySwal.fire({
+                title: 'Are you sure?',
+                text: `Confirm ${pageLocation === 'active-digicards' ? "deleting" : "restoring"} the selected Digicards!`,
+                type: 'warning',
+                showCloseButton: true,
+                showCancelButton: true
+            }).then(async (willDelete) => {
+
+                if (willDelete.value) {
+
+                    var payload = {
+                        "digicard_status": DigicardStatus,
+                        "digi_card_array": DigicardIds
+                    }
+
+                    const ResultData = await toggleMultiDigicardStatus(payload)
+                    if (ResultData.Error) {
+                        if (ResultData.Error.response.data == 'Invalid Token') {
+                            sessionStorage.clear();
+                            localStorage.clear();
+                            history.push('/auth/signin-1');
+                            window.location.reload();
+                        } else {
+                            return MySwal.fire('Error', ResultData.Error.response.data, 'error').then(() => {
+                                window.location.reload();
+                            });
+                        }
+                    } else {
+                        return MySwal.fire('', `Digicards ${DigicardStatus === 'Active' ? 'Restored' : "Deleted"} Successfully`, 'success').then(() => {
+                            window.location.reload();
+                        });
+                    }
+
                 }
-            } else {
-                return MySwal.fire('', `Digicards ${DigicardStatus === 'Active' ? 'Restored' : "Deleted"} Successfully`, 'success').then(() => {
-                    window.location.reload();
-                });
-            }
+            })
+
+
         } else {
             return MySwal.fire('Sorry', 'No Digicard Selected!', 'warning').then(() => {
                 window.location.reload();
@@ -126,22 +177,27 @@ function Table({ columns, data, modalOpen }) {
                 </Col>
                 <Col className="mb-3" style={{ display: 'contents' }}>
                     <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
-                    <Button className='btn-sm btn-round has-ripple ml-2 btn btn-success'
-                        onClick={() => { adddigicard(); }}
-                    > <i className="feather icon-plus" />&nbsp;
-                        Add DigiCard
-                    </Button>
+
                     {digicardStatus === "Active" ? (
-                        <Button className='btn-sm btn-round has-ripple ml-2 btn btn-danger'
-                            onClick={() => { getIDFromData("Archived") }}
-                            style={{marginRight:'15px'}}
-                        > <i className="feather icon-trash-2" />&nbsp;
-                            Multi Delete
-                        </Button>
+                        <>
+                            <Button className='btn-sm btn-round has-ripple ml-2 btn btn-success'
+                                onClick={() => { adddigicard(); }}
+                            > <i className="feather icon-plus" />&nbsp;
+                                Add DigiCard
+                            </Button>
+
+                            <Button className='btn-sm btn-round has-ripple ml-2 btn btn-danger'
+                                onClick={() => { getIDFromData("Archived") }}
+                                style={{ marginRight: '15px' }}
+                            > <i className="feather icon-trash-2" />&nbsp;
+                                Multi Delete
+                            </Button>
+                        </>
+
                     ) : (
                         <Button className='btn-sm btn-round has-ripple ml-2 btn btn-primary'
                             onClick={() => { getIDFromData("Active") }}
-                            style={{marginRight:'15px'}}
+                            style={{ marginRight: '15px' }}
                         > <i className="feather icon-plus" />&nbsp;
                             Multi Restore
                         </Button>
@@ -226,21 +282,6 @@ const DigiCard = () => {
 
     const columns = React.useMemo(
         () => [
-            {
-                id: "selection",
-
-                Header: ({ getToggleAllRowsSelectedProps }) => (
-                    <div>
-                        <input type="checkbox" {...getToggleAllRowsSelectedProps()} />
-                    </div>
-                ),
-
-                Cell: ({ row }) => (
-                    <div>
-                        <input type="checkbox" {...row.getToggleRowSelectedProps()} />
-                    </div>
-                )
-            },
             {
                 Header: 'DigiCard Logo',
                 accessor: 'digicard_image'
@@ -407,8 +448,8 @@ const DigiCard = () => {
         let DigicardTyle = digicardStatus === "Active" ? "Active Digicards" : "Archived Digicards"
         sessionStorage.setItem('digicard_type', DigicardTyle)
         axios.post(dynamicUrl.fetchDigiCardsBasedonStatus, {
-            data:{
-                digicard_status:digicardStatus
+            data: {
+                digicard_status: digicardStatus
             }
         }, {
             headers: { Authorization: sessionStorage.getItem('user_jwt') }

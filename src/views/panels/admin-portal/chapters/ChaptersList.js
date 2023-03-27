@@ -20,9 +20,7 @@ import { useLocation } from "react-router-dom";
 import BasicSpinner from '../../../../helper/BasicSpinner';
 import AddChapter from './AddChapters';
 import EditChapter from './EditChapter';
-import { toggleMultiChapterStatus } from '../../../api/CommonApi'
-
-
+import { toggleMultiChapterStatus } from '../../../api/CommonApi';
 
 
 function Table({ columns, data, modalOpen }) {
@@ -33,6 +31,23 @@ function Table({ columns, data, modalOpen }) {
     const MySwal = withReactContent(Swal);
     let history = useHistory();
 
+
+    const IndeterminateCheckbox = React.forwardRef(
+        ({ indeterminate, ...rest }, ref) => {
+            const defaultRef = React.useRef();
+            const resolvedRef = ref || defaultRef;
+
+            React.useEffect(() => {
+                resolvedRef.current.indeterminate = indeterminate;
+            }, [resolvedRef, indeterminate]);
+
+            return (
+                <>
+                    <input type="checkbox" ref={resolvedRef} {...rest} />
+                </>
+            );
+        }
+    );
 
 
     const {
@@ -82,58 +97,58 @@ function Table({ columns, data, modalOpen }) {
                 },
                 ...columns
             ]);
-        }
+        } 
     );
 
 
-    const IndeterminateCheckbox = React.forwardRef(
-        ({ indeterminate, ...rest }, ref) => {
-            const defaultRef = React.useRef();
-            const resolvedRef = ref || defaultRef;
-
-            React.useEffect(() => {
-                resolvedRef.current.indeterminate = indeterminate;
-            }, [resolvedRef, indeterminate]);
-
-            return (
-                <>
-                    <input type="checkbox" ref={resolvedRef} {...rest} />
-                </>
-            );
-        }
-    );
-
-
+    
 
     const multiDelete = async (status) => {
+
         console.log("selectedFlatRows", selectedFlatRows);
         const chapterIds = [];
         selectedFlatRows.map((item) => {
             chapterIds.push(item.original.chapter_id)
         })
-        if (chapterIds.length > 0) {
-            var payload = {
-                "chapter_status": status,
-                "chapter_array": chapterIds
-            }
 
-            const ResultData = await toggleMultiChapterStatus(payload)
-            if (ResultData.Error) {
-                if (ResultData.Error.response.data == 'Invalid Token') {
-                    sessionStorage.clear();
-                    localStorage.clear();
-                    history.push('/auth/signin-1');
-                    window.location.reload();
-                } else {
-                    return MySwal.fire('Error', ResultData.Error.response.data, 'error').then(() => {
-                        window.location.reload();
-                    });
+        if (chapterIds.length > 0) {
+
+            MySwal.fire({
+                title: 'Are you sure?',
+                text: `Confirm ${pageLocation === 'active-chapter' ? "deleting" : "restoring"} the selected Chapter(s)!`,
+                type: 'warning',
+                showCloseButton: true,
+                showCancelButton: true
+            }).then(async (willDelete) => {
+
+                if (willDelete.value) {
+
+                    var payload = {
+                        "chapter_status": status,
+                        "chapter_array": chapterIds
+                    }
+
+                    const ResultData = await toggleMultiChapterStatus(payload)
+                    if (ResultData.Error) {
+                        if (ResultData.Error.response.data == 'Invalid Token') {
+                            sessionStorage.clear();
+                            localStorage.clear();
+                            history.push('/auth/signin-1');
+                            window.location.reload();
+                        } else {
+                            return MySwal.fire('Error', ResultData.Error.response.data, 'error').then(() => {
+                                window.location.reload();
+                            });
+                        }
+                    } else {
+                        return MySwal.fire('success', `Selected Chapters have been ${status === 'Active' ? 'restored' : "deleted"} successfully!`, 'success').then(() => {
+                            window.location.reload();
+                        });
+                    }
+
                 }
-            } else {
-                return MySwal.fire('success', `Chapters ${status === 'Active' ? 'Restored' : "Deleted"} Successfully`, 'success').then(() => {
-                    window.location.reload();
-                });
-            }
+            });
+
         } else {
             return MySwal.fire('Sorry', 'No Chapters Selected!', 'warning').then(() => {
                 // window.location.reload();
@@ -166,16 +181,20 @@ function Table({ columns, data, modalOpen }) {
 
                 <Col className="mb-3" style={{ display: 'contents' }}>
                     <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
-                    <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={() => { setOpenAddChapter(true) }}>
-                        <i className="feather icon-plus" /> Add Chapter
-                    </Button>
+
                     {chapterStatus === 'Active' ? (
-                        <Button variant="success" className='btn-sm btn-round has-ripple ml-2 btn btn-danger'
-                            onClick={() => { multiDelete("Archived") }}
-                            style={{ marginRight: '15px' }}
-                        >
-                            <i className="feather icon-trash-2" />  Multi Delete
-                        </Button>
+                        <>
+                            <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={() => { setOpenAddChapter(true) }}>
+                                <i className="feather icon-plus" /> Add Chapter
+                            </Button>
+
+                            <Button variant="success" className='btn-sm btn-round has-ripple ml-2 btn btn-danger'
+                                onClick={() => { multiDelete("Archived") }}
+                                style={{ marginRight: '15px' }}
+                            >
+                                <i className="feather icon-trash-2" />  Multi Delete
+                            </Button>
+                        </>
                     ) : (
                         <Button className='btn-sm btn-round has-ripple ml-2 btn btn-primary'
                             onClick={() => { multiDelete("Active") }}
@@ -375,7 +394,6 @@ const ChaptersListChild = (props) => {
                             hideLoader();
                         }
                     });
-            } else {
             }
         });
     };

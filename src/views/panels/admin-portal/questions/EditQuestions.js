@@ -14,7 +14,7 @@ import ArticleRTE from './ArticleRTE';
 import dynamicUrl from '../../../../helper/dynamicUrls';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import { SessionStorage } from '../../../../util/SessionStorage';
-import { isEmptyArray, areFilesInvalid, voiceInvalid } from '../../../../util/utils';
+import { isEmptyArray, areFilesInvalid, voiceInvalid, isEmptyObject } from '../../../../util/utils';
 import BasicSpinner from '../../../../helper/BasicSpinner';
 
 const EditQuestions = () => {
@@ -28,16 +28,27 @@ const EditQuestions = () => {
     const [displayHeading, setDisplayHeading] = useState(sessionStorage.getItem('question_active_status'));
     const _questionStatus = sessionStorage.getItem('click_event');
     let displaySuccessMsg;
-
     const [questionTypeOptions, setQquestionTypeOptions] = useState([
         { value: 'Objective', label: 'Objective' },
         { value: 'Subjective', label: 'Subjective' }
     ]);
+    const [questionCategoryOptions, setQquestionCategoryOptions] = useState([
+        { value: 'Voice based', label: 'Voice based' },
+        { value: 'Picture based', label: 'Picture based' },
+        { value: 'Case Study based', label: 'Case Study based' },
+        { value: 'Comprehension based', label: 'Comprehension based' },
+        { value: 'Fill in the blank', label: 'Fill in the blank' },
+        { value: 'True or False', label: 'True or False' },
+        { value: 'Numerical problem', label: 'Numerical problem' }
+    ]);
     const [questionTypeErrMsg, setQuestionTypeErrMsg] = useState(false);
+    const [questionCategoryErrMsg, setQuestionCategoryErrMsg] = useState(false);
     const [questionEmptyErrMsg, setQuestionEmptyErrMsg] = useState(false);
     const [ansWeightageErrMsg, setAnsWeightageErrMsg] = useState(false);
 
     const [selectedQuestionType, setSelectedQuestionType] = useState([]);
+    const [selectedQuestionCategory, setSelectedQuestionCategory] = useState({});
+    const [selectedQuestionDisclaimer, setSelectedQuestionDisclaimer] = useState({});
     const [showMathKeyboard, setShowMathKeyboard] = useState('No');
     const [answerTypeOptions, setAnswerTypeOptions] = useState([]);
     const [selectedAnswerType, setSelectedAnswerType] = useState([]);
@@ -74,6 +85,14 @@ const EditQuestions = () => {
     const [newdIgicardErrReq, setNewDigicardErrReq] = useState(false);
     const [newdIgicardErrRegex, setNewDigicardErrRegex] = useState(false);
 
+    const [options, setOptions] = useState([]);
+    const [errorMessage, setErrorMessage] = useState("");//for question category
+
+    const [optionsDisclaimer, setOptionsDisclaimer] = useState([]);
+    const [selectedValueDisclaimer, setSelectedValueDisclaimer] = useState([]);
+    const [errorMessageDisclaimer, setErrorMessageDisclaimer] = useState(false); //for question disclaimer
+
+
     const [questionLabelAlreadyExists, setQuestionLabelAlreadyExists] = useState(false);
 
     const [answerOptionsForm, setAnswerOptionsForm] = useState([
@@ -86,21 +105,351 @@ const EditQuestions = () => {
         }
     ]);
 
-    if (_questionStatus === 'Save') {
-        displaySuccessMsg = 'Question Saved!';
-    } else if (_questionStatus === 'Submit') {
-        displaySuccessMsg = 'Question Submitted!';
-    } else if (_questionStatus === 'Accept') {
-        displaySuccessMsg = 'Question Accepted!';
-    } else if (_questionStatus === 'Reject') {
-        displaySuccessMsg = 'Question Rejected!';
-    } else if (_questionStatus === 'Revisit') {
-        displaySuccessMsg = 'Question set as Revisit!';
-    } else if (_questionStatus === 'DesignReady') {
-        displaySuccessMsg = 'Question set as Design Ready!';
-    } else if (_questionStatus === 'Publish') {
-        displaySuccessMsg = 'Question Published!';
+    displaySuccessMsg = _questionStatus === 'Save' ? 'Question Saved!' : _questionStatus === 'Submit' ? 'Question Submitted!' : _questionStatus === 'Accept' ? 'Question Accepted!' : _questionStatus === 'Reject' ? 'Question Rejected!' : _questionStatus === 'Revisit' ? 'Question set as Revisit!' : _questionStatus === 'DesignReady' ? 'Question set as Design Ready!' : _questionStatus === 'Publish' ? 'Question Published!' : 'Question Updated!';
+
+    // const handleQuestionCategory = (event) => {
+    //     setQuestionCategoryErrMsg(false);
+    //     setSelectedQuestionCategory(event.target.value);
+
+    // }
+    // const handleQuestionDisclaimer = (event) => {
+    //     // setQuestionCategoryErrMsg(false);
+    //     setSelectedQuestionDisclaimer(event.target.value);
+
+    // }
+
+    useEffect(() => {
+
+        console.log("Request : ", {
+            data: {
+                category_status: "Active"
+            }
+        });
+        axios
+            // .post("api-url")
+            .post(
+                dynamicUrl.fetchDisclaimersandCategories,
+                {
+                    data: {
+                        disclaimer_type: "Question",
+                        disclaimer_status: "Active",
+                        category_type: "Question",
+                        category_status: "Active"
+                    }
+                },
+                {
+                    headers: { Authorization: sessionStorage.getItem('user_jwt') }
+                }
+            )
+            .then(async (response) => {
+
+                console.log("Response : ", response);
+                let tempCategoryArr = [];
+                let tempDisclaimerArr = [];
+                await (response.data.categories.map(e => { tempCategoryArr.push({ value: e.category_id, label: e.category_name }) }));
+                await (response.data.disclaimers.map(e => { tempDisclaimerArr.push({ value: e.disclaimer_id, label: e.disclaimer_label }) }));
+
+                console.log("tempCategoryArr : ", tempCategoryArr);
+                console.log("tempDisclaimerArr : ", tempDisclaimerArr);
+                setOptions(tempCategoryArr);
+                setOptionsDisclaimer(tempDisclaimerArr);
+
+
+            })
+
+            .catch((error) => {
+                console.log(error)
+                setErrorMessage("Error fetching data. Please try again later.")
+            });
+    }, []);
+
+
+
+
+    const IndividualQuestionData = () => {
+        console.log("Options : ", options, optionsDisclaimer);
+
+        let userJWT = sessionStorage.getItem('user_jwt');
+
+        if (userJWT === "" || userJWT === undefined || userJWT === "undefined" || userJWT === null) {
+
+            sessionStorage.clear();
+            localStorage.clear();
+            history.push('/auth/signin-1');
+            window.location.reload();
+
+        } else {
+
+            threadLinks.length === 1 ? setDisplayHeader(false) : setDisplayHeader(true);
+
+            setIsLoading(true);
+            axios
+                .post(
+                    dynamicUrl.fetchIndividualQuestionData,
+                    {
+                        data: {
+                            question_id: question_id
+                        }
+                    },
+                    {
+                        headers: { Authorization: SessionStorage.getItem('user_jwt') }
+                    }
+                )
+                .then((response) => {
+
+                    hideLoader();
+
+                    if (response.data.Items[0]) {
+
+                        let individual_user_data = response.data.Items[0];
+                        console.log({ individual_user_data });
+                        let selectedCategory = options.length > 0 && options.filter((e) => e.value === individual_user_data.question_category.value)
+                        console.log("selectedCategory ", selectedCategory);
+
+                        setSelectedQuestionCategory(selectedCategory);
+
+
+                        if (individual_user_data.question_disclaimer === "") {
+                            console.log("Disclaimer is not selected");
+                            setSelectedQuestionDisclaimer({});
+                        } else {
+                            let selectedDisclaimer = optionsDisclaimer.filter((e) => e.value === individual_user_data.question_disclaimer.value);
+                            console.log("selectedDisclaimer ", selectedDisclaimer);
+                            setSelectedValueDisclaimer(selectedDisclaimer[0]);
+                            setSelectedQuestionDisclaimer(selectedDisclaimer);
+                        }
+
+                        const radioValue = individual_user_data.show_math_keyboard === 'Yes' ? true : false;
+
+                        setIsLoading(false);
+
+                        setShowMathKeyboard(individual_user_data.show_math_keyboard);
+                        _setRadio(radioValue);
+
+                        setSelectedQuestionType(individual_user_data.question_type);
+                        setQuestionLabelValue(individual_user_data.question_label);
+
+                        individual_user_data.question_type === 'Subjective' ? setAnswerTypeOptions([
+                            { value: 'Words', label: 'Words' },
+                            { value: 'Numbers', label: 'Numbers' },
+                            { value: 'Equation', label: 'Equation' }
+                        ]) : setAnswerTypeOptions([
+                            { value: 'Words', label: 'Words' },
+                            { value: 'Numbers', label: 'Numbers' },
+                            { value: 'Equation', label: 'Equation' },
+                            { value: 'Image', label: 'Image' },
+                            { value: 'Audio File', label: 'Audio File' }
+                        ]);
+
+                        setArticleDataTtitle(individual_user_data.question_content);
+
+                        let uploadParams = individual_user_data.answers_of_question;
+                        let object;
+                        let tempArray = [];
+                        let tempImgPreviewArr = [];
+                        let tempAudioPreviewArr = [];
+                        let tempEquPreviewArr = [];
+
+                        if (Array.isArray(uploadParams)) {
+
+                            function setValues(index) {
+
+                                if (index < uploadParams.length) {
+
+                                    if (individual_user_data.answer_type === 'Numbers') {
+
+                                        object = {
+                                            answer_type: individual_user_data.answer_type,
+                                            answer_content: uploadParams[index].answer_content,
+                                            answer_display: uploadParams[index].answer_display,
+                                            answer_option: uploadParams[index].answer_option,
+                                            answer_weightage: uploadParams[index].answer_weightage,
+                                            answer_range_from: Number(uploadParams[index].answer_range_from),
+                                            answer_range_to: Number(uploadParams[index].answer_range_to)
+                                        }
+
+                                        tempArray.push(object);
+
+                                    } else {
+
+                                        object = {
+                                            answer_type: individual_user_data.answer_type,
+                                            answer_content: uploadParams[index].answer_content,
+                                            answer_display: uploadParams[index].answer_display,
+                                            answer_option: uploadParams[index].answer_option,
+                                            answer_weightage: uploadParams[index].answer_weightage
+                                        }
+
+                                        tempArray.push(object);
+                                    }
+
+                                    if (individual_user_data.answer_type === 'Image') {
+
+                                        let tempPreviewImg = uploadParams[index].answer_content_url;
+                                        tempImgPreviewArr.push(tempPreviewImg);
+
+                                        index++;
+                                        setValues(index);
+                                    } else if (individual_user_data.answer_type === 'Equation') {
+
+                                        let tempPreviewEqu = uploadParams[index].answer_content;
+                                        tempEquPreviewArr.push(tempPreviewEqu);
+                                        index++;
+                                        setValues(index);
+                                    } else if (individual_user_data.answer_type === 'Audio File') {
+
+                                        let tempPreviewAudio = uploadParams[index].answer_content_url;
+                                        tempAudioPreviewArr.push(tempPreviewAudio);
+
+                                        index++;
+                                        setValues(index);
+                                    } else {
+
+                                        index++;
+                                        setValues(index);
+                                    }
+
+                                } else {
+
+                                    isEmptyArray(tempArray) ? (
+
+                                        tempArray.push(object = {
+                                            answer_type: individual_user_data.answer_type,
+                                            answer_option: '',
+                                            answer_content: '',
+                                            answer_display: '',
+                                            answer_weightage: ''
+                                        })
+
+                                    ) : (console.log("Not empty"));
+
+                                    tempArray.length >= 1 ? setAddAnswerOptions(true) : setAddAnswerOptions(false);
+
+                                    setAnswerOptionsForm(tempArray);
+
+                                    setPreviewImages(tempImgPreviewArr);
+
+                                    setPreviewAudios(tempAudioPreviewArr);
+
+                                    setEquation(tempEquPreviewArr);
+
+                                    switch (individual_user_data.answer_type) {
+                                        case 'Words':
+                                            setToggleWordsInput(true);
+                                            setToggleNumbersInput(false);
+                                            setToggleEquationsInput(false);
+                                            setToggleImageInput(false);
+                                            setToggleAudioInput(false);
+                                            break;
+                                        case 'Numbers':
+                                            setToggleNumbersInput(true);
+                                            setToggleWordsInput(false);
+                                            setToggleEquationsInput(false);
+                                            setToggleImageInput(false);
+                                            setToggleAudioInput(false);
+                                            break;
+                                        case 'Equation':
+                                            setToggleEquationsInput(true);
+                                            setToggleWordsInput(false);
+                                            setToggleNumbersInput(false);
+                                            setToggleImageInput(false);
+                                            setToggleAudioInput(false);
+                                            break;
+                                        case 'Image':
+                                            setToggleImageInput(true);
+                                            setToggleWordsInput(false);
+                                            setToggleEquationsInput(false);
+                                            setToggleNumbersInput(false);
+                                            setToggleAudioInput(false);
+                                            break;
+                                        case 'Audio File':
+                                            setToggleAudioInput(true);
+                                            setToggleWordsInput(false);
+                                            setToggleEquationsInput(false);
+                                            setToggleNumbersInput(false);
+                                            setToggleImageInput(false);
+                                            break;
+                                        default:
+                                            break;
+                                    }
+
+                                    setSelectedAnswerType(individual_user_data.answer_type);
+
+                                    if (individual_user_data.question_voice_note === 'N.A.') {
+
+                                        console.log("No Question Voice Note");
+
+                                    } else {
+
+                                        setSelectedQuestionVoiceNote(individual_user_data.question_voice_note);
+                                        setQuestionVoiceNote(individual_user_data.question_voice_note_url);
+                                        // setVoiceNoteFileValues(individual_user_data.question_voice_note_url);
+                                    }
+                                    setPreviousData(individual_user_data);
+                                }
+
+                            } setValues(0);
+                        }
+                    } else {
+
+                        // setIsEditModalOpen(true);
+                    }
+
+                })
+                .catch((error) => {
+                    if (error.response) {
+                        // Request made and server responded
+                        console.log(error.response.data);
+                        // setIsEditModalOpen(false);
+                        hideLoader();
+
+                        if (error.response.data === 'Invalid Token') {
+
+                            sessionStorage.clear();
+                            localStorage.clear();
+
+                            history.push('/auth/signin-1');
+                            window.location.reload();
+
+                        } else {
+
+                            // sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+                            // fetchUserData();
+                        }
+
+                    } else if (error.request) {
+                        // The request was made but no response was received
+                        hideLoader();
+                        console.log(error.request);
+                        // fetchUserData();
+                    } else {
+                        // Something happened in setting up the request that triggered an Error
+                        hideLoader();
+                        console.log('Error', error.message);
+                        // fetchUserData();
+                    }
+                });
+        }
     }
+    useEffect(() => {
+        if (!isEmptyArray(optionsDisclaimer) && !isEmptyObject(options)) {
+            console.log("Inside UE!", options, optionsDisclaimer);
+
+            IndividualQuestionData();
+        }
+    }, [optionsDisclaimer, options]);
+
+    const handleQuestionCategory = (event) => {
+        console.log(event);
+        setQuestionCategoryErrMsg(false);
+        setSelectedQuestionCategory([event]);
+    };
+    const handleDisclaimerChange = (event) => {
+        console.log(event);
+        setErrorMessageDisclaimer(false)
+        setSelectedValueDisclaimer(event.value);
+        setSelectedQuestionDisclaimer(event);
+    };
 
     const handleQuestionLabel = (e) => {
 
@@ -164,12 +513,15 @@ const EditQuestions = () => {
     const handleQuestionType = (event) => {
 
         setAnswerTypeOptions((currentOptions) => currentOptions.filter((currentOption) => !selectedAnswerType.includes(currentOption)));
+        setSelectedQuestionCategory({});
+        setSelectedQuestionDisclaimer({});
 
         console.log(answerTypeOptions);
         // setAnswerTypeOptions([]);
         setSelectedAnswerType([]);
         setAnswerOptionsForm([]);
         setQuestionTypeErrMsg(false);
+        setQuestionCategoryErrMsg(false);
         setQuestionEmptyErrMsg(false);
         setAnsWeightageErrMsg(false);
 
@@ -399,262 +751,6 @@ const EditQuestions = () => {
         setAnswerOptionsForm(data);
     }
 
-    useEffect(() => {
-
-        let userJWT = sessionStorage.getItem('user_jwt');
-
-        if (userJWT === "" || userJWT === undefined || userJWT === "undefined" || userJWT === null) {
-
-            sessionStorage.clear();
-            localStorage.clear();
-            history.push('/auth/signin-1');
-            window.location.reload();
-
-        } else {
-
-            threadLinks.length === 1 ? setDisplayHeader(false) : setDisplayHeader(true);
-
-            setIsLoading(true);
-            axios
-                .post(
-                    dynamicUrl.fetchIndividualQuestionData,
-                    {
-                        data: {
-                            question_id: question_id
-                        }
-                    },
-                    {
-                        headers: { Authorization: SessionStorage.getItem('user_jwt') }
-                    }
-                )
-                .then((response) => {
-
-                    hideLoader();
-
-                    if (response.data.Items[0]) {
-
-                        let individual_user_data = response.data.Items[0];
-                        console.log({ individual_user_data });
-                        const radioValue = individual_user_data.show_math_keyboard === 'Yes' ? true : false;
-
-                        setIsLoading(false);
-
-                        setShowMathKeyboard(individual_user_data.show_math_keyboard)
-                        _setRadio(radioValue);
-
-                        setSelectedQuestionType(individual_user_data.question_type);
-                        setQuestionLabelValue(individual_user_data.question_label);
-
-                        individual_user_data.question_type === 'Subjective' ? setAnswerTypeOptions([
-                            { value: 'Words', label: 'Words' },
-                            { value: 'Numbers', label: 'Numbers' },
-                            { value: 'Equation', label: 'Equation' }
-                        ]) : setAnswerTypeOptions([
-                            { value: 'Words', label: 'Words' },
-                            { value: 'Numbers', label: 'Numbers' },
-                            { value: 'Equation', label: 'Equation' },
-                            { value: 'Image', label: 'Image' },
-                            { value: 'Audio File', label: 'Audio File' }
-                        ]);
-
-                        setArticleDataTtitle(individual_user_data.question_content);
-
-                        let uploadParams = individual_user_data.answers_of_question;
-                        let object;
-                        let tempArray = [];
-                        let tempImgPreviewArr = [];
-                        let tempAudioPreviewArr = [];
-                        let tempEquPreviewArr = [];
-
-                        if (Array.isArray(uploadParams)) {
-
-                            function setValues(index) {
-
-                                if (index < uploadParams.length) {
-
-                                    if (individual_user_data.answer_type === 'Numbers') {
-
-                                        object = {
-                                            answer_type: individual_user_data.answer_type,
-                                            answer_content: uploadParams[index].answer_content,
-                                            answer_display: uploadParams[index].answer_display,
-                                            answer_option: uploadParams[index].answer_option,
-                                            answer_weightage: uploadParams[index].answer_weightage,
-                                            answer_range_from: Number(uploadParams[index].answer_range_from),
-                                            answer_range_to: Number(uploadParams[index].answer_range_to)
-                                        }
-
-                                        tempArray.push(object);
-
-                                    } else {
-
-                                        object = {
-                                            answer_type: individual_user_data.answer_type,
-                                            answer_content: uploadParams[index].answer_content,
-                                            answer_display: uploadParams[index].answer_display,
-                                            answer_option: uploadParams[index].answer_option,
-                                            answer_weightage: uploadParams[index].answer_weightage
-                                        }
-
-                                        tempArray.push(object);
-                                    }
-
-                                    if (individual_user_data.answer_type === 'Image') {
-
-                                        let tempPreviewImg = uploadParams[index].answer_content_url;
-                                        tempImgPreviewArr.push(tempPreviewImg);
-
-                                        index++;
-                                        setValues(index);
-                                    } else if (individual_user_data.answer_type === 'Equation') {
-
-                                        let tempPreviewEqu = uploadParams[index].answer_content;
-                                        tempEquPreviewArr.push(tempPreviewEqu);
-                                        index++;
-                                        setValues(index);
-                                    } else if (individual_user_data.answer_type === 'Audio File') {
-
-                                        let tempPreviewAudio = uploadParams[index].answer_content_url;
-                                        tempAudioPreviewArr.push(tempPreviewAudio);
-
-                                        index++;
-                                        setValues(index);
-                                    } else {
-
-                                        index++;
-                                        setValues(index);
-                                    }
-
-                                } else {
-
-                                    isEmptyArray(tempArray) ? (
-
-                                        tempArray.push(object = {
-                                            answer_type: individual_user_data.answer_type,
-                                            answer_option: '',
-                                            answer_content: '',
-                                            answer_display: '',
-                                            answer_weightage: ''
-                                        })
-
-                                    ) : (console.log("Not empty"));
-
-                                    tempArray.length >= 1 ? setAddAnswerOptions(true) : setAddAnswerOptions(false);
-
-                                    setAnswerOptionsForm(tempArray);
-
-                                    setPreviewImages(tempImgPreviewArr);
-
-                                    setPreviewAudios(tempAudioPreviewArr);
-
-                                    setEquation(tempEquPreviewArr);
-
-                                    switch (individual_user_data.answer_type) {
-                                        case 'Words':
-                                            setToggleWordsInput(true);
-                                            setToggleNumbersInput(false);
-                                            setToggleEquationsInput(false);
-                                            setToggleImageInput(false);
-                                            setToggleAudioInput(false);
-                                            break;
-                                        case 'Numbers':
-                                            setToggleNumbersInput(true);
-                                            setToggleWordsInput(false);
-                                            setToggleEquationsInput(false);
-                                            setToggleImageInput(false);
-                                            setToggleAudioInput(false);
-                                            break;
-                                        case 'Equation':
-                                            setToggleEquationsInput(true);
-                                            setToggleWordsInput(false);
-                                            setToggleNumbersInput(false);
-                                            setToggleImageInput(false);
-                                            setToggleAudioInput(false);
-                                            break;
-                                        case 'Image':
-                                            setToggleImageInput(true);
-                                            setToggleWordsInput(false);
-                                            setToggleEquationsInput(false);
-                                            setToggleNumbersInput(false);
-                                            setToggleAudioInput(false);
-                                            break;
-                                        case 'Audio File':
-                                            setToggleAudioInput(true);
-                                            setToggleWordsInput(false);
-                                            setToggleEquationsInput(false);
-                                            setToggleNumbersInput(false);
-                                            setToggleImageInput(false);
-                                            break;
-                                        default:
-                                            break;
-                                    }
-
-                                    setSelectedAnswerType(individual_user_data.answer_type);
-
-                                    if (individual_user_data.question_voice_note === 'N.A.') {
-
-                                        console.log("No Question Voice Note");
-
-                                    } else {
-
-                                        setSelectedQuestionVoiceNote(individual_user_data.question_voice_note);
-                                        setQuestionVoiceNote(individual_user_data.question_voice_note_url);
-                                        // setVoiceNoteFileValues(individual_user_data.question_voice_note_url);
-                                    }
-                                    setPreviousData(individual_user_data);
-
-                                }
-
-                            } setValues(0);
-
-
-                        }
-
-
-
-                    } else {
-
-                        // setIsEditModalOpen(true);
-                    }
-
-                })
-                .catch((error) => {
-                    if (error.response) {
-                        // Request made and server responded
-                        console.log(error.response.data);
-                        // setIsEditModalOpen(false);
-                        hideLoader();
-
-                        if (error.response.data === 'Invalid Token') {
-
-                            sessionStorage.clear();
-                            localStorage.clear();
-
-                            history.push('/auth/signin-1');
-                            window.location.reload();
-
-                        } else {
-
-                            // sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
-                            // fetchUserData();
-                        }
-
-                    } else if (error.request) {
-                        // The request was made but no response was received
-                        hideLoader();
-                        console.log(error.request);
-                        // fetchUserData();
-                    } else {
-                        // Something happened in setting up the request that triggered an Error
-                        hideLoader();
-                        console.log('Error', error.message);
-                        // fetchUserData();
-                    }
-                });
-        }
-
-    }, []);
-
     const _addQuestions = (payLoad) => {
         axios
             .post(
@@ -810,6 +906,9 @@ const EditQuestions = () => {
     }
 
     const _editQuestions = (payLoad) => {
+
+        console.log("payLoad: ", payLoad);
+
         axios
             .post(
                 dynamicUrl.editQuestion,
@@ -977,12 +1076,13 @@ const EditQuestions = () => {
             let payLoad = {
 
                 question_type: selectedQuestionType,
+                question_category: selectedQuestionCategory[0],
                 question_voice_note: selectedQuestionVoiceNote,
                 question_content: articleDataTitle,
                 answer_type: selectedAnswerType,
                 answers_of_question: answerOptionsForm,
                 question_status: 'Save',
-                question_disclaimer: document.getElementById('question_disclaimer').value === "" ? "" : document.getElementById('question_disclaimer').value,
+                question_disclaimer: selectedQuestionDisclaimer,
                 show_math_keyboard: showMathKeyboard,
                 question_label: document.getElementById('newQuestionLabel').value
             }
@@ -997,6 +1097,9 @@ const EditQuestions = () => {
             setQuestionLabelErr(true);
         } else if (isEmptyArray(selectedQuestionType)) {
             setQuestionTypeErrMsg(true);
+        } else if (isEmptyObject(selectedQuestionCategory[0]) || selectedQuestionCategory[0] === 'Select...') {
+            console.log(selectedQuestionCategory[0]);
+            setQuestionCategoryErrMsg(true);
         } else if (articleDataTitle === "" || articleDataTitle === undefined || articleDataTitle === 'undefined' || articleDataTitle === "<p><br></p>" || articleDataTitle === "<p></p>" || articleDataTitle === "<br>") {
             setQuestionEmptyErrMsg(true);
         } else if (answerOptionsForm) {
@@ -1287,7 +1390,8 @@ const EditQuestions = () => {
 
         <>
             {
-                isLoading ? (
+                (options.length) > 0 && (optionsDisclaimer.length > 0) &&
+                (isLoading ? (
                     <BasicSpinner />
                 ) : (
 
@@ -1330,7 +1434,8 @@ const EditQuestions = () => {
 
                                                     initialValues={{
                                                         question_label: previousData.question_label,
-                                                        question_disclaimer: previousData.question_disclaimer,
+                                                        question_disclaimer: selectedValueDisclaimer,
+                                                        question_category: selectedQuestionCategory[0],
                                                         answerType: '',
                                                         submit: null
                                                     }}
@@ -1359,6 +1464,10 @@ const EditQuestions = () => {
 
                                                             } else if (isEmptyArray(selectedQuestionType)) {
                                                                 setQuestionTypeErrMsg(true);
+                                                            } else if (isEmptyObject(selectedQuestionCategory[0]) || selectedQuestionCategory[0] === 'Select...') {
+                                                                console.log(selectedQuestionCategory[0]);
+
+                                                                setQuestionCategoryErrMsg(true);
                                                             } else if (articleDataTitle === "" || articleDataTitle === undefined || articleDataTitle === 'undefined' || articleDataTitle === "<p><br></p>" || articleDataTitle === "<p></p>" || articleDataTitle === "<br>") {
                                                                 setQuestionEmptyErrMsg(true);
                                                             } else if (answerOptionsForm) {
@@ -1374,12 +1483,14 @@ const EditQuestions = () => {
                                                                     let payLoad = {
 
                                                                         question_type: selectedQuestionType,
+                                                                        question_category: selectedQuestionCategory[0],
                                                                         question_voice_note: selectedQuestionVoiceNote,
                                                                         question_content: articleDataTitle,
                                                                         answer_type: selectedAnswerType,
                                                                         answers_of_question: answerOptionsForm,
                                                                         question_status: 'Save',
-                                                                        question_disclaimer: values.question_disclaimer === "" ? "" : values.question_disclaimer,
+                                                                        // question_disclaimer: values.question_disclaimer === "" ? "" : values.question_disclaimer,
+                                                                        question_disclaimer: selectedQuestionDisclaimer,
                                                                         show_math_keyboard: showMathKeyboard,
                                                                         question_label: questionLabelValue
                                                                     }
@@ -1660,6 +1771,10 @@ const EditQuestions = () => {
 
                                                             } else if (isEmptyArray(selectedQuestionType)) {
                                                                 setQuestionTypeErrMsg(true);
+                                                            } else if (isEmptyObject(selectedQuestionCategory[0]) || selectedQuestionCategory[0] === 'Select...') {
+                                                                console.log("selectedQuestionCategory : ", selectedQuestionCategory[0])
+
+                                                                setQuestionCategoryErrMsg(true);
                                                             } else if (articleDataTitle === "" || articleDataTitle === undefined || articleDataTitle === 'undefined' || articleDataTitle === "<p><br></p>" || articleDataTitle === "<p></p>" || articleDataTitle === "<br>") {
                                                                 setQuestionEmptyErrMsg(true);
                                                             } else if (answerOptionsForm) {
@@ -1676,12 +1791,13 @@ const EditQuestions = () => {
 
                                                                         question_id: question_id,
                                                                         question_type: selectedQuestionType,
+                                                                        question_category: selectedQuestionCategory[0],
                                                                         question_voice_note: selectedQuestionVoiceNote,
                                                                         question_content: articleDataTitle,
                                                                         answer_type: selectedAnswerType,
                                                                         answers_of_question: answerOptionsForm,
                                                                         question_status: sessionStorage.getItem('click_event'),
-                                                                        question_disclaimer: values.question_disclaimer === "" ? "" : values.question_disclaimer,
+                                                                        question_disclaimer: selectedQuestionDisclaimer,
                                                                         show_math_keyboard: showMathKeyboard,
                                                                         question_label: questionLabelValue
                                                                     }
@@ -2095,6 +2211,34 @@ const EditQuestions = () => {
                                                                         )
                                                                     }
                                                                 </Col>
+
+                                                                <Col xs={6}>
+                                                                    <label className="floating-label">
+                                                                        <small className="text-danger">* </small>
+                                                                        Question Category
+                                                                    </label>
+
+
+                                                                    <Select
+                                                                        defaultValue={selectedQuestionCategory[0]}
+                                                                        name="questionCategory"
+                                                                        options={options}
+                                                                        className="basic-multi-select"
+                                                                        classNamePrefix="Select"
+                                                                        onChange={(event) => {
+                                                                            handleQuestionCategory(event)
+                                                                            // setFieldValue('answerType', '')
+                                                                        }}
+                                                                        menuPortalTarget={document.body}
+                                                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                                                                    />
+
+                                                                    {questionCategoryErrMsg && (
+                                                                        <>
+                                                                            <small className="text-danger form-text">{'Please select Question Category'}</small>
+                                                                        </>
+                                                                    )}
+                                                                </Col>
                                                             </Row>
 
                                                             <br />
@@ -2104,19 +2248,34 @@ const EditQuestions = () => {
                                                                         <small className="text-danger"></small>
                                                                         Question Disclaimer
                                                                     </label>
-                                                                    <textarea
-                                                                        value={values.question_disclaimer}
-                                                                        className="form-control"
-                                                                        error={touched.question_disclaimer && errors.question_disclaimer}
-                                                                        label="question_disclaimer"
-                                                                        name="question_disclaimer"
-                                                                        id='question_disclaimer'
-                                                                        onBlur={handleBlur}
-                                                                        type="textarea"
-                                                                        onChange={handleChange}
-                                                                        placeholder="Disclaimer"
+                                                                    {console.log()}
+                                                                    <Select
+                                                                        defaultValue={selectedValueDisclaimer}
+                                                                        name="questionDisclaimer"
+                                                                        options={optionsDisclaimer}
+                                                                        className="basic-multi-select"
+                                                                        classNamePrefix="Select"
+                                                                        onChange={(event) => {
+                                                                            handleDisclaimerChange(event)
+                                                                            // setFieldValue('answerType', '')
+                                                                        }}
+                                                                        menuPortalTarget={document.body}
+                                                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                                                     />
+
+                                                                    {errorMessageDisclaimer && (
+                                                                        <>
+                                                                            <small className="text-danger form-text">{'Please select Question Disclaimer'}</small>
+                                                                        </>
+                                                                    )}
+
+
+
+
+
                                                                 </Col>
+                                                                <Col></Col>
+
 
                                                             </Row>
 
@@ -2592,7 +2751,7 @@ const EditQuestions = () => {
 
                                                                                 <Row key={index}>
 
-                                                                                    {console.log(form)}
+                                                                                    {/* {console.log(form)} */}
                                                                                     <Col xs={3}>
                                                                                         <label className="floating-label">
                                                                                             <small className="text-danger"></small>
@@ -3539,6 +3698,7 @@ const EditQuestions = () => {
                         }
                     </>
 
+                )
                 )
             }
         </ >

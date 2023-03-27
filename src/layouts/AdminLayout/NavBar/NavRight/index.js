@@ -225,13 +225,11 @@ const NavRight = () => {
               <img src={user} className="img-radius wid-40" alt="User Profile" />
             </Dropdown.Toggle>
             <Dropdown.Menu alignRight className="profile-notification">
-              <div className="pro-head">
+              {/* <div className="pro-head">
                 <img src={user} className="img-radius" alt="User Profile" />
                 <span>UpSchool Admin</span>
-                {/* <Link to="#" className="dud-logout" title="Logout">
-                  <i className="feather icon-log-out" />
-                </Link> */}
-              </div>
+               
+              </div> */}
               <ListGroup as="ul" bsPrefix=" " variant="flush" className="pro-body">
                 {/* <ListGroup.Item as="li" bsPrefix=" ">
                   <Link to="#" className="dropdown-item">

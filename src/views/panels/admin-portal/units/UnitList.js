@@ -5,11 +5,8 @@ import BTable from 'react-bootstrap/Table';
 import withReactContent from 'sweetalert2-react-content';
 import Swal from 'sweetalert2';
 import { GlobalFilter } from './GlobalFilter';
-
-import { useTable, useSortBy, usePagination, useGlobalFilter } from 'react-table';
-
+import { useTable, useSortBy, usePagination, useGlobalFilter, useRowSelect } from 'react-table';
 import dynamicUrl from '../../../../helper/dynamicUrls';
-
 import { Link, useHistory } from 'react-router-dom';
 import { SessionStorage } from '../../../../util/SessionStorage';
 import MESSAGES from '../../../../helper/messages';
@@ -20,10 +17,10 @@ import BasicSpinner from '../../../../helper/BasicSpinner';
 import AddUnit from './AddUnit';
 import EditUnit from './EditUnit';
 
-
-
-
 function Table({ columns, data, modalOpen }) {
+    const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[3]);
+    const initiallySelectedRows = React.useMemo(() => new Set(["1"]), []);
+
     const {
         getTableProps,
         getTableBodyProps,
@@ -41,26 +38,166 @@ function Table({ columns, data, modalOpen }) {
         gotoPage,
         nextPage,
         previousPage,
+        selectedFlatRows,
         setPageSize,
-        state: { pageIndex, pageSize }
+        state: { pageIndex, pageSize, selectedRowPaths }
     } = useTable(
         {
             columns,
             data,
-            initialState: { pageIndex: 0, pageSize: 10 }
+            initialState: { pageIndex: 0, pageSize: 10, selectedRowPaths: initiallySelectedRows }
         },
         useGlobalFilter,
         useSortBy,
-        usePagination
+        usePagination,
+        useRowSelect
     );
-
+    const unit_status = pageLocation === 'active-units' ? "Active" : "Archived"
+    console.log("unit_status", unit_status);
+    console.log(pageLocation)
     const [isOpen, setIsOpen] = useState(false);
     const [isOpenAddUnit, setOpenAddUnit] = useState(false)
+    const [loader, showLoader, hideLoader] = useFullPageLoader();
+    const MySwal = withReactContent(Swal);
     let history = useHistory();
+
+
+    const sweetAlertHandler = (alert) => {
+        MySwal.fire({
+            title: alert.title,
+            text: alert.text,
+            icon: alert.type
+        });
+    };
 
     const addingChapter = () => {
         history.push('/admin-portal/addUnits');
         setIsOpen(true);
+    }
+
+    const getUnitsFromData = () => {
+        let arrayWithUnits = [];
+        page.map(e => {
+            e.isSelected === true && arrayWithUnits.push(e.original.unit_id)
+        })
+
+        console.log("arrayWithUnits.length", arrayWithUnits.length)
+        console.log("CHECKED IDS : ", arrayWithUnits);
+
+        if (arrayWithUnits.length === 0) {
+            const MySwal = withReactContent(Swal);
+            return MySwal.fire('Sorry', 'No units are selected!', 'warning').then(() => {
+                window.location.reload();
+            });
+        } else {
+
+            const MySwal = withReactContent(Swal);
+            MySwal.fire({
+                title: 'Are you sure?',
+                text: pageLocation === 'active-units' ? 'Confirm deleting' : 'Confirm restoring',
+                type: 'warning',
+                showCloseButton: true,
+                showCancelButton: true,
+
+            }).then((willDelete) => {
+
+                if (willDelete.value) {
+                    console.log("api calling");
+                    // changeStatus(digi_card_id, digi_card_title);
+                    console.log("Request : ", {
+                        unit_status: unit_status === "Active" ? "Archived" : "Active",
+                        unit_array: arrayWithUnits,
+                    });
+
+                    axios
+                        .post(
+                            dynamicUrl.bulkToggleUnitStatus,
+                            {
+                                data: {
+                                    unit_status: unit_status === "Active" ? "Archived" : "Active",
+                                    unit_array: arrayWithUnits,
+
+                                }
+                            }, {
+                            headers: { Authorization: sessionStorage.getItem('user_jwt') }
+                        })
+                        .then(async (response) => {
+                            console.log("response : ", response);
+                            if (response.Error) {
+                                console.log("Error");
+                                hideLoader();
+                                // sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
+                                pageLocation === "active-units"
+                                    ? sweetAlertHandler({
+                                        title: MESSAGES.TTTLES.Sorry,
+                                        type: "error",
+                                        text: MESSAGES.ERROR.DeletingUnit
+                                    })
+                                    : sweetAlertHandler({
+                                        title: MESSAGES.TTTLES.Sorry,
+                                        type: "error",
+                                        text: MESSAGES.ERROR.RestoringUnit
+                                    });
+
+                                history.push('/admin-portal/' + pageLocation)
+                            }
+                            else {
+                                console.log("response : ", response);
+                                if (response.Error) {
+                                    console.log("Error");
+                                    hideLoader();
+                                    // sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
+                                    pageLocation === "active-units"
+                                        ? sweetAlertHandler({
+                                            title: MESSAGES.TTTLES.Sorry,
+                                            type: "error",
+                                            text: MESSAGES.ERROR.DeletingParents
+                                        })
+                                        : sweetAlertHandler({
+                                            title: MESSAGES.TTTLES.Sorry,
+                                            type: "error",
+                                            text: MESSAGES.ERROR.RestoringParents
+                                        });
+
+                                    history.push('/admin-portal/' + pageLocation)
+                                }
+                                else {
+                                    console.log("response : ", response);
+                                    if (response.data === 200) {
+                                        MySwal.fire({
+                                            title: (pageLocation === 'active-units') ? 'units Deleted' : "units restored",
+                                            icon: "success",
+                                            // text: (pageLocation === 'active-units') ? 'Unit Deleted' : 'Unit Restored',
+                                            // type: 'success',
+                                        }).then((willDelete) => {
+
+                                            window.location.reload()
+
+                                        })
+
+                                    }
+                                }
+                                //new
+                            }
+                        }
+                        ).catch(async (errorResponse) => {
+                            console.log("errorResponse : ", errorResponse);
+                            if (errorResponse.response.data) {
+                                MySwal.fire({
+                                    title: (pageLocation === 'active-units') ? 'Units Deleted' : "Units Restored",
+                                    icon: "success",
+                                    // text: (pageLocation === 'active-units') ? 'Unit Deleted' : 'Unit Restored',
+                                    // type: 'success',
+                                }).then((willDelete) => {
+
+                                    window.location.reload()
+
+                                })
+                            }
+                        })
+                }
+            });
+        }
     }
 
     return (
@@ -86,9 +223,33 @@ function Table({ columns, data, modalOpen }) {
 
                 <Col className="d-flex justify-content-end">
                     <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
-                    <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={() => { setOpenAddUnit(true) }}>
-                        <i className="feather icon-plus" /> Add Unit
-                    </Button>
+
+                    {unit_status === "Active" ? (
+                        <>
+                            <Button
+                                variant="success"
+                                style={{ whiteSpace: "no-wrap" }}
+                                className="btn-sm btn-round has-ripple ml-2"
+                                onClick={() => { setOpenAddUnit(true) }}>
+                                <i className="feather icon-plus" /> Add Unit
+                            </Button>
+
+                            <Button
+                                className='btn-sm btn-round has-ripple ml-2 btn btn-danger'
+                                style={{ whiteSpace: "no-wrap" }}
+                                onClick={() => { getUnitsFromData("Archived") }}
+                            > <i className="feather icon-trash-2" />&nbsp;
+                                Multi Delete
+                            </Button>
+                        </>
+                    ) : (
+                        <Button className='btn-sm btn-round has-ripple ml-2 btn btn-primary'
+                            style={{ whiteSpace: "no-wrap" }}
+                            onClick={() => { getUnitsFromData("Active") }}
+                        > <i className="feather icon-plus" />&nbsp;
+                            Multi Restore
+                        </Button>
+                    )}
                 </Col>
             </Row>
 
@@ -119,6 +280,7 @@ function Table({ columns, data, modalOpen }) {
                     ))}
                 </thead>
                 <tbody {...getTableBodyProps()}>
+                    {console.log("page : ", page)}
                     {page.map((row, i) => {
                         prepareRow(row);
                         return (
@@ -175,8 +337,34 @@ function Table({ columns, data, modalOpen }) {
 }
 
 const UnitList = (props) => {
+
+    const [unitData, setUnitData] = useState([]);
+    const [reloadAllData, setReloadAllData] = useState('Fetched');
+    const [statusUrl, setStatusUrl] = useState('');
+    const [loader, showLoader, hideLoader] = useFullPageLoader();
+    const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[3]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [isOpenEditUnit, setOpenEditUnit] = useState(false);
+    const [isOpenAddUnit, setOpenAddUnit] = useState(false);
+    const [unitId, setUnitId] = useState()
+
     const columns = React.useMemo(
         () => [
+            {
+                id: "selection",
+
+                Header: ({ getToggleAllRowsSelectedProps }) => (
+                    <div>
+                        <input type="checkbox" {...getToggleAllRowsSelectedProps()} />
+                    </div>
+                ),
+
+                Cell: ({ row }) => (
+                    <div>
+                        <input type="checkbox" {...row.getToggleRowSelectedProps()} />
+                    </div>
+                )
+            },
             {
                 Header: '#',
                 accessor: "index_no"
@@ -192,22 +380,6 @@ const UnitList = (props) => {
         ],
         []
     );
-
-    // const data = React.useMemo(() => makeData(80), []);
-    const [unitData, setUnitData] = useState([]);
-    const [reloadAllData, setReloadAllData] = useState('Fetched');
-    const [statusUrl, setStatusUrl] = useState('');
-    const [loader, showLoader, hideLoader] = useFullPageLoader();
-    const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[3]);
-    const [isLoading, setIsLoading] = useState(false);
-    const [isOpenEditUnit, setOpenEditUnit] = useState(false);
-    const [isOpenAddUnit, setOpenAddUnit] = useState(false);
-    const [unitId, setUnitId] = useState()
-
-
-
-
-    // console.log('data: ', data)
 
     const handleAddUnit = (e) => {
 
@@ -225,8 +397,6 @@ const UnitList = (props) => {
         });
     }
     let history = useHistory();
-
-
 
     const deleteUnit = (unit_id, unit_title) => {
         var data = {
@@ -280,10 +450,6 @@ const UnitList = (props) => {
             }
         });
     };
-
-
-
-
 
     function restoreChapter(unit_id, unit_title) {
         console.log("unit_id", unit_id);
@@ -366,7 +532,7 @@ const UnitList = (props) => {
                 console.log("dataResponse", dataResponse);
                 let finalDataArray = [];
                 if (UnitStatus === 'Active') {
-                  
+
 
                     for (let index = 0; index < dataResponse.length; index++) {
                         dataResponse[index].index_no = index + 1;
@@ -509,8 +675,9 @@ const UnitList = (props) => {
                     </>
                 )
             }
-        </div >
+        </div>
 
     );
 };
+
 export default UnitList;

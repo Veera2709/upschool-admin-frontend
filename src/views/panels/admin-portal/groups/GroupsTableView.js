@@ -10,12 +10,36 @@ import withReactContent from 'sweetalert2-react-content';
 import MESSAGES from '../../../../helper/messages';
 import { decodeJWT } from '../../../../util/utils';
 import { GlobalFilter } from '../../../common-ui-components/tables/GlobalFilter';
-import { useTable, useSortBy, usePagination, useGlobalFilter } from 'react-table';
+import { useTable, useSortBy, usePagination, useGlobalFilter, useRowSelect } from 'react-table';
 import dynamicUrl from '../../../../helper/dynamicUrls';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import BasicSpinner from '../../../../helper/BasicSpinner';
+import { toggleMultipleGroupStatus } from '../../../api/CommonApi'
 
 function Table({ columns, data, modalOpen }) {
+    const initiallySelectedRows = React.useMemo(() => new Set(["1"]), []);
+    const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
+    const payLoadStatus = pageLocation === "active-groups" ? 'Active' : 'Archived';
+    const MySwal = withReactContent(Swal);
+    let history = useHistory();
+
+    const IndeterminateCheckbox = React.forwardRef(
+        ({ indeterminate, ...rest }, ref) => {
+            const defaultRef = React.useRef();
+            const resolvedRef = ref || defaultRef;
+
+            React.useEffect(() => {
+                resolvedRef.current.indeterminate = indeterminate;
+            }, [resolvedRef, indeterminate]);
+
+            return (
+                <>
+                    <input type="checkbox" ref={resolvedRef} {...rest} />
+                </>
+            );
+        }
+    );
+
     const {
         getTableProps,
         getTableBodyProps,
@@ -34,17 +58,76 @@ function Table({ columns, data, modalOpen }) {
         nextPage,
         previousPage,
         setPageSize,
-        state: { pageIndex, pageSize }
+        selectedFlatRows,
+        state: { pageIndex, pageSize, selectedRowPaths }
     } = useTable(
         {
             columns,
             data,
-            initialState: { pageIndex: 0, pageSize: 10 }
+            initialState: { pageIndex: 0, pageSize: 10, selectedRowPaths: initiallySelectedRows }
         },
         useGlobalFilter,
         useSortBy,
-        usePagination
+        usePagination, useRowSelect,
+        (hooks) => {
+            hooks.visibleColumns.push((columns) => [
+                {
+                    id: "selection",
+                    Header: ({ getToggleAllPageRowsSelectedProps }) => (
+                        <div>
+                            <IndeterminateCheckbox {...getToggleAllPageRowsSelectedProps()} />
+                        </div>
+                    ),
+                    Cell: ({ row }) => (
+                        <div>
+                            <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
+                        </div>
+                    )
+                },
+                ...columns
+            ]);
+        }
     );
+
+    const multiDelete = async (status) => {
+        console.log("selectedFlatRows", selectedFlatRows);
+        const groupIds = [];
+        selectedFlatRows.map((item) => {
+            groupIds.push(item.original.group_id)
+        })
+        if (groupIds.length > 0) {
+            var payload = {
+                "group_status": status,
+                "group_array": groupIds
+            }
+
+            const ResultData = await toggleMultipleGroupStatus(payload)
+            if (ResultData.Error) {
+                if (ResultData.Error.response.data == 'Invalid Token') {
+                    sessionStorage.clear();
+                    localStorage.clear();
+                    history.push('/auth/signin-1');
+                    window.location.reload();
+                } else {
+                    return MySwal.fire('Error', ResultData.Error.response.data, 'error').then(() => {
+                        window.location.reload();
+                    });
+                }
+            } else {
+                return MySwal.fire('success', `Groups have been ${status === 'Active' ? 'Restored' : "Deleted"} Successfully`, 'success').then(() => {
+                    window.location.reload();
+                });
+            }
+        } else {
+            return MySwal.fire('Sorry', 'No Groups Selected!', 'warning').then(() => {
+                // window.location.reload();
+            });
+        }
+    }
+
+    const addingGroup = () => {
+        history.push('/admin-portal/add-groups')
+    }
 
     return (
         <>
@@ -66,14 +149,29 @@ function Table({ columns, data, modalOpen }) {
                     </select>
                     Entries
                 </Col>
-                <Col className="d-flex justify-content-end">
+                <Col className="mb-3" style={{ display: 'contents' }}>
                     <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
 
-                    <Link to={'/admin-portal/add-groups'}>
-                        <Button variant="success" className="btn-sm btn-round has-ripple ml-2">
-                            <i className="feather icon-plus" /> Add Groups
+                    {payLoadStatus === 'Active' ? (
+                        <>
+                            <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={(e) => { addingGroup() }}>
+                                <i className="feather icon-plus" /> Add Groups
+                            </Button>
+                            <Button variant="success" className='btn-sm btn-round has-ripple ml-2 btn btn-danger'
+                                onClick={() => { multiDelete("Archived") }}
+                                style={{ marginRight: '15px' }}
+                            >
+                                <i className="feather icon-trash-2" />  Multi Delete
+                            </Button>
+                        </>
+                    ) : (
+                        <Button className='btn-sm btn-round has-ripple ml-2 btn btn-primary'
+                            onClick={() => { multiDelete("Active") }}
+                            style={{ marginRight: '15px' }}
+                        >
+                            <i className="feather icon-plus" />   Multi Restore
                         </Button>
-                    </Link>
+                    )}
                 </Col>
             </Row>
 
@@ -170,6 +268,14 @@ const GroupsTableView = ({ _groupType }) => {
             accessor: 'group_levels'
         },
         {
+            Header: 'No.Questions',
+            accessor: 'group_Questions'
+        },
+        {
+            Header: 'Description',
+            accessor: 'group_description'
+        },
+        {
             Header: 'Options',
             accessor: 'action'
         }
@@ -217,7 +323,6 @@ const GroupsTableView = ({ _groupType }) => {
             }
         });
     };
-
 
     const saveGroupIdDelete = (e, group_id, updateStatus) => {
         e.preventDefault();
@@ -290,7 +395,6 @@ const GroupsTableView = ({ _groupType }) => {
                         fetchGroupsData();
                     }
 
-
                 } else if (error.request) {
                     // The request was made but no response was received
                     hideLoader();
@@ -321,8 +425,11 @@ const GroupsTableView = ({ _groupType }) => {
         let levelNames;
 
         for (let index = 0; index < responseData.length; index++) {
-
             responseData[index].id = index + 1;
+            responseData[index]['group_Questions'] = <span
+                style={{ backgroundColor: "cadetblue" }}
+                className="badge badge-warning inline-block mr-1"
+            >{responseData[index].questions_count}</span>;
 
             levelNames = responseData[index]['group_levels'];
 
@@ -343,10 +450,20 @@ const GroupsTableView = ({ _groupType }) => {
                     }
                 </>
             );
+            
+            responseData[index].group_description = responseData[index].group_description === undefined ? "" : (responseData[index].group_description.length > 23 ? (responseData[index].group_description.substring(0,20) + "...") : responseData[index].group_description);
+            console.log("responseData[index].group_description.length : ", responseData[index].group_description);
 
+            responseData[index]['group_description'] = (
+                <>
+                 <span
+                    style={{ backgroundColor: "cadetblue" }}
+                    className="badge badge-warning inline-block mr-1"
+                >{responseData[index].group_description}</span>
+                </>
+            );
             responseData[index]['action'] = (
                 <>
-
                     {pageLocation === 'active-groups' ? (
 
                         <>
@@ -386,7 +503,9 @@ const GroupsTableView = ({ _groupType }) => {
 
                 </>
             );
-            finalDataArray.push(responseData[index]);
+            // Work on ...
+
+            finalDataArray.push(responseData[index]); 
         }
 
         setGroupData(finalDataArray);

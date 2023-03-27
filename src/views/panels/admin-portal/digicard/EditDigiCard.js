@@ -254,7 +254,6 @@ const EditDigiCard = () => {
     }
 
     const inserNewDigicard = () => {
-        showLoader()
         let DigiCardtitleRegex = Constants.AddDigiCard.DigiCardtitleRegex;
         let name = document.getElementById("newdigicardtitle").value;
         console.log("nameLength", name.length);
@@ -321,6 +320,7 @@ const EditDigiCard = () => {
                 related_digi_cards: multiOptions,
             };
             console.log("formData", formData);
+            showLoader()
             axios
                 .post(dynamicUrl.insertDigicard, { data: formData }, { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
                 .then(async (response) => {
@@ -486,9 +486,9 @@ const EditDigiCard = () => {
                                                 digi_card_id: individualDigiCardData[0].digi_card_id,
                                                 digi_card_title: values.digicardtitle,
                                                 digi_card_files: [values.digicard_image],
-                                                digicard_image: values.digicard_image === '' || values.digicard_image === undefined ? '' : values.digicard_image,
-                                                digicard_document: values.digicard_document === '' || values.digicard_document === undefined ? '' : values.digicard_document,//upload doc
-                                                digicard_voice_note: values.digicard_voice_note === '' || values.digicard_voice_note === undefined ? '' : values.digicard_voice_note,
+                                                digicard_image: values.digicard_image === '' || values.digicard_image === undefined ? individualDigiCardData[0].digicard_image : values.digicard_image,
+                                                digicard_document: values.digicard_document === '' || values.digicard_document === undefined ? individualDigiCardData[0].digicard_document : values.digicard_document,//upload doc
+                                                digicard_voice_note: values.digicard_voice_note === '' || values.digicard_voice_note === undefined ? individualDigiCardData[0].digicard_voice_note : values.digicard_voice_note,
                                                 digi_card_excerpt: articleDataTitle,
                                                 digi_card_content: articleData,
                                                 digi_card_keywords: tags,
@@ -890,10 +890,10 @@ const EditDigiCard = () => {
                                                     setNewDigicardErrReq(false)
                                                 }}
                                             />
-                                        </div><br/>
+                                        </div><br />
                                         {loader}
                                     </Col>
-                                    
+
                                 </Row>
                                 <Row>
                                     <Col sm={9}>
