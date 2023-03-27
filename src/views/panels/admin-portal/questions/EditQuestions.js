@@ -48,7 +48,7 @@ const EditQuestions = () => {
 
     const [selectedQuestionType, setSelectedQuestionType] = useState([]);
     const [selectedQuestionCategory, setSelectedQuestionCategory] = useState({});
-    const [selectedQuestionDisclaimer, setSelectedQuestionDisclaimer] = useState([]);
+    const [selectedQuestionDisclaimer, setSelectedQuestionDisclaimer] = useState({});
     const [showMathKeyboard, setShowMathKeyboard] = useState('No');
     const [answerTypeOptions, setAnswerTypeOptions] = useState([]);
     const [selectedAnswerType, setSelectedAnswerType] = useState([]);
@@ -208,12 +208,15 @@ const EditQuestions = () => {
 
                         setSelectedQuestionCategory(selectedCategory);
 
+
                         if (individual_user_data.question_disclaimer === "") {
                             console.log("Disclaimer is not selected");
+                            setSelectedQuestionDisclaimer({});
                         } else {
-                            let selectedDisclaimer = optionsDisclaimer.filter((e) => e.value === individual_user_data.question_disclaimer)
+                            let selectedDisclaimer = optionsDisclaimer.filter((e) => e.value === individual_user_data.question_disclaimer.value);
                             console.log("selectedDisclaimer ", selectedDisclaimer);
-                            setSelectedValueDisclaimer(selectedDisclaimer[0])
+                            setSelectedValueDisclaimer(selectedDisclaimer[0]);
+                            setSelectedQuestionDisclaimer(selectedDisclaimer);
                         }
 
                         const radioValue = individual_user_data.show_math_keyboard === 'Yes' ? true : false;
@@ -445,6 +448,7 @@ const EditQuestions = () => {
         console.log(event);
         setErrorMessageDisclaimer(false)
         setSelectedValueDisclaimer(event.value);
+        setSelectedQuestionDisclaimer(event);
     };
 
     const handleQuestionLabel = (e) => {
@@ -510,6 +514,7 @@ const EditQuestions = () => {
 
         setAnswerTypeOptions((currentOptions) => currentOptions.filter((currentOption) => !selectedAnswerType.includes(currentOption)));
         setSelectedQuestionCategory({});
+        setSelectedQuestionDisclaimer({});
 
         console.log(answerTypeOptions);
         // setAnswerTypeOptions([]);
@@ -1077,7 +1082,7 @@ const EditQuestions = () => {
                 answer_type: selectedAnswerType,
                 answers_of_question: answerOptionsForm,
                 question_status: 'Save',
-                question_disclaimer: document.getElementById('question_disclaimer').value === "" ? "" : document.getElementById('question_disclaimer').value,
+                question_disclaimer: selectedQuestionDisclaimer,
                 show_math_keyboard: showMathKeyboard,
                 question_label: document.getElementById('newQuestionLabel').value
             }
@@ -1485,7 +1490,7 @@ const EditQuestions = () => {
                                                                         answers_of_question: answerOptionsForm,
                                                                         question_status: 'Save',
                                                                         // question_disclaimer: values.question_disclaimer === "" ? "" : values.question_disclaimer,
-                                                                        question_disclaimer: selectedValueDisclaimer.length === 0 ? "" : selectedValueDisclaimer,
+                                                                        question_disclaimer: selectedQuestionDisclaimer,
                                                                         show_math_keyboard: showMathKeyboard,
                                                                         question_label: questionLabelValue
                                                                     }

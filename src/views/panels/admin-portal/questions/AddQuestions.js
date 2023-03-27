@@ -70,7 +70,7 @@ const AddQuestions = ({ className, ...rest }) => {
     const [errorMessage, setErrorMessage] = useState("");//for question category
 
     const [optionsDisclaimer, setOptionsDisclaimer] = useState([]);
-    const [selectedValueDisclaimer, setSelectedValueDisclaimer] = useState([]);
+    const [selectedValueDisclaimer, setSelectedValueDisclaimer] = useState({});
     const [errorMessageDisclaimer, setErrorMessageDisclaimer] = useState(false); //for question disclaimer
 
     const [questionLabelAlreadyExists, setQuestionLabelAlreadyExists] = useState(false);
@@ -142,7 +142,7 @@ const AddQuestions = ({ className, ...rest }) => {
     const handleDisclaimerChange = (event) => {
         console.log(event);
         // setErrorMessageDisclaimer(false)
-        setSelectedValueDisclaimer(event.value);
+        setSelectedValueDisclaimer(event);
     };
 
 
@@ -632,7 +632,7 @@ const AddQuestions = ({ className, ...rest }) => {
 
                 options.length > 0 && optionsDisclaimer.length > 0 &&
                 <>
-                    (
+
                     <React.Fragment>
 
                         {
@@ -723,7 +723,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                         answer_type: selectedAnswerType,
                                                         answers_of_question: answerOptionsForm,
                                                         question_status: sessionStorage.getItem('click_event'),
-                                                        question_disclaimer: selectedValueDisclaimer.length === 0 ? "" : selectedValueDisclaimer,
+                                                        question_disclaimer: selectedValueDisclaimer,
                                                         show_math_keyboard: showMathKeyboard,
                                                         question_label: questionLabelValue
                                                     }
@@ -2408,7 +2408,7 @@ const AddQuestions = ({ className, ...rest }) => {
 
 
                     </React.Fragment>
-                    )
+
                 </>
             }
 
