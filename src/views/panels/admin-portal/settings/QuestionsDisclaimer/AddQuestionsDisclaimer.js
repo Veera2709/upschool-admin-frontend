@@ -145,7 +145,7 @@ const AddQuestionDisclaimer = ({ setIsOpenAddQuestionDisclaimer }) => {
 
                     }}>
 
-                    {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, setFieldValue }) => (
+                    {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
                         <form noValidate onSubmit={handleSubmit} >
 
                             <Row>
