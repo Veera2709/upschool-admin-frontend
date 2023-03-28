@@ -14,7 +14,7 @@ import ArticleRTE from './ArticleRTE';
 import dynamicUrl from '../../../../helper/dynamicUrls';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import { SessionStorage } from '../../../../util/SessionStorage';
-import { isEmptyArray, areFilesInvalid, voiceInvalid, isEmptyObject } from '../../../../util/utils';
+import { isEmptyArray, areFilesInvalid, voiceInvalid } from '../../../../util/utils';
 import BasicSpinner from '../../../../helper/BasicSpinner';
 
 const EditQuestions = () => {
@@ -47,8 +47,8 @@ const EditQuestions = () => {
     const [ansWeightageErrMsg, setAnsWeightageErrMsg] = useState(false);
 
     const [selectedQuestionType, setSelectedQuestionType] = useState([]);
-    const [selectedQuestionCategory, setSelectedQuestionCategory] = useState({});
-    const [selectedQuestionDisclaimer, setSelectedQuestionDisclaimer] = useState({});
+    const [selectedQuestionCategory, setSelectedQuestionCategory] = useState([]);
+    const [selectedQuestionDisclaimer, setSelectedQuestionDisclaimer] = useState([]);
     const [showMathKeyboard, setShowMathKeyboard] = useState('No');
     const [answerTypeOptions, setAnswerTypeOptions] = useState([]);
     const [selectedAnswerType, setSelectedAnswerType] = useState([]);
@@ -90,6 +90,7 @@ const EditQuestions = () => {
 
     const [optionsDisclaimer, setOptionsDisclaimer] = useState([]);
     const [selectedValueDisclaimer, setSelectedValueDisclaimer] = useState([]);
+    const [selectedValueCategory, setSelectedValueCategory] = useState([]);
     const [errorMessageDisclaimer, setErrorMessageDisclaimer] = useState(false); //for question disclaimer
 
 
@@ -106,17 +107,6 @@ const EditQuestions = () => {
     ]);
 
     displaySuccessMsg = _questionStatus === 'Save' ? 'Question Saved!' : _questionStatus === 'Submit' ? 'Question Submitted!' : _questionStatus === 'Accept' ? 'Question Accepted!' : _questionStatus === 'Reject' ? 'Question Rejected!' : _questionStatus === 'Revisit' ? 'Question set as Revisit!' : _questionStatus === 'DesignReady' ? 'Question set as Design Ready!' : _questionStatus === 'Publish' ? 'Question Published!' : 'Question Updated!';
-
-    // const handleQuestionCategory = (event) => {
-    //     setQuestionCategoryErrMsg(false);
-    //     setSelectedQuestionCategory(event.target.value);
-
-    // }
-    // const handleQuestionDisclaimer = (event) => {
-    //     // setQuestionCategoryErrMsg(false);
-    //     setSelectedQuestionDisclaimer(event.target.value);
-
-    // }
 
     useEffect(() => {
 
@@ -203,20 +193,24 @@ const EditQuestions = () => {
 
                         let individual_user_data = response.data.Items[0];
                         console.log({ individual_user_data });
-                        let selectedCategory = options.length > 0 && options.filter((e) => e.value === individual_user_data.question_category.value)
-                        console.log("selectedCategory ", selectedCategory);
+                        let selectedCategory = options.length > 0 && options.filter((e) => e.value === individual_user_data.question_category)
+                        console.log("selectedCategory ", selectedCategory[0].value);
 
-                        setSelectedQuestionCategory(selectedCategory);
+                        setSelectedValueCategory(selectedCategory);
+                        setSelectedQuestionCategory(selectedCategory[0].value);
 
 
-                        if (individual_user_data.question_disclaimer === "") {
+                        if (individual_user_data.question_disclaimer === "" || isEmptyArray(individual_user_data.question_disclaimer)) {
                             console.log("Disclaimer is not selected");
-                            setSelectedQuestionDisclaimer({});
+                            setSelectedValueDisclaimer([]);
+                            setSelectedQuestionDisclaimer([]);
                         } else {
-                            let selectedDisclaimer = optionsDisclaimer.filter((e) => e.value === individual_user_data.question_disclaimer.value);
-                            console.log("selectedDisclaimer ", selectedDisclaimer);
-                            setSelectedValueDisclaimer(selectedDisclaimer[0]);
-                            setSelectedQuestionDisclaimer(selectedDisclaimer);
+                            console.log("Disclaimer is not selected else");
+
+                            let selectedDisclaimer = optionsDisclaimer.filter((e) => e.value === individual_user_data.question_disclaimer);
+                            console.log("selectedDisclaimer ", selectedDisclaimer[0].value);
+                            setSelectedValueDisclaimer(selectedDisclaimer);
+                            setSelectedQuestionDisclaimer(selectedDisclaimer[0].value);
                         }
 
                         const radioValue = individual_user_data.show_math_keyboard === 'Yes' ? true : false;
@@ -432,7 +426,7 @@ const EditQuestions = () => {
         }
     }
     useEffect(() => {
-        if (!isEmptyArray(optionsDisclaimer) && !isEmptyObject(options)) {
+        if (!isEmptyArray(optionsDisclaimer) && !isEmptyArray(options)) {
             console.log("Inside UE!", options, optionsDisclaimer);
 
             IndividualQuestionData();
@@ -442,13 +436,14 @@ const EditQuestions = () => {
     const handleQuestionCategory = (event) => {
         console.log(event);
         setQuestionCategoryErrMsg(false);
-        setSelectedQuestionCategory([event]);
+        setSelectedValueCategory(event.value);
+        setSelectedQuestionCategory(event.value);
     };
     const handleDisclaimerChange = (event) => {
         console.log(event);
         setErrorMessageDisclaimer(false)
         setSelectedValueDisclaimer(event.value);
-        setSelectedQuestionDisclaimer(event);
+        setSelectedQuestionDisclaimer(event.value);
     };
 
     const handleQuestionLabel = (e) => {
@@ -513,8 +508,8 @@ const EditQuestions = () => {
     const handleQuestionType = (event) => {
 
         setAnswerTypeOptions((currentOptions) => currentOptions.filter((currentOption) => !selectedAnswerType.includes(currentOption)));
-        setSelectedQuestionCategory({});
-        setSelectedQuestionDisclaimer({});
+        setSelectedQuestionCategory([]);
+        setSelectedQuestionDisclaimer([]);
 
         console.log(answerTypeOptions);
         // setAnswerTypeOptions([]);
@@ -1076,7 +1071,7 @@ const EditQuestions = () => {
             let payLoad = {
 
                 question_type: selectedQuestionType,
-                question_category: selectedQuestionCategory[0],
+                question_category: selectedQuestionCategory,
                 question_voice_note: selectedQuestionVoiceNote,
                 question_content: articleDataTitle,
                 answer_type: selectedAnswerType,
@@ -1097,8 +1092,8 @@ const EditQuestions = () => {
             setQuestionLabelErr(true);
         } else if (isEmptyArray(selectedQuestionType)) {
             setQuestionTypeErrMsg(true);
-        } else if (isEmptyObject(selectedQuestionCategory[0]) || selectedQuestionCategory[0] === 'Select...') {
-            console.log(selectedQuestionCategory[0]);
+        } else if (isEmptyArray(selectedQuestionCategory) || selectedQuestionCategory === 'Select...') {
+            console.log(selectedQuestionCategory);
             setQuestionCategoryErrMsg(true);
         } else if (articleDataTitle === "" || articleDataTitle === undefined || articleDataTitle === 'undefined' || articleDataTitle === "<p><br></p>" || articleDataTitle === "<p></p>" || articleDataTitle === "<br>") {
             setQuestionEmptyErrMsg(true);
@@ -1435,7 +1430,7 @@ const EditQuestions = () => {
                                                     initialValues={{
                                                         question_label: previousData.question_label,
                                                         question_disclaimer: selectedValueDisclaimer,
-                                                        question_category: selectedQuestionCategory[0],
+                                                        question_category: selectedValueCategory,
                                                         answerType: '',
                                                         submit: null
                                                     }}
@@ -1464,8 +1459,8 @@ const EditQuestions = () => {
 
                                                             } else if (isEmptyArray(selectedQuestionType)) {
                                                                 setQuestionTypeErrMsg(true);
-                                                            } else if (isEmptyObject(selectedQuestionCategory[0]) || selectedQuestionCategory[0] === 'Select...') {
-                                                                console.log(selectedQuestionCategory[0]);
+                                                            } else if (isEmptyArray(selectedQuestionCategory) || selectedQuestionCategory === 'Select...') {
+                                                                console.log(selectedQuestionCategory);
 
                                                                 setQuestionCategoryErrMsg(true);
                                                             } else if (articleDataTitle === "" || articleDataTitle === undefined || articleDataTitle === 'undefined' || articleDataTitle === "<p><br></p>" || articleDataTitle === "<p></p>" || articleDataTitle === "<br>") {
@@ -1483,13 +1478,12 @@ const EditQuestions = () => {
                                                                     let payLoad = {
 
                                                                         question_type: selectedQuestionType,
-                                                                        question_category: selectedQuestionCategory[0],
+                                                                        question_category: selectedQuestionCategory,
                                                                         question_voice_note: selectedQuestionVoiceNote,
                                                                         question_content: articleDataTitle,
                                                                         answer_type: selectedAnswerType,
                                                                         answers_of_question: answerOptionsForm,
                                                                         question_status: 'Save',
-                                                                        // question_disclaimer: values.question_disclaimer === "" ? "" : values.question_disclaimer,
                                                                         question_disclaimer: selectedQuestionDisclaimer,
                                                                         show_math_keyboard: showMathKeyboard,
                                                                         question_label: questionLabelValue
@@ -1771,8 +1765,8 @@ const EditQuestions = () => {
 
                                                             } else if (isEmptyArray(selectedQuestionType)) {
                                                                 setQuestionTypeErrMsg(true);
-                                                            } else if (isEmptyObject(selectedQuestionCategory[0]) || selectedQuestionCategory[0] === 'Select...') {
-                                                                console.log("selectedQuestionCategory : ", selectedQuestionCategory[0])
+                                                            } else if (isEmptyArray(selectedQuestionCategory) || selectedQuestionCategory === 'Select...') {
+                                                                console.log("selectedQuestionCategory : ", selectedQuestionCategory)
 
                                                                 setQuestionCategoryErrMsg(true);
                                                             } else if (articleDataTitle === "" || articleDataTitle === undefined || articleDataTitle === 'undefined' || articleDataTitle === "<p><br></p>" || articleDataTitle === "<p></p>" || articleDataTitle === "<br>") {
@@ -1791,7 +1785,7 @@ const EditQuestions = () => {
 
                                                                         question_id: question_id,
                                                                         question_type: selectedQuestionType,
-                                                                        question_category: selectedQuestionCategory[0],
+                                                                        question_category: selectedQuestionCategory,
                                                                         question_voice_note: selectedQuestionVoiceNote,
                                                                         question_content: articleDataTitle,
                                                                         answer_type: selectedAnswerType,
@@ -2220,7 +2214,7 @@ const EditQuestions = () => {
 
 
                                                                     <Select
-                                                                        defaultValue={selectedQuestionCategory[0]}
+                                                                        defaultValue={selectedValueCategory}
                                                                         name="questionCategory"
                                                                         options={options}
                                                                         className="basic-multi-select"
