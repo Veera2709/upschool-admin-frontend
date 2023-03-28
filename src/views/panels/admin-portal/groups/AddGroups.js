@@ -296,7 +296,8 @@ const AddGroups = ({ className, ...rest }) => {
                                     <Formik
 
                                         initialValues={{
-                                            group_name: ''
+                                            group_name: '',
+                                            question_duration: ''
                                         }}
 
                                         validationSchema={
@@ -306,6 +307,10 @@ const AddGroups = ({ className, ...rest }) => {
                                                     .min(2, 'Group Name is too short!')
                                                     .max(51, 'Group Name is too long!')
                                                     .required('Group Name is required!'),
+                                                question_duration: Yup.number()
+                                                    .lessThan(150, 'Group Duration is Less Then 30min!')
+                                                    .moreThan(30, 'Group Duration is More Then 150min!')
+                                                    .required('Group Duration is required!'),
                                             })
                                         }
 
@@ -334,7 +339,8 @@ const AddGroups = ({ className, ...rest }) => {
                                                     group_question_id: selectedQuestions,
                                                     group_levels: selectedLevels,
                                                     group_related_digicard: selectedDigicards,
-                                                    group_description: values.group_description
+                                                    group_description: values.group_description,
+                                                    question_duration: values.question_duration
                                                 }
 
                                                 console.log("payLoad", payLoad);
@@ -575,6 +581,28 @@ const AddGroups = ({ className, ...rest }) => {
                                                                 </>
                                                             )
                                                         }
+                                                    </Col>
+                                                    <Col>
+                                                        <label className="floating-label">
+                                                            <small className="text-danger">* </small>
+                                                             Duration Per Question
+                                                        </label>
+
+                                                        <input
+                                                            value={values.question_duration}
+                                                            className="form-control"
+                                                            error={touched.question_duration && errors.question_duration}
+                                                            label="question_duration"
+                                                            name="question_duration"
+                                                            onBlur={handleBlur}
+                                                            type='number'
+                                                            onChange={e => {
+                                                                setGroupNameExistsErrMsg(false);
+                                                                handleChange(e);
+                                                            }}
+                                                            placeholder="Group Duration"
+                                                        />
+                                                        {touched.question_duration && errors.question_duration && <small className="text-danger form-text">{errors.question_duration}</small>}
                                                     </Col>
                                                 </Row>
                                                 {loader}
