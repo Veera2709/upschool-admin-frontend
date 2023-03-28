@@ -128,7 +128,6 @@ const EditGroups = ({ className, ...rest }) => {
                     console.log('inside res');
 
                     let resultDataAllQuestions = response.data.Items;
-                    // console.log("resultDataAllQuestions", resultDataAllQuestions);
 
                     let questionsArr = [];
                     let getQuestionsArr;
@@ -144,7 +143,6 @@ const EditGroups = ({ className, ...rest }) => {
                             console.log(questionsArr);
                         }
                     }
-                    
 
                     setQuestionsDropdown(questionsArr);
 

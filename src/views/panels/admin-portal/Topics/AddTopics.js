@@ -39,9 +39,6 @@ const AddTopics = ({ setOpenAddTopic }) => {
 
     const MySwal = withReactContent(Swal);
 
-
-
-
     const sweetAlertHandler = (alert) => {
         const MySwal = withReactContent(Swal);
         MySwal.fire({
@@ -51,27 +48,27 @@ const AddTopics = ({ setOpenAddTopic }) => {
         });
     };
 
-    const topicQuizTemplatePre = [
-        { level: 'Level-1', duration: "" },
-        { level: 'Level-2', duration: "" }]
-    const topicQuizTemplatePost = [
-        { level: 'Level-1', duration: "" },
-        { level: 'Level-2', duration: "" },
-        { level: 'Level-3', duration: "" }]
-    const [topicQuiz, setTopicQuiz] = useState(topicQuizTemplatePre)
-    console.log("topicQuiz : ", topicQuiz);
+    // const topicQuizTemplatePre = [
+    //     { level: 'Level-1', duration: "" },
+    //     { level: 'Level-2', duration: "" }]
+    // const topicQuizTemplatePost = [
+    //     { level: 'Level-1', duration: "" },
+    //     { level: 'Level-2', duration: "" },
+    //     { level: 'Level-3', duration: "" }]
+    // const [topicQuiz, setTopicQuiz] = useState(topicQuizTemplatePre)
+    // console.log("topicQuiz : ", topicQuiz);
 
 
-    const onDynamicFormChange = (e, index, fieldType) => {
-        console.log("e", e)
-        console.log("Field", fieldType)
-        const updatedTopics = topicQuiz.map((topic, i) =>
-            index == i
-                ? Object.assign(topic, { [e.target.name]: e.target.value })
-                : topic
-        )
-        setTopicQuiz(updatedTopics)
-    }
+    // const onDynamicFormChange = (e, index, fieldType) => {
+    //     console.log("e", e)
+    //     console.log("Field", fieldType)
+    //     const updatedTopics = topicQuiz.map((topic, i) =>
+    //         index == i
+    //             ? Object.assign(topic, { [e.target.name]: e.target.value })
+    //             : topic
+    //     )
+    //     setTopicQuiz(updatedTopics)
+    // }
 
 
     const postTopic = (formData) => {
@@ -90,7 +87,6 @@ const AddTopics = ({ setOpenAddTopic }) => {
                     }).then((willDelete) => {
 
                         window.location.reload();
-
                     })
 
                 } else {
@@ -175,7 +171,7 @@ const AddTopics = ({ setOpenAddTopic }) => {
     const postPreOption = (e) => {
         console.log("postPreOption", e);
         setprePostLearning(e.value);
-        e.value === 'Pre-Learning' ? setTopicQuiz(topicQuizTemplatePre) : setTopicQuiz(topicQuizTemplatePost)
+        // e.value === 'Pre-Learning' ? setTopicQuiz(topicQuizTemplatePre) : setTopicQuiz(topicQuizTemplatePost)
     };
 
     const getconceptId = (event) => {
@@ -209,7 +205,7 @@ const AddTopics = ({ setOpenAddTopic }) => {
                     topic_concept_id: [],
                     pre_post_learning: '',
                     related_topics: [],
-                    topic_quiz_config: []
+                    // topic_quiz_config: []
                 }}
 
                 validationSchema={Yup.object().shape({
@@ -229,16 +225,16 @@ const AddTopics = ({ setOpenAddTopic }) => {
                 // validationSchema
                 onSubmit={(values, { setErrors, setStatus, setSubmitting }) => {
                     // setSubmitting(true);
-                    let emptyFieldValidation = topicQuiz.find(o => o.duration === "" || o.duration === 0 || o.duration <= 0)
-                    let TopicDurationLimit = topicQuiz.find(o => o.duration > 150)
-                    if (topicConceptId == '') {
-                        setIsShownConcept(false)
-                    } else if (emptyFieldValidation) {
-                        setTopicDuration(true)
-                    } else if (TopicDurationLimit) {
-                        setTimeLimit(true)
-                    }
-                    else {
+                    // let emptyFieldValidation = topicQuiz.find(o => o.duration === "" || o.duration === 0 || o.duration <= 0)
+                    // let TopicDurationLimit = topicQuiz.find(o => o.duration > 150)
+                    // if (topicConceptId == '') {
+                    //     setIsShownConcept(false)
+                    // } else if (emptyFieldValidation) {
+                    //     setTopicDuration(true)
+                    // } else if (TopicDurationLimit) {
+                    //     setTimeLimit(true)
+                    // }
+                    // else {
 
                         if (prePostLearning === 'Pre-Learning') {
                             var formData = {
@@ -248,8 +244,8 @@ const AddTopics = ({ setOpenAddTopic }) => {
                                 pre_post_learning: prePostLearning,
                                 related_topics: relatedTopicsId,
                                 // topic_quiz_config: topicQuiz
-                                Level_1: { duration: topicQuiz[0].duration },
-                                Level_2: { duration: topicQuiz[1].duration },
+                                // Level_1: { duration: topicQuiz[0].duration },
+                                // Level_2: { duration: topicQuiz[1].duration },
 
                             }
                         } else {
@@ -260,16 +256,16 @@ const AddTopics = ({ setOpenAddTopic }) => {
                                 pre_post_learning: prePostLearning,
                                 related_topics: relatedTopicsId,
                                 // topic_quiz_config: topicQuiz
-                                Level_1: { duration: topicQuiz[0].duration },
-                                Level_2: { duration: topicQuiz[1].duration },
-                                Level_3: { duration: topicQuiz[2].duration },
+                                // Level_1: { duration: topicQuiz[0].duration },
+                                // Level_2: { duration: topicQuiz[1].duration },
+                                // Level_3: { duration: topicQuiz[2].duration },
 
                             }
                         }
 
                         console.log('formData: ', formData)
                         postTopic(formData)
-                    }
+                    // }
 
                 }}
             >
@@ -359,7 +355,7 @@ const AddTopics = ({ setOpenAddTopic }) => {
                             </Form.Group>
                         </Col>
 
-                        <Row>
+                        {/* <Row>
                             <Col sm={4}>
                                 <Form.Label className="floating-label" ><small className="text-danger">* </small>Topic Quiz Levels</Form.Label>
                             </Col>
@@ -404,8 +400,8 @@ const AddTopics = ({ setOpenAddTopic }) => {
                                     </div>
                                 </div>
                             </div>
-                        ))}
-                        <Row>
+                        ))} */}
+                        {/* <Row>
                             <Col sm={4}>
                             </Col>
                             <Col sm={6}>
@@ -413,16 +409,14 @@ const AddTopics = ({ setOpenAddTopic }) => {
                                 {topicDuration && (
                                     <small className="text-danger form-text">Quiz Minutes are required!</small>
                                 )}
-                                {/* {negativeValue&&(
-                                <small className="text-danger form-text">Quiz Minutes are required in positive value!</small>
-                                )} */}
                                 {timeLimit && (
                                     <small className="text-danger form-text">Quiz Minutes exceeds more 150min !</small>
                                 )}
                             </Col>
-                        </Row>
+                        </Row> */}
                         <p></p>
                         {/* <button type="button" className="btn btn-primary" onClick={addTopic} >Add another Quiz</button> */}
+
                         <div className="row d-flex justify-content-end">
                             <div className="form-group fill">
                                 <div className="center col-sm-12">
