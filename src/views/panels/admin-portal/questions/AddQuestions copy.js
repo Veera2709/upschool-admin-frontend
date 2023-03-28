@@ -182,10 +182,10 @@ const AddQuestions = ({ className, ...rest }) => {
     }
 
     const [answerBlanksOptions, setAnswerBlanksOptions] = useState([]);
-    const answerDisplayOptions = [
+    const [answerDisplayOptions, setAnswerDisplayOptions] = useState([
         { value: 'No', label: 'No' },
         { value: 'Yes', label: 'Yes' }
-    ];
+    ]);
 
     const selectedArr = [{ label: 'Options', value: 'Options' }];
 
