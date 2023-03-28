@@ -1390,7 +1390,7 @@ const EditQuestions = () => {
 
         <>
             {
-                (options.length) > 0 && (optionsDisclaimer.length > 0) &&
+                // (options.length) > 0 && (optionsDisclaimer.length > 0) &&
                 (isLoading ? (
                     <BasicSpinner />
                 ) : (
