@@ -1002,7 +1002,6 @@ const AddQuestions = ({ className, ...rest }) => {
                                                         <small className="text-danger">* </small>
                                                         Question Type
                                                     </label>
-
                                                     <Select
                                                         name="questionType"
                                                         options={questionTypeOptions}
