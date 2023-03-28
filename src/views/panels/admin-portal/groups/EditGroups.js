@@ -128,7 +128,7 @@ const EditGroups = ({ className, ...rest }) => {
                     console.log('inside res');
 
                     let resultDataAllQuestions = response.data.Items;
-                    console.log("resultDataAllQuestions", resultDataAllQuestions);
+                    // console.log("resultDataAllQuestions", resultDataAllQuestions);
 
                     let questionsArr = [];
                     let getQuestionsArr;
@@ -136,12 +136,15 @@ const EditGroups = ({ className, ...rest }) => {
                     if (Array.isArray(resultDataAllQuestions)) {
                         for (let index = 0; index < resultDataAllQuestions.length; index++) {
 
-                            getQuestionsArr = [{ label: resultDataAllQuestions[index].question_label, value: resultDataAllQuestions[index].question_id }];
+                            console.log("resultDataAllQuestions[index].question_label : ", resultDataAllQuestions[index].question_label);
+                            
+                            getQuestionsArr = { label: resultDataAllQuestions[index].question_label, value: resultDataAllQuestions[index].question_id };
 
-                            questionsArr.push(getQuestionsArr[0]);
+                            questionsArr.push(getQuestionsArr);
                             console.log(questionsArr);
                         }
                     }
+                    
 
                     setQuestionsDropdown(questionsArr);
 
