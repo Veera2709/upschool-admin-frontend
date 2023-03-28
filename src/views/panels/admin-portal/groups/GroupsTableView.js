@@ -503,7 +503,6 @@ const GroupsTableView = ({ _groupType }) => {
 
                 </>
             );
-            // Work on ...
 
             finalDataArray.push(responseData[index]); 
         }
