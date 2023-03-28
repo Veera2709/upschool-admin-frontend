@@ -34,8 +34,8 @@ const AddTopics = ({ setOpenAddTopic }) => {
     const [relatedTopicNames, setRelatedTopicNames] = useState([]);
     const [isShownConcept, setIsShownConcept] = useState(true);
     const [isShownTopic, setIsShownTopic] = useState(true);
-    const [topicDuration, setTopicDuration] = useState(false);
-    const [timeLimit, setTimeLimit] = useState(false);
+    // const [topicDuration, setTopicDuration] = useState(false);
+    // const [timeLimit, setTimeLimit] = useState(false);
 
     const MySwal = withReactContent(Swal);
 
@@ -199,8 +199,8 @@ const AddTopics = ({ setOpenAddTopic }) => {
             <Formik
                 initialValues={{
                     topic_title: '',
-                    level: "",
-                    duration: "",
+                    // level: "",
+                    // duration: "",
                     topic_description: '',
                     topic_concept_id: [],
                     pre_post_learning: '',
@@ -214,9 +214,9 @@ const AddTopics = ({ setOpenAddTopic }) => {
                         .min(2, Constants.AddTopic.TopictitleTooShort)
                         .max(32, Constants.AddTopic.TopictitleTooLong)
                         .required(Constants.AddTopic.TopictitleRequired),
-                    duration: Yup.string()
-                        .trim()
-                        .required(Constants.AddTopic.QuizMinutesRequired),
+                    // duration: Yup.string()
+                    //     .trim()
+                    //     .required(Constants.AddTopic.QuizMinutesRequired),
                     topic_description: Yup.string()
                         .trim()
                         .required(Constants.AddTopic.DescriptionRequired),
@@ -235,9 +235,10 @@ const AddTopics = ({ setOpenAddTopic }) => {
                     //     setTimeLimit(true)
                     // }
                     // else {
+                        let formData;
 
                         if (prePostLearning === 'Pre-Learning') {
-                            var formData = {
+                            formData = {
                                 topic_title: values.topic_title,
                                 topic_description: values.topic_description,
                                 topic_concept_id: topicConceptId,
@@ -249,7 +250,7 @@ const AddTopics = ({ setOpenAddTopic }) => {
 
                             }
                         } else {
-                            var formData = {
+                            formData = {
                                 topic_title: values.topic_title,
                                 topic_description: values.topic_description,
                                 topic_concept_id: topicConceptId,

@@ -1,8 +1,8 @@
 const menuItems = {
   items: [
     {
-      id: 'admin-panel',
-      title: 'Admin Panel',
+      id: 'content-panel',
+      title: 'Content Panel',
       type: 'group',
       icon: 'icon-monitor',
       children: [
@@ -12,66 +12,6 @@ const menuItems = {
           icon: 'feather icon-home',
           type: 'item',
           url: '/admin-portal/admin-dashboard'
-        },
-        {
-          id: 'sch-addSchool',
-          title: 'School',
-          icon: 'fas fa-building',
-          type: 'collapse',
-          children: [
-            {
-              id: 'active-schools',
-              title: 'Active Schools',
-              type: 'item',
-              url: '/admin-portal/active-schools'
-            },
-            {
-              id: 'archived-schools',
-              title: 'Archived Schools',
-              type: 'item',
-              url: '/admin-portal/archived-schools'
-            }
-          ]
-        },
-        {
-          id: 'users',
-          title: 'Users',
-          type: 'collapse',
-          icon: 'feather icon-users',
-          children: [
-            {
-              id: 'active-users',
-              title: 'Active Users',
-              type: 'item',
-              url: '/admin-portal/active-users'
-            },
-            {
-              id: 'archived-users',
-              title: 'Archived Users',
-              type: 'item',
-              url: '/admin-portal/archived-users'
-            }
-          ]
-        },
-        {
-          id: 'upSchoolUsers',
-          title: 'CMS Users',
-          type: 'collapse',
-          icon: 'fas fa-users',
-          children: [
-            {
-              id: 'active-upSchoolUsers',
-              title: 'Active Users',
-              type: 'item',
-              url: '/admin-portal/active-upSchoolUsers'
-            },
-            {
-              id: 'archived-upSchoolUsers',
-              title: 'Archived Users',
-              type: 'item',
-              url: '/admin-portal/archived-upSchoolUsers'
-            }
-          ]
         },
         {
           id: 'digicard',
@@ -91,6 +31,46 @@ const menuItems = {
               title: 'Archived Digicards',
               type: 'item',
               url: '/admin-portal/digicard-Archived',
+            }
+          ]
+        },
+        {
+          id: 'questions',
+          title: 'Questions',
+          type: 'collapse',
+          icon: 'feather icon-check-square',
+          children: [
+            {
+              id: 'active-questions',
+              title: 'Active Questions',
+              type: 'item',
+              url: '/admin-portal/active-questions'
+            },
+            {
+              id: 'archived-questions',
+              title: 'Archived Questions',
+              type: 'item',
+              url: '/admin-portal/archived-questions'
+            }
+          ]
+        },
+        {
+          id: 'groups',
+          title: 'Groups',
+          type: 'collapse',
+          icon: 'feather icon-folder',
+          children: [
+            {
+              id: 'active-groups',
+              title: 'Active Groups',
+              type: 'item',
+              url: '/admin-portal/active-groups'
+            },
+            {
+              id: 'archived-groups',
+              title: 'Archived Groups',
+              type: 'item',
+              url: '/admin-portal/archived-groups'
             }
           ]
         },
@@ -161,7 +141,7 @@ const menuItems = {
           title: 'Units',
           type: 'collapse',
           icon: 'fas fa-book',
-          children:[
+          children: [
             {
               id: 'active-units',
               title: 'Active Units',
@@ -217,70 +197,123 @@ const menuItems = {
             }
           ]
         },
-        {
-          id: 'questions',
-          title: 'Questions',
-          type: 'collapse',
-          icon: 'feather icon-check-square',
-          children: [
-            {
-              id: 'active-questions',
-              title: 'Active Questions',
-              type: 'item',
-              url: '/admin-portal/active-questions'
-            },
-            {
-              id: 'archived-questions',
-              title: 'Archived Questions',
-              type: 'item',
-              url: '/admin-portal/archived-questions'
-            }
-          ]
-        },
-        {
-          id: 'groups',
-          title: 'Groups',
-          type: 'collapse',
-          icon: 'feather icon-folder',
-          children: [
-            {
-              id: 'active-groups',
-              title: 'Active Groups',
-              type: 'item',
-              url: '/admin-portal/active-groups'
-            },
-            {
-              id: 'archived-groups',
-              title: 'Archived Groups',
-              type: 'item',
-              url: '/admin-portal/archived-groups'
-            }
-          ]
-        },
-        // {
-        //   id: 'boards',
-        //   title: 'Boards',
-        //   type: 'collapse',
-        //   icon: 'feather icon-file',
-        //   children: [
-        //     {
-        //       id: 'active-boards',
-        //       title: 'Active Boards',
-        //       type: 'item',
-        //       url: '/admin-portal/active-boards'
-        //     },
-        //     {
-        //       id: 'archived-boards',
-        //       title: 'Archived Boards',
-        //       type: 'item',
-        //       url: '/admin-portal/archived-boards'
-        //     }
-        //   ]
-        // },
       ]
-    }
-
+    },
+    {
+      id: 'management-panel',
+      title: 'Management Panel',
+      type: 'group',
+      icon: 'icon-monitor',
+      children: [
+        {
+          id: 'sch-addSchool',
+          title: 'School',
+          icon: 'fas fa-building',
+          type: 'collapse',
+          children: [
+            {
+              id: 'active-schools',
+              title: 'Active Schools',
+              type: 'item',
+              url: '/admin-portal/active-schools'
+            },
+            {
+              id: 'archived-schools',
+              title: 'Archived Schools',
+              type: 'item',
+              url: '/admin-portal/archived-schools'
+            }
+          ]
+        },
+        {
+          id: 'users',
+          title: 'Users',
+          type: 'collapse',
+          icon: 'feather icon-users',
+          children: [
+            {
+              id: 'active-users',
+              title: 'Active Users',
+              type: 'item',
+              url: '/admin-portal/active-users'
+            },
+            {
+              id: 'archived-users',
+              title: 'Archived Users',
+              type: 'item',
+              url: '/admin-portal/archived-users'
+            }
+          ]
+        },
+        {
+          id: 'upSchoolUsers',
+          title: 'CMS Users',
+          type: 'collapse',
+          icon: 'fas fa-users',
+          children: [
+            {
+              id: 'active-upSchoolUsers',
+              title: 'Active Users',
+              type: 'item',
+              url: '/admin-portal/active-upSchoolUsers'
+            },
+            {
+              id: 'archived-upSchoolUsers',
+              title: 'Archived Users',
+              type: 'item',
+              url: '/admin-portal/archived-upSchoolUsers'
+            }
+          ]
+        },
+        {
+          id: 'settings',
+          title: 'Settings',
+          icon: 'feather icon-settings',
+          type: 'collapse',
+          children: [
+            {
+              id: 'questionCategory',
+              title: 'Question Category',
+              type: 'collapse',
+              children: [
+                {
+                  id: 'activeQuestionCategory',
+                  title: 'Active',
+                  type: 'item',
+                  url: '/admin-portal/admin-settings/active-questionCategory'
+                },
+                {
+                  id: 'archivedQuestionCategory',
+                  title: 'Archived',
+                  type: 'item',
+                  url: '/admin-portal/admin-settings/archived-questionCategory'
+                },
+              ]
+            },
+            {
+              id: 'questionDisclaimer',
+              title: 'Question Disclaimer',
+              type: 'collapse',
+              children: [
+                {
+                  id: 'activeQuestionDisclaimer',
+                  title: 'Active',
+                  type: 'item',
+                  url: '/admin-portal/admin-settings/active-questionDisclaimer'
+                },
+                {
+                  id: 'archivedQuestionDisclaimer',
+                  title: 'Archived',
+                  type: 'item',
+                  url: '/admin-portal/admin-settings/archived-questionDisclaimer'
+                },
+              ]
+            }
+          ]
+        }
+      ]
+    },
   ]
-};
+}
 
 export default menuItems;

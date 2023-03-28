@@ -71,7 +71,7 @@ const EditGroups = ({ className, ...rest }) => {
             }
         }
         console.log(valuesArr);
-        setPreviousQuestions(valuesArr);
+        setSelectedQuestions(valuesArr);
     }
 
     const handleDigicardsChange = (event) => {
@@ -219,6 +219,7 @@ const EditGroups = ({ className, ...rest }) => {
                                                 for (let index = 0; index < questionData.length; index++) {
 
                                                     getDataQuestionsSec = resultDataAllQuestions.filter(p => p.question_id === questionData[index]);
+                                                    console.log("getDataQuestionsSec", getDataQuestionsSec)
                                                     getQuestionsArr = [{ label: getDataQuestionsSec[0].question_label, value: questionData[index] }];
                                                     questionsArr.push(getQuestionsArr[0]);
 
@@ -451,7 +452,7 @@ const EditGroups = ({ className, ...rest }) => {
                                                             group_id: group_id.group_id,
                                                             group_name: values.group_name,
                                                             group_type: selectedGroupType,
-                                                            group_question_id: previousQuestions,
+                                                            group_question_id: selectedQuestions,
                                                             group_levels: selectedLevels,
                                                             group_related_digicard: selectedDigicards,
                                                             group_description: values.group_description
@@ -600,38 +601,43 @@ const EditGroups = ({ className, ...rest }) => {
 
                                                         <br />
                                                         <Row>
-                                                    <Col>
-                                                    
-                                                     <label className="floating-label">
-                                                        <small className="text-danger"></small>
-                                                        Group Description
-                                                    </label>
-                                                    <textarea
-                                                        value={values.group_description}
-                                                        className="form-control"
-                                                        error={touched.group_description && errors.group_description}
-                                                        label="group_description"
-                                                        name="group_description"
-                                                        onBlur={handleBlur}
-                                                        type="textarea"
-                                                        onChange={handleChange}
-                                                        placeholder="Description"
-                                                    />
-                                                    </Col>
-                                                </Row>
-                                               
-                                                <br />
+                                                            <Col>
+
+                                                                <label className="floating-label">
+                                                                    <small className="text-danger"></small>
+                                                                    Group Description
+                                                                </label>
+                                                                <textarea
+                                                                    value={values.group_description}
+                                                                    className="form-control"
+                                                                    error={touched.group_description && errors.group_description}
+                                                                    label="group_description"
+                                                                    name="group_description"
+                                                                    onBlur={handleBlur}
+                                                                    type="textarea"
+                                                                    onChange={handleChange}
+                                                                    placeholder="Description"
+                                                                />
+                                                            </Col>
+                                                        </Row>
+
+                                                        <br />
                                                         <Row>
 
                                                             <Col>
                                                                 {
                                                                     questionsDropdown && (
                                                                         <>
-                                                                            <label className="floating-label">
-                                                                                Questions
-                                                                                <small >&nbsp;{`(${previousQuestions.length})`}</small>
-                                                                            </label>
-
+                                                                            <Row>
+                                                                                <Col>
+                                                                                    <label className="floating-label">
+                                                                                        Questions
+                                                                                    </label>
+                                                                                </Col>
+                                                                                <Col className='d-flex justify-content-end' style={{marginRight:'10px'}}>
+                                                                                    <label className="text-danger" >&nbsp;{`${selectedQuestions.length}`}</label>
+                                                                                </Col>
+                                                                            </Row>
                                                                             <Select
                                                                                 defaultValue={previousQuestions}
                                                                                 isMulti

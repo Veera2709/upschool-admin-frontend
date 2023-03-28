@@ -5,8 +5,7 @@ import SunEditor from "./suneditor-react/dist/SunEditor";
 import katex from 'katex'
 import 'katex/dist/katex.min.css'
 import './suneditor/dist/suneditor.css';
-// import EditTable from './Table'
-
+import fontList from "../../../../helper/fontList";
 import plugins from './suneditor/src/plugins'
 
 function ArticleRTE({
@@ -31,7 +30,6 @@ function ArticleRTE({
   return (
     <div>
       <SunEditor placeholder="Please type here..."
-        disable={sessionStorage.getItem("user_role") == "Viewer"}
         setContents={articleData}
         showToolbar={true}
         onChange={handleEditorChange}
@@ -40,36 +38,7 @@ function ArticleRTE({
           imageUploadSizeLimit: "250000",
           katex: katex,
           plugins: plugins,
-          // plugins:[listType],
-          font: [
-            'Arial',
-            'tohoma',
-            'Courier New,Courier',
-            'Verdana',
-            'Trebuchet MS',
-            'Times New Roman',
-            'Georgia',
-            'Garamond',
-            'Courier New',
-            'Brush Script MT',
-            'Times',
-            'Helvetica',
-            'Geneva',
-            "sans-serif",
-            "cursive",
-            "Mogra",
-            "monospace",
-            "Impact",
-            "trebuchet ms",
-            "comic sans ms",
-            "verdana",
-            "arial black",
-            "tahoma",
-            "Lucida Console",
-            "Poppins",
-          ],
-          preview: [{ pathpath: '/admin-portal/admin-dashboard' }
-          ],
+          font: fontList,
           buttonList: [
             ['undo', 'redo'],
             ['font', 'fontSize', 'formatBlock'],

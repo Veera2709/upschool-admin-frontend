@@ -32,7 +32,7 @@ const dynamicUrl = {
     setQuizConfiguration: baseUrl + '/setQuizConfiguration',
     schoolubscriptionFeatures: baseUrl + '/schoolubscriptionFeatures',
 
-    //chapters
+    // chapters
     fetchChaptersBasedonStatus: baseUrl + '/fetchChaptersBasedonStatus',
     fetchTopicsBasedonStatus: baseUrl + '/fetchTopicsBasedonStatus',
     addChapter: baseUrl + '/addChapter',
@@ -59,8 +59,9 @@ const dynamicUrl = {
     mappingSubjectToTeacher: baseUrl + '/mappingSubjectToTeacher',
     fetchMappedSubjectForTeacher: baseUrl + '/fetchMappedSubjectForTeacher',
     bulkToggleUsersStatus: baseUrl + "/bulkToggleUsersStatus",
+    bulkToggleCMSUserStatus: baseUrl + "/bulkToggleCMSUserStatus",
 
-    //units
+    // units
     fetchUnitsBasedonStatus: baseUrl + '/fetchUnitsBasedonStatus',
     addUnit: baseUrl + '/addUnit',
     fetchIndividualUnit: baseUrl + '/fetchIndividualUnit',
@@ -112,6 +113,8 @@ const dynamicUrl = {
     editQuestion: baseUrl + '/editQuestion',
     fetchAllQuestionsData: baseUrl + '/fetchAllQuestionsData',
     addQuestions: baseUrl + '/addQuestions',
+    fetchAllQuestionCategories: baseUrl + '/fetchAllQuestionCategories',
+    fetchDisclaimersandCategories: baseUrl + '/fetchDisclaimersandCategories',
     bulkToggleQuestionStatus: baseUrl + '/bulkToggleQuestionStatus',
 
     // Sections
@@ -131,12 +134,28 @@ const dynamicUrl = {
     editGroup: baseUrl + '/editGroup',
     fetchDigicardIdAndName: baseUrl + '/fetchDigicardIdAndName',
 
-    //CMS users
+    // CMS users
     addCMSUser: baseUrl + '/addCMSUser',
     fetchCMSUsersBasedonRoleStatus: baseUrl + '/fetchCMSUsersBasedonRoleStatus',
     fetchIndividualCMSUser: baseUrl + '/fetchIndividualCMSUser',
     toggleCMSUserStatus: baseUrl + '/toggleCMSUserStatus',
     editCMSUser: baseUrl + '/editCMSUser',
+
+    // settings - Question Category
+    bulkToggleQuestionCategoryStatus: baseUrl + '/bulkToggleQuestionCategoryStatus',
+    fetchAllQuestionCategories: baseUrl + '/fetchAllQuestionCategories',
+    toggleQuestionCategoryStatus: baseUrl + '/toggleQuestionCategoryStatus',
+    addQuestionCategory: baseUrl + '/addQuestionCategory',
+    fetchIndividualCategory: baseUrl + '/fetchIndividualCategory',
+    updateQuestionCategory: baseUrl + '/updateQuestionCategory',
+
+    // settings - Question Disclaimer
+    bulkToggleQuestionDisclaimerStatus: baseUrl + '/bulkToggleQuestionDisclaimerStatus',
+    toggleQuestionDisclaimerStatus: baseUrl + '/toggleQuestionDisclaimerStatus',
+    fetchAllQuestionDisclaimers: baseUrl + '/fetchAllQuestionDisclaimers',
+    addQuestionDisclaimer: baseUrl + '/addQuestionDisclaimer',
+    fetchIndividualDisclaimer: baseUrl + '/fetchIndividualDisclaimer',
+    updateQuestionDisclaimer: baseUrl + '/updateQuestionDisclaimer',
 }
 
 export default dynamicUrl;

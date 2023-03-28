@@ -368,6 +368,26 @@ const routes = [
       },
       {
         exact: true,
+        path: '/admin-portal/admin-settings/active-questionCategory',
+        component: lazy(() => import('./views/panels/admin-portal/settings/QuestionsCategory/QuestionsCategoryTableView'))
+      },
+      {
+        exact: true,
+        path: '/admin-portal/admin-settings/archived-questionCategory',
+        component: lazy(() => import('./views/panels/admin-portal/settings/QuestionsCategory/QuestionsCategoryTableView'))
+      },
+      {
+        exact: true,
+        path: '/admin-portal/admin-settings/active-questionDisclaimer',
+        component: lazy(() => import('./views/panels/admin-portal/settings/QuestionsDisclaimer/QuestionsDisclaimerTableView'))
+      },
+      {
+        exact: true,
+        path: '/admin-portal/admin-settings/archived-questionDisclaimer',
+        component: lazy(() => import('./views/panels/admin-portal/settings/QuestionsDisclaimer/QuestionsDisclaimerTableView'))
+      },
+      {
+        exact: true,
         path: '/admin-portal/editCMSUser/:id',
         component: lazy(() => import('./views/panels/admin-portal/CMS users/editUsers'))
       },

@@ -44,7 +44,7 @@ export default {
         let font, text, i, len;
         let fontList = core.options.font;
 
-        let list = '<div class="se-list-inner">' +
+        let list = '<div class="se-list-inner" style="height : 200px">' +
                 '<ul class="se-list-basic">' +
                     '<li><button type="button" class="default_value se-btn-list" title="' + lang.toolbar.default + '" aria-label="' + lang.toolbar.default + '">(' + lang.toolbar.default + ')</button></li>';
         for (i = 0, len = fontList.length; i < len; i++) {
