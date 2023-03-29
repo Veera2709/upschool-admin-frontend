@@ -136,7 +136,7 @@ const EditGroups = ({ className, ...rest }) => {
                         for (let index = 0; index < resultDataAllQuestions.length; index++) {
 
                             console.log("resultDataAllQuestions[index].question_label : ", resultDataAllQuestions[index].question_label);
-                            
+
                             getQuestionsArr = { label: resultDataAllQuestions[index].question_label, value: resultDataAllQuestions[index].question_id };
 
                             questionsArr.push(getQuestionsArr);
@@ -429,8 +429,8 @@ const EditGroups = ({ className, ...rest }) => {
                                                             .max(51, 'Group Name is too long!')
                                                             .required('Group Name is required!'),
                                                         question_duration: Yup.number()
-                                                            .lessThan(150, 'Group Duration is Less Then 30min!')
-                                                            .moreThan(30, 'Group Duration is More Then 150min!')
+                                                            .moreThan(1, 'Group Duration is Less Then 30min!')
+                                                            .lessThan(150, 'Group Duration is More Then 150min!')
                                                             .required('Group Duration is required!'),
 
                                                     })}
