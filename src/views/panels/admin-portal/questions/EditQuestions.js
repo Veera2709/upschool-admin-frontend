@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Formik } from 'formik';
 import Swal from 'sweetalert2';
@@ -25,22 +25,14 @@ const EditQuestions = () => {
     const [loader, showLoader, hideLoader] = useFullPageLoader();
     const threadLinks = document.getElementsByClassName('page-header');
     const [displayHeader, setDisplayHeader] = useState(true);
-    const [displayHeading, setDisplayHeading] = useState(sessionStorage.getItem('question_active_status'));
+    const displayHeading = sessionStorage.getItem('question_active_status');
     const _questionStatus = sessionStorage.getItem('click_event');
     let displaySuccessMsg;
-    const [questionTypeOptions, setQquestionTypeOptions] = useState([
+    const questionTypeOptions = [
         { value: 'Objective', label: 'Objective' },
         { value: 'Subjective', label: 'Subjective' }
-    ]);
-    const [questionCategoryOptions, setQquestionCategoryOptions] = useState([
-        { value: 'Voice based', label: 'Voice based' },
-        { value: 'Picture based', label: 'Picture based' },
-        { value: 'Case Study based', label: 'Case Study based' },
-        { value: 'Comprehension based', label: 'Comprehension based' },
-        { value: 'Fill in the blank', label: 'Fill in the blank' },
-        { value: 'True or False', label: 'True or False' },
-        { value: 'Numerical problem', label: 'Numerical problem' }
-    ]);
+    ];
+
     const [questionTypeErrMsg, setQuestionTypeErrMsg] = useState(false);
     const [questionCategoryErrMsg, setQuestionCategoryErrMsg] = useState(false);
     const [questionEmptyErrMsg, setQuestionEmptyErrMsg] = useState(false);
@@ -61,13 +53,7 @@ const EditQuestions = () => {
     const [articleDataTitle, setArticleDataTtitle] = useState("");
     const [newDigicard, setnNewDigicard] = useState(false);
 
-
     const [addAnserOptions, setAddAnswerOptions] = useState(false);
-    const [toggleWordsInput, setToggleWordsInput] = useState(false);
-    const [toggleNumbersInput, setToggleNumbersInput] = useState(false);
-    const [toggleEquationsInput, setToggleEquationsInput] = useState(false);
-    const [toggleImageInput, setToggleImageInput] = useState(false);
-    const [toggleAudioInput, setToggleAudioInput] = useState(false);
     const [questionLabelErr, setQuestionLabelErr] = useState(false);
     const [questionLabelValue, setQuestionLabelValue] = useState('');
 
@@ -83,7 +69,6 @@ const EditQuestions = () => {
     const [newdIgicardErrMax, setNewDigicardErrMax] = useState(false);
     const [newdIgicardErrMin, setNewDigicardErrMin] = useState(false);
     const [newdIgicardErrReq, setNewDigicardErrReq] = useState(false);
-    const [newdIgicardErrRegex, setNewDigicardErrRegex] = useState(false);
 
     const [options, setOptions] = useState([]);
     const [errorMessage, setErrorMessage] = useState("");//for question category
@@ -91,8 +76,6 @@ const EditQuestions = () => {
     const [optionsDisclaimer, setOptionsDisclaimer] = useState([]);
     const [selectedValueDisclaimer, setSelectedValueDisclaimer] = useState([]);
     const [selectedValueCategory, setSelectedValueCategory] = useState([]);
-    const [errorMessageDisclaimer, setErrorMessageDisclaimer] = useState(false); //for question disclaimer
-
 
     const [questionLabelAlreadyExists, setQuestionLabelAlreadyExists] = useState(false);
 
@@ -101,7 +84,7 @@ const EditQuestions = () => {
             answer_type: '',
             answer_option: '',
             answer_content: '',
-            answer_display: '',
+            answer_display: 'No',
             answer_weightage: ''
         }
     ]);
@@ -152,9 +135,6 @@ const EditQuestions = () => {
                 setErrorMessage("Error fetching data. Please try again later.")
             });
     }, []);
-
-
-
 
     const IndividualQuestionData = () => {
         console.log("Options : ", options, optionsDisclaimer);
@@ -250,10 +230,10 @@ const EditQuestions = () => {
 
                                 if (index < uploadParams.length) {
 
-                                    if (individual_user_data.answer_type === 'Numbers') {
+                                    if (uploadParams[index].answer_type === 'Numbers') {
 
                                         object = {
-                                            answer_type: individual_user_data.answer_type,
+                                            answer_type: uploadParams[index].answer_type,
                                             answer_content: uploadParams[index].answer_content,
                                             answer_display: uploadParams[index].answer_display,
                                             answer_option: uploadParams[index].answer_option,
@@ -267,7 +247,7 @@ const EditQuestions = () => {
                                     } else {
 
                                         object = {
-                                            answer_type: individual_user_data.answer_type,
+                                            answer_type: uploadParams[index].answer_type,
                                             answer_content: uploadParams[index].answer_content,
                                             answer_display: uploadParams[index].answer_display,
                                             answer_option: uploadParams[index].answer_option,
@@ -277,20 +257,20 @@ const EditQuestions = () => {
                                         tempArray.push(object);
                                     }
 
-                                    if (individual_user_data.answer_type === 'Image') {
+                                    if (uploadParams[index].answer_type === 'Image') {
 
                                         let tempPreviewImg = uploadParams[index].answer_content_url;
                                         tempImgPreviewArr.push(tempPreviewImg);
 
                                         index++;
                                         setValues(index);
-                                    } else if (individual_user_data.answer_type === 'Equation') {
+                                    } else if (uploadParams[index].answer_type === 'Equation') {
 
                                         let tempPreviewEqu = uploadParams[index].answer_content;
                                         tempEquPreviewArr.push(tempPreviewEqu);
                                         index++;
                                         setValues(index);
-                                    } else if (individual_user_data.answer_type === 'Audio File') {
+                                    } else if (uploadParams[index].answer_type === 'Audio File') {
 
                                         let tempPreviewAudio = uploadParams[index].answer_content_url;
                                         tempAudioPreviewArr.push(tempPreviewAudio);
@@ -308,10 +288,10 @@ const EditQuestions = () => {
                                     isEmptyArray(tempArray) ? (
 
                                         tempArray.push(object = {
-                                            answer_type: individual_user_data.answer_type,
+                                            answer_type: '',
                                             answer_option: '',
                                             answer_content: '',
-                                            answer_display: '',
+                                            answer_display: 'No',
                                             answer_weightage: ''
                                         })
 
@@ -320,54 +300,9 @@ const EditQuestions = () => {
                                     tempArray.length >= 1 ? setAddAnswerOptions(true) : setAddAnswerOptions(false);
 
                                     setAnswerOptionsForm(tempArray);
-
                                     setPreviewImages(tempImgPreviewArr);
-
                                     setPreviewAudios(tempAudioPreviewArr);
-
                                     setEquation(tempEquPreviewArr);
-
-                                    switch (individual_user_data.answer_type) {
-                                        case 'Words':
-                                            setToggleWordsInput(true);
-                                            setToggleNumbersInput(false);
-                                            setToggleEquationsInput(false);
-                                            setToggleImageInput(false);
-                                            setToggleAudioInput(false);
-                                            break;
-                                        case 'Numbers':
-                                            setToggleNumbersInput(true);
-                                            setToggleWordsInput(false);
-                                            setToggleEquationsInput(false);
-                                            setToggleImageInput(false);
-                                            setToggleAudioInput(false);
-                                            break;
-                                        case 'Equation':
-                                            setToggleEquationsInput(true);
-                                            setToggleWordsInput(false);
-                                            setToggleNumbersInput(false);
-                                            setToggleImageInput(false);
-                                            setToggleAudioInput(false);
-                                            break;
-                                        case 'Image':
-                                            setToggleImageInput(true);
-                                            setToggleWordsInput(false);
-                                            setToggleEquationsInput(false);
-                                            setToggleNumbersInput(false);
-                                            setToggleAudioInput(false);
-                                            break;
-                                        case 'Audio File':
-                                            setToggleAudioInput(true);
-                                            setToggleWordsInput(false);
-                                            setToggleEquationsInput(false);
-                                            setToggleNumbersInput(false);
-                                            setToggleImageInput(false);
-                                            break;
-                                        default:
-                                            break;
-                                    }
-
-                                    setSelectedAnswerType(individual_user_data.answer_type);
 
                                     if (individual_user_data.question_voice_note === 'N.A.') {
 
@@ -441,7 +376,6 @@ const EditQuestions = () => {
     };
     const handleDisclaimerChange = (event) => {
         console.log(event);
-        setErrorMessageDisclaimer(false)
         setSelectedValueDisclaimer(event.value);
         setSelectedQuestionDisclaimer(event.value);
     };
@@ -498,10 +432,10 @@ const EditQuestions = () => {
     }
 
     const [answerBlanksOptions, setAnswerBlanksOptions] = useState([]);
-    const [answerDisplayOptions, setAnswerDisplayOptions] = useState([
+    const answerDisplayOptions = [
         { value: 'No', label: 'No' },
         { value: 'Yes', label: 'Yes' }
-    ]);
+    ];
 
     const selectedArr = [{ label: 'Options', value: 'Options' }];
 
@@ -514,17 +448,18 @@ const EditQuestions = () => {
         console.log(answerTypeOptions);
         // setAnswerTypeOptions([]);
         setSelectedAnswerType([]);
-        setAnswerOptionsForm([]);
+        setAnswerOptionsForm([{
+            answer_type: '',
+            answer_option: '',
+            answer_content: '',
+            answer_display: 'No',
+            answer_weightage: ''
+        }]);
         setQuestionTypeErrMsg(false);
         setQuestionCategoryErrMsg(false);
         setQuestionEmptyErrMsg(false);
         setAnsWeightageErrMsg(false);
 
-        setToggleWordsInput(false);
-        setToggleNumbersInput(false);
-        setToggleImageInput(false);
-        setToggleAudioInput(false);
-        setToggleEquationsInput(false);
         setAddAnswerOptions(false);
         setEquation([]);
 
@@ -557,39 +492,160 @@ const EditQuestions = () => {
         });
     };
 
+    // const handleAnswerBlanks = (event, index) => {
+
+    //     let data = [...answerOptionsForm];
+    //     if (toggleNumbersInput && event.target.name === 'answer_content') {
+    //         data[index][event.target.name] = Number(event.target.value);
+    //     } else {
+    //         data[index][event.target.name] = event.target.value;
+    //     }
+
+    //     if (toggleNumbersInput && event.target.name === 'answer_range_from') {
+    //         data[index][event.target.name] = Number(event.target.value);
+    //     }
+
+    //     if (toggleNumbersInput && event.target.name === 'answer_range_to') {
+    //         data[index][event.target.name] = Number(event.target.value);
+    //     }
+
+    //     data[index]["answer_type"] = selectedAnswerType;
+
+    //     if (event.target.name === 'answer_weightage') {
+    //         setAnsWeightageErrMsg(false);
+    //     }
+
+    //     if (toggleEquationsInput && event.target.name === 'answer_content') {
+    //         let tempEquation = [...equation];
+    //         tempEquation[index] = event.target.value;
+
+    //         setEquation(tempEquation);
+    //     }
+
+    //     if (toggleImageInput && event.target.name === 'answer_content') {
+
+    //         data[index][event.target.name] = '';
+
+    //         if (areFilesInvalid([event.target.files[0]]) !== 0) {
+    //             sweetAlertHandler(
+    //                 {
+    //                     title: 'Invalid Image File(s)!',
+    //                     type: 'warning',
+    //                     text: 'Supported file formats are .png, .jpg, .jpeg. Uploaded files should be less than 2MB. '
+    //                 }
+    //             );
+    //         } else {
+
+    //             let tempPreviewImg = [...previewImages];
+    //             tempPreviewImg[index] = event.target.files.length === 0 ? '' : URL.createObjectURL(event.target.files[0]);
+    //             setPreviewImages(tempPreviewImg);
+
+    //             let tempFileValue = [...fileValues];
+    //             tempFileValue[count] = event.target.files.length === 0 ? '' : event.target.files[0];
+    //             setFileValues(tempFileValue);
+
+    //             let tempCount = count + 1;
+    //             setCount(tempCount);
+    //         }
+
+    //     }
+
+    //     if (toggleAudioInput && event.target.name === 'answer_content') {
+
+    //         data[index][event.target.name] = '';
+
+    //         if (voiceInvalid([event.target.files[0]]) !== 0) {
+    //             sweetAlertHandler({
+    //                 title: 'Invalid Audio File(s)!',
+    //                 type: 'warning',
+    //                 text: 'Supported file formats are .mp3, .mpeg, .wav. Uploaded files should be less than 10MB. '
+    //             });
+    //         } else {
+
+    //             let tempPreviewAudio = [...previewAudios];
+    //             tempPreviewAudio[index] = event.target.files.length === 0 ? '' : URL.createObjectURL(event.target.files[0]);
+    //             setPreviewAudios(tempPreviewAudio);
+
+    //             let tempFileValue = [...fileValues];
+    //             tempFileValue[count] = event.target.files.length === 0 ? '' : event.target.files[0];
+    //             setFileValues(tempFileValue);
+
+    //             let tempCount = event.target.files.length === 0 ? count : count + 1;
+    //             setCount(tempCount);
+
+    //         }
+    //     }
+
+    //     setAnswerOptionsForm(data);
+    // }
+
     const handleAnswerBlanks = (event, index) => {
 
+        console.log(event.target);
+
         let data = [...answerOptionsForm];
-        if (toggleNumbersInput && event.target.name === 'answer_content') {
+
+        if (event.target.name === 'answer_type') {
+
+            // Clear Answer Values
+            data[index][event.target.name] = event.target.value;
+            data[index]["answer_content"] = "";
+            data[index]["answer_display"] = "No";
+            data[index]["answer_option"] = "";
+            data[index]["answer_weightage"] = "";
+
+            // Clear selected File Values (Image&Audio)
+            let tempFileValue = [...fileValues];
+            tempFileValue[index] = '';
+            setFileValues(tempFileValue);
+
+            // Clear Image Preview Values
+            let tempPreviewImg = [...previewImages];
+            tempPreviewImg[index] = '';
+            setPreviewImages(tempPreviewImg);
+
+            // Clear Audio Preview Values
+            let tempPreviewAudio = [...previewAudios];
+            tempPreviewAudio[index] = '';
+            setPreviewAudios(tempPreviewAudio);
+
+        }
+
+        if (event.target.value === "Numbers" && event.target.name === 'answer_type') {
+            data[index][event.target.name] = event.target.value;
+        }
+
+        if (event.target.value === "Numbers" && event.target.name === 'answer_content') {
             data[index][event.target.name] = Number(event.target.value);
         } else {
             data[index][event.target.name] = event.target.value;
         }
 
-        if (toggleNumbersInput && event.target.name === 'answer_range_from') {
+        if (event.target.value === "Numbers" && event.target.name === 'answer_range_from') {
             data[index][event.target.name] = Number(event.target.value);
         }
 
-        if (toggleNumbersInput && event.target.name === 'answer_range_to') {
+        if (event.target.value === "Numbers" && event.target.name === 'answer_range_to') {
             data[index][event.target.name] = Number(event.target.value);
         }
 
-        data[index]["answer_type"] = selectedAnswerType;
+        console.log(data);
+
+        setAnswerOptionsForm(data);
 
         if (event.target.name === 'answer_weightage') {
             setAnsWeightageErrMsg(false);
         }
 
-        if (toggleEquationsInput && event.target.name === 'answer_content') {
+        if (data[index]['answer_type'] === 'Equation' && event.target.name === 'answer_content') {
             let tempEquation = [...equation];
             tempEquation[index] = event.target.value;
 
+            console.log(tempEquation);
             setEquation(tempEquation);
         }
 
-        if (toggleImageInput && event.target.name === 'answer_content') {
-
-            data[index][event.target.name] = '';
+        if (data[index]['answer_type'] === 'Image' && event.target.files && event.target.name === 'answer_content') {
 
             if (areFilesInvalid([event.target.files[0]]) !== 0) {
                 sweetAlertHandler(
@@ -606,18 +662,12 @@ const EditQuestions = () => {
                 setPreviewImages(tempPreviewImg);
 
                 let tempFileValue = [...fileValues];
-                tempFileValue[count] = event.target.files.length === 0 ? '' : event.target.files[0];
+                tempFileValue[index] = event.target.files[0];
                 setFileValues(tempFileValue);
-
-                let tempCount = count + 1;
-                setCount(tempCount);
             }
-
         }
 
-        if (toggleAudioInput && event.target.name === 'answer_content') {
-
-            data[index][event.target.name] = '';
+        if (data[index]['answer_type'] === 'Audio File' && event.target.files && event.target.name === 'answer_content') {
 
             if (voiceInvalid([event.target.files[0]]) !== 0) {
                 sweetAlertHandler({
@@ -632,16 +682,10 @@ const EditQuestions = () => {
                 setPreviewAudios(tempPreviewAudio);
 
                 let tempFileValue = [...fileValues];
-                tempFileValue[count] = event.target.files.length === 0 ? '' : event.target.files[0];
+                tempFileValue[index] = event.target.files[0];
                 setFileValues(tempFileValue);
-
-                let tempCount = event.target.files.length === 0 ? count : count + 1;
-                setCount(tempCount);
-
             }
         }
-
-        setAnswerOptionsForm(data);
     }
 
     const previewQuestionVoiceNote = (e) => {
@@ -653,86 +697,15 @@ const EditQuestions = () => {
         setVoiceNoteFileValues(tempVoiceNoteFileValues);
     }
 
-    const handleAnswerType = (event) => {
-
-        let valuesSelected = event.target.value;
-
-        setSelectedAnswerType(valuesSelected);
-
-        setAnswerOptionsForm([{
-            answer_type: event.target.value,
-            answer_option: '',
-            answer_content: '',
-            answer_display: '',
-            answer_weightage: ''
-        }]);
-
-        // setQquestionTypeOptions({ disabled: true });
-        // setAnswerTypeOptions({ disabled: true });
-        setEquation([]);
-        setAddAnswerOptions(true);
-        setAnsWeightageErrMsg(false);
-
-
-        switch (valuesSelected) {
-            case 'Words':
-                setToggleWordsInput(true);
-                setToggleNumbersInput(false);
-                setToggleEquationsInput(false);
-                setToggleImageInput(false);
-                setToggleAudioInput(false);
-                break;
-            case 'Numbers':
-                setToggleNumbersInput(true);
-                setToggleWordsInput(false);
-                setToggleEquationsInput(false);
-                setToggleImageInput(false);
-                setToggleAudioInput(false);
-                break;
-            case 'Equation':
-                setToggleEquationsInput(true);
-                setToggleWordsInput(false);
-                setToggleNumbersInput(false);
-                setToggleImageInput(false);
-                setToggleAudioInput(false);
-                break;
-            case 'Image':
-                setToggleImageInput(true);
-                setToggleWordsInput(false);
-                setToggleEquationsInput(false);
-                setToggleNumbersInput(false);
-                setToggleAudioInput(false);
-                break;
-            case 'Audio File':
-                setToggleAudioInput(true);
-                setToggleWordsInput(false);
-                setToggleEquationsInput(false);
-                setToggleNumbersInput(false);
-                setToggleImageInput(false);
-                break;
-            case 'Select...':
-                setToggleAudioInput(false);
-                setToggleWordsInput(false);
-                setToggleEquationsInput(false);
-                setToggleNumbersInput(false);
-                setToggleImageInput(false);
-                setAddAnswerOptions(false);
-                break;
-            default:
-
-        }
-
-    }
-
     const addAnswerTypeOptions = () => {
 
         sessionStorage.setItem('click_event', "");
 
         let object = {
-            answer_type: selectedAnswerType,
+            answer_type: '',
             answer_option: '',
             answer_content: '',
-            answer_display: '',
+            answer_display: 'No',
             answer_weightage: ''
         }
 
@@ -961,14 +934,18 @@ const EditQuestions = () => {
                                 let blobField = fileValues[index];
                                 console.log({ blobField });
 
-                                let tempObjFile = uploadParamsAnswerOptions[index];
+                                if (blobField !== undefined || blobField !== 'undefined') {
 
-                                let result = fetch(tempObjFile[keyName], {
-                                    method: 'PUT',
-                                    body: blobField
-                                });
+                                    let tempObjFile = uploadParamsAnswerOptions[index];
 
-                                console.log({ result });
+                                    let result = fetch(tempObjFile[keyName], {
+                                        method: 'PUT',
+                                        body: blobField
+                                    });
+
+                                    console.log({ result });
+                                }
+
                             }
 
                             const MySwal = withReactContent(Swal);
@@ -1074,7 +1051,6 @@ const EditQuestions = () => {
                 question_category: selectedQuestionCategory,
                 question_voice_note: selectedQuestionVoiceNote,
                 question_content: articleDataTitle,
-                answer_type: selectedAnswerType,
                 answers_of_question: answerOptionsForm,
                 question_status: 'Save',
                 question_disclaimer: selectedQuestionDisclaimer,
@@ -1093,7 +1069,6 @@ const EditQuestions = () => {
         } else if (isEmptyArray(selectedQuestionType)) {
             setQuestionTypeErrMsg(true);
         } else if (isEmptyArray(selectedQuestionCategory) || selectedQuestionCategory === 'Select...') {
-            console.log(selectedQuestionCategory);
             setQuestionCategoryErrMsg(true);
         } else if (articleDataTitle === "" || articleDataTitle === undefined || articleDataTitle === 'undefined' || articleDataTitle === "<p><br></p>" || articleDataTitle === "<p></p>" || articleDataTitle === "<br>") {
             setQuestionEmptyErrMsg(true);
@@ -1431,7 +1406,7 @@ const EditQuestions = () => {
                                                         question_label: previousData.question_label,
                                                         question_disclaimer: selectedValueDisclaimer,
                                                         question_category: selectedValueCategory,
-                                                        answerType: '',
+                                                        // answerType: '',
                                                         submit: null
                                                     }}
 
@@ -1460,7 +1435,6 @@ const EditQuestions = () => {
                                                             } else if (isEmptyArray(selectedQuestionType)) {
                                                                 setQuestionTypeErrMsg(true);
                                                             } else if (isEmptyArray(selectedQuestionCategory) || selectedQuestionCategory === 'Select...') {
-                                                                console.log(selectedQuestionCategory);
 
                                                                 setQuestionCategoryErrMsg(true);
                                                             } else if (articleDataTitle === "" || articleDataTitle === undefined || articleDataTitle === 'undefined' || articleDataTitle === "<p><br></p>" || articleDataTitle === "<p></p>" || articleDataTitle === "<br>") {
@@ -1481,7 +1455,6 @@ const EditQuestions = () => {
                                                                         question_category: selectedQuestionCategory,
                                                                         question_voice_note: selectedQuestionVoiceNote,
                                                                         question_content: articleDataTitle,
-                                                                        answer_type: selectedAnswerType,
                                                                         answers_of_question: answerOptionsForm,
                                                                         question_status: 'Save',
                                                                         question_disclaimer: selectedQuestionDisclaimer,
@@ -1491,266 +1464,8 @@ const EditQuestions = () => {
 
                                                                     console.log("payLoad", payLoad);
 
-                                                                    let allFilesData = [];
-                                                                    let questionsVoiceNoteFilesData = [];
-
-                                                                    if (selectedQuestionVoiceNote) {
-
-                                                                        let selectedFileVoiceNote = voiceNoteFileValues;
-                                                                        console.log('File is here!');
-                                                                        console.log(selectedFileVoiceNote);
-
-                                                                        if (selectedFileVoiceNote) {
-                                                                            questionsVoiceNoteFilesData.push(selectedFileVoiceNote);
-                                                                        }
-
-                                                                        if (questionsVoiceNoteFilesData.length === 0) {
-
-                                                                            if (selectedAnswerType === "Image") {
-
-                                                                                fileValues.forEach((fileName) => {
-                                                                                    let selectedFile = fileName;
-                                                                                    console.log('File is here!');
-                                                                                    console.log(selectedFile);
-                                                                                    if (selectedFile) {
-                                                                                        allFilesData.push(selectedFile);
-                                                                                    }
-                                                                                });
-
-                                                                                console.log(allFilesData);
-
-                                                                                if (allFilesData.length === 0) {
-
-                                                                                    showLoader();
-                                                                                    _addQuestions(payLoad);
-
-                                                                                } else {
-                                                                                    if (areFilesInvalid(allFilesData) !== 0) {
-                                                                                        sweetAlertHandler(
-                                                                                            {
-                                                                                                title: 'Invalid Image File(s)!',
-                                                                                                type: 'warning',
-                                                                                                text: 'Supported file formats are .png, .jpg, .jpeg. Uploaded files should be less than 2MB. '
-                                                                                            }
-                                                                                        );
-                                                                                    } else {
-
-                                                                                        showLoader();
-                                                                                        _addQuestions(payLoad);
-
-                                                                                    }
-                                                                                }
-
-                                                                            } else if (selectedAnswerType === "Audio File") {
-
-                                                                                fileValues.forEach((fileName) => {
-                                                                                    let selectedFile = fileName;
-                                                                                    console.log('File is here!');
-                                                                                    console.log(selectedFile);
-                                                                                    if (selectedFile) {
-                                                                                        allFilesData.push(selectedFile);
-                                                                                    }
-                                                                                });
-
-                                                                                console.log(allFilesData);
-
-                                                                                if (allFilesData.length === 0) {
-
-                                                                                    showLoader();
-                                                                                    _addQuestions(payLoad);
-
-
-                                                                                } else {
-
-                                                                                    if (voiceInvalid(allFilesData) !== 0) {
-                                                                                        sweetAlertHandler({
-                                                                                            title: 'Invalid Audio File(s)!',
-                                                                                            type: 'warning',
-                                                                                            text: 'Supported file formats are .mp3, .mpeg, .wav. Uploaded files should be less than 10MB. '
-                                                                                        });
-                                                                                    } else {
-
-                                                                                        showLoader();
-                                                                                        _addQuestions(payLoad);
-
-                                                                                    }
-                                                                                }
-                                                                            } else {
-
-                                                                                showLoader();
-                                                                                _addQuestions(payLoad);
-
-                                                                            }
-
-                                                                        } else {
-
-                                                                            if (voiceInvalid(questionsVoiceNoteFilesData) !== 0) {
-                                                                                sweetAlertHandler({
-                                                                                    title: 'Invalid Question Voice Note File!',
-                                                                                    type: 'warning',
-                                                                                    text: 'Supported file formats are .mp3, .mpeg, .wav. Uploaded files should be less than 10MB. '
-                                                                                });
-                                                                            } else {
-
-                                                                                if (selectedAnswerType === "Image") {
-
-                                                                                    fileValues.forEach((fileName) => {
-                                                                                        let selectedFile = fileName;
-                                                                                        console.log('File is here!');
-                                                                                        console.log(selectedFile);
-                                                                                        if (selectedFile) {
-                                                                                            allFilesData.push(selectedFile);
-                                                                                        }
-                                                                                    });
-
-                                                                                    console.log(allFilesData);
-
-                                                                                    if (allFilesData.length === 0) {
-
-                                                                                        showLoader();
-                                                                                        _addQuestions(payLoad);
-
-                                                                                    } else {
-                                                                                        if (areFilesInvalid(allFilesData) !== 0) {
-                                                                                            sweetAlertHandler(
-                                                                                                {
-                                                                                                    title: 'Invalid Image File(s)!',
-                                                                                                    type: 'warning',
-                                                                                                    text: 'Supported file formats are .png, .jpg, .jpeg. Uploaded files should be less than 2MB. '
-                                                                                                }
-                                                                                            );
-                                                                                        } else {
-
-                                                                                            showLoader();
-                                                                                            _addQuestions(payLoad);
-
-                                                                                        }
-                                                                                    }
-
-                                                                                } else if (selectedAnswerType === "Audio File") {
-
-                                                                                    fileValues.forEach((fileName) => {
-                                                                                        let selectedFile = fileName;
-                                                                                        console.log('File is here!');
-                                                                                        console.log(selectedFile);
-                                                                                        if (selectedFile) {
-                                                                                            allFilesData.push(selectedFile);
-                                                                                        }
-                                                                                    });
-
-                                                                                    console.log(allFilesData);
-
-                                                                                    if (allFilesData.length === 0) {
-
-                                                                                        showLoader();
-                                                                                        _addQuestions(payLoad);
-
-
-                                                                                    } else {
-
-                                                                                        if (voiceInvalid(allFilesData) !== 0) {
-                                                                                            sweetAlertHandler({
-                                                                                                title: 'Invalid Audio File(s)!',
-                                                                                                type: 'warning',
-                                                                                                text: 'Supported file formats are .mp3, .mpeg, .wav. Uploaded files should be less than 10MB. '
-                                                                                            });
-                                                                                        } else {
-
-                                                                                            showLoader();
-                                                                                            _addQuestions(payLoad);
-
-                                                                                        }
-                                                                                    }
-                                                                                } else {
-
-                                                                                    showLoader();
-                                                                                    _addQuestions(payLoad);
-
-                                                                                }
-
-                                                                            }
-                                                                        }
-
-                                                                    }
-                                                                    else {
-
-                                                                        if (selectedAnswerType === "Image") {
-
-                                                                            fileValues.forEach((fileName) => {
-                                                                                let selectedFile = fileName;
-                                                                                console.log('File is here!');
-                                                                                console.log(selectedFile);
-                                                                                if (selectedFile) {
-                                                                                    allFilesData.push(selectedFile);
-                                                                                }
-                                                                            });
-
-                                                                            console.log(allFilesData);
-
-                                                                            if (allFilesData.length === 0) {
-
-                                                                                showLoader();
-                                                                                _addQuestions(payLoad);
-
-                                                                            } else {
-                                                                                if (areFilesInvalid(allFilesData) !== 0) {
-                                                                                    sweetAlertHandler(
-                                                                                        {
-                                                                                            title: 'Invalid Image File(s)!',
-                                                                                            type: 'warning',
-                                                                                            text: 'Supported file formats are .png, .jpg, .jpeg. Uploaded files should be less than 2MB. '
-                                                                                        }
-                                                                                    );
-                                                                                } else {
-
-                                                                                    showLoader();
-                                                                                    _addQuestions(payLoad);
-
-                                                                                }
-                                                                            }
-
-                                                                        } else if (selectedAnswerType === "Audio File") {
-
-                                                                            fileValues.forEach((fileName) => {
-                                                                                let selectedFile = fileName;
-                                                                                console.log('File is here!');
-                                                                                console.log(selectedFile);
-                                                                                if (selectedFile) {
-                                                                                    allFilesData.push(selectedFile);
-                                                                                }
-                                                                            });
-
-                                                                            console.log(allFilesData);
-
-                                                                            if (allFilesData.length === 0) {
-
-                                                                                showLoader();
-                                                                                _addQuestions(payLoad);
-
-
-                                                                            } else {
-
-                                                                                if (voiceInvalid(allFilesData) !== 0) {
-                                                                                    sweetAlertHandler({
-                                                                                        title: 'Invalid Audio File(s)!',
-                                                                                        type: 'warning',
-                                                                                        text: 'Supported file formats are .mp3, .mpeg, .wav. Uploaded files should be less than 10MB. '
-                                                                                    });
-                                                                                } else {
-
-                                                                                    showLoader();
-                                                                                    _addQuestions(payLoad);
-
-                                                                                }
-                                                                            }
-                                                                        } else {
-
-                                                                            showLoader();
-                                                                            _addQuestions(payLoad);
-
-                                                                        }
-
-                                                                    }
+                                                                    showLoader();
+                                                                    _addQuestions(payLoad);
                                                                 }
                                                             }
 
@@ -1766,7 +1481,6 @@ const EditQuestions = () => {
                                                             } else if (isEmptyArray(selectedQuestionType)) {
                                                                 setQuestionTypeErrMsg(true);
                                                             } else if (isEmptyArray(selectedQuestionCategory) || selectedQuestionCategory === 'Select...') {
-                                                                console.log("selectedQuestionCategory : ", selectedQuestionCategory)
 
                                                                 setQuestionCategoryErrMsg(true);
                                                             } else if (articleDataTitle === "" || articleDataTitle === undefined || articleDataTitle === 'undefined' || articleDataTitle === "<p><br></p>" || articleDataTitle === "<p></p>" || articleDataTitle === "<br>") {
@@ -1788,7 +1502,6 @@ const EditQuestions = () => {
                                                                         question_category: selectedQuestionCategory,
                                                                         question_voice_note: selectedQuestionVoiceNote,
                                                                         question_content: articleDataTitle,
-                                                                        answer_type: selectedAnswerType,
                                                                         answers_of_question: answerOptionsForm,
                                                                         question_status: sessionStorage.getItem('click_event'),
                                                                         question_disclaimer: selectedQuestionDisclaimer,
@@ -2071,7 +1784,7 @@ const EditQuestions = () => {
                                                                         value={selectedQuestionType}
                                                                         onChange={(event) => {
                                                                             handleQuestionType(event)
-                                                                            setFieldValue('answerType', '')
+                                                                            setFieldValue('answer_type', '')
                                                                         }}
                                                                     >
 
@@ -2221,7 +1934,6 @@ const EditQuestions = () => {
                                                                         classNamePrefix="Select"
                                                                         onChange={(event) => {
                                                                             handleQuestionCategory(event)
-                                                                            // setFieldValue('answerType', '')
                                                                         }}
                                                                         menuPortalTarget={document.body}
                                                                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
@@ -2251,21 +1963,16 @@ const EditQuestions = () => {
                                                                         classNamePrefix="Select"
                                                                         onChange={(event) => {
                                                                             handleDisclaimerChange(event)
-                                                                            // setFieldValue('answerType', '')
                                                                         }}
                                                                         menuPortalTarget={document.body}
                                                                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                                                     />
 
-                                                                    {errorMessageDisclaimer && (
+                                                                    {/* {errorMessageDisclaimer && (
                                                                         <>
                                                                             <small className="text-danger form-text">{'Please select Question Disclaimer'}</small>
                                                                         </>
-                                                                    )}
-
-
-
-
+                                                                    )} */}
 
                                                                 </Col>
                                                                 <Col></Col>
@@ -2330,1063 +2037,1066 @@ const EditQuestions = () => {
                                                             </Row>
 
                                                             <br />
-                                                            <Row>
-                                                                <Col>
-                                                                    <label className="floating-label">
-                                                                        <small className="text-danger"></small>
-                                                                        Answer Type
-                                                                    </label>
-
-                                                                    <select
-                                                                        className="form-control"
-                                                                        error={touched.answerType && errors.answerType}
-                                                                        name="answerType"
-                                                                        onBlur={handleBlur}
-                                                                        type="text"
-                                                                        value={selectedAnswerType}
-                                                                        onChange={event => handleAnswerType(event)}
-                                                                    >
-
-                                                                        <option>
-                                                                            Select...
-                                                                        </option>
-                                                                        {answerTypeOptions.map((optionsData) => {
-
-                                                                            return <option
-                                                                                value={optionsData.value}
-                                                                                key={optionsData.value}
-                                                                            >
-                                                                                {optionsData.value}
-                                                                            </option>
-
-                                                                        })}
-
-                                                                    </select>
-
-                                                                </Col>
-                                                                <Col></Col>
-                                                            </Row>
 
                                                             {answerOptionsForm.map((form, index) => {
 
                                                                 return (
                                                                     <>
-                                                                        < br />
 
-                                                                        {toggleWordsInput && answerBlanksOptions && (
+                                                                        <Card
+                                                                            className="shadow p-3 mb-5 bg-white rounded"
+                                                                            style={{ backgroundColor: "rgb(224 238 255)" }}>
 
-                                                                            <>
+                                                                            <Card.Body style={{ backgroundColor: "rgb(224 238 255)" }}>
 
-                                                                                <br />
-
-                                                                                {answerOptionsForm.length > 1 && (
-                                                                                    <Row>
-                                                                                        <Col></Col>
-                                                                                        <Col>
-                                                                                            <CloseButton onClick={() => {
-                                                                                                removeAnswerTypeOptions(index)
-                                                                                            }} variant="white" />
-                                                                                        </Col>
-                                                                                    </Row>
-                                                                                )}
-
-                                                                                <Row key={index}>
-
-                                                                                    <Col xs={3}>
-                                                                                        <label className="floating-label">
-                                                                                            <small className="text-danger"></small>
-                                                                                            Option
-                                                                                        </label>
-
-                                                                                        <select
-                                                                                            className="form-control"
-                                                                                            error={touched.answer_option && errors.answer_option}
-                                                                                            name="answer_option"
-                                                                                            onBlur={handleBlur}
-
-                                                                                            type="text"
-                                                                                            value={form.answer_option}
-                                                                                            key={index}
-                                                                                            onChange={event => handleAnswerBlanks(event, index)}
-                                                                                        >
-
-                                                                                            <option>
-                                                                                                Select...
-                                                                                            </option>
-
-                                                                                            {
-                                                                                                selectedQuestionType === 'Objective' ?
-                                                                                                    <>
-
-                                                                                                        {selectedArr.map((optionsData) => {
-
-                                                                                                            return <option
-                                                                                                                value={optionsData.value}
-                                                                                                                key={optionsData.value}
-                                                                                                            >
-                                                                                                                {optionsData.label}
-                                                                                                            </option>
-
-                                                                                                        })}
-                                                                                                    </> : <>
-
-                                                                                                        {answerBlanksOptions.map((optionsData) => {
-
-                                                                                                            return <option
-                                                                                                                value={optionsData.value}
-                                                                                                                key={optionsData.value}
-                                                                                                            >
-                                                                                                                {optionsData.label}
-                                                                                                            </option>
-
-                                                                                                        })}
-                                                                                                    </>
-
-                                                                                            }
-
-                                                                                        </select>
-
-                                                                                    </Col>
-
-                                                                                    <Col xs={5}>
-                                                                                        <label className="floating-label">
-                                                                                            <small className="text-danger"></small>
-                                                                                            Answer
-                                                                                        </label>
-                                                                                        <input
-                                                                                            value={form.answer_content}
-                                                                                            className="form-control"
-                                                                                            error={touched.answer_content && errors.answer_content}
-                                                                                            label="answer_content"
-                                                                                            name="answer_content"
-                                                                                            onBlur={handleBlur}
-                                                                                            type="text"
-                                                                                            onChange={event => handleAnswerBlanks(event, index)}
-                                                                                            placeholder="Enter Answer"
-                                                                                        />
-                                                                                    </Col>
-
-                                                                                    <Col>
-                                                                                        <label className="floating-label">
-                                                                                            <small className="text-danger"></small>
-                                                                                            Answer Display
-                                                                                        </label>
-
-                                                                                        <select
-                                                                                            className="form-control"
-                                                                                            error={touched.answer_display && errors.answer_display}
-                                                                                            name="answer_display"
-                                                                                            onBlur={handleBlur}
-
-                                                                                            type="text"
-                                                                                            value={form.answer_display}
-                                                                                            key={index}
-                                                                                            onChange={event => handleAnswerBlanks(event, index)}
-                                                                                        >
-
-                                                                                            {/* <option>
-                                                                                                Select...
-                                                                                            </option> */}
-
-                                                                                            {answerDisplayOptions.map((optionsData) => {
-
-                                                                                                return <option
-                                                                                                    value={optionsData.value}
-                                                                                                    key={optionsData.value}
-                                                                                                >
-                                                                                                    {optionsData.label}
-                                                                                                </option>
-
-                                                                                            })}
-
-                                                                                        </select>
-
-
-                                                                                    </Col>
-
-                                                                                    <Col>
-                                                                                        <label className="floating-label">
-                                                                                            <small className="text-danger"></small>
-                                                                                            Weightage
-                                                                                        </label>
-                                                                                        <input
-                                                                                            value={form.answer_weightage}
-                                                                                            className="form-control"
-                                                                                            error={touched.answer_weightage && errors.answer_weightage}
-                                                                                            label="answer_weightage"
-                                                                                            name="answer_weightage"
-                                                                                            onBlur={handleBlur}
-                                                                                            // onChange={handleChange}
-                                                                                            type="number"
-                                                                                            min="0.01"
-                                                                                            onChange={event => handleAnswerBlanks(event, index)}
-                                                                                            placeholder="Enter Weightage"
-                                                                                        />
-                                                                                    </Col>
-
-                                                                                </Row>
-
-                                                                            </>
-
-                                                                        )}
-
-                                                                        {toggleEquationsInput && answerBlanksOptions && (
-
-                                                                            <>
-                                                                                <br />
-
-                                                                                {answerOptionsForm.length > 1 && (
-
-                                                                                    < Row >
-                                                                                        <Col></Col>
-                                                                                        <Col>
-                                                                                            <CloseButton onClick={() => {
-                                                                                                removeAnswerTypeOptions(index)
-                                                                                            }} variant="white" />
-                                                                                        </Col>
-                                                                                    </Row>
-                                                                                )}
-
-                                                                                <Row key={index}>
-
-                                                                                    <Col xs={3}>
-                                                                                        <label className="floating-label">
-                                                                                            <small className="text-danger"></small>
-                                                                                            Option
-                                                                                        </label>
-
-                                                                                        <select
-                                                                                            className="form-control"
-                                                                                            error={touched.answer_option && errors.answer_option}
-                                                                                            name="answer_option"
-                                                                                            onBlur={handleBlur}
-
-                                                                                            type="text"
-                                                                                            value={form.answer_option}
-                                                                                            key={index}
-                                                                                            onChange={(event) => {
-                                                                                                handleAnswerBlanks(event, index);
-                                                                                            }}
-                                                                                        >
-
-                                                                                            <option>
-                                                                                                Select...
-                                                                                            </option>
-
-                                                                                            {
-                                                                                                selectedQuestionType === 'Objective' ?
-                                                                                                    <>
-
-                                                                                                        {selectedArr.map((optionsData) => {
-
-                                                                                                            return <option
-                                                                                                                value={optionsData.value}
-                                                                                                                key={optionsData.value}
-                                                                                                            >
-                                                                                                                {optionsData.label}
-                                                                                                            </option>
-
-                                                                                                        })}
-                                                                                                    </> : <>
-
-                                                                                                        {answerBlanksOptions.map((optionsData) => {
-
-                                                                                                            return <option
-                                                                                                                value={optionsData.value}
-                                                                                                                key={optionsData.value}
-                                                                                                            >
-                                                                                                                {optionsData.label}
-                                                                                                            </option>
-
-                                                                                                        })}
-                                                                                                    </>
-
-                                                                                            }
-
-                                                                                        </select>
-
-
-                                                                                    </Col>
-
-                                                                                    <Col>
-                                                                                        <label className="floating-label">
-                                                                                            <small className="text-danger"></small>
-                                                                                            Answer Display
-                                                                                        </label>
-
-                                                                                        <select
-                                                                                            className="form-control"
-                                                                                            error={touched.answer_display && errors.answer_display}
-                                                                                            name="answer_display"
-                                                                                            onBlur={handleBlur}
-
-                                                                                            type="text"
-                                                                                            value={form.answer_display}
-                                                                                            key={index}
-                                                                                            onChange={(event) => {
-
-                                                                                                handleAnswerBlanks(event, index)
-                                                                                            }}
-                                                                                        >
-
-                                                                                            {/* <option>
-                                                                                                Select...
-                                                                                            </option> */}
-
-                                                                                            {answerDisplayOptions.map((optionsData) => {
-
-                                                                                                return <option
-                                                                                                    value={optionsData.value}
-                                                                                                    key={optionsData.value}
-                                                                                                >
-                                                                                                    {optionsData.label}
-                                                                                                </option>
-
-                                                                                            })}
-
-                                                                                        </select>
-
-
-                                                                                    </Col>
-
-                                                                                    <Col>
-                                                                                        <label className="floating-label">
-                                                                                            <small className="text-danger"></small>
-                                                                                            Weightage
-                                                                                        </label>
-                                                                                        <input
-                                                                                            value={form.answer_weightage}
-                                                                                            className="form-control"
-                                                                                            error={touched.answer_weightage && errors.answer_weightage}
-                                                                                            label="answer_weightage"
-                                                                                            name="answer_weightage"
-                                                                                            onBlur={handleBlur}
-                                                                                            // onChange={handleChange}
-                                                                                            type="number"
-                                                                                            min="0.01"
-                                                                                            onChange={event => {
-
-                                                                                                handleAnswerBlanks(event, index)
-                                                                                            }}
-                                                                                            placeholder="Enter Weightage"
-                                                                                        />
-                                                                                    </Col>
-
-                                                                                </Row>
-
-                                                                                <br />
                                                                                 <Row>
-                                                                                    <Col xs={6}>
+                                                                                    <Col>
                                                                                         <label className="floating-label">
                                                                                             <small className="text-danger"></small>
-                                                                                            Equation
+                                                                                            Answer Type
                                                                                         </label>
-                                                                                        <textarea
-                                                                                            value={form.answer_content}
+
+                                                                                        <select
                                                                                             className="form-control"
-                                                                                            error={touched.answer_content && errors.answer_content}
-                                                                                            label="answer_content"
-                                                                                            name="answer_content"
+                                                                                            error={touched.answer_type && errors.answer_type}
+                                                                                            name="answer_type"
                                                                                             onBlur={handleBlur}
-                                                                                            type="textarea"
-                                                                                            onChange={(event) => {
+                                                                                            type="text"
+                                                                                            value={form.answer_type}
+                                                                                            onChange={event => handleAnswerBlanks(event, index)}
+                                                                                        >
 
-                                                                                                handleAnswerBlanks(event, index);
+                                                                                            <option>
+                                                                                                Select...
+                                                                                            </option>
+                                                                                            {answerTypeOptions.map((optionsData) => {
 
-                                                                                            }}
-                                                                                            placeholder="Enter Equation"
-                                                                                        />
+                                                                                                return <option
+                                                                                                    value={optionsData.value}
+                                                                                                    key={optionsData.value}
+                                                                                                >
+                                                                                                    {optionsData.value}
+                                                                                                </option>
+
+                                                                                            })}
+
+                                                                                        </select>
+
                                                                                     </Col>
+                                                                                    <Col>
+                                                                                        {answerOptionsForm.length > 1 && (
+                                                                                            <Row>
+                                                                                                <Col></Col>
+                                                                                                <Col>
+                                                                                                    <CloseButton onClick={() => {
+                                                                                                        removeAnswerTypeOptions(index)
+                                                                                                    }} variant="white" />
+                                                                                                </Col>
+                                                                                            </Row>
+                                                                                        )}
+                                                                                    </Col>
+                                                                                </Row>
 
-                                                                                    <Col xs={6}>
-                                                                                        <label className="floating-label">
-                                                                                            <small className="text-danger"></small>
-                                                                                            Preview
-                                                                                        </label>
+                                                                                {form.answer_type === 'Words' && answerBlanksOptions && (
 
-                                                                                        {equation.length >= 1 && (
-                                                                                            <MathJax.Provider>
+                                                                                    <>
+                                                                                        <br />
+                                                                                        <Row key={index}>
+
+                                                                                            <Col xs={3}>
+                                                                                                <label className="floating-label">
+                                                                                                    <small className="text-danger"></small>
+                                                                                                    Placeholder
+                                                                                                </label>
+
+                                                                                                <select
+                                                                                                    className="form-control"
+                                                                                                    error={touched.answer_option && errors.answer_option}
+                                                                                                    name="answer_option"
+                                                                                                    onBlur={handleBlur}
+
+                                                                                                    type="text"
+                                                                                                    value={form.answer_option}
+                                                                                                    key={index}
+                                                                                                    onChange={event => handleAnswerBlanks(event, index)}
+                                                                                                >
+
+                                                                                                    <option>
+                                                                                                        Select...
+                                                                                                    </option>
+
+                                                                                                    {
+                                                                                                        selectedQuestionType === 'Objective' ?
+                                                                                                            <>
+
+                                                                                                                {selectedArr.map((optionsData) => {
+
+                                                                                                                    return <option
+                                                                                                                        value={optionsData.value}
+                                                                                                                        key={optionsData.value}
+                                                                                                                    >
+                                                                                                                        {optionsData.label}
+                                                                                                                    </option>
+
+                                                                                                                })}
+                                                                                                            </> : <>
+
+                                                                                                                {answerBlanksOptions.map((optionsData) => {
+
+                                                                                                                    return <option
+                                                                                                                        value={optionsData.value}
+                                                                                                                        key={optionsData.value}
+                                                                                                                    >
+                                                                                                                        {optionsData.label}
+                                                                                                                    </option>
+
+                                                                                                                })}
+                                                                                                            </>
+
+                                                                                                    }
+
+                                                                                                </select>
+
+                                                                                            </Col>
+
+                                                                                            <Col xs={5}>
+                                                                                                <label className="floating-label">
+                                                                                                    <small className="text-danger"></small>
+                                                                                                    Answer
+                                                                                                </label>
+                                                                                                <input
+                                                                                                    value={form.answer_content}
+                                                                                                    className="form-control"
+                                                                                                    error={touched.answer_content && errors.answer_content}
+                                                                                                    label="answer_content"
+                                                                                                    name="answer_content"
+                                                                                                    onBlur={handleBlur}
+                                                                                                    type="text"
+                                                                                                    onChange={event => handleAnswerBlanks(event, index)}
+                                                                                                    placeholder="Enter Answer"
+                                                                                                />
+                                                                                            </Col>
+
+                                                                                            <Col>
+
                                                                                                 {
-                                                                                                    (
-                                                                                                        equation[index] && (
-                                                                                                            <div>
-                                                                                                                <MathJax.Node inline formula={equation[index]} />
-                                                                                                            </div>
-                                                                                                        )
+                                                                                                    selectedQuestionType === 'Objective' ? (
+                                                                                                        <label className="floating-label">
+                                                                                                            <small className="text-danger"></small>
+                                                                                                            Correct Answer
+                                                                                                        </label>
+                                                                                                    ) : (
+                                                                                                        <label className="floating-label">
+                                                                                                            <small className="text-danger"></small>
+                                                                                                            Answer Display
+                                                                                                        </label>
                                                                                                     )
                                                                                                 }
 
-                                                                                            </MathJax.Provider>
-                                                                                        )}
+                                                                                                <select
+                                                                                                    className="form-control"
+                                                                                                    error={touched.answer_display && errors.answer_display}
+                                                                                                    name="answer_display"
+                                                                                                    onBlur={handleBlur}
 
-                                                                                    </Col>
-                                                                                </Row>
+                                                                                                    type="text"
+                                                                                                    value={form.answer_display}
+                                                                                                    key={index}
+                                                                                                    onChange={event => handleAnswerBlanks(event, index)}
+                                                                                                >
 
-                                                                            </>
-
-                                                                        )
-                                                                        }
-
-                                                                        {toggleNumbersInput && answerBlanksOptions && (
-
-                                                                            <>
-                                                                                <br />
-
-                                                                                {answerOptionsForm.length > 1 && (
-                                                                                    <Row>
-                                                                                        <Col></Col>
-                                                                                        <Col>
-                                                                                            <CloseButton onClick={() => {
-                                                                                                removeAnswerTypeOptions(index)
-                                                                                            }} variant="white" />
-                                                                                        </Col>
-                                                                                    </Row>
-                                                                                )}
-
-                                                                                <Row key={index}>
-
-                                                                                    {/* {console.log(form)} */}
-                                                                                    <Col xs={3}>
-                                                                                        <label className="floating-label">
-                                                                                            <small className="text-danger"></small>
-                                                                                            Option
-                                                                                        </label>
-
-                                                                                        <select
-                                                                                            className="form-control"
-                                                                                            error={touched.answer_option && errors.answer_option}
-                                                                                            name="answer_option"
-                                                                                            onBlur={handleBlur}
-
-                                                                                            type="text"
-                                                                                            value={form.answer_option}
-                                                                                            key={index}
-                                                                                            onChange={event => handleAnswerBlanks(event, index)}
-                                                                                        >
-
-                                                                                            <option>
-                                                                                                Select...
-                                                                                            </option>
-
-                                                                                            {
-                                                                                                selectedQuestionType === 'Objective' ?
-                                                                                                    <>
-
-                                                                                                        {selectedArr.map((optionsData) => {
-
-                                                                                                            return <option
-                                                                                                                value={optionsData.value}
-                                                                                                                key={optionsData.value}
-                                                                                                            >
-                                                                                                                {optionsData.label}
-                                                                                                            </option>
-
-                                                                                                        })}
-                                                                                                    </> : <>
-
-                                                                                                        {answerBlanksOptions.map((optionsData) => {
-
-                                                                                                            return <option
-                                                                                                                value={optionsData.value}
-                                                                                                                key={optionsData.value}
-                                                                                                            >
-                                                                                                                {optionsData.label}
-                                                                                                            </option>
-
-                                                                                                        })}
-                                                                                                    </>
-
-                                                                                            }
-
-                                                                                        </select>
-
-
-                                                                                    </Col>
-
-                                                                                    <Col xs={5}>
-                                                                                        <label className="floating-label">
-                                                                                            <small className="text-danger"></small>
-                                                                                            Answer
-                                                                                        </label>
-                                                                                        <input
-                                                                                            className="form-control"
-                                                                                            error={touched.answer_content && errors.answer_content}
-                                                                                            label="answer_content"
-                                                                                            name="answer_content"
-                                                                                            onBlur={handleBlur}
-                                                                                            type="number"
-                                                                                            value={form.answer_content}
-                                                                                            onChange={event => handleAnswerBlanks(event, index)}
-                                                                                            placeholder="Enter Answer"
-                                                                                        />
-                                                                                    </Col>
-
-                                                                                    <Col>
-                                                                                        <label className="floating-label">
-                                                                                            <small className="text-danger"></small>
-                                                                                            Answer Display
-                                                                                        </label>
-
-                                                                                        <select
-                                                                                            className="form-control"
-                                                                                            error={touched.answer_display && errors.answer_display}
-                                                                                            name="answer_display"
-                                                                                            onBlur={handleBlur}
-
-                                                                                            type="text"
-                                                                                            value={form.answer_display}
-                                                                                            key={index}
-                                                                                            onChange={event => handleAnswerBlanks(event, index)}
-                                                                                        >
-
-                                                                                            {/* <option>
+                                                                                                    {/* <option>
                                                                                                 Select...
                                                                                             </option> */}
 
-                                                                                            {answerDisplayOptions.map((optionsData) => {
+                                                                                                    {answerDisplayOptions.map((optionsData) => {
 
-                                                                                                return <option
-                                                                                                    value={optionsData.value}
-                                                                                                    key={optionsData.value}
+                                                                                                        return <option
+                                                                                                            value={optionsData.value}
+                                                                                                            key={optionsData.value}
+                                                                                                        >
+                                                                                                            {optionsData.label}
+                                                                                                        </option>
+
+                                                                                                    })}
+
+                                                                                                </select>
+
+
+                                                                                            </Col>
+
+                                                                                            <Col>
+                                                                                                <label className="floating-label">
+                                                                                                    <small className="text-danger"></small>
+                                                                                                    Weightage
+                                                                                                </label>
+                                                                                                <input
+                                                                                                    value={form.answer_weightage}
+                                                                                                    className="form-control"
+                                                                                                    error={touched.answer_weightage && errors.answer_weightage}
+                                                                                                    label="answer_weightage"
+                                                                                                    name="answer_weightage"
+                                                                                                    onBlur={handleBlur}
+                                                                                                    // onChange={handleChange}
+                                                                                                    type="number"
+                                                                                                    min="0.01"
+                                                                                                    onChange={event => handleAnswerBlanks(event, index)}
+                                                                                                    placeholder="Enter Weightage"
+                                                                                                />
+                                                                                            </Col>
+
+                                                                                        </Row>
+
+                                                                                    </>
+
+                                                                                )}
+
+                                                                                {form.answer_type === 'Equation' && answerBlanksOptions && (
+
+                                                                                    <>                                                            <br />
+                                                                                        <Row key={index}>
+
+                                                                                            <Col xs={3}>
+                                                                                                <label className="floating-label">
+                                                                                                    <small className="text-danger"></small>
+                                                                                                    Placeholder
+                                                                                                </label>
+
+                                                                                                <select
+                                                                                                    className="form-control"
+                                                                                                    error={touched.answer_option && errors.answer_option}
+                                                                                                    name="answer_option"
+                                                                                                    onBlur={handleBlur}
+
+                                                                                                    type="text"
+                                                                                                    value={form.answer_option}
+                                                                                                    key={index}
+                                                                                                    onChange={(event) => {
+                                                                                                        handleAnswerBlanks(event, index);
+                                                                                                    }}
                                                                                                 >
-                                                                                                    {optionsData.label}
-                                                                                                </option>
 
-                                                                                            })}
+                                                                                                    <option>
+                                                                                                        Select...
+                                                                                                    </option>
 
-                                                                                        </select>
+                                                                                                    {
+                                                                                                        selectedQuestionType === 'Objective' ?
+                                                                                                            <>
+
+                                                                                                                {selectedArr.map((optionsData) => {
+
+                                                                                                                    return <option
+                                                                                                                        value={optionsData.value}
+                                                                                                                        key={optionsData.value}
+                                                                                                                    >
+                                                                                                                        {optionsData.label}
+                                                                                                                    </option>
+
+                                                                                                                })}
+                                                                                                            </> : <>
+
+                                                                                                                {answerBlanksOptions.map((optionsData) => {
+
+                                                                                                                    return <option
+                                                                                                                        value={optionsData.value}
+                                                                                                                        key={optionsData.value}
+                                                                                                                    >
+                                                                                                                        {optionsData.label}
+                                                                                                                    </option>
+
+                                                                                                                })}
+                                                                                                            </>
+
+                                                                                                    }
+
+                                                                                                </select>
 
 
-                                                                                    </Col>
+                                                                                            </Col>
 
-                                                                                    <Col>
-                                                                                        <label className="floating-label">
-                                                                                            <small className="text-danger"></small>
-                                                                                            Weightage
-                                                                                        </label>
-                                                                                        <input
-                                                                                            className="form-control"
-                                                                                            error={touched.answer_weightage && errors.answer_weightage}
-                                                                                            label="answer_weightage"
-                                                                                            name="answer_weightage"
-                                                                                            onBlur={handleBlur}
-                                                                                            // onChange={handleChange}
-                                                                                            type="number"
-                                                                                            min="0.01"
-                                                                                            value={form.answer_weightage}
-                                                                                            onChange={event => handleAnswerBlanks(event, index)}
-                                                                                            placeholder="Enter Weightage"
-                                                                                        />
-                                                                                    </Col>
+                                                                                            <Col>
 
-                                                                                </Row>
+                                                                                                {
+                                                                                                    selectedQuestionType === 'Objective' ? (
+                                                                                                        <label className="floating-label">
+                                                                                                            <small className="text-danger"></small>
+                                                                                                            Correct Answer
+                                                                                                        </label>
+                                                                                                    ) : (
+                                                                                                        <label className="floating-label">
+                                                                                                            <small className="text-danger"></small>
+                                                                                                            Answer Display
+                                                                                                        </label>
+                                                                                                    )
+                                                                                                }
 
-                                                                                {
-                                                                                    selectedQuestionType === 'Subjective' && (
-                                                                                        <>
-                                                                                            <br />
-                                                                                            <Row>
-                                                                                                <Col>
-                                                                                                    <label className="floating-label">
-                                                                                                        <small className="text-danger"></small>
-                                                                                                        Answer Range
-                                                                                                    </label>
-                                                                                                </Col>
-                                                                                            </Row>
-                                                                                            <Row>
-                                                                                                <Col xs={3}>
-                                                                                                    <input
-                                                                                                        className="form-control"
-                                                                                                        error={touched.answer_range_from && errors.answer_range_from}
-                                                                                                        label="answer_range_from"
-                                                                                                        name="answer_range_from"
-                                                                                                        onBlur={handleBlur}
-                                                                                                        type="number"
-                                                                                                        value={form.answer_range_from}
-                                                                                                        onChange={event => handleAnswerBlanks(event, index)}
-                                                                                                        placeholder="From"
-                                                                                                    />
-                                                                                                </Col>
-                                                                                                <div style={{
-                                                                                                    paddingTop: "6px"
-                                                                                                }}
-                                                                                                >-</div>
+                                                                                                <select
+                                                                                                    className="form-control"
+                                                                                                    error={touched.answer_display && errors.answer_display}
+                                                                                                    name="answer_display"
+                                                                                                    onBlur={handleBlur}
 
-                                                                                                <Col xs={3}>
-                                                                                                    <input
-                                                                                                        className="form-control"
-                                                                                                        error={touched.answer_range_to && errors.answer_range_to}
-                                                                                                        label="answer_range_to"
-                                                                                                        name="answer_range_to"
-                                                                                                        onBlur={handleBlur}
-                                                                                                        type="number"
-                                                                                                        value={form.answer_range_to}
-                                                                                                        onChange={event => handleAnswerBlanks(event, index)}
-                                                                                                        placeholder="To"
-                                                                                                    />
-                                                                                                </Col>
-                                                                                            </Row>
-                                                                                        </>
-                                                                                    )
+                                                                                                    type="text"
+                                                                                                    value={form.answer_display}
+                                                                                                    key={index}
+                                                                                                    onChange={(event) => {
+
+                                                                                                        handleAnswerBlanks(event, index)
+                                                                                                    }}
+                                                                                                >
+
+                                                                                                    {answerDisplayOptions.map((optionsData) => {
+
+                                                                                                        return <option
+                                                                                                            value={optionsData.value}
+                                                                                                            key={optionsData.value}
+                                                                                                        >
+                                                                                                            {optionsData.label}
+                                                                                                        </option>
+
+                                                                                                    })}
+
+                                                                                                </select>
+
+
+                                                                                            </Col>
+
+                                                                                            <Col>
+                                                                                                <label className="floating-label">
+                                                                                                    <small className="text-danger"></small>
+                                                                                                    Weightage
+                                                                                                </label>
+                                                                                                <input
+                                                                                                    value={form.answer_weightage}
+                                                                                                    className="form-control"
+                                                                                                    error={touched.answer_weightage && errors.answer_weightage}
+                                                                                                    label="answer_weightage"
+                                                                                                    name="answer_weightage"
+                                                                                                    onBlur={handleBlur}
+                                                                                                    // onChange={handleChange}
+                                                                                                    type="number"
+                                                                                                    min="0.01"
+                                                                                                    onChange={event => {
+
+                                                                                                        handleAnswerBlanks(event, index)
+                                                                                                    }}
+                                                                                                    placeholder="Enter Weightage"
+                                                                                                />
+                                                                                            </Col>
+
+                                                                                        </Row>
+
+                                                                                        <br />
+                                                                                        <Row>
+                                                                                            <Col xs={6}>
+                                                                                                <label className="floating-label">
+                                                                                                    <small className="text-danger"></small>
+                                                                                                    Equation
+                                                                                                </label>
+                                                                                                <textarea
+                                                                                                    value={form.answer_content}
+                                                                                                    className="form-control"
+                                                                                                    error={touched.answer_content && errors.answer_content}
+                                                                                                    label="answer_content"
+                                                                                                    name="answer_content"
+                                                                                                    onBlur={handleBlur}
+                                                                                                    type="textarea"
+                                                                                                    onChange={(event) => {
+
+                                                                                                        handleAnswerBlanks(event, index);
+
+                                                                                                    }}
+                                                                                                    placeholder="Enter Equation"
+                                                                                                />
+                                                                                            </Col>
+
+                                                                                            <Col xs={6}>
+                                                                                                <label className="floating-label">
+                                                                                                    <small className="text-danger"></small>
+                                                                                                    Preview
+                                                                                                </label>
+
+                                                                                                {equation.length >= 1 && (
+                                                                                                    <MathJax.Provider>
+                                                                                                        {
+                                                                                                            (
+                                                                                                                equation[index] && (
+                                                                                                                    <div>
+                                                                                                                        <MathJax.Node inline formula={equation[index]} />
+                                                                                                                    </div>
+                                                                                                                )
+                                                                                                            )
+                                                                                                        }
+
+                                                                                                    </MathJax.Provider>
+                                                                                                )}
+
+                                                                                            </Col>
+                                                                                        </Row>
+
+                                                                                    </>
+
+                                                                                )
                                                                                 }
 
-                                                                            </>
+                                                                                {form.answer_type === 'Numbers' && answerBlanksOptions && (
 
-                                                                        )}
+                                                                                    <>
+                                                                                        <br />
+                                                                                        <Row key={index}>
 
-                                                                        {toggleImageInput && answerBlanksOptions && (
+                                                                                            {/* {console.log(form)} */}
+                                                                                            <Col xs={3}>
+                                                                                                <label className="floating-label">
+                                                                                                    <small className="text-danger"></small>
+                                                                                                    Placeholder
+                                                                                                </label>
 
-                                                                            <>
-                                                                                <br />
+                                                                                                <select
+                                                                                                    className="form-control"
+                                                                                                    error={touched.answer_option && errors.answer_option}
+                                                                                                    name="answer_option"
+                                                                                                    onBlur={handleBlur}
 
-                                                                                {answerOptionsForm.length > 1 && (
-                                                                                    <Row>
-                                                                                        <Col></Col>
-                                                                                        <Col>
-                                                                                            <CloseButton onClick={() => {
-                                                                                                removeAnswerTypeOptions(index)
-                                                                                            }} variant="white" />
-                                                                                        </Col>
-                                                                                    </Row>
-                                                                                )}
+                                                                                                    type="text"
+                                                                                                    value={form.answer_option}
+                                                                                                    key={index}
+                                                                                                    onChange={event => handleAnswerBlanks(event, index)}
+                                                                                                >
 
-                                                                                <Row key={index}>
+                                                                                                    <option>
+                                                                                                        Select...
+                                                                                                    </option>
 
-                                                                                    <Col xs={3}>
-                                                                                        <label className="floating-label">
-                                                                                            <small className="text-danger"></small>
-                                                                                            Option
-                                                                                        </label>
+                                                                                                    {
+                                                                                                        selectedQuestionType === 'Objective' ?
+                                                                                                            <>
 
-                                                                                        <select
-                                                                                            className="form-control"
-                                                                                            error={touched.answer_option && errors.answer_option}
-                                                                                            name="answer_option"
-                                                                                            onBlur={handleBlur}
+                                                                                                                {selectedArr.map((optionsData) => {
 
-                                                                                            type="text"
-                                                                                            value={form.answer_option}
-                                                                                            key={index}
-                                                                                            onChange={event => {
-                                                                                                handleAnswerBlanks(event, index)
-                                                                                            }}
-                                                                                        >
+                                                                                                                    return <option
+                                                                                                                        value={optionsData.value}
+                                                                                                                        key={optionsData.value}
+                                                                                                                    >
+                                                                                                                        {optionsData.label}
+                                                                                                                    </option>
 
-                                                                                            <option>
-                                                                                                Select...
-                                                                                            </option>
+                                                                                                                })}
+                                                                                                            </> : <>
 
-                                                                                            {
-                                                                                                selectedQuestionType === 'Objective' ?
-                                                                                                    <>
+                                                                                                                {answerBlanksOptions.map((optionsData) => {
 
-                                                                                                        {selectedArr.map((optionsData) => {
+                                                                                                                    return <option
+                                                                                                                        value={optionsData.value}
+                                                                                                                        key={optionsData.value}
+                                                                                                                    >
+                                                                                                                        {optionsData.label}
+                                                                                                                    </option>
 
-                                                                                                            return <option
-                                                                                                                value={optionsData.value}
-                                                                                                                key={optionsData.value}
-                                                                                                            >
-                                                                                                                {optionsData.label}
-                                                                                                            </option>
+                                                                                                                })}
+                                                                                                            </>
 
-                                                                                                        })}
-                                                                                                    </> : <>
+                                                                                                    }
 
-                                                                                                        {answerBlanksOptions.map((optionsData) => {
-
-                                                                                                            return <option
-                                                                                                                value={optionsData.value}
-                                                                                                                key={optionsData.value}
-                                                                                                            >
-                                                                                                                {optionsData.label}
-                                                                                                            </option>
-
-                                                                                                        })}
-                                                                                                    </>
-
-                                                                                            }
-
-                                                                                        </select>
+                                                                                                </select>
 
 
-                                                                                    </Col>
+                                                                                            </Col>
 
-                                                                                    <Col>
-                                                                                        <label className="floating-label">
-                                                                                            <small className="text-danger"></small>
-                                                                                            Answer Display
-                                                                                        </label>
+                                                                                            <Col xs={5}>
+                                                                                                <label className="floating-label">
+                                                                                                    <small className="text-danger"></small>
+                                                                                                    Answer
+                                                                                                </label>
+                                                                                                <input
+                                                                                                    className="form-control"
+                                                                                                    error={touched.answer_content && errors.answer_content}
+                                                                                                    label="answer_content"
+                                                                                                    name="answer_content"
+                                                                                                    onBlur={handleBlur}
+                                                                                                    type="text"
+                                                                                                    value={form.answer_content}
+                                                                                                    onChange={event => handleAnswerBlanks(event, index)}
+                                                                                                    placeholder="Enter Answer"
+                                                                                                />
+                                                                                            </Col>
 
-                                                                                        <select
-                                                                                            className="form-control"
-                                                                                            error={touched.answer_display && errors.answer_display}
-                                                                                            name="answer_display"
-                                                                                            onBlur={handleBlur}
+                                                                                            <Col>
 
-                                                                                            type="text"
-                                                                                            value={form.answer_display}
-                                                                                            key={index}
-                                                                                            onChange={event => {
-                                                                                                handleAnswerBlanks(event, index)
-                                                                                            }}
-                                                                                        >
+                                                                                                {
+                                                                                                    selectedQuestionType === 'Objective' ? (
+                                                                                                        <label className="floating-label">
+                                                                                                            <small className="text-danger"></small>
+                                                                                                            Correct Answer
+                                                                                                        </label>
+                                                                                                    ) : (
+                                                                                                        <label className="floating-label">
+                                                                                                            <small className="text-danger"></small>
+                                                                                                            Answer Display
+                                                                                                        </label>
+                                                                                                    )
+                                                                                                }
 
-                                                                                            {/* <option>
+                                                                                                <select
+                                                                                                    className="form-control"
+                                                                                                    error={touched.answer_display && errors.answer_display}
+                                                                                                    name="answer_display"
+                                                                                                    onBlur={handleBlur}
+
+                                                                                                    type="text"
+                                                                                                    value={form.answer_display}
+                                                                                                    key={index}
+                                                                                                    onChange={event => handleAnswerBlanks(event, index)}
+                                                                                                >
+
+                                                                                                    {/* <option>
                                                                                                 Select...
                                                                                             </option> */}
 
-                                                                                            {answerDisplayOptions.map((optionsData) => {
+                                                                                                    {answerDisplayOptions.map((optionsData) => {
 
-                                                                                                return <option
-                                                                                                    value={optionsData.value}
-                                                                                                    key={optionsData.value}
-                                                                                                >
-                                                                                                    {optionsData.label}
-                                                                                                </option>
+                                                                                                        return <option
+                                                                                                            value={optionsData.value}
+                                                                                                            key={optionsData.value}
+                                                                                                        >
+                                                                                                            {optionsData.label}
+                                                                                                        </option>
 
-                                                                                            })}
+                                                                                                    })}
 
-                                                                                        </select>
-
-
-                                                                                    </Col>
-
-                                                                                    <Col>
-                                                                                        <label className="floating-label">
-                                                                                            <small className="text-danger"></small>
-                                                                                            Weightage
-                                                                                        </label>
-                                                                                        <input
-                                                                                            className="form-control"
-                                                                                            error={touched.answer_weightage && errors.answer_weightage}
-                                                                                            label="answer_weightage"
-                                                                                            name="answer_weightage"
-                                                                                            onBlur={handleBlur}
-                                                                                            // onChange={handleChange}
-                                                                                            type="number"
-                                                                                            min="0.01"
-                                                                                            value={form.answer_weightage}
-                                                                                            onChange={event => {
-                                                                                                handleAnswerBlanks(event, index)
-                                                                                            }}
-                                                                                            placeholder="Enter Weightage"
-                                                                                        />
-                                                                                    </Col>
-
-                                                                                </Row>
-
-                                                                                <br />
-                                                                                <Row>
-                                                                                    <Col xs={6}>
-
-                                                                                        <label className="floating-label">
-                                                                                            <small className="text-danger"></small>
-                                                                                            Image
-                                                                                        </label>
-                                                                                        <div>
-                                                                                            <input
-                                                                                                class="hidden"
-                                                                                                className="form-control"
-                                                                                                error={touched.answer_content && errors.answer_content}
-                                                                                                label="answer_content"
-                                                                                                name="answer_content"
-                                                                                                onBlur={handleBlur}
-                                                                                                // onChange={handleChange}
-                                                                                                type="file"
-                                                                                                // value={form.answer_content}
-                                                                                                title="&nbsp;"
-                                                                                                onClick={() => {
-                                                                                                    let tempPreviewImg = [...previewImages];
-                                                                                                    tempPreviewImg[index] = '';
-                                                                                                    setPreviewImages(tempPreviewImg);
-
-                                                                                                }}
-                                                                                                onChange={event => {
-                                                                                                    handleAnswerBlanks(event, index);
-                                                                                                }}
-                                                                                                placeholder="Enter Answer"
-                                                                                            />
-                                                                                        </div>
-                                                                                    </Col>
-                                                                                    <Col xs={3} style={{ display: "contents" }} >
-
-                                                                                        <label className="floating-label">
-                                                                                            <small className="text-danger"></small>
-                                                                                            Preview
-                                                                                        </label>
+                                                                                                </select>
 
 
-                                                                                        {previewImages[index] && previewImages[index] !== ""
-                                                                                            && (
+                                                                                            </Col>
 
+                                                                                            <Col>
+                                                                                                <label className="floating-label">
+                                                                                                    <small className="text-danger"></small>
+                                                                                                    Weightage
+                                                                                                </label>
+                                                                                                <input
+                                                                                                    className="form-control"
+                                                                                                    error={touched.answer_weightage && errors.answer_weightage}
+                                                                                                    label="answer_weightage"
+                                                                                                    name="answer_weightage"
+                                                                                                    onBlur={handleBlur}
+                                                                                                    // onChange={handleChange}
+                                                                                                    type="number"
+                                                                                                    min="0.01"
+                                                                                                    value={form.answer_weightage}
+                                                                                                    onChange={event => handleAnswerBlanks(event, index)}
+                                                                                                    placeholder="Enter Weightage"
+                                                                                                />
+                                                                                            </Col>
+
+                                                                                        </Row>
+
+                                                                                        {
+                                                                                            selectedQuestionType === 'Subjective' && (
                                                                                                 <>
                                                                                                     <br />
-
-                                                                                                    <img width={150} src={previewImages[index]} alt="" className="img-fluid mb-3" style={{
-                                                                                                        marginTop: "20px",
-                                                                                                        marginLeft: "-50px"
-                                                                                                    }} />
-
-
-                                                                                                    {
-                                                                                                        previewImages[index] && previewImages[index] !== 'N.A.' && (
-
-                                                                                                            <CloseButton
-
-
-                                                                                                                onClick={() => {
-                                                                                                                    setFieldValue("answer_content", "")
-                                                                                                                    setFieldTouched("answer_content", false, false);
-                                                                                                                    removeSelectedImg(index)
-                                                                                                                }}
-                                                                                                                style={
-                                                                                                                    {
-                                                                                                                        color: "#ff0000",
-                                                                                                                        marginRight: "50px",
-                                                                                                                        marginTop: "-80px"
-                                                                                                                    }
-                                                                                                                }
+                                                                                                    <Row>
+                                                                                                        <Col>
+                                                                                                            <label className="floating-label">
+                                                                                                                <small className="text-danger"></small>
+                                                                                                                Answer Range
+                                                                                                            </label>
+                                                                                                        </Col>
+                                                                                                    </Row>
+                                                                                                    <Row>
+                                                                                                        <Col xs={3}>
+                                                                                                            <input
+                                                                                                                className="form-control"
+                                                                                                                error={touched.answer_range_from && errors.answer_range_from}
+                                                                                                                label="answer_range_from"
+                                                                                                                name="answer_range_from"
+                                                                                                                onBlur={handleBlur}
+                                                                                                                type="number"
+                                                                                                                value={form.answer_range_from}
+                                                                                                                onChange={event => handleAnswerBlanks(event, index)}
+                                                                                                                placeholder="From"
                                                                                                             />
-                                                                                                        )
-                                                                                                    }
+                                                                                                        </Col>
+                                                                                                        <div style={{
+                                                                                                            paddingTop: "6px"
+                                                                                                        }}
+                                                                                                        >-</div>
 
+                                                                                                        <Col xs={3}>
+                                                                                                            <input
+                                                                                                                className="form-control"
+                                                                                                                error={touched.answer_range_to && errors.answer_range_to}
+                                                                                                                label="answer_range_to"
+                                                                                                                name="answer_range_to"
+                                                                                                                onBlur={handleBlur}
+                                                                                                                type="number"
+                                                                                                                value={form.answer_range_to}
+                                                                                                                onChange={event => handleAnswerBlanks(event, index)}
+                                                                                                                placeholder="To"
+                                                                                                            />
+                                                                                                        </Col>
+                                                                                                    </Row>
                                                                                                 </>
                                                                                             )
                                                                                         }
-                                                                                    </Col>
-                                                                                </Row>
-                                                                            </>
 
-                                                                        )}
+                                                                                    </>
 
-                                                                        {toggleAudioInput && answerBlanksOptions && (
-
-                                                                            <>
-                                                                                <br />
-
-                                                                                {answerOptionsForm.length > 1 && (
-                                                                                    <Row>
-                                                                                        <Col></Col>
-                                                                                        <Col>
-                                                                                            <CloseButton onClick={() => {
-                                                                                                removeAnswerTypeOptions(index)
-                                                                                            }} variant="white" />
-                                                                                        </Col>
-                                                                                    </Row>
                                                                                 )}
 
-                                                                                <Row key={index}>
+                                                                                {form.answer_type === 'Image' && answerBlanksOptions && (
 
-                                                                                    <Col xs={3}>
-                                                                                        <label className="floating-label">
-                                                                                            <small className="text-danger"></small>
-                                                                                            Option
-                                                                                        </label>
+                                                                                    <>
+                                                                                        <br />
+                                                                                        <Row key={index}>
 
-                                                                                        <select
-                                                                                            className="form-control"
-                                                                                            error={touched.answer_option && errors.answer_option}
-                                                                                            name="answer_option"
-                                                                                            onBlur={handleBlur}
+                                                                                            <Col xs={3}>
+                                                                                                <label className="floating-label">
+                                                                                                    <small className="text-danger"></small>
+                                                                                                    Placeholder
+                                                                                                </label>
 
-                                                                                            type="text"
-                                                                                            value={form.answer_option}
-                                                                                            key={index}
-                                                                                            onChange={event => handleAnswerBlanks(event, index)}
-                                                                                        >
+                                                                                                <select
+                                                                                                    className="form-control"
+                                                                                                    error={touched.answer_option && errors.answer_option}
+                                                                                                    name="answer_option"
+                                                                                                    onBlur={handleBlur}
 
-                                                                                            <option>
-                                                                                                Select...
-                                                                                            </option>
+                                                                                                    type="text"
+                                                                                                    value={form.answer_option}
+                                                                                                    key={index}
+                                                                                                    onChange={event => {
+                                                                                                        handleAnswerBlanks(event, index)
+                                                                                                    }}
+                                                                                                >
 
-                                                                                            {
-                                                                                                selectedQuestionType === 'Objective' ?
-                                                                                                    <>
+                                                                                                    <option>
+                                                                                                        Select...
+                                                                                                    </option>
 
-                                                                                                        {selectedArr.map((optionsData) => {
-                                                                                                            return <option
-                                                                                                                value={optionsData.value}
-                                                                                                                key={optionsData.value}
-                                                                                                            >
-                                                                                                                {optionsData.label}
-                                                                                                            </option>
+                                                                                                    {
+                                                                                                        selectedQuestionType === 'Objective' ?
+                                                                                                            <>
 
-                                                                                                        })}
-                                                                                                    </> : <>
+                                                                                                                {selectedArr.map((optionsData) => {
 
-                                                                                                        {answerBlanksOptions.map((optionsData) => {
-                                                                                                            return <option
-                                                                                                                value={optionsData.value}
-                                                                                                                key={optionsData.value}
-                                                                                                            >
-                                                                                                                {optionsData.label}
-                                                                                                            </option>
+                                                                                                                    return <option
+                                                                                                                        value={optionsData.value}
+                                                                                                                        key={optionsData.value}
+                                                                                                                    >
+                                                                                                                        {optionsData.label}
+                                                                                                                    </option>
 
-                                                                                                        })}
-                                                                                                    </>
+                                                                                                                })}
+                                                                                                            </> : <>
 
-                                                                                            }
+                                                                                                                {answerBlanksOptions.map((optionsData) => {
 
-                                                                                        </select>
+                                                                                                                    return <option
+                                                                                                                        value={optionsData.value}
+                                                                                                                        key={optionsData.value}
+                                                                                                                    >
+                                                                                                                        {optionsData.label}
+                                                                                                                    </option>
 
-                                                                                    </Col>
+                                                                                                                })}
+                                                                                                            </>
+
+                                                                                                    }
+
+                                                                                                </select>
 
 
-                                                                                    <Col>
-                                                                                        <label className="floating-label">
-                                                                                            <small className="text-danger"></small>
-                                                                                            Answer Display
-                                                                                        </label>
+                                                                                            </Col>
 
-                                                                                        <select
-                                                                                            className="form-control"
-                                                                                            error={touched.answer_display && errors.answer_display}
-                                                                                            name="answer_display"
-                                                                                            onBlur={handleBlur}
+                                                                                            <Col>
 
-                                                                                            type="text"
-                                                                                            value={form.answer_display}
-                                                                                            key={index}
-                                                                                            onChange={event => handleAnswerBlanks(event, index)}
-                                                                                        >
+                                                                                                {
+                                                                                                    selectedQuestionType === 'Objective' ? (
+                                                                                                        <label className="floating-label">
+                                                                                                            <small className="text-danger"></small>
+                                                                                                            Correct Answer
+                                                                                                        </label>
+                                                                                                    ) : (
+                                                                                                        <label className="floating-label">
+                                                                                                            <small className="text-danger"></small>
+                                                                                                            Answer Display
+                                                                                                        </label>
+                                                                                                    )
+                                                                                                }
 
-                                                                                            {/* <option>
+                                                                                                <select
+                                                                                                    className="form-control"
+                                                                                                    error={touched.answer_display && errors.answer_display}
+                                                                                                    name="answer_display"
+                                                                                                    onBlur={handleBlur}
+
+                                                                                                    type="text"
+                                                                                                    value={form.answer_display}
+                                                                                                    key={index}
+                                                                                                    onChange={event => {
+                                                                                                        handleAnswerBlanks(event, index)
+                                                                                                    }}
+                                                                                                >
+
+                                                                                                    {/* <option>
                                                                                                 Select...
                                                                                             </option> */}
 
-                                                                                            {answerDisplayOptions.map((optionsData) => {
+                                                                                                    {answerDisplayOptions.map((optionsData) => {
 
-                                                                                                return <option
-                                                                                                    value={optionsData.value}
-                                                                                                    key={optionsData.value}
+                                                                                                        return <option
+                                                                                                            value={optionsData.value}
+                                                                                                            key={optionsData.value}
+                                                                                                        >
+                                                                                                            {optionsData.label}
+                                                                                                        </option>
+
+                                                                                                    })}
+
+                                                                                                </select>
+
+
+                                                                                            </Col>
+
+                                                                                            <Col>
+                                                                                                <label className="floating-label">
+                                                                                                    <small className="text-danger"></small>
+                                                                                                    Weightage
+                                                                                                </label>
+                                                                                                <input
+                                                                                                    className="form-control"
+                                                                                                    error={touched.answer_weightage && errors.answer_weightage}
+                                                                                                    label="answer_weightage"
+                                                                                                    name="answer_weightage"
+                                                                                                    onBlur={handleBlur}
+                                                                                                    // onChange={handleChange}
+                                                                                                    type="number"
+                                                                                                    min="0.01"
+                                                                                                    value={form.answer_weightage}
+                                                                                                    onChange={event => {
+                                                                                                        handleAnswerBlanks(event, index)
+                                                                                                    }}
+                                                                                                    placeholder="Enter Weightage"
+                                                                                                />
+                                                                                            </Col>
+
+                                                                                        </Row>
+
+                                                                                        <br />
+                                                                                        <Row>
+                                                                                            <Col xs={6}>
+
+                                                                                                <label className="floating-label">
+                                                                                                    <small className="text-danger"></small>
+                                                                                                    Image
+                                                                                                </label>
+                                                                                                <div>
+                                                                                                    <input
+                                                                                                        class="hidden"
+                                                                                                        className="form-control"
+                                                                                                        error={touched.answer_content && errors.answer_content}
+                                                                                                        label="answer_content"
+                                                                                                        name="answer_content"
+                                                                                                        onBlur={handleBlur}
+                                                                                                        // onChange={handleChange}
+                                                                                                        type="file"
+                                                                                                        // value={form.answer_content}
+                                                                                                        title="&nbsp;"
+                                                                                                        onClick={() => {
+                                                                                                            let tempPreviewImg = [...previewImages];
+                                                                                                            tempPreviewImg[index] = '';
+                                                                                                            setPreviewImages(tempPreviewImg);
+
+                                                                                                        }}
+                                                                                                        onChange={event => {
+                                                                                                            handleAnswerBlanks(event, index);
+                                                                                                        }}
+                                                                                                        placeholder="Enter Answer"
+                                                                                                    />
+                                                                                                </div>
+                                                                                            </Col>
+                                                                                            <Col xs={3} style={{ display: "contents" }} >
+
+                                                                                                <label className="floating-label">
+                                                                                                    <small className="text-danger"></small>
+                                                                                                    Preview
+                                                                                                </label>
+
+
+                                                                                                {previewImages[index] && previewImages[index] !== ""
+                                                                                                    && (
+
+                                                                                                        <>
+                                                                                                            <br />
+
+                                                                                                            <img width={150} src={previewImages[index]} alt="" className="img-fluid mb-3" style={{
+                                                                                                                marginTop: "20px",
+                                                                                                                marginLeft: "-50px"
+                                                                                                            }} />
+
+
+                                                                                                            {
+                                                                                                                previewImages[index] && previewImages[index] !== 'N.A.' && (
+
+                                                                                                                    <CloseButton
+
+
+                                                                                                                        onClick={() => {
+                                                                                                                            setFieldValue("answer_content", "")
+                                                                                                                            setFieldTouched("answer_content", false, false);
+                                                                                                                            removeSelectedImg(index)
+                                                                                                                        }}
+                                                                                                                        style={
+                                                                                                                            {
+                                                                                                                                color: "#ff0000",
+                                                                                                                                marginRight: "50px",
+                                                                                                                                marginTop: "-80px"
+                                                                                                                            }
+                                                                                                                        }
+                                                                                                                    />
+                                                                                                                )
+                                                                                                            }
+
+                                                                                                        </>
+                                                                                                    )
+                                                                                                }
+                                                                                            </Col>
+                                                                                        </Row>
+                                                                                    </>
+
+                                                                                )}
+
+                                                                                {form.answer_type === 'Audio File' && answerBlanksOptions && (
+
+                                                                                    <>
+                                                                                        <br />
+
+                                                                                        <Row key={index}>
+
+                                                                                            <Col xs={3}>
+                                                                                                <label className="floating-label">
+                                                                                                    <small className="text-danger"></small>
+                                                                                                    Placeholder
+                                                                                                </label>
+
+                                                                                                <select
+                                                                                                    className="form-control"
+                                                                                                    error={touched.answer_option && errors.answer_option}
+                                                                                                    name="answer_option"
+                                                                                                    onBlur={handleBlur}
+
+                                                                                                    type="text"
+                                                                                                    value={form.answer_option}
+                                                                                                    key={index}
+                                                                                                    onChange={event => handleAnswerBlanks(event, index)}
                                                                                                 >
-                                                                                                    {optionsData.label}
-                                                                                                </option>
 
-                                                                                            })}
+                                                                                                    <option>
+                                                                                                        Select...
+                                                                                                    </option>
 
-                                                                                        </select>
+                                                                                                    {
+                                                                                                        selectedQuestionType === 'Objective' ?
+                                                                                                            <>
+
+                                                                                                                {selectedArr.map((optionsData) => {
+                                                                                                                    return <option
+                                                                                                                        value={optionsData.value}
+                                                                                                                        key={optionsData.value}
+                                                                                                                    >
+                                                                                                                        {optionsData.label}
+                                                                                                                    </option>
+
+                                                                                                                })}
+                                                                                                            </> : <>
+
+                                                                                                                {answerBlanksOptions.map((optionsData) => {
+                                                                                                                    return <option
+                                                                                                                        value={optionsData.value}
+                                                                                                                        key={optionsData.value}
+                                                                                                                    >
+                                                                                                                        {optionsData.label}
+                                                                                                                    </option>
+
+                                                                                                                })}
+                                                                                                            </>
+
+                                                                                                    }
+
+                                                                                                </select>
+
+                                                                                            </Col>
 
 
-                                                                                    </Col>
+                                                                                            <Col>
 
-                                                                                    <Col>
-                                                                                        <label className="floating-label">
-                                                                                            <small className="text-danger"></small>
-                                                                                            Weightage
-                                                                                        </label>
-                                                                                        <input
-                                                                                            className="form-control"
-                                                                                            error={touched.answer_weightage && errors.answer_weightage}
-                                                                                            label="answer_weightage"
-                                                                                            name="answer_weightage"
-                                                                                            onBlur={handleBlur}
-                                                                                            type="number"
-                                                                                            min="0.01"
-                                                                                            value={form.answer_weightage}
-                                                                                            onChange={event => handleAnswerBlanks(event, index)}
-                                                                                            placeholder="Enter Weightage"
-                                                                                        />
-                                                                                    </Col>
+                                                                                                {
+                                                                                                    selectedQuestionType === 'Objective' ? (
+                                                                                                        <label className="floating-label">
+                                                                                                            <small className="text-danger"></small>
+                                                                                                            Correct Answer
+                                                                                                        </label>
+                                                                                                    ) : (
+                                                                                                        <label className="floating-label">
+                                                                                                            <small className="text-danger"></small>
+                                                                                                            Answer Display
+                                                                                                        </label>
+                                                                                                    )
+                                                                                                }
 
-                                                                                </Row>
+                                                                                                <select
+                                                                                                    className="form-control"
+                                                                                                    error={touched.answer_display && errors.answer_display}
+                                                                                                    name="answer_display"
+                                                                                                    onBlur={handleBlur}
+
+                                                                                                    type="text"
+                                                                                                    value={form.answer_display}
+                                                                                                    key={index}
+                                                                                                    onChange={event => handleAnswerBlanks(event, index)}
+                                                                                                >
+
+                                                                                                    {/* <option>
+                                                                                                Select...
+                                                                                            </option> */}
+
+                                                                                                    {answerDisplayOptions.map((optionsData) => {
+
+                                                                                                        return <option
+                                                                                                            value={optionsData.value}
+                                                                                                            key={optionsData.value}
+                                                                                                        >
+                                                                                                            {optionsData.label}
+                                                                                                        </option>
+
+                                                                                                    })}
+
+                                                                                                </select>
+
+
+                                                                                            </Col>
+
+                                                                                            <Col>
+                                                                                                <label className="floating-label">
+                                                                                                    <small className="text-danger"></small>
+                                                                                                    Weightage
+                                                                                                </label>
+                                                                                                <input
+                                                                                                    className="form-control"
+                                                                                                    error={touched.answer_weightage && errors.answer_weightage}
+                                                                                                    label="answer_weightage"
+                                                                                                    name="answer_weightage"
+                                                                                                    onBlur={handleBlur}
+                                                                                                    type="number"
+                                                                                                    min="0.01"
+                                                                                                    value={form.answer_weightage}
+                                                                                                    onChange={event => handleAnswerBlanks(event, index)}
+                                                                                                    placeholder="Enter Weightage"
+                                                                                                />
+                                                                                            </Col>
+
+                                                                                        </Row>
+
+                                                                                        <br />
+
+                                                                                        <Row>
+
+                                                                                            <Col xs={6}>
+                                                                                                <label className="floating-label">
+                                                                                                    <small className="text-danger"></small>
+                                                                                                    Audio File
+                                                                                                </label>
+                                                                                                <input
+                                                                                                    className="form-control"
+                                                                                                    error={touched.answer_content && errors.answer_content}
+                                                                                                    name="answer_content"
+                                                                                                    id="answer_content"
+                                                                                                    onBlur={handleBlur}
+                                                                                                    // value={form.answer_content}
+                                                                                                    onClick={() => {
+                                                                                                        let tempPreviewAudio = [...previewAudios];
+                                                                                                        tempPreviewAudio[index] = '';
+                                                                                                        setPreviewAudios(tempPreviewAudio);
+
+                                                                                                    }}
+                                                                                                    onChange={event => {
+                                                                                                        handleAnswerBlanks(event, index)
+                                                                                                    }}
+                                                                                                    type="file"
+                                                                                                    accept=".mp3,audio/*"
+                                                                                                />
+                                                                                            </Col>
+
+                                                                                            <Col xs={3} style={{ display: "contents" }}>
+
+                                                                                                <label className="floating-label">
+                                                                                                    <small className="text-danger"></small>
+                                                                                                    Preview
+                                                                                                </label>
+
+                                                                                                {previewAudios && previewAudios[index] && previewAudios[index] !== 'N.A.' &&
+                                                                                                    (
+                                                                                                        <>
+                                                                                                            <br />
+
+                                                                                                            <div className="form-group fill" style={{ marginTop: "25px", marginLeft: "-53px" }} >
+                                                                                                                <audio controls>
+                                                                                                                    <source
+                                                                                                                        src={previewAudios[index]}
+                                                                                                                        alt="Audio"
+                                                                                                                        type="audio/mp3" />
+
+                                                                                                                </audio>
+                                                                                                            </div>
+
+                                                                                                            {
+                                                                                                                previewAudios[index] && (
+                                                                                                                    <CloseButton
+                                                                                                                        onClick={() => {
+                                                                                                                            setFieldValue("answer_content", "")
+                                                                                                                            setFieldTouched("answer_content", false, false);
+                                                                                                                            removeSelectedAudio(index)
+                                                                                                                        }}
+                                                                                                                        style={
+                                                                                                                            {
+                                                                                                                                color: "#ff0000",
+                                                                                                                                marginRight: "-95px",
+                                                                                                                                marginTop:
+                                                                                                                                    "-55px"
+                                                                                                                            }
+                                                                                                                        }
+                                                                                                                    />
+                                                                                                                )
+                                                                                                            }
+
+
+                                                                                                        </>
+                                                                                                    )
+                                                                                                }
+                                                                                            </Col>
+                                                                                        </Row>
+                                                                                    </>
+
+                                                                                )}
 
                                                                                 <br />
 
-                                                                                <Row>
-
-                                                                                    <Col xs={6}>
-                                                                                        <label className="floating-label">
-                                                                                            <small className="text-danger"></small>
-                                                                                            Audio File
-                                                                                        </label>
-                                                                                        <input
-                                                                                            className="form-control"
-                                                                                            error={touched.answer_content && errors.answer_content}
-                                                                                            name="answer_content"
-                                                                                            id="answer_content"
-                                                                                            onBlur={handleBlur}
-                                                                                            // value={form.answer_content}
-                                                                                            onClick={() => {
-                                                                                                let tempPreviewAudio = [...previewAudios];
-                                                                                                tempPreviewAudio[index] = '';
-                                                                                                setPreviewAudios(tempPreviewAudio);
-
-                                                                                            }}
-                                                                                            onChange={event => {
-                                                                                                handleAnswerBlanks(event, index)
-                                                                                            }}
-                                                                                            type="file"
-                                                                                            accept=".mp3,audio/*"
-                                                                                        />
-                                                                                    </Col>
-
-                                                                                    <Col xs={3} style={{ display: "contents" }}>
-
-                                                                                        <label className="floating-label">
-                                                                                            <small className="text-danger"></small>
-                                                                                            Preview
-                                                                                        </label>
-
-                                                                                        {previewAudios && previewAudios[index] && previewAudios[index] !== 'N.A.' &&
-                                                                                            (
-                                                                                                <>
-                                                                                                    <br />
-
-                                                                                                    <div className="form-group fill" style={{ marginTop: "25px", marginLeft: "-53px" }} >
-                                                                                                        <audio controls>
-                                                                                                            <source
-                                                                                                                src={previewAudios[index]}
-                                                                                                                alt="Audio"
-                                                                                                                type="audio/mp3" />
-
-                                                                                                        </audio>
-                                                                                                    </div>
-
-                                                                                                    {
-                                                                                                        previewAudios[index] && (
-                                                                                                            <CloseButton
-                                                                                                                onClick={() => {
-                                                                                                                    setFieldValue("answer_content", "")
-                                                                                                                    setFieldTouched("answer_content", false, false);
-                                                                                                                    removeSelectedAudio(index)
-                                                                                                                }}
-                                                                                                                style={
-                                                                                                                    {
-                                                                                                                        color: "#ff0000",
-                                                                                                                        marginRight: "-95px",
-                                                                                                                        marginTop:
-                                                                                                                            "-55px"
-                                                                                                                    }
-                                                                                                                }
-                                                                                                            />
-                                                                                                        )
-                                                                                                    }
-
-
-                                                                                                </>
-                                                                                            )
-                                                                                        }
-                                                                                    </Col>
-                                                                                </Row>
-                                                                            </>
-
-                                                                        )}
-
+                                                                            </Card.Body>
+                                                                        </Card>
                                                                     </>
                                                                 )
                                                             })
                                                             }
 
-                                                            {addAnserOptions && (
-                                                                <Row className="my-3">
-                                                                    <Col></Col>
-                                                                    <Col></Col>
-                                                                    <Col>
-                                                                        <button onClick={addAnswerTypeOptions} className="float-right">+</button>
-                                                                    </Col>
-                                                                </Row>
-                                                            )}
+                                                            <Row className="my-3">
+                                                                <Col></Col>
+                                                                <Col></Col>
+                                                                <Col>
+                                                                    <button onClick={addAnswerTypeOptions} className="float-right">+</button>
+                                                                </Col>
+                                                            </Row>
 
                                                             {loader}
 
