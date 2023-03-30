@@ -128,7 +128,6 @@ const EditGroups = ({ className, ...rest }) => {
                     console.log('inside res');
 
                     let resultDataAllQuestions = response.data.Items;
-                    console.log("resultDataAllQuestions", resultDataAllQuestions);
 
                     let questionsArr = [];
                     let getQuestionsArr;
@@ -136,9 +135,11 @@ const EditGroups = ({ className, ...rest }) => {
                     if (Array.isArray(resultDataAllQuestions)) {
                         for (let index = 0; index < resultDataAllQuestions.length; index++) {
 
-                            getQuestionsArr = [{ label: resultDataAllQuestions[index].question_label, value: resultDataAllQuestions[index].question_id }];
+                            console.log("resultDataAllQuestions[index].question_label : ", resultDataAllQuestions[index].question_label);
 
-                            questionsArr.push(getQuestionsArr[0]);
+                            getQuestionsArr = { label: resultDataAllQuestions[index].question_label, value: resultDataAllQuestions[index].question_id };
+
+                            questionsArr.push(getQuestionsArr);
                             console.log(questionsArr);
                         }
                     }
@@ -415,8 +416,9 @@ const EditGroups = ({ className, ...rest }) => {
                                             <Formik
 
                                                 initialValues={{
-                                                    group_name: previousGroupData === {} ? '' : previousGroupData.group_name,
-                                                    group_description: previousGroupData === {} ? '' : previousGroupData.group_description
+                                                    group_name: previousGroupData.group_name,
+                                                    group_description: previousGroupData === {} ? '' : previousGroupData.group_description,
+                                                    question_duration: previousGroupData.question_duration
                                                 }}
 
                                                 validationSchema={
@@ -426,6 +428,11 @@ const EditGroups = ({ className, ...rest }) => {
                                                             .min(2, 'Group Name is too short!')
                                                             .max(51, 'Group Name is too long!')
                                                             .required('Group Name is required!'),
+                                                        question_duration: Yup.number()
+                                                            .moreThan(1, 'Group Duration is Less Then 30min!')
+                                                            .lessThan(150, 'Group Duration is More Then 150min!')
+                                                            .required('Group Duration is required!'),
+
                                                     })}
 
                                                 onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
@@ -454,7 +461,8 @@ const EditGroups = ({ className, ...rest }) => {
                                                             group_question_id: selectedQuestions,
                                                             group_levels: selectedLevels,
                                                             group_related_digicard: selectedDigicards,
-                                                            group_description: values.group_description
+                                                            group_description: values.group_description,
+                                                            question_duration: values.question_duration
                                                         }
 
                                                         console.log("payLoad", payLoad);
@@ -633,7 +641,7 @@ const EditGroups = ({ className, ...rest }) => {
                                                                                         Questions
                                                                                     </label>
                                                                                 </Col>
-                                                                                <Col className='d-flex justify-content-end' style={{marginRight:'10px'}}>
+                                                                                <Col className='d-flex justify-content-end' style={{ marginRight: '10px' }}>
                                                                                     <label className="text-danger" >&nbsp;{`${selectedQuestions.length}`}</label>
                                                                                 </Col>
                                                                             </Row>
@@ -696,6 +704,28 @@ const EditGroups = ({ className, ...rest }) => {
                                                                         </>
                                                                     )
                                                                 }
+                                                            </Col>
+                                                            <Col>
+                                                                <label className="floating-label">
+                                                                    <small className="text-danger">* </small>
+                                                                    Duration Per Question
+                                                                </label>
+
+                                                                <input
+                                                                    value={values.question_duration}
+                                                                    className="form-control"
+                                                                    error={touched.question_duration && errors.question_duration}
+                                                                    label="question_duration"
+                                                                    name="question_duration"
+                                                                    onBlur={handleBlur}
+                                                                    type='number'
+                                                                    onChange={e => {
+                                                                        setGroupNameExistsErrMsg(false);
+                                                                        handleChange(e);
+                                                                    }}
+                                                                    placeholder="Group Duration"
+                                                                />
+                                                                {touched.question_duration && errors.question_duration && <small className="text-danger form-text">{errors.question_duration}</small>}
                                                             </Col>
                                                         </Row>
 
