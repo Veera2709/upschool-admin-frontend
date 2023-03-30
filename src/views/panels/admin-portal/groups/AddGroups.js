@@ -477,7 +477,6 @@ const AddGroups = ({ className, ...rest }) => {
 
                                                 </Row>
 
-                                                <br />
                                                 <Row>
                                                     <Col>
 
