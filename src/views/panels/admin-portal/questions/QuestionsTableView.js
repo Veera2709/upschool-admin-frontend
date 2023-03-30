@@ -89,112 +89,6 @@ function Table({ columns, data, modalOpen }) {
   );
   const question_active_status = pageLocation === 'active-questions' ? "Active" : "Archived"
 
-//   const toggleFunction = () => {
-
-//     let arrayWithQuestions = [];
-//     page.map(e => {
-//         e.isSelected === true && arrayWithQuestions.push(e.original.question_id)
-//     })
-
-//     console.log("arrayWithQuestions.length", arrayWithQuestions.length)
-//     console.log("CHECKED IDS : ", arrayWithQuestions);
-
-//     if (arrayWithQuestions.length === 0) { 
-//         const MySwal = withReactContent(Swal); 
-//         return MySwal.fire('Sorry', 'No Questions Selected!', 'warning').then(() => {
-//         });
-//     }else{
-//       MySwal.fire({
-//           title: 'Are you sure?',
-//           text: pageLocation === 'active-questions' ? 'Confirm deleting' : 'Confirm restoring',
-//           type: 'warning',
-//           showCloseButton: true,
-//           showCancelButton: true,
-  
-//       }).then((willDelete) => {
-//           if (willDelete.value) {
-//               console.log("api calling");
-//               // changeStatus(digi_card_id, digi_card_title);
-//               console.log("Request : ", {
-//                   question_active_status: question_active_status === "Active" ? "Archived" : "Active",
-//                   question_array: arrayWithQuestions,
-//               });
-  
-//               axios
-//                   .post(
-//                       dynamicUrl.bulkToggleQuestionStatus,
-//                       {
-//                           data: {
-//                               question_active_status: question_active_status === "Active" ? "Archived" : "Active",
-//                               question_array: arrayWithQuestions,
-//                           }
-//                       }, {
-//                       headers: { Authorization: sessionStorage.getItem('user_jwt') }
-//                   })
-//                   .then(async (response) => {
-//                       console.log("response : ", response);
-//                       if (response.Error) {
-//                           console.log("Error");
-//                           hideLoader();
-//                           // sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
-//                           pageLocation === "active-questions"
-//                               ? sweetAlertHandler({
-//                                   title: MESSAGES.TTTLES.Sorry,
-//                                   type: "error",
-//                                   text: MESSAGES.ERROR.DeletingQuestion
-//                               })
-//                               : sweetAlertHandler({
-//                                   title: MESSAGES.TTTLES.Sorry,
-//                                   type: "error",
-//                                   text: MESSAGES.ERROR.RestoringQuestion
-//                               });
-//                           history.push('/admin-portal/' + pageLocation)
-//                       }
-//                       else {
-//                           console.log("response : ", response);
-//                           if (response.data === 200) {
-//                               MySwal.fire({
-//                                   title: (pageLocation === 'active-questions') ? 'Questions Deleted' : "Questions Restored",
-//                                   icon: "success",
-//                                   // text: (pageLocation === 'active-questions') ? 'Unit Deleted' : 'Unit Restored',
-//                                   // type: 'success',
-//                               }).then((willDelete) => {
-  
-//                                   window.location.reload()
-  
-//                               })
-  
-//                           }
-//                       }
-//                       //new
-  
-//                   }
-//                   ).catch(async (errorResponse) => {
-//                       console.log("errorResponse : ", errorResponse);
-//                       if (errorResponse.response.data) {
-//                           MySwal.fire({
-//                               title: MESSAGES.TTTLES.Sorry,
-//                               icon: "error",
-//                               text: errorResponse.response.data,
-//                               // type: 'success',
-//                           }).then((willDelete) => {
-  
-//                               window.location.reload()
-  
-//                           })
-//                       }
-  
-//                   }
-  
-//                   )
-  
-//           } 
-  
-//       })
-//     }
-
-// }
-
 const IndeterminateCheckbox = React.forwardRef(
   ({ indeterminate, ...rest }, ref) => {
       const defaultRef = React.useRef();
@@ -286,7 +180,6 @@ const multiDelete = async (status) => {
         </Col>
         <Col className="d-flex justify-content-end">
           <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
-
          
           {
               pageLocation === "active-questions" ? (<>
@@ -296,33 +189,54 @@ const multiDelete = async (status) => {
                   <i className="feather icon-plus" /> Add Questions
                 </Button>
               </Link>
-              
-              <Button
-                  // variant="danger"
-                  className="btn-sm btn-round has-ripple ml-2 btn btn-danger"
-                  style={{ whiteSpace: "no-wrap" }}
+              {
+                (sessionStorage.getItem('question_status') === 'Save' || sessionStorage.getItem('question_status') === 'Reject') && (
+                  <>
+                  <Button
+                    // variant="danger"
+                    className="btn-sm btn-round has-ripple ml-2 btn btn-danger"
+                    style={{ whiteSpace: "no-wrap" }}
 
-                  onClick={(e) => {
-                      // handleAddConcepts(e);
-                      multiDelete("Archived"); 
-                  }}>
-                  <i className="feather icon-trash-2" /> Multi Delete
-              </Button>
+                    onClick={(e) => {
+                        // handleAddConcepts(e);
+                        multiDelete("Archived"); 
+                    }}>
+                    <i className="feather icon-trash-2" /> Multi Delete
+                  </Button>
+                  </>
+                ) 
+              }
               </>)
                : 
                (<>
-                <Button
+                {
+                (sessionStorage.getItem('question_status') === 'Save' || sessionStorage.getItem('question_status') === 'Reject') && (
+                  <>
+                  <Button
                     // variant="success"
                     className="btn-sm btn-round has-ripple ml-2 btn btn-primary"
                     style={{ whiteSpace: "no-wrap" }}
                     onClick={(e) => {
                         // handleAddConcepts(e);
                         multiDelete("Active"); 
-
                     }}
                 >
                     <i className="feather icon-plus" /> Multi Restore
                 </Button>
+                  </>
+                ) 
+              } 
+                {/* <Button
+                    // variant="success"
+                    className="btn-sm btn-round has-ripple ml-2 btn btn-primary"
+                    style={{ whiteSpace: "no-wrap" }}
+                    onClick={(e) => {
+                        // handleAddConcepts(e);
+                        multiDelete("Active"); 
+                    }}
+                >
+                    <i className="feather icon-plus" /> Multi Restore
+                </Button> */}
                </>)
           }
         </Col>
@@ -410,20 +324,7 @@ const QuestionsTableView = ({ _questionStatus }) => {
   console.log(_questionStatus);
 
   const columns = React.useMemo(() => [
-    //   {
-    //     id: "selection",
-
-    //     Header: ({ getToggleAllRowsSelectedProps }) => (
-    //         <div>
-    //             <input type="checkbox" {...getToggleAllRowsSelectedProps()} />
-    //         </div>
-    //     ),
-    //     Cell: ({ row }) => (
-    //         <div>
-    //             <input type="checkbox" {...row.getToggleRowSelectedProps()} />
-    //         </div>
-    //     )
-    // },
+  
     {
       Header: '#',
       accessor: 'id'
@@ -484,7 +385,6 @@ const QuestionsTableView = ({ _questionStatus }) => {
       }
     });
   };
-
 
   const saveUserIdDelete = (e, question_id, updateStatus) => {
     e.preventDefault();
@@ -659,7 +559,6 @@ const QuestionsTableView = ({ _questionStatus }) => {
           {pageLocation === 'active-questions' ? (
 
             <>
-
               {
                 (sessionStorage.getItem('question_status') === 'Save' || sessionStorage.getItem('question_status') === 'Reject') && (
                   <>
