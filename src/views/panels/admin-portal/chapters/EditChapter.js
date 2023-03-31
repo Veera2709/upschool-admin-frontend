@@ -198,6 +198,7 @@ const EditChapter = ({ setOpenEditChapter, chapterId }) => {
                             enableReinitialize
                             initialValues={{
                                 chaptertitle: individualChapterdata.chapter_title,
+                                displayname: individualChapterdata.display_name,
                                 postlearning_topic: '',
                                 prelearning_topic: '',
                                 isLocked: '',
@@ -211,6 +212,12 @@ const EditChapter = ({ setOpenEditChapter, chapterId }) => {
                                     .required(Constants.AddDigiCard.ChaptertitleRequired),
                                 chapter_description: Yup.string()
                                     .required(Constants.AddUnit.DescriptionRequired),
+                                displayname: Yup.string()
+                                    .trim()
+                                    .min(2, Constants.AddDigiCard.DisplayNameTooShort)
+                                    // .max(32, Constants.AddDigiCard.DisplayNameTooLong)
+                                    .required(Constants.AddDigiCard.DisplayNameRequired),
+
                             })}
 
                             onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
@@ -226,6 +233,7 @@ const EditChapter = ({ setOpenEditChapter, chapterId }) => {
                                     var formData = {
                                         chapter_id: chapterId,
                                         chapter_title: values.chaptertitle,
+                                        display_name: values.displayname,
                                         chapter_description: values.chapter_description,
                                         prelearning_topic_id: prelearningOptions,
                                         postlearning_topic_id: postlearningOption,
@@ -310,6 +318,26 @@ const EditChapter = ({ setOpenEditChapter, chapterId }) => {
                                                 />
                                                 {touched.chaptertitle && errors.chaptertitle && <small className="text-danger form-text">{errors.chaptertitle}</small>}
                                             </div><br />
+
+
+                                            <div className="form-group fill">
+                                                <label className="floating-label" htmlFor="displayname">
+                                                    <small className="text-danger">* </small>Display Name
+                                                </label>
+                                                <input
+                                                    className="form-control"
+                                                    error={touched.displayname && errors.displayname}
+                                                    name="displayname"
+                                                    onBlur={handleBlur}
+                                                    onChange={handleChange}
+                                                    type="text"
+                                                    value={values.displayname}
+                                                    id='title'
+                                                />
+                                                {touched.displayname && errors.displayname && <small className="text-danger form-text">{errors.displayname}</small>}
+                                            </div><br />
+
+
                                             <div className="form-group fill" style={{ position: "relative", zIndex: 20 }}>
                                                 <label className="floating-label" htmlFor="postlearning_topic">
                                                     <small className="text-danger">* </small> Post-learning Topic

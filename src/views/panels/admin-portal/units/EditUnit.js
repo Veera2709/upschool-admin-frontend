@@ -153,6 +153,7 @@ const EditUnit = ({ setOpenEditUnit, unitId }) => {
                         enableReinitialize
                         initialValues={{
                             unittitle: individualUnitdata.unit_title,
+                            displayname: individualUnitdata.display_name,
                             chapter: '',
                             unit_description: individualUnitdata.unit_description,
                         }}
@@ -164,6 +165,11 @@ const EditUnit = ({ setOpenEditUnit, unitId }) => {
                                 .required(Constants.AddUnit.UnittitleTooLongs),
                             unit_description: Yup.string()
                                 .required(Constants.AddUnit.DescriptionRequired),
+                            displayname: Yup.string()
+                                .trim()
+                                .min(2, Constants.AddUnit.DisplayNameTooShort)
+                                .max(32, Constants.AddUnit.DisplayNameTooLong)
+                                .required(Constants.AddUnit.DisplayNameRequired),
                         })}
 
 
@@ -178,6 +184,7 @@ const EditUnit = ({ setOpenEditUnit, unitId }) => {
                                 console.log("on submit");
                                 var formData = {
                                     unit_id: unitId,
+                                    display_name: values.displayname,
                                     unit_title: values.unittitle,
                                     unit_description: values.unit_description,
                                     unit_chapter_id: chapterOption
@@ -257,6 +264,29 @@ const EditUnit = ({ setOpenEditUnit, unitId }) => {
                                             />
                                             {touched.unittitle && errors.unittitle && <small className="text-danger form-text">{errors.unittitle}</small>}
                                         </div>
+
+
+
+
+                                        <div className="form-group fill">
+                                            <label className="floating-label" htmlFor="displayname">
+                                                <small className="text-danger">* </small>Display Name
+                                            </label>
+                                            <input
+                                                className="form-control"
+                                                error={touched.displayname && errors.displayname}
+                                                name="displayname"
+                                                onBlur={handleBlur}
+                                                onChange={handleChange}
+                                                type="text"
+                                                value={values.displayname}
+                                                id='title'
+                                            />
+                                            {touched.displayname && errors.displayname && <small className="text-danger form-text">{errors.displayname}</small>}
+                                        </div><br />
+
+
+
                                         <OverlayTrigger placement="top" overlay={<Tooltip id={`tooltip-top`} style={{ zIndex: 1151 }}>The selected order will be the index of chapter!</Tooltip>}>
                                             {defaultOptions && (<div className="form-group fill" style={{ position: "relative", zIndex: 20 }}>
                                                 <label className="floating-label" htmlFor="chapter">

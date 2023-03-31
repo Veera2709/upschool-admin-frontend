@@ -126,6 +126,7 @@ const AddClass = ({ setOpenAddClass }) => {
       <Formik
         initialValues={{
           classTitle: "",
+          displayname: "",
           standard_subject_id: "",
         }}
         validationSchema={Yup.object().shape({
@@ -134,6 +135,12 @@ const AddClass = ({ setOpenAddClass }) => {
             .min(2, Constants.AddClasses.ClasstitleTooShort)
             .max(32, Constants.AddClasses.ClasstitleTooLong)
             .required(Constants.AddClasses.ClasstitleRequired),
+
+          displayname: Yup.string()
+            .trim()
+            .min(2, Constants.AddClasses.DisplayNameTooShort)
+            .max(32, Constants.AddClasses.DisplayNameTooLong)
+            .required(Constants.AddClasses.DisplayNameRequired),
         })}
         onSubmit={async (
           values,
@@ -145,6 +152,7 @@ const AddClass = ({ setOpenAddClass }) => {
             console.log("on submit");
             var formData = {
               class_name: values.classTitle,
+              display_name: values.displayname,
               class_subject_id: subjectOption,
             };
             console.log("formdata", formData);
@@ -226,6 +234,31 @@ const AddClass = ({ setOpenAddClass }) => {
                   )}
                 </div>
                 <br />
+
+                <div className="form-group fill">
+                  <label className="floating-label" htmlFor="displayname">
+                    <small className="text-danger">* </small>Display Name
+                  </label>
+                  <input
+                    className="form-control"
+                    error={touched.displayname && errors.displayname}
+                    name="displayname"
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    type="text"
+                    value={values.displayname}
+                    placeholder="Enter Display Name"
+                    id='title'
+                  />
+                  {touched.displayname && errors.displayname && <small className="text-danger form-text">{errors.displayname}</small>}
+                </div>
+
+
+
+
+
+
+
                 <div
                   className="form-group fill"
                   style={{ position: "relative", zIndex: 20 }}

@@ -58,9 +58,6 @@ const AddChapter = ({ setOpenAddChapter }) => {
     const [topicDigiCardIds, setTopicDigiCardIds] = useState([]);
 
 
-
-
-
     const [tags, setTags] = useState([]);
     const [ImgURL, setImgURL] = useState([]);
     const [display, setDisplay] = useState('none');
@@ -109,8 +106,8 @@ const AddChapter = ({ setOpenAddChapter }) => {
             let resultData = allPostLeraningData.Items
             console.log("resultData", resultData);
             resultData.forEach((item, index) => {
-                    console.log();
-                    postLeraning.push({ value: item.topic_id, label: item.topic_title })  
+                console.log();
+                postLeraning.push({ value: item.topic_id, label: item.topic_title })
             }
             );
             console.log("postLeraning", postLeraning);
@@ -126,10 +123,10 @@ const AddChapter = ({ setOpenAddChapter }) => {
                 }
             } else {
                 let preData = allPreLerningdData.Items
-                console.log("preLeraningTopics",preData)
+                console.log("preLeraningTopics", preData)
                 preData.forEach((itempre, index) => {
-                        console.log();
-                        preLeraning.push({ value: itempre.topic_id, label: itempre.topic_title }) 
+                    console.log();
+                    preLeraning.push({ value: itempre.topic_id, label: itempre.topic_title })
                 });
                 setTopicTitlesPre(preLeraning)
             }
@@ -153,7 +150,7 @@ const AddChapter = ({ setOpenAddChapter }) => {
 
     const handleOnSelect = (event) => {
         let valuesArr = [];
-        if(event){
+        if (event) {
             for (let i = 0; i < event.length; i++) {
                 valuesArr.push(event[i].value)
             }
@@ -163,7 +160,7 @@ const AddChapter = ({ setOpenAddChapter }) => {
 
     const handleOnSelectPre = (event) => {
         let valuesArr = [];
-        if(event){
+        if (event) {
             for (let i = 0; i < event.length; i++) {
                 valuesArr.push(event[i].value)
             }
@@ -179,6 +176,7 @@ const AddChapter = ({ setOpenAddChapter }) => {
             <Formik
                 initialValues={{
                     chaptertitle: '',
+                    displayname: '',
                     postlearning_topic: '',
                     prelearning_topic: '',
                     chapter_description: '',
@@ -189,6 +187,11 @@ const AddChapter = ({ setOpenAddChapter }) => {
                         .min(2, Constants.AddDigiCard.ChaptertitleTooShort)
                         .max(32, Constants.AddDigiCard.ChaptertitleTooLong)
                         .required(Constants.AddDigiCard.ChaptertitleRequired),
+                    displayname: Yup.string()
+                        .trim()
+                        .min(2, Constants.AddDigiCard.DisplayNameTooShort)
+                        .max(32, Constants.AddDigiCard.DisplayNameTooLong)
+                        .required(Constants.AddDigiCard.DisplayNameRequired),
                 })}
 
 
@@ -207,6 +210,7 @@ const AddChapter = ({ setOpenAddChapter }) => {
                         console.log("on submit");
                         var formData = {
                             chapter_title: values.chaptertitle,
+                            display_name: values.displayname,
                             chapter_description: description,
                             prelearning_topic_id: prelearningOptions,
                             postlearning_topic_id: postlearningOption,
@@ -286,6 +290,25 @@ const AddChapter = ({ setOpenAddChapter }) => {
                                     />
                                     {touched.chaptertitle && errors.chaptertitle && <small className="text-danger form-text">{errors.chaptertitle}</small>}
                                 </div><br />
+
+                                <div className="form-group fill">
+                                    <label className="floating-label" htmlFor="displayname">
+                                        <small className="text-danger">* </small>Display Name
+                                    </label>
+                                    <input
+                                        className="form-control"
+                                        error={touched.displayname && errors.displayname}
+                                        name="displayname"
+                                        onBlur={handleBlur}
+                                        onChange={handleChange}
+                                        type="text"
+                                        value={values.displayname}
+                                        id='title'
+                                    />
+                                    {touched.displayname && errors.displayname && <small className="text-danger form-text">{errors.displayname}</small>}
+                                </div><br />
+
+
                                 <div className="form-group fill">
                                     <label className="floating-label" htmlFor="postlearning_topic">
                                         <small className="text-danger">* </small> Post-learning Topic
