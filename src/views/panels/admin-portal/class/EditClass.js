@@ -132,7 +132,7 @@ const EditClass = ({ setOpenEditClass, classId }) => {
     setSubjectOption(valuesArr);
   };
 
-  return  (
+  return (
     <div>
       {isLoading === true ? (
         <>
@@ -147,6 +147,8 @@ const EditClass = ({ setOpenEditClass, classId }) => {
                   enableReinitialize
                   initialValues={{
                     classTitle: individualClassdata.class_name,
+                    displayname: individualClassdata.display_name,
+
                     // class_subject_id: subjectOption,
                   }}
                   validationSchema={Yup.object().shape({
@@ -155,6 +157,14 @@ const EditClass = ({ setOpenEditClass, classId }) => {
                       .min(2, Constants.AddClasses.ClasstitleTooShort)
                       .max(32, Constants.AddClasses.ClasstitleTooLong)
                       .required(Constants.AddClasses.ClasstitleRequired),
+
+                    displayname: Yup.string()
+                      .trim()
+                      .min(2, Constants.AddClasses.DisplayNameTooShort)
+                      .max(32, Constants.AddClasses.DisplayNameTooLong)
+                      .required(Constants.AddClasses.DisplayNameRequired),
+
+
                   })}
                   onSubmit={async (
                     values,
@@ -168,6 +178,8 @@ const EditClass = ({ setOpenEditClass, classId }) => {
                       var formData = {
                         class_id: classId,
                         class_name: values.classTitle,
+                        display_name: values.displayname,
+
                         class_subject_id: subjectOption,
                       };
                       setOpenEditClass(false)
@@ -246,6 +258,34 @@ const EditClass = ({ setOpenEditClass, classId }) => {
                             )}
                           </div>
                           <br />
+
+
+                          <div className="form-group fill">
+                            <label className="floating-label" htmlFor="displayname">
+                              <small className="text-danger">* </small>Display Name
+                            </label>
+                            <input
+                              className="form-control"
+                              error={touched.displayname && errors.displayname}
+                              name="displayname"
+                              onBlur={handleBlur}
+                              onChange={handleChange}
+                              type="text"
+                              value={values.displayname}
+                              placeholder="Enter Display Name"
+                              id='title'
+                            />
+                            {touched.displayname && errors.displayname && <small className="text-danger form-text">{errors.displayname}</small>}
+                          </div>
+
+
+
+
+
+
+
+
+
                           {
                             <div
                               className="form-group fill"

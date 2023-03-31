@@ -135,6 +135,7 @@ const AddSubjects = ({ _units, _relatedSubjects, setIsOpenAddSubject, fetchAllSu
                             initialValues={
                                 {
                                     subjectTitle: "",
+                                    displayname: '',
                                     description: "",
                                     submit: null
                                 }
@@ -150,6 +151,12 @@ const AddSubjects = ({ _units, _relatedSubjects, setIsOpenAddSubject, fetchAllSu
                                         .trim()
                                         .min(2, Constants.AddSubjects.SubjectTitleTooShort)
                                         .required(Constants.AddSubjects.SubjectTitleRequired),
+
+                                    displayname: Yup.string()
+                                        .trim()
+                                        .min(2, Constants.AddSubjects.DisplayNameTooShort)
+                                        .max(32, Constants.AddSubjects.DisplayNameTooLong)
+                                        .required(Constants.AddSubjects.DisplayNameRequired),
                                 })
                             }
                             onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
@@ -162,6 +169,7 @@ const AddSubjects = ({ _units, _relatedSubjects, setIsOpenAddSubject, fetchAllSu
                                 const formData = {
                                     data: {
                                         subject_title: values.subjectTitle,
+                                        display_name: values.displayname,
                                         subject_unit_id: selectedUnits,
                                         subject_keyword: selectedKeywords,
                                         related_subject: selectedRelatedSubjects,
@@ -322,6 +330,28 @@ const AddSubjects = ({ _units, _relatedSubjects, setIsOpenAddSubject, fetchAllSu
                                                 </Col>
                                             </Row>
                                             <br />
+                                            <Row>
+                                                <Col>
+
+                                                    <div className="form-group fill">
+                                                        <label className="floating-label" htmlFor="displayname">
+                                                            <small className="text-danger">* </small>Display Name
+                                                        </label>
+                                                        <input
+                                                            className="form-control"
+                                                            error={touched.displayname && errors.displayname}
+                                                            name="displayname"
+                                                            onBlur={handleBlur}
+                                                            onChange={handleChange}
+                                                            type="text"
+                                                            value={values.displayname}
+                                                            id='title'
+                                                        />
+                                                        {touched.displayname && errors.displayname && <small className="text-danger form-text">{errors.displayname}</small>}
+                                                    </div>
+                                                </Col>
+                                                <Col></Col>
+                                            </Row>
 
                                             <Row>
                                                 <Col>

@@ -277,6 +277,7 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                                             enableReinitialize
                                             initialValues={{
                                                 topic_title: editTopicData.topic_title,
+                                                display_name: editTopicData.display_name,
                                                 topic_description: editTopicData.topic_description,
                                                 topic_concept_id: '',
                                                 pre_post_learning: '',
@@ -291,9 +292,18 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                                                     .min(2, Constants.AddTopic.TopictitleTooShort)
                                                     .max(32, Constants.AddTopic.TopictitleTooLong)
                                                     .required(Constants.AddTopic.TopictitleRequired),
+
                                                 topic_description: Yup.string()
                                                     .trim()
                                                     .required(Constants.AddTopic.DescriptionRequired),
+
+                                                display_name: Yup.string()
+                                                    .trim()
+                                                    .min(2, Constants.AddTopic.DisplayNameTooShort)
+                                                    .max(32, Constants.AddTopic.DisplayNameTooLong)
+                                                    .required(Constants.AddTopic.DisplayNameRequired),
+
+
                                             })}
 
 
@@ -305,6 +315,7 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                                                     formData = {
                                                         topic_id: topicId,
                                                         topic_title: values.topic_title,
+                                                        display_name: values.display_name,
                                                         topic_description: values.topic_description,
                                                         topic_concept_id: topicConceptId,
                                                         pre_post_learning: prePostLearning,
@@ -316,6 +327,7 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                                                     formData = {
                                                         topic_id: topicId,
                                                         topic_title: values.topic_title,
+                                                        display_name: values.display_name,
                                                         topic_description: values.topic_description,
                                                         topic_concept_id: topicConceptId,
                                                         pre_post_learning: prePostLearning,
@@ -339,10 +351,10 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                                                 //     if (topicConceptId == '') {
                                                 //         setIsShown(false)
                                                 //     } else {
-                                                       
 
-                                                        console.log('formData: ', formData)
-                                                        submitEditTopic(formData)
+
+                                                console.log('formData: ', formData)
+                                                submitEditTopic(formData)
                                                 //     }
                                                 // }
 
@@ -362,6 +374,22 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                                                                 value={values.topic_title}
                                                             />
                                                             {touched.topic_title && errors.topic_title && <small className="text-danger form-text">{errors.topic_title}</small>}
+                                                        </Form.Group>
+                                                    </Col>
+
+
+                                                    <Col sm={6}>
+                                                        <Form.Group>
+                                                            <Form.Label className="floating-label" htmlFor="display_name"><small className="text-danger">* </small>Display Name</Form.Label>
+                                                            <Form.Control
+                                                                className="form-control"
+                                                                name="display_name"
+                                                                onBlur={handleBlur}
+                                                                onChange={handleChange}
+                                                                type="text"
+                                                                value={values.display_name}
+                                                            />
+                                                            {touched.display_name && errors.display_name && <small className="text-danger form-text">{errors.display_name}</small>}
                                                         </Form.Group>
                                                     </Col>
 

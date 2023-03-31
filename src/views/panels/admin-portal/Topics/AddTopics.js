@@ -36,6 +36,9 @@ const AddTopics = ({ setOpenAddTopic }) => {
     const [isShownTopic, setIsShownTopic] = useState(true);
     // const [topicDuration, setTopicDuration] = useState(false);
     // const [timeLimit, setTimeLimit] = useState(false);
+    const [displayNameErr, setDisplayNameErr] = useState(false);
+
+    const [displayNameErrMessage, setDisplayNameErrMessage] = useState('');
 
     const MySwal = withReactContent(Swal);
 
@@ -199,6 +202,7 @@ const AddTopics = ({ setOpenAddTopic }) => {
             <Formik
                 initialValues={{
                     topic_title: '',
+                    display_name: '',
                     // level: "",
                     // duration: "",
                     topic_description: '',
@@ -221,6 +225,11 @@ const AddTopics = ({ setOpenAddTopic }) => {
                         .trim()
                         .required(Constants.AddTopic.DescriptionRequired),
 
+                    display_name: Yup.string()
+                        .trim()
+                        .min(2, Constants.AddTopic.DisplayNameTooShort)
+                        .max(32, Constants.AddTopic.DisplayNameTooLong)
+                        .required(Constants.AddTopic.DisplayNameRequired),
                 })}
                 // validationSchema
                 onSubmit={(values, { setErrors, setStatus, setSubmitting }) => {
@@ -235,37 +244,39 @@ const AddTopics = ({ setOpenAddTopic }) => {
                     //     setTimeLimit(true)
                     // }
                     // else {
-                        let formData;
+                    let formData;
 
-                        if (prePostLearning === 'Pre-Learning') {
-                            formData = {
-                                topic_title: values.topic_title,
-                                topic_description: values.topic_description,
-                                topic_concept_id: topicConceptId,
-                                pre_post_learning: prePostLearning,
-                                related_topics: relatedTopicsId,
-                                // topic_quiz_config: topicQuiz
-                                // Level_1: { duration: topicQuiz[0].duration },
-                                // Level_2: { duration: topicQuiz[1].duration },
+                    if (prePostLearning === 'Pre-Learning') {
+                        formData = {
+                            topic_title: values.topic_title,
+                            display_name: values.display_name,
+                            topic_description: values.topic_description,
+                            topic_concept_id: topicConceptId,
+                            pre_post_learning: prePostLearning,
+                            related_topics: relatedTopicsId,
+                            // topic_quiz_config: topicQuiz
+                            // Level_1: { duration: topicQuiz[0].duration },
+                            // Level_2: { duration: topicQuiz[1].duration },
 
-                            }
-                        } else {
-                            formData = {
-                                topic_title: values.topic_title,
-                                topic_description: values.topic_description,
-                                topic_concept_id: topicConceptId,
-                                pre_post_learning: prePostLearning,
-                                related_topics: relatedTopicsId,
-                                // topic_quiz_config: topicQuiz
-                                // Level_1: { duration: topicQuiz[0].duration },
-                                // Level_2: { duration: topicQuiz[1].duration },
-                                // Level_3: { duration: topicQuiz[2].duration },
-
-                            }
                         }
+                    } else {
+                        formData = {
+                            topic_title: values.topic_title,
+                            display_name: values.display_name,
+                            topic_description: values.topic_description,
+                            topic_concept_id: topicConceptId,
+                            pre_post_learning: prePostLearning,
+                            related_topics: relatedTopicsId,
+                            // topic_quiz_config: topicQuiz
+                            // Level_1: { duration: topicQuiz[0].duration },
+                            // Level_2: { duration: topicQuiz[1].duration },
+                            // Level_3: { duration: topicQuiz[2].duration },
 
-                        console.log('formData: ', formData)
-                        postTopic(formData)
+                        }
+                    }
+
+                    console.log('formData: ', formData)
+                    postTopic(formData)
                     // }
 
                 }}
@@ -286,6 +297,25 @@ const AddTopics = ({ setOpenAddTopic }) => {
                                 {touched.topic_title && errors.topic_title && <small className="text-danger form-text">{errors.topic_title}</small>}
                             </Form.Group>
                         </Col>
+
+                        <Col sm={6}>
+                            <Form.Group>
+                                <Form.Label className="floating-label" htmlFor="display_name"><small className="text-danger">* </small>Display Name</Form.Label>
+                                <Form.Control
+                                    className="form-control"
+                                    name="display_name"
+                                    onBlur={handleBlur}
+                                    onChange={handleChange}
+                                    type="text"
+                                    value={values.display_name}
+                                />
+                                {touched.display_name && errors.display_name && <small className="text-danger form-text">{errors.display_name}</small>}
+                            </Form.Group>
+                        </Col>
+
+
+
+
 
                         <Col sm={6}>
 
@@ -429,7 +459,7 @@ const AddTopics = ({ setOpenAddTopic }) => {
                     </Form>
                 )}
             </Formik>
-        </React.Fragment >
+        </React.Fragment>
     )
 }
 

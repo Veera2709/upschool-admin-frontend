@@ -297,7 +297,9 @@ const AddGroups = ({ className, ...rest }) => {
 
                                         initialValues={{
                                             group_name: '',
-                                            question_duration: ''
+                                            displayname: "",
+                                            question_duration: '',
+                                            group_description: '',
                                         }}
 
                                         validationSchema={
@@ -307,10 +309,23 @@ const AddGroups = ({ className, ...rest }) => {
                                                     .min(2, 'Group Name is too short!')
                                                     .max(51, 'Group Name is too long!')
                                                     .required('Group Name is required!'),
+
                                                 question_duration: Yup.number()
                                                     .moreThan(1, 'Group Duration is Less Then 30min!')
                                                     .lessThan(150, 'Group Duration is More Then 150min!')
                                                     .required('Group Duration is required!'),
+
+                                                group_description: Yup.string()
+                                                    .trim()
+                                                    .min(2, 'Group description is too short!')
+                                                    .required('Group description is required!'),
+
+
+                                                displayname: Yup.string()
+                                                    .trim()
+                                                    .min(2, 'Group Name is too short!')
+                                                    // .max(32, Constants.AddSubjects.DisplayNameTooLong)
+                                                    .required('Group Name is required!'),
                                             })
                                         }
 
@@ -335,6 +350,7 @@ const AddGroups = ({ className, ...rest }) => {
                                                 let payLoad = {
 
                                                     group_name: values.group_name,
+                                                    display_name: values.displayname,
                                                     group_type: selectedGroupType,
                                                     group_question_id: selectedQuestions,
                                                     group_levels: selectedLevels,
@@ -451,9 +467,7 @@ const AddGroups = ({ className, ...rest }) => {
                                                         />
 
                                                         {touched.group_name && errors.group_name && <small className="text-danger form-text">{errors.group_name}</small>}
-                                                        {
-                                                            groupNameExistsErrMsg && <small className="text-danger form-text">{'Group Name Already Exists!'}</small>
-                                                        }
+
                                                     </Col>
 
                                                     <Col xs={6}>
@@ -482,12 +496,34 @@ const AddGroups = ({ className, ...rest }) => {
                                                     </Col>
 
                                                 </Row>
+                                                <br />
+                                                <Row>
+                                                    <Col>
+                                                        <div className="form-group fill">
+                                                            <label className="floating-label" htmlFor="displayname">
+                                                                <small className="text-danger">* </small>Display Name
+                                                            </label>
+                                                            <input
+                                                                className="form-control"
+                                                                error={touched.displayname && errors.displayname}
+                                                                name="displayname"
+                                                                onBlur={handleBlur}
+                                                                onChange={handleChange}
+                                                                type="text"
+                                                                value={values.displayname}
+                                                                id='title'
+                                                            />
+                                                            {touched.displayname && errors.displayname && <small className="text-danger form-text">{errors.displayname}</small>}
+                                                        </div>
+                                                    </Col>
+                                                    <Col></Col>
+                                                </Row>
 
                                                 <Row>
                                                     <Col>
 
                                                         <label className="floating-label">
-                                                            <small className="text-danger"></small>
+                                                            <small className="text-danger">*</small>
                                                             Group Description
                                                         </label>
                                                         <textarea
@@ -500,7 +536,10 @@ const AddGroups = ({ className, ...rest }) => {
                                                             type="textarea"
                                                             onChange={handleChange}
                                                             placeholder="Description"
+
                                                         />
+
+                                                        {touched.group_description && errors.group_description && <small className="text-danger form-text">{errors.group_description}</small>}
                                                     </Col>
                                                 </Row>
 
@@ -584,7 +623,7 @@ const AddGroups = ({ className, ...rest }) => {
                                                     <Col>
                                                         <label className="floating-label">
                                                             <small className="text-danger">* </small>
-                                                             Duration Per Question
+                                                            Duration Per Question
                                                         </label>
 
                                                         <input

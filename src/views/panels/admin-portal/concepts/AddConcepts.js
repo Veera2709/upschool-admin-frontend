@@ -52,6 +52,9 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
     const [showIntermediateGroupErr, setShowIntermediateGroupErr] = useState(false);
     const [showAdvancedGroupErr, setShowAdvancedGroupErr] = useState(false);
     const [conceptTitleErr, setConceptTitleErr] = useState(false);
+    const [displayNameErr, setDisplayNameErr] = useState(false);
+
+    const [displayNameErrMessage, setDisplayNameErrMessage] = useState('');
     const [conceptTitleErrMessage, setConceptTitleErrMessage] = useState('');
 
     useEffect(() => {
@@ -229,6 +232,8 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
                             initialValues={
                                 {
                                     conceptTitle: "",
+                                    displayName: "",
+
                                     submit: null
                                 }
                             }
@@ -239,6 +244,14 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
                                         .min(2, Constants.AddConcepts.ConceptTitleTooShort)
                                         .max(32, Constants.AddConcepts.ConceptTitleTooLong)
                                         .required(Constants.AddConcepts.ConceptTitleRequired),
+
+                                    displayName: Yup.string()
+                                        .trim()
+                                        .min(2, Constants.AddConcepts.DisplayNameTooShort)
+                                        .required(Constants.AddConcepts.DisplayNameRequired),
+
+
+
 
                                 })
                             }
@@ -251,6 +264,7 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
                                 const formData = {
                                     data: {
                                         concept_title: values.conceptTitle,
+                                        display_name: values.displayName,
                                         concept_digicard_id: selectedDigicards,
                                         concept_keywords: selectedKeywords,
                                         related_concept: selectedRelatedConcepts,
@@ -435,6 +449,40 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
                                                 </Col>
                                             </Row>
                                             <br />
+                                            <Row>
+                                                <Col>
+
+                                                    <div className="form-group fill">
+                                                        <label className="floating-label" htmlFor="displayName">
+                                                            <small className="text-danger">* </small>Display Name
+                                                        </label>
+                                                        <input
+                                                            className="form-control"
+                                                            error={touched.conceptTitle && errors.conceptTitle}
+                                                            name="displayName"
+                                                            onBlur={handleBlur}
+                                                            // onChange={handleChange}
+                                                            type="text"
+                                                            value={values.displayName}
+                                                            onChange={(e) => {
+                                                                handleChange("displayName")(e);
+                                                                setDisplayNameErr(false);
+                                                            }}
+
+                                                        />
+
+                                                        {touched.displayName && errors.displayName && <small className="text-danger form-text">{errors.displayName}</small>}
+
+                                                        {displayNameErr && displayNameErrMessage &&
+                                                            <small className="text-danger form-text">{displayNameErrMessage}</small>
+                                                        }
+
+                                                    </div>
+
+                                                </Col>
+                                                <Col></Col>
+                                            </Row>
+
                                             <Row>
                                                 <Col>
                                                     <div className="form-group fill">

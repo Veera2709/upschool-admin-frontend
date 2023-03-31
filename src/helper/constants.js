@@ -29,6 +29,13 @@ export const AddDigiCard = {
   DigiCardNameTooLong: 'Digicard name is too long!',
   DigiCardNameValidation: 'Digicard name should contain only alphabets and numbers!',
 
+
+
+  DisplayNameRequired: "Display Name required! ",
+  DisplayNameTooShort: "Display Name  is too short!! ",
+  DisplayNameTooLong: "Display Nameis too long! ",
+
+
   DigiCardtitleRegex: /^([a-zA-Z0-9]+\s)*[a-zA-Z0-9]+$/,
   DigiCardtitleRequired: 'Digicard title is required!',
   DigiCardtitleTooShort: 'Digicard title is too short!',
@@ -83,12 +90,25 @@ export const AddUnit = {
   UnittitleTooShort: 'Unit Title is too short!',
   UnittitleTooLong: "Unit Title is too long!",
   DescriptionRequired: "Unit Description is required!",
+
+
+
+  DisplayNameRequired: "Display Name required! ",
+  DisplayNameTooShort: "Display Name  is too short!! ",
+  DisplayNameTooLong: "Display Nameis too long! ",
+
 };
 
 export const AddClasses = {
   ClasstitleTooShort: 'Class Title is too short',
   ClasstitleTooLong: 'Class Title is too Long',
   ClasstitleRequired: 'Class Title is required!',
+
+
+  DisplayNameRequired: "Display Name required! ",
+  DisplayNameTooShort: "Display Name  is too short!! ",
+  DisplayNameTooLong: "Display Nameis too long! ",
+
 };
 
 export const AddTopic = {
@@ -97,7 +117,11 @@ export const AddTopic = {
   QuizMinutesRequired: 'Quiz Minutes are required!',
   TopictitleTooShort: 'Topic Title is too short!',
   TopictitleTooLong: "Topic Title is too long!",
-  DescriptionRequired: " Topic Description is required!"
+  DescriptionRequired: " Topic Description is required!",
+  DisplayNameRequired: "Display Name required! ",
+  DisplayNameTooShort: "Display Name  is too short!! ",
+  DisplayNameTooLong: "Display Nameis too long! ",
+
 };
 
 export const cmsRole = {
@@ -132,13 +156,20 @@ export const cmsRole = {
 export const AddConcepts = {
   ConceptTitleRequired: 'Concept Title required!',
   ConceptTitleTooShort: 'Concept Title is too short!',
-  ConceptTitleTooLong: "Concept Title is too long!"
+  ConceptTitleTooLong: "Concept Title is too long!",
+  DisplayNameRequired: "Display Name required! ",
+  DisplayNameTooShort: "Display Name  is too short!! ",
+  DisplayNameTooLong: "Display Nameis too long! ",
 };
 
 export const AddSubjects = {
   SubjectTitleRequired: 'Subject Title required!',
   SubjectTitleTooShort: 'Subject Title is too short!',
-  SubjectTitleTooLong: "Subject Title is too long!"
+  SubjectTitleTooLong: "Subject Title is too long!",
+  DisplayNameRequired: "Display Name required! ",
+  DisplayNameTooShort: "Display Name  is too short!! ",
+  DisplayNameTooLong: "Display Nameis too long! ",
+
 };
 
 export const AddQuestionCategory = {
