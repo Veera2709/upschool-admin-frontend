@@ -26,6 +26,7 @@ const AddQuestions = ({ className, ...rest }) => {
     const [questionCategoryErrMsg, setQuestionCategoryErrMsg] = useState(false);
     const [questionEmptyErrMsg, setQuestionEmptyErrMsg] = useState(false);
     const [ansWeightageErrMsg, setAnsWeightageErrMsg] = useState(false);
+    const [unitWeightageErrMsg, setUnitWeightageErrMsg] = useState(false);
     const [answerTypeErrMsg, setAnswerTypeErrMsg] = useState(false);
 
     const [selectedQuestionType, setSelectedQuestionType] = useState([]);
@@ -201,6 +202,7 @@ const AddQuestions = ({ className, ...rest }) => {
         setQuestionCategoryErrMsg(false);
         setQuestionEmptyErrMsg(false);
         setAnsWeightageErrMsg(false);
+        setUnitWeightageErrMsg(false);
 
         setEquation([]);
 
@@ -258,10 +260,6 @@ const AddQuestions = ({ className, ...rest }) => {
 
         }
 
-        if (event.target.value === "Numbers" && event.target.name === 'answer_type') {
-            data[index][event.target.name] = event.target.value;
-        }
-
         if (event.target.value === "Numbers" && event.target.name === 'answer_content') {
             data[index][event.target.name] = Number(event.target.value);
         } else {
@@ -276,12 +274,41 @@ const AddQuestions = ({ className, ...rest }) => {
             data[index][event.target.name] = Number(event.target.value);
         }
 
+        // ------------ Alpha Numeric ---------------//
+
+        if (event.target.value === "Alpha Numeric" && event.target.name === 'answer_content') {
+            data[index][event.target.name] = Number(event.target.value);
+        } else {
+            data[index][event.target.name] = event.target.value;
+        }
+
+        if (event.target.value === "Alpha Numeric" && event.target.name === 'answer_range_from') {
+            data[index][event.target.name] = Number(event.target.value);
+        }
+
+        if (event.target.value === "Alpha Numeric" && event.target.name === 'answer_range_to') {
+            data[index][event.target.name] = Number(event.target.value);
+        }
+
+        if (event.target.value === "Alpha Numeric" && event.target.name === 'answer_unit') {
+            data[index][event.target.name] = event.target.value;
+        }
+
+        if (event.target.value === "Alpha Numeric" && event.target.name === 'unit_weightage') {
+            data[index][event.target.name] = Number(event.target.value);
+        }
+
+
         console.log(data);
 
         setAnswerOptionsForm(data);
 
         if (event.target.name === 'answer_weightage') {
             setAnsWeightageErrMsg(false);
+        }
+
+        if (event.target.name === 'unit_weightage') {
+            setUnitWeightageErrMsg(false);
         }
 
         if (data[index]['answer_type'] === 'Equation' && event.target.name === 'answer_content') {
@@ -659,10 +686,13 @@ const AddQuestions = ({ className, ...rest }) => {
                                             setQuestionEmptyErrMsg(true);
                                         } else if (answerOptionsForm) {
 
-                                            let tempWeightage = answerOptionsForm.filter(value => value.answer_weightage < 0);
+                                            let tempAnsWeightage = answerOptionsForm.filter(value => value.answer_weightage < 0);
+                                            let tempUnitWeightage = answerOptionsForm.filter(value => value.unit_weightage < 0);
 
-                                            if (tempWeightage.length !== 0) {
+                                            if (tempAnsWeightage.length !== 0) {
                                                 setAnsWeightageErrMsg(true);
+                                            } else if (tempUnitWeightage.length !== 0) {
+                                                setUnitWeightageErrMsg(true);
                                             } else {
 
                                                 console.log('Data inserted!', values.question_disclaimer);
@@ -1406,7 +1436,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                             name="answer_option"
                                                                             onBlur={handleBlur}
 
-                                                                            type="number"
+                                                                            type="text"
                                                                             value={form.answer_option}
                                                                             key={index}
                                                                             onChange={event => handleAnswerBlanks(event, index)}
@@ -1416,33 +1446,32 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                 Select...
                                                                             </option>
 
-                                                                            {
-                                                                                selectedQuestionType === 'Objective' ?
-                                                                                    <>
+                                                                            {selectedQuestionType === 'Objective' ?
+                                                                                <>
 
-                                                                                        {selectedArr.map((optionsData) => {
-                                                                                            { console.log(optionsData) }
-                                                                                            return <option
-                                                                                                value={optionsData.value}
-                                                                                                key={optionsData.value}
-                                                                                            >
-                                                                                                {optionsData.label}
-                                                                                            </option>
+                                                                                    {selectedArr.map((optionsData) => {
+                                                                                        { console.log(optionsData) }
+                                                                                        return <option
+                                                                                            value={optionsData.value}
+                                                                                            key={optionsData.value}
+                                                                                        >
+                                                                                            {optionsData.label}
+                                                                                        </option>
 
-                                                                                        })}
-                                                                                    </> : <>
+                                                                                    })}
+                                                                                </> : <>
 
-                                                                                        {answerBlanksOptions.map((optionsData) => {
+                                                                                    {answerBlanksOptions.map((optionsData) => {
 
-                                                                                            return <option
-                                                                                                value={optionsData.value}
-                                                                                                key={optionsData.value}
-                                                                                            >
-                                                                                                {optionsData.label}
-                                                                                            </option>
+                                                                                        return <option
+                                                                                            value={optionsData.value}
+                                                                                            key={optionsData.value}
+                                                                                        >
+                                                                                            {optionsData.label}
+                                                                                        </option>
 
-                                                                                        })}
-                                                                                    </>
+                                                                                    })}
+                                                                                </>
 
                                                                             }
 
@@ -1462,7 +1491,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                             label="answer_content"
                                                                             name="answer_content"
                                                                             onBlur={handleBlur}
-                                                                            type="text"
+                                                                            type="number"
                                                                             value={values.answer_content}
                                                                             onChange={event => handleAnswerBlanks(event, index)}
                                                                             placeholder="Enter Answer"
@@ -1587,6 +1616,389 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                         </>
                                                                     )
                                                                 }
+
+                                                            </>
+
+                                                        )}
+
+                                                        {form.answer_type === "Alpha Numeric" && answerBlanksOptions && (
+
+                                                            <>
+
+                                                                {selectedQuestionType === 'Subjective' ? (
+                                                                    <>
+                                                                        <br />
+                                                                        <Row key={index}>
+
+                                                                            <Col xs={3}>
+                                                                                <label className="floating-label">
+                                                                                    <small className="text-danger"></small>
+                                                                                    Placeholder
+                                                                                </label>
+
+                                                                                <select
+                                                                                    className="form-control"
+                                                                                    error={touched.answer_option && errors.answer_option}
+                                                                                    name="answer_option"
+                                                                                    onBlur={handleBlur}
+                                                                                    type="text"
+                                                                                    value={form.answer_option}
+                                                                                    key={index}
+                                                                                    onChange={event => handleAnswerBlanks(event, index)}
+                                                                                >
+
+                                                                                    <option>
+                                                                                        Select...
+                                                                                    </option>
+
+                                                                                    {selectedQuestionType === 'Objective' ?
+                                                                                        <>
+
+                                                                                            {selectedArr.map((optionsData) => {
+                                                                                                { console.log(optionsData) }
+                                                                                                return <option
+                                                                                                    value={optionsData.value}
+                                                                                                    key={optionsData.value}
+                                                                                                >
+                                                                                                    {optionsData.label}
+                                                                                                </option>
+
+                                                                                            })}
+                                                                                        </> : <>
+
+                                                                                            {answerBlanksOptions.map((optionsData) => {
+
+                                                                                                return <option
+                                                                                                    value={optionsData.value}
+                                                                                                    key={optionsData.value}
+                                                                                                >
+                                                                                                    {optionsData.label}
+                                                                                                </option>
+
+                                                                                            })}
+                                                                                        </>
+                                                                                    }
+
+                                                                                </select>
+
+
+                                                                            </Col>
+
+                                                                            <Col xs={5}>
+                                                                                <label className="floating-label">
+                                                                                    <small className="text-danger"></small>
+                                                                                    Answer
+                                                                                </label>
+                                                                                <input
+                                                                                    className="form-control"
+                                                                                    error={touched.answer_content && errors.answer_content}
+                                                                                    label="answer_content"
+                                                                                    name="answer_content"
+                                                                                    onBlur={handleBlur}
+                                                                                    type="number"
+                                                                                    value={values.answer_content}
+                                                                                    onChange={event => handleAnswerBlanks(event, index)}
+                                                                                    placeholder="Enter Answer"
+                                                                                />
+                                                                            </Col>
+
+                                                                            <Col xs={4}>
+                                                                                <label className="floating-label">
+                                                                                    <small className="text-danger"></small>
+                                                                                    Unit
+                                                                                </label>
+
+                                                                                <input
+                                                                                    className="form-control"
+                                                                                    error={touched.answer_unit && errors.answer_unit}
+                                                                                    label="answer_unit"
+                                                                                    name="answer_unit"
+                                                                                    onBlur={handleBlur}
+                                                                                    type="text"
+                                                                                    value={values.answer_unit}
+                                                                                    onChange={event => handleAnswerBlanks(event, index)}
+                                                                                    placeholder="Enter Unit"
+                                                                                />
+
+                                                                            </Col>
+                                                                        </Row>
+
+                                                                        <br />
+                                                                        <Row>
+
+                                                                            <Col>
+                                                                                <label className="floating-label">
+                                                                                    <small className="text-danger"></small>
+                                                                                    Weightage for Answer
+                                                                                </label>
+                                                                                <input
+                                                                                    className="form-control"
+                                                                                    error={touched.answer_weightage && errors.answer_weightage}
+                                                                                    label="answer_weightage"
+                                                                                    name="answer_weightage"
+                                                                                    onBlur={handleBlur}
+                                                                                    // onChange={handleChange}
+                                                                                    type="number"
+                                                                                    min="0.01"
+                                                                                    value={form.answer_weightage}
+                                                                                    onChange={event => handleAnswerBlanks(event, index)}
+                                                                                    placeholder="Enter Weightage for Answer"
+                                                                                />
+                                                                            </Col>
+
+                                                                            <Col>
+                                                                                <label className="floating-label">
+                                                                                    <small className="text-danger"></small>
+                                                                                    Weightage for Unit
+                                                                                </label>
+                                                                                <input
+                                                                                    className="form-control"
+                                                                                    error={touched.unit_weightage && errors.unit_weightage}
+                                                                                    label="unit_weightage"
+                                                                                    name="unit_weightage"
+                                                                                    onBlur={handleBlur}
+                                                                                    // onChange={handleChange}
+                                                                                    type="number"
+                                                                                    min="0.01"
+                                                                                    value={form.unit_weightage}
+                                                                                    onChange={event => handleAnswerBlanks(event, index)}
+                                                                                    placeholder="Enter Weightage for Unit"
+                                                                                />
+                                                                            </Col>
+
+                                                                            <Col>
+
+                                                                                {selectedQuestionType === 'Objective' ? (
+                                                                                    <label className="floating-label">
+                                                                                        <small className="text-danger"></small>
+                                                                                        Correct Answer
+                                                                                    </label>
+                                                                                ) : (
+                                                                                    <label className="floating-label">
+                                                                                        <small className="text-danger"></small>
+                                                                                        Answer Display
+                                                                                    </label>
+                                                                                )
+                                                                                }
+
+                                                                                <select
+                                                                                    className="form-control"
+                                                                                    error={touched.answer_display && errors.answer_display}
+                                                                                    name="answer_display"
+                                                                                    onBlur={handleBlur}
+
+                                                                                    type="text"
+                                                                                    value={form.answer_display}
+                                                                                    key={index}
+                                                                                    onChange={event => handleAnswerBlanks(event, index)}
+                                                                                >
+
+                                                                                    {answerDisplayOptions.map((optionsData) => {
+
+                                                                                        return <option
+                                                                                            value={optionsData.value}
+                                                                                            key={optionsData.value}
+                                                                                        >
+                                                                                            {optionsData.label}
+                                                                                        </option>
+
+                                                                                    })}
+
+                                                                                </select>
+
+
+                                                                            </Col>
+
+                                                                        </Row>
+
+                                                                        <br />
+                                                                        <Row>
+                                                                            <Col>
+                                                                                <label className="floating-label">
+                                                                                    <small className="text-danger"></small>
+                                                                                    Answer Range
+                                                                                </label>
+                                                                            </Col>
+                                                                        </Row>
+
+                                                                        <Row>
+                                                                            <Col xs={3}>
+                                                                                <input
+                                                                                    className="form-control"
+                                                                                    error={touched.answer_range_from && errors.answer_range_from}
+                                                                                    label="answer_range_from"
+                                                                                    name="answer_range_from"
+                                                                                    onBlur={handleBlur}
+                                                                                    type="number"
+                                                                                    value={values.answer_range_from}
+                                                                                    onChange={event => handleAnswerBlanks(event, index)}
+                                                                                    placeholder="From"
+                                                                                />
+                                                                            </Col>
+                                                                            <div style={{
+                                                                                paddingTop: "6px"
+                                                                            }}
+                                                                            >-</div>
+
+                                                                            <Col xs={3}>
+                                                                                <input
+                                                                                    className="form-control"
+                                                                                    error={touched.answer_range_to && errors.answer_range_to}
+                                                                                    label="answer_range_to"
+                                                                                    name="answer_range_to"
+                                                                                    onBlur={handleBlur}
+                                                                                    type="number"
+                                                                                    value={values.answer_range_to}
+                                                                                    onChange={event => handleAnswerBlanks(event, index)}
+                                                                                    placeholder="To"
+                                                                                />
+                                                                            </Col>
+                                                                        </Row>
+                                                                    </>
+                                                                ) : (
+
+                                                                    <>
+                                                                        <br />
+                                                                        <Row key={index}>
+
+                                                                            <Col xs={3}>
+                                                                                <label className="floating-label">
+                                                                                    <small className="text-danger"></small>
+                                                                                    Placeholder
+                                                                                </label>
+
+                                                                                <select
+                                                                                    className="form-control"
+                                                                                    error={touched.answer_option && errors.answer_option}
+                                                                                    name="answer_option"
+                                                                                    onBlur={handleBlur}
+                                                                                    type="text"
+                                                                                    value={form.answer_option}
+                                                                                    key={index}
+                                                                                    onChange={event => handleAnswerBlanks(event, index)}
+                                                                                >
+
+                                                                                    <option>
+                                                                                        Select...
+                                                                                    </option>
+
+                                                                                    {selectedQuestionType === 'Objective' ?
+                                                                                        <>
+
+                                                                                            {selectedArr.map((optionsData) => {
+                                                                                                { console.log(optionsData) }
+                                                                                                return <option
+                                                                                                    value={optionsData.value}
+                                                                                                    key={optionsData.value}
+                                                                                                >
+                                                                                                    {optionsData.label}
+                                                                                                </option>
+
+                                                                                            })}
+                                                                                        </> : <>
+
+                                                                                            {answerBlanksOptions.map((optionsData) => {
+
+                                                                                                return <option
+                                                                                                    value={optionsData.value}
+                                                                                                    key={optionsData.value}
+                                                                                                >
+                                                                                                    {optionsData.label}
+                                                                                                </option>
+
+                                                                                            })}
+                                                                                        </>
+                                                                                    }
+
+                                                                                </select>
+
+
+                                                                            </Col>
+
+                                                                            <Col xs={5}>
+                                                                                <label className="floating-label">
+                                                                                    <small className="text-danger"></small>
+                                                                                    Answer
+                                                                                </label>
+                                                                                <input
+                                                                                    className="form-control"
+                                                                                    error={touched.answer_content && errors.answer_content}
+                                                                                    label="answer_content"
+                                                                                    name="answer_content"
+                                                                                    onBlur={handleBlur}
+                                                                                    type="number"
+                                                                                    value={values.answer_content}
+                                                                                    onChange={event => handleAnswerBlanks(event, index)}
+                                                                                    placeholder="Enter Answer"
+                                                                                />
+                                                                            </Col>
+
+                                                                            <Col>
+
+                                                                                {selectedQuestionType === 'Objective' ? (
+                                                                                    <label className="floating-label">
+                                                                                        <small className="text-danger"></small>
+                                                                                        Correct Answer
+                                                                                    </label>
+                                                                                ) : (
+                                                                                    <label className="floating-label">
+                                                                                        <small className="text-danger"></small>
+                                                                                        Answer Display
+                                                                                    </label>
+                                                                                )
+                                                                                }
+
+                                                                                <select
+                                                                                    className="form-control"
+                                                                                    error={touched.answer_display && errors.answer_display}
+                                                                                    name="answer_display"
+                                                                                    onBlur={handleBlur}
+
+                                                                                    type="text"
+                                                                                    value={form.answer_display}
+                                                                                    key={index}
+                                                                                    onChange={event => handleAnswerBlanks(event, index)}
+                                                                                >
+
+                                                                                    {answerDisplayOptions.map((optionsData) => {
+
+                                                                                        return <option
+                                                                                            value={optionsData.value}
+                                                                                            key={optionsData.value}
+                                                                                        >
+                                                                                            {optionsData.label}
+                                                                                        </option>
+
+                                                                                    })}
+
+                                                                                </select>
+
+
+                                                                            </Col>
+
+                                                                            <Col>
+                                                                                <label className="floating-label">
+                                                                                    <small className="text-danger"></small>
+                                                                                    Weightage
+                                                                                </label>
+                                                                                <input
+                                                                                    className="form-control"
+                                                                                    error={touched.answer_weightage && errors.answer_weightage}
+                                                                                    label="answer_weightage"
+                                                                                    name="answer_weightage"
+                                                                                    onBlur={handleBlur}
+                                                                                    // onChange={handleChange}
+                                                                                    type="number"
+                                                                                    min="0.01"
+                                                                                    value={form.answer_weightage}
+                                                                                    onChange={event => handleAnswerBlanks(event, index)}
+                                                                                    placeholder="Enter Weightage"
+                                                                                />
+                                                                            </Col>
+
+                                                                        </Row>
+                                                                    </>
+                                                                )}
 
                                                             </>
 
@@ -2071,6 +2483,19 @@ const AddQuestions = ({ className, ...rest }) => {
 
                                                     </>
                                                 )}
+
+                                                {unitWeightageErrMsg && (
+                                                    <>
+                                                        <div
+                                                            style={{ color: 'red' }}
+                                                            className="error">
+                                                            Invalid Unit Weightage
+                                                        </div>
+
+                                                    </>
+                                                )}
+
+
                                             </Col>
                                             <Col>
                                                 <Row>

@@ -57,8 +57,8 @@ const EditQuestions = () => {
     const [questionLabelErr, setQuestionLabelErr] = useState(false);
     const [questionLabelValue, setQuestionLabelValue] = useState('');
 
-    const [equation, setEquation] = useState([]);
     const [previewImages, setPreviewImages] = useState([]);
+    const [commonPreview, setCommonPreview] = useState([]);
     const [fileValues, setFileValues] = useState([]);
     const [voiceNoteFileValues, setVoiceNoteFileValues] = useState('');
     const [previewAudios, setPreviewAudios] = useState([]);
@@ -206,10 +206,12 @@ const EditQuestions = () => {
                         individual_user_data.question_type === 'Subjective' ? setAnswerTypeOptions([
                             { value: 'Words', label: 'Words' },
                             { value: 'Numbers', label: 'Numbers' },
+                            { value: 'Alpha Numeric', label: 'Alpha Numeric' },
                             { value: 'Equation', label: 'Equation' }
                         ]) : setAnswerTypeOptions([
                             { value: 'Words', label: 'Words' },
                             { value: 'Numbers', label: 'Numbers' },
+                            { value: 'Alpha Numeric', label: 'Alpha Numeric' },
                             { value: 'Equation', label: 'Equation' },
                             { value: 'Image', label: 'Image' },
                             { value: 'Audio File', label: 'Audio File' }
@@ -220,6 +222,7 @@ const EditQuestions = () => {
                         let uploadParams = individual_user_data.answers_of_question;
                         let object;
                         let tempArray = [];
+                        let tempCommonPreviewArr = [];
                         let tempImgPreviewArr = [];
                         let tempAudioPreviewArr = [];
                         let tempEquPreviewArr = [];
@@ -234,12 +237,28 @@ const EditQuestions = () => {
 
                                         object = {
                                             answer_type: uploadParams[index].answer_type,
-                                            answer_content: uploadParams[index].answer_content,
+                                            answer_content: Number(uploadParams[index].answer_content),
                                             answer_display: uploadParams[index].answer_display,
                                             answer_option: uploadParams[index].answer_option,
                                             answer_weightage: uploadParams[index].answer_weightage,
                                             answer_range_from: Number(uploadParams[index].answer_range_from),
                                             answer_range_to: Number(uploadParams[index].answer_range_to)
+                                        }
+
+                                        tempArray.push(object);
+
+                                    } else if (uploadParams[index].answer_type === 'Alpha Numeric') {
+
+                                        object = {
+                                            answer_type: uploadParams[index].answer_type,
+                                            answer_content: Number(uploadParams[index].answer_content),
+                                            answer_unit: uploadParams[index].answer_unit,
+                                            answer_display: uploadParams[index].answer_display,
+                                            answer_option: uploadParams[index].answer_option,
+                                            answer_weightage: uploadParams[index].answer_weightage,
+                                            unit_weightage: uploadParams[index].unit_weightage,
+                                            answer_range_from: Number(uploadParams[index].answer_range_from),
+                                            answer_range_to: Number(uploadParams[index].answer_range_to),
                                         }
 
                                         tempArray.push(object);
@@ -261,6 +280,7 @@ const EditQuestions = () => {
 
                                         let tempPreviewImg = uploadParams[index].answer_content_url;
                                         tempImgPreviewArr.push(tempPreviewImg);
+                                        tempCommonPreviewArr.push(tempPreviewImg);
 
                                         index++;
                                         setValues(index);
@@ -268,17 +288,20 @@ const EditQuestions = () => {
 
                                         let tempPreviewEqu = uploadParams[index].answer_content;
                                         tempEquPreviewArr.push(tempPreviewEqu);
+                                        tempCommonPreviewArr.push(tempPreviewEqu);
+
                                         index++;
                                         setValues(index);
                                     } else if (uploadParams[index].answer_type === 'Audio File') {
 
                                         let tempPreviewAudio = uploadParams[index].answer_content_url;
                                         tempAudioPreviewArr.push(tempPreviewAudio);
+                                        tempCommonPreviewArr.push(tempPreviewAudio);
 
                                         index++;
                                         setValues(index);
                                     } else {
-
+                                        tempCommonPreviewArr.push("N.A.");
                                         index++;
                                         setValues(index);
                                     }
@@ -300,9 +323,11 @@ const EditQuestions = () => {
                                     tempArray.length >= 1 ? setAddAnswerOptions(true) : setAddAnswerOptions(false);
 
                                     setAnswerOptionsForm(tempArray);
+                                    setCommonPreview(tempCommonPreviewArr);
                                     setPreviewImages(tempImgPreviewArr);
                                     setPreviewAudios(tempAudioPreviewArr);
-                                    setEquation(tempEquPreviewArr);
+
+                                    console.log("tempCommonPreviewArr : ", tempCommonPreviewArr);
 
                                     if (individual_user_data.question_voice_note === 'N.A.') {
 
@@ -393,8 +418,13 @@ const EditQuestions = () => {
         tempPreviewImg[index] = '';
         setPreviewImages(tempPreviewImg);
 
+        let tempPreviewCommon = [...commonPreview];
+        tempPreviewCommon[index] = '';
+        setCommonPreview(tempPreviewCommon);
+
         let tempFileValue = [...fileValues];
-        tempFileValue[count] = '';
+        tempFileValue.splice(count, 1);
+        // tempFileValue[count] = '';
         setFileValues(tempFileValue);
 
         let data = [...answerOptionsForm];
@@ -412,8 +442,13 @@ const EditQuestions = () => {
         tempPreviewAudio[index] = '';
         setPreviewAudios(tempPreviewAudio);
 
+        let tempPreviewCommon = [...commonPreview];
+        tempPreviewCommon[index] = '';
+        setCommonPreview(tempPreviewCommon);
+
         let tempFileValue = [...fileValues];
-        tempFileValue[count] = '';
+        tempFileValue.splice(count, 1);
+        // tempFileValue[count] = '';
         setFileValues(tempFileValue);
 
         let data = [...answerOptionsForm];
@@ -461,7 +496,6 @@ const EditQuestions = () => {
         setAnsWeightageErrMsg(false);
 
         setAddAnswerOptions(false);
-        setEquation([]);
 
         console.log(event.target);
 
@@ -472,10 +506,12 @@ const EditQuestions = () => {
         valuesSelected === 'Subjective' ? setAnswerTypeOptions([
             { value: 'Words', label: 'Words' },
             { value: 'Numbers', label: 'Numbers' },
+            { value: 'Alpha Numeric', label: 'Alpha Numeric' },
             { value: 'Equation', label: 'Equation' }
         ]) : setAnswerTypeOptions([
             { value: 'Words', label: 'Words' },
             { value: 'Numbers', label: 'Numbers' },
+            { value: 'Alpha Numeric', label: 'Alpha Numeric' },
             { value: 'Equation', label: 'Equation' },
             { value: 'Image', label: 'Image' },
             { value: 'Audio File', label: 'Audio File' }
@@ -491,93 +527,6 @@ const EditQuestions = () => {
             icon: alert.type
         });
     };
-
-    // const handleAnswerBlanks = (event, index) => {
-
-    //     let data = [...answerOptionsForm];
-    //     if (toggleNumbersInput && event.target.name === 'answer_content') {
-    //         data[index][event.target.name] = Number(event.target.value);
-    //     } else {
-    //         data[index][event.target.name] = event.target.value;
-    //     }
-
-    //     if (toggleNumbersInput && event.target.name === 'answer_range_from') {
-    //         data[index][event.target.name] = Number(event.target.value);
-    //     }
-
-    //     if (toggleNumbersInput && event.target.name === 'answer_range_to') {
-    //         data[index][event.target.name] = Number(event.target.value);
-    //     }
-
-    //     data[index]["answer_type"] = selectedAnswerType;
-
-    //     if (event.target.name === 'answer_weightage') {
-    //         setAnsWeightageErrMsg(false);
-    //     }
-
-    //     if (toggleEquationsInput && event.target.name === 'answer_content') {
-    //         let tempEquation = [...equation];
-    //         tempEquation[index] = event.target.value;
-
-    //         setEquation(tempEquation);
-    //     }
-
-    //     if (toggleImageInput && event.target.name === 'answer_content') {
-
-    //         data[index][event.target.name] = '';
-
-    //         if (areFilesInvalid([event.target.files[0]]) !== 0) {
-    //             sweetAlertHandler(
-    //                 {
-    //                     title: 'Invalid Image File(s)!',
-    //                     type: 'warning',
-    //                     text: 'Supported file formats are .png, .jpg, .jpeg. Uploaded files should be less than 2MB. '
-    //                 }
-    //             );
-    //         } else {
-
-    //             let tempPreviewImg = [...previewImages];
-    //             tempPreviewImg[index] = event.target.files.length === 0 ? '' : URL.createObjectURL(event.target.files[0]);
-    //             setPreviewImages(tempPreviewImg);
-
-    //             let tempFileValue = [...fileValues];
-    //             tempFileValue[count] = event.target.files.length === 0 ? '' : event.target.files[0];
-    //             setFileValues(tempFileValue);
-
-    //             let tempCount = count + 1;
-    //             setCount(tempCount);
-    //         }
-
-    //     }
-
-    //     if (toggleAudioInput && event.target.name === 'answer_content') {
-
-    //         data[index][event.target.name] = '';
-
-    //         if (voiceInvalid([event.target.files[0]]) !== 0) {
-    //             sweetAlertHandler({
-    //                 title: 'Invalid Audio File(s)!',
-    //                 type: 'warning',
-    //                 text: 'Supported file formats are .mp3, .mpeg, .wav. Uploaded files should be less than 10MB. '
-    //             });
-    //         } else {
-
-    //             let tempPreviewAudio = [...previewAudios];
-    //             tempPreviewAudio[index] = event.target.files.length === 0 ? '' : URL.createObjectURL(event.target.files[0]);
-    //             setPreviewAudios(tempPreviewAudio);
-
-    //             let tempFileValue = [...fileValues];
-    //             tempFileValue[count] = event.target.files.length === 0 ? '' : event.target.files[0];
-    //             setFileValues(tempFileValue);
-
-    //             let tempCount = event.target.files.length === 0 ? count : count + 1;
-    //             setCount(tempCount);
-
-    //         }
-    //     }
-
-    //     setAnswerOptionsForm(data);
-    // }
 
     const handleAnswerBlanks = (event, index) => {
 
@@ -596,23 +545,14 @@ const EditQuestions = () => {
 
             // Clear selected File Values (Image&Audio)
             let tempFileValue = [...fileValues];
-            tempFileValue[index] = '';
+            tempFileValue.splice(index, 1);
             setFileValues(tempFileValue);
 
-            // Clear Image Preview Values
-            let tempPreviewImg = [...previewImages];
-            tempPreviewImg[index] = '';
-            setPreviewImages(tempPreviewImg);
+            // Clear Common Preview Values
+            let tempPreviewCommon = [...commonPreview];
+            tempPreviewCommon[index] = '';
+            setCommonPreview(tempPreviewCommon);
 
-            // Clear Audio Preview Values
-            let tempPreviewAudio = [...previewAudios];
-            tempPreviewAudio[index] = '';
-            setPreviewAudios(tempPreviewAudio);
-
-        }
-
-        if (event.target.value === "Numbers" && event.target.name === 'answer_type') {
-            data[index][event.target.name] = event.target.value;
         }
 
         if (event.target.value === "Numbers" && event.target.name === 'answer_content') {
@@ -629,6 +569,30 @@ const EditQuestions = () => {
             data[index][event.target.name] = Number(event.target.value);
         }
 
+        // ------------ Alpha Numeric ---------------//
+
+        if (event.target.value === "Alpha Numeric" && event.target.name === 'answer_content') {
+            data[index][event.target.name] = Number(event.target.value);
+        } else {
+            data[index][event.target.name] = event.target.value;
+        }
+
+        if (event.target.value === "Alpha Numeric" && event.target.name === 'answer_range_from') {
+            data[index][event.target.name] = Number(event.target.value);
+        }
+
+        if (event.target.value === "Alpha Numeric" && event.target.name === 'answer_range_to') {
+            data[index][event.target.name] = Number(event.target.value);
+        }
+
+        if (event.target.value === "Alpha Numeric" && event.target.name === 'answer_unit') {
+            data[index][event.target.name] = event.target.value;
+        }
+
+        if (event.target.value === "Alpha Numeric" && event.target.name === 'unit_weightage') {
+            data[index][event.target.name] = Number(event.target.value);
+        }
+
         console.log(data);
 
         setAnswerOptionsForm(data);
@@ -638,11 +602,10 @@ const EditQuestions = () => {
         }
 
         if (data[index]['answer_type'] === 'Equation' && event.target.name === 'answer_content') {
-            let tempEquation = [...equation];
-            tempEquation[index] = event.target.value;
 
-            console.log(tempEquation);
-            setEquation(tempEquation);
+            let tempEquation = [...commonPreview];
+            tempEquation[index] = event.target.value;
+            setCommonPreview(tempEquation);
         }
 
         if (data[index]['answer_type'] === 'Image' && event.target.files && event.target.name === 'answer_content') {
@@ -657,9 +620,9 @@ const EditQuestions = () => {
                 );
             } else {
 
-                let tempPreviewImg = [...previewImages];
-                tempPreviewImg[index] = event.target.files.length === 0 ? '' : URL.createObjectURL(event.target.files[0]);
-                setPreviewImages(tempPreviewImg);
+                let tempPreviewCommon = [...commonPreview];
+                tempPreviewCommon[index] = event.target.files.length === 0 ? '' : URL.createObjectURL(event.target.files[0]);
+                setCommonPreview(tempPreviewCommon);
 
                 let tempFileValue = [...fileValues];
                 tempFileValue[index] = event.target.files[0];
@@ -677,9 +640,9 @@ const EditQuestions = () => {
                 });
             } else {
 
-                let tempPreviewAudio = [...previewAudios];
-                tempPreviewAudio[index] = event.target.files.length === 0 ? '' : URL.createObjectURL(event.target.files[0]);
-                setPreviewAudios(tempPreviewAudio);
+                let tempPreviewCommon = [...commonPreview];
+                tempPreviewCommon[index] = event.target.files.length === 0 ? '' : URL.createObjectURL(event.target.files[0]);
+                setCommonPreview(tempPreviewCommon);
 
                 let tempFileValue = [...fileValues];
                 tempFileValue[index] = event.target.files[0];
@@ -845,7 +808,6 @@ const EditQuestions = () => {
                         }
                     }
 
-
                 } else {
 
                     console.log('else res');
@@ -912,99 +874,79 @@ const EditQuestions = () => {
                             let blobField = voiceNoteFileValues;
                             console.log({ blobField });
 
-                            let tempObj = uploadParamsQuestionsNote[index];
-                            let result = fetch(tempObj[keyName], {
-                                method: 'PUT',
-                                body: blobField
-                            });
-
-                            console.log({ result });
-                        }
-
-
-                        if (Array.isArray(uploadParamsAnswerOptions)) {
-
-                            for (let index = 0; index < uploadParamsAnswerOptions.length; index++) {
-
-                                let keyNameArr = Object.keys(uploadParamsAnswerOptions[index]);
-                                let keyName = keyNameArr[1];
-
-                                console.log(fileValues);
-
-                                let blobField = fileValues[index];
-                                console.log({ blobField });
-
-                                if (blobField !== undefined || blobField !== 'undefined') {
-
-                                    let tempObjFile = uploadParamsAnswerOptions[index];
-
-                                    let result = fetch(tempObjFile[keyName], {
-                                        method: 'PUT',
-                                        body: blobField
-                                    });
-
-                                    console.log({ result });
-                                }
-
-                            }
-
-                            const MySwal = withReactContent(Swal);
-
-                            MySwal.fire({
-
-                                title: sessionStorage.getItem('click_event') === 'Save' ? 'Question Saved!' : sessionStorage.getItem('click_event') === 'Submit' ? 'Question Submitted!' : sessionStorage.getItem('click_event') === 'Accept' ? "Question Accepted!" : sessionStorage.getItem('click_event') === 'Reject' ? "Question Rejected!" : sessionStorage.getItem('click_event') === 'Revisit' ? "Question marked as Revisit!" : sessionStorage.getItem('click_event') === 'DesignReady' ? "Question marked as Design Ready!" : "Question Published!",
-                                icon: 'success',
-                            }).then((willDelete) => {
-
-                                history.push('/admin-portal/active-questions');
-                                // window.location.reload();
-
-                            });
-
-                        } else {
-
-                            console.log('Answer option files not uploaded!');
-                        }
-
-
-                    } else {
-
-                        if (Array.isArray(uploadParamsAnswerOptions)) {
-
-                            for (let index = 0; index < uploadParamsAnswerOptions.length; index++) {
-
-                                let keyNameArr = Object.keys(uploadParamsAnswerOptions[index]);
-                                let keyName = keyNameArr[1];
-
-                                let blobField = fileValues[index];
-                                console.log({ blobField });
-
-                                let tempObjFile = uploadParamsAnswerOptions[index];
-
-                                let result = fetch(tempObjFile[keyName], {
+                            if (blobField !== undefined || blobField !== 'undefined') {
+                                let tempObj = uploadParamsQuestionsNote[index];
+                                let result = fetch(tempObj[keyName], {
                                     method: 'PUT',
                                     body: blobField
                                 });
 
                                 console.log({ result });
                             }
-
-                            const MySwal = withReactContent(Swal);
-                            MySwal.fire({
-
-                                title: displaySuccessMsg,
-                                icon: 'success',
-                            }).then((willDelete) => {
-
-                                history.push('/admin-portal/active-questions');
-                                // window.location.reload();
-
-                            })
-
-                            console.log('Question Voice Note not uploaded');
                         }
-                    }
 
+
+                        if (Array.isArray(fileValues)) {
+
+                            function setEditedImages(index) {
+
+                                if (index < fileValues.length) {
+
+                                    let keyNameArr = Object.keys(uploadParamsAnswerOptions[0]);
+                                    let keyName = keyNameArr[1];
+
+                                    console.log(fileValues);
+
+                                    let blobField = fileValues[index];
+                                    console.log({ blobField });
+                                    console.log((blobField === undefined || blobField === 'undefined'));
+
+                                    if (blobField === undefined || blobField === 'undefined') {
+
+                                        console.log("Inside Undefined");
+                                        index++;
+                                        setEditedImages(index);
+
+                                    } else {
+
+                                        let tempObjFile = uploadParamsAnswerOptions[0];
+                                        uploadParamsAnswerOptions.shift();
+
+                                        let result = fetch(tempObjFile[keyName], {
+                                            method: 'PUT',
+                                            body: blobField
+                                        });
+
+                                        console.log({ result });
+
+                                        index++;
+                                        setEditedImages(index);
+
+                                    }
+
+                                } else {
+
+                                    const MySwal = withReactContent(Swal);
+
+                                    MySwal.fire({
+
+                                        title: sessionStorage.getItem('click_event') === 'Save' ? 'Question Saved!' : sessionStorage.getItem('click_event') === 'Submit' ? 'Question Submitted!' : sessionStorage.getItem('click_event') === 'Accept' ? "Question Accepted!" : sessionStorage.getItem('click_event') === 'Reject' ? "Question Rejected!" : sessionStorage.getItem('click_event') === 'Revisit' ? "Question marked as Revisit!" : sessionStorage.getItem('click_event') === 'DesignReady' ? "Question marked as Design Ready!" : "Question Published!",
+                                        icon: 'success',
+                                    }).then((willDelete) => {
+
+                                        history.push('/admin-portal/active-questions');
+                                        // window.location.reload();
+
+                                    });
+                                }
+                            }
+                            setEditedImages(0);
+
+                        }
+
+                    } else {
+                        console.log("Invalid type received!")
+                    }
 
                 } else {
 
@@ -1037,14 +979,21 @@ const EditQuestions = () => {
     }
 
     const newQuestion = () => {
+
         let name = document.getElementById('newQuestionLabel').value;
+
         if ((name.length <= 2 && name.length > 0) || name.length > 32) {
+
             name.length > 32 ? setNewDigicardErrMax(true) : setNewDigicardErrMin(true)
-            setnNewDigicard(true)
+            setnNewDigicard(true);
+
         } else if (name.trim().length === 0) {
-            setNewDigicardErrReq(true)
-            setnNewDigicard(true)
+
+            setNewDigicardErrReq(true);
+            setnNewDigicard(true);
+
         } else {
+
             let payLoad = {
 
                 question_type: selectedQuestionType,
@@ -1063,6 +1012,7 @@ const EditQuestions = () => {
     }
 
     const addnewQuestion = () => {
+
         let DigiCardtitleRegex = Constants.AddDigiCard.DigiCardtitleRegex;
         if (questionLabelValue === "" || questionLabelValue === undefined || questionLabelValue === "undefined") {
             setQuestionLabelErr(true);
@@ -1079,279 +1029,7 @@ const EditQuestions = () => {
             if (tempWeightage.length !== 0) {
                 setAnsWeightageErrMsg(true);
             } else {
-
-                console.log('Data inserted!');
-
-                let allFilesData = [];
-                let questionsVoiceNoteFilesData = [];
-
-                if (selectedQuestionVoiceNote) {
-
-                    let selectedFileVoiceNote = voiceNoteFileValues;
-                    console.log('File is here!');
-                    console.log(selectedFileVoiceNote);
-
-                    if (selectedFileVoiceNote) {
-                        questionsVoiceNoteFilesData.push(selectedFileVoiceNote);
-                    }
-
-                    if (questionsVoiceNoteFilesData.length === 0) {
-
-                        if (selectedAnswerType === "Image") {
-
-                            fileValues.forEach((fileName) => {
-                                let selectedFile = fileName;
-                                console.log('File is here!');
-                                console.log(selectedFile);
-                                if (selectedFile) {
-                                    allFilesData.push(selectedFile);
-                                }
-                            });
-
-                            console.log(allFilesData);
-
-                            if (allFilesData.length === 0) {
-
-
-                                setnNewDigicard(true)
-
-
-                            } else {
-                                if (areFilesInvalid(allFilesData) !== 0) {
-                                    sweetAlertHandler(
-                                        {
-                                            title: 'Invalid Image File(s)!',
-                                            type: 'warning',
-                                            text: 'Supported file formats are .png, .jpg, .jpeg. Uploaded files should be less than 2MB. '
-                                        }
-                                    );
-                                } else {
-
-
-                                    setnNewDigicard(true)
-
-
-                                }
-                            }
-
-                        } else if (selectedAnswerType === "Audio File") {
-
-                            fileValues.forEach((fileName) => {
-                                let selectedFile = fileName;
-                                console.log('File is here!');
-                                console.log(selectedFile);
-                                if (selectedFile) {
-                                    allFilesData.push(selectedFile);
-                                }
-                            });
-
-                            console.log(allFilesData);
-
-                            if (allFilesData.length === 0) {
-
-
-                                setnNewDigicard(true)
-
-
-
-                            } else {
-
-                                if (voiceInvalid(allFilesData) !== 0) {
-                                    sweetAlertHandler({
-                                        title: 'Invalid Audio File(s)!',
-                                        type: 'warning',
-                                        text: 'Supported file formats are .mp3, .mpeg, .wav. Uploaded files should be less than 10MB. '
-                                    });
-                                } else {
-
-
-                                    setnNewDigicard(true)
-
-
-                                }
-                            }
-                        } else {
-
-                            setnNewDigicard(true)
-
-
-                        }
-
-                    } else {
-
-                        if (voiceInvalid(questionsVoiceNoteFilesData) !== 0) {
-                            sweetAlertHandler({
-                                title: 'Invalid Question Voice Note File!',
-                                type: 'warning',
-                                text: 'Supported file formats are .mp3, .mpeg, .wav. Uploaded files should be less than 10MB. '
-                            });
-                        } else {
-
-                            if (selectedAnswerType === "Image") {
-
-                                fileValues.forEach((fileName) => {
-                                    let selectedFile = fileName;
-                                    console.log('File is here!');
-                                    console.log(selectedFile);
-                                    if (selectedFile) {
-                                        allFilesData.push(selectedFile);
-                                    }
-                                });
-
-                                console.log(allFilesData);
-
-                                if (allFilesData.length === 0) {
-
-
-                                    setnNewDigicard(true)
-
-
-                                } else {
-                                    if (areFilesInvalid(allFilesData) !== 0) {
-                                        sweetAlertHandler(
-                                            {
-                                                title: 'Invalid Image File(s)!',
-                                                type: 'warning',
-                                                text: 'Supported file formats are .png, .jpg, .jpeg. Uploaded files should be less than 2MB. '
-                                            }
-                                        );
-                                    } else {
-
-
-                                        setnNewDigicard(true)
-
-
-                                    }
-                                }
-
-                            } else if (selectedAnswerType === "Audio File") {
-
-                                fileValues.forEach((fileName) => {
-                                    let selectedFile = fileName;
-                                    console.log('File is here!');
-                                    console.log(selectedFile);
-                                    if (selectedFile) {
-                                        allFilesData.push(selectedFile);
-                                    }
-                                });
-
-                                console.log(allFilesData);
-
-                                if (allFilesData.length === 0) {
-
-
-                                    setnNewDigicard(true)
-
-
-
-                                } else {
-
-                                    if (voiceInvalid(allFilesData) !== 0) {
-                                        sweetAlertHandler({
-                                            title: 'Invalid Audio File(s)!',
-                                            type: 'warning',
-                                            text: 'Supported file formats are .mp3, .mpeg, .wav. Uploaded files should be less than 10MB. '
-                                        });
-                                    } else {
-
-
-                                        setnNewDigicard(true)
-
-
-                                    }
-                                }
-                            } else {
-
-
-                                setnNewDigicard(true)
-
-
-                            }
-
-                        }
-                    }
-
-                }
-                else {
-
-                    if (selectedAnswerType === "Image") {
-
-                        fileValues.forEach((fileName) => {
-                            let selectedFile = fileName;
-                            console.log('File is here!');
-                            console.log(selectedFile);
-                            if (selectedFile) {
-                                allFilesData.push(selectedFile);
-                            }
-                        });
-
-                        console.log(allFilesData);
-
-                        if (allFilesData.length === 0) {
-
-                            setnNewDigicard(true)
-
-
-                        } else {
-                            if (areFilesInvalid(allFilesData) !== 0) {
-                                sweetAlertHandler(
-                                    {
-                                        title: 'Invalid Image File(s)!',
-                                        type: 'warning',
-                                        text: 'Supported file formats are .png, .jpg, .jpeg. Uploaded files should be less than 2MB. '
-                                    }
-                                );
-                            } else {
-
-
-                                setnNewDigicard(true)
-
-
-                            }
-                        }
-
-                    } else if (selectedAnswerType === "Audio File") {
-
-                        fileValues.forEach((fileName) => {
-                            let selectedFile = fileName;
-                            console.log('File is here!');
-                            console.log(selectedFile);
-                            if (selectedFile) {
-                                allFilesData.push(selectedFile);
-                            }
-                        });
-
-                        console.log(allFilesData);
-
-                        if (allFilesData.length === 0) {
-
-                            setnNewDigicard(true)
-
-
-
-                        } else {
-
-                            if (voiceInvalid(allFilesData) !== 0) {
-                                sweetAlertHandler({
-                                    title: 'Invalid Audio File(s)!',
-                                    type: 'warning',
-                                    text: 'Supported file formats are .mp3, .mpeg, .wav. Uploaded files should be less than 10MB. '
-                                });
-                            } else {
-
-
-                                setnNewDigicard(true)
-
-
-                            }
-                        }
-                    } else {
-                        setnNewDigicard(true)
-
-
-                    }
-
-                }
+                setnNewDigicard(true);
             }
         }
     }
@@ -1360,7 +1038,7 @@ const EditQuestions = () => {
 
         <>
             {
-                // (options.length) > 0 && (optionsDisclaimer.length > 0) &&
+
                 (isLoading ? (
                     <BasicSpinner />
                 ) : (
@@ -1469,7 +1147,6 @@ const EditQuestions = () => {
                                                                 }
                                                             }
 
-
                                                         } else {
 
                                                             console.log(questionLabelValue);
@@ -1511,252 +1188,8 @@ const EditQuestions = () => {
 
                                                                     console.log("payLoad", payLoad);
 
-                                                                    let allFilesData = [];
-                                                                    let questionsVoiceNoteFilesData = [];
-
-                                                                    if (selectedQuestionVoiceNote) {
-
-                                                                        let selectedFileVoiceNote = voiceNoteFileValues;
-                                                                        console.log('File is here!');
-                                                                        console.log(selectedFileVoiceNote);
-
-                                                                        if (selectedFileVoiceNote) {
-                                                                            questionsVoiceNoteFilesData.push(selectedFileVoiceNote);
-                                                                        }
-
-                                                                        if (questionsVoiceNoteFilesData.length === 0) {
-
-                                                                            if (selectedAnswerType === "Image") {
-
-                                                                                fileValues.forEach((fileName) => {
-                                                                                    let selectedFile = fileName;
-                                                                                    console.log('File is here!');
-                                                                                    console.log(selectedFile);
-                                                                                    if (selectedFile) {
-                                                                                        allFilesData.push(selectedFile);
-                                                                                    }
-                                                                                });
-
-                                                                                console.log(allFilesData);
-
-                                                                                if (allFilesData.length === 0) {
-
-                                                                                    showLoader();
-                                                                                    _editQuestions(payLoad);
-
-                                                                                } else {
-                                                                                    if (areFilesInvalid(allFilesData) !== 0) {
-                                                                                        sweetAlertHandler(
-                                                                                            {
-                                                                                                title: 'Invalid Image File(s)!',
-                                                                                                type: 'warning',
-                                                                                                text: 'Supported file formats are .png, .jpg, .jpeg. Uploaded files should be less than 2MB. '
-                                                                                            }
-                                                                                        );
-                                                                                    } else {
-
-                                                                                        showLoader();
-                                                                                        _editQuestions(payLoad);
-                                                                                    }
-                                                                                }
-
-                                                                            } else if (selectedAnswerType === "Audio File") {
-
-                                                                                fileValues.forEach((fileName) => {
-                                                                                    let selectedFile = fileName;
-                                                                                    console.log('File is here!');
-                                                                                    console.log(selectedFile);
-                                                                                    if (selectedFile) {
-                                                                                        allFilesData.push(selectedFile);
-                                                                                    }
-                                                                                });
-
-                                                                                console.log(allFilesData);
-
-                                                                                if (allFilesData.length === 0) {
-
-                                                                                    showLoader();
-                                                                                    _editQuestions(payLoad);
-
-                                                                                } else {
-
-                                                                                    if (voiceInvalid(allFilesData) !== 0) {
-                                                                                        sweetAlertHandler({
-                                                                                            title: 'Invalid Audio File(s)!',
-                                                                                            type: 'warning',
-                                                                                            text: 'Supported file formats are .mp3, .mpeg, .wav. Uploaded files should be less than 10MB. '
-                                                                                        });
-                                                                                    } else {
-
-                                                                                        showLoader();
-                                                                                        _editQuestions(payLoad);
-                                                                                    }
-                                                                                }
-                                                                            } else {
-
-                                                                                showLoader();
-                                                                                _editQuestions(payLoad);
-                                                                            }
-
-                                                                        } else {
-
-                                                                            if (voiceInvalid(questionsVoiceNoteFilesData) !== 0) {
-                                                                                sweetAlertHandler({
-                                                                                    title: 'Invalid Question Voice Note File!',
-                                                                                    type: 'warning',
-                                                                                    text: 'Supported file formats are .mp3, .mpeg, .wav. Uploaded files should be less than 10MB. '
-                                                                                });
-                                                                            } else {
-
-                                                                                if (selectedAnswerType === "Image") {
-
-                                                                                    fileValues.forEach((fileName) => {
-                                                                                        let selectedFile = fileName;
-                                                                                        console.log('File is here!');
-                                                                                        console.log(selectedFile);
-                                                                                        if (selectedFile) {
-                                                                                            allFilesData.push(selectedFile);
-                                                                                        }
-                                                                                    });
-
-                                                                                    console.log(allFilesData);
-
-                                                                                    if (allFilesData.length === 0) {
-
-                                                                                        showLoader();
-                                                                                        _editQuestions(payLoad);
-
-                                                                                    } else {
-                                                                                        if (areFilesInvalid(allFilesData) !== 0) {
-                                                                                            sweetAlertHandler(
-                                                                                                {
-                                                                                                    title: 'Invalid Image File(s)!',
-                                                                                                    type: 'warning',
-                                                                                                    text: 'Supported file formats are .png, .jpg, .jpeg. Uploaded files should be less than 2MB. '
-                                                                                                }
-                                                                                            );
-                                                                                        } else {
-
-                                                                                            showLoader();
-                                                                                            _editQuestions(payLoad);
-                                                                                        }
-                                                                                    }
-
-                                                                                } else if (selectedAnswerType === "Audio File") {
-
-                                                                                    fileValues.forEach((fileName) => {
-                                                                                        let selectedFile = fileName;
-                                                                                        console.log('File is here!');
-                                                                                        console.log(selectedFile);
-                                                                                        if (selectedFile) {
-                                                                                            allFilesData.push(selectedFile);
-                                                                                        }
-                                                                                    });
-
-                                                                                    console.log(allFilesData);
-
-                                                                                    if (allFilesData.length === 0) {
-
-                                                                                        showLoader();
-                                                                                        _editQuestions(payLoad);
-
-                                                                                    } else {
-
-                                                                                        if (voiceInvalid(allFilesData) !== 0) {
-                                                                                            sweetAlertHandler({
-                                                                                                title: 'Invalid Audio File(s)!',
-                                                                                                type: 'warning',
-                                                                                                text: 'Supported file formats are .mp3, .mpeg, .wav. Uploaded files should be less than 10MB. '
-                                                                                            });
-                                                                                        } else {
-
-                                                                                            showLoader();
-                                                                                            _editQuestions(payLoad);
-                                                                                        }
-                                                                                    }
-                                                                                } else {
-
-                                                                                    showLoader();
-                                                                                    _editQuestions(payLoad);
-                                                                                }
-
-                                                                            }
-                                                                        }
-
-                                                                    } else {
-
-                                                                        if (selectedAnswerType === "Image") {
-
-                                                                            fileValues.forEach((fileName) => {
-                                                                                let selectedFile = fileName;
-                                                                                console.log('File is here!');
-                                                                                console.log(selectedFile);
-                                                                                if (selectedFile) {
-                                                                                    allFilesData.push(selectedFile);
-                                                                                }
-                                                                            });
-
-                                                                            console.log(allFilesData);
-
-                                                                            if (allFilesData.length === 0) {
-
-                                                                                showLoader();
-                                                                                _editQuestions(payLoad);
-
-                                                                            } else {
-                                                                                if (areFilesInvalid(allFilesData) !== 0) {
-                                                                                    sweetAlertHandler(
-                                                                                        {
-                                                                                            title: 'Invalid Image File(s)!',
-                                                                                            type: 'warning',
-                                                                                            text: 'Supported file formats are .png, .jpg, .jpeg. Uploaded files should be less than 2MB. '
-                                                                                        }
-                                                                                    );
-                                                                                } else {
-
-                                                                                    showLoader();
-                                                                                    _editQuestions(payLoad);
-                                                                                }
-                                                                            }
-
-                                                                        } else if (selectedAnswerType === "Audio File") {
-
-                                                                            fileValues.forEach((fileName) => {
-                                                                                let selectedFile = fileName;
-                                                                                console.log('File is here!');
-                                                                                console.log(selectedFile);
-                                                                                if (selectedFile) {
-                                                                                    allFilesData.push(selectedFile);
-                                                                                }
-                                                                            });
-
-                                                                            console.log(allFilesData);
-
-                                                                            if (allFilesData.length === 0) {
-
-                                                                                showLoader();
-                                                                                _editQuestions(payLoad);
-
-                                                                            } else {
-
-                                                                                if (voiceInvalid(allFilesData) !== 0) {
-                                                                                    sweetAlertHandler({
-                                                                                        title: 'Invalid Audio File(s)!',
-                                                                                        type: 'warning',
-                                                                                        text: 'Supported file formats are .mp3, .mpeg, .wav. Uploaded files should be less than 10MB. '
-                                                                                    });
-                                                                                } else {
-
-                                                                                    showLoader();
-                                                                                    _editQuestions(payLoad);
-                                                                                }
-                                                                            }
-                                                                        } else {
-
-                                                                            showLoader();
-                                                                            _editQuestions(payLoad);
-                                                                        }
-                                                                    }
+                                                                    showLoader();
+                                                                    _editQuestions(payLoad);
 
                                                                 }
                                                             }
@@ -1967,12 +1400,6 @@ const EditQuestions = () => {
                                                                         menuPortalTarget={document.body}
                                                                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                                                     />
-
-                                                                    {/* {errorMessageDisclaimer && (
-                                                                        <>
-                                                                            <small className="text-danger form-text">{'Please select Question Disclaimer'}</small>
-                                                                        </>
-                                                                    )} */}
 
                                                                 </Col>
                                                                 <Col></Col>
@@ -2417,13 +1844,13 @@ const EditQuestions = () => {
                                                                                                     Preview
                                                                                                 </label>
 
-                                                                                                {equation.length >= 1 && (
+                                                                                                {commonPreview.length >= 1 && (
                                                                                                     <MathJax.Provider>
                                                                                                         {
                                                                                                             (
-                                                                                                                equation[index] && (
+                                                                                                                commonPreview[index] && (
                                                                                                                     <div>
-                                                                                                                        <MathJax.Node inline formula={equation[index]} />
+                                                                                                                        <MathJax.Node inline formula={commonPreview[index]} />
                                                                                                                     </div>
                                                                                                                 )
                                                                                                             )
@@ -2515,7 +1942,7 @@ const EditQuestions = () => {
                                                                                                     label="answer_content"
                                                                                                     name="answer_content"
                                                                                                     onBlur={handleBlur}
-                                                                                                    type="text"
+                                                                                                    type="number"
                                                                                                     value={form.answer_content}
                                                                                                     onChange={event => handleAnswerBlanks(event, index)}
                                                                                                     placeholder="Enter Answer"
@@ -2640,6 +2067,389 @@ const EditQuestions = () => {
                                                                                                 </>
                                                                                             )
                                                                                         }
+
+                                                                                    </>
+
+                                                                                )}
+
+                                                                                {form.answer_type === "Alpha Numeric" && answerBlanksOptions && (
+
+                                                                                    <>
+
+                                                                                        {selectedQuestionType === 'Subjective' ? (
+                                                                                            <>
+                                                                                                <br />
+                                                                                                <Row key={index}>
+
+                                                                                                    <Col xs={3}>
+                                                                                                        <label className="floating-label">
+                                                                                                            <small className="text-danger"></small>
+                                                                                                            Placeholder
+                                                                                                        </label>
+
+                                                                                                        <select
+                                                                                                            className="form-control"
+                                                                                                            error={touched.answer_option && errors.answer_option}
+                                                                                                            name="answer_option"
+                                                                                                            onBlur={handleBlur}
+                                                                                                            type="text"
+                                                                                                            value={form.answer_option}
+                                                                                                            key={index}
+                                                                                                            onChange={event => handleAnswerBlanks(event, index)}
+                                                                                                        >
+
+                                                                                                            <option>
+                                                                                                                Select...
+                                                                                                            </option>
+
+                                                                                                            {selectedQuestionType === 'Objective' ?
+                                                                                                                <>
+
+                                                                                                                    {selectedArr.map((optionsData) => {
+                                                                                                                        { console.log(optionsData) }
+                                                                                                                        return <option
+                                                                                                                            value={optionsData.value}
+                                                                                                                            key={optionsData.value}
+                                                                                                                        >
+                                                                                                                            {optionsData.label}
+                                                                                                                        </option>
+
+                                                                                                                    })}
+                                                                                                                </> : <>
+
+                                                                                                                    {answerBlanksOptions.map((optionsData) => {
+
+                                                                                                                        return <option
+                                                                                                                            value={optionsData.value}
+                                                                                                                            key={optionsData.value}
+                                                                                                                        >
+                                                                                                                            {optionsData.label}
+                                                                                                                        </option>
+
+                                                                                                                    })}
+                                                                                                                </>
+                                                                                                            }
+
+                                                                                                        </select>
+
+
+                                                                                                    </Col>
+
+                                                                                                    <Col xs={5}>
+                                                                                                        <label className="floating-label">
+                                                                                                            <small className="text-danger"></small>
+                                                                                                            Answer
+                                                                                                        </label>
+                                                                                                        <input
+                                                                                                            className="form-control"
+                                                                                                            error={touched.answer_content && errors.answer_content}
+                                                                                                            label="answer_content"
+                                                                                                            name="answer_content"
+                                                                                                            onBlur={handleBlur}
+                                                                                                            type="number"
+                                                                                                            value={form.answer_content}
+                                                                                                            onChange={event => handleAnswerBlanks(event, index)}
+                                                                                                            placeholder="Enter Answer"
+                                                                                                        />
+                                                                                                    </Col>
+
+                                                                                                    <Col xs={4}>
+                                                                                                        <label className="floating-label">
+                                                                                                            <small className="text-danger"></small>
+                                                                                                            Unit
+                                                                                                        </label>
+
+                                                                                                        <input
+                                                                                                            className="form-control"
+                                                                                                            error={touched.answer_unit && errors.answer_unit}
+                                                                                                            label="answer_unit"
+                                                                                                            name="answer_unit"
+                                                                                                            onBlur={handleBlur}
+                                                                                                            type="text"
+                                                                                                            value={form.answer_unit}
+                                                                                                            onChange={event => handleAnswerBlanks(event, index)}
+                                                                                                            placeholder="Enter Unit"
+                                                                                                        />
+
+                                                                                                    </Col>
+                                                                                                </Row>
+
+                                                                                                <br />
+                                                                                                <Row>
+
+                                                                                                    <Col>
+                                                                                                        <label className="floating-label">
+                                                                                                            <small className="text-danger"></small>
+                                                                                                            Weightage for Answer
+                                                                                                        </label>
+                                                                                                        <input
+                                                                                                            className="form-control"
+                                                                                                            error={touched.answer_weightage && errors.answer_weightage}
+                                                                                                            label="answer_weightage"
+                                                                                                            name="answer_weightage"
+                                                                                                            onBlur={handleBlur}
+                                                                                                            // onChange={handleChange}
+                                                                                                            type="number"
+                                                                                                            min="0.01"
+                                                                                                            value={form.answer_weightage}
+                                                                                                            onChange={event => handleAnswerBlanks(event, index)}
+                                                                                                            placeholder="Enter Weightage for Answer"
+                                                                                                        />
+                                                                                                    </Col>
+
+                                                                                                    <Col>
+                                                                                                        <label className="floating-label">
+                                                                                                            <small className="text-danger"></small>
+                                                                                                            Weightage for Unit
+                                                                                                        </label>
+                                                                                                        <input
+                                                                                                            className="form-control"
+                                                                                                            error={touched.unit_weightage && errors.unit_weightage}
+                                                                                                            label="unit_weightage"
+                                                                                                            name="unit_weightage"
+                                                                                                            onBlur={handleBlur}
+                                                                                                            // onChange={handleChange}
+                                                                                                            type="number"
+                                                                                                            min="0.01"
+                                                                                                            value={form.unit_weightage}
+                                                                                                            onChange={event => handleAnswerBlanks(event, index)}
+                                                                                                            placeholder="Enter Weightage for Unit"
+                                                                                                        />
+                                                                                                    </Col>
+
+                                                                                                    <Col>
+
+                                                                                                        {selectedQuestionType === 'Objective' ? (
+                                                                                                            <label className="floating-label">
+                                                                                                                <small className="text-danger"></small>
+                                                                                                                Correct Answer
+                                                                                                            </label>
+                                                                                                        ) : (
+                                                                                                            <label className="floating-label">
+                                                                                                                <small className="text-danger"></small>
+                                                                                                                Answer Display
+                                                                                                            </label>
+                                                                                                        )
+                                                                                                        }
+
+                                                                                                        <select
+                                                                                                            className="form-control"
+                                                                                                            error={touched.answer_display && errors.answer_display}
+                                                                                                            name="answer_display"
+                                                                                                            onBlur={handleBlur}
+
+                                                                                                            type="text"
+                                                                                                            value={form.answer_display}
+                                                                                                            key={index}
+                                                                                                            onChange={event => handleAnswerBlanks(event, index)}
+                                                                                                        >
+
+                                                                                                            {answerDisplayOptions.map((optionsData) => {
+
+                                                                                                                return <option
+                                                                                                                    value={optionsData.value}
+                                                                                                                    key={optionsData.value}
+                                                                                                                >
+                                                                                                                    {optionsData.label}
+                                                                                                                </option>
+
+                                                                                                            })}
+
+                                                                                                        </select>
+
+
+                                                                                                    </Col>
+
+                                                                                                </Row>
+
+                                                                                                <br />
+                                                                                                <Row>
+                                                                                                    <Col>
+                                                                                                        <label className="floating-label">
+                                                                                                            <small className="text-danger"></small>
+                                                                                                            Answer Range
+                                                                                                        </label>
+                                                                                                    </Col>
+                                                                                                </Row>
+
+                                                                                                <Row>
+                                                                                                    <Col xs={3}>
+                                                                                                        <input
+                                                                                                            className="form-control"
+                                                                                                            error={touched.answer_range_from && errors.answer_range_from}
+                                                                                                            label="answer_range_from"
+                                                                                                            name="answer_range_from"
+                                                                                                            onBlur={handleBlur}
+                                                                                                            type="number"
+                                                                                                            value={form.answer_range_from}
+                                                                                                            onChange={event => handleAnswerBlanks(event, index)}
+                                                                                                            placeholder="From"
+                                                                                                        />
+                                                                                                    </Col>
+                                                                                                    <div style={{
+                                                                                                        paddingTop: "6px"
+                                                                                                    }}
+                                                                                                    >-</div>
+
+                                                                                                    <Col xs={3}>
+                                                                                                        <input
+                                                                                                            className="form-control"
+                                                                                                            error={touched.answer_range_to && errors.answer_range_to}
+                                                                                                            label="answer_range_to"
+                                                                                                            name="answer_range_to"
+                                                                                                            onBlur={handleBlur}
+                                                                                                            type="number"
+                                                                                                            value={form.answer_range_to}
+                                                                                                            onChange={event => handleAnswerBlanks(event, index)}
+                                                                                                            placeholder="To"
+                                                                                                        />
+                                                                                                    </Col>
+                                                                                                </Row>
+                                                                                            </>
+                                                                                        ) : (
+
+                                                                                            <>
+                                                                                                <br />
+                                                                                                <Row key={index}>
+
+                                                                                                    <Col xs={3}>
+                                                                                                        <label className="floating-label">
+                                                                                                            <small className="text-danger"></small>
+                                                                                                            Placeholder
+                                                                                                        </label>
+
+                                                                                                        <select
+                                                                                                            className="form-control"
+                                                                                                            error={touched.answer_option && errors.answer_option}
+                                                                                                            name="answer_option"
+                                                                                                            onBlur={handleBlur}
+                                                                                                            type="text"
+                                                                                                            value={form.answer_option}
+                                                                                                            key={index}
+                                                                                                            onChange={event => handleAnswerBlanks(event, index)}
+                                                                                                        >
+
+                                                                                                            <option>
+                                                                                                                Select...
+                                                                                                            </option>
+
+                                                                                                            {selectedQuestionType === 'Objective' ?
+                                                                                                                <>
+
+                                                                                                                    {selectedArr.map((optionsData) => {
+                                                                                                                        { console.log(optionsData) }
+                                                                                                                        return <option
+                                                                                                                            value={optionsData.value}
+                                                                                                                            key={optionsData.value}
+                                                                                                                        >
+                                                                                                                            {optionsData.label}
+                                                                                                                        </option>
+
+                                                                                                                    })}
+                                                                                                                </> : <>
+
+                                                                                                                    {answerBlanksOptions.map((optionsData) => {
+
+                                                                                                                        return <option
+                                                                                                                            value={optionsData.value}
+                                                                                                                            key={optionsData.value}
+                                                                                                                        >
+                                                                                                                            {optionsData.label}
+                                                                                                                        </option>
+
+                                                                                                                    })}
+                                                                                                                </>
+                                                                                                            }
+
+                                                                                                        </select>
+
+
+                                                                                                    </Col>
+
+                                                                                                    <Col xs={5}>
+                                                                                                        <label className="floating-label">
+                                                                                                            <small className="text-danger"></small>
+                                                                                                            Answer
+                                                                                                        </label>
+                                                                                                        <input
+                                                                                                            className="form-control"
+                                                                                                            error={touched.answer_content && errors.answer_content}
+                                                                                                            label="answer_content"
+                                                                                                            name="answer_content"
+                                                                                                            onBlur={handleBlur}
+                                                                                                            type="number"
+                                                                                                            value={form.answer_content}
+                                                                                                            onChange={event => handleAnswerBlanks(event, index)}
+                                                                                                            placeholder="Enter Answer"
+                                                                                                        />
+                                                                                                    </Col>
+
+                                                                                                    <Col>
+
+                                                                                                        {selectedQuestionType === 'Objective' ? (
+                                                                                                            <label className="floating-label">
+                                                                                                                <small className="text-danger"></small>
+                                                                                                                Correct Answer
+                                                                                                            </label>
+                                                                                                        ) : (
+                                                                                                            <label className="floating-label">
+                                                                                                                <small className="text-danger"></small>
+                                                                                                                Answer Display
+                                                                                                            </label>
+                                                                                                        )
+                                                                                                        }
+
+                                                                                                        <select
+                                                                                                            className="form-control"
+                                                                                                            error={touched.answer_display && errors.answer_display}
+                                                                                                            name="answer_display"
+                                                                                                            onBlur={handleBlur}
+
+                                                                                                            type="text"
+                                                                                                            value={form.answer_display}
+                                                                                                            key={index}
+                                                                                                            onChange={event => handleAnswerBlanks(event, index)}
+                                                                                                        >
+
+                                                                                                            {answerDisplayOptions.map((optionsData) => {
+
+                                                                                                                return <option
+                                                                                                                    value={optionsData.value}
+                                                                                                                    key={optionsData.value}
+                                                                                                                >
+                                                                                                                    {optionsData.label}
+                                                                                                                </option>
+
+                                                                                                            })}
+
+                                                                                                        </select>
+
+
+                                                                                                    </Col>
+
+                                                                                                    <Col>
+                                                                                                        <label className="floating-label">
+                                                                                                            <small className="text-danger"></small>
+                                                                                                            Weightage
+                                                                                                        </label>
+                                                                                                        <input
+                                                                                                            className="form-control"
+                                                                                                            error={touched.answer_weightage && errors.answer_weightage}
+                                                                                                            label="answer_weightage"
+                                                                                                            name="answer_weightage"
+                                                                                                            onBlur={handleBlur}
+                                                                                                            // onChange={handleChange}
+                                                                                                            type="number"
+                                                                                                            min="0.01"
+                                                                                                            value={form.answer_weightage}
+                                                                                                            onChange={event => handleAnswerBlanks(event, index)}
+                                                                                                            placeholder="Enter Weightage"
+                                                                                                        />
+                                                                                                    </Col>
+
+                                                                                                </Row>
+                                                                                            </>
+                                                                                        )}
 
                                                                                     </>
 
@@ -2808,6 +2618,9 @@ const EditQuestions = () => {
                                                                                                             let tempPreviewImg = [...previewImages];
                                                                                                             tempPreviewImg[index] = '';
                                                                                                             setPreviewImages(tempPreviewImg);
+                                                                                                            let tempPreviewCommon = [...commonPreview];
+                                                                                                            tempPreviewCommon[index] = '';
+                                                                                                            setCommonPreview(tempPreviewCommon);
 
                                                                                                         }}
                                                                                                         onChange={event => {
@@ -2825,20 +2638,20 @@ const EditQuestions = () => {
                                                                                                 </label>
 
 
-                                                                                                {previewImages[index] && previewImages[index] !== ""
+                                                                                                {commonPreview[index] && commonPreview[index] !== ""
                                                                                                     && (
 
                                                                                                         <>
                                                                                                             <br />
 
-                                                                                                            <img width={150} src={previewImages[index]} alt="" className="img-fluid mb-3" style={{
+                                                                                                            <img width={150} src={commonPreview[index]} alt="" className="img-fluid mb-3" style={{
                                                                                                                 marginTop: "20px",
                                                                                                                 marginLeft: "-50px"
                                                                                                             }} />
 
 
                                                                                                             {
-                                                                                                                previewImages[index] && previewImages[index] !== 'N.A.' && (
+                                                                                                                commonPreview[index] && commonPreview[index] !== 'N.A.' && (
 
                                                                                                                     <CloseButton
 
@@ -3019,6 +2832,9 @@ const EditQuestions = () => {
                                                                                                         let tempPreviewAudio = [...previewAudios];
                                                                                                         tempPreviewAudio[index] = '';
                                                                                                         setPreviewAudios(tempPreviewAudio);
+                                                                                                        let tempPreviewCommon = [...commonPreview];
+                                                                                                        tempPreviewCommon[index] = '';
+                                                                                                        setCommonPreview(tempPreviewCommon);
 
                                                                                                     }}
                                                                                                     onChange={event => {
@@ -3036,7 +2852,7 @@ const EditQuestions = () => {
                                                                                                     Preview
                                                                                                 </label>
 
-                                                                                                {previewAudios && previewAudios[index] && previewAudios[index] !== 'N.A.' &&
+                                                                                                {commonPreview && commonPreview[index] && commonPreview[index] !== 'N.A.' &&
                                                                                                     (
                                                                                                         <>
                                                                                                             <br />
@@ -3044,7 +2860,7 @@ const EditQuestions = () => {
                                                                                                             <div className="form-group fill" style={{ marginTop: "25px", marginLeft: "-53px" }} >
                                                                                                                 <audio controls>
                                                                                                                     <source
-                                                                                                                        src={previewAudios[index]}
+                                                                                                                        src={commonPreview[index]}
                                                                                                                         alt="Audio"
                                                                                                                         type="audio/mp3" />
 
@@ -3052,7 +2868,7 @@ const EditQuestions = () => {
                                                                                                             </div>
 
                                                                                                             {
-                                                                                                                previewAudios[index] && (
+                                                                                                                commonPreview[index] && (
                                                                                                                     <CloseButton
                                                                                                                         onClick={() => {
                                                                                                                             setFieldValue("answer_content", "")

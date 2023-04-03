@@ -137,18 +137,13 @@ const routes = [
       },
       {
         exact: true,
-        path: '/admin-portal/school',
-        component: lazy(() => import('./views/panels/admin-portal/school/School'))
-      },
-      {
-        exact: true,
         path: '/admin-portal/active-schools',
-        component: lazy(() => import('./views/panels/admin-portal/school/School'))
+        component: lazy(() => import('./views/panels/admin-portal/school/FetchActiveSchools'))
       },
       {
         exact: true,
         path: '/admin-portal/archived-schools',
-        component: lazy(() => import('./views/panels/admin-portal/school/ArchivedSchools'))
+        component: lazy(() => import('./views/panels/admin-portal/school/FetchArchivedSchools'))
       },
       {
         exact: true,
@@ -694,26 +689,6 @@ const routes = [
         path: '/membership/mshp-membership',
         component: lazy(() => import('./views/panels/membership/Membership'))
       },
-      // {
-      //   exact: true,
-      //   path: '/school/sch-student',
-      //   component: lazy(() => import('./views/panels/admin-portal/school/Student'))
-      // },
-      {
-        exact: true,
-        path: '/school/sch-school',
-        component: lazy(() => import('./views/panels/admin-portal/school/School'))
-      },
-      // {
-      //   exact: true,
-      //   path: '/school/sch-parents',
-      //   component: lazy(() => import('./views/panels/admin-portal/school/Parents'))
-      // },
-      // {
-      //   exact: true,
-      //   path: '/school/sch-teacher',
-      //   component: lazy(() => import('./views/panels/admin-portal/school/Teacher'))
-      // },
       {
         exact: true,
         path: '/sis/sis-dashboard',
