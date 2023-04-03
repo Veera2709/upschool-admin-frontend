@@ -222,61 +222,62 @@ const SchoolChild = (props) => {
         };
 
         console.log(value);
-        // const MySwal = withReactContent(Swal);
-        // MySwal.fire({
-        //     title: 'Are you sure?',
-        //     text: 'Once deleted, you will not be able to recover!',
-        //     type: 'warning',
-        //     showCloseButton: true,
-        //     showCancelButton: true
-        // }).then((willDelete) => {
-        //     if (willDelete.value) {
-        axios
-            .post(
-                dynamicUrl.toggleSchoolStatus,
-                {
-                    data: {
-                        school_id: school_id,
-                        school_status: Archieved
-                    }
-                },
-                {
-                    headers: { Authorization: sessionStorage.getItem('user_jwt') }
-                }
-            )
-            .then(async (response) => {
-                let responseData = response.status === 200;
-                if (response.Error) {
-                    hideLoader();
-                    sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
-                    fetchSchoolData();
-                    setInactive(false);
-                    // _fetchSchoolData();
-                } else {
-                    sweetAlertHandler({ title: MESSAGES.INFO.SCHOOL_DELETED, type: 'success' });
-                    hideLoader();
-                    fetchSchoolData();
-                    setInactive(false);
-                    // _fetchSchoolData();
-                }
-            })
 
-            .catch((error) => {
-                if (error.response) {
-                    // Request made and server responded
-                    hideLoader();
-                    console.log(error.response.data);
-                    sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
-                } else if (error.request) {
-                    // The request was made but no response was received
-                    hideLoader();
-                    console.log(error.request);
-                } else {
-                    // Something happened in setting up the request that triggered an Error
-                    hideLoader();
-                    console.log('Error', error.message);
-                }
-            });
+        const MySwal = withReactContent(Swal);
+        MySwal.fire({
+            title: 'Are you sure?',
+            text: 'Upon confirmation all the users associated with this School will also be deleted!',
+            type: 'warning',
+            showCloseButton: true,
+            showCancelButton: true
+        }).then((willDelete) => {
+            axios
+                .post(
+                    dynamicUrl.toggleSchoolStatus,
+                    {
+                        data: {
+                            school_id: school_id,
+                            school_status: Archieved
+                        }
+                    },
+                    {
+                        headers: { Authorization: sessionStorage.getItem('user_jwt') }
+                    }
+                )
+                .then(async (response) => {
+                    let responseData = response.status === 200;
+                    if (response.Error) {
+                        hideLoader();
+                        sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingSchool });
+                        fetchSchoolData();
+                        setInactive(false);
+                        // _fetchSchoolData();
+                    } else {
+                        sweetAlertHandler({ title: 'Success', type: 'success', text: MESSAGES.INFO.SCHOOL_DELETED });
+                        hideLoader();
+                        fetchSchoolData();
+                        setInactive(false);
+                        // _fetchSchoolData();
+                    }
+                })
+
+                .catch((error) => {
+                    if (error.response) {
+                        // Request made and server responded
+                        hideLoader();
+                        console.log(error.response.data);
+                        sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+                    } else if (error.request) {
+                        // The request was made but no response was received
+                        hideLoader();
+                        console.log(error.request);
+                    } else {
+                        // Something happened in setting up the request that triggered an Error
+                        hideLoader();
+                        console.log('Error', error.message);
+                    }
+                });
+        })
     };
 
     const handleSubscribeClass = (e, school_id) => {
@@ -351,14 +352,14 @@ const SchoolChild = (props) => {
                     >
                         <i className="feather icon-edit" /> &nbsp; Edit
                     </Button>
-                    {/* &nbsp;
+                    &nbsp;
                     {inactive === false ? null :
                         <Button onClick={(e) => { handleDeleteSchool(e, resultData[index].school_id, 'Archived') }}
                             size='sm' className="btn btn-icon btn-rounded btn-danger"
                         >
                             <i className="feather icon-delete" /> &nbsp; Delete
                         </Button>
-                    } */}
+                    }
 
                 </>
             );

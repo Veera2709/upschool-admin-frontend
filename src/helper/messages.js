@@ -20,6 +20,7 @@ const MESSAGES = {
     UpdatingUser: 'Error in updating User',
     UpdatingGroup: 'Error in updating Group',
     DeletingUser: 'Error in deleting User',
+    DeletingSchool: 'Error in deleting School',
     RestoringUser: 'Error in restoring User',
     DeletingGroup: 'Error in deleting Group',
     DeletingUnit: 'Error in deleting Unit',
@@ -45,7 +46,7 @@ const MESSAGES = {
     DeletingTopic: 'Error in deleting Topic',
   },
   SUCCESS: {
-    RestoredSuccessfully: 'Restored Successfully!',
+    SchoolRestoredSuccessfully: 'School restored Successfully!',
     UpdatingQuizConfiguration: 'Updated Quiz Configuration settings successfully!',
     UpdatingSubscriptionFeatures: 'Updated Subscription Features successfully!',
     AddingDigiCard: 'Added DigiCard Successfully',
