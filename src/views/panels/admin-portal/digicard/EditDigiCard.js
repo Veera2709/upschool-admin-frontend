@@ -777,9 +777,7 @@ const EditDigiCard = () => {
                                                             <small className="text-danger"> </small>Related DigiCard Titles
                                                         </label>
                                                         {defaultOptions.length === 0 ? (
-
                                                             <Select
-
                                                                 className="basic-single"
                                                                 classNamePrefix="select"
                                                                 name="color"
@@ -795,7 +793,6 @@ const EditDigiCard = () => {
                                                         ) : (
                                                             <>
                                                                 {defaultOptions && (
-
                                                                     <Select
                                                                         defaultValue={defaultOptions}
                                                                         className="basic-single"
