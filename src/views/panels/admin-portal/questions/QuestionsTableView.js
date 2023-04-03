@@ -68,24 +68,27 @@ function Table({ columns, data, modalOpen }) {
     useSortBy,
     usePagination,
     useRowSelect,
-    (hooks) => {
-      hooks.visibleColumns.push((columns) => [
-          {
-              id: "selection",
-              Header: ({ getToggleAllPageRowsSelectedProps }) => (
-                  <div>
-                      <IndeterminateCheckbox {...getToggleAllPageRowsSelectedProps()} />
-                  </div>
-              ),
-              Cell: ({ row }) => (
-                  <div>
-                      <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
-                  </div>
-              )
-          },
-          ...columns
-      ]);
-  } 
+    (sessionStorage.getItem('question_status') === 'Save' || sessionStorage.getItem('question_status') === 'Reject') && (
+      (hooks) => {
+        hooks.visibleColumns.push((columns) => [
+            {
+                id: "selection",
+                Header: ({ getToggleAllPageRowsSelectedProps }) => (
+                    <div>
+                        <IndeterminateCheckbox {...getToggleAllPageRowsSelectedProps()} />
+                    </div>
+                ),
+                Cell: ({ row }) => (
+                    <div>
+                        <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
+                    </div>
+                )
+            },
+            ...columns
+        ]);
+    }
+    )
+     
   );
   const question_active_status = pageLocation === 'active-questions' ? "Active" : "Archived"
 

@@ -417,6 +417,7 @@ const EditGroups = ({ className, ...rest }) => {
 
                                                 initialValues={{
                                                     group_name: previousGroupData.group_name,
+                                                    display_name: previousGroupData.display_name,
                                                     group_description: previousGroupData === {} ? '' : previousGroupData.group_description,
                                                     question_duration: previousGroupData.question_duration
                                                 }}
@@ -429,9 +430,20 @@ const EditGroups = ({ className, ...rest }) => {
                                                             .max(51, 'Group Name is too long!')
                                                             .required('Group Name is required!'),
                                                         question_duration: Yup.number()
-                                                            .moreThan(1, 'Group Duration is Less Then 30min!')
+                                                            .moreThan(0, 'Group Duration is Less Then 0min!')
                                                             .lessThan(150, 'Group Duration is More Then 150min!')
                                                             .required('Group Duration is required!'),
+
+                                                        group_description: Yup.string()
+                                                            .trim()
+                                                            .min(2, 'Group description is too short!')
+                                                            .required('Group description is required!'),
+
+                                                        display_name: Yup.string()
+                                                            .trim()
+                                                            .min(2, 'Group Name is too short!')
+
+                                                            .required('Group Name is required!'),
 
                                                     })}
 
@@ -457,6 +469,7 @@ const EditGroups = ({ className, ...rest }) => {
 
                                                             group_id: group_id.group_id,
                                                             group_name: values.group_name,
+                                                            display_name: values.display_name,
                                                             group_type: selectedGroupType,
                                                             group_question_id: selectedQuestions,
                                                             group_levels: selectedLevels,
@@ -605,13 +618,35 @@ const EditGroups = ({ className, ...rest }) => {
                                                             </Col>
 
                                                         </Row>
+                                                        <br />
+                                                        <Row>
+                                                            <Col>
+                                                                <div className="form-group fill">
+                                                                    <label className="floating-label" htmlFor="displayname">
+                                                                        <small className="text-danger">* </small>Display Name
+                                                                    </label>
+                                                                    <input
+                                                                        className="form-control"
+                                                                        error={touched.display_name && errors.display_name}
+                                                                        name="display_name"
+                                                                        onBlur={handleBlur}
+                                                                        onChange={handleChange}
+                                                                        type="text"
+                                                                        value={values.display_name}
+                                                                        id='title'
+                                                                    />
+                                                                    {touched.display_name && errors.display_name && <small className="text-danger form-text">{errors.display_name}</small>}
+                                                                </div>
+                                                            </Col>
+                                                            <Col></Col>
+                                                        </Row>
 
                                                         <br />
                                                         <Row>
                                                             <Col>
 
                                                                 <label className="floating-label">
-                                                                    <small className="text-danger"></small>
+                                                                    <small className="text-danger">*</small>
                                                                     Group Description
                                                                 </label>
                                                                 <textarea
@@ -625,6 +660,7 @@ const EditGroups = ({ className, ...rest }) => {
                                                                     onChange={handleChange}
                                                                     placeholder="Description"
                                                                 />
+                                                                {touched.group_description && errors.group_description && <small className="text-danger form-text">{errors.group_description}</small>}
                                                             </Col>
                                                         </Row>
 
