@@ -12,7 +12,7 @@ import { Scrollbars } from 'react-custom-scrollbars';
 import { Link, useHistory, useParams } from 'react-router-dom';
 import { fetchIndividualDigiCard, fetchDigiCardAudioContent } from '../../../api/CommonApi'
 import dynamicUrl from '../../../../helper/dynamicUrls';
-
+import './Styles/katex.css'
 
 
 

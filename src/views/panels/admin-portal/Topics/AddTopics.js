@@ -34,13 +34,13 @@ const AddTopics = ({ setOpenAddTopic }) => {
     const [relatedTopicNames, setRelatedTopicNames] = useState([]);
     const [isShownConcept, setIsShownConcept] = useState(true);
     const [isShownTopic, setIsShownTopic] = useState(true);
-    const [topicDuration, setTopicDuration] = useState(false);
-    const [timeLimit, setTimeLimit] = useState(false);
+    // const [topicDuration, setTopicDuration] = useState(false);
+    // const [timeLimit, setTimeLimit] = useState(false);
+    const [displayNameErr, setDisplayNameErr] = useState(false);
+
+    const [displayNameErrMessage, setDisplayNameErrMessage] = useState('');
 
     const MySwal = withReactContent(Swal);
-
-
-
 
     const sweetAlertHandler = (alert) => {
         const MySwal = withReactContent(Swal);
@@ -51,27 +51,27 @@ const AddTopics = ({ setOpenAddTopic }) => {
         });
     };
 
-    const topicQuizTemplatePre = [
-        { level: 'Level-1', duration: "" },
-        { level: 'Level-2', duration: "" }]
-    const topicQuizTemplatePost = [
-        { level: 'Level-1', duration: "" },
-        { level: 'Level-2', duration: "" },
-        { level: 'Level-3', duration: "" }]
-    const [topicQuiz, setTopicQuiz] = useState(topicQuizTemplatePre)
-    console.log("topicQuiz : ", topicQuiz);
+    // const topicQuizTemplatePre = [
+    //     { level: 'Level-1', duration: "" },
+    //     { level: 'Level-2', duration: "" }]
+    // const topicQuizTemplatePost = [
+    //     { level: 'Level-1', duration: "" },
+    //     { level: 'Level-2', duration: "" },
+    //     { level: 'Level-3', duration: "" }]
+    // const [topicQuiz, setTopicQuiz] = useState(topicQuizTemplatePre)
+    // console.log("topicQuiz : ", topicQuiz);
 
 
-    const onDynamicFormChange = (e, index, fieldType) => {
-        console.log("e", e)
-        console.log("Field", fieldType)
-        const updatedTopics = topicQuiz.map((topic, i) =>
-            index == i
-                ? Object.assign(topic, { [e.target.name]: e.target.value })
-                : topic
-        )
-        setTopicQuiz(updatedTopics)
-    }
+    // const onDynamicFormChange = (e, index, fieldType) => {
+    //     console.log("e", e)
+    //     console.log("Field", fieldType)
+    //     const updatedTopics = topicQuiz.map((topic, i) =>
+    //         index == i
+    //             ? Object.assign(topic, { [e.target.name]: e.target.value })
+    //             : topic
+    //     )
+    //     setTopicQuiz(updatedTopics)
+    // }
 
 
     const postTopic = (formData) => {
@@ -90,7 +90,6 @@ const AddTopics = ({ setOpenAddTopic }) => {
                     }).then((willDelete) => {
 
                         window.location.reload();
-
                     })
 
                 } else {
@@ -175,7 +174,7 @@ const AddTopics = ({ setOpenAddTopic }) => {
     const postPreOption = (e) => {
         console.log("postPreOption", e);
         setprePostLearning(e.value);
-        e.value === 'Pre-Learning' ? setTopicQuiz(topicQuizTemplatePre) : setTopicQuiz(topicQuizTemplatePost)
+        // e.value === 'Pre-Learning' ? setTopicQuiz(topicQuizTemplatePre) : setTopicQuiz(topicQuizTemplatePost)
     };
 
     const getconceptId = (event) => {
@@ -203,13 +202,14 @@ const AddTopics = ({ setOpenAddTopic }) => {
             <Formik
                 initialValues={{
                     topic_title: '',
-                    level: "",
-                    duration: "",
+                    display_name: '',
+                    // level: "",
+                    // duration: "",
                     topic_description: '',
                     topic_concept_id: [],
                     pre_post_learning: '',
                     related_topics: [],
-                    topic_quiz_config: []
+                    // topic_quiz_config: []
                 }}
 
                 validationSchema={Yup.object().shape({
@@ -218,58 +218,66 @@ const AddTopics = ({ setOpenAddTopic }) => {
                         .min(2, Constants.AddTopic.TopictitleTooShort)
                         .max(32, Constants.AddTopic.TopictitleTooLong)
                         .required(Constants.AddTopic.TopictitleRequired),
-                    duration: Yup.string()
-                        .trim()
-                        .required(Constants.AddTopic.QuizMinutesRequired),
+                    // duration: Yup.string()
+                    //     .trim()
+                    //     .required(Constants.AddTopic.QuizMinutesRequired),
                     topic_description: Yup.string()
                         .trim()
                         .required(Constants.AddTopic.DescriptionRequired),
 
+                    display_name: Yup.string()
+                        .trim()
+                        .min(2, Constants.AddTopic.DisplayNameTooShort)
+                        .max(32, Constants.AddTopic.DisplayNameTooLong)
+                        .required(Constants.AddTopic.DisplayNameRequired),
                 })}
                 // validationSchema
                 onSubmit={(values, { setErrors, setStatus, setSubmitting }) => {
                     // setSubmitting(true);
-                    let emptyFieldValidation = topicQuiz.find(o => o.duration === "" || o.duration === 0 || o.duration <= 0)
-                    let TopicDurationLimit = topicQuiz.find(o => o.duration > 150)
-                    if (topicConceptId == '') {
-                        setIsShownConcept(false)
-                    } else if (emptyFieldValidation) {
-                        setTopicDuration(true)
-                    } else if (TopicDurationLimit) {
-                        setTimeLimit(true)
-                    }
-                    else {
+                    // let emptyFieldValidation = topicQuiz.find(o => o.duration === "" || o.duration === 0 || o.duration <= 0)
+                    // let TopicDurationLimit = topicQuiz.find(o => o.duration > 150)
+                    // if (topicConceptId == '') {
+                    //     setIsShownConcept(false)
+                    // } else if (emptyFieldValidation) {
+                    //     setTopicDuration(true)
+                    // } else if (TopicDurationLimit) {
+                    //     setTimeLimit(true)
+                    // }
+                    // else {
+                    let formData;
 
-                        if (prePostLearning === 'Pre-Learning') {
-                            var formData = {
-                                topic_title: values.topic_title,
-                                topic_description: values.topic_description,
-                                topic_concept_id: topicConceptId,
-                                pre_post_learning: prePostLearning,
-                                related_topics: relatedTopicsId,
-                                // topic_quiz_config: topicQuiz
-                                Level_1: { duration: topicQuiz[0].duration },
-                                Level_2: { duration: topicQuiz[1].duration },
+                    if (prePostLearning === 'Pre-Learning') {
+                        formData = {
+                            topic_title: values.topic_title,
+                            display_name: values.display_name,
+                            topic_description: values.topic_description,
+                            topic_concept_id: topicConceptId,
+                            pre_post_learning: prePostLearning,
+                            related_topics: relatedTopicsId,
+                            // topic_quiz_config: topicQuiz
+                            // Level_1: { duration: topicQuiz[0].duration },
+                            // Level_2: { duration: topicQuiz[1].duration },
 
-                            }
-                        } else {
-                            var formData = {
-                                topic_title: values.topic_title,
-                                topic_description: values.topic_description,
-                                topic_concept_id: topicConceptId,
-                                pre_post_learning: prePostLearning,
-                                related_topics: relatedTopicsId,
-                                // topic_quiz_config: topicQuiz
-                                Level_1: { duration: topicQuiz[0].duration },
-                                Level_2: { duration: topicQuiz[1].duration },
-                                Level_3: { duration: topicQuiz[2].duration },
-
-                            }
                         }
+                    } else {
+                        formData = {
+                            topic_title: values.topic_title,
+                            display_name: values.display_name,
+                            topic_description: values.topic_description,
+                            topic_concept_id: topicConceptId,
+                            pre_post_learning: prePostLearning,
+                            related_topics: relatedTopicsId,
+                            // topic_quiz_config: topicQuiz
+                            // Level_1: { duration: topicQuiz[0].duration },
+                            // Level_2: { duration: topicQuiz[1].duration },
+                            // Level_3: { duration: topicQuiz[2].duration },
 
-                        console.log('formData: ', formData)
-                        postTopic(formData)
+                        }
                     }
+
+                    console.log('formData: ', formData)
+                    postTopic(formData)
+                    // }
 
                 }}
             >
@@ -289,6 +297,25 @@ const AddTopics = ({ setOpenAddTopic }) => {
                                 {touched.topic_title && errors.topic_title && <small className="text-danger form-text">{errors.topic_title}</small>}
                             </Form.Group>
                         </Col>
+
+                        <Col sm={6}>
+                            <Form.Group>
+                                <Form.Label className="floating-label" htmlFor="display_name"><small className="text-danger">* </small>Display Name</Form.Label>
+                                <Form.Control
+                                    className="form-control"
+                                    name="display_name"
+                                    onBlur={handleBlur}
+                                    onChange={handleChange}
+                                    type="text"
+                                    value={values.display_name}
+                                />
+                                {touched.display_name && errors.display_name && <small className="text-danger form-text">{errors.display_name}</small>}
+                            </Form.Group>
+                        </Col>
+
+
+
+
 
                         <Col sm={6}>
 
@@ -359,7 +386,7 @@ const AddTopics = ({ setOpenAddTopic }) => {
                             </Form.Group>
                         </Col>
 
-                        <Row>
+                        {/* <Row>
                             <Col sm={4}>
                                 <Form.Label className="floating-label" ><small className="text-danger">* </small>Topic Quiz Levels</Form.Label>
                             </Col>
@@ -404,8 +431,8 @@ const AddTopics = ({ setOpenAddTopic }) => {
                                     </div>
                                 </div>
                             </div>
-                        ))}
-                        <Row>
+                        ))} */}
+                        {/* <Row>
                             <Col sm={4}>
                             </Col>
                             <Col sm={6}>
@@ -413,16 +440,14 @@ const AddTopics = ({ setOpenAddTopic }) => {
                                 {topicDuration && (
                                     <small className="text-danger form-text">Quiz Minutes are required!</small>
                                 )}
-                                {/* {negativeValue&&(
-                                <small className="text-danger form-text">Quiz Minutes are required in positive value!</small>
-                                )} */}
                                 {timeLimit && (
                                     <small className="text-danger form-text">Quiz Minutes exceeds more 150min !</small>
                                 )}
                             </Col>
-                        </Row>
+                        </Row> */}
                         <p></p>
                         {/* <button type="button" className="btn btn-primary" onClick={addTopic} >Add another Quiz</button> */}
+
                         <div className="row d-flex justify-content-end">
                             <div className="form-group fill">
                                 <div className="center col-sm-12">
@@ -434,7 +459,7 @@ const AddTopics = ({ setOpenAddTopic }) => {
                     </Form>
                 )}
             </Formik>
-        </React.Fragment >
+        </React.Fragment>
     )
 }
 

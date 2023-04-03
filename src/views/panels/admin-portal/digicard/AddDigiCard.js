@@ -251,6 +251,7 @@ const AddDigiCard = (
               initialValues={{
                 digicardname: '',
                 digicardtitle: '',
+                displayname: '',
                 digicard_image: '',
                 digicardcontent: '',
                 digicardtitleExcerpt: '',
@@ -269,6 +270,12 @@ const AddDigiCard = (
                   .trim()
                   .nullable(true, Constants.AddDigiCard.DigiCardImageNotNull)
                   .required(Constants.AddDigiCard.DigiCardImageRequired),
+
+                displayname: Yup.string()
+                  .trim()
+                  .min(2, Constants.AddDigiCard.DisplayNameTooShort)
+                  .max(32, Constants.AddDigiCard.DisplayNameTooLong)
+                  .required(Constants.AddDigiCard.DisplayNameRequired),
               })}
 
               onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
@@ -308,6 +315,7 @@ const AddDigiCard = (
 
                   var formData = {
                     digi_card_title: values.digicardtitle,
+                    display_name: values.displayname,
                     digi_card_files: [values.digicard_image],
                     digicard_image: values.digicard_image,
                     digi_card_excerpt: articleDataTitle,
@@ -431,6 +439,35 @@ const AddDigiCard = (
                         />
                         {touched.digicardtitle && errors.digicardtitle && <small className="text-danger form-text">{errors.digicardtitle}</small>}
                       </div>
+
+                      <Row>
+                        <Col>
+                          <div className="form-group fill">
+                            <label className="floating-label" htmlFor="displayname">
+                              <small className="text-danger">* </small>Display Name
+                            </label>
+                            <input
+                              className="form-control"
+                              error={touched.displayname && errors.displayname}
+                              name="displayname"
+                              onBlur={handleBlur}
+                              onChange={handleChange}
+                              type="text"
+                              value={values.displayname}
+                              id='title'
+                            />
+                            {touched.displayname && errors.displayname && <small className="text-danger form-text">{errors.displayname}</small>}
+                          </div>
+                        </Col>
+
+
+                      </Row>
+
+
+
+
+
+
                       <div className="form-group fill">
                         <label className="floating-label" htmlFor="digicard_image">
                           <small className="text-danger">* </small>DigiCard Logo

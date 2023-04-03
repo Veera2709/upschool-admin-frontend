@@ -58,6 +58,8 @@ const EditDigiCard = () => {
     const [voiceError, setVoiceError] = useState(true);
     const [docError, setDocError] = useState(true);//upload doc err
     const [isLoading, setIsLoading] = useState(false);
+    const [displayName, setDisplayName] = useState("");
+
     const threadLinks = document.getElementsByClassName('page-header');
     console.log('individualDigiCardData initial', individualDigiCardData);
     console.log("defaultOptions", defaultOptions);
@@ -68,6 +70,12 @@ const EditDigiCard = () => {
 
 
     const allowedFileTypes = ['.pdf', '.doc', '.docx', '.jpg', '.jpeg', '.png', '.gif'];
+
+    const handleDisplayName = (e) => {
+
+        console.log("handleDisplayName : ", e.target.value);
+        setDisplayName(e.target.value)
+    }
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
@@ -93,8 +101,6 @@ const EditDigiCard = () => {
         }
     }
 
-
-
     function getPreviewLink(e) {
         console.log("getPreviewLink");
         console.log("URL.createObjectURL(selectedFile) : ", URL.createObjectURL(e.target.files[0]));
@@ -107,8 +113,6 @@ const EditDigiCard = () => {
         // }
 
     }
-
-
 
     const handleDelete = (i, states) => {
         const newTags = tags.slice(0);
@@ -189,7 +193,7 @@ const EditDigiCard = () => {
             const indidvidualDigicard = await fetchIndividualDigiCard(dynamicUrl.fetchIndividualDigiCard, digi_card_id);
             if (indidvidualDigicard.error) {
                 console.log("indidvidualDigicard.error", indidvidualDigicard.error);
-                if (indidvidualDigicard.Error.response.data == 'Invalid Token') {
+                if (indidvidualDigicard.Error.response.data === 'Invalid Token') {
                     sessionStorage.clear();
                     localStorage.clear();
                     history.push('/auth/signin-1');
@@ -203,6 +207,7 @@ const EditDigiCard = () => {
                 let previousVoiceNote = indidvidualDigicard.Items[0].digicard_voice_noteURL;
 
                 setIndividualDigiCardData(indidvidualDigicard.Items);
+                setDisplayName(indidvidualDigicard.Items[0].display_name);
                 setImgFile(previousImage);
                 setVoiceNote(previousVoiceNote);
                 setArticleData(indidvidualDigicard.Items[0].digi_card_content)
@@ -256,6 +261,7 @@ const EditDigiCard = () => {
     const inserNewDigicard = () => {
         let DigiCardtitleRegex = Constants.AddDigiCard.DigiCardtitleRegex;
         let name = document.getElementById("newdigicardtitle").value;
+        let display_name = document.getElementsByName("displayname").value;
         console.log("nameLength", name.length);
         let allFilesData = [];
         let voiceData = [];
@@ -304,6 +310,8 @@ const EditDigiCard = () => {
         } else {
             var formData = {
                 digi_card_title: name,
+                // display_name:,
+                display_name: displayName,
                 digi_card_files: [document.getElementById("digicard_image").value],
                 digicard_image: document.getElementById("digicard_image").value === '' ?
                     (individualDigiCardData[0].digicard_image === '' ? '' : individualDigiCardData[0].digicard_image)
@@ -449,6 +457,7 @@ const EditDigiCard = () => {
                                     enableReinitialize
                                     initialValues={{
                                         digicardtitle: individualDigiCardData[0].digi_card_title,
+                                        displayname: displayName,
                                         digicard_image: '',
                                         digicard_voice_note: '',
                                         digicard_document: '',
@@ -461,6 +470,12 @@ const EditDigiCard = () => {
                                             .max(32, Constants.AddDigiCard.DigiCardtitleTooLong)
                                             .matches(Constants.AddDigiCard.DigiCardtitleRegex, Constants.AddDigiCard.DigiCardtitleValidation)
                                             .required(Constants.AddDigiCard.DigiCardtitleRequired),
+
+                                        displayname: Yup.string()
+                                            .trim()
+                                            .min(2, Constants.AddDigiCard.DisplayNameTooShort)
+
+                                            .required(Constants.AddDigiCard.DisplayNameRequired),
                                     })}
 
 
@@ -485,6 +500,8 @@ const EditDigiCard = () => {
                                             const formData = {
                                                 digi_card_id: individualDigiCardData[0].digi_card_id,
                                                 digi_card_title: values.digicardtitle,
+                                                display_name: displayName,
+
                                                 digi_card_files: [values.digicard_image],
                                                 digicard_image: values.digicard_image === '' || values.digicard_image === undefined ? individualDigiCardData[0].digicard_image : values.digicard_image,
                                                 digicard_document: values.digicard_document === '' || values.digicard_document === undefined ? individualDigiCardData[0].digicard_document : values.digicard_document,//upload doc
@@ -604,6 +621,39 @@ const EditDigiCard = () => {
                                                         />
                                                         {touched.digicardtitle && errors.digicardtitle && <small className="text-danger form-text">{errors.digicardtitle}</small>}
                                                     </div>
+
+
+
+
+
+                                                    <Row>
+                                                        <Col>
+                                                            <div className="form-group fill">
+                                                                <label className="floating-label" htmlFor="displayname">
+                                                                    <small className="text-danger">* </small>Display Name
+                                                                </label>
+                                                                <input
+                                                                    className="form-control"
+                                                                    error={touched.displayname && errors.displayname}
+                                                                    name="displayname"
+                                                                    id="display_name"
+                                                                    onBlur={handleBlur}
+                                                                    onChange={(e) => {
+                                                                        handleChange(e);
+                                                                        handleDisplayName(e)
+                                                                    }}
+                                                                    type="text"
+                                                                    value={displayName}
+                                                                />
+                                                                {touched.displayname && errors.displayname && <small className="text-danger form-text">{errors.displayname}</small>}
+                                                            </div>
+                                                        </Col>
+
+
+                                                    </Row>
+
+
+
                                                     <div className="form-group fill">
                                                         <label className="floating-label" htmlFor="digicard_image">
                                                             <small className="text-danger">* </small>DigiCard Logo
@@ -727,9 +777,7 @@ const EditDigiCard = () => {
                                                             <small className="text-danger"> </small>Related DigiCard Titles
                                                         </label>
                                                         {defaultOptions.length === 0 ? (
-
                                                             <Select
-
                                                                 className="basic-single"
                                                                 classNamePrefix="select"
                                                                 name="color"
@@ -745,7 +793,6 @@ const EditDigiCard = () => {
                                                         ) : (
                                                             <>
                                                                 {defaultOptions && (
-
                                                                     <Select
                                                                         defaultValue={defaultOptions}
                                                                         className="basic-single"

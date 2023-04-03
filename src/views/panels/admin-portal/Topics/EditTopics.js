@@ -18,7 +18,6 @@ import MESSAGES from '../../../../helper/messages';
 import BasicSpinner from '../../../../helper/BasicSpinner';
 
 
-
 const EditTopics = ({ setOpenEditTopic, topicId }) => {
     let history = useHistory();
 
@@ -40,16 +39,16 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
     const [defaultTopicOption, setDefaultTopicOption] = useState([]);
     const [defaultOption, setDefaultOption] = useState([]);
     const [isShownRelatedTopic, setIsShownRelatedTopic] = useState([]);
-    const [topicDuration, setTopicDuration] = useState(true);
+    // const [topicDuration, setTopicDuration] = useState(true);
     const [negativeValue, setNegative] = useState(false);
     const [timeLimit, setTimeLimit] = useState(false);
     const MySwal = withReactContent(Swal);
     const [isLoading, setIsLoading] = useState(false);
-    const [topicQuiz, setTopicQuiz] = useState([])
+    // const [topicQuiz, setTopicQuiz] = useState([])
 
 
 
-    console.log("topicQuiz", topicQuiz);
+    // console.log("topicQuiz", topicQuiz);
     console.log("defaultTopicOption", defaultTopicOption);
     console.log("defaultOption", defaultOption);
     const sweetAlertHandler = (alert) => {
@@ -67,17 +66,16 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
 
 
 
-    const onDynamicFormChange = (e, index, fieldType) => {
-        console.log("e", e)
-        console.log("Field", fieldType)
-        const updatedTopics = topicQuiz.map((topic, i) =>
-            index == i
-                ? Object.assign(topic, { [e.target.name]: e.target.value })
-                : topic
-        )
-        setTopicQuiz(updatedTopics)
-    }
-
+    // const onDynamicFormChange = (e, index, fieldType) => {
+    //     console.log("e", e)
+    //     console.log("Field", fieldType)
+    //     const updatedTopics = topicQuiz.map((topic, i) =>
+    //         index == i
+    //             ? Object.assign(topic, { [e.target.name]: e.target.value })
+    //             : topic
+    //     )
+    //     setTopicQuiz(updatedTopics)
+    // }
 
     const data = [{ id: 'ac05006b-2351-59e1-a5bf-aa88e249ad05', name: 'ac05006b-2351-59e1-a5bf-aa88e249ad05' }]
 
@@ -104,7 +102,7 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                 }
             })
             .catch((err) => {
-                console.log(err.response.data);
+                console.log(err);
                 if (err.response.data === 'Topic Name Already Exists') {
                     sweetAlertHandler({ title: 'Sorry', type: 'error', text: 'Topic Name Already Exists!' })
                 }
@@ -194,28 +192,28 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
 
                 setEditTopicData(result);
 
-                result.pre_post_learning === 'Pre-Learning' ?
-                    setTopicQuiz([
-                        {
-                            label: 'Level-1', duration: result.Level_1.duration
-                        },
-                        {
-                            label: 'Level-2', duration: result.Level_2.duration
-                        }
-                    ]
-                    ) :
-                    setTopicQuiz([
-                        {
-                            label: 'Level-1', duration: result.Level_1.duration
-                        },
-                        {
-                            label: 'Level-2', duration: result.Level_2.duration
-                        },
-                        {
-                            label: 'Level-3', duration: result.Level_3.duration
-                        }
-                    ]
-                    )
+                // result.pre_post_learning === 'Pre-Learning' ?
+                //     setTopicQuiz([
+                //         {
+                //             label: 'Level-1', duration: result.Level_1.duration
+                //         },
+                //         {
+                //             label: 'Level-2', duration: result.Level_2.duration
+                //         }
+                //     ]
+                //     ) :
+                //     setTopicQuiz([
+                //         {
+                //             label: 'Level-1', duration: result.Level_1.duration
+                //         },
+                //         {
+                //             label: 'Level-2', duration: result.Level_2.duration
+                //         },
+                //         {
+                //             label: 'Level-3', duration: result.Level_3.duration
+                //         }
+                //     ]
+                //     )
 
 
             }
@@ -279,12 +277,13 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                                             enableReinitialize
                                             initialValues={{
                                                 topic_title: editTopicData.topic_title,
+                                                display_name: editTopicData.display_name,
                                                 topic_description: editTopicData.topic_description,
                                                 topic_concept_id: '',
                                                 pre_post_learning: '',
                                                 related_topics: '',
                                                 topic_quiz_config: '',
-                                                duration: ''
+                                                // duration: ''
                                             }}
 
                                             validationSchema={Yup.object().shape({
@@ -293,56 +292,71 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                                                     .min(2, Constants.AddTopic.TopictitleTooShort)
                                                     .max(32, Constants.AddTopic.TopictitleTooLong)
                                                     .required(Constants.AddTopic.TopictitleRequired),
+
                                                 topic_description: Yup.string()
                                                     .trim()
                                                     .required(Constants.AddTopic.DescriptionRequired),
+
+                                                display_name: Yup.string()
+                                                    .trim()
+                                                    .min(2, Constants.AddTopic.DisplayNameTooShort)
+                                                    .max(32, Constants.AddTopic.DisplayNameTooLong)
+                                                    .required(Constants.AddTopic.DisplayNameRequired),
+
+
                                             })}
 
 
                                             onSubmit={(values, { setErrors, setStatus, setSubmitting }) => {
 
-                                                console.log("SUBMIT SIDE QUIZ : ", topicQuiz);
+                                                let formData;
 
-                                                let emptyFieldValidation = topicQuiz.find(o => o.duration === "" || o.duration === 0 || o.duration <= 0)
-                                                // let TopicDuration = topicQuiz.find(o => o.duration <= 0)
-                                                let TopicDurationLimit = topicQuiz.find(o => o.duration > 150)
-                                                if (emptyFieldValidation) {
-                                                    setTopicDuration(false)
-                                                } else if (TopicDurationLimit) {
-                                                    setTimeLimit(true)
+                                                if (prePostLearning === 'Pre-Learning') {
+                                                    formData = {
+                                                        topic_id: topicId,
+                                                        topic_title: values.topic_title,
+                                                        display_name: values.display_name,
+                                                        topic_description: values.topic_description,
+                                                        topic_concept_id: topicConceptId,
+                                                        pre_post_learning: prePostLearning,
+                                                        related_topics: relatedTopicsId,
+                                                        // Level_1: { duration: topicQuiz[0].duration },
+                                                        // Level_2: { duration: topicQuiz[1].duration },
+                                                    }
                                                 } else {
-                                                    if (topicConceptId == '') {
-                                                        setIsShown(false)
-                                                    } else {
-                                                        if (prePostLearning === 'Pre-Learning') {
-                                                            var formData = {
-                                                                topic_id: topicId,
-                                                                topic_title: values.topic_title,
-                                                                topic_description: values.topic_description,
-                                                                topic_concept_id: topicConceptId,
-                                                                pre_post_learning: prePostLearning,
-                                                                related_topics: relatedTopicsId,
-                                                                Level_1: { duration: topicQuiz[0].duration },
-                                                                Level_2: { duration: topicQuiz[1].duration },
-                                                            }
-                                                        } else {
-                                                            var formData = {
-                                                                topic_id: topicId,
-                                                                topic_title: values.topic_title,
-                                                                topic_description: values.topic_description,
-                                                                topic_concept_id: topicConceptId,
-                                                                pre_post_learning: prePostLearning,
-                                                                related_topics: relatedTopicsId,
-                                                                Level_1: { duration: topicQuiz[0].duration },
-                                                                Level_2: { duration: topicQuiz[1].duration },
-                                                                Level_3: { duration: topicQuiz[2].duration },
-                                                            }
-                                                        }
-
-                                                        console.log('formData: ', formData)
-                                                        submitEditTopic(formData)
+                                                    formData = {
+                                                        topic_id: topicId,
+                                                        topic_title: values.topic_title,
+                                                        display_name: values.display_name,
+                                                        topic_description: values.topic_description,
+                                                        topic_concept_id: topicConceptId,
+                                                        pre_post_learning: prePostLearning,
+                                                        related_topics: relatedTopicsId,
+                                                        // Level_1: { duration: topicQuiz[0].duration },
+                                                        // Level_2: { duration: topicQuiz[1].duration },
+                                                        // Level_3: { duration: topicQuiz[2].duration },
                                                     }
                                                 }
+
+                                                // console.log("SUBMIT SIDE QUIZ : ", topicQuiz);
+
+                                                // let emptyFieldValidation = topicQuiz.find(o => o.duration === "" || o.duration === 0 || o.duration <= 0)
+                                                // // let TopicDuration = topicQuiz.find(o => o.duration <= 0)
+                                                // let TopicDurationLimit = topicQuiz.find(o => o.duration > 150)
+                                                // if (emptyFieldValidation) {
+                                                //     setTopicDuration(false)
+                                                // } else if (TopicDurationLimit) {
+                                                //     setTimeLimit(true)
+                                                // } else {
+                                                //     if (topicConceptId == '') {
+                                                //         setIsShown(false)
+                                                //     } else {
+
+
+                                                console.log('formData: ', formData)
+                                                submitEditTopic(formData)
+                                                //     }
+                                                // }
 
                                             }}
                                         >
@@ -360,6 +374,22 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                                                                 value={values.topic_title}
                                                             />
                                                             {touched.topic_title && errors.topic_title && <small className="text-danger form-text">{errors.topic_title}</small>}
+                                                        </Form.Group>
+                                                    </Col>
+
+
+                                                    <Col sm={6}>
+                                                        <Form.Group>
+                                                            <Form.Label className="floating-label" htmlFor="display_name"><small className="text-danger">* </small>Display Name</Form.Label>
+                                                            <Form.Control
+                                                                className="form-control"
+                                                                name="display_name"
+                                                                onBlur={handleBlur}
+                                                                onChange={handleChange}
+                                                                type="text"
+                                                                value={values.display_name}
+                                                            />
+                                                            {touched.display_name && errors.display_name && <small className="text-danger form-text">{errors.display_name}</small>}
                                                         </Form.Group>
                                                     </Col>
 
@@ -494,23 +524,18 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                                                             {touched.topic_description && errors.topic_description && <small className="text-danger form-text">{errors.topic_description}</small>}
                                                         </Form.Group>
                                                     </Col>
-                                                    <Row>
+                                                    {/* <Row>
                                                         <Col sm={4}>
                                                             <Form.Label className="floating-label" ><small className="text-danger">* </small>Topic Quiz Levels</Form.Label>
                                                         </Col>
                                                         <Col sm={6}>
                                                             <Form.Label className="floating-label" ><small className="text-danger">* </small>Topic Quiz Minutes</Form.Label>
                                                         </Col>
-                                                    </Row>
-                                                    {topicQuiz.map((topic, index) => (
+                                                    </Row> */}
+                                                    {/* {topicQuiz.map((topic, index) => (
 
                                                         <div className='row ml-1 mb-2' key={index + 1000} >
                                                             <div className='col-md-4' key={index + 10} >
-                                                                {/* <select className='form-control' name="level" id="level" onChange={(e) => onDynamicFormChange(e, index, 'level')} value={topic.level} >
-                                                                    {levels.map((ele, i) => {
-                                                                        return <option id="level" keys={i} value={ele.value} >{ele.label}</option>
-                                                                    })}
-                                                                </select> */}
                                                                 <Form.Control
                                                                     type='text'
                                                                     name='topic_level'
@@ -539,11 +564,6 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                                                                             autoComplete='off'
                                                                         />
                                                                     </div>
-                                                                    {/* {topicQuiz.length == 1 ? "" :
-                                                                        <div className='col-md-6'>
-                                                                            <Button variant='danger' onClick={() => removeTopic(index)}>Remove</Button>
-                                                                        </div>} */}
-
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -559,7 +579,7 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                                                                 <small className="text-danger form-text">Quiz Minutes exceeds more 150min !</small>
                                                             )}
                                                         </Col>
-                                                    </Row>
+                                                    </Row> */}
                                                     <p></p>
                                                     {/* <button type="button" className="btn btn-primary" onClick={addTopic} >Add another Quiz</button> */}
                                                     <div className="row d-flex justify-content-end">
