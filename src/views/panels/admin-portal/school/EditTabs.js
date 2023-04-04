@@ -5,7 +5,7 @@ import { useHistory, useParams } from 'react-router-dom';
 
 import EditSchoolForm from './EditSchoolForm'
 import SubscribeClass from './SubscribeClass';
-import SectionList from './SectionList'
+import SectionsTableView from './SectionsTableView'
 import QuizConfiguration from './QuizConfiguration';
 import SubscriptionFeatures from './SubscriptionFeatures';
 import BasicSpinner from '../../../../helper/BasicSpinner';
@@ -74,7 +74,7 @@ const EditTabs = () => {
                             <SubscribeClass id={school_id} />
                         </Tab>
                         <Tab eventKey={5} title="Add Section">
-                            <SectionList id={school_id} />
+                            <SectionsTableView id={school_id} />
                         </Tab>
                     </Tabs>
                 </React.Fragment>
