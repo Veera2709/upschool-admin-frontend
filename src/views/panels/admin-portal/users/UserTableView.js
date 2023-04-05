@@ -32,6 +32,7 @@ function Table({ columns, data, modalOpen, userRole }) {
   const initiallySelectedRows = React.useMemo(() => new Set(["1"]), []);
   const MySwal = withReactContent(Swal);
   const history = useHistory();
+  const [_showLoader, _setShowLoader] = useState(false);
 
   const sweetAlertHandler = (alert) => {
     MySwal.fire({
@@ -91,7 +92,7 @@ function Table({ columns, data, modalOpen, userRole }) {
       if (willDelete.value) {
         console.log("api calling");
         deleteUsersById();
-      } 
+      }
     });
   }
 
@@ -116,16 +117,7 @@ function Table({ columns, data, modalOpen, userRole }) {
 
 
   const deleteUsersById = () => {
-    // let tempArr;
-    // tempArr = users.map(user => user.id === id ? { ...user, isChecked: checked } : user)
 
-    // alert("its working")
-    // let arrIds = [];
-    // stateUser.forEach(d => {
-    //   if (d.select) {  
-    //     arrIds.push(d.id)
-    //   }
-    // })
     console.log("data check: ", data);
     let arrIds = [];
     let userId = (userRole === "Teachers") ? "teacher_id" : (userRole === "Students") ? "student_id" : (userRole === "Parents") ? "parent_id" : "N.A.";
@@ -143,7 +135,7 @@ function Table({ columns, data, modalOpen, userRole }) {
         if (document.getElementById(data[k][userId]).checked) {
           console.log("Inside Condition");
 
-          arrIds.push(data[k][userId]);
+          arrIds.push({ user_id: data[k][userId], school_id: data[k]["school_id"] });
         }
       } else if (userRole === "Parents") {
         console.log("Parents cond");
@@ -152,18 +144,20 @@ function Table({ columns, data, modalOpen, userRole }) {
         if (document.getElementById(data[k][userId]).checked) {
           console.log("Inside Condition");
 
-          arrIds.push(data[k][userId]);
+          arrIds.push({ user_id: data[k][userId], school_id: data[k]["school_id"] });
         }
       }
     }
     console.log("CHECK ROWS : ", arrIds);
+    console.log(_showLoader);
 
+    _setShowLoader(true);
     axios
       .post(
         dynamicUrl.bulkToggleUsersStatus,
         {
           data: {
-            userIdArray: arrIds,
+            selectedUsers: arrIds,
             user_role: userRolePayload,
             user_status: user_status === "Active" ? "Archived" : "Active"
           }
@@ -173,7 +167,7 @@ function Table({ columns, data, modalOpen, userRole }) {
       )
       .then(async (response) => {
         console.log("response : ", response);
-
+        _setShowLoader(false);
         if (response.Error) {
           hideLoader();
           sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
@@ -188,10 +182,50 @@ function Table({ columns, data, modalOpen, userRole }) {
             // window.location.reload();
             // setCheck(true);
             // history.push('/admin-portal/' + pageLocation)
+          } else {
+
+            MySwal.fire({ title: 'Sorry', icon: 'warning', text: response.response.data })
+              .then((willDelete) => {
+                window.location.reload();
+              });
           }
         }
       }
-      )
+      ).catch((error) => {
+        _setShowLoader(false);
+        if (error.response) {
+          // Request made and server responded
+          console.log(error.response.data);
+          hideLoader();
+
+          if (error.response.data === 'Invalid Token') {
+
+            sessionStorage.clear();
+            localStorage.clear();
+
+            history.push('/auth/signin-1');
+            window.location.reload();
+
+          } else {
+
+            sweetAlertHandler({ title: 'Sorry', text: error.response.data, type: 'warning' }).then((willDelete) => {
+              window.location.reaload();
+            });
+
+          }
+
+        } else if (error.request) {
+          // The request was made but no response was received
+          hideLoader();
+          console.log(error.request);
+
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          hideLoader();
+          console.log('Error', error.message);
+
+        }
+      });
   }
   const getAlldata = () => {
     console.log("selectedFlatRows", selectedFlatRows);
@@ -205,104 +239,139 @@ function Table({ columns, data, modalOpen, userRole }) {
       console.log("Teacher Id : ", items.original.teacher_id);
       if (userRolePayload === "Teacher") {
         console.log("Teacher Id : ", items.original.teacher_id);
-        arrayWithUserIds.push(items.original.teacher_id);
+        arrayWithUserIds.push({ user_id: items.original.teacher_id, school_id: items.original.school_id });
       }
       else if (userRolePayload === "Parent") {
         console.log("Parent Id : ", items.original.parent_id);
-        arrayWithUserIds.push(items.original.parent_id);
+        arrayWithUserIds.push({ user_id: items.original.parent_id, school_id: items.original.school_id });
       }
     })
     console.log("CHECKED IDS : ", arrayWithUserIds);
 
     if (arrayWithUserIds.length === 0) {
+
       const MySwal = withReactContent(Swal);
-      return MySwal.fire('Sorry', 'No User Selected!', 'warning').then(() => {
-        window.location.reload();
-      });
-    }
+      return MySwal.fire('Sorry', 'No User Selected!', 'warning');
 
+    } else {
 
-    const MySwal = withReactContent(Swal);
-    MySwal.fire({
-      title: 'Are you sure?',
-      text: pageLocation === 'active-users' ? 'Confirm deleting' : 'Confirm restoring',
-      type: 'warning',
-      showCloseButton: true,
-      showCancelButton: true,
+      const MySwal = withReactContent(Swal);
+      MySwal.fire({
+        title: 'Are you sure?',
+        text: pageLocation === 'active-users' ? 'Confirm deleting' : 'Confirm restoring',
+        type: 'warning',
+        showCloseButton: true,
+        showCancelButton: true,
 
-    }).then((willDelete) => {
-      if (willDelete.value) {
-        console.log("api calling");
-        // changeStatus(digi_card_id, digi_card_title);
-        axios
-          .post(
-            dynamicUrl.bulkToggleUsersStatus,
-            {
-              data: {
-                userIdArray: arrayWithUserIds,  // selectedFlatRows
-                user_role: userRolePayload,
-                user_status: user_status === "Active" ? "Archived" : "Active"
-              }
-            }, {
-            headers: { Authorization: sessionStorage.getItem('user_jwt') }
-          }
-          )
-          .then(async (response) => {
-            console.log("response : ", response);
+      }).then((willDelete) => {
+        if (willDelete.value) {
 
-            if (response.Error) {
-              hideLoader();
-              // sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
-              pageLocation === "active-users"
-                ? sweetAlertHandler({
-                  title: MESSAGES.TTTLES.Sorry,
-                  type: "error",
-                  text:
-                    userRole === "Teachers"
-                      ? MESSAGES.ERROR.DeletingTeachers
-                      : userRole === "Parents"
-                        ? MESSAGES.ERROR.DeletingParents
-                        : MESSAGES.ERROR.InvalidUser,
-                })
-                : sweetAlertHandler({
-                  title: MESSAGES.TTTLES.Sorry,
-                  type: "error",
-                  text:
-                    userRole === "Teachers"
-                      ? MESSAGES.ERROR.RestoringTeachers
-                      : userRole === "Parents"
-                        ? MESSAGES.ERROR.RestoringParents
-                        : MESSAGES.ERROR.InvalidUser,
-                });
+          _setShowLoader(true);
+          console.log("api calling", _showLoader);
 
-              history.push('/admin-portal/' + pageLocation)
-              // fetchUserData();
-            } else {
-              console.log("response : ", response);
-              if (response.data === 200) {
-                MySwal.fire({
-                  title: (userRole === "Teachers" && pageLocation === 'active-users') ? 'Teachers Deleted' :
-                    (userRole === "Parents" && pageLocation === 'active-users') ? 'Parents Deleted' :
-                      'Users Restored',
-                  icon: "success",
-                  text: pageLocation === 'active-users' ? 'User Deleted' : 'User Restored',
-                  // type: 'success',
-                }).then((willDelete) => {
-
-                  window.location.reload()
-
-                })
-
-              }
+          // changeStatus(digi_card_id, digi_card_title);
+          axios
+            .post(
+              dynamicUrl.bulkToggleUsersStatus,
+              {
+                data: {
+                  selectedUsers: arrayWithUserIds,  // selectedFlatRows
+                  user_role: userRolePayload,
+                  user_status: user_status === "Active" ? "Archived" : "Active"
+                }
+              }, {
+              headers: { Authorization: sessionStorage.getItem('user_jwt') }
             }
-          }
-          )
+            )
+            .then(async (response) => {
+              console.log("response : ", response);
+              _setShowLoader(false);
+              if (response.Error) {
+                hideLoader();
+                // sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
+                pageLocation === "active-users"
+                  ? sweetAlertHandler({
+                    title: MESSAGES.TTTLES.Sorry,
+                    type: "error",
+                    text:
+                      userRole === "Teachers"
+                        ? MESSAGES.ERROR.DeletingTeachers
+                        : userRole === "Parents"
+                          ? MESSAGES.ERROR.DeletingParents
+                          : MESSAGES.ERROR.InvalidUser,
+                  })
+                  : sweetAlertHandler({
+                    title: MESSAGES.TTTLES.Sorry,
+                    type: "error",
+                    text:
+                      userRole === "Teachers"
+                        ? MESSAGES.ERROR.RestoringTeachers
+                        : userRole === "Parents"
+                          ? MESSAGES.ERROR.RestoringParents
+                          : MESSAGES.ERROR.InvalidUser,
+                  });
 
-      } 
+                history.push('/admin-portal/' + pageLocation)
+                // fetchUserData();
+              } else {
+                console.log("response : ", response);
+                if (response.data === 200) {
+                  MySwal.fire({
+                    title: (userRole === "Teachers" && pageLocation === 'active-users') ? 'Teachers Deleted' :
+                      (userRole === "Parents" && pageLocation === 'active-users') ? 'Parents Deleted' :
+                        'Users Restored',
+                    icon: "success",
+                    text: pageLocation === 'active-users' ? 'User Deleted' : 'User Restored',
+                    // type: 'success',
+                  }).then((willDelete) => {
 
-    });
+                    window.location.reload()
 
+                  })
 
+                }
+              }
+
+            }
+            ).catch((error) => {
+              _setShowLoader(false);
+              if (error.response) {
+                // Request made and server responded
+                console.log(error.response.data);
+                hideLoader();
+
+                if (error.response.data === 'Invalid Token') {
+
+                  sessionStorage.clear();
+                  localStorage.clear();
+
+                  history.push('/auth/signin-1');
+                  window.location.reload();
+
+                } else {
+
+                  MySwal.fire({ title: 'Sorry', text: error.response.data, icon: 'warning' }).then((willDelete) => {
+                    window.location.reload();
+                  })
+
+                }
+
+              } else if (error.request) {
+                // The request was made but no response was received
+                hideLoader();
+                console.log(error.request);
+              } else {
+                // Something happened in setting up the request that triggered an Error
+                hideLoader();
+                console.log('Error', error.message);
+              }
+            });
+
+        }
+
+      });
+
+    }
   }
 
   return (
@@ -333,6 +402,13 @@ function Table({ columns, data, modalOpen, userRole }) {
           </select>
           Entries
         </Col>
+        <Col>
+          {
+            _showLoader === true && (
+              <div className="form-group fill text-center">{loader}</div>
+            )
+          }
+        </Col>
         <Col className="d-flex justify-content-end">
           <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
 
@@ -353,7 +429,10 @@ function Table({ columns, data, modalOpen, userRole }) {
                 // style={{ marginLeft: "1.5rem" }}
                 style={{ whiteSpace: "nowrap" }}
                 onClick={() => { getAlldata() }}
-              >Multi Delete</Button>
+              >
+                <i className="feather icon-trash-2" /> &nbsp;
+                Multi Delete
+              </Button>
             </>
           ) : (
 
@@ -496,8 +575,6 @@ const UserTableView = ({ _userRole }) => {
   const handleSelectAll = (allId) => {
 
 
-
-
     console.log("ALL CEHCK IDS : ", checkBoxId);
     if (document.getElementById(allId).checked === true) {
       alert("Checked");
@@ -525,8 +602,6 @@ const UserTableView = ({ _userRole }) => {
     // );
     // setOutPutData(updatedData);
   };
-
-
 
   const columns = React.useMemo(() => [
     // {
@@ -583,7 +658,6 @@ const UserTableView = ({ _userRole }) => {
     }
   ], []);
 
-
   const sweetAlertHandler = (alert) => {
     MySwal.fire({
       title: alert.title,
@@ -592,7 +666,7 @@ const UserTableView = ({ _userRole }) => {
     });
   };
 
-  const sweetConfirmHandler = (alert, user_id, user_role, updateStatus) => {
+  const sweetConfirmHandler = (alert, user_id, user_role, updateStatus, schoolId) => {
     MySwal.fire({
       title: alert.title,
       text: alert.text,
@@ -602,7 +676,7 @@ const UserTableView = ({ _userRole }) => {
     }).then((willDelete) => {
       if (willDelete.value) {
         showLoader();
-        deleteUser(user_id, user_role, updateStatus);
+        deleteUser(user_id, user_role, updateStatus, schoolId);
       } else {
 
         // const returnValue = pageLocation === 'active-users' ? (
@@ -622,13 +696,13 @@ const UserTableView = ({ _userRole }) => {
 
   };
 
-  const saveUserIdDelete = (e, user_id, user_role, updateStatus) => {
+  const saveUserIdDelete = (e, user_id, user_role, updateStatus, schoolId) => {
     e.preventDefault();
 
     pageLocation === 'active-users' ? (
-      sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: MESSAGES.INFO.ABLE_TO_RECOVER }, user_id, user_role, updateStatus)
+      sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: MESSAGES.INFO.ABLE_TO_RECOVER }, user_id, user_role, updateStatus, schoolId)
     ) : (
-      sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: 'This will restore the user!' }, user_id, user_role, updateStatus)
+      sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: 'This will restore the user!' }, user_id, user_role, updateStatus, schoolId)
     )
 
   };
@@ -727,11 +801,12 @@ const UserTableView = ({ _userRole }) => {
       });
   };
 
-  const deleteUser = (user_id, user_role, updateStatus) => {
+  const deleteUser = (user_id, user_role, updateStatus, schoolId) => {
     const values = {
       user_id: user_id,
       user_role: user_role,
-      user_status: updateStatus
+      user_status: updateStatus,
+      school_id: schoolId
     };
 
     console.log(values);
@@ -742,7 +817,8 @@ const UserTableView = ({ _userRole }) => {
           data: {
             user_id: user_id,
             user_role: user_role,
-            user_status: updateStatus
+            user_status: updateStatus,
+            school_id: schoolId
           }
         }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
       .then(async (response) => {
@@ -897,7 +973,7 @@ const UserTableView = ({ _userRole }) => {
                   <Button
                     size="sm"
                     className="btn btn-icon btn-rounded btn-danger"
-                    onClick={(e) => saveUserIdDelete(e, responseData[index].teacher_id, responseData[index].user_role, 'Archived')}
+                    onClick={(e) => saveUserIdDelete(e, responseData[index].teacher_id, responseData[index].user_role, 'Archived', responseData[index].school_id)}
                   >
                     <i className="feather icon-trash-2" /> &nbsp;Delete
                   </Button>
@@ -917,7 +993,7 @@ const UserTableView = ({ _userRole }) => {
                   <Button
                     size="sm"
                     className="btn btn-icon btn-rounded btn-danger"
-                    onClick={(e) => saveUserIdDelete(e, responseData[index].parent_id, responseData[index].user_role, 'Archived')}
+                    onClick={(e) => saveUserIdDelete(e, responseData[index].parent_id, responseData[index].user_role, 'Archived', responseData[index].school_id)}
                   >
                     <i className="feather icon-trash-2" /> &nbsp;Delete
                   </Button>
@@ -933,7 +1009,7 @@ const UserTableView = ({ _userRole }) => {
                   <Button
                     size="sm"
                     className="btn btn-icon btn-rounded btn-primary"
-                    onClick={(e) => saveUserIdDelete(e, responseData[index].teacher_id, responseData[index].user_role, 'Active')}
+                    onClick={(e) => saveUserIdDelete(e, responseData[index].teacher_id, responseData[index].user_role, 'Active', responseData[index].school_id)}
                   >
                     <i className="feather icon-plus" /> &nbsp;Restore
                   </Button>
@@ -943,7 +1019,7 @@ const UserTableView = ({ _userRole }) => {
                   <Button
                     size="sm"
                     className="btn btn-icon btn-rounded btn-primary"
-                    onClick={(e) => saveUserIdDelete(e, responseData[index].parent_id, responseData[index].user_role, 'Active')}
+                    onClick={(e) => saveUserIdDelete(e, responseData[index].parent_id, responseData[index].user_role, 'Active', responseData[index].school_id)}
                   >
                     <i className="feather icon-plus" /> &nbsp;Restore
                   </Button>
@@ -1097,6 +1173,7 @@ const UserTableView = ({ _userRole }) => {
                               <Card.Header>
                                 <Card.Title as="h5">User List</Card.Title>
                               </Card.Header>
+
                               <Card.Body>
                                 <Table columns={columns} data={userData} modalOpen={openHandler} userRole={_userRole} selectAllCheckbox={selectAllCheckbox} />
                               </Card.Body>

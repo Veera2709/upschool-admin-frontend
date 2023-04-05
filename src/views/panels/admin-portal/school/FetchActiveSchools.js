@@ -1,21 +1,12 @@
 import React, { useEffect } from 'react'
 import axios from 'axios';
 import dynamicUrl from '../../../../helper/dynamicUrls';
-import SchoolChild from './SchoolChild'
+import SchoolChild from './ActiveSchoolsTableView'
 import { useState } from 'react';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import { useHistory } from 'react-router-dom';
 import BasicSpinner from '../../../../helper/BasicSpinner';
-
-// // import React, { useState } from 'react';
-// import { Row, Col, Card, Pagination, Button, Modal } from 'react-bootstrap';
-// import BTable from 'react-bootstrap/Table';
-
-// import { GlobalFilter } from './GlobalFilter';
-
-// import { useTable, useSortBy, usePagination, useGlobalFilter } from 'react-table';
-// // import makeData from '../../../data/schoolData';
 
 const School = () => {
     const history = useHistory();
@@ -27,7 +18,7 @@ const School = () => {
 
     const fetchSchoolData = () => {
         setIsLoading(true);
-        axios.post(dynamicUrl.fetchAllSchool, {}, {
+        axios.post(dynamicUrl.fetchActiveSchool, {}, {
             headers: { Authorization: sessionStorage.getItem('user_jwt') }
         })
             .then((response) => {

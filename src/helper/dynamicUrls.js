@@ -23,7 +23,7 @@ const dynamicUrl = {
 
     // School
     insertSchool: baseUrl + '/insertSchool',
-    fetchAllSchool: baseUrl + '/fetchAllSchool',
+    fetchArchivedSchool: baseUrl + '/fetchArchivedSchool',
     updateSchool: baseUrl + '/updateSchool',
     fetchIndividualSchool: baseUrl + '/fetchIndividualSchool',
     deleteSchool: baseUrl + '/deleteSchool',
@@ -47,6 +47,7 @@ const dynamicUrl = {
     fetchSchoolIdNames: baseUrl + '/fetchSchoolIdNames',
     fetchAllUsersData: baseUrl + '/fetchAllUsersData',
     fetchInactiveUsersData: baseUrl + '/fetchInactiveUsersData',
+    fetchActiveSchool: baseUrl + '/fetchActiveSchool',
     getUserBulkuploadUrl: baseUrl + '/getUserBulkuploadUrl',
     bulkUsersUpload: baseUrl + '/bulkUsersUpload',
     fetchIndividualUser: baseUrl + '/fetchIndividualUser',
@@ -86,7 +87,6 @@ const dynamicUrl = {
     toggleTopicStatus: baseUrl + '/toggleTopicStatus',
     getConcepts: baseUrl + '/fetchAllConcepts',
     toggleSchoolStatus: baseUrl + '/toggleSchoolStatus',
-    fetchInactiveSchool: baseUrl + '/fetchInactiveSchool',
     bulkToggleTopicStatus: baseUrl + '/bulkToggleTopicStatus',
 
     // Subjects

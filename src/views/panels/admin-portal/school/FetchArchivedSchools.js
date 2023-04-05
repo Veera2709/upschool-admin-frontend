@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import dynamicUrl from '../../../../helper/dynamicUrls';
 import { isEmptyArray } from '../../../../util/utils';
-import SchoolsDataList from './SchoolsDataList';
+import ArchivedSchoolsTableView from './ArchivedSchoolsTableView';
 import { Link, useHistory } from 'react-router-dom';
 import BasicSpinner from '../../../../helper/BasicSpinner';
 
@@ -15,7 +15,7 @@ const ArchivedSchools = () => {
     const fetchArchivedSchoolData = () => {
         // useEffect(() => {
         setIsLoading(true);
-        axios.post(dynamicUrl.fetchInactiveSchool, {}, { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
+        axios.post(dynamicUrl.fetchArchivedSchool, {}, { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
             .then((response) => {
                 const result = response.data.Items;
                 if (!isEmptyArray(result)) {
@@ -49,7 +49,7 @@ const ArchivedSchools = () => {
         <div>
 
             {isLoading ? <BasicSpinner /> : (
-                <SchoolsDataList _data={_data} fetchArchivedSchoolData={fetchArchivedSchoolData} />
+                <ArchivedSchoolsTableView _data={_data} fetchArchivedSchoolData={fetchArchivedSchoolData} />
 
             )}
         </div>
