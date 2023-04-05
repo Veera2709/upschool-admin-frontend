@@ -430,8 +430,8 @@ const EditGroups = ({ className, ...rest }) => {
                                                             .max(51, 'Group Name is too long!')
                                                             .required('Group Name is required!'),
                                                         question_duration: Yup.number()
-                                                            .moreThan(0, 'Group Duration is Less Then 0min!')
-                                                            .lessThan(150, 'Group Duration is More Then 150min!')
+                                                            .min(1, 'Group Duration is Less Then 1min!')
+                                                            .max(10, 'Group Duration is More Then 10min!')
                                                             .required('Group Duration is required!'),
 
                                                         group_description: Yup.string()
