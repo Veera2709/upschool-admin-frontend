@@ -32,6 +32,7 @@ function Table({ columns, data, modalOpen, userRole }) {
   const initiallySelectedRows = React.useMemo(() => new Set(["1"]), []);
   const MySwal = withReactContent(Swal);
   const history = useHistory();
+  const [_showLoader, _setShowLoader] = useState(false);
 
   const sweetAlertHandler = (alert) => {
     MySwal.fire({
@@ -116,16 +117,7 @@ function Table({ columns, data, modalOpen, userRole }) {
 
 
   const deleteUsersById = () => {
-    // let tempArr;
-    // tempArr = users.map(user => user.id === id ? { ...user, isChecked: checked } : user)
 
-    // alert("its working")
-    // let arrIds = [];
-    // stateUser.forEach(d => {
-    //   if (d.select) {  
-    //     arrIds.push(d.id)
-    //   }
-    // })
     console.log("data check: ", data);
     let arrIds = [];
     let userId = (userRole === "Teachers") ? "teacher_id" : (userRole === "Students") ? "student_id" : (userRole === "Parents") ? "parent_id" : "N.A.";
@@ -157,7 +149,9 @@ function Table({ columns, data, modalOpen, userRole }) {
       }
     }
     console.log("CHECK ROWS : ", arrIds);
+    console.log(_showLoader);
 
+    _setShowLoader(true);
     axios
       .post(
         dynamicUrl.bulkToggleUsersStatus,
@@ -173,7 +167,7 @@ function Table({ columns, data, modalOpen, userRole }) {
       )
       .then(async (response) => {
         console.log("response : ", response);
-
+        _setShowLoader(false);
         if (response.Error) {
           hideLoader();
           sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
@@ -188,10 +182,50 @@ function Table({ columns, data, modalOpen, userRole }) {
             // window.location.reload();
             // setCheck(true);
             // history.push('/admin-portal/' + pageLocation)
+          } else {
+
+            MySwal.fire({ title: 'Sorry', icon: 'warning', text: response.response.data })
+              .then((willDelete) => {
+                window.location.reload();
+              });
           }
         }
       }
-      )
+      ).catch((error) => {
+        _setShowLoader(false);
+        if (error.response) {
+          // Request made and server responded
+          console.log(error.response.data);
+          hideLoader();
+
+          if (error.response.data === 'Invalid Token') {
+
+            sessionStorage.clear();
+            localStorage.clear();
+
+            history.push('/auth/signin-1');
+            window.location.reload();
+
+          } else {
+
+            sweetAlertHandler({ title: 'Sorry', text: error.response.data, type: 'warning' }).then((willDelete) => {
+              window.location.reaload();
+            });
+
+          }
+
+        } else if (error.request) {
+          // The request was made but no response was received
+          hideLoader();
+          console.log(error.request);
+
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          hideLoader();
+          console.log('Error', error.message);
+
+        }
+      });
   }
   const getAlldata = () => {
     console.log("selectedFlatRows", selectedFlatRows);
@@ -215,10 +249,10 @@ function Table({ columns, data, modalOpen, userRole }) {
     console.log("CHECKED IDS : ", arrayWithUserIds);
 
     if (arrayWithUserIds.length === 0) {
+
       const MySwal = withReactContent(Swal);
-      return MySwal.fire('Sorry', 'No User Selected!', 'warning').then(() => {
-        window.location.reload();
-      });
+      return MySwal.fire('Sorry', 'No User Selected!', 'warning');
+
     } else {
 
       const MySwal = withReactContent(Swal);
@@ -231,7 +265,10 @@ function Table({ columns, data, modalOpen, userRole }) {
 
       }).then((willDelete) => {
         if (willDelete.value) {
-          console.log("api calling");
+
+          _setShowLoader(true);
+          console.log("api calling", _showLoader);
+
           // changeStatus(digi_card_id, digi_card_title);
           axios
             .post(
@@ -248,7 +285,7 @@ function Table({ columns, data, modalOpen, userRole }) {
             )
             .then(async (response) => {
               console.log("response : ", response);
-
+              _setShowLoader(false);
               if (response.Error) {
                 hideLoader();
                 // sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
@@ -294,8 +331,41 @@ function Table({ columns, data, modalOpen, userRole }) {
 
                 }
               }
+
             }
-            )
+            ).catch((error) => {
+              _setShowLoader(false);
+              if (error.response) {
+                // Request made and server responded
+                console.log(error.response.data);
+                hideLoader();
+
+                if (error.response.data === 'Invalid Token') {
+
+                  sessionStorage.clear();
+                  localStorage.clear();
+
+                  history.push('/auth/signin-1');
+                  window.location.reload();
+
+                } else {
+
+                  MySwal.fire({ title: 'Sorry', text: error.response.data, icon: 'warning' }).then((willDelete) => {
+                    window.location.reload();
+                  })
+
+                }
+
+              } else if (error.request) {
+                // The request was made but no response was received
+                hideLoader();
+                console.log(error.request);
+              } else {
+                // Something happened in setting up the request that triggered an Error
+                hideLoader();
+                console.log('Error', error.message);
+              }
+            });
 
         }
 
@@ -332,6 +402,13 @@ function Table({ columns, data, modalOpen, userRole }) {
           </select>
           Entries
         </Col>
+        <Col>
+          {
+            _showLoader === true && (
+              <div className="form-group fill text-center">{loader}</div>
+            )
+          }
+        </Col>
         <Col className="d-flex justify-content-end">
           <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
 
@@ -352,7 +429,10 @@ function Table({ columns, data, modalOpen, userRole }) {
                 // style={{ marginLeft: "1.5rem" }}
                 style={{ whiteSpace: "nowrap" }}
                 onClick={() => { getAlldata() }}
-              >Multi Delete</Button>
+              >
+                <i className="feather icon-trash-2" /> &nbsp;
+                Multi Delete
+              </Button>
             </>
           ) : (
 
@@ -495,8 +575,6 @@ const UserTableView = ({ _userRole }) => {
   const handleSelectAll = (allId) => {
 
 
-
-
     console.log("ALL CEHCK IDS : ", checkBoxId);
     if (document.getElementById(allId).checked === true) {
       alert("Checked");
@@ -524,8 +602,6 @@ const UserTableView = ({ _userRole }) => {
     // );
     // setOutPutData(updatedData);
   };
-
-
 
   const columns = React.useMemo(() => [
     // {
@@ -581,7 +657,6 @@ const UserTableView = ({ _userRole }) => {
       accessor: 'action'
     }
   ], []);
-
 
   const sweetAlertHandler = (alert) => {
     MySwal.fire({
@@ -1098,6 +1173,7 @@ const UserTableView = ({ _userRole }) => {
                               <Card.Header>
                                 <Card.Title as="h5">User List</Card.Title>
                               </Card.Header>
+
                               <Card.Body>
                                 <Table columns={columns} data={userData} modalOpen={openHandler} userRole={_userRole} selectAllCheckbox={selectAllCheckbox} />
                               </Card.Body>

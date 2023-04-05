@@ -176,7 +176,40 @@ function Table({ columns, data, modalOpen, userRole }) {
                     // _fetchSchoolData();
                 }
             }
-            )
+            ).catch((error) => {
+                if (error.response) {
+                    // Request made and server responded
+                    console.log(error.response.data);
+                    hideLoader();
+
+                    if (error.response.data === 'Invalid Token') {
+
+                        sessionStorage.clear();
+                        localStorage.clear();
+
+                        history.push('/auth/signin-1');
+                        window.location.reload();
+
+                    } else {
+
+                        sweetAlertHandler({ title: 'Sorry', text: error.response.data, type: 'warning' }).then((willDelete) => {
+                            window.location.reaload();
+                        });
+
+                    }
+
+                } else if (error.request) {
+                    // The request was made but no response was received
+                    hideLoader();
+                    console.log(error.request);
+
+                } else {
+                    // Something happened in setting up the request that triggered an Error
+                    hideLoader();
+                    console.log('Error', error.message);
+
+                }
+            });
 
     }
     const deleteAllStudent = () => {
@@ -263,7 +296,40 @@ function Table({ columns, data, modalOpen, userRole }) {
                                 }
                             }
                         }
-                        )
+                        ).catch((error) => {
+                            if (error.response) {
+                                // Request made and server responded
+                                console.log(error.response.data);
+                                hideLoader();
+
+                                if (error.response.data === 'Invalid Token') {
+
+                                    sessionStorage.clear();
+                                    localStorage.clear();
+
+                                    history.push('/auth/signin-1');
+                                    window.location.reload();
+
+                                } else {
+
+                                    sweetAlertHandler({ title: 'Sorry', text: error.response.data, type: 'warning' }).then((willDelete) => {
+                                        window.location.reaload();
+                                    });
+
+                                }
+
+                            } else if (error.request) {
+                                // The request was made but no response was received
+                                hideLoader();
+                                console.log(error.request);
+
+                            } else {
+                                // Something happened in setting up the request that triggered an Error
+                                hideLoader();
+                                console.log('Error', error.message);
+
+                            }
+                        });
                 } else {
                     return MySwal.fire('', pageLocation === 'active-users' ? 'User is safe!' : "User remains Archived", 'error')
 
@@ -299,14 +365,37 @@ function Table({ columns, data, modalOpen, userRole }) {
                 <Col className="d-flex justify-content-end">
                     <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
 
-                    <Link to={'/admin-portal/add-users'}>
-                        <Button style={{ whiteSpace: "nowrap" }} variant="success" className="btn-sm btn-round has-ripple ml-2">
-                            <i className="feather icon-plus" /> Add Users</Button>
-                    </Link>
-                    {user_status === "Active" ?
-                        <Button onClick={(e) => { deleteAllStudent() }} variant="danger" className="btn-sm btn-round has-ripple ml-2" style={{ whiteSpace: "nowrap" }} >Multi Delete</Button>
+                    {user_status === "Active" ? (
+                        <>
+                            <Link to={'/admin-portal/add-users'}>
+                                <Button
+                                    style={{ whiteSpace: "nowrap" }}
+                                    variant="success"
+                                    className="btn-sm btn-round has-ripple ml-2">
+                                    <i className="feather icon-plus" /> Add Users
+                                </Button>
+                            </Link>
+
+                            <Button
+                                onClick={(e) => { deleteAllStudent() }}
+                                variant="danger"
+                                className="btn-sm btn-round has-ripple ml-2"
+                                style={{ whiteSpace: "nowrap" }} >
+                                <i className="feather icon-trash-2" /> &nbsp;
+                                Multi Delete
+                            </Button>
+                        </>
+
+                    )
                         :
-                        <Button onClick={deleteAllStudent} variant="primary" className="btn-sm btn-round has-ripple ml-2" style={{ whiteSpace: "nowrap" }} >Multi Restores</Button>
+                        <Button
+                            onClick={deleteAllStudent}
+                            variant="primary"
+                            className="btn-sm btn-round has-ripple ml-2"
+                            style={{ whiteSpace: "nowrap" }} >
+                            <i className="feather icon-plus" /> &nbsp;
+                            Multi Restore
+                        </Button>
                     }
                 </Col>
             </Row>
