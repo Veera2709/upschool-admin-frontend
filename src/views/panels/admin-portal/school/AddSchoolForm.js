@@ -400,7 +400,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                                         <small class="text-danger">* </small>
                                         School Name</label>
                                     <input
-                                        error={touched.permCrimPhoneNo && errors.permCrimPhoneNo}
+                                        error={touched.school_name && errors.school_name}
                                         class="form-control"
                                         type="text"
                                         name="school_name"
@@ -456,7 +456,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                                     <div className="row">
                                         <div className="col">
                                             <label class="floating-label">
-                                                <small class="text-danger">* </small>Subscription Active
+                                                <small class="text-danger"></small>Subscription Active
                                             </label>
                                         </div>
                                         <div className="col">
