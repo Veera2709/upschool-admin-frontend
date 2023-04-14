@@ -344,9 +344,9 @@ const LoginWithOTP = ({ className, handleLogin, ...rest }) => {
                                             validationSchema={Yup.object().shape({
 
                                                 newPassword: Yup.string()
-                                                    .max(20, 'Password is too long!')
-                                                    .min(9, 'Password is too short!')
-                                                    .required("Password is required!")
+                                                    .max(20, 'New Password is too long!')
+                                                    .min(8, 'New Password is too short!')
+                                                    .required("New Password is required!")
                                                     .matches(
                                                         Constants.Common.PasswordRegex,
                                                         "Must be a combination of varied characters like: uppercase, lowercase, numbers and symbols with no white spaces!"
@@ -355,7 +355,7 @@ const LoginWithOTP = ({ className, handleLogin, ...rest }) => {
                                                     is: val => (val && val.length > 0 ? true : false),
                                                     then: Yup.string().oneOf(
                                                         [Yup.ref("newPassword")],
-                                                        "Password must to be same!"
+                                                        "Confirm Password must be same as New Password!"
                                                     )
                                                 })
 
