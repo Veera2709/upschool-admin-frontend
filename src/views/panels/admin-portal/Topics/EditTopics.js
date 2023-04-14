@@ -167,9 +167,10 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                 let tempArr = [];
                 let tempTopic = [];
 
-                topicData.Items[0].topic_concept_id.forEach(function (entry_concept) {
-                    conceptArr.forEach(function (childrenEntry_concept) {
+                result.topic_concept_id.forEach(function (entry_concept) {
+                    conceptArr.forEach(function (childrenEntry_concept,index) {
                         if (entry_concept === childrenEntry_concept.value) {
+                            console.log("entry_concept", entry_concept);
                             tempArr.push(childrenEntry_concept)
                         }
 
@@ -178,6 +179,26 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                     setDefaultConceptOption(tempArr)
                     setTopicConceptId(topicData.Items[0].topic_concept_id)
                 });
+
+              
+                // conceptArr.map((item)=>{
+                //     result.topic_concept_id.map((childItem)=>{
+                //        console.log("childItem",childItem);
+                //     })
+                // })
+                console.log("result.topic_concept_id : ", result.topic_concept_id);
+                console.log("conceptArr : ", conceptArr);
+                // result.topic_concept_id.map((item)=>{
+
+                //     conceptArr.filter((e)=>{
+                //         console.log("Check : ", e.value === item);
+
+                //         // if(e.value === item){
+                //         //     console.log("conceptArr",e);
+                //         // }
+                //     })
+                // })
+
 
                 topicData.Items[0].related_topics.forEach(function (entry) {
                     topicArr.forEach(function (childrenEntry) {
@@ -192,28 +213,7 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
 
                 setEditTopicData(result);
 
-                // result.pre_post_learning === 'Pre-Learning' ?
-                //     setTopicQuiz([
-                //         {
-                //             label: 'Level-1', duration: result.Level_1.duration
-                //         },
-                //         {
-                //             label: 'Level-2', duration: result.Level_2.duration
-                //         }
-                //     ]
-                //     ) :
-                //     setTopicQuiz([
-                //         {
-                //             label: 'Level-1', duration: result.Level_1.duration
-                //         },
-                //         {
-                //             label: 'Level-2', duration: result.Level_2.duration
-                //         },
-                //         {
-                //             label: 'Level-3', duration: result.Level_3.duration
-                //         }
-                //     ]
-                //     )
+
 
 
             }
@@ -320,8 +320,6 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                                                         topic_concept_id: topicConceptId,
                                                         pre_post_learning: prePostLearning,
                                                         related_topics: relatedTopicsId,
-                                                        // Level_1: { duration: topicQuiz[0].duration },
-                                                        // Level_2: { duration: topicQuiz[1].duration },
                                                     }
                                                 } else {
                                                     formData = {
@@ -332,9 +330,6 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                                                         topic_concept_id: topicConceptId,
                                                         pre_post_learning: prePostLearning,
                                                         related_topics: relatedTopicsId,
-                                                        // Level_1: { duration: topicQuiz[0].duration },
-                                                        // Level_2: { duration: topicQuiz[1].duration },
-                                                        // Level_3: { duration: topicQuiz[2].duration },
                                                     }
                                                 }
 
@@ -434,7 +429,7 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                                                     </Col>
 
                                                     <Col sm={6}>
-
+                                                        {console.log("defaultConceptOption", defaultConceptOption)}
                                                         {defaultConceptOption && (<div className="form-group fill" style={{ position: "relative", zIndex: 50 }}>
                                                             <label className="floating-label" htmlFor="concept">
                                                                 <small className="text-danger">* </small>concepts
@@ -445,7 +440,7 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                                                                     className="basic-multi-select"
                                                                     isMulti
                                                                     closeMenuOnSelect={false}
-                                                                    onChange={(e) => { gettopicId(e); setIsShown(true) }}
+                                                                    onChange={(e) => { getconceptId(e); setIsShown(true) }}
                                                                     options={conceptTitles}
                                                                     placeholder="Select the concept Title"
                                                                 />
@@ -488,9 +483,7 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
 
                                                             ) : (
                                                                 <>
-                                                                    {console.log(defaultTopicOption)}
                                                                     {defaultTopicOption && (
-
                                                                         < Select
                                                                             defaultValue={defaultTopicOption}
                                                                             className="basic-multi-select"
