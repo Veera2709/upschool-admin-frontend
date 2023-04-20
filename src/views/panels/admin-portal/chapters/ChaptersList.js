@@ -623,7 +623,10 @@ const ChaptersListChild = (props) => {
                                             <Col sm={12}>
                                                 <Card>
                                                     <Card.Header>
-                                                        <Card.Title as="h5">Chapters List</Card.Title>
+                                                        <Card.Title as="h5" className='d-flex justify-content-between'>
+                                                            <h5>Chapters List</h5>
+                                                            <h5>Total Entries :- {chapterData.length}</h5>
+                                                        </Card.Title>
                                                     </Card.Header>
                                                     <Card.Body>
                                                         <Table columns={columns} data={chapterData} />

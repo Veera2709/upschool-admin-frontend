@@ -213,23 +213,23 @@ function Table({ columns, data }) {
 
     pageLocation === "active-concepts"
       ? sweetConfirmHandler(
-          {
-            title: MESSAGES.TTTLES.AreYouSure,
-            type: "warning",
-            text: MESSAGES.INFO.ABLE_TO_RECOVER,
-          },
-          concept_id,
-          updateStatus
-        )
+        {
+          title: MESSAGES.TTTLES.AreYouSure,
+          type: "warning",
+          text: MESSAGES.INFO.ABLE_TO_RECOVER,
+        },
+        concept_id,
+        updateStatus
+      )
       : sweetConfirmHandler(
-          {
-            title: MESSAGES.TTTLES.AreYouSure,
-            type: "warning",
-            text: "This will restore the concept!",
-          },
-          concept_id,
-          updateStatus
-        );
+        {
+          title: MESSAGES.TTTLES.AreYouSure,
+          type: "warning",
+          text: "This will restore the concept!",
+        },
+        concept_id,
+        updateStatus
+      );
   };
 
   const fetchAllConceptsData = () => {
@@ -535,15 +535,15 @@ function Table({ columns, data }) {
               // sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
               pageLocation === "active-concepts"
                 ? sweetAlertHandler({
-                    title: MESSAGES.TTTLES.Sorry,
-                    type: "error",
-                    text: MESSAGES.ERROR.DeletingConcept,
-                  })
+                  title: MESSAGES.TTTLES.Sorry,
+                  type: "error",
+                  text: MESSAGES.ERROR.DeletingConcept,
+                })
                 : sweetAlertHandler({
-                    title: MESSAGES.TTTLES.Sorry,
-                    type: "error",
-                    text: MESSAGES.ERROR.RestoringConcept,
-                  });
+                  title: MESSAGES.TTTLES.Sorry,
+                  type: "error",
+                  text: MESSAGES.ERROR.RestoringConcept,
+                });
               history.push("/admin-portal/" + pageLocation);
             } else {
               console.log("response : ", response);
@@ -1005,23 +1005,23 @@ const ConceptTableView = ({ userStatus }) => {
 
     pageLocation === "active-concepts"
       ? sweetConfirmHandler(
-          {
-            title: MESSAGES.TTTLES.AreYouSure,
-            type: "warning",
-            text: MESSAGES.INFO.ABLE_TO_RECOVER,
-          },
-          concept_id,
-          updateStatus
-        )
+        {
+          title: MESSAGES.TTTLES.AreYouSure,
+          type: "warning",
+          text: MESSAGES.INFO.ABLE_TO_RECOVER,
+        },
+        concept_id,
+        updateStatus
+      )
       : sweetConfirmHandler(
-          {
-            title: MESSAGES.TTTLES.AreYouSure,
-            type: "warning",
-            text: "This will restore the concept!",
-          },
-          concept_id,
-          updateStatus
-        );
+        {
+          title: MESSAGES.TTTLES.AreYouSure,
+          type: "warning",
+          text: "This will restore the concept!",
+        },
+        concept_id,
+        updateStatus
+      );
   };
 
   const fetchAllConceptsData = () => {
@@ -1312,7 +1312,10 @@ const ConceptTableView = ({ userStatus }) => {
                   <Col sm={12}>
                     <Card>
                       <Card.Header>
-                        <Card.Title as="h5">Concept List</Card.Title>
+                        <Card.Title as="h5" className='d-flex justify-content-between'>
+                          <h5>Concept List</h5>
+                          <h5>Total Entries :- {conceptData.length}</h5>
+                        </Card.Title>
                       </Card.Header>
                       <Card.Body>
                         <Table columns={columns} data={conceptData} />

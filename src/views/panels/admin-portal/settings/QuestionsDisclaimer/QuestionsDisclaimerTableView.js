@@ -752,7 +752,10 @@ const QuestionsDisclaimerTableView = ({ userStatus }) => {
                                             <Col sm={12}>
                                                 <Card>
                                                     <Card.Header>
-                                                        <Card.Title as="h5">Question Disclaimer List</Card.Title>
+                                                        <Card.Title as="h5" className='d-flex justify-content-between'>
+                                                            <h5>Question Disclaimer List</h5>
+                                                            <h5>Total Entries :- {questionDisclaimerData.length}</h5>
+                                                        </Card.Title>
                                                     </Card.Header>
                                                     {
                                                         _showLoader === true && (

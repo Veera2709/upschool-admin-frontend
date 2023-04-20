@@ -747,7 +747,10 @@ const QuestionCategoryTableView = ({ userStatus }) => {
                                             <Col sm={12}>
                                                 <Card>
                                                     <Card.Header>
-                                                        <Card.Title as="h5">Questions Category List</Card.Title>
+                                                        <Card.Title as="h5" className='d-flex justify-content-between'>
+                                                            <h5>Questions Category List</h5>
+                                                            <h5>Total Entries :- {questionCategoryData.length}</h5>
+                                                        </Card.Title>
                                                     </Card.Header>
                                                     {
                                                         _showLoader === true && (

@@ -177,7 +177,6 @@ function Table({ columns, data, modalOpen }) {
                 </Col>
                 <Col className="mb-3" style={{ display: 'contents' }}>
                     <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
-
                     {digicardStatus === "Active" ? (
                         <>
                             <Button className='btn-sm btn-round has-ripple ml-2 btn btn-success'
@@ -579,7 +578,12 @@ const DigiCard = () => {
                                             <Col sm={12}>
                                                 <Card>
                                                     <Card.Header>
-                                                        <Card.Title as="h5">DigiCard List</Card.Title>
+                                                        <Card.Title as='h5' className='d-flex justify-content-between'>
+                                                            
+                                                                <h5>DigiCard List</h5>
+                                                                <h5 >Total Entries :- {data.length}</h5>
+                                                            
+                                                        </Card.Title>
                                                     </Card.Header>
                                                     <Card.Body>
                                                         <Table columns={columns} data={data} />
