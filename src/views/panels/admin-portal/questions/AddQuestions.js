@@ -1926,7 +1926,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                     label="answer_content"
                                                                                     name="answer_content"
                                                                                     onBlur={handleBlur}
-                                                                                    type="number"
+                                                                                    type="text"
                                                                                     value={values.answer_content}
                                                                                     onChange={event => handleAnswerBlanks(event, index)}
                                                                                     placeholder="Enter Answer"

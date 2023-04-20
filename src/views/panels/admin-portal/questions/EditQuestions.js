@@ -249,19 +249,39 @@ const EditQuestions = () => {
 
                                     } else if (uploadParams[index].answer_type === 'Alpha Numeric') {
 
-                                        object = {
-                                            answer_type: uploadParams[index].answer_type,
-                                            answer_content: Number(uploadParams[index].answer_content),
-                                            answer_unit: uploadParams[index].answer_unit,
-                                            answer_display: uploadParams[index].answer_display,
-                                            answer_option: uploadParams[index].answer_option,
-                                            answer_weightage: uploadParams[index].answer_weightage,
-                                            unit_weightage: uploadParams[index].unit_weightage,
-                                            answer_range_from: Number(uploadParams[index].answer_range_from),
-                                            answer_range_to: Number(uploadParams[index].answer_range_to),
+                                        if (individual_user_data.question_type === 'Subjective') {
+
+                                            object = {
+                                                answer_type: uploadParams[index].answer_type,
+                                                answer_content: Number(uploadParams[index].answer_content),
+                                                answer_unit: uploadParams[index].answer_unit,
+                                                answer_display: uploadParams[index].answer_display,
+                                                answer_option: uploadParams[index].answer_option,
+                                                answer_weightage: uploadParams[index].answer_weightage,
+                                                unit_weightage: uploadParams[index].unit_weightage,
+                                                answer_range_from: Number(uploadParams[index].answer_range_from),
+                                                answer_range_to: Number(uploadParams[index].answer_range_to),
+                                            }
+
+                                            tempArray.push(object);
+
+                                        } else {
+
+                                            object = {
+                                                answer_type: uploadParams[index].answer_type,
+                                                answer_content: uploadParams[index].answer_content,
+                                                answer_unit: uploadParams[index].answer_unit,
+                                                answer_display: uploadParams[index].answer_display,
+                                                answer_option: uploadParams[index].answer_option,
+                                                answer_weightage: uploadParams[index].answer_weightage,
+                                                unit_weightage: uploadParams[index].unit_weightage,
+                                                answer_range_from: Number(uploadParams[index].answer_range_from),
+                                                answer_range_to: Number(uploadParams[index].answer_range_to),
+                                            }
+
+                                            tempArray.push(object);
                                         }
 
-                                        tempArray.push(object);
 
                                     } else {
 
@@ -2075,7 +2095,6 @@ const EditQuestions = () => {
                                                                                 {form.answer_type === "Alpha Numeric" && answerBlanksOptions && (
 
                                                                                     <>
-
                                                                                         {selectedQuestionType === 'Subjective' ? (
                                                                                             <>
                                                                                                 <br />
@@ -2306,9 +2325,8 @@ const EditQuestions = () => {
                                                                                                     </Col>
                                                                                                 </Row>
                                                                                             </>
-                                                                                        ) : (
-
-                                                                                            <>
+                                                                                        ) :
+                                                                                            (<>
                                                                                                 <br />
                                                                                                 <Row key={index}>
 
@@ -2365,7 +2383,7 @@ const EditQuestions = () => {
 
 
                                                                                                     </Col>
-
+                                                                                                    {console.log(form.answer_content)}
                                                                                                     <Col xs={5}>
                                                                                                         <label className="floating-label">
                                                                                                             <small className="text-danger"></small>
@@ -2377,7 +2395,7 @@ const EditQuestions = () => {
                                                                                                             label="answer_content"
                                                                                                             name="answer_content"
                                                                                                             onBlur={handleBlur}
-                                                                                                            type="number"
+                                                                                                            type="text"
                                                                                                             value={form.answer_content}
                                                                                                             onChange={event => handleAnswerBlanks(event, index)}
                                                                                                             placeholder="Enter Answer"
@@ -2449,7 +2467,7 @@ const EditQuestions = () => {
 
                                                                                                 </Row>
                                                                                             </>
-                                                                                        )}
+                                                                                            )}
 
                                                                                     </>
 
