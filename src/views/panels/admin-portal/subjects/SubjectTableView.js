@@ -1003,7 +1003,12 @@ const SubjectTableView = ({ userStatus }) => {
                                             <Col sm={12}>
                                                 <Card>
                                                     <Card.Header>
-                                                        <Card.Title as="h5">Subject List</Card.Title>
+                                                        <Card.Title as="h5" className='d-flex justify-content-between'>
+                                                            
+                                                            <h5>Subject List</h5>
+                                                            <h5>Total Entries :- {subjectData.length}</h5>
+                                                            
+                                                            </Card.Title>
                                                     </Card.Header>
                                                     <Card.Body>
                                                         <Table columns={columns} data={subjectData} />
