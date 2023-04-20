@@ -652,7 +652,10 @@ const UsersList = ({ _userType }) => {
                                             <Col sm={12}>
                                                 <Card>
                                                     <Card.Header>
-                                                        <Card.Title as="h5">CMS Users</Card.Title>
+                                                        <Card.Title as="h5" className='d-flex justify-content-between'>
+                                                            <h5>CMS Users</h5>
+                                                            <h5>Total Entries :- {unitData.length}</h5>
+                                                        </Card.Title>
                                                     </Card.Header>
                                                     <Card.Body>
                                                         <Table columns={columns} data={unitData} />

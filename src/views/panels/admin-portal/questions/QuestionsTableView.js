@@ -27,16 +27,16 @@ function Table({ columns, data, modalOpen }) {
   const initiallySelectedRows = React.useMemo(() => new Set(["1"]), []);
 
   const history = useHistory();
-  
+
   const MySwal = withReactContent(Swal);
-  
+
   const sweetAlertHandler = (alert) => {
     MySwal.fire({
-        title: alert.title,
-        text: alert.text,
-        icon: alert.type
+      title: alert.title,
+      text: alert.text,
+      icon: alert.type
     });
-};
+  };
 
   const {
     getTableProps,
@@ -71,96 +71,96 @@ function Table({ columns, data, modalOpen }) {
     (sessionStorage.getItem('question_status') === 'Save' || sessionStorage.getItem('question_status') === 'Reject') && (
       (hooks) => {
         hooks.visibleColumns.push((columns) => [
-            {
-                id: "selection",
-                Header: ({ getToggleAllPageRowsSelectedProps }) => (
-                    <div>
-                        <IndeterminateCheckbox {...getToggleAllPageRowsSelectedProps()} />
-                    </div>
-                ),
-                Cell: ({ row }) => (
-                    <div>
-                        <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
-                    </div>
-                )
-            },
-            ...columns
+          {
+            id: "selection",
+            Header: ({ getToggleAllPageRowsSelectedProps }) => (
+              <div>
+                <IndeterminateCheckbox {...getToggleAllPageRowsSelectedProps()} />
+              </div>
+            ),
+            Cell: ({ row }) => (
+              <div>
+                <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
+              </div>
+            )
+          },
+          ...columns
         ]);
-    }
+      }
     )
-     
+
   );
   const question_active_status = pageLocation === 'active-questions' ? "Active" : "Archived"
 
-const IndeterminateCheckbox = React.forwardRef(
-  ({ indeterminate, ...rest }, ref) => {
+  const IndeterminateCheckbox = React.forwardRef(
+    ({ indeterminate, ...rest }, ref) => {
       const defaultRef = React.useRef();
       const resolvedRef = ref || defaultRef;
 
       React.useEffect(() => {
-          resolvedRef.current.indeterminate = indeterminate;
+        resolvedRef.current.indeterminate = indeterminate;
       }, [resolvedRef, indeterminate]);
 
       return (
-          <>
-              <input type="checkbox" ref={resolvedRef} {...rest} />
-          </>
+        <>
+          <input type="checkbox" ref={resolvedRef} {...rest} />
+        </>
       );
-  }
-);
+    }
+  );
 
-const multiDelete = async (status) => {
+  const multiDelete = async (status) => {
 
-  const questionIDs = [];
+    const questionIDs = [];
 
-  page.map(e => {
+    page.map(e => {
       e.isSelected === true && questionIDs.push(e.original.question_id)
-  })
+    })
 
-  if (questionIDs.length > 0) {
-    const MySwal = withReactContent(Swal);
-    MySwal.fire({
+    if (questionIDs.length > 0) {
+      const MySwal = withReactContent(Swal);
+      MySwal.fire({
         title: 'Are you sure?',
         text: pageLocation === 'active-units' ? 'Confirm deleting' : 'Confirm restoring',
         type: 'warning',
         showCloseButton: true,
         showCancelButton: true,
-  
-    }).then( async (willDelete) => {
+
+      }).then(async (willDelete) => {
         if (willDelete.value) {
-         
-              var payload = {
-                  "question_active_status": status,
-                  "question_array": questionIDs
-              }
-        
-              const ResultData = await bulkToggleQuestionStatus(payload)
-              if (ResultData.Error) {
-                  if (ResultData.Error.response.data == 'Invalid Token') {
-                      sessionStorage.clear();
-                      localStorage.clear();
-                      history.push('/auth/signin-1');
-                      window.location.reload();
-                  } else {
-                      return MySwal.fire('Error', ResultData.Error.response.data, 'error').then(() => {
-                          window.location.reload();
-                      });
-                  }
-              } else {
-                  return MySwal.fire('success', `Questions ${status === 'Active' ? 'Restored' : "Deleted"} Successfully`, 'success').then(() => {
-                      window.location.reload();
-                  });
-              }
-         
+
+          var payload = {
+            "question_active_status": status,
+            "question_array": questionIDs
+          }
+
+          const ResultData = await bulkToggleQuestionStatus(payload)
+          if (ResultData.Error) {
+            if (ResultData.Error.response.data == 'Invalid Token') {
+              sessionStorage.clear();
+              localStorage.clear();
+              history.push('/auth/signin-1');
+              window.location.reload();
+            } else {
+              return MySwal.fire('Error', ResultData.Error.response.data, 'error').then(() => {
+                window.location.reload();
+              });
+            }
+          } else {
+            return MySwal.fire('success', `Questions ${status === 'Active' ? 'Restored' : "Deleted"} Successfully`, 'success').then(() => {
+              window.location.reload();
+            });
+          }
+
         }
       })
-  } else {
-    return MySwal.fire('Sorry', 'No Questions Selected!', 'warning').then(() => {
+    } else {
+      return MySwal.fire('Sorry', 'No Questions Selected!', 'warning').then(() => {
         // window.location.reload();
-    });
-}
- 
-}
+      });
+    }
+
+  }
   return (
     <>
       <Row className="mb-3">
@@ -183,10 +183,10 @@ const multiDelete = async (status) => {
         </Col>
         <Col className="d-flex justify-content-end">
           <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
-         
+
           {
-              pageLocation === "active-questions" ? (<>
-              
+            pageLocation === "active-questions" ? (<>
+
               <Link to={'/admin-portal/add-questions'}>
                 <Button variant="success" className="btn-sm btn-round has-ripple ml-2">
                   <i className="feather icon-plus" /> Add Questions
@@ -195,40 +195,40 @@ const multiDelete = async (status) => {
               {
                 (sessionStorage.getItem('question_status') === 'Save' || sessionStorage.getItem('question_status') === 'Reject') && (
                   <>
-                  <Button
-                    // variant="danger"
-                    className="btn-sm btn-round has-ripple ml-2 btn btn-danger"
-                    style={{ whiteSpace: "no-wrap" }}
+                    <Button
+                      // variant="danger"
+                      className="btn-sm btn-round has-ripple ml-2 btn btn-danger"
+                      style={{ whiteSpace: "no-wrap" }}
 
-                    onClick={(e) => {
+                      onClick={(e) => {
                         // handleAddConcepts(e);
-                        multiDelete("Archived"); 
-                    }}>
-                    <i className="feather icon-trash-2" /> Multi Delete
-                  </Button>
+                        multiDelete("Archived");
+                      }}>
+                      <i className="feather icon-trash-2" /> Multi Delete
+                    </Button>
                   </>
-                ) 
+                )
               }
-              </>)
-               : 
-               (<>
+            </>)
+              :
+              (<>
                 {
-                (sessionStorage.getItem('question_status') === 'Save' || sessionStorage.getItem('question_status') === 'Reject') && (
-                  <>
-                  <Button
-                    // variant="success"
-                    className="btn-sm btn-round has-ripple ml-2 btn btn-primary"
-                    style={{ whiteSpace: "no-wrap" }}
-                    onClick={(e) => {
-                        // handleAddConcepts(e);
-                        multiDelete("Active"); 
-                    }}
-                >
-                    <i className="feather icon-plus" /> Multi Restore
-                </Button>
-                  </>
-                ) 
-              } 
+                  (sessionStorage.getItem('question_status') === 'Save' || sessionStorage.getItem('question_status') === 'Reject') && (
+                    <>
+                      <Button
+                        // variant="success"
+                        className="btn-sm btn-round has-ripple ml-2 btn btn-primary"
+                        style={{ whiteSpace: "no-wrap" }}
+                        onClick={(e) => {
+                          // handleAddConcepts(e);
+                          multiDelete("Active");
+                        }}
+                      >
+                        <i className="feather icon-plus" /> Multi Restore
+                      </Button>
+                    </>
+                  )
+                }
                 {/* <Button
                     // variant="success"
                     className="btn-sm btn-round has-ripple ml-2 btn btn-primary"
@@ -240,7 +240,7 @@ const multiDelete = async (status) => {
                 >
                     <i className="feather icon-plus" /> Multi Restore
                 </Button> */}
-               </>)
+              </>)
           }
         </Col>
       </Row>
@@ -327,7 +327,7 @@ const QuestionsTableView = ({ _questionStatus }) => {
   console.log(_questionStatus);
 
   const columns = React.useMemo(() => [
-  
+
     {
       Header: '#',
       accessor: 'id'
@@ -760,7 +760,10 @@ const QuestionsTableView = ({ _questionStatus }) => {
                           <Col sm={12}>
                             <Card>
                               <Card.Header>
-                                <Card.Title as="h5">Questions List</Card.Title>
+                                <Card.Title as='h5' className='d-flex justify-content-between'>
+                                  <h5>Questions List</h5>
+                                  <h5>Total Entries :- {userData.length}</h5>
+                                </Card.Title>
                               </Card.Header>
                               <Card.Body>
                                 <Table columns={columns} data={userData} modalOpen={openHandler} />
