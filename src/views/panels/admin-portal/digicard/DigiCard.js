@@ -517,6 +517,16 @@ const DigiCard = () => {
                                     >
                                         <i className="feather icon-plus" /> &nbsp; Restore
                                     </Button>
+                                    &nbsp;
+
+                                    <Button
+                                        size="sm"
+                                        className="btn btn-icon btn-rounded btn-info"
+                                        onClick={(e) => { previewData(dataResponse[index].digi_card_id) }}
+                                    >
+                                        <i className="feather icon-eye " /> &nbsp; Preview
+                                    </Button>
+                                    &nbsp;
                                 </>
                             </>
                         );
