@@ -309,7 +309,18 @@ const DigiCard = () => {
     let history = useHistory();
 
 
-
+    const previewData = (digi_card_id) => {
+        let userJWT = sessionStorage.getItem('user_jwt');
+        console.log("jwt", userJWT);
+        if (userJWT === "" || userJWT === undefined || userJWT === "undefined" || userJWT === null) {
+            sessionStorage.clear();
+            localStorage.clear();
+            history.push('/auth/signin-1');
+            window.location.reload();
+        } else {
+            window.open(`/admin-portal/preview/${digi_card_id}`)
+        }
+    }
     const sweetConfirmHandler = (alert) => {
         MySwal.fire({
             title: alert.title,
@@ -462,6 +473,7 @@ const DigiCard = () => {
                         dataResponse[index]['digicard_image'] = <img className="img-fluid img-radius wid-40" alt="Poison regulate" src={dataResponse[index].digicard_imageURL} />
                         dataResponse[index]['actions'] = (
                             <>
+
                                 <Button
                                     size="sm"
                                     className="btn btn-icon btn-rounded btn-primary"
@@ -478,6 +490,15 @@ const DigiCard = () => {
                                     <i className="feather icon-trash-2 " /> &nbsp; Delete
                                 </Button>
                                 &nbsp;
+                                <Button
+                                    size="sm"
+                                    className="btn btn-icon btn-rounded btn-info"
+                                    onClick={(e) => { previewData(dataResponse[index].digi_card_id) }}
+                                >
+                                    <i className="feather icon-eye " /> &nbsp; Preview
+                                </Button>
+                                &nbsp;
+
                             </>
                         );
                         finalDataArray.push(dataResponse[index]);
@@ -496,6 +517,16 @@ const DigiCard = () => {
                                     >
                                         <i className="feather icon-plus" /> &nbsp; Restore
                                     </Button>
+                                    &nbsp;
+
+                                    <Button
+                                        size="sm"
+                                        className="btn btn-icon btn-rounded btn-info"
+                                        onClick={(e) => { previewData(dataResponse[index].digi_card_id) }}
+                                    >
+                                        <i className="feather icon-eye " /> &nbsp; Preview
+                                    </Button>
+                                    &nbsp;
                                 </>
                             </>
                         );
@@ -579,10 +610,10 @@ const DigiCard = () => {
                                                 <Card>
                                                     <Card.Header>
                                                         <Card.Title as='h5' className='d-flex justify-content-between'>
-                                                            
-                                                                <h5>DigiCard List</h5>
-                                                                <h5 >Total Entries :- {data.length}</h5>
-                                                            
+
+                                                            <h5>DigiCard List</h5>
+                                                            <h5 >Total Entries :- {data.length}</h5>
+
                                                         </Card.Title>
                                                     </Card.Header>
                                                     <Card.Body>
