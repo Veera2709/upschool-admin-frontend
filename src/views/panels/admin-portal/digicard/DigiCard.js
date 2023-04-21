@@ -5,11 +5,9 @@ import BTable from 'react-bootstrap/Table';
 
 import { GlobalFilter } from './GlobalFilter';
 
-import { useTable, useSortBy, usePagination, useGlobalFilter } from 'react-table';
+import { useTable, useSortBy, usePagination, useGlobalFilter, useRowSelect } from 'react-table';
 // import makeData from '../../../data/schoolData';
 import { Link, useHistory } from 'react-router-dom';
-
-
 import dynamicUrl from '../../../../helper/dynamicUrls';
 import MESSAGES from '../../../../helper/messages';
 import { SessionStorage } from '../../../../util/SessionStorage';
@@ -17,13 +15,33 @@ import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import withReactContent from 'sweetalert2-react-content';
 import { useLocation } from "react-router-dom";
 import BasicSpinner from '../../../../helper/BasicSpinner';
-
-
-
-
+import { toggleMultiDigicardStatus } from '../../../api/CommonApi'
 import Swal from 'sweetalert2';
 
+
 function Table({ columns, data, modalOpen }) {
+    const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
+    const initiallySelectedRows = React.useMemo(() => new Set(["1"]), []);
+    const MySwal = withReactContent(Swal);
+    let digicardStatus = pageLocation === "active-digiCard" ? 'Active' : 'Archived';
+
+    const IndeterminateCheckbox = React.forwardRef(
+        ({ indeterminate, ...rest }, ref) => {
+            const defaultRef = React.useRef();
+            const resolvedRef = ref || defaultRef;
+
+            React.useEffect(() => {
+                resolvedRef.current.indeterminate = indeterminate;
+            }, [resolvedRef, indeterminate]);
+
+            return (
+                <>
+                    <input type="checkbox" ref={resolvedRef} {...rest} />
+                </>
+            );
+        }
+    );
+
     const {
         getTableProps,
         getTableBodyProps,
@@ -41,27 +59,100 @@ function Table({ columns, data, modalOpen }) {
         gotoPage,
         nextPage,
         previousPage,
+        selectedFlatRows,
         setPageSize,
-        state: { pageIndex, pageSize }
+        state: { pageIndex, pageSize, selectedRowPaths }
     } = useTable(
         {
             columns,
             data,
-            initialState: { pageIndex: 0, pageSize: 10 }
+            initialState: { pageIndex: 0, pageSize: 10, selectedRowPaths: initiallySelectedRows }
         },
         useGlobalFilter,
         useSortBy,
-        usePagination
+        usePagination,
+        useRowSelect,
+        (hooks) => {
+            hooks.visibleColumns.push((columns) => [
+                {
+                    id: "selection",
+                    Header: ({ getToggleAllPageRowsSelectedProps }) => (
+                        <div>
+                            <IndeterminateCheckbox {...getToggleAllPageRowsSelectedProps()} />
+                        </div>
+                    ),
+                    Cell: ({ row }) => (
+                        <div>
+                            <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
+                        </div>
+                    )
+                },
+                ...columns
+            ]);
+        }
     );
 
-    const [isOpen, setIsOpen] = useState(false);
 
 
     let history = useHistory();
 
     const adddigicard = () => {
         history.push('/admin-portal/add-digicard');
-        setIsOpen(true);
+    }
+
+    const getIDFromData = async (DigicardStatus) => {
+        console.log("page data", page);
+        var DigicardIds = [];
+        selectedFlatRows.map((item) => {
+            console.log("item.original.digi_card_id", item.original.digi_card_id);
+            DigicardIds.push(item.original.digi_card_id)
+        })
+
+        console.log("DigicardIds", DigicardIds.length);
+        if (DigicardIds.length > 0) {
+
+            MySwal.fire({
+                title: 'Are you sure?',
+                text: `Confirm ${pageLocation === 'active-digicards' ? "deleting" : "restoring"} the selected Digicards!`,
+                type: 'warning',
+                showCloseButton: true,
+                showCancelButton: true
+            }).then(async (willDelete) => {
+
+                if (willDelete.value) {
+
+                    var payload = {
+                        "digicard_status": DigicardStatus,
+                        "digi_card_array": DigicardIds
+                    }
+
+                    const ResultData = await toggleMultiDigicardStatus(payload)
+                    if (ResultData.Error) {
+                        if (ResultData.Error.response.data == 'Invalid Token') {
+                            sessionStorage.clear();
+                            localStorage.clear();
+                            history.push('/auth/signin-1');
+                            window.location.reload();
+                        } else {
+                            return MySwal.fire('Error', ResultData.Error.response.data, 'error').then(() => {
+                                window.location.reload();
+                            });
+                        }
+                    } else {
+                        return MySwal.fire('', `Digicards ${DigicardStatus === 'Active' ? 'Restored' : "Deleted"} Successfully`, 'success').then(() => {
+                            window.location.reload();
+                        });
+                    }
+
+                }
+            })
+
+
+        } else {
+            return MySwal.fire('Sorry', 'No Digicard Selected!', 'warning').then(() => {
+                window.location.reload();
+            });
+        }
     }
 
     return (
@@ -84,13 +175,33 @@ function Table({ columns, data, modalOpen }) {
                     </select>
                     Entries
                 </Col>
-                <Col className="d-flex justify-content-end">
+                <Col className="mb-3" style={{ display: 'contents' }}>
                     <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
-                    <Button className='btn-sm btn-round has-ripple ml-2 btn btn-success'
-                        onClick={() => { adddigicard(); }}
-                    > <i className="feather icon-plus" />&nbsp;
-                        Add DigiCard
-                    </Button>
+                    {digicardStatus === "Active" ? (
+                        <>
+                            <Button className='btn-sm btn-round has-ripple ml-2 btn btn-success'
+                                onClick={() => { adddigicard(); }}
+                            > <i className="feather icon-plus" />&nbsp;
+                                Add DigiCard
+                            </Button>
+
+                            <Button className='btn-sm btn-round has-ripple ml-2 btn btn-danger'
+                                onClick={() => { getIDFromData("Archived") }}
+                                style={{ marginRight: '15px' }}
+                            > <i className="feather icon-trash-2" />&nbsp;
+                                Multi Delete
+                            </Button>
+                        </>
+
+                    ) : (
+                        <Button className='btn-sm btn-round has-ripple ml-2 btn btn-primary'
+                            onClick={() => { getIDFromData("Active") }}
+                            style={{ marginRight: '15px' }}
+                        > <i className="feather icon-plus" />&nbsp;
+                            Multi Restore
+                        </Button>
+                    )}
+
                 </Col>
             </Row>
             <BTable striped bordered hover responsive {...getTableProps()}>
@@ -167,6 +278,7 @@ function Table({ columns, data, modalOpen }) {
 }
 
 const DigiCard = () => {
+
     const columns = React.useMemo(
         () => [
             {
@@ -186,18 +298,29 @@ const DigiCard = () => {
     );
 
     // const data = React.useMemo(() => makeData(80), []);
+
     const [data, setData] = useState([]);
     console.log('data: ', data)
-    const [isOpen, setIsOpen] = useState(false);
     const [loader, showLoader, hideLoader] = useFullPageLoader();
     const [isLoading, setIsLoading] = useState(false);
     const [reloadAllData, setReloadAllData] = useState('Fetched');
-    const [statusUrl, setStatusUrl] = useState('');
     const MySwal = withReactContent(Swal);
     const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
     let history = useHistory();
 
 
+    const previewData = (digi_card_id) => {
+        let userJWT = sessionStorage.getItem('user_jwt');
+        console.log("jwt", userJWT);
+        if (userJWT === "" || userJWT === undefined || userJWT === "undefined" || userJWT === null) {
+            sessionStorage.clear();
+            localStorage.clear();
+            history.push('/auth/signin-1');
+            window.location.reload();
+        } else {
+            window.open(`/admin-portal/preview/${digi_card_id}`)
+        }
+    }
     const sweetConfirmHandler = (alert) => {
         MySwal.fire({
             title: alert.title,
@@ -205,12 +328,6 @@ const DigiCard = () => {
             icon: alert.type
         });
     }
-
-
-    const openHandler = () => {
-        setIsOpen(true);
-    };
-
 
 
     function deleteDigicard(digi_card_id, digi_card_title) {
@@ -303,11 +420,6 @@ const DigiCard = () => {
                                 fetchAllDigiCards()
                                 setReloadAllData("Deleted");
                                 return MySwal.fire('', 'The ' + digi_card_title + ' is Restored', 'success');
-                                // window. location. reload() 
-                                //  MySwal.fire('', MESSAGES.INFO.CLIENT_DELETED, 'success');
-
-
-
                             }
                         })
                         .catch((error) => {
@@ -345,7 +457,11 @@ const DigiCard = () => {
         let digicardStatus = pageLocation === "active-digiCard" ? 'Active' : 'Archived';
         let DigicardTyle = digicardStatus === "Active" ? "Active Digicards" : "Archived Digicards"
         sessionStorage.setItem('digicard_type', DigicardTyle)
-        axios.post(dynamicUrl.fetchAllDigiCards, {}, {
+        axios.post(dynamicUrl.fetchDigiCardsBasedonStatus, {
+            data: {
+                digicard_status: digicardStatus
+            }
+        }, {
             headers: { Authorization: sessionStorage.getItem('user_jwt') }
         })
             .then((response) => {
@@ -353,18 +469,15 @@ const DigiCard = () => {
                 let dataResponse = response.data.Items
                 let finalDataArray = [];
                 if (digicardStatus === 'Active') {
-                    let ActiveresultData = (dataResponse && dataResponse.filter(e => e.digicard_status === 'Active'))
-                    console.log("ActiveresultData", ActiveresultData);
-
-                    for (let index = 0; index < ActiveresultData.length; index++) {
-                        ActiveresultData[index]['digicard_image'] = <img className="img-fluid img-radius wid-40" alt="Poison regulate" src={ActiveresultData[index].digicard_imageURL} />
-                        ActiveresultData[index]['actions'] = (
+                    for (let index = 0; index < dataResponse.length; index++) {
+                        dataResponse[index]['digicard_image'] = <img className="img-fluid img-radius wid-40" alt="Poison regulate" src={dataResponse[index].digicard_imageURL} />
+                        dataResponse[index]['actions'] = (
                             <>
+
                                 <Button
                                     size="sm"
                                     className="btn btn-icon btn-rounded btn-primary"
-                                    onClick={(e) => history.push(`/admin-portal/editDigiCard/${ActiveresultData[index].digi_card_id}`)}
-                                // onClick={(e) => history.push(`/admin-portal/admin-casedetails/${resultData[index].client_id}/all_cases`)}
+                                    onClick={(e) => history.push(`/admin-portal/editDigiCard/${dataResponse[index].digi_card_id}`)}
                                 >
                                     <i className="feather icon-edit" /> &nbsp; Edit
                                 </Button>
@@ -372,42 +485,55 @@ const DigiCard = () => {
                                 <Button
                                     size="sm"
                                     className="btn btn-icon btn-rounded btn-danger"
-                                    onClick={(e) => deleteDigicard(ActiveresultData[index].digi_card_id, ActiveresultData[index].digi_card_title)}
+                                    onClick={(e) => deleteDigicard(dataResponse[index].digi_card_id, dataResponse[index].digi_card_title)}
                                 >
                                     <i className="feather icon-trash-2 " /> &nbsp; Delete
                                 </Button>
                                 &nbsp;
-                                {/* <Button size='sm' className="btn btn-icon btn-rounded btn-danger" onClick={(e) => saveClientIdDelete(e, responseData[index].client_id)}>
-                                <i className="feather icon-delete" /> &nbsp; Delete
-                              </Button> */}
+                                <Button
+                                    size="sm"
+                                    className="btn btn-icon btn-rounded btn-info"
+                                    onClick={(e) => { previewData(dataResponse[index].digi_card_id) }}
+                                >
+                                    <i className="feather icon-eye " /> &nbsp; Preview
+                                </Button>
+                                &nbsp;
+
                             </>
                         );
-                        finalDataArray.push(ActiveresultData[index]);
+                        finalDataArray.push(dataResponse[index]);
                         console.log('finalDataArray: ', finalDataArray)
                     }
                 } else {
-                    let resultData = (dataResponse && dataResponse.filter(e => e.digicard_status === 'Archived'))
-                    for (let index = 0; index < resultData.length; index++) {
-                        resultData[index]['digicard_image'] = <img className="img-fluid img-radius wid-40" alt="Poison regulate" src={resultData[index].digicard_imageURL} />
-                        resultData[index]['actions'] = (
+                    for (let index = 0; index < dataResponse.length; index++) {
+                        dataResponse[index]['digicard_image'] = <img className="img-fluid img-radius wid-40" alt="Poison regulate" src={dataResponse[index].digicard_imageURL} />
+                        dataResponse[index]['actions'] = (
                             <>
                                 <>
                                     <Button
                                         size="sm"
                                         className="btn btn-icon btn-rounded btn-primary"
-                                        onClick={(e) => digicardRestore(resultData[index].digi_card_id, resultData[index].digi_card_title)}
+                                        onClick={(e) => digicardRestore(dataResponse[index].digi_card_id, dataResponse[index].digi_card_title)}
                                     >
                                         <i className="feather icon-plus" /> &nbsp; Restore
                                     </Button>
+                                    &nbsp;
+
+                                    <Button
+                                        size="sm"
+                                        className="btn btn-icon btn-rounded btn-info"
+                                        onClick={(e) => { previewData(dataResponse[index].digi_card_id) }}
+                                    >
+                                        <i className="feather icon-eye " /> &nbsp; Preview
+                                    </Button>
+                                    &nbsp;
                                 </>
                             </>
                         );
-                        finalDataArray.push(resultData[index]);
+                        finalDataArray.push(dataResponse[index]);
                         console.log('finalDataArray: ', finalDataArray)
                     }
                 }
-
-
                 setData(finalDataArray);
                 console.log('resultData: ', finalDataArray);
                 setIsLoading(false);
@@ -483,7 +609,12 @@ const DigiCard = () => {
                                             <Col sm={12}>
                                                 <Card>
                                                     <Card.Header>
-                                                        <Card.Title as="h5">DigiCard List</Card.Title>
+                                                        <Card.Title as='h5' className='d-flex justify-content-between'>
+
+                                                            <h5>DigiCard List</h5>
+                                                            <h5 >Total Entries :- {data.length}</h5>
+
+                                                        </Card.Title>
                                                     </Card.Header>
                                                     <Card.Body>
                                                         <Table columns={columns} data={data} />

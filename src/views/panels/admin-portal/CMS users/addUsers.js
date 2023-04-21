@@ -18,14 +18,10 @@ import * as Constants from '../../../../helper/constants';
 import MESSAGES from '../../../../helper/messages';
 import { setDate } from 'date-fns';
 
-
-
 const AddUsers = ({ setOpenAddTopic }) => {
     let history = useHistory();
     const MySwal = withReactContent(Swal);
-
-
-
+    const today = new Date().toISOString().split("T")[0];
 
     const sweetAlertHandler = (alert) => {
         const MySwal = withReactContent(Swal);
@@ -52,7 +48,7 @@ const AddUsers = ({ setOpenAddTopic }) => {
     const [isDate, setDate] = useState()
     const [isRoleRep, setIsRoleRep] = useState(false)
     const [isDateReq, setIsDateReq] = useState(false)
-    const [displayHeading, setDisplayHeading] = useState(sessionStorage.getItem('Upusers_type'));
+    const [displayHeading, setDisplayHeading] = useState(sessionStorage.getItem('upUsers_status'));
     const [displayHeader, setDisplayHeader] = useState(true);
     const [isSelected, setIsSelected] = useState(false);
     const [isSelectedEntity, setIsSelectedEntity] = useState(false);
@@ -94,8 +90,6 @@ const AddUsers = ({ setOpenAddTopic }) => {
                 const i = data[index]['roles'].indexOf(type);
                 data[index]['roles'].splice(i, 1);
             }
-
-
         }
     }
 
@@ -119,7 +113,7 @@ const AddUsers = ({ setOpenAddTopic }) => {
                         title: 'User added successfully!',
                         icon: 'success',
                     }).then((willDelete) => {
-
+                        history.push('/admin-portal/active-upSchoolUsers')
                         window.location.reload();
 
                     })
@@ -218,12 +212,12 @@ const AddUsers = ({ setOpenAddTopic }) => {
                         validationSchema={Yup.object().shape({
                             firstName: Yup.string()
                                 .trim()
-                                .min(2, Constants.cmsRole.FirstNameTooShort)
+                                .min(1, Constants.cmsRole.FirstNameTooShort)
                                 .max(32, Constants.cmsRole.FirstNameTooLong)
                                 .required(Constants.cmsRole.FirstName),
                             lastName: Yup.string()
                                 .trim()
-                                .min(2, Constants.cmsRole.LastNameTooShort)
+                                .min(1, Constants.cmsRole.LastNameTooShort)
                                 .max(32, Constants.cmsRole.LastNameTooLong)
                                 .required(Constants.cmsRole.LastName),
                             userEmail: Yup.string()
@@ -247,7 +241,7 @@ const AddUsers = ({ setOpenAddTopic }) => {
                         })}
                         // validationSchema
                         onSubmit={(values, { setErrors, setStatus, setSubmitting }) => {
-                            console.log("userRoles", userRoles);
+                            console.log("userRoles", userRoles.length);
                             const unique = new Set();
                             const showError = userRoles.some(element => unique.size === unique.add(element.entity).size);
                             let validateRole = userRoles.find(o => o.entity === '' || o.entity === 0 || o.entity === undefined)
@@ -263,6 +257,8 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                 setIsSelectedEntity(true)
                             } else if (validator.length > 0) {
                                 setIsSelected(true)
+                            } else if (userRoles.length <= 0) {
+                                setIsSelected(true)
                             } else {
                                 var formData = {
                                     user_name: values.userName,
@@ -276,9 +272,7 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                 console.log('formData: ', formData)
                                 inserUser(formData)
                             }
-
                         }
-
                         }
                     >
                         {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
@@ -394,7 +388,7 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                                 }}
                                                 type="date"
                                                 value={isDate}
-
+                                                max={today}
                                             />
                                             {isDateReq && (
                                                 <small className="text-danger form-text">DOB is required!</small>
@@ -413,14 +407,10 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                     <Col sm={6}>
                                         <div className='d-flex justify-content-between'>
                                             <Form.Label className="floating-label" ><small className="text-danger">* </small>Creator</Form.Label>
-                                            <Form.Label className="floating-label" ><small className="text-danger">* </small>Previewer</Form.Label>
+                                            <Form.Label className="floating-label" ><small className="text-danger">* </small>Reviewer</Form.Label>
                                             <Form.Label className="floating-label" style={{ marginRight: '-15px' }} ><small className="text-danger">* </small>Publisher</Form.Label>
                                         </div>
-
                                     </Col>
-                                    {/* <Col sm={6}>
-                                        <Form.Label className="floating-label" ><small className="text-danger">* </small>Topic Quiz Minutes</Form.Label>
-                                    </Col> */}
                                 </Row>
                                 {userRoles.map((topic, index) => (
                                     <Row>
@@ -465,14 +455,14 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                                 <div>
                                                     <Form.Control
                                                         className="form-control"
-                                                        name="previewer"
+                                                        name="reviewer"
                                                         onBlur={handleBlur}
                                                         onChange={(e) => {
-                                                            getUserRole(e, 'previewer', index);
+                                                            getUserRole(e, 'reviewer', index);
                                                             setIsSelected(false);
                                                         }}
                                                         type="checkbox"
-                                                        value={values.previewer}
+                                                        value={values.reviewer}
                                                         style={{ width: '25px' }}
                                                         key={index}
                                                     // defaultChecked={true}
@@ -496,14 +486,13 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                             </div>
                                         </Col>
                                         <Col sm={2}>
-                                            {/* <CloseButton
-                                                onClick={(e) => { removeRole(index) }}
-                                                variant="white"
-                                                style={{ marginRight: "80px" }}
-                                                key={index}
-                                            /> */}
                                             <Button className="btn btn-icon btn-rounded btn-danger"
-                                                onClick={(e) => { removeRole(index) }}
+                                                onClick={(e) => {
+                                                    removeRole(index);
+                                                    setIsRoleRep(false);
+                                                    setIsSelected(false);
+                                                    setIsSelectedEntity(false)
+                                                }}
                                                 style={{ marginLeft: "40px", paddingTop: '2px', paddingBottom: '2px', marginTop: '4px' }}
                                             >
                                                 <i className='feather icon-trash-2'></i>
@@ -523,9 +512,8 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                             <small className="text-danger form-text">Entity Not selected!</small>
                                         )}
                                         <br />
-                                        <button type='button' onClick={addOneRole}>+</button>
+                                        <button type='button' onClick={(e) => { addOneRole(e); setIsSelected(false) }}>+</button>
                                     </Col>
-
                                 </Row>
                                 <p></p>
                                 {/* <button type="button" className="btn btn-primary" onClick={addTopic} >Add another Quiz</button> */}

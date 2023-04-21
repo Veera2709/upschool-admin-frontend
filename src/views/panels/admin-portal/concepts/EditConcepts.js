@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Formik } from 'formik';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
-import Select from 'react-select';
+import Select from 'react-draggable-multi-select';
 import ReactTags from 'react-tag-autocomplete';
 import * as Yup from 'yup';
 import { Row, Col } from 'react-bootstrap';
@@ -46,6 +46,9 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
     const [showAdvancedGroupErr, setShowAdvancedGroupErr] = useState(false);
     const [conceptTitleErr, setConceptTitleErr] = useState(false);
     const [conceptTitleErrMessage, setConceptTitleErrMessage] = useState('');
+    const [displayNameErr, setDisplayNameErr] = useState(false);
+
+    const [displayNameErrMessage, setDisplayNameErrMessage] = useState('');
 
     const [previousData, setPreviousData] = useState([]);
     const [tags, setTags] = useState([]);
@@ -457,10 +460,11 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
         console.log(event);
 
         let valuesArr = [];
-        for (let i = 0; i < event.length; i++) {
-            valuesArr.push(event[i].value)
+        if (event) {
+            for (let i = 0; i < event.length; i++) {
+                valuesArr.push(event[i].value)
+            }
         }
-
         console.log(valuesArr);
         setSelectedDigicards(valuesArr);
     }
@@ -471,10 +475,12 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
         console.log(event);
 
         let valuesArr = [];
-        for (let i = 0; i < event.length; i++) {
-            valuesArr.push(event[i].value)
-        }
+        if (event) {
+            for (let i = 0; i < event.length; i++) {
+                valuesArr.push(event[i].value)
+            }
 
+        }
         console.log(valuesArr);
         setSelectedBasicGroups(valuesArr);
     }
@@ -485,9 +491,12 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
         console.log(event);
 
         let valuesArr = [];
-        for (let i = 0; i < event.length; i++) {
-            valuesArr.push(event[i].value)
+        if (event) {
+            for (let i = 0; i < event.length; i++) {
+                valuesArr.push(event[i].value)
+            }
         }
+
 
         console.log(valuesArr);
         setSelectedIntermediateGroups(valuesArr);
@@ -499,9 +508,12 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
         console.log(event);
 
         let valuesArr = [];
-        for (let i = 0; i < event.length; i++) {
-            valuesArr.push(event[i].value)
+        if (event) {
+            for (let i = 0; i < event.length; i++) {
+                valuesArr.push(event[i].value)
+            }
         }
+
 
         console.log(valuesArr);
         setSelectedAdvancedGroups(valuesArr);
@@ -512,10 +524,11 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
         console.log(event);
 
         let valuesArr = [];
-        for (let i = 0; i < event.length; i++) {
-            valuesArr.push(event[i].value)
+        if (event) {
+            for (let i = 0; i < event.length; i++) {
+                valuesArr.push(event[i].value)
+            }
         }
-
         console.log(valuesArr);
         setSelectedRelatedConcepts(valuesArr);
     }
@@ -541,6 +554,7 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
                                             initialValues={
                                                 {
                                                     conceptTitle: previousData.concept_title,
+                                                    displayName: previousData.display_name,
                                                     // submit: null
                                                 }
                                             }
@@ -551,6 +565,14 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
                                                         .min(2, Constants.AddConcepts.ConceptTitleTooShort)
                                                         .max(32, Constants.AddConcepts.ConceptTitleTooLong)
                                                         .required(Constants.AddConcepts.ConceptTitleRequired),
+
+                                                    displayName: Yup.string()
+                                                        .trim()
+                                                        .min(2, Constants.AddConcepts.DisplayNameTooShort)
+                                                        .max(32, Constants.AddConcepts.DisplayNameTooLong)
+                                                        .required(Constants.AddConcepts.DisplayNameRequired),
+
+
 
                                                 })
                                             }
@@ -565,6 +587,7 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
                                                     data: {
                                                         concept_id: editConceptID,
                                                         concept_title: values.conceptTitle,
+                                                        display_name: values.displayName,
                                                         concept_digicard_id: selectedDigicards,
                                                         concept_keywords: selectedKeywords,
                                                         related_concept: selectedRelatedConcepts,
@@ -731,6 +754,39 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
                                                                 </Col>
                                                             </Row>
                                                             <br />
+                                                            <Row>
+                                                                <Col>
+
+                                                                    <div className="form-group fill">
+                                                                        <label className="floating-label" htmlFor="displayName">
+                                                                            <small className="text-danger">* </small>Display Name
+                                                                        </label>
+                                                                        <input
+                                                                            className="form-control"
+                                                                            error={touched.conceptTitle && errors.conceptTitle}
+                                                                            name="displayName"
+                                                                            onBlur={handleBlur}
+                                                                            // onChange={handleChange}
+                                                                            type="text"
+                                                                            value={values.displayName}
+                                                                            onChange={(e) => {
+                                                                                handleChange("displayName")(e);
+                                                                                setDisplayNameErr(false);
+                                                                            }}
+
+                                                                        />
+
+                                                                        {touched.displayName && errors.displayName && <small className="text-danger form-text">{errors.displayName}</small>}
+
+                                                                        {displayNameErr && displayNameErrMessage &&
+                                                                            <small className="text-danger form-text">{displayNameErrMessage}</small>
+                                                                        }
+
+                                                                    </div>
+
+                                                                </Col>
+                                                                <Col></Col>
+                                                            </Row>
                                                             <Row>
                                                                 <Col>
                                                                     <div className="form-group fill">

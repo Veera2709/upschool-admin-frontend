@@ -400,7 +400,7 @@ export default {
             else oAudio = this.plugins.audio._createAudioTag.call(this);
 
             file = { name: fileList[i].name, size: fileList[i].size };
-            this.plugins.audio.create_audio.call(this, oAudio, fileList[i].url, file, info.isUpdate);
+            // this.plugins.audio.create_audio.call(this, oAudio, fileList[i].url, file, info.isUpdate);
         }
 
         this.closeLoading();

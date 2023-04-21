@@ -6,6 +6,8 @@ import withReactContent from 'sweetalert2-react-content';
 import Swal from 'sweetalert2';
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
+// import Select from 'react-select';
+import Select from "react-draggable-multi-select";
 
 import dynamicUrl from "../../../../helper/dynamicUrls";
 import MESSAGES from '../../../../helper/messages';
@@ -15,307 +17,172 @@ import BasicSpinner from '../../../../helper/BasicSpinner';
 
 const SubscriptionFeatures = ({ className, rest, id }) => {
 
-    // let history = useHistory();
+    let history = useHistory();
     const [isLoading, setIsLoading] = useState(false);
-    // const [loader, showLoader, hideLoader] = useFullPageLoader();
-    // const [previousDataPreQuiz, setPreviousDataPreQuiz] = useState([]);
-    // const [previousDataPostQuiz, setPreviousDataPostQuiz] = useState([]);
-    // const [_radioL2MandatoryPre, _setRadioL2MandatoryPre] = useState(false);
-    // const [_radioReadDigicardPre, _setRadioReadDigicardPre] = useState(false);
-    // const [_radioRecommendTeachersPre, _setRadioRecommendTeachersPre] = useState(false);
+    const [loader, showLoader, hideLoader] = useFullPageLoader();
 
-    // const [_radioReadDigicardPost, _setRadioReadDigicardPost] = useState(false);
-    // const [_radioRecommendTeachersPost, _setRadioRecommendTeachersPost] = useState(false);
+    const [previousSubscriptionData, setPreviousSubscriptionData] = useState([]);
+    const [previousTypeOfReports, setPreviousTypeOfReports] = useState([]);
 
-    // const [selectedL2MandatoryPre, setSlectedL2MandatoryPre] = useState('No');
-    // const [selectedReadDigicardPre, setSlectedReadDigicardPre] = useState('No');
-    // const [selectedRecommendTeachersPre, setSlectedRecommendTeachersPre] = useState('No');
+    const [_radioLibraryFeature, _setRadioLibraryFeature] = useState(false);
+    const [_radioAutomateEvaluation, _setRadioAutomateEvaluation] = useState(false);
 
-    // const [selectedReadDigicardPost, setSlectedReadDigicardPost] = useState('No');
-    // const [selectedRecommendTeachersPost, setSlectedRecommendTeachersPost] = useState('No');
+    const [selectedLibraryFeature, setSelectedLibraryFeature] = useState('No');
+    const [slectedAutomateEvaluation, setSlectedAutomateEvaluation] = useState('No');
+    const [selectedtypeOfReports, setSelectedTypeOfReports] = useState([]);
 
-    // const MySwal = withReactContent(Swal);
+    const [typeOfReportsErrMsg, setTypeOfReportsErrMsg] = useState(false);
 
-    // const sweetAlertHandler = (alert) => {
-    //     MySwal.fire({
-    //         title: alert.title,
-    //         text: alert.text,
-    //         icon: alert.type
-    //     });
-    // };
+    const testTypePre = [
+        { label: 'Online', value: 'Online' },
+        { label: 'Paper Based', value: 'Paper Based' },
+        { label: 'Both', value: 'Both' }
+    ];
 
-    // const handleL2MandatoryPre = () => {
+    const testTypePost = [
+        { label: 'Online', value: 'Online' },
+        { label: 'Paper Based', value: 'Paper Based' },
+        { label: 'Both', value: 'Both' }
+    ];
 
-    //     _setRadioL2MandatoryPre(!_radioL2MandatoryPre);
-    //     _radioL2MandatoryPre === true ? setSlectedL2MandatoryPre('No') : setSlectedL2MandatoryPre('Yes');
-    // }
+    const typesOfReportsOptions = [
+        { value: 'Report1', label: 'Report1' },
+        { value: 'Report2', label: 'Report2' },
+        { value: 'Report3', label: 'Report3' },
+        { value: 'Report4', label: 'Report4' },
+        { value: 'Report5', label: 'Report5' }
+    ];
 
-    // const handleReadDigicardPre = (e) => {
+    const MySwal = withReactContent(Swal);
 
-    //     _setRadioReadDigicardPre(!_radioReadDigicardPre);
-    //     _radioReadDigicardPre === true ? setSlectedReadDigicardPre('No') : setSlectedReadDigicardPre('Yes');
-    // }
+    const sweetAlertHandler = (alert) => {
+        MySwal.fire({
+            title: alert.title,
+            text: alert.text,
+            icon: alert.type
+        });
+    };
 
-    // const handleReadDigicardPost = (e) => {
+    const handleReportChange = (event) => {
 
-    //     _setRadioReadDigicardPost(!_radioReadDigicardPost);
-    //     _radioReadDigicardPost === true ? setSlectedReadDigicardPost('No') : setSlectedReadDigicardPost('Yes');
-    // }
+        setTypeOfReportsErrMsg(false);
+        console.log(event);
 
-    // const handleRecommendTeachersPre = (e) => {
+        let valuesArr = [];
+        if (event) {
+            for (let i = 0; i < event.length; i++) {
+                valuesArr.push(event[i].value)
+            }
+        }
 
-    //     _setRadioRecommendTeachersPre(!_radioRecommendTeachersPre);
-    //     _radioRecommendTeachersPre === true ? setSlectedRecommendTeachersPre('No') : setSlectedRecommendTeachersPre('Yes');
-    // }
+        console.log(valuesArr);
+        setSelectedTypeOfReports(valuesArr);
+    }
 
-    // const handleRecommendTeachersPost = (e) => {
+    const handleLibraryFeature = (e) => {
 
-    //     _setRadioRecommendTeachersPost(!_radioRecommendTeachersPost);
-    //     _radioRecommendTeachersPost === true ? setSlectedRecommendTeachersPost('No') : setSlectedRecommendTeachersPost('Yes');
-    // }
+        _setRadioLibraryFeature(!_radioLibraryFeature);
+        _radioLibraryFeature === true ? setSelectedLibraryFeature('No') : setSelectedLibraryFeature('Yes');
+    }
 
+    const handleAutomateEvaluation = (e) => {
 
-    // const schemaValues = (_radioRecommendTeachersPost === false && _radioRecommendTeachersPre === true) ? {
-    //     passPercentageL1Pre: Yup.string()
-    //         .matches(Constants.Common.passPercentageRegex, 'Invalid Percentage!')
-    //         .required('Field is required/Invalid Percentage!')
-    //         .min(1, 'Field is required!'),
-    //     passPercentageL2Pre: Yup.string()
-    //         .matches(Constants.Common.passPercentageRegex, 'Invalid Percentage!')
-    //         .required('Field is required/Invalid Percentage!'),
-    //     minStudentsPre: Yup.string()
-    //         .matches(Constants.Common.passPercentageRegex, 'Invalid Percentage!')
-    //         .required('Field is required/Invalid Percentage!'),
-    //     noOfAttemptsPre: Yup.string()
-    //         .matches(Constants.Common.numOfAttemptsRegex, 'Invalid Number!')
-    //         .required('Field is required/Invalid Number!'),
-    //     passPercentageL1Post: Yup.string()
-    //         .matches(Constants.Common.passPercentageRegex, 'Invalid Percentage!')
-    //         .required('Field is required/Invalid Percentage!')
-    //         .min(1, 'Field is required!'),
-    //     percentageOfStudentsPre: Yup.string()
-    //         .matches(Constants.Common.passPercentageRegex, 'Invalid Percentage!')
-    //         .required('Field is required/Invalid Percentage!')
-    //         .min(1, 'Field is required!'),
-    //     passPercentageL2Post: Yup.string()
-    //         .matches(Constants.Common.passPercentageRegex, 'Invalid Percentage!')
-    //         .required('Field is required/Invalid Percentage!')
-    //         .min(1, 'Field is required!'),
-    //     passPercentageL3Post: Yup.string()
-    //         .matches(Constants.Common.passPercentageRegex, 'Invalid Percentage!')
-    //         .required('Field is required/Invalid Percentage!')
-    //         .min(1, 'Field is required!'),
-    //     minStudentsPost: Yup.string()
-    //         .matches(Constants.Common.passPercentageRegex, 'Invalid Percentage!')
-    //         .required('Field is required/Invalid Percentage!'),
-    //     noOfAttemptsPost: Yup.string()
-    //         .matches(Constants.Common.numOfAttemptsRegex, 'Invalid Number!')
-    //         .required('Field is required/Invalid Number!')
-    // } : (_radioRecommendTeachersPre === false && _radioRecommendTeachersPost === true) ? {
-    //     passPercentageL1Pre: Yup.string()
-    //         .matches(Constants.Common.passPercentageRegex, 'Invalid Percentage!')
-    //         .required('Field is required/Invalid Percentage!')
-    //         .min(1, 'Field is required!'),
-    //     passPercentageL2Pre: Yup.string()
-    //         .matches(Constants.Common.passPercentageRegex, 'Invalid Percentage!')
-    //         .required('Field is required/Invalid Percentage!'),
-    //     minStudentsPre: Yup.string()
-    //         .matches(Constants.Common.passPercentageRegex, 'Invalid Percentage!')
-    //         .required('Field is required/Invalid Percentage!'),
-    //     noOfAttemptsPre: Yup.string()
-    //         .matches(Constants.Common.numOfAttemptsRegex, 'Invalid Number!')
-    //         .required('Field is required/Invalid Number!'),
-    //     passPercentageL1Post: Yup.string()
-    //         .matches(Constants.Common.passPercentageRegex, 'Invalid Percentage!')
-    //         .required('Field is required/Invalid Percentage!')
-    //         .min(1, 'Field is required!'),
-    //     passPercentageL2Post: Yup.string()
-    //         .matches(Constants.Common.passPercentageRegex, 'Invalid Percentage!')
-    //         .required('Field is required/Invalid Percentage!')
-    //         .min(1, 'Field is required!'),
-    //     passPercentageL3Post: Yup.string()
-    //         .matches(Constants.Common.passPercentageRegex, 'Invalid Percentage!')
-    //         .required('Field is required/Invalid Percentage!')
-    //         .min(1, 'Field is required!'),
-    //     minStudentsPost: Yup.string()
-    //         .matches(Constants.Common.passPercentageRegex, 'Invalid Percentage!')
-    //         .required('Field is required/Invalid Percentage!'),
-    //     noOfAttemptsPost: Yup.string()
-    //         .matches(Constants.Common.numOfAttemptsRegex, 'Invalid Number!')
-    //         .required('Field is required/Invalid Number!'),
-    //     percentageOfStudentsPost: Yup.string()
-    //         .matches(Constants.Common.passPercentageRegex, 'Invalid Percentage!')
-    //         .required('Field is required/Invalid Percentage!')
-    //         .min(1, 'Field is required!'),
-    // } : (_radioRecommendTeachersPost === true && _radioRecommendTeachersPre === true) ? {
-    //     passPercentageL1Pre: Yup.string()
-    //         .matches(Constants.Common.passPercentageRegex, 'Invalid Percentage!')
-    //         .required('Field is required/Invalid Percentage!')
-    //         .min(1, 'Field is required!'),
-    //     passPercentageL2Pre: Yup.string()
-    //         .matches(Constants.Common.passPercentageRegex, 'Invalid Percentage!')
-    //         .required('Field is required/Invalid Percentage!'),
-    //     minStudentsPre: Yup.string()
-    //         .matches(Constants.Common.passPercentageRegex, 'Invalid Percentage!')
-    //         .required('Field is required/Invalid Percentage!'),
-    //     noOfAttemptsPre: Yup.string()
-    //         .matches(Constants.Common.numOfAttemptsRegex, 'Invalid Number!')
-    //         .required('Field is required/Invalid Number!'),
-    //     passPercentageL1Post: Yup.string()
-    //         .matches(Constants.Common.passPercentageRegex, 'Invalid Percentage!')
-    //         .required('Field is required/Invalid Percentage!')
-    //         .min(1, 'Field is required!'),
-    //     percentageOfStudentsPre: Yup.string()
-    //         .matches(Constants.Common.passPercentageRegex, 'Invalid Percentage!')
-    //         .required('Field is required/Invalid Percentage!')
-    //         .min(1, 'Field is required!'),
-    //     passPercentageL2Post: Yup.string()
-    //         .matches(Constants.Common.passPercentageRegex, 'Invalid Percentage!')
-    //         .required('Field is required/Invalid Percentage!')
-    //         .min(1, 'Field is required!'),
-    //     passPercentageL3Post: Yup.string()
-    //         .matches(Constants.Common.passPercentageRegex, 'Invalid Percentage!')
-    //         .required('Field is required/Invalid Percentage!')
-    //         .min(1, 'Field is required!'),
-    //     minStudentsPost: Yup.string()
-    //         .matches(Constants.Common.passPercentageRegex, 'Invalid Percentage!')
-    //         .required('Field is required/Invalid Percentage!'),
-    //     noOfAttemptsPost: Yup.string()
-    //         .matches(Constants.Common.numOfAttemptsRegex, 'Invalid Number!')
-    //         .required('Field is required/Invalid Number!'),
-    //     percentageOfStudentsPost: Yup.string()
-    //         .matches(Constants.Common.passPercentageRegex, 'Invalid Percentage!')
-    //         .required('Field is required/Invalid Percentage!')
-    //         .min(1, 'Field is required!'),
-    // } : {
-    //     passPercentageL1Pre: Yup.string()
-    //         .matches(Constants.Common.passPercentageRegex, 'Invalid Percentage!')
-    //         .required('Field is required/Invalid Percentage!')
-    //         .min(1, 'Field is required!'),
-    //     passPercentageL2Pre: Yup.string()
-    //         .matches(Constants.Common.passPercentageRegex, 'Invalid Percentage!')
-    //         .required('Field is required/Invalid Percentage!'),
-    //     minStudentsPre: Yup.string()
-    //         .matches(Constants.Common.passPercentageRegex, 'Invalid Percentage!')
-    //         .required('Field is required/Invalid Percentage!'),
-    //     noOfAttemptsPre: Yup.string()
-    //         .matches(Constants.Common.numOfAttemptsRegex, 'Invalid Number!')
-    //         .required('Field is required/Invalid Number!'),
-    //     passPercentageL1Post: Yup.string()
-    //         .matches(Constants.Common.passPercentageRegex, 'Invalid Percentage!')
-    //         .required('Field is required/Invalid Percentage!')
-    //         .min(1, 'Field is required!'),
-    //     passPercentageL2Post: Yup.string()
-    //         .matches(Constants.Common.passPercentageRegex, 'Invalid Percentage!')
-    //         .required('Field is required/Invalid Percentage!')
-    //         .min(1, 'Field is required!'),
-    //     passPercentageL3Post: Yup.string()
-    //         .matches(Constants.Common.passPercentageRegex, 'Invalid Percentage!')
-    //         .required('Field is required/Invalid Percentage!')
-    //         .min(1, 'Field is required!'),
-    //     minStudentsPost: Yup.string()
-    //         .matches(Constants.Common.passPercentageRegex, 'Invalid Percentage!')
-    //         .required('Field is required/Invalid Percentage!'),
-    //     noOfAttemptsPost: Yup.string()
-    //         .matches(Constants.Common.numOfAttemptsRegex, 'Invalid Number!')
-    //         .required('Field is required/Invalid Number!'),
-    // }
+        _setRadioAutomateEvaluation(!_radioAutomateEvaluation);
+        _radioAutomateEvaluation === true ? setSlectedAutomateEvaluation('No') : setSlectedAutomateEvaluation('Yes');
+    }
 
-    // const fetchIndividualSchoolDetails = () => {
-    //     axios
-    //         .post(
-    //             dynamicUrl.fetchIndividualSchool,
-    //             {
-    //                 data: {
-    //                     school_id: id,
-    //                 }
-    //             },
-    //             {
-    //                 headers: { Authorization: sessionStorage.getItem('user_jwt') }
-    //             }
-    //         )
-    //         .then((response) => {
-    //             console.log({ response });
-    //             console.log(response.data.Items[0]);
-    //             console.log(response.status === 200);
-    //             let result = response.status === 200;
-    //             hideLoader();
-    //             if (result) {
+    const fetchIndividualSchoolDetails = () => {
+        axios
+            .post(
+                dynamicUrl.fetchIndividualSchool,
+                {
+                    data: {
+                        school_id: id,
+                    }
+                },
+                {
+                    headers: { Authorization: sessionStorage.getItem('user_jwt') }
+                }
+            )
+            .then((response) => {
+                console.log({ response });
+                console.log(response.data.Items[0]);
+                console.log(response.status === 200);
+                let result = response.status === 200;
+                hideLoader();
+                if (result) {
 
-    //                 console.log('inside res initial data');
+                    console.log('inside res initial data');
 
-    //                 let previousDataPreQuiz = response.data.Items[0].school_quiz_config.pre_learning;
-    //                 let previousDataPostQuiz = response.data.Items[0].school_quiz_config.post_learning;
-    //                 console.log(previousDataPreQuiz);
-    //                 console.log(previousDataPostQuiz.pass_pct_quiz_l3);
-    //                 console.log(previousDataPostQuiz.pct_of_student_for_focus);
+                    let previousSubscriptionData = response.data.Items[0].school_subscribtion_feature;
+                    console.log(previousSubscriptionData);
 
-    //                 const radioValueL2MandatoryPre = previousDataPreQuiz.l2_mandatory === 'Yes' ? true : false;
-    //                 const radioValueReadDigicardPre = previousDataPreQuiz.read_digicard_mandatory === 'Yes' ? true : false;
-    //                 const radioValueRecommendTeachersPre = previousDataPreQuiz.recommend_teacher_on_focus_area === 'Yes' ? true : false;
-    //                 const radioValueReadDigicardPost = previousDataPostQuiz.read_digicard_mandatory === 'Yes' ? true : false;
-    //                 const radioValueRecommendTeachersPost = previousDataPostQuiz.recommend_teacher_on_focus_area === 'Yes' ? true : false;
+                    let valuesArr = [];
+                    let dataArr = [];
 
-    //                 _setRadioL2MandatoryPre(radioValueL2MandatoryPre);
-    //                 _setRadioReadDigicardPre(radioValueReadDigicardPre);
-    //                 _setRadioRecommendTeachersPre(radioValueRecommendTeachersPre);
-    //                 _setRadioReadDigicardPost(radioValueReadDigicardPost);
-    //                 _setRadioRecommendTeachersPost(radioValueRecommendTeachersPost);
+                    if (previousSubscriptionData.types_of_report) {
+                        for (let i = 0; i < previousSubscriptionData.types_of_report.length; i++) {
+                            dataArr.push({ value: previousSubscriptionData.types_of_report[i], label: previousSubscriptionData.types_of_report[i] })
+                            valuesArr.push(previousSubscriptionData.types_of_report[i])
+                        }
+                        console.log(valuesArr);
+                    }
 
-    //                 setSlectedL2MandatoryPre(previousDataPreQuiz.l2_mandatory);
-    //                 setSlectedReadDigicardPre(previousDataPreQuiz.read_digicard_mandatory);
-    //                 setSlectedRecommendTeachersPre(previousDataPreQuiz.recommend_teacher_on_focus_area);
+                    const radioValueLibraryFeature = previousSubscriptionData.library_enable_on_app === 'Yes' ? true : false;
+                    const radioValueAutomateEvaluation = previousSubscriptionData.automated_evaluation === 'Yes' ? true : false;
 
-    //                 setSlectedReadDigicardPost(previousDataPostQuiz.read_digicard_mandatory);
-    //                 setSlectedRecommendTeachersPost(previousDataPostQuiz.recommend_teacher_on_focus_area);
+                    _setRadioLibraryFeature(radioValueLibraryFeature);
+                    _setRadioAutomateEvaluation(radioValueAutomateEvaluation);
 
+                    setSelectedLibraryFeature(previousSubscriptionData.library_enable_on_app);
+                    setSlectedAutomateEvaluation(previousSubscriptionData.automated_evaluation);
+                    setSelectedTypeOfReports(valuesArr);
 
-    //                 setPreviousDataPreQuiz(previousDataPreQuiz);
-    //                 setPreviousDataPostQuiz(previousDataPostQuiz);
-    //                 setIsLoading(false);
-    //             } else {
-    //                 console.log('else res');
-    //                 hideLoader();
-    //                 // Request made and server responded
-    //                 // setStatus({ success: false });
-    //                 // setErrors({ submit: 'Error in generating OTP' });
-    //             }
-    //         })
-    //         .catch((error) => {
-    //             if (error.response) {
-    //                 hideLoader();
-    //                 // Request made and server responded
-    //                 console.log(error.response.data);
+                    setPreviousTypeOfReports(dataArr);
+                    setPreviousSubscriptionData(previousSubscriptionData);
+                    setIsLoading(false);
+                } else {
+                    console.log('else res');
+                    hideLoader();
+                    // Request made and server responded
+                    // setStatus({ success: false });
+                    // setErrors({ submit: 'Error in generating OTP' });
+                }
+            })
+            .catch((error) => {
+                if (error.response) {
+                    hideLoader();
+                    // Request made and server responded
+                    console.log(error.response.data);
 
-    //                 if (error.response.data === 'Invalid Token') {
-    //                     sessionStorage.clear();
-    //                     localStorage.clear();
-    //                     history.push('/auth/signin-1');
-    //                     window.location.reload();
-    //                 }
-    //                 // setStatus({ success: false });
-    //                 // setErrors({ submit: error.response.data });
-    //             } else if (error.request) {
-    //                 // The request was made but no response was received
-    //                 console.log(error.request);
-    //                 hideLoader();
-    //                 setIsLoading(false);
-    //             } else {
-    //                 // Something happened in setting up the request that triggered an Error
-    //                 console.log('Error', error.message);
-    //                 hideLoader();
-    //                 setIsLoading(false);
-    //             }
-    //         });
-    // }
+                    if (error.response.data === 'Invalid Token') {
+                        sessionStorage.clear();
+                        localStorage.clear();
+                        history.push('/auth/signin-1');
+                        window.location.reload();
+                    }
+                    // setStatus({ success: false });
+                    // setErrors({ submit: error.response.data });
+                } else if (error.request) {
+                    // The request was made but no response was received
+                    console.log(error.request);
+                    hideLoader();
+                    setIsLoading(false);
+                } else {
+                    // Something happened in setting up the request that triggered an Error
+                    console.log('Error', error.message);
+                    hideLoader();
+                    setIsLoading(false);
+                }
+            });
+    }
 
-    // useEffect(() => {
+    useEffect(() => {
 
-    //     setIsLoading(true);
-    //     fetchIndividualSchoolDetails();
+        setIsLoading(true);
+        fetchIndividualSchoolDetails();
 
-
-    // }, []);
+    }, []);
 
     return (
 
@@ -330,22 +197,33 @@ const SubscriptionFeatures = ({ className, rest, id }) => {
                             <Card>
                                 <Card.Body>
 
-                                    {/* <Formik
+                                    <Formik
                                         initialValues={{
-                                            passPercentageL1Pre: previousDataPreQuiz.pass_pct_quiz_l1 === '' ? '' : previousDataPreQuiz.pass_pct_quiz_l1,
-                                            passPercentageL2Pre: previousDataPreQuiz.pass_pct_quiz_l2 === '' ? '' : previousDataPreQuiz.pass_pct_quiz_l2,
-                                            minStudentsPre: previousDataPreQuiz.pct_of_student_for_reteach === '' ? '' : previousDataPreQuiz.pct_of_student_for_reteach,
-                                            noOfAttemptsPre: previousDataPreQuiz.no_of_attempt_to_unlock === '' ? '' : previousDataPreQuiz.no_of_attempt_to_unlock,
-                                            percentageOfStudentsPre: previousDataPreQuiz.pct_of_student_for_focus === '' ? '' : previousDataPreQuiz.pct_of_student_for_focus,
-                                            passPercentageL1Post: previousDataPostQuiz.pass_pct_quiz_l1 === '' ? '' : previousDataPostQuiz.pass_pct_quiz_l1,
-                                            passPercentageL2Post: previousDataPostQuiz.pass_pct_quiz_l2 === '' ? '' : previousDataPostQuiz.pass_pct_quiz_l2,
-                                            passPercentageL3Post: previousDataPostQuiz.pass_pct_quiz_l3 === '' ? '' : previousDataPostQuiz.pass_pct_quiz_l3,
-                                            minStudentsPost: previousDataPostQuiz.pct_of_student_for_reteach === '' ? '' : previousDataPostQuiz.pct_of_student_for_reteach,
-                                            noOfAttemptsPost: previousDataPostQuiz.no_of_attempt_to_unlock === '' ? '' : previousDataPostQuiz.no_of_attempt_to_unlock,
-                                            percentageOfStudentsPost: previousDataPostQuiz.pct_of_student_for_focus === '' ? '' : previousDataPostQuiz.pct_of_student_for_focus,
+                                            testTypePre: previousSubscriptionData.pre_test_type === '' ? '' : previousSubscriptionData.pre_test_type,
+                                            testTypePost: previousSubscriptionData.post_test_type === '' ? '' : previousSubscriptionData.post_test_type,
+                                            noOfTestPapers: previousSubscriptionData.no_of_test === '' ? '' : previousSubscriptionData.no_of_test,
+                                            noOfWorksheets: previousSubscriptionData.no_of_worksheet === '' ? '' : previousSubscriptionData.no_of_worksheet,
                                             submit: null
                                         }}
-                                        validationSchema={Yup.object().shape(schemaValues)}
+
+                                        validationSchema={Yup.object().shape(
+                                            {
+                                                testTypePre: Yup.string()
+                                                    .min(1, 'Please, select Test Type!')
+                                                    .oneOf([testTypePre.map((ele) => ele.value)], "Please, provide a valid Test Type!")
+                                                    .required('Please, select Test Type!'),
+                                                testTypePost: Yup.string()
+                                                    .min(1, 'Please, select Test Type!')
+                                                    .oneOf([testTypePre.map((ele) => ele.value)], "Please, provide a valid Test Type!")
+                                                    .required('Please, select Test Type!'),
+                                                noOfWorksheets: Yup.string()
+                                                    .matches(Constants.Common.numOfWorksheetsAndTestPapersRegex, 'Invalid Number of Worksheets!')
+                                                    .required('Field is required/Invalid Number!'),
+                                                noOfTestPapers: Yup.string()
+                                                    .matches(Constants.Common.numOfWorksheetsAndTestPapersRegex, 'Invalid Number of Test Papers!')
+                                                    .required('Field is required/Invalid Number!'),
+                                            }
+                                        )}
                                         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
 
                                             setStatus({ success: true });
@@ -354,160 +232,161 @@ const SubscriptionFeatures = ({ className, rest, id }) => {
                                             const formData = {
                                                 data: {
                                                     school_id: id,
-                                                    school_quiz_config: {
-                                                        pre_learning: {
-                                                            pass_pct_quiz_l1: values.passPercentageL1Pre,
-                                                            pass_pct_quiz_l2: values.passPercentageL2Pre,
-                                                            pct_of_student_for_reteach: values.minStudentsPre,
-                                                            no_of_attempt_to_unlock: values.noOfAttemptsPre,
-                                                            l2_mandatory: selectedL2MandatoryPre,
-                                                            read_digicard_mandatory: selectedReadDigicardPre,
-                                                            recommend_teacher_on_focus_area: selectedRecommendTeachersPre,
-                                                            pct_of_student_for_focus: selectedRecommendTeachersPre === 'Yes' ? values.percentageOfStudentsPre : '',
-                                                        },
-                                                        post_learning: {
-                                                            pass_pct_quiz_l1: values.passPercentageL1Post,
-                                                            pass_pct_quiz_l2: values.passPercentageL2Post,
-                                                            pass_pct_quiz_l3: values.passPercentageL3Post,
-                                                            pct_of_student_for_reteach: values.minStudentsPost,
-                                                            no_of_attempt_to_unlock: values.noOfAttemptsPost,
-                                                            read_digicard_mandatory: selectedReadDigicardPost,
-                                                            recommend_teacher_on_focus_area: selectedRecommendTeachersPost,
-                                                            pct_of_student_for_focus: selectedRecommendTeachersPost === 'Yes' ? values.percentageOfStudentsPost : '',
-                                                        }
+                                                    school_subscribe_feature: {
+                                                        pre_test_type: values.testTypePre,
+                                                        post_test_type: values.testTypePost,
+                                                        types_of_report: selectedtypeOfReports,
+                                                        no_of_worksheet: values.noOfWorksheets,
+                                                        no_of_test: values.noOfTestPapers,
+                                                        library_enable_on_app: selectedLibraryFeature,
+                                                        automated_evaluation: slectedAutomateEvaluation
                                                     }
                                                 }
                                             }
 
                                             console.log(formData);
 
-                                            axios
-                                                .post(
-                                                    dynamicUrl.setQuizConfiguration,
-                                                    formData,
-                                                    {
-                                                        headers: { Authorization: sessionStorage.getItem('user_jwt') }
-                                                    }
-                                                )
-                                                .then((response) => {
+                                            if (selectedtypeOfReports.length >= 1) {
+                                                showLoader();
+                                                axios
+                                                    .post(
+                                                        dynamicUrl.schoolubscriptionFeatures,
+                                                        formData,
+                                                        {
+                                                            headers: { Authorization: sessionStorage.getItem('user_jwt') }
+                                                        }
+                                                    )
+                                                    .then((response) => {
 
-                                                    console.log({ response });
+                                                        console.log({ response });
 
-                                                    let result = response.status === 200;
-                                                    hideLoader();
+                                                        let result = response.status === 200;
+                                                        hideLoader();
 
-                                                    if (result) {
+                                                        if (result) {
 
-                                                        console.log('inside res edit');
+                                                            console.log('inside res edit');
 
-                                                        if (response.status === 200) {
+                                                            if (response.status === 200) {
 
-                                                            const MySwal = withReactContent(Swal);
-                                                            MySwal.fire({
-                                                                title: MESSAGES.TTTLES.Goodjob,
-                                                                type: 'success',
-                                                                text: MESSAGES.SUCCESS.UpdatingQuizConfiguration,
-                                                                icon: 'success',
-                                                            }).then((willDelete) => {
-                                                                window.location.reload();
-                                                            });
+                                                                const MySwal = withReactContent(Swal);
+                                                                MySwal.fire({
+                                                                    // title: MESSAGES.TTTLES.Goodjob,
+                                                                    type: 'success',
+                                                                    text: MESSAGES.SUCCESS.UpdatingSubscriptionFeatures,
+                                                                    icon: 'success',
+                                                                }).then((willDelete) => {
+                                                                    window.location.reload();
+                                                                });
 
+                                                            } else {
+
+                                                                setStatus({ success: false });
+                                                                setErrors({ submit: 'Error in Editing School' });
+                                                            }
                                                         } else {
+
+                                                            console.log('else res');
 
                                                             setStatus({ success: false });
                                                             setErrors({ submit: 'Error in Editing School' });
                                                         }
-                                                    } else {
+                                                    })
+                                                    .catch((error) => {
+                                                        if (error.response) {
 
-                                                        console.log('else res');
+                                                            hideLoader();
+                                                            // Request made and server responded
+                                                            console.log(error.response.data);
 
-                                                        setStatus({ success: false });
-                                                        setErrors({ submit: 'Error in Editing School' });
-                                                    }
-                                                })
-                                                .catch((error) => {
-                                                    if (error.response) {
+                                                            if (error.response.data === "Invalid Token") {
 
-                                                        hideLoader();
-                                                        // Request made and server responded
-                                                        console.log(error.response.data);
+                                                                sessionStorage.clear();
+                                                                localStorage.clear();
 
-                                                        if (error.response.data === "Invalid Token") {
+                                                                history.push('/auth/signin-1');
+                                                                window.location.reload();
+                                                            } else {
+                                                                setStatus({ success: false });
+                                                                setErrors({ submit: error.response.data });
+                                                            }
 
-                                                            sessionStorage.clear();
-                                                            localStorage.clear();
 
-                                                            history.push('/auth/signin-1');
-                                                            window.location.reload();
+
+                                                        } else if (error.request) {
+                                                            // The request was made but no response was received
+                                                            console.log(error.request);
+                                                            hideLoader();
+
                                                         } else {
-                                                            setStatus({ success: false });
-                                                            setErrors({ submit: error.response.data });
+                                                            // Something happened in setting up the request that triggered an Error
+                                                            console.log('Error', error.message);
+                                                            hideLoader();
+
                                                         }
+                                                    })
 
-
-
-                                                    } else if (error.request) {
-                                                        // The request was made but no response was received
-                                                        console.log(error.request);
-                                                        hideLoader();
-
-                                                    } else {
-                                                        // Something happened in setting up the request that triggered an Error
-                                                        console.log('Error', error.message);
-                                                        hideLoader();
-
-                                                    }
-                                                })
-
-
+                                            } else {
+                                                console.log("Type of reports empty!");
+                                                setTypeOfReportsErrMsg(true);
+                                            }
                                         }}
                                     >
                                         {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, setFieldValue }) => (
                                             <form noValidate onSubmit={handleSubmit} className={className} {...rest}>
 
-                                                <Card.Title>
-                                                    Pre-level Quiz
-                                                </Card.Title>
-                                                <hr />
+                                                <br />
                                                 <Row>
                                                     <Col>
                                                         <label className="floating-label">
                                                             <small className="text-danger">* </small>
-                                                            Pass Percentage for Quiz Level -1
+                                                            Test Type for Pre-learning
                                                         </label>
-                                                        <input
+                                                        <select
                                                             className="form-control"
-                                                            error={touched.passPercentageL1Pre && errors.passPercentageL1Pre}
-                                                            label="passPercentageL1Pre"
-                                                            name="passPercentageL1Pre"
+                                                            error={touched.testTypePre && errors.testTypePre}
+                                                            name="testTypePre"
                                                             onBlur={handleBlur}
-                                                            onChange={handleChange}
-                                                            type="number"
-                                                            value={values.passPercentageL1Pre}
-                                                        // placeholder="To clear the Quiz"
-                                                        />
-
-                                                        {touched.passPercentageL1Pre && errors.passPercentageL1Pre && <small className="text-danger form-text">{errors.passPercentageL1Pre}</small>}
+                                                            type="text"
+                                                            defaultValue={previousSubscriptionData.pre_test_type}
+                                                            onChange={e => {
+                                                                handleChange(e);
+                                                            }}
+                                                        >
+                                                            <option value={testTypePre}>Select</option>
+                                                            {(testTypePre.map((ele, i) => {
+                                                                return <option key={i} value={ele.value}>{ele.label}</option>
+                                                            }))}
+                                                        </select>
+                                                        {touched.testTypePre && errors.testTypePre ? (
+                                                            <small className="text-danger form-text">{errors.testTypePre}</small>
+                                                        ) : null}
                                                     </Col>
 
                                                     <Col>
                                                         <label className="floating-label">
                                                             <small className="text-danger">* </small>
-                                                            Pass Percentage for Quiz Level -2
+                                                            Test Type for Post-learning
                                                         </label>
-                                                        <input
+                                                        <select
                                                             className="form-control"
-                                                            error={touched.passPercentageL2Pre && errors.passPercentageL2Pre}
-                                                            label="passPercentageL2Pre"
-                                                            name="passPercentageL2Pre"
+                                                            error={touched.testTypePost && errors.testTypePost}
+                                                            name="testTypePost"
                                                             onBlur={handleBlur}
-                                                            onChange={handleChange}
-                                                            type="number"
-                                                            value={values.passPercentageL2Pre}
-                                                        // placeholder="To clear the Quiz"
-                                                        />
-
-                                                        {touched.passPercentageL2Pre && errors.passPercentageL2Pre && <small className="text-danger form-text">{errors.passPercentageL2Pre}</small>}
+                                                            type="text"
+                                                            defaultValue={previousSubscriptionData.post_test_type}
+                                                            onChange={e => {
+                                                                handleChange(e);
+                                                            }}
+                                                        >
+                                                            <option value={testTypePost}>Select</option>
+                                                            {(testTypePost.map((ele, i) => {
+                                                                return <option key={i} value={ele.value}>{ele.label}</option>
+                                                            }))}
+                                                        </select>
+                                                        {touched.testTypePost && errors.testTypePost ? (
+                                                            <small className="text-danger form-text">{errors.testTypePost}</small>
+                                                        ) : null}
                                                     </Col>
 
                                                 </Row>
@@ -515,152 +394,98 @@ const SubscriptionFeatures = ({ className, rest, id }) => {
                                                 <br />
                                                 <Row>
                                                     <Col xs={6}>
-                                                        <OverlayTrigger
-                                                            placement="top"
-                                                            overlay={
-                                                                <Tooltip
-                                                                    id={`tooltip-top`}
-                                                                    style={{ zIndex: 1151, fontSize: '10px' }}
-                                                                >
-                                                                    So that the teacher will get recommendations of Concepts to re-teach
-                                                                </Tooltip>}>
-                                                            <div className="form-group fill">
-                                                                <label className="floating-label">
-                                                                    <small className="text-danger">* </small>
-                                                                    Percentage of students to clear the quiz
-                                                                </label>
-                                                                <input
-                                                                    className="form-control"
-                                                                    error={touched.minStudentsPre && errors.minStudentsPre}
-                                                                    label="minStudentsPre"
-                                                                    name="minStudentsPre"
-                                                                    onBlur={handleBlur}
-                                                                    onChange={handleChange}
-                                                                    type="number"
-                                                                    value={values.minStudentsPre}
-                                                                // placeholder="To clear the Quiz"
-                                                                />
-                                                                {touched.minStudentsPre && errors.minStudentsPre && <small className="text-danger form-text">{errors.minStudentsPre}</small>}
-                                                            </div>
-                                                        </OverlayTrigger>
+                                                        <div className="form-group fill" style={{ position: "relative", zIndex: 20 }}>
+                                                            <label className="floating-label">
+                                                                <small className="text-danger">* </small>
+                                                                Types of Reports
+                                                            </label>
+                                                            <Select
+                                                                defaultValue={previousTypeOfReports}
+                                                                isMulti
+                                                                name="boards"
+                                                                options={typesOfReportsOptions}
+                                                                className="basic-multi-select"
+                                                                classNamePrefix="Select"
+                                                                onChange={event => handleReportChange(event)}
+                                                                style={{ menuPortal: base => ({ ...base, zIndex: 9999 }), position: 'fixed' }}
+                                                            />
+
+                                                            {typeOfReportsErrMsg && (
+                                                                <small className="text-danger form-text">{'Please, select any Types of Reports!'}</small>
+                                                            )}
+                                                        </div>
 
                                                     </Col>
-                                                    <Col>
+                                                    <Col xs={6}>
 
-                                                        <OverlayTrigger
-                                                            placement="top"
-                                                            overlay={
-                                                                <Tooltip id={`tooltip-top`}
-                                                                    style={{ zIndex: 1151, fontSize: '10px' }}
-                                                                >
-                                                                    After unlocking from Need Attention
-                                                                </Tooltip>}>
-                                                            <div className="form-group fill">
+                                                        <div className="form-group fill">
 
-                                                                <label className="floating-label">
-                                                                    <small className="text-danger">* </small>
-                                                                    No. of attempts
-                                                                </label>
+                                                            <label className="floating-label">
+                                                                <small className="text-danger">* </small>
+                                                                No. of Worksheets to be generated
+                                                            </label>
 
-                                                                <input
-                                                                    className="form-control"
-                                                                    error={touched.noOfAttemptsPre && errors.noOfAttemptsPre}
-                                                                    label="noOfAttemptsPre"
-                                                                    name="noOfAttemptsPre"
-                                                                    onBlur={handleBlur}
-                                                                    onChange={handleChange}
-                                                                    type="number"
-                                                                    // placeholder="After unlocking from Need Attention"
-                                                                    value={values.noOfAttemptsPre}
-                                                                />
+                                                            <input
+                                                                className="form-control"
+                                                                error={touched.noOfWorksheets && errors.noOfWorksheets}
+                                                                label="noOfWorksheets"
+                                                                name="noOfWorksheets"
+                                                                onBlur={handleBlur}
+                                                                onChange={handleChange}
+                                                                type="number"
+                                                                value={values.noOfWorksheets}
+                                                            />
 
-                                                                {touched.noOfAttemptsPre && errors.noOfAttemptsPre && <small className="text-danger form-text">{errors.noOfAttemptsPre}</small>}
-                                                            </div>
-                                                        </OverlayTrigger>
+                                                            {touched.noOfWorksheets && errors.noOfWorksheets && <small className="text-danger form-text">{errors.noOfWorksheets}</small>}
+                                                        </div>
 
                                                     </Col>
                                                 </Row>
 
                                                 <br />
                                                 <Row>
+
                                                     <Col xs={6}>
+
+                                                        <div className="form-group fill">
+
+                                                            <label className="floating-label">
+                                                                <small className="text-danger">* </small>
+                                                                No. of Test Papers to be generated
+                                                            </label>
+
+                                                            <input
+                                                                className="form-control"
+                                                                error={touched.noOfTestPapers && errors.noOfTestPapers}
+                                                                label="noOfTestPapers"
+                                                                name="noOfTestPapers"
+                                                                onBlur={handleBlur}
+                                                                onChange={handleChange}
+                                                                type="number"
+                                                                value={values.noOfTestPapers}
+                                                            />
+
+                                                            {touched.noOfTestPapers && errors.noOfTestPapers && <small className="text-danger form-text">{errors.noOfTestPapers}</small>}
+                                                        </div>
+
+                                                    </Col>
+
+                                                    <Col xs={6}></Col>
+                                                </Row>
+
+                                                <br />
+                                                <Row>
+                                                    <Col xs={6}>
+
                                                         <Row>
                                                             <Col>
                                                                 <label className="floating-label">
-                                                                    <small className="text-danger">* </small>Is Level 2 Mandatory?
+                                                                    <small className="text-danger"></small>
+                                                                    Enable Library feature on Student App?
                                                                 </label>
                                                             </Col>
-                                                            <Col xs={3}>
-                                                                <div className="row profile-view-radio-button-view">
-                                                                    <Form.Check
-                                                                        id={`radio-l2Mandatory`}
-                                                                        // label="Yes"
-                                                                        error={touched.l2Mandatory && errors.l2Mandatory}
-                                                                        type="switch"
-                                                                        variant={'outline-primary'}
-                                                                        name="radio-l2Mandatory"
-                                                                        checked={_radioL2MandatoryPre}
-                                                                        onChange={() => handleL2MandatoryPre()}
-                                                                    // className='ml-3 col-md-6'
-                                                                    />
-                                                                    <Form.Label className="profile-view-question" id={`radio-l2Mandatory`}>
-                                                                        {_radioL2MandatoryPre === true ? 'Yes' : 'No'}
-                                                                    </Form.Label>
-                                                                </div>
-                                                            </Col>
-                                                        </Row>
-                                                    </Col>
-
-                                                    <Col xs={6}>
-                                                        <Row>
-                                                            <Col>
-                                                                <label className="floating-label">
-                                                                    <small className="text-danger">* </small>Is reading a Digicard Mandatory?
-                                                                </label>
-                                                            </Col>
-                                                            <Col xs={3}>
-                                                                <div className="row profile-view-radio-button-view">
-                                                                    <Form.Check
-                                                                        id={`radio-readDigicardPre`}
-                                                                        // label="Yes"
-                                                                        error={touched.readDigicardPre && errors.readDigicardPre}
-                                                                        type="switch"
-                                                                        variant={'outline-primary'}
-                                                                        name="radio-readDigicardPre"
-                                                                        checked={_radioReadDigicardPre}
-                                                                        onChange={(e) => handleReadDigicardPre(e)}
-                                                                    // className='ml-3 col-md-6'
-                                                                    />
-                                                                    <Form.Label className="profile-view-question" id={`radio-readDigicardPre`}>
-                                                                        {_radioReadDigicardPre === true ? 'Yes' : 'No'}
-                                                                    </Form.Label>
-                                                                </div>
-                                                            </Col>
-                                                        </Row>
-                                                    </Col>
-
-
-                                                </Row>
-
-                                                <br />
-                                                <Row>
-                                                    <Col xs={6}>
-
-                                                        <OverlayTrigger
-                                                            placement="top"
-                                                            overlay={
-                                                                <Tooltip id={`tooltip-top`}
-                                                                    style={{ zIndex: 1151, fontSize: '10px' }}
-                                                                >
-                                                                    Based on classroom pre assesement results
-                                                                </Tooltip>}>
-                                                            <Row>
-                                                                <Col>
-                                                                    <label className="floating-label">
-                                                                        <small className="text-danger">* </small>Recommend teachers on focus areas?
-                                                                    </label>
-                                                                </Col>
-                                                                <Col xs={3}>
+                                                            <Col xs={2}>
+                                                                <div className="form-group fill">
                                                                     <div className="row profile-view-radio-button-view">
                                                                         <Form.Check
                                                                             id={`radio-recommendTeachersPre`}
@@ -669,340 +494,56 @@ const SubscriptionFeatures = ({ className, rest, id }) => {
                                                                             type="switch"
                                                                             variant={'outline-primary'}
                                                                             name="radio-recommendTeachersPre"
-                                                                            checked={_radioRecommendTeachersPre}
-                                                                            onChange={(e) => {
-
-                                                                                console.log("_radioRecommendTeachersPre", _radioRecommendTeachersPre);
-                                                                                _radioRecommendTeachersPre === false ? setFieldValue('percentageOfStudentsPre', '') : setFieldValue('percentageOfStudentsPre', '')
-                                                                                handleRecommendTeachersPre(e)
-                                                                            }
-                                                                            }
-                                                                        // className='ml-3 col-md-6'
+                                                                            checked={_radioLibraryFeature}
+                                                                            onChange={(e) => { handleLibraryFeature(e) }}
                                                                         />
                                                                         <Form.Label className="profile-view-question" id={`radio-recommendTeachersPre`}>
-                                                                            {_radioRecommendTeachersPre === true ? 'Yes' : 'No'}
+                                                                            {_radioLibraryFeature === true ? 'Yes' : 'No'}
                                                                         </Form.Label>
                                                                     </div>
-                                                                </Col>
-                                                            </Row>
-                                                        </OverlayTrigger>
+                                                                </div>
+                                                            </Col>
+                                                        </Row>
 
-                                                    </Col>
-                                                </Row>
-
-                                                <br />
-                                                <Row>
-                                                    <Col xs={6}>
-                                                        {
-                                                            _radioRecommendTeachersPre === true && (
-                                                                <Row>
-                                                                    <Col>
-
-                                                                        <OverlayTrigger
-                                                                            placement="top"
-                                                                            overlay={
-                                                                                <Tooltip id={`tooltip-top`}
-                                                                                    style={{ zIndex: 1151, fontSize: '10px' }}
-                                                                                >
-                                                                                    For generating focus points of Concepts in reports
-                                                                                </Tooltip>}>
-                                                                            <div className="form-group fill">
-
-                                                                                <label className="floating-label">
-                                                                                    <small className="text-danger">* </small>Percentage of Students
-                                                                                </label>
-
-                                                                                <input
-                                                                                    className="form-control"
-                                                                                    error={touched.percentageOfStudentsPre && errors.percentageOfStudentsPre}
-                                                                                    label="percentageOfStudentsPre"
-                                                                                    name="percentageOfStudentsPre"
-                                                                                    onBlur={handleBlur}
-                                                                                    onChange={handleChange}
-                                                                                    type="number"
-                                                                                    // placeholder="After unlocking from Need Attention"
-                                                                                    value={values.percentageOfStudentsPre}
-                                                                                />
-
-                                                                                {touched.percentageOfStudentsPre && errors.percentageOfStudentsPre && <small className="text-danger form-text">{errors.percentageOfStudentsPre}</small>}
-
-                                                                            </div>
-                                                                        </OverlayTrigger>
-
-
-                                                                    </Col>
-                                                                </Row>
-                                                            )}
-                                                    </Col>
-                                                </Row>
-
-                                                <br />
-                                                <Card.Title>
-                                                    Post-level Quiz
-                                                </Card.Title>
-                                                <hr />
-
-                                                <Row>
-                                                    <Col>
-                                                        <label className="floating-label">
-                                                            <small className="text-danger">* </small>
-                                                            Pass Percentage for Quiz Level -1
-                                                        </label>
-                                                        <input
-                                                            className="form-control"
-                                                            error={touched.passPercentageL1Post && errors.passPercentageL1Post}
-                                                            label="passPercentageL1Post"
-                                                            name="passPercentageL1Post"
-                                                            onBlur={handleBlur}
-                                                            onChange={handleChange}
-                                                            type="number"
-                                                            value={values.passPercentageL1Post}
-                                                        // placeholder="To clear the Quiz"
-                                                        />
-
-                                                        {touched.passPercentageL1Post && errors.passPercentageL1Post && <small className="text-danger form-text">{errors.passPercentageL1Post}</small>}
-                                                    </Col>
-
-                                                    <Col>
-                                                        <label className="floating-label">
-                                                            <small className="text-danger">* </small>
-                                                            Pass Percentage for Quiz Level -2
-                                                        </label>
-                                                        <input
-                                                            className="form-control"
-                                                            error={touched.passPercentageL2Post && errors.passPercentageL2Post}
-                                                            label="passPercentageL2Post"
-                                                            name="passPercentageL2Post"
-                                                            onBlur={handleBlur}
-                                                            onChange={handleChange}
-                                                            type="number"
-                                                            value={values.passPercentageL2Post}
-                                                        // placeholder="To clear the Quiz"
-                                                        />
-
-                                                        {touched.passPercentageL2Post && errors.passPercentageL2Post && <small className="text-danger form-text">{errors.passPercentageL2Post}</small>}
-                                                    </Col>
-
-                                                </Row>
-
-                                                <br />
-                                                <Row>
-                                                    <Col xs={6}>
-                                                        <label className="floating-label">
-                                                            <small className="text-danger">* </small>
-                                                            Pass Percentage for Quiz Level -3
-                                                        </label>
-                                                        <input
-                                                            className="form-control"
-                                                            error={touched.passPercentageL3Post && errors.passPercentageL3Post}
-                                                            label="passPercentageL3Post"
-                                                            name="passPercentageL3Post"
-                                                            onBlur={handleBlur}
-                                                            onChange={handleChange}
-                                                            type="number"
-                                                            value={values.passPercentageL3Post}
-                                                        // placeholder="To clear the Quiz"
-                                                        />
-
-                                                        {touched.passPercentageL3Post && errors.passPercentageL3Post && <small className="text-danger form-text">{errors.passPercentageL3Post}</small>}
                                                     </Col>
 
                                                     <Col xs={6}>
 
-                                                        <OverlayTrigger
-                                                            placement="top"
-                                                            overlay={
-                                                                <Tooltip id={`tooltip-top`}
-                                                                    style={{ zIndex: 1151, fontSize: '10px' }}
-                                                                >
-                                                                    So that the teacher will get recommendations of Concepts to re-teach
-                                                                </Tooltip>}>
-                                                            <div className="form-group fill">
-
-                                                                <label className="floating-label">
-                                                                    <small className="text-danger">* </small>
-                                                                    Percentage of students to clear the quiz
-                                                                </label>
-                                                                <input
-                                                                    className="form-control"
-                                                                    error={touched.minStudentsPost && errors.minStudentsPost}
-                                                                    label="minStudentsPost"
-                                                                    name="minStudentsPost"
-                                                                    onBlur={handleBlur}
-                                                                    onChange={handleChange}
-                                                                    type="number"
-                                                                    value={values.minStudentsPost}
-                                                                // placeholder="To clear the Quiz"
-                                                                />
-
-                                                                {touched.minStudentsPost && errors.minStudentsPost && <small className="text-danger form-text">{errors.minStudentsPost}</small>}
-
-                                                            </div>
-                                                        </OverlayTrigger>
-                                                    </Col>
-                                                </Row>
-                                                <br />
-                                                <Row>
-
-                                                    <Col xs={6}>
-
-                                                        <OverlayTrigger
-                                                            placement="top"
-                                                            overlay={
-                                                                <Tooltip id={`tooltip-top`}
-                                                                    style={{ zIndex: 1151, fontSize: '10px' }}
-                                                                >
-                                                                    After unlocking from Need Attention
-                                                                </Tooltip>}>
-                                                            <div className="form-group fill">
-
-                                                                <label className="floating-label">
-                                                                    <small className="text-danger">* </small>
-                                                                    No. of attempts
-                                                                </label>
-
-                                                                <input
-                                                                    className="form-control"
-                                                                    error={touched.noOfAttemptsPost && errors.noOfAttemptsPost}
-                                                                    label="noOfAttemptsPost"
-                                                                    name="noOfAttemptsPost"
-                                                                    onBlur={handleBlur}
-                                                                    onChange={handleChange}
-                                                                    type="number"
-                                                                    // placeholder="After unlocking from Need Attention"
-                                                                    value={values.noOfAttemptsPost}
-                                                                />
-
-                                                                {touched.noOfAttemptsPost && errors.noOfAttemptsPost && <small className="text-danger form-text">{errors.noOfAttemptsPost}</small>}
-                                                            </div>
-                                                        </OverlayTrigger>
-
-
-                                                    </Col>
-
-                                                </Row>
-
-                                                <br />
-                                                <Row>
-
-                                                    <Col xs={6}>
-                                                        <Row >
+                                                        <Row>
                                                             <Col>
                                                                 <label className="floating-label">
-                                                                    <small className="text-danger">* </small>Is reading a Digicard Mandatory?
+                                                                    <small className="text-danger"></small>Automate evaluation of worksheets or test papers?
                                                                 </label>
                                                             </Col>
-                                                            <Col xs={3}>
+                                                            <Col xs={2}>
                                                                 <div className="row profile-view-radio-button-view">
                                                                     <Form.Check
-                                                                        id={`radio-readDigicardPost`}
+                                                                        id={`radio-automateEvaluation`}
                                                                         // label="Yes"
-                                                                        error={touched.readDigicardPost && errors.readDigicardPost}
+                                                                        error={touched.automateEvaluation && errors.automateEvaluation}
                                                                         type="switch"
                                                                         variant={'outline-primary'}
-                                                                        name="radio-readDigicardPost"
-                                                                        checked={_radioReadDigicardPost}
-                                                                        onChange={(e) => handleReadDigicardPost(e)}
+                                                                        name="radio-automateEvaluation"
+                                                                        checked={_radioAutomateEvaluation}
+                                                                        onChange={(e) => { handleAutomateEvaluation(e); }}
                                                                     // className='ml-3 col-md-6'
                                                                     />
-                                                                    <Form.Label className="profile-view-question" id={`radio-readDigicardPost`}>
-                                                                        {_radioReadDigicardPost === true ? 'Yes' : 'No'}
+                                                                    <Form.Label className="profile-view-question" id={`radio-automateEvaluation`}>
+                                                                        {_radioAutomateEvaluation === true ? 'Yes' : 'No'}
                                                                     </Form.Label>
                                                                 </div>
                                                             </Col>
                                                         </Row>
-                                                    </Col>
-
-                                                    <Col xs={6}>
-
-                                                        <OverlayTrigger
-                                                            placement="top"
-                                                            overlay={
-                                                                <Tooltip id={`tooltip-top`}
-                                                                    style={{ zIndex: 1151, fontSize: '10px' }}
-                                                                >
-                                                                    Based on classroom post-assesement results
-                                                                </Tooltip>}>
-
-                                                            <Row>
-                                                                <Col>
-                                                                    <label className="floating-label">
-                                                                        <small className="text-danger">* </small>Recommend teachers on focus areas?
-                                                                    </label>
-                                                                </Col>
-                                                                <Col xs={3}>
-                                                                    <div className="row profile-view-radio-button-view">
-                                                                        <Form.Check
-                                                                            id={`radio-recommendTeachersPost`}
-                                                                            // label="Yes"
-                                                                            error={touched.recommendTeachersPost && errors.recommendTeachersPost}
-                                                                            type="switch"
-                                                                            variant={'outline-primary'}
-                                                                            name="radio-recommendTeachersPost"
-                                                                            checked={_radioRecommendTeachersPost}
-                                                                            onChange={(e) => handleRecommendTeachersPost(e)}
-                                                                        // className='ml-3 col-md-6'
-                                                                        />
-                                                                        <Form.Label className="profile-view-question" id={`radio-recommendTeachersPost`}>
-                                                                            {_radioRecommendTeachersPost === true ? 'Yes' : 'No'}
-                                                                        </Form.Label>
-                                                                    </div>
-                                                                </Col>
-                                                            </Row>
-
-                                                        </OverlayTrigger>
-
 
                                                     </Col>
                                                 </Row>
 
-                                                <br />
-                                                <Row>
-                                                    <Col xs={6}></Col>
-                                                    <Col xs={6}>
-                                                        {
-                                                            _radioRecommendTeachersPost === true && (
-                                                                <Row>
-
-                                                                    <OverlayTrigger
-                                                                        placement="top"
-                                                                        overlay={
-                                                                            <Tooltip
-                                                                                id={`tooltip-top`}
-                                                                                style={{ zIndex: 1151, fontSize: '10px' }}
-                                                                            >
-                                                                                For generating focus points of Concepts in reports
-                                                                            </Tooltip>}>
-
-                                                                        <Col>
-                                                                            <label className="floating-label">
-                                                                                <small className="text-danger">* </small>Percentage of Students
-                                                                            </label>
-
-                                                                            <input
-                                                                                className="form-control"
-                                                                                error={touched.percentageOfStudentsPost && errors.percentageOfStudentsPost}
-                                                                                label="percentageOfStudentsPost"
-                                                                                name="percentageOfStudentsPost"
-                                                                                onBlur={handleBlur}
-                                                                                onChange={handleChange}
-                                                                                type="number"
-                                                                                // placeholder="After unlocking from Need Attention"
-                                                                                value={values.percentageOfStudentsPost}
-                                                                            />
-
-                                                                            {touched.percentageOfStudentsPost && errors.percentageOfStudentsPost && <small className="text-danger form-text">{errors.percentageOfStudentsPost}</small>}
-                                                                        </Col>
-                                                                    </OverlayTrigger>
-                                                                </Row>
-                                                            )}
-                                                    </Col>
-                                                </Row>
+                                                {loader}
 
                                                 <Row className="my-3">
                                                     <Col> </Col>
                                                     <Col> </Col>
-                                                    <Col xs={3}>
+                                                    <Col xs={2}>
                                                         <Button
                                                             className="btn-block"
                                                             color="success"
@@ -1017,7 +558,7 @@ const SubscriptionFeatures = ({ className, rest, id }) => {
                                             </form>
 
                                         )}
-                                    </Formik> */}
+                                    </Formik>
 
                                 </Card.Body>
                             </Card>

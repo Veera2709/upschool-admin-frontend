@@ -55,8 +55,10 @@ var SunEditor = function (props) {
         if (height)
             setOptions.height = height;
         if (name && defaultValue)
+            console.log(name);
+            console.log(defaultValue);
             txtArea.current.value = defaultValue;
-        editor.current = suneditor_1.default.create(txtArea.current, __assign({ value: defaultValue }, setOptions));
+        editor.current = suneditor_1.default.create(txtArea.current, __assign({ value: "" }, setOptions));
         if (getSunEditorInstance)
             getSunEditorInstance(editor.current);
         editor.current.onChange = function (content) {

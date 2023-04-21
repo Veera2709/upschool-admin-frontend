@@ -17,7 +17,8 @@ import withReactContent from "sweetalert2-react-content";
 import { areFilesInvalid, isEmptyObject } from "../../../../util/utils";
 import { useEffect } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import Select from "react-select";
+import Select from "react-draggable-multi-select";
+import BasicSpinner from "../../../../helper/BasicSpinner";
 
 
 import {
@@ -26,7 +27,7 @@ import {
   editClass,
 } from "../../../api/CommonApi";
 
-const EditClass = ({setOpenEditClass,classId}) => {
+const EditClass = ({ setOpenEditClass, classId }) => {
   const colourOptions = [];
 
   const isLocked = [
@@ -43,8 +44,10 @@ const EditClass = ({setOpenEditClass,classId}) => {
   const [isShown, setIsShown] = useState(true);
   const [individualClassdata, setIndividualClassdata] = useState([]);
   const [toggle, setToggle] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  console.log("classId",classId);
+
+  console.log("classId", classId);
 
   const sweetAlertHandler = (alert) => {
     MySwal.fire({
@@ -58,6 +61,7 @@ const EditClass = ({setOpenEditClass,classId}) => {
     setToggle(true);
   };
   const fetchAllData = async () => {
+    setIsLoading(true)
     const allSubjectData = await fetchSubjectIdName();
     if (allSubjectData.Error) {
       console.log("allSubjectData", allSubjectData.Error);
@@ -110,6 +114,7 @@ const EditClass = ({setOpenEditClass,classId}) => {
         storeAllData(individual_class_data);
       }
     }
+    setIsLoading(false)
   };
   useEffect(() => {
     fetchAllData();
@@ -118,203 +123,254 @@ const EditClass = ({setOpenEditClass,classId}) => {
   const handleDigicardChange = (event) => {
     console.log("event- ", event);
     let valuesArr = [];
-    for (let i = 0; i < event.length; i++) {
-      valuesArr.push(event[i].subject_id);
+    if (event) {
+      for (let i = 0; i < event.length; i++) {
+        valuesArr.push(event[i].subject_id);
+      }
     }
     console.log(valuesArr);
     setSubjectOption(valuesArr);
   };
 
-  return isEmptyObject(individualClassdata) ? null : (
+  return (
     <div>
-      {toggle && (
+      {isLoading === true ? (
         <>
-          <React.Fragment>
-            <Formik
-              enableReinitialize
-              initialValues={{
-                classTitle: individualClassdata.class_name,
-                // class_subject_id: subjectOption,
-              }}
-              validationSchema={Yup.object().shape({
-                classTitle: Yup.string()
-                  .trim()
-                  .min(2, Constants.AddClasses.ClasstitleTooShort)
-                  .max(32, Constants.AddClasses.ClasstitleTooLong)
-                  .required(Constants.AddClasses.ClasstitleRequired),
-              })}
-              onSubmit={async (
-                values,
-                { setErrors, setStatus, setSubmitting }
-              ) => {
-                
-                if (subjectOption == "") {
-                  setIsShown(false);
-                } else {
-                  console.log("on submit");
-                  var formData = {
-                    class_id: classId,
-                    class_name: values.classTitle,
-                    class_subject_id: subjectOption,
-                  };
-                  setOpenEditClass(false)
+          <BasicSpinner />
+        </>
+      ) : (
+        <div>
+          {toggle && (
+            <>
+              <React.Fragment>
+                <Formik
+                  enableReinitialize
+                  initialValues={{
+                    classTitle: individualClassdata.class_name,
+                    displayname: individualClassdata.display_name,
 
-                  console.log("formdata", formData);
+                    // class_subject_id: subjectOption,
+                  }}
+                  validationSchema={Yup.object().shape({
+                    classTitle: Yup.string()
+                      .trim()
+                      .min(2, Constants.AddClasses.ClasstitleTooShort)
+                      .max(32, Constants.AddClasses.ClasstitleTooLong)
+                      .required(Constants.AddClasses.ClasstitleRequired),
 
-                  const editClassRes = await editClass(formData);
-                  console.log("editClassRes : ", editClassRes);
+                    displayname: Yup.string()
+                      .trim()
+                      .min(2, Constants.AddClasses.DisplayNameTooShort)
+                      .max(32, Constants.AddClasses.DisplayNameTooLong)
+                      .required(Constants.AddClasses.DisplayNameRequired),
 
-                  if (editClassRes.Error) {
-                    let errStatus = editClassRes.Error.response.status;
-                    console.log("errStatus", errStatus);
-                    errStatus === 400
-                      ? sweetAlertHandler({
-                        title: "Error",
-                        type: "error",
-                        text: MESSAGES.ERROR.ClassNameExists,
-                      })
-                      : errStatus === 502
-                        ? sweetAlertHandler({
-                          title: "Error",
-                          type: "error",
-                          text: MESSAGES.ERROR.InvalidClassName,
-                        })
-                        : sweetAlertHandler({
-                          title: "Error",
-                          type: "error",
-                          text: editClassRes.Error,
+
+                  })}
+                  onSubmit={async (
+                    values,
+                    { setErrors, setStatus, setSubmitting }
+                  ) => {
+
+                    if (subjectOption == "") {
+                      setIsShown(false);
+                    } else {
+                      console.log("on submit");
+                      var formData = {
+                        class_id: classId,
+                        class_name: values.classTitle,
+                        display_name: values.displayname,
+
+                        class_subject_id: subjectOption,
+                      };
+                      setOpenEditClass(false)
+
+                      console.log("formdata", formData);
+
+                      const editClassRes = await editClass(formData);
+                      console.log("editClassRes : ", editClassRes);
+
+                      if (editClassRes.Error) {
+                        let errStatus = editClassRes.Error.response.status;
+                        console.log("errStatus", errStatus);
+                        errStatus === 400
+                          ? sweetAlertHandler({
+                            title: "Error",
+                            type: "error",
+                            text: MESSAGES.ERROR.ClassNameExists,
+                          })
+                          : errStatus === 502
+                            ? sweetAlertHandler({
+                              title: "Error",
+                              type: "error",
+                              text: MESSAGES.ERROR.InvalidClassName,
+                            })
+                            : sweetAlertHandler({
+                              title: "Error",
+                              type: "error",
+                              text: editClassRes.Error,
+                            });
+                      } else {
+                        MySwal.fire({
+                          title: "Class " + formData.class_name + " is Edited",
+                          icon: "success",
+                        }).then((willDelete) => {
+                          history.push('/admin-portal/classes/active-classes')
+                          window.location.reload();
                         });
-                  } else {
-                    MySwal.fire({
-                      title: "Class " + formData.class_name + " is Edited",
-                      icon: "success",
-                    }).then((willDelete) => {
-                      history.push('/admin-portal/classes/active-classes')
-                      window.location.reload();
-                    });
-                  }
-                }
-              }}
-            >
-              {({
-                errors,
-                handleBlur,
-                handleChange,
-                handleSubmit,
-                touched,
-                values,
-              }) => (
-                <form noValidate onSubmit={handleSubmit}>
-                  <Row>
-                    {/* {edit1Toggle && <Loader />} */}
-                    <Col sm={6}>
-                      <div className="form-group fill">
-                        <label
-                          className="floating-label"
-                          htmlFor="classTitle"
-                        >
-                          <small className="text-danger">* </small>Class Name
-                        </label>
-                        <input
-                          className="form-control"
-                          error={touched.classTitle && errors.classTitle}
-                          name="classTitle"
-                          onBlur={handleBlur}
-                          onChange={handleChange}
-                          type="text"
-                          value={values.classTitle}
-                          placeholder="Enter Class Name"
-                          id="title"
-                        />
-                        {touched.classTitle && errors.classTitle && (
-                          <small className="text-danger form-text">
-                            {errors.classTitle}
-                          </small>
-                        )}
-                      </div>
-                      <br />
-                      {
-                        <div
-                          className="form-group fill"
-                          style={{ position: "relative", zIndex: 20 }}
-                        >
-                          <label
-                            className="floating-label"
-                            htmlFor="class_subject_id"
-                          >
-                            <small className="text-danger">* </small> Subjects
-                          </label>
-
-                          {defaultSubjects.length === 0 ? (
-                            <Select
-                              isMulti
-                              name="color"
-                              options={topicTitles}
-                              // className="basic-multi-select"
-                              className="basic-single"
-                              classNamePrefix="Select"
-                              onChange={(event) => {
-                                handleDigicardChange(event);
-                                setIsShown(true);
-                              }}
+                      }
+                    }
+                  }}
+                >
+                  {({
+                    errors,
+                    handleBlur,
+                    handleChange,
+                    handleSubmit,
+                    touched,
+                    values,
+                  }) => (
+                    <form noValidate onSubmit={handleSubmit}>
+                      <Row>
+                        {/* {edit1Toggle && <Loader />} */}
+                        <Col sm={6}>
+                          <div className="form-group fill">
+                            <label
+                              className="floating-label"
+                              htmlFor="classTitle"
+                            >
+                              <small className="text-danger">* </small>Class Name
+                            </label>
+                            <input
+                              className="form-control"
+                              error={touched.classTitle && errors.classTitle}
+                              name="classTitle"
+                              onBlur={handleBlur}
+                              onChange={handleChange}
+                              type="text"
+                              value={values.classTitle}
+                              placeholder="Enter Class Name"
+                              id="title"
                             />
-                          ) : (
-                            <>
-                              {defaultSubjects && (
+                            {touched.classTitle && errors.classTitle && (
+                              <small className="text-danger form-text">
+                                {errors.classTitle}
+                              </small>
+                            )}
+                          </div>
+                          <br />
+
+
+                          <div className="form-group fill">
+                            <label className="floating-label" htmlFor="displayname">
+                              <small className="text-danger">* </small>Display Name
+                            </label>
+                            <input
+                              className="form-control"
+                              error={touched.displayname && errors.displayname}
+                              name="displayname"
+                              onBlur={handleBlur}
+                              onChange={handleChange}
+                              type="text"
+                              value={values.displayname}
+                              placeholder="Enter Display Name"
+                              id='title'
+                            />
+                            {touched.displayname && errors.displayname && <small className="text-danger form-text">{errors.displayname}</small>}
+                          </div>
+
+
+
+
+
+
+
+
+
+                          {
+                            <div
+                              className="form-group fill"
+                              style={{ position: "relative", zIndex: 20 }}
+                            >
+                              <label
+                                className="floating-label"
+                                htmlFor="class_subject_id"
+                              >
+                                <small className="text-danger">* </small> Subjects
+                              </label>
+
+                              {defaultSubjects.length === 0 ? (
+                                <Select
+                                  isMulti
+                                  name="color"
+                                  options={topicTitles}
+                                  // className="basic-multi-select"
+                                  className="basic-single"
+                                  classNamePrefix="Select"
+                                  onChange={(event) => {
+                                    handleDigicardChange(event);
+                                    setIsShown(true);
+                                  }}
+                                />
+                              ) : (
                                 <>
-                                  {console.log(defaultSubjects)}
-                                  <Select
-                                    defaultValue={defaultSubjects}
-                                    isMulti
-                                    name="color"
-                                    options={topicTitles}
-                                    // className="basic-multi-select"
-                                    className="basic-single"
-                                    classNamePrefix="Select"
-                                    closeMenuOnSelect={false}
-                                    onChange={(event) => {
-                                      handleDigicardChange(event);
-                                      setIsShown(true);
-                                    }}
-                                  />
+                                  {defaultSubjects && (
+                                    <>
+                                      {console.log(defaultSubjects)}
+                                      <Select
+                                        defaultValue={defaultSubjects}
+                                        isMulti
+                                        name="color"
+                                        options={topicTitles}
+                                        // className="basic-multi-select"
+                                        className="basic-single"
+                                        classNamePrefix="Select"
+                                        closeMenuOnSelect={false}
+                                        onChange={(event) => {
+                                          handleDigicardChange(event);
+                                          setIsShown(true);
+                                        }}
+                                      />
+                                    </>
+                                  )}
                                 </>
                               )}
-                            </>
-                          )}
-                          <small
-                            className="text-danger form-text"
-                            style={{ display: isShown ? "none" : "block" }}
-                          >
-                            Please select a Subject
-                          </small>
+                              <small
+                                className="text-danger form-text"
+                                style={{ display: isShown ? "none" : "block" }}
+                              >
+                                Please select a Subject
+                              </small>
+                            </div>
+                          }
+                        </Col>
+                      </Row>
+                      <br></br>
+                      <Row>
+                        <Col sm={10}></Col>
+                        <div className="form-group fill float-end">
+                          <Col sm={12} className="center">
+                            <Button
+                              className="btn-block"
+                              color="success"
+                              size="large"
+                              type="submit"
+                              variant="success"
+                            >
+                              Submit
+                            </Button>
+                          </Col>
                         </div>
-                      }
-                    </Col>
-                  </Row>
-                  <br></br>
-                  <Row>
-                    <Col sm={10}></Col>
-                    <div className="form-group fill float-end">
-                      <Col sm={12} className="center">
-                        <Button
-                          className="btn-block"
-                          color="success"
-                          size="large"
-                          type="submit"
-                          variant="success"
-                        >
-                          Submit
-                        </Button>
-                      </Col>
-                    </div>
-                  </Row>
-                </form>
-              )}
-            </Formik>
-          </React.Fragment>
-        </>
+                      </Row>
+                    </form>
+                  )}
+                </Formik>
+              </React.Fragment>
+            </>
+          )}
+        </div>
       )}
     </div>
+
   );
 };
 

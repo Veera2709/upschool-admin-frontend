@@ -3,7 +3,7 @@ import React, { useState, useCallback } from 'react';
 import { Row, Col, Card, Button, OverlayTrigger, Tooltip, Form, ModalBody } from 'react-bootstrap';
 // import CkDecoupledEditor from '../../../components/CK-Editor/CkDecoupledEditor';
 import * as Constants from '../../../../helper/constants';
-import { Formik } from 'formik';
+import { Formik } from 'formik';    
 import * as Yup from 'yup';
 import axios from 'axios';
 import dynamicUrl from '../../../../helper/dynamicUrls';
@@ -17,8 +17,8 @@ import withReactContent from 'sweetalert2-react-content';
 import { areFilesInvalid, isEmptyObject } from '../../../../util/utils';
 import { useEffect } from 'react';
 import Multiselect from 'multiselect-react-dropdown';
-import { fetchAllChapters } from '../../../api/CommonApi'
-import Select from 'react-select';
+import { fetchChaptersBasedonStatus } from '../../../api/CommonApi'
+import Select from 'react-draggable-multi-select';
 import { useHistory, useParams } from 'react-router-dom';
 
 
@@ -55,8 +55,10 @@ const AddUnit = ({ setOpenAddUnit }) => {
 
     const getMultiOptions = (event) => {
         let valuesArr = [];
-        for (let i = 0; i < event.length; i++) {
-            valuesArr.push(event[i].value)
+        if (event) {
+            for (let i = 0; i < event.length; i++) {
+                valuesArr.push(event[i].value)
+            }
         }
         setChapterOption(valuesArr);
     }
@@ -69,7 +71,7 @@ const AddUnit = ({ setOpenAddUnit }) => {
     }
 
     const fetchAllChapterList = async () => {
-        const allChapterData = await fetchAllChapters();
+        const allChapterData = await fetchChaptersBasedonStatus();
         console.log("allTopicdData", allChapterData.Items);
         if (allChapterData.Error) {
             console.log("allChapterData", allChapterData.Error);
@@ -84,10 +86,7 @@ const AddUnit = ({ setOpenAddUnit }) => {
             let resultData = allChapterData.Items
             console.log("resultData", resultData);
             resultData.forEach((item, index) => {
-                if (item.chapter_status === 'Active') {
-                    console.log();
-                    colourOptions.push({ value: item.chapter_id, label: item.chapter_title })
-                }
+                colourOptions.push({ value: item.chapter_id, label: item.chapter_title })
             }
             );
             console.log("colourOptions", colourOptions);
@@ -114,6 +113,7 @@ const AddUnit = ({ setOpenAddUnit }) => {
             <Formik
                 initialValues={{
                     unittitle: '',
+                    displayname: '',
                     chapter: '',
                     unit_description: '',
                 }}
@@ -123,6 +123,11 @@ const AddUnit = ({ setOpenAddUnit }) => {
                         .min(2, Constants.AddUnit.UnittitleTooShort)
                         .max(30, Constants.AddUnit.UnittitleTooLong)
                         .required(Constants.AddUnit.UnittitleRequired),
+                    displayname: Yup.string()
+                        .trim()
+                        .min(2, Constants.AddUnit.DisplayNameTooShort)
+                        .max(32, Constants.AddUnit.DisplayNameTooLong)
+                        .required(Constants.AddUnit.DisplayNameRequired),
                 })}
 
 
@@ -134,10 +139,10 @@ const AddUnit = ({ setOpenAddUnit }) => {
                         setIsShownDes(false)
                     }
                     else {
-                        setOpenAddUnit(false)
                         console.log("on submit");
                         var formData = {
                             unit_title: values.unittitle,
+                            display_name: values.displayname,
                             unit_description: description,
                             unit_chapter_id: chapterOption,
                         };
@@ -153,10 +158,9 @@ const AddUnit = ({ setOpenAddUnit }) => {
                                     hideLoader();
                                     setDisableButton(false);
                                 } else {
-                                    // sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingUnit });
+                                    setOpenAddUnit(false)
                                     hideLoader();
                                     setDisableButton(false);
-                                    // fetchClientData();
                                     setIsOpen(false);
 
                                     MySwal.fire({
@@ -208,7 +212,6 @@ const AddUnit = ({ setOpenAddUnit }) => {
                 {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
                     <form noValidate onSubmit={handleSubmit}>
                         <Row>
-                            {/* {edit1Toggle && <Loader />} */}
                             <Col sm={6}>
                                 <div className="form-group fill">
                                     <label className="floating-label" htmlFor="unittitle">
@@ -226,26 +229,47 @@ const AddUnit = ({ setOpenAddUnit }) => {
                                     />
                                     {touched.unittitle && errors.unittitle && <small className="text-danger form-text">{errors.unittitle}</small>}
                                 </div><br />
-                                <OverlayTrigger placement="top" overlay={<Tooltip id={`tooltip-top`} style={{zIndex:1151 }}>The selected order will be the index of chapter!</Tooltip>}>
+
                                 <div className="form-group fill">
-                                    <label className="floating-label" htmlFor="chapter">
-                                        <small className="text-danger">* </small> Chapters
+                                    <label className="floating-label" htmlFor="displayname">
+                                        <small className="text-danger">* </small>Display Name
                                     </label>
-                                    <Select
-                                        className="basic-single"
-                                        classNamePrefix="select"
-                                        name="color"
-                                        isMulti
-                                        closeMenuOnSelect={false}
-                                        onChange={(e) => { getMultiOptions(e); setIsShown(true) }}
-                                        options={topicTitles}
-                                        placeholder="Select"
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                                    <input
+                                        className="form-control"
+                                        error={touched.displayname && errors.displayname}
+                                        name="displayname"
+                                        onBlur={handleBlur}
+                                        onChange={handleChange}
+                                        type="text"
+                                        value={values.displayname}
+                                        id='title'
                                     />
-                                    <br />
-                                    <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>Field Required</small>
-                                </div>
+                                    {touched.displayname && errors.displayname && <small className="text-danger form-text">{errors.displayname}</small>}
+                                </div><br />
+
+
+
+
+                                <OverlayTrigger placement="top" overlay={<Tooltip id={`tooltip-top`} style={{ zIndex: 1151 }}>The selected order will be the index of chapter!</Tooltip>}>
+                                    <div className="form-group fill">
+                                        <label className="floating-label" htmlFor="chapter">
+                                            <small className="text-danger">* </small> Chapters
+                                        </label>
+                                        <Select
+                                            className="basic-single"
+                                            classNamePrefix="select"
+                                            name="color"
+                                            isMulti
+                                            closeMenuOnSelect={false}
+                                            onChange={(e) => { getMultiOptions(e); setIsShown(true) }}
+                                            options={topicTitles}
+                                            placeholder="Select"
+                                            menuPortalTarget={document.body}
+                                            styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                                        />
+                                        <br />
+                                        <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>Field Required</small>
+                                    </div>
                                 </OverlayTrigger>
                                 <div className="form-group fill" htmlFor="unit_description">
                                     <Form.Label> <small className="text-danger">* </small>Unit Description</Form.Label>
@@ -277,15 +301,6 @@ const AddUnit = ({ setOpenAddUnit }) => {
                 )}
             </Formik>
         </React.Fragment>
-
-
-
-
-
-
-
-
-
     )
 
 };

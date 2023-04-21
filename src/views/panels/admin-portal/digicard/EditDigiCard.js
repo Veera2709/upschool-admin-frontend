@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col, Card, Button, Modal } from 'react-bootstrap';
+import { Row, Col, Card, Button, Modal, InputGroup } from 'react-bootstrap';
 import * as Constants from '../../../../helper/constants';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
@@ -15,15 +15,16 @@ import withReactContent from 'sweetalert2-react-content';
 import ArticleRTE from './ArticleRTE'
 import { areFilesInvalid, voiceInvalid } from '../../../../util/utils';
 import Multiselect from 'multiselect-react-dropdown';
-import { fetchIndividualDigiCard, fetchAllDigiCards } from '../../../api/CommonApi'
+import { fetchIndividualDigiCard, fetchDigiCardsBasedonStatus } from '../../../api/CommonApi'
 import { Link, useHistory, useParams } from 'react-router-dom';
-import Select from 'react-select';
+import Select from 'react-draggable-multi-select';
 import BasicSpinner from '../../../../helper/BasicSpinner';
 
 
 const EditDigiCard = () => {
 
     const colourOptions = [];
+    const [selectedFile, setSelectedFile] = useState(null);//doc selected
 
     const [loader, showLoader, hideLoader] = useFullPageLoader();
     const [disableButton, setDisableButton] = useState(false);
@@ -35,6 +36,7 @@ const EditDigiCard = () => {
     const [tags, setTags] = useState([]);
     const [imgFile, setImgFile] = useState([]);
     const [voiceNotePre, setVoiceNote] = useState("");
+    const [documentPre, setDocumentPre] = useState("");
     const [articleData, setArticleData] = useState("");
     const [articleDataTitle, setArticleDataTtitle] = useState("");
     const [digiCardTitles, setDigitalTitles] = useState([]);
@@ -54,9 +56,9 @@ const EditDigiCard = () => {
     const [status, setStatus] = useState('');
     const [newDigicard, setnNewDigicard] = useState(false);
     const [voiceError, setVoiceError] = useState(true);
-    const [isLoading, setIsLoading] = useState(false)
-
-
+    const [docError, setDocError] = useState(true);//upload doc err
+    const [isLoading, setIsLoading] = useState(false);
+    const [displayName, setDisplayName] = useState("");
 
     const threadLinks = document.getElementsByClassName('page-header');
     console.log('individualDigiCardData initial', individualDigiCardData);
@@ -64,6 +66,53 @@ const EditDigiCard = () => {
     let history = useHistory();
 
     const { digi_card_id } = useParams();
+
+
+
+    const allowedFileTypes = ['.pdf', '.doc', '.docx', '.jpg', '.jpeg', '.png', '.gif'];
+
+    const handleDisplayName = (e) => {
+
+        console.log("handleDisplayName : ", e.target.value);
+        setDisplayName(e.target.value)
+    }
+
+    const handleFileChange = (event) => {
+        const file = event.target.files[0];
+        const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+
+        if (!allowedFileTypes.includes(fileExtension)) {
+            console.log('Invalid file type');
+            MySwal.fire('Sorry', 'Invalid file type. Only PDF, DOC, DOCX, JPG, JPEG, PNG, and GIF files are allowed.', 'warning').then(() => {
+                window.location.reload();
+            });
+            event.target.value = null;
+            setSelectedFile(null);
+            return;
+        }
+
+        setSelectedFile(file);
+    };
+
+    function handleChange(event) {
+        const file = event.target.files[0];
+        if (file) {
+            setSelectedFile(file);
+        }
+    }
+
+    function getPreviewLink(e) {
+        console.log("getPreviewLink");
+        console.log("URL.createObjectURL(selectedFile) : ", URL.createObjectURL(e.target.files[0]));
+        individualDigiCardData[0].digicard_documentURL = URL.createObjectURL(e.target.files[0])
+        // if (selectedFile) {
+
+        //     return URL.createObjectURL(selectedFile);
+        // } else {
+        //     return "";
+        // }
+
+    }
 
     const handleDelete = (i, states) => {
         const newTags = tags.slice(0);
@@ -84,15 +133,18 @@ const EditDigiCard = () => {
         });
     };
 
-    
+
 
     const previewImage = (e) => {
-        // setImgFile(URL.createObjectURL(e.target.files[0]));
         let FileLength = e.target.files.length
         console.log("FileLength", FileLength);
         FileLength === 1 ? setImgFile(URL.createObjectURL(e.target.files[0])) : setImgFile()
     }
-
+    const previewDocument = (e) => {
+        let FileLength = e.target.files.length
+        console.log("FileLength", FileLength);
+        FileLength === 1 ? setImgFile(URL.createObjectURL(e.target.files[0])) : setImgFile()
+    }
     const previewData = () => {
         let userJWT = sessionStorage.getItem('user_jwt');
         console.log("jwt", userJWT);
@@ -111,13 +163,15 @@ const EditDigiCard = () => {
     }
 
     const fetchAllData = async () => {
+
         setIsLoading(true)
-        if (threadLinks.length === 2) {
+        console.log("threadLinks", threadLinks.length);
+        if (threadLinks.length === 1 || threadLinks.length === 2) {
             setDisplayHeader(false);
         } else {
             setDisplayHeader(true);
         }
-        const allDigicardData = await fetchAllDigiCards(dynamicUrl.fetchAllDigiCards);
+        const allDigicardData = await fetchDigiCardsBasedonStatus("Active");
         if (allDigicardData.error) {
             console.log(allDigicardData.error);
             if (allDigicardData.Error.response.data == 'Invalid Token') {
@@ -130,7 +184,7 @@ const EditDigiCard = () => {
             console.log("allDigicardData", allDigicardData.Items);
             let resultData = allDigicardData.Items;
             resultData.forEach((item, index) => {
-                if (item.digicard_status === 'Active' && item.digi_card_id != digi_card_id) {
+                if (item.digi_card_id !== digi_card_id) {
                     colourOptions.push({ value: item.digi_card_id, label: item.digi_card_title })
                 }
             })
@@ -139,7 +193,7 @@ const EditDigiCard = () => {
             const indidvidualDigicard = await fetchIndividualDigiCard(dynamicUrl.fetchIndividualDigiCard, digi_card_id);
             if (indidvidualDigicard.error) {
                 console.log("indidvidualDigicard.error", indidvidualDigicard.error);
-                if (indidvidualDigicard.Error.response.data == 'Invalid Token') {
+                if (indidvidualDigicard.Error.response.data === 'Invalid Token') {
                     sessionStorage.clear();
                     localStorage.clear();
                     history.push('/auth/signin-1');
@@ -153,7 +207,7 @@ const EditDigiCard = () => {
                 let previousVoiceNote = indidvidualDigicard.Items[0].digicard_voice_noteURL;
 
                 setIndividualDigiCardData(indidvidualDigicard.Items);
-                setDigiCardDataTitel(indidvidualDigicard.Items[0].digi_card_title)
+                setDisplayName(indidvidualDigicard.Items[0].display_name);
                 setImgFile(previousImage);
                 setVoiceNote(previousVoiceNote);
                 setArticleData(indidvidualDigicard.Items[0].digi_card_content)
@@ -180,6 +234,7 @@ const EditDigiCard = () => {
     useEffect(() => {
         let userJWT = sessionStorage.getItem('user_jwt');
         console.log("jwt", userJWT);
+
         if (userJWT === "" || userJWT === undefined || userJWT === "undefined" || userJWT === null) {
             sessionStorage.clear();
             localStorage.clear();
@@ -195,8 +250,10 @@ const EditDigiCard = () => {
 
     const getMultiOptions = (event) => {
         let valuesArr = [];
-        for (let i = 0; i < event.length; i++) {
-            valuesArr.push(event[i].value)
+        if (event) {
+            for (let i = 0; i < event.length; i++) {
+                valuesArr.push(event[i].value)
+            }
         }
         selectedOption(valuesArr);
     }
@@ -204,6 +261,7 @@ const EditDigiCard = () => {
     const inserNewDigicard = () => {
         let DigiCardtitleRegex = Constants.AddDigiCard.DigiCardtitleRegex;
         let name = document.getElementById("newdigicardtitle").value;
+        let display_name = document.getElementsByName("displayname").value;
         console.log("nameLength", name.length);
         let allFilesData = [];
         let voiceData = [];
@@ -250,36 +308,27 @@ const EditDigiCard = () => {
             setImageErr(true)
             setnNewDigicard(false)
         } else {
-            setnNewDigicard(false)
-            var formData;
-            console.log("------------------------------------------------------");
-            if (img === '' || voiceNote === '') {
-                console.log("if condition");
-                formData = {
-                    digi_card_title: name,
-                    digi_card_files: [document.getElementById("digicard_image").value],
-                    digicard_image: individualDigiCardData[0].digicard_image,
-                    digi_card_excerpt: articleDataTitle,
-                    digi_card_content: articleData,
-                    digi_card_keywords: tags,
-                    digicard_voice_note: individualDigiCardData[0].digicard_voice_note === '' ? '' : individualDigiCardData[0].digicard_voice_note,
-                    related_digi_cards: multiOptions,
-                };
-            } else {
-                console.log("else condition");
-                formData = {
-                    digi_card_title: name,
-                    digi_card_files: [document.getElementById("digicard_image").value],
-                    digicard_image: document.getElementById("digicard_image").value,
-                    digi_card_excerpt: articleDataTitle,
-                    digi_card_content: articleData,
-                    digi_card_keywords: tags,
-                    digicard_voice_note: document.getElementById("digicard_voice_note").value === undefined || '' ? "" : document.getElementById("digicard_voice_note").value,
-                    related_digi_cards: multiOptions,
-                };
-            }
-
+            var formData = {
+                digi_card_title: name,
+                // display_name:,
+                display_name: displayName,
+                digi_card_files: [document.getElementById("digicard_image").value],
+                digicard_image: document.getElementById("digicard_image").value === '' ?
+                    (individualDigiCardData[0].digicard_image === '' ? '' : individualDigiCardData[0].digicard_image)
+                    : document.getElementById("digicard_image").value,
+                digi_card_excerpt: articleDataTitle,
+                digi_card_content: articleData,
+                digi_card_keywords: tags,
+                digicard_document: document.getElementById("digicard_document").value === '' ?
+                    (individualDigiCardData[0].digicard_document === '' ? '' : individualDigiCardData[0].digicard_document)
+                    : individualDigiCardData[0].digicard_document,//upload doc
+                digicard_voice_note: document.getElementById("digicard_voice_note").value === '' ?
+                    (individualDigiCardData[0].digicard_voice_note === '' ? '' : individualDigiCardData[0].digicard_voice_note)
+                    : document.getElementById("digicard_voice_note").value,
+                related_digi_cards: multiOptions,
+            };
             console.log("formData", formData);
+            showLoader()
             axios
                 .post(dynamicUrl.insertDigicard, { data: formData }, { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
                 .then(async (response) => {
@@ -290,8 +339,6 @@ const EditDigiCard = () => {
                         setDisableButton(false);
                     } else {
                         let uploadParams = response.data;
-                        hideLoader();
-                        setDisableButton(false);
                         console.log('Proceeding with file upload');
 
                         if (Array.isArray(uploadParams)) {
@@ -317,45 +364,34 @@ const EditDigiCard = () => {
                                     result
                                 });
                             }
-                            // sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingDigiCard });
-                            hideLoader();
-                            setDisableButton(false);
-                            // fetchClientData();
-                            setIsOpen(false);
-
+                            hideLoader()
+                            setnNewDigicard(false)
                             MySwal.fire({
-
                                 title: 'Digicard added successfully!',
                                 icon: 'success',
                             }).then((willDelete) => {
                                 history.push('/admin-portal/active-digiCard');
                                 window.location.reload();
-
                             })
                         } else {
                             console.log('No files uploaded');
+                            hideLoader()
+                            setnNewDigicard(false)
                             sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingDigiCard });
-                            hideLoader();
-                            setDisableButton(false);
-                            // fetchClientData();
-                            setIsOpen(false);
+                            history.push('/admin-portal/active-digiCard');
+                            window.location.reload();
                         }
                     }
                 })
                 .catch((error) => {
                     if (error.response) {
-                        // Request made and server responded
                         console.log(error.response.data);
-
                         console.log(error.response.data);
                         if (error.response.status === 401) {
                             console.log();
                             hideLoader();
-                            // setIsClientExists(true);
                             sweetAlertHandler({ title: 'Error', type: 'error', text: MESSAGES.ERROR.DigiCardNameExists });
-
                         } else if (error.response.data === 'Invalid Token') {
-
                             sessionStorage.clear();
                             localStorage.clear();
                             history.push('/auth/signin-1');
@@ -365,26 +401,30 @@ const EditDigiCard = () => {
                         }
 
                     } else if (error.request) {
-                        // The request was made but no response was received
                         console.log(error.request);
-                        setDisableButton(false);
                         hideLoader();
                     } else {
-                        // Something happened in setting up the request that triggered an Error
                         console.log('Error', error.message);
-                        setDisableButton(false);
                         hideLoader();
                     }
                 });
         }
     }
 
+    //doc
+    const handleFileInput = (e) => {
+        setSelectedFile(e.target.files[0]);
+    };
+
+
+
     return (
         <div>
             {isLoading ? (
                 <BasicSpinner />
             ) : (
-                <>
+                <>{
+                    individualDigiCardData.length > 0 &&
                     <React.Fragment>
                         {
                             displayHeader && (
@@ -416,10 +456,11 @@ const EditDigiCard = () => {
                                 <Formik
                                     enableReinitialize
                                     initialValues={{
-                                        // digicardname: individualDigiCardData.digi_card_name,
-                                        digicardtitle: digiCardDataTitel,
+                                        digicardtitle: individualDigiCardData[0].digi_card_title,
+                                        displayname: displayName,
                                         digicard_image: '',
                                         digicard_voice_note: '',
+                                        digicard_document: '',
                                         digi_card_keywords: tags
                                     }}
                                     validationSchema={Yup.object().shape({
@@ -429,15 +470,20 @@ const EditDigiCard = () => {
                                             .max(32, Constants.AddDigiCard.DigiCardtitleTooLong)
                                             .matches(Constants.AddDigiCard.DigiCardtitleRegex, Constants.AddDigiCard.DigiCardtitleValidation)
                                             .required(Constants.AddDigiCard.DigiCardtitleRequired),
+
+                                        displayname: Yup.string()
+                                            .trim()
+                                            .min(2, Constants.AddDigiCard.DisplayNameTooShort)
+
+                                            .required(Constants.AddDigiCard.DisplayNameRequired),
                                     })}
 
 
                                     onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
+                                        showLoader()
                                         console.log("multiOptions in submitting time", multiOptions);
                                         let allFilesData = [];
-
                                         const fileNameArray = ['digicard_image'];
-
                                         fileNameArray.forEach((fileName) => {
                                             let selectedFile = document.getElementById(fileName).files[0];
                                             console.log('File is here!');
@@ -451,35 +497,20 @@ const EditDigiCard = () => {
                                             setImgValidation(true)
                                             hideLoader();
                                         } else {
-                                            var formData;
-                                            if (values.digicard_image === '' || voiceNotePre !== undefined) {
-                                                console.log("if condition");
-                                                formData = {
-                                                    digi_card_id: individualDigiCardData[0].digi_card_id,
-                                                    digi_card_title: values.digicardtitle,
-                                                    digi_card_files: [values.digicard_image],
-                                                    digicard_image: imgFile,
-                                                    digicard_voice_note: voiceNotePre === undefined ? values.digicard_voice_note : values.digicard_voice_note,
-                                                    digi_card_excerpt: articleDataTitle,
-                                                    digi_card_content: articleData,
-                                                    digi_card_keywords: tags,
-                                                    related_digi_cards: multiOptions
-                                                };
-                                            } else {
-                                                console.log("else condition");
-                                                formData = {
-                                                    digi_card_id: individualDigiCardData[0].digi_card_id,
-                                                    digi_card_title: values.digicardtitle,
-                                                    digi_card_files: [values.digicard_image],
-                                                    digicard_image: values.digicard_image,
-                                                    digicard_voice_note: values.digicard_voice_note,
-                                                    digi_card_excerpt: articleDataTitle,
-                                                    digi_card_content: articleData,
-                                                    digi_card_keywords: tags,
-                                                    related_digi_cards: multiOptions
-                                                };
-                                            }
+                                            const formData = {
+                                                digi_card_id: individualDigiCardData[0].digi_card_id,
+                                                digi_card_title: values.digicardtitle,
+                                                display_name: displayName,
 
+                                                digi_card_files: [values.digicard_image],
+                                                digicard_image: values.digicard_image === '' || values.digicard_image === undefined ? individualDigiCardData[0].digicard_image : values.digicard_image,
+                                                digicard_document: values.digicard_document === '' || values.digicard_document === undefined ? individualDigiCardData[0].digicard_document : values.digicard_document,//upload doc
+                                                digicard_voice_note: values.digicard_voice_note === '' || values.digicard_voice_note === undefined ? individualDigiCardData[0].digicard_voice_note : values.digicard_voice_note,
+                                                digi_card_excerpt: articleDataTitle,
+                                                digi_card_content: articleData,
+                                                digi_card_keywords: tags,
+                                                related_digi_cards: multiOptions
+                                            };
                                             console.log("formData", formData);
 
                                             axios
@@ -492,10 +523,7 @@ const EditDigiCard = () => {
                                                         setDisableButton(false);
                                                     } else {
                                                         let uploadParams = response.data;
-                                                        hideLoader();
-                                                        setDisableButton(false);
                                                         console.log('Proceeding with file upload');
-
                                                         if (Array.isArray(uploadParams)) {
                                                             for (let index = 0; index < uploadParams.length; index++) {
                                                                 let keyNameArr = Object.keys(uploadParams[index]);
@@ -529,16 +557,10 @@ const EditDigiCard = () => {
 
                                                             })
                                                             hideLoader();
-                                                            setDisableButton(false);
-                                                            // fetchClientData();
-                                                            setIsOpen(false);
                                                         } else {
                                                             console.log('No files uploaded');
                                                             sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.EditDigiCard });
                                                             hideLoader();
-                                                            setDisableButton(false);
-                                                            // fetchClientData();
-                                                            setIsOpen(false);
                                                         }
                                                     }
                                                 })
@@ -599,6 +621,39 @@ const EditDigiCard = () => {
                                                         />
                                                         {touched.digicardtitle && errors.digicardtitle && <small className="text-danger form-text">{errors.digicardtitle}</small>}
                                                     </div>
+
+
+
+
+
+                                                    <Row>
+                                                        <Col>
+                                                            <div className="form-group fill">
+                                                                <label className="floating-label" htmlFor="displayname">
+                                                                    <small className="text-danger">* </small>Display Name
+                                                                </label>
+                                                                <input
+                                                                    className="form-control"
+                                                                    error={touched.displayname && errors.displayname}
+                                                                    name="displayname"
+                                                                    id="display_name"
+                                                                    onBlur={handleBlur}
+                                                                    onChange={(e) => {
+                                                                        handleChange(e);
+                                                                        handleDisplayName(e)
+                                                                    }}
+                                                                    type="text"
+                                                                    value={displayName}
+                                                                />
+                                                                {touched.displayname && errors.displayname && <small className="text-danger form-text">{errors.displayname}</small>}
+                                                            </div>
+                                                        </Col>
+
+
+                                                    </Row>
+
+
+
                                                     <div className="form-group fill">
                                                         <label className="floating-label" htmlFor="digicard_image">
                                                             <small className="text-danger">* </small>DigiCard Logo
@@ -624,8 +679,9 @@ const EditDigiCard = () => {
                                                         {imageErr && (
                                                             <small className="text-danger form-text">Digicard Image is required!</small>
                                                         )}
-                                                        {imgValidation && (<small className="text-danger form-text">Invalid File Type or File size is Exceed More Than 1MB</small>)}
+                                                        {imgValidation && (<small className="text-danger form-text">Invalid File Type or File size is Exceed More Than 2MB</small>)}
                                                     </div>
+
                                                     <div className="form-group fill">
                                                         <label className="floating-label" htmlFor="digicard_voice_note">
                                                             <small className="text-danger"> </small>Voice Note
@@ -636,6 +692,9 @@ const EditDigiCard = () => {
                                                             name="digicard_voice_note"
                                                             id="digicard_voice_note"
                                                             onBlur={handleBlur}
+                                                            onClick={(e) => {
+                                                                setVoiceNote('');
+                                                            }}
                                                             onChange={(e) => {
                                                                 handleChange(e);
                                                                 previewVoiceNote(e);
@@ -649,6 +708,53 @@ const EditDigiCard = () => {
                                                             <small className="text-danger form-text">{errors.digicard_voice_note}</small>
                                                         )}
                                                     </div>
+
+
+                                                    <div className="form-group fill">
+                                                        <label className="floating-label" htmlFor="digicard_document">
+                                                            <small className="text-danger"> </small> Upload Document
+                                                        </label>
+                                                        <InputGroup>
+                                                            <input
+
+                                                                className="form-control"
+                                                                error={touched.digicard_document && errors.digicard_document}
+                                                                name="digicard_document"
+                                                                id="digicard_document"
+                                                                value={values.digicard_document}
+
+                                                                onBlur={handleBlur}
+                                                                onChange={(e) => { handleFileInput(e); handleChange(e); getPreviewLink(e); handleFileChange(e) }}
+                                                                type="file"
+                                                                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif"
+                                                            />
+                                                        </InputGroup>
+
+
+                                                        {selectedFile && (
+                                                            <small className="text-muted form-text">
+                                                                Selected file: {selectedFile.name}
+                                                            </small>
+                                                        )}
+
+                                                        {<a href={individualDigiCardData[0].digicard_documentURL} target="_blank" >Click here to Preview Document</a>}
+
+
+
+
+                                                        <small className="text-danger form-text" style={{ display: docError ? 'none' : 'block' }}>Invalid File Type or File size is Exceed More Than 10MB</small>
+
+
+
+
+                                                        {touched.digicard_document && errors.digicard_document && (
+                                                            <small className="text-danger form-text">{errors.digicard_document}</small>
+                                                        )}
+                                                        <small className="text-danger form-text" style={{ display: docError ? 'none' : 'block' }}>Invalid File Type or File size is Exceed More Than 10MB</small>
+                                                    </div>
+
+
+
 
                                                     <div className='ReactTags'>
                                                         <label className="floating-label" htmlFor="digicard_image">
@@ -671,9 +777,7 @@ const EditDigiCard = () => {
                                                             <small className="text-danger"> </small>Related DigiCard Titles
                                                         </label>
                                                         {defaultOptions.length === 0 ? (
-
                                                             <Select
-
                                                                 className="basic-single"
                                                                 classNamePrefix="select"
                                                                 name="color"
@@ -689,7 +793,6 @@ const EditDigiCard = () => {
                                                         ) : (
                                                             <>
                                                                 {defaultOptions && (
-
                                                                     <Select
                                                                         defaultValue={defaultOptions}
                                                                         className="basic-single"
@@ -714,7 +817,7 @@ const EditDigiCard = () => {
                                                 </Col>
                                                 <Col sm={6}>
 
-                                                    <div className="form-group fill" style={{marginTop:'60px'}}>
+                                                    <div className="form-group fill" style={{ marginTop: '60px' }}>
                                                         <label className="floating-label" htmlFor="digicardtitle">
                                                             <small className="text-danger">* </small>Logo preview
                                                         </label><br />
@@ -729,7 +832,6 @@ const EditDigiCard = () => {
                                                             <source src={voiceNotePre} alt="Audio" type="audio/mp3" />
                                                         </audio>
                                                     </div>)}
-
 
 
                                                 </Col>
@@ -761,6 +863,7 @@ const EditDigiCard = () => {
                                                         setArticleData={setArticleData}
                                                     />
                                                 </Col>
+                                                {loader}
                                             </Row><br></br>
                                             <Row >
                                                 <Col sm={6}>
@@ -768,15 +871,15 @@ const EditDigiCard = () => {
                                                 <Col>
                                                     <Row>
                                                         <Col>
-                                                            <Button
+                                                            {/* <Button
                                                                 className="btn-block"
                                                                 color="success"
                                                                 size="large"
                                                                 variant="success"
                                                                 onClick={previewData}
                                                             >
-                                                                preview
-                                                            </Button>
+                                                                Save And Preview
+                                                            </Button> */}
                                                         </Col>
                                                         <Col>
                                                             <Button
@@ -834,8 +937,10 @@ const EditDigiCard = () => {
                                                     setNewDigicardErrReq(false)
                                                 }}
                                             />
-                                        </div>
+                                        </div><br />
+                                        {loader}
                                     </Col>
+
                                 </Row>
                                 <Row>
                                     <Col sm={9}>
@@ -861,6 +966,7 @@ const EditDigiCard = () => {
                             </Modal.Body>
                         </Modal>
                     </React.Fragment>
+                }
                 </>
             )}
         </div>

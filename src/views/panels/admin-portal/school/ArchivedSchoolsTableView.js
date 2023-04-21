@@ -9,9 +9,9 @@ import axios from 'axios';
 import { SessionStorage } from '../../../../util/SessionStorage';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
-import MESSAGES from './../../../../helper/messages';
+import MESSAGES from '../../../../helper/messages';
 import { isEmptyArray, decodeJWT } from '../../../../util/utils';
-import BasicSpinner from './../../../../helper/BasicSpinner';
+import BasicSpinner from '../../../../helper/BasicSpinner';
 
 import { GlobalFilter } from './GlobalFilter';
 import { useTable, useSortBy, usePagination, useGlobalFilter } from 'react-table';
@@ -244,89 +244,81 @@ const SchoolsDataList = (props) => {
 
         console.log(value);
         const MySwal = withReactContent(Swal);
-        //     MySwal.fire({
-        //         title: 'Are you sure?',
-        //         text: 'Once deleted, you will not be able to recover!',
-        //         type: 'warning',
-        //         showCloseButton: true,
-        //         showCancelButton: true
-        //     }).then((willDelete) => {
-        //         if (willDelete.value))
-        // }
-
-
-
-
-
-
-        axios
-            .post(
-                dynamicUrl.toggleSchoolStatus,
-                {
-                    data: {
-                        school_id: school_id,
-                        school_status: Archieved
+        MySwal.fire({
+            title: 'Are you sure?',
+            text: 'Upon confirmation all the users associated with this School will also be restored!',
+            type: 'warning',
+            showCloseButton: true,
+            showCancelButton: true
+        }).then((willDelete) => {
+            axios
+                .post(
+                    dynamicUrl.toggleSchoolStatus,
+                    {
+                        data: {
+                            school_id: school_id,
+                            school_status: Archieved
+                        }
+                    },
+                    {
+                        headers: { Authorization: sessionStorage.getItem('user_jwt') }
                     }
-                },
-                {
-                    headers: { Authorization: sessionStorage.getItem('user_jwt') }
-                }
-            )
-            .then(async (response) => {
-                let responseData = response.status === 200;
-                if (response.Error) {
-                    hideLoader();
-                    setIsLoading(false);
-                    sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
-                    fetchArchivedSchoolData();
-                    // responseData === 200 && window.location.reload();
+                )
+                .then(async (response) => {
+                    let responseData = response.status === 200;
+                    if (response.Error) {
+                        hideLoader();
+                        setIsLoading(false);
+                        sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingSchool });
+                        fetchArchivedSchoolData();
 
-                } else {
-                    setIsLoading(false);
-
-                    sweetAlertHandler({ title: '', type: 'success', text: MESSAGES.SUCCESS.RestoredSuccessfully });
-
-                    hideLoader();
-                    fetchArchivedSchoolData();
-                    // responseData === 200 && window.location.reload();
-                }
-            })
-
-            .catch((error) => {
-                if (error.response) {
-                    // Request made and server responded
-                    hideLoader();
-                    console.log(error.response.data);
-
-                    setIsLoading(false);
-
-                    if (error.response.data === "Invalid Token") {
-
-                        sessionStorage.clear();
-                        localStorage.clear();
-
-                        history.push('/auth/signin-1');
-                        window.location.reload();
                     } else {
+                        setIsLoading(false);
 
-                        sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+                        sweetAlertHandler({ title: 'Success', type: 'success', text: MESSAGES.SUCCESS.SchoolRestoredSuccessfully });
+
+                        hideLoader();
+                        fetchArchivedSchoolData();
+                        
                     }
+                })
+
+                .catch((error) => {
+                    if (error.response) {
+                        // Request made and server responded
+                        hideLoader();
+                        console.log(error.response.data);
+
+                        setIsLoading(false);
+
+                        if (error.response.data === "Invalid Token") {
+
+                            sessionStorage.clear();
+                            localStorage.clear();
+
+                            history.push('/auth/signin-1');
+                            window.location.reload();
+                        } else {
+
+                            sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+                        }
 
 
-                } else if (error.request) {
-                    // The request was made but no response was received
-                    hideLoader();
-                    setIsLoading(false);
+                    } else if (error.request) {
+                        // The request was made but no response was received
+                        hideLoader();
+                        setIsLoading(false);
 
-                    console.log(error.request);
-                } else {
-                    // Something happened in setting up the request that triggered an Error
-                    hideLoader();
-                    setIsLoading(false);
+                        console.log(error.request);
+                    } else {
+                        // Something happened in setting up the request that triggered an Error
+                        hideLoader();
+                        setIsLoading(false);
 
-                    console.log('Error', error.message);
-                }
-            });
+                        console.log('Error', error.message);
+                    }
+                });
+        })
     };
 
     const _fetchSchoolData = () => {

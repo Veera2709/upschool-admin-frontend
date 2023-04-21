@@ -55,6 +55,12 @@ const routes = [
   },
   {
     exact: true,
+    // guard: GuestGuard,
+    path: '/auth/createOrResetPassword',
+    component: lazy(() => import('./views/auth/signin/CreateOrResetPassword'))
+  },
+  {
+    exact: true,
     path: '/404',
     component: lazy(() => import('./views/errors/NotFound404'))
   },
@@ -131,18 +137,13 @@ const routes = [
       },
       {
         exact: true,
-        path: '/admin-portal/school',
-        component: lazy(() => import('./views/panels/admin-portal/school/School'))
-      },
-      {
-        exact: true,
         path: '/admin-portal/active-schools',
-        component: lazy(() => import('./views/panels/admin-portal/school/School'))
+        component: lazy(() => import('./views/panels/admin-portal/school/FetchActiveSchools'))
       },
       {
         exact: true,
         path: '/admin-portal/archived-schools',
-        component: lazy(() => import('./views/panels/admin-portal/school/ArchivedSchools'))
+        component: lazy(() => import('./views/panels/admin-portal/school/FetchArchivedSchools'))
       },
       {
         exact: true,
@@ -252,12 +253,12 @@ const routes = [
         exact: true,
         path: '/admin-portal/edit-questions/:question_id',
         component: lazy(() => import('./views/panels/admin-portal/questions/EditQuestions'))
-      }, 
+      },
       {
         exact: true,
         path: '/admin-portal/active-groups',
         component: lazy(() => import('./views/panels/admin-portal/groups/ListGroups'))
-      }, 
+      },
       {
         exact: true,
         path: '/admin-portal/edit-groups/:group_id',
@@ -348,7 +349,7 @@ const routes = [
         path: '/admin-portal/classes/archived-classes',
         component: lazy(() => import('./views/panels/admin-portal/class/ClassesList'))
       },
-      
+
       //UpSchool_useers
       {
         exact: true,
@@ -359,6 +360,26 @@ const routes = [
         exact: true,
         path: '/admin-portal/archived-upSchoolUsers',
         component: lazy(() => import('./views/panels/admin-portal/CMS users/userTable'))
+      },
+      {
+        exact: true,
+        path: '/admin-portal/admin-settings/active-questionCategory',
+        component: lazy(() => import('./views/panels/admin-portal/settings/QuestionsCategory/QuestionsCategoryTableView'))
+      },
+      {
+        exact: true,
+        path: '/admin-portal/admin-settings/archived-questionCategory',
+        component: lazy(() => import('./views/panels/admin-portal/settings/QuestionsCategory/QuestionsCategoryTableView'))
+      },
+      {
+        exact: true,
+        path: '/admin-portal/admin-settings/active-questionDisclaimer',
+        component: lazy(() => import('./views/panels/admin-portal/settings/QuestionsDisclaimer/QuestionsDisclaimerTableView'))
+      },
+      {
+        exact: true,
+        path: '/admin-portal/admin-settings/archived-questionDisclaimer',
+        component: lazy(() => import('./views/panels/admin-portal/settings/QuestionsDisclaimer/QuestionsDisclaimerTableView'))
       },
       {
         exact: true,
@@ -668,26 +689,6 @@ const routes = [
         path: '/membership/mshp-membership',
         component: lazy(() => import('./views/panels/membership/Membership'))
       },
-      // {
-      //   exact: true,
-      //   path: '/school/sch-student',
-      //   component: lazy(() => import('./views/panels/admin-portal/school/Student'))
-      // },
-      {
-        exact: true,
-        path: '/school/sch-school',
-        component: lazy(() => import('./views/panels/admin-portal/school/School'))
-      },
-      // {
-      //   exact: true,
-      //   path: '/school/sch-parents',
-      //   component: lazy(() => import('./views/panels/admin-portal/school/Parents'))
-      // },
-      // {
-      //   exact: true,
-      //   path: '/school/sch-teacher',
-      //   component: lazy(() => import('./views/panels/admin-portal/school/Teacher'))
-      // },
       {
         exact: true,
         path: '/sis/sis-dashboard',

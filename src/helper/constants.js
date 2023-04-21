@@ -29,6 +29,13 @@ export const AddDigiCard = {
   DigiCardNameTooLong: 'Digicard name is too long!',
   DigiCardNameValidation: 'Digicard name should contain only alphabets and numbers!',
 
+
+
+  DisplayNameRequired: "Display Name required! ",
+  DisplayNameTooShort: "Display Name  is too short!! ",
+  DisplayNameTooLong: "Display Nameis too long! ",
+
+
   DigiCardtitleRegex: /^([a-zA-Z0-9]+\s)*[a-zA-Z0-9]+$/,
   DigiCardtitleRequired: 'Digicard title is required!',
   DigiCardtitleTooShort: 'Digicard title is too short!',
@@ -83,12 +90,25 @@ export const AddUnit = {
   UnittitleTooShort: 'Unit Title is too short!',
   UnittitleTooLong: "Unit Title is too long!",
   DescriptionRequired: "Unit Description is required!",
+
+
+
+  DisplayNameRequired: "Display Name required! ",
+  DisplayNameTooShort: "Display Name  is too short!! ",
+  DisplayNameTooLong: "Display Nameis too long! ",
+
 };
 
 export const AddClasses = {
   ClasstitleTooShort: 'Class Title is too short',
   ClasstitleTooLong: 'Class Title is too Long',
   ClasstitleRequired: 'Class Title is required!',
+
+
+  DisplayNameRequired: "Display Name required! ",
+  DisplayNameTooShort: "Display Name  is too short!! ",
+  DisplayNameTooLong: "Display Nameis too long! ",
+
 };
 
 export const AddTopic = {
@@ -97,7 +117,11 @@ export const AddTopic = {
   QuizMinutesRequired: 'Quiz Minutes are required!',
   TopictitleTooShort: 'Topic Title is too short!',
   TopictitleTooLong: "Topic Title is too long!",
-  DescriptionRequired: " Topic Description is required!"
+  DescriptionRequired: " Topic Description is required!",
+  DisplayNameRequired: "Display Name required! ",
+  DisplayNameTooShort: "Display Name  is too short!! ",
+  DisplayNameTooLong: "Display Nameis too long! ",
+
 };
 
 export const cmsRole = {
@@ -119,7 +143,7 @@ export const cmsRole = {
   userEmailTooLong: "Email is too long!",
 
   phoneRegExp: /^(\+91[\-\s]?)?[0]?(91)?[6789]\d{9}$/,
-  phoneNumVali:"Phone number is not valid",
+  phoneNumVali: "Phone number is not valid",
   phoneNumTooShort: 'Phone Number Have Less Then 10 Digits!',
   phoneNumTooLong: "Phone Number is too long!",
   phoneNum: "Phone Number is required!",
@@ -132,13 +156,34 @@ export const cmsRole = {
 export const AddConcepts = {
   ConceptTitleRequired: 'Concept Title required!',
   ConceptTitleTooShort: 'Concept Title is too short!',
-  ConceptTitleTooLong: "Concept Title is too long!"
+  ConceptTitleTooLong: "Concept Title is too long!",
+  DisplayNameRequired: "Display Name required! ",
+  DisplayNameTooShort: "Display Name  is too short!! ",
+  DisplayNameTooLong: "Display Nameis too long! ",
 };
 
 export const AddSubjects = {
   SubjectTitleRequired: 'Subject Title required!',
   SubjectTitleTooShort: 'Subject Title is too short!',
-  SubjectTitleTooLong: "Subject Title is too long!"
+  SubjectTitleTooLong: "Subject Title is too long!",
+  DisplayNameRequired: "Display Name required! ",
+  DisplayNameTooShort: "Display Name  is too short!! ",
+  DisplayNameTooLong: "Display Nameis too long! ",
+
+};
+
+export const AddQuestionCategory = {
+  QuestionCategoryRequired: 'Question Category required!',
+  QuestionCategoryTooShort: 'Question Category is too short!',
+  QuestionCategoryTooLong: "Question Category is too long!"
+};
+
+export const AddQuestionDisclaimer = {
+  QuestionDisclaimerRequired: 'Question Disclaimer required!',
+  QuestionDisclaimerTooShort: 'Question Disclaimer is too short!',
+  QuestionDisclaimerLabelTooLong: "Question Disclaimer Title is too long!",
+  QuestionDisclaimerLabelRequired: 'Question Disclaimer Title required!',
+  QuestionDisclaimerLabelTooShort: 'Question Disclaimer Title is too short!',
 };
 
 export const AddSection = {
@@ -886,3 +931,6 @@ export const componentsListArray = [
 export const EmailInitiation = {
   EmailsRequired: 'Recipients are required!'
 };
+
+
+export const userRolesArray = ["Teachers", "Students", "Parents"];

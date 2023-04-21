@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Row, Col, Button, Card, } from 'react-bootstrap';
-import Select from 'react-select';
+import Select from 'react-draggable-multi-select';
 import Swal from 'sweetalert2';
 import axios from 'axios';
 import * as Yup from 'yup';
@@ -58,10 +58,11 @@ const AddGroups = ({ className, ...rest }) => {
         console.log(event);
 
         let valuesArr = [];
-        for (let i = 0; i < event.length; i++) {
-            valuesArr.push(event[i].value)
+        if (event) {
+            for (let i = 0; i < event.length; i++) {
+                valuesArr.push(event[i].value)
+            }
         }
-
         console.log(valuesArr);
         setSelectedQuestions(valuesArr);
     }
@@ -71,10 +72,12 @@ const AddGroups = ({ className, ...rest }) => {
         console.log(event);
 
         let valuesArr = [];
-        for (let i = 0; i < event.length; i++) {
-            valuesArr.push(event[i].value)
-        }
+        if (event) {
+            for (let i = 0; i < event.length; i++) {
+                valuesArr.push(event[i].value)
+            }
 
+        }
         console.log(valuesArr);
         setSelectedDigicards(valuesArr);
     }
@@ -85,10 +88,11 @@ const AddGroups = ({ className, ...rest }) => {
         console.log(event);
 
         let valuesArr = [];
-        for (let i = 0; i < event.length; i++) {
-            valuesArr.push(event[i].value)
+        if (event) {
+            for (let i = 0; i < event.length; i++) {
+                valuesArr.push(event[i].value)
+            }
         }
-
         console.log(valuesArr);
         setSelectedLevels(valuesArr);
     }
@@ -196,7 +200,6 @@ const AddGroups = ({ className, ...rest }) => {
                             getQuestionsArr = [{ value: resultData[index].digi_card_id, label: resultData[index].digi_card_title }];
 
                             digicardsArr.push(getQuestionsArr[0]);
-
                         }
                     }
 
@@ -262,7 +265,6 @@ const AddGroups = ({ className, ...rest }) => {
                         <BasicSpinner />
                     ) : (
                         <>
-
                             {
                                 displayHeader && (
                                     <div className="page-header">
@@ -294,7 +296,10 @@ const AddGroups = ({ className, ...rest }) => {
                                     <Formik
 
                                         initialValues={{
-                                            group_name: ''
+                                            group_name: '',
+                                            displayname: "",
+                                            question_duration: '',
+                                            group_description: '',
                                         }}
 
                                         validationSchema={
@@ -303,6 +308,23 @@ const AddGroups = ({ className, ...rest }) => {
                                                     .trim()
                                                     .min(2, 'Group Name is too short!')
                                                     .max(51, 'Group Name is too long!')
+                                                    .required('Group Name is required!'),
+
+                                                question_duration: Yup.number()
+                                                    .min(1, 'Group Duration is Less Then 1min!')
+                                                    .max(10, 'Group Duration is More Then 10min!')
+                                                    .required('Group Duration is required!'),
+
+                                                group_description: Yup.string()
+                                                    .trim()
+                                                    .min(2, 'Group description is too short!')
+                                                    .required('Group description is required!'),
+
+
+                                                displayname: Yup.string()
+                                                    .trim()
+                                                    .min(2, 'Group Name is too short!')
+                                                    // .max(32, Constants.AddSubjects.DisplayNameTooLong)
                                                     .required('Group Name is required!'),
                                             })
                                         }
@@ -328,10 +350,13 @@ const AddGroups = ({ className, ...rest }) => {
                                                 let payLoad = {
 
                                                     group_name: values.group_name,
+                                                    display_name: values.displayname,
                                                     group_type: selectedGroupType,
                                                     group_question_id: selectedQuestions,
                                                     group_levels: selectedLevels,
-                                                    group_related_digicard: selectedDigicards
+                                                    group_related_digicard: selectedDigicards,
+                                                    group_description: values.group_description,
+                                                    question_duration: values.question_duration
                                                 }
 
                                                 console.log("payLoad", payLoad);
@@ -414,7 +439,6 @@ const AddGroups = ({ className, ...rest }) => {
                                             }
                                         }}
 
-
                                     >
                                         {({ errors, handleBlur, handleChange, handleSubmit, touched, values, setFieldValue }) => (
                                             <form noValidate onSubmit={handleSubmit} className={className} {...rest}>
@@ -443,9 +467,7 @@ const AddGroups = ({ className, ...rest }) => {
                                                         />
 
                                                         {touched.group_name && errors.group_name && <small className="text-danger form-text">{errors.group_name}</small>}
-                                                        {
-                                                            groupNameExistsErrMsg && <small className="text-danger form-text">{'Group Name Already Exists!'}</small>
-                                                        }
+
                                                     </Col>
 
                                                     <Col xs={6}>
@@ -474,6 +496,52 @@ const AddGroups = ({ className, ...rest }) => {
                                                     </Col>
 
                                                 </Row>
+                                                <br />
+                                                <Row>
+                                                    <Col>
+                                                        <div className="form-group fill">
+                                                            <label className="floating-label" htmlFor="displayname">
+                                                                <small className="text-danger">* </small>Display Name
+                                                            </label>
+                                                            <input
+                                                                className="form-control"
+                                                                error={touched.displayname && errors.displayname}
+                                                                name="displayname"
+                                                                onBlur={handleBlur}
+                                                                onChange={handleChange}
+                                                                type="text"
+                                                                value={values.displayname}
+                                                                id='title'
+                                                            />
+                                                            {touched.displayname && errors.displayname && <small className="text-danger form-text">{errors.displayname}</small>}
+                                                        </div>
+                                                    </Col>
+                                                    <Col></Col>
+                                                </Row>
+
+                                                <Row>
+                                                    <Col>
+
+                                                        <label className="floating-label">
+                                                            <small className="text-danger">*</small>
+                                                            Group Description
+                                                        </label>
+                                                        <textarea
+                                                            value={values.group_description}
+                                                            className="form-control"
+                                                            error={touched.group_description && errors.group_description}
+                                                            label="group_description"
+                                                            name="group_description"
+                                                            onBlur={handleBlur}
+                                                            type="textarea"
+                                                            onChange={handleChange}
+                                                            placeholder="Description"
+
+                                                        />
+
+                                                        {touched.group_description && errors.group_description && <small className="text-danger form-text">{errors.group_description}</small>}
+                                                    </Col>
+                                                </Row>
 
                                                 <br />
                                                 <Row>
@@ -482,10 +550,16 @@ const AddGroups = ({ className, ...rest }) => {
                                                         {
                                                             questionsDropdown && (
                                                                 <>
-                                                                    <label className="floating-label">
-                                                                        <small className="text-danger"></small>
-                                                                        Questions
-                                                                    </label>
+                                                                    <Row>
+                                                                        <Col>
+                                                                            <label className="floating-label">
+                                                                                Questions
+                                                                            </label>
+                                                                        </Col>
+                                                                        <Col className='d-flex justify-content-end' style={{ marginRight: '10px' }}>
+                                                                            <label className="text-danger" >&nbsp;{`${selectedQuestions.length}`}</label>
+                                                                        </Col>
+                                                                    </Row>
 
                                                                     <Select
                                                                         isMulti
@@ -545,6 +619,28 @@ const AddGroups = ({ className, ...rest }) => {
                                                                 </>
                                                             )
                                                         }
+                                                    </Col>
+                                                    <Col>
+                                                        <label className="floating-label">
+                                                            <small className="text-danger">* </small>
+                                                            Duration Per Question
+                                                        </label>
+
+                                                        <input
+                                                            value={values.question_duration}
+                                                            className="form-control"
+                                                            error={touched.question_duration && errors.question_duration}
+                                                            label="question_duration"
+                                                            name="question_duration"
+                                                            onBlur={handleBlur}
+                                                            type='number'
+                                                            onChange={e => {
+                                                                setGroupNameExistsErrMsg(false);
+                                                                handleChange(e);
+                                                            }}
+                                                            placeholder="Group Duration"
+                                                        />
+                                                        {touched.question_duration && errors.question_duration && <small className="text-danger form-text">{errors.question_duration}</small>}
                                                     </Col>
                                                 </Row>
                                                 {loader}

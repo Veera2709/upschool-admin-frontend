@@ -5,19 +5,14 @@ import { useHistory, useParams } from 'react-router-dom';
 
 import EditSchoolForm from './EditSchoolForm'
 import SubscribeClass from './SubscribeClass';
-import SectionList from './SectionList'
+import SectionsTableView from './SectionsTableView'
 import QuizConfiguration from './QuizConfiguration';
 import SubscriptionFeatures from './SubscriptionFeatures';
 import BasicSpinner from '../../../../helper/BasicSpinner';
 
-const SectionAdd = () => {
-    const history = useHistory();
+const EditTabs = () => {
     const [_data, _setData] = useState([]);
-    const [isLoading, setIsLoading] = useState(false);
-    const [subscriptionActive, setSubscriptionActive] = useState([]);
-    const [subscriptionInActive, setSubscriptionInActive] = useState([]);
-    // const [displayHeading, setDisplayHeading] = useState(sessionStorage.getItem('status'));
-    const [inactive, setInactive] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const threadLinks = document.getElementsByClassName('page-header');
     const [displayHeader, setDisplayHeader] = useState(true);
 
@@ -26,8 +21,10 @@ const SectionAdd = () => {
     useEffect(() => {
         if (threadLinks.length === 2) {
             setDisplayHeader(false);
+            setIsLoading(false);
         } else {
             setDisplayHeader(true);
+            setIsLoading(false);
         }
     }, []);
 
@@ -67,17 +64,17 @@ const SectionAdd = () => {
                         <Tab eventKey={1} title="General" >
                             <EditSchoolForm id={school_id} />
                         </Tab>
-                        {/* <Tab eventKey={2} title="Subscription Features">
+                        <Tab eventKey={2} title="Subscription Features">
                             <SubscriptionFeatures id={school_id} />
-                        </Tab> */}
-                        <Tab eventKey={2} title="Quiz Configuration">
+                        </Tab>
+                        <Tab eventKey={3} title="Quiz Configuration">
                             <QuizConfiguration id={school_id} />
                         </Tab>
-                        <Tab eventKey={3} title="Subscribe Class">
+                        <Tab eventKey={4} title="Subscribe Class">
                             <SubscribeClass id={school_id} />
                         </Tab>
-                        <Tab eventKey={4} title="Add Section">
-                            <SectionList id={school_id} />
+                        <Tab eventKey={5} title="Add Section">
+                            <SectionsTableView id={school_id} />
                         </Tab>
                     </Tabs>
                 </React.Fragment>
@@ -86,4 +83,4 @@ const SectionAdd = () => {
     )
 }
 
-export default SectionAdd
+export default EditTabs

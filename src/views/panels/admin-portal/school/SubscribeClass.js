@@ -102,7 +102,7 @@ const SubscribeClass = ({ className, rest, id, setIsOpenSubscribeClass }) => {
 
                         const MySwal = withReactContent(Swal);
                         MySwal.fire({
-                            title: MESSAGES.TTTLES.Goodjob,
+                            // title: MESSAGES.TTTLES.Goodjob,
                             type: 'success',
                             text: 'School subscrption successful!',
                             icon: 'success',
@@ -406,7 +406,7 @@ const SubscribeClass = ({ className, rest, id, setIsOpenSubscribeClass }) => {
                                                         {errorMessage &&
                                                             <div style={{ color: 'red' }} className="error"> {errorMessage} </div>}
                                                     </Col>
-                                                    <Col xs={3}>
+                                                    <Col xs={2}>
                                                         <Button
                                                             onClick={(event) => {
                                                                 subscribeClass(event);

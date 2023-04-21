@@ -6,7 +6,7 @@ import withReactContent from 'sweetalert2-react-content';
 import Swal from 'sweetalert2';
 import { GlobalFilter } from '../digicard/GlobalFilter';
 
-import { useTable, useSortBy, usePagination, useGlobalFilter } from 'react-table';
+import { useTable, useSortBy, usePagination, useGlobalFilter, useRowSelect } from 'react-table';
 
 import dynamicUrl from '../../../../helper/dynamicUrls';
 
@@ -26,6 +26,15 @@ import { isEmptyArray } from '../../../../util/utils';
 
 
 function Table({ columns, data, modalOpen }) {
+    const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
+    const user_status = pageLocation === 'active-upSchoolUsers' ? "Active" : "Archived"
+    const initiallySelectedRows = React.useMemo(() => new Set(["1"]), []);
+    const [isOpen, setIsOpen] = useState(false);
+    const [isOpenAddUnit, setOpenAddUnit] = useState(false)
+    const [loader, showLoader, hideLoader] = useFullPageLoader();
+    let history = useHistory();
+    const MySwal = withReactContent(Swal);
+
     const {
         getTableProps,
         getTableBodyProps,
@@ -44,26 +53,161 @@ function Table({ columns, data, modalOpen }) {
         nextPage,
         previousPage,
         setPageSize,
-        state: { pageIndex, pageSize }
+        selectedFlatRows,
+        toggleAllRowsSelected,
+        state: { pageIndex, pageSize, selectedRowPaths }
+
     } = useTable(
         {
             columns,
             data,
-            initialState: { pageIndex: 0, pageSize: 10 }
+            initialState: { pageIndex: 0, pageSize: 10, selectedRowPaths: initiallySelectedRows }
         },
         useGlobalFilter,
         useSortBy,
-        usePagination
+        usePagination,
+        useRowSelect
     );
 
-    const [isOpen, setIsOpen] = useState(false);
-    const [isOpenAddUnit, setOpenAddUnit] = useState(false)
-    let history = useHistory();
+    const sweetAlertHandler = (alert) => {
+        MySwal.fire({
+            title: alert.title,
+            text: alert.text,
+            icon: alert.type
+        });
+    };
+
 
     const addingChapter = () => {
         history.push('/admin-portal/addUnits');
         setIsOpen(true);
     }
+
+
+    const getAllCmsData = () => {
+        let arrayWithCmsUsers = [];
+        const UnitStatus = pageLocation === "active-upSchoolUsers" ? 'Active' : 'Archived';
+        var userType = sessionStorage.getItem('user_type')
+
+        let userTypePayload = (userType === "admin") ? "admin" : (userType === "creator") ? "creator" : (userType === "reviewer") ? "reviewer" : (userType === "publisher") ? "publisher" : "N.A.";
+
+        page.map((item) => {
+            console.log("Items : ", item);
+            item.isSelected === true && arrayWithCmsUsers.push(item.original.user_id)
+        })
+        // selectedFlatRows.map((item) => {
+        //     console.log("item.original.unit_chapter_id", item.original.user_id);
+        //     console.log("pagelocation", pageLocation)
+        //     arrayWithCmsUsers.push(item.original.user_id)
+        // })
+        console.log("CHECKED IDS : ", arrayWithCmsUsers);
+        if (arrayWithCmsUsers.length === 0) {
+            console.log("Not Selected");
+            const MySwal = withReactContent(Swal);
+            return MySwal.fire('Sorry', 'No User Selected!', 'warning').then(() => {
+                // window.location.reload();
+            });
+        } else {
+            const MySwal = withReactContent(Swal);
+            MySwal.fire({
+                title: 'Are you sure?',
+                text: pageLocation === 'active-upSchoolUsers' ? 'Confirm deleting' : 'Confirm restoring',
+                type: 'warning',
+                showCloseButton: true,
+                showCancelButton: true,
+            }).then((willDelete) => {
+                if (willDelete.value) {
+                    console.log("api calling");
+                    // changeStatus(digi_card_id, digi_card_title);
+                    console.log("Request : ", {
+                        user_status: user_status === "active-upSchoolUsers" ? "Archived" : "Active",
+                        user_array: arrayWithCmsUsers,
+
+                    });
+
+                    axios
+                        .post(
+                            dynamicUrl.bulkToggleCMSUserStatus,
+                            {
+                                data: {
+                                    user_status: user_status === "Active" ? "Archived" : "Active",
+                                    cms_user_array: arrayWithCmsUsers,
+
+                                }
+                            }, {
+                            headers: { Authorization: sessionStorage.getItem('user_jwt') }
+                        })
+                        .then(async (response) => {
+                            console.log("response : ", response);
+                            console.log("pagelocation", pageLocation);
+                            if (response.Error) {
+                                console.log("Error");
+                                hideLoader();
+                                // sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
+                                pageLocation === "active-upSchoolUsers"
+
+                                    ? sweetAlertHandler({
+                                        title: MESSAGES.TTTLES.Sorry,
+                                        type: "error",
+                                        text: MESSAGES.ERROR.DeletingUser
+                                    })
+                                    : sweetAlertHandler({
+                                        title: MESSAGES.TTTLES.Sorry,
+                                        type: "error",
+                                        text: MESSAGES.ERROR.RestoringUser
+                                    });
+
+                                history.push('/admin-portal/' + pageLocation)
+                            }
+                            else {
+                                console.log("response : ", response);
+                                if (response.data === 200) {
+                                    MySwal.fire({
+                                        title: (pageLocation === 'active-upSchoolUsers') ? 'Users Deleted' : "Users restored",
+                                        icon: "success",
+                                        // text: (pageLocation === 'active-upSchoolUsers') ? 'User Deleted' : 'User Restored',
+                                        // type: 'success',
+                                    }).then((willDelete) => {
+
+                                        window.location.reload()
+
+                                    })
+
+                                }
+                            }
+                            //new
+
+
+
+
+                        }
+                        ).catch(async (errorResponse) => {
+                            console.log("errorResponse : ", errorResponse);
+                            if (errorResponse.response.data) {
+                                MySwal.fire({
+                                    title: MESSAGES.TTTLES.Sorry,
+                                    icon: "error",
+                                    text: errorResponse.response.data,
+                                    // type: 'success',
+                                }).then((willDelete) => {
+
+                                    window.location.reload()
+
+                                })
+                            }
+
+                        }
+
+                        )
+
+                }
+
+            })
+        }
+
+
+    }
+
 
     return (
         <>
@@ -91,6 +235,26 @@ function Table({ columns, data, modalOpen }) {
                     <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={(e) => { history.push('/admin-portal/add_UpSchoolusers'); }}>
                         <i className="feather icon-plus" /> Add User
                     </Button>
+                    {user_status === "Active" ?
+                        <Button
+                            variant="danger"
+                            className="btn-sm btn-round has-ripple ml-2"
+                            // style={{ marginLeft: "1.5rem" }}
+                            style={{ whiteSpace: "nowrap" }}
+                            onClick={(e) => { getAllCmsData() }}
+                        >Multi Delete</Button> :
+
+                        <Button
+                            onClick={getAllCmsData}
+                            variant="primary"
+                            className="btn-sm btn-round has-ripple ml-2"
+                            // style={{ marginLeft: "1.5rem" }}
+                            style={{ whiteSpace: "nowrap" }}
+                        >Multi Restore</Button>
+                    }
+
+
+
                 </Col>
             </Row>
 
@@ -179,6 +343,19 @@ function Table({ columns, data, modalOpen }) {
 const UsersList = ({ _userType }) => {
     const columns = React.useMemo(
         () => [
+            {
+                id: "selection",
+                Header: ({ getToggleAllRowsSelectedProps }) => (
+                    <div>
+                        <input type="checkbox" {...getToggleAllRowsSelectedProps()} />
+                    </div>
+                ),
+                Cell: ({ row }) => (
+                    <div>
+                        <input type="checkbox" {...row.getToggleRowSelectedProps()} />
+                    </div>
+                )
+            },
             {
                 Header: '#',
                 accessor: "index_no"
@@ -437,7 +614,7 @@ const UsersList = ({ _userType }) => {
 
 
     }, [_userType])
-  
+
 
     return (
         <div>
@@ -463,7 +640,7 @@ const UsersList = ({ _userType }) => {
                                                 </div>
                                             </React.Fragment>
                                         ) : (
-                                            <h3 style={{ textAlign: 'center' }}>No {pageLocation === "active-units" ? 'Active Users' : 'Archived Users'} Found</h3>
+                                            <h3 style={{ textAlign: 'center' }}>No {pageLocation === "active-upSchoolUsers" ? 'Active Users' : 'Archived Users'} Found</h3>
                                         )
                                     }
 
@@ -475,7 +652,10 @@ const UsersList = ({ _userType }) => {
                                             <Col sm={12}>
                                                 <Card>
                                                     <Card.Header>
-                                                        <Card.Title as="h5">CMS Users</Card.Title>
+                                                        <Card.Title as="h5" className='d-flex justify-content-between'>
+                                                            <h5>CMS Users</h5>
+                                                            <h5>Total Entries :- {unitData.length}</h5>
+                                                        </Card.Title>
                                                     </Card.Header>
                                                     <Card.Body>
                                                         <Table columns={columns} data={unitData} />

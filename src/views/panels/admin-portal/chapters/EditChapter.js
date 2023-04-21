@@ -13,7 +13,7 @@ import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import withReactContent from 'sweetalert2-react-content';
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import Select from 'react-select';
+import Select from 'react-draggable-multi-select';
 import Multiselect from 'multiselect-react-dropdown';
 import { fetchIndividualChapter, fetchPostLearningTopics, fetchPreLearningTopics } from '../../../api/CommonApi'
 import { useHistory } from 'react-router-dom';
@@ -91,10 +91,7 @@ const EditChapter = ({ setOpenEditChapter, chapterId }) => {
             let resultData = allTopicdData.Items
             console.log("resultData", resultData);
             resultData.forEach((item, index) => {
-                if (item.topic_status === 'Active') {
-                    console.log();
-                    postLeraning.push({ value: item.topic_id, label: item.topic_title })
-                }
+                postLeraning.push({ value: item.topic_id, label: item.topic_title })
             }
             );
             console.log("postLeraning", postLeraning);
@@ -112,10 +109,7 @@ const EditChapter = ({ setOpenEditChapter, chapterId }) => {
             } else {
                 let preData = allPreLerningdData.Items
                 preData.forEach((itempre, index) => {
-                    if (itempre.topic_status === 'Active') {
-                        console.log();
-                        preLeraning.push({ value: itempre.topic_id, label: itempre.topic_title })
-                    }
+                    preLeraning.push({ value: itempre.topic_id, label: itempre.topic_title })
                 });
                 setTopicTitlesPre(preLeraning)
             }
@@ -173,16 +167,20 @@ const EditChapter = ({ setOpenEditChapter, chapterId }) => {
 
     const prelerningOtions = (event_pre) => {
         let values_pre = [];
-        for (let i = 0; i < event_pre.length; i++) {
-            values_pre.push(event_pre[i].value)
+        if (event_pre) {
+            for (let i = 0; i < event_pre.length; i++) {
+                values_pre.push(event_pre[i].value)
+            }
         }
         setPrelearningOptions(values_pre);
     }
 
     const postlerningOtions = (event) => {
         let valuesArr = [];
-        for (let i = 0; i < event.length; i++) {
-            valuesArr.push(event[i].value)
+        if (event) {
+            for (let i = 0; i < event.length; i++) {
+                valuesArr.push(event[i].value)
+            }
         }
         setPostlearningOption(valuesArr);
     }
@@ -200,6 +198,7 @@ const EditChapter = ({ setOpenEditChapter, chapterId }) => {
                             enableReinitialize
                             initialValues={{
                                 chaptertitle: individualChapterdata.chapter_title,
+                                displayname: individualChapterdata.display_name,
                                 postlearning_topic: '',
                                 prelearning_topic: '',
                                 isLocked: '',
@@ -213,6 +212,12 @@ const EditChapter = ({ setOpenEditChapter, chapterId }) => {
                                     .required(Constants.AddDigiCard.ChaptertitleRequired),
                                 chapter_description: Yup.string()
                                     .required(Constants.AddUnit.DescriptionRequired),
+                                displayname: Yup.string()
+                                    .trim()
+                                    .min(2, Constants.AddDigiCard.DisplayNameTooShort)
+                                    // .max(32, Constants.AddDigiCard.DisplayNameTooLong)
+                                    .required(Constants.AddDigiCard.DisplayNameRequired),
+
                             })}
 
                             onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
@@ -224,11 +229,11 @@ const EditChapter = ({ setOpenEditChapter, chapterId }) => {
                                 else if (values.chapter_description == undefined || values.chapter_description.trim() == '') {
                                     setIsShownDes(false)
                                 } else {
-                                    setOpenEditChapter(false)
                                     console.log("on submit");
                                     var formData = {
                                         chapter_id: chapterId,
                                         chapter_title: values.chaptertitle,
+                                        display_name: values.displayname,
                                         chapter_description: values.chapter_description,
                                         prelearning_topic_id: prelearningOptions,
                                         postlearning_topic_id: postlearningOption,
@@ -245,6 +250,7 @@ const EditChapter = ({ setOpenEditChapter, chapterId }) => {
                                                 hideLoader();
                                                 setDisableButton(false);
                                             } else {
+                                                setOpenEditChapter(false)
                                                 // sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.EditChapter });
                                                 MySwal.fire({
 
@@ -261,7 +267,8 @@ const EditChapter = ({ setOpenEditChapter, chapterId }) => {
                                                 setIsOpen(false);
                                             }
                                         })
-                                        .catch((error) => {
+                                        .catch((error) => { 
+                                            setOpenEditChapter(false)
                                             if (error.response) {
                                                 // Request made and server responded
                                                 console.log(error.response.data);
@@ -312,6 +319,26 @@ const EditChapter = ({ setOpenEditChapter, chapterId }) => {
                                                 />
                                                 {touched.chaptertitle && errors.chaptertitle && <small className="text-danger form-text">{errors.chaptertitle}</small>}
                                             </div><br />
+
+
+                                            <div className="form-group fill">
+                                                <label className="floating-label" htmlFor="displayname">
+                                                    <small className="text-danger">* </small>Display Name
+                                                </label>
+                                                <input
+                                                    className="form-control"
+                                                    error={touched.displayname && errors.displayname}
+                                                    name="displayname"
+                                                    onBlur={handleBlur}
+                                                    onChange={handleChange}
+                                                    type="text"
+                                                    value={values.displayname}
+                                                    id='title'
+                                                />
+                                                {touched.displayname && errors.displayname && <small className="text-danger form-text">{errors.displayname}</small>}
+                                            </div><br />
+
+
                                             <div className="form-group fill" style={{ position: "relative", zIndex: 20 }}>
                                                 <label className="floating-label" htmlFor="postlearning_topic">
                                                     <small className="text-danger">* </small> Post-learning Topic

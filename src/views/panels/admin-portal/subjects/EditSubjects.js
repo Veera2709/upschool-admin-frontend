@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Formik } from 'formik';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
-import Select from 'react-select';
+import Select from 'react-draggable-multi-select';
 import ReactTags from 'react-tag-autocomplete';
 import * as Yup from 'yup';
 import { Row, Col } from 'react-bootstrap';
@@ -280,10 +280,11 @@ const EditSubjects = ({ _units, _relatedSubjects, editSubjectID, setIsOpenEditSu
         console.log(event);
 
         let valuesArr = [];
-        for (let i = 0; i < event.length; i++) {
-            valuesArr.push(event[i].value)
+        if (event) {
+            for (let i = 0; i < event.length; i++) {
+                valuesArr.push(event[i].value)
+            }
         }
-
         console.log(valuesArr);
         setSelectedUnits(valuesArr);
     }
@@ -293,10 +294,11 @@ const EditSubjects = ({ _units, _relatedSubjects, editSubjectID, setIsOpenEditSu
         console.log(event);
 
         let valuesArr = [];
-        for (let i = 0; i < event.length; i++) {
-            valuesArr.push(event[i].value)
+        if (event) {
+            for (let i = 0; i < event.length; i++) {
+                valuesArr.push(event[i].value)
+            }
         }
-
         console.log(valuesArr);
         setSelectedRelatedSubjects(valuesArr);
     }
@@ -322,7 +324,9 @@ const EditSubjects = ({ _units, _relatedSubjects, editSubjectID, setIsOpenEditSu
                                             initialValues={
                                                 {
                                                     subjectTitle: previousData.subject_title,
+                                                    displayname: previousData.display_name,
                                                     description: previousData.subject_description,
+
                                                     // submit: null
                                                 }
                                             }
@@ -338,6 +342,13 @@ const EditSubjects = ({ _units, _relatedSubjects, editSubjectID, setIsOpenEditSu
                                                         .min(2, Constants.AddSubjects.SubjectTitleTooShort)
                                                         .required(Constants.AddSubjects.SubjectTitleRequired),
 
+                                                    displayname: Yup.string()
+                                                        .trim()
+                                                        .min(2, Constants.AddSubjects.DisplayNameTooShort)
+                                                        .required(Constants.AddSubjects.DisplayNameRequired),
+
+
+
                                                 })
                                             }
                                             onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
@@ -350,7 +361,9 @@ const EditSubjects = ({ _units, _relatedSubjects, editSubjectID, setIsOpenEditSu
                                                 const formData = {
                                                     data: {
                                                         subject_id: editSubjectID,
+
                                                         subject_title: values.subjectTitle,
+                                                        display_name: values.displayname,
                                                         subject_unit_id: selectedUnits,
                                                         subject_keyword: selectedKeywords,
                                                         related_subject: selectedRelatedSubjects,
@@ -502,6 +515,28 @@ const EditSubjects = ({ _units, _relatedSubjects, editSubjectID, setIsOpenEditSu
                                                                 </Col>
                                                             </Row>
                                                             <br />
+                                                            <Row>
+                                                                <Col>
+
+                                                                    <div className="form-group fill">
+                                                                        <label className="floating-label" htmlFor="displayname">
+                                                                            <small className="text-danger">* </small>Display Name
+                                                                        </label>
+                                                                        <input
+                                                                            className="form-control"
+                                                                            error={touched.displayname && errors.displayname}
+                                                                            name="displayname"
+                                                                            onBlur={handleBlur}
+                                                                            onChange={handleChange}
+                                                                            type="text"
+                                                                            value={values.displayname}
+                                                                            id='title'
+                                                                        />
+                                                                        {touched.displayname && errors.displayname && <small className="text-danger form-text">{errors.displayname}</small>}
+                                                                    </div>
+                                                                </Col>
+                                                                <Col></Col>
+                                                            </Row>
 
                                                             <Row>
                                                                 <Col>
@@ -633,9 +668,10 @@ const EditSubjects = ({ _units, _relatedSubjects, editSubjectID, setIsOpenEditSu
                         </>
                     )}
                 </>
-            )}
+            )
+            }
 
-        </div>
+        </div >
 
 
     )

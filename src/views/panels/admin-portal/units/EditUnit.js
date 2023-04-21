@@ -15,10 +15,11 @@ import withReactContent from 'sweetalert2-react-content';
 import { areFilesInvalid, isEmptyObject } from '../../../../util/utils';
 import { useEffect } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
-import Select from 'react-select';
+import Select from 'react-draggable-multi-select';
 import { isEmptyArray } from '../../../../util/utils';
 import Multiselect from 'multiselect-react-dropdown';
-import { fetchAllChapters, fetchIndividualUnit } from '../../../api/CommonApi'
+import { fetchChaptersBasedonStatus, fetchIndividualUnit } from '../../../api/CommonApi'
+import BasicSpinner from '../../../../helper/BasicSpinner';
 
 
 
@@ -37,31 +38,13 @@ const EditUnit = ({ setOpenEditUnit, unitId }) => {
     const MySwal = withReactContent(Swal);
     const [chapterOption, setChapterOption] = useState([]);
     let history = useHistory();
-
-
-
-
     const [postlearningOption, setPostlearningOption] = useState([]);
-    const [defaultPrelearning, setDefaultPrelearning] = useState([]);
-    const [prelearningOptions, setPrelearningOptions] = useState([]);
-    const [defaultPostleraing, setDefaultPostleraing] = useState([]);
-    const [topicDigiCardIds, setTopicDigiCardIds] = useState([]);
-
-
-
     const [defaultOptions, setDefaultOptions] = useState([]);
-
     const [defauleDescription, setDefauleDescription] = useState();
     const [isShownDes, setIsShownDes] = useState(true);
-
-
-
-
-
     const [topicTitles, setTopicTitles] = useState([]);
-
     const [isShown, setIsShown] = useState(true);
-
+    const [isLoading, setIsLoading] = useState(false);
     const [individualUnitdata, setIndividualUnitdata] = useState([]);
     console.log("individualUnitdata", individualUnitdata);
 
@@ -78,7 +61,8 @@ const EditUnit = ({ setOpenEditUnit, unitId }) => {
     };
 
     const fetchAllChaptersList = async () => {
-        const allChapterData = await fetchAllChapters();
+        setIsLoading(true)
+        const allChapterData = await fetchChaptersBasedonStatus();
         console.log("allTopicdData", allChapterData.Items);
         if (allChapterData.Error) {
             console.log("allChapterData", allChapterData.Error);
@@ -93,10 +77,7 @@ const EditUnit = ({ setOpenEditUnit, unitId }) => {
             let resultData = allChapterData.Items
             console.log("resultData", resultData);
             resultData.forEach((item, index) => {
-                if (item.chapter_status === 'Active') {
-                    console.log();
-                    colourOptions.push({ value: item.chapter_id, label: item.chapter_title })
-                }
+                colourOptions.push({ value: item.chapter_id, label: item.chapter_title })
             }
             );
             console.log("colourOptions", colourOptions);
@@ -130,6 +111,7 @@ const EditUnit = ({ setOpenEditUnit, unitId }) => {
             }
 
         }
+        setIsLoading(false)
     }
 
 
@@ -150,212 +132,247 @@ const EditUnit = ({ setOpenEditUnit, unitId }) => {
 
     const getMultiOptions = (event) => {
         let valuesArr = [];
-        for (let i = 0; i < event.length; i++) {
-            valuesArr.push(event[i].value)
+        if (event) {
+            for (let i = 0; i < event.length; i++) {
+                valuesArr.push(event[i].value)
+            }
         }
         setChapterOption(valuesArr);
     }
 
 
     return (
-        <React.Fragment>
-            <Formik
-                enableReinitialize
-                initialValues={{
-                    unittitle: individualUnitdata.unit_title,
-                    chapter: '',
-                    unit_description: individualUnitdata.unit_description,
-                }}
-                validationSchema={Yup.object().shape({
-                    unittitle: Yup.string()
-                        .trim()
-                        .min(2, Constants.AddUnit.UnittitleRequired)
-                        .max(30, Constants.AddUnit.UnittitleTooShort)
-                        .required(Constants.AddUnit.UnittitleTooLongs),
-                    unit_description: Yup.string()
-                        .required(Constants.AddUnit.DescriptionRequired),
-                })}
+        <div>
+            {isLoading === true ? (
+                <>
+                    <BasicSpinner />
+                </>
+            ) : (
+                <React.Fragment>
+                    <Formik
+                        enableReinitialize
+                        initialValues={{
+                            unittitle: individualUnitdata.unit_title,
+                            displayname: individualUnitdata.display_name,
+                            chapter: '',
+                            unit_description: individualUnitdata.unit_description,
+                        }}
+                        validationSchema={Yup.object().shape({
+                            unittitle: Yup.string()
+                                .trim()
+                                .min(2, Constants.AddUnit.UnittitleRequired)
+                                .max(30, Constants.AddUnit.UnittitleTooShort)
+                                .required(Constants.AddUnit.UnittitleTooLongs),
+                            unit_description: Yup.string()
+                                .required(Constants.AddUnit.DescriptionRequired),
+                            displayname: Yup.string()
+                                .trim()
+                                .min(2, Constants.AddUnit.DisplayNameTooShort)
+                                .max(32, Constants.AddUnit.DisplayNameTooLong)
+                                .required(Constants.AddUnit.DisplayNameRequired),
+                        })}
 
 
 
-                onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-                    if (chapterOption == '') {
-                        setIsShown(false)
-                    } else if (values.unit_description === undefined || values.unit_description.trim() === '') {
-                        setIsShownDes(false)
-                    }
-                    else {
-                        console.log("on submit");
-                        setOpenEditUnit(false)
-                        var formData = {
-                            unit_id: unitId,
-                            unit_title: values.unittitle,
-                            unit_description: values.unit_description,
-                            unit_chapter_id: chapterOption
-                        };
+                        onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
+                            if (chapterOption == '') {
+                                setIsShown(false)
+                            } else if (values.unit_description === undefined || values.unit_description.trim() === '') {
+                                setIsShownDes(false)
+                            }
+                            else {
+                                console.log("on submit");
+                                var formData = {
+                                    unit_id: unitId,
+                                    display_name: values.displayname,
+                                    unit_title: values.unittitle,
+                                    unit_description: values.unit_description,
+                                    unit_chapter_id: chapterOption
+                                };
 
-                        console.log("formdata", formData);
+                                console.log("formdata", formData);
 
-                        axios
-                            .post(dynamicUrl.editUnit, { data: formData }, { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
-                            .then(async (response) => {
-                                console.log({ response });
-                                if (response.Error) {
-                                    console.log('Error');
-                                    hideLoader();
-                                    setDisableButton(false);
-                                } else {
-                                    // sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.EditUnit });
-                                    MySwal.fire({
-                                        title: 'Unit Updated successfully!',
-                                        icon: 'success',
-                                    }).then((willDelete) => {
-                                        history.push('/admin-portal/units/active-units');
-                                        window.location.reload();
+                                axios
+                                    .post(dynamicUrl.editUnit, { data: formData }, { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
+                                    .then(async (response) => {
+                                        console.log({ response });
+                                        if (response.Error) {
+                                            console.log('Error');
+                                            hideLoader();
+                                            setDisableButton(false);
+                                        } else {
+                                            setOpenEditUnit(false)
+                                            MySwal.fire({
+                                                title: 'Unit Updated successfully!',
+                                                icon: 'success',
+                                            }).then((willDelete) => {
+                                                history.push('/admin-portal/units/active-units');
+                                                window.location.reload();
+                                            })
+                                            hideLoader();
+                                            setDisableButton(false);
+                                            setIsOpen(false);
+                                        }
                                     })
-                                    hideLoader();
-                                    setDisableButton(false);
-                                    // fetchClientData();
-                                    setIsOpen(false);
-                                }
-                            })
-                            .catch((error) => {
-                                if (error.response) {
-                                    // Request made and server responded
-                                    console.log(error.response.data);
+                                    .catch((error) => {
+                                        if (error.response) {
+                                            // Request made and server responded
+                                            console.log(error.response.data);
 
-                                    console.log(error.response.data);
-                                    if (error.response.status === 401) {
-                                        console.log();
-                                        hideLoader();
-                                        // setIsClientExists(true);
-                                        sweetAlertHandler({ title: 'Error', type: 'error', text: MESSAGES.ERROR.DigiCardNameExists });
+                                            console.log(error.response.data);
+                                            if (error.response.status === 401) {
+                                                console.log();
+                                                hideLoader();
+                                                // setIsClientExists(true);
+                                                sweetAlertHandler({ title: 'Error', type: 'error', text: MESSAGES.ERROR.DigiCardNameExists });
 
-                                    } else {
-                                        sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
-                                    }
-                                } else if (error.request) {
-                                    // The request was made but no response was received
-                                    console.log(error.request);
-                                    setDisableButton(false);
-                                    hideLoader();
-                                } else {
-                                    // Something happened in setting up the request that triggered an Error
-                                    console.log('Error', error.message);
-                                    setDisableButton(false);
-                                    hideLoader();
-                                }
-                            });
-                    }
-
-
-
-                    // }
-
-                }}
-            >
-                {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
-                    <form noValidate onSubmit={handleSubmit}>
-                        <Row>
-                            <Col sm={6}>
-                                <div className="form-group fill">
-                                    <label className="floating-label" htmlFor="unittitle">
-                                        <small className="text-danger">* </small>Unit Title
-                                    </label>
-                                    <input
-                                        className="form-control"
-                                        error={touched.unittitle && errors.unittitle}
-                                        name="unittitle"
-                                        onBlur={handleBlur}
-                                        onChange={handleChange}
-                                        type="text"
-                                        value={values.unittitle}
-                                        id='title'
-                                    />
-                                    {touched.unittitle && errors.unittitle && <small className="text-danger form-text">{errors.unittitle}</small>}
-                                </div>
-                                <OverlayTrigger placement="top" overlay={<Tooltip id={`tooltip-top`} style={{zIndex:1151 }}>The selected order will be the index of chapter!</Tooltip>}>
-                                    {defaultOptions && (<div className="form-group fill" style={{ position: "relative", zIndex: 20 }}>
-                                        <label className="floating-label" htmlFor="chapter">
-                                            <small className="text-danger">* </small> Chapter
-                                        </label>
-                                        {defaultOptions.length === 0 ? (
-
-                                            <Select
-                                                className="basic-single"
-                                                classNamePrefix="select"
-                                                name="color"
-                                                isMulti
-                                                closeMenuOnSelect={false}
-                                                onChange={getMultiOptions}
-                                                options={topicTitles}
-                                                placeholder="Select"
+                                            } else {
+                                                sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
+                                            }
+                                        } else if (error.request) {
+                                            // The request was made but no response was received
+                                            console.log(error.request);
+                                            setDisableButton(false);
+                                            hideLoader();
+                                        } else {
+                                            // Something happened in setting up the request that triggered an Error
+                                            console.log('Error', error.message);
+                                            setDisableButton(false);
+                                            hideLoader();
+                                        }
+                                    });
+                            }
+                        }}
+                    >
+                        {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
+                            <form noValidate onSubmit={handleSubmit}>
+                                <Row>
+                                    <Col sm={6}>
+                                        <div className="form-group fill">
+                                            <label className="floating-label" htmlFor="unittitle">
+                                                <small className="text-danger">* </small>Unit Title
+                                            </label>
+                                            <input
+                                                className="form-control"
+                                                error={touched.unittitle && errors.unittitle}
+                                                name="unittitle"
+                                                onBlur={handleBlur}
+                                                onChange={handleChange}
+                                                type="text"
+                                                value={values.unittitle}
+                                                id='title'
                                             />
+                                            {touched.unittitle && errors.unittitle && <small className="text-danger form-text">{errors.unittitle}</small>}
+                                        </div>
 
-                                        ) : (
-                                            <>
-                                                {defaultOptions && (
+
+
+
+                                        <div className="form-group fill">
+                                            <label className="floating-label" htmlFor="displayname">
+                                                <small className="text-danger">* </small>Display Name
+                                            </label>
+                                            <input
+                                                className="form-control"
+                                                error={touched.displayname && errors.displayname}
+                                                name="displayname"
+                                                onBlur={handleBlur}
+                                                onChange={handleChange}
+                                                type="text"
+                                                value={values.displayname}
+                                                id='title'
+                                            />
+                                            {touched.displayname && errors.displayname && <small className="text-danger form-text">{errors.displayname}</small>}
+                                        </div><br />
+
+
+
+                                        <OverlayTrigger placement="top" overlay={<Tooltip id={`tooltip-top`} style={{ zIndex: 1151 }}>The selected order will be the index of chapter!</Tooltip>}>
+                                            {defaultOptions && (<div className="form-group fill" style={{ position: "relative", zIndex: 20 }}>
+                                                <label className="floating-label" htmlFor="chapter">
+                                                    <small className="text-danger">* </small> Chapter
+                                                </label>
+                                                {defaultOptions.length === 0 ? (
 
                                                     <Select
-                                                        defaultValue={defaultOptions}
                                                         className="basic-single"
                                                         classNamePrefix="select"
                                                         name="color"
                                                         isMulti
                                                         closeMenuOnSelect={false}
-                                                        onChange={(e) => { getMultiOptions(e); setIsShown(true) }}
+                                                        onChange={getMultiOptions}
                                                         options={topicTitles}
                                                         placeholder="Select"
                                                     />
 
+                                                ) : (
+                                                    <>
+                                                        {defaultOptions && (
+
+                                                            <Select
+                                                                defaultValue={defaultOptions}
+                                                                className="basic-single"
+                                                                classNamePrefix="select"
+                                                                name="color"
+                                                                isMulti
+                                                                closeMenuOnSelect={false}
+                                                                onChange={(e) => { getMultiOptions(e); setIsShown(true) }}
+                                                                options={topicTitles}
+                                                                placeholder="Select"
+                                                            />
+
+                                                        )}
+                                                    </>
+
                                                 )}
-                                            </>
+                                                <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>Chapter Required</small>
+                                            </div>)}
+                                        </OverlayTrigger>
 
-                                        )}
-                                        <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>Chapter Required</small>
-                                    </div>)}
-                                </OverlayTrigger>
+                                        <div className="form-group fill" >
+                                            <Form.Label htmlFor="unit_description"> <small className="text-danger">* </small>Unit Description</Form.Label>
+                                            <Form.Control
+                                                as="textarea"
+                                                onChange={(e) => { handleChange(e); setIsShownDes(e) }}
+                                                rows="4"
+                                                onBlur={handleBlur}
+                                                name="unit_description"
+                                                value={values.unit_description}
+                                                type='text'
+                                            />
+                                            <br />
+                                            {touched.unit_description && errors.unit_description && <small className="text-danger form-text">{errors.unit_description}</small>}
+                                            <small className="text-danger form-text" style={{ display: isShownDes ? 'none' : 'block' }}>Unit Description Required</small>
+                                        </div>
+                                    </Col>
+                                </Row>
+                                <br></br>
+                                <Row>
+                                    <Col sm={10}>
+                                    </Col>
+                                    <div className="form-group fill float-end" >
+                                        <Col sm={12} className="center">
+                                            <Button
+                                                className="btn-block"
+                                                color="success"
+                                                size="large"
+                                                type="submit"
+                                                variant="success"
+                                            >
+                                                Submit
+                                            </Button>
+                                        </Col>
+                                    </div>
+                                </Row>
+                            </form>
+                        )}
 
-                                <div className="form-group fill" >
-                                    <Form.Label htmlFor="unit_description"> <small className="text-danger">* </small>Unit Description</Form.Label>
-                                    <Form.Control
-                                        as="textarea"
-                                        onChange={(e) => { handleChange(e); setIsShownDes(e) }}
-                                        rows="4"
-                                        onBlur={handleBlur}
-                                        name="unit_description"
-                                        value={values.unit_description}
-                                        type='text'
-                                    />
-                                    <br />
-                                    {touched.unit_description && errors.unit_description && <small className="text-danger form-text">{errors.unit_description}</small>}
-                                    <small className="text-danger form-text" style={{ display: isShownDes ? 'none' : 'block' }}>Unit Description Required</small>
-                                </div>
-                            </Col>
-                        </Row>
-                        <br></br>
-                        <Row>
-                            <Col sm={10}>
-                            </Col>
-                            <div className="form-group fill float-end" >
-                                <Col sm={12} className="center">
-                                    <Button
-                                        className="btn-block"
-                                        color="success"
-                                        size="large"
-                                        type="submit"
-                                        variant="success"
-                                    >
-                                        Submit
-                                    </Button>
-                                </Col>
-                            </div>
-                        </Row>
-                    </form>
-                )}
+                    </Formik>
+                </React.Fragment>
+            )}
+        </div>
 
-            </Formik>
-        </React.Fragment>
+
     )
 
 };

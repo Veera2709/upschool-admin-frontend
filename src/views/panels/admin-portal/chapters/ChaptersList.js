@@ -6,7 +6,7 @@ import withReactContent from 'sweetalert2-react-content';
 import Swal from 'sweetalert2';
 import { GlobalFilter } from './GlobalFilter';
 
-import { useTable, useSortBy, usePagination, useGlobalFilter } from 'react-table';
+import { useTable, useSortBy, usePagination, useGlobalFilter, useRowSelect } from 'react-table';
 
 import dynamicUrl from '../../../../helper/dynamicUrls';
 
@@ -20,9 +20,36 @@ import { useLocation } from "react-router-dom";
 import BasicSpinner from '../../../../helper/BasicSpinner';
 import AddChapter from './AddChapters';
 import EditChapter from './EditChapter';
+import { toggleMultiChapterStatus } from '../../../api/CommonApi';
 
 
 function Table({ columns, data, modalOpen }) {
+    const [isOpenAddChapter, setOpenAddChapter] = useState(false);
+    const initiallySelectedRows = React.useMemo(() => new Set(["1"]), []);
+    const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[3]);
+    const chapterStatus = pageLocation === "active-chapter" ? 'Active' : 'Archived';
+    const MySwal = withReactContent(Swal);
+    let history = useHistory();
+
+
+    const IndeterminateCheckbox = React.forwardRef(
+        ({ indeterminate, ...rest }, ref) => {
+            const defaultRef = React.useRef();
+            const resolvedRef = ref || defaultRef;
+
+            React.useEffect(() => {
+                resolvedRef.current.indeterminate = indeterminate;
+            }, [resolvedRef, indeterminate]);
+
+            return (
+                <>
+                    <input type="checkbox" ref={resolvedRef} {...rest} />
+                </>
+            );
+        }
+    );
+
+
     const {
         getTableProps,
         getTableBodyProps,
@@ -41,26 +68,95 @@ function Table({ columns, data, modalOpen }) {
         nextPage,
         previousPage,
         setPageSize,
-        state: { pageIndex, pageSize }
+        selectedFlatRows,
+        state: { pageIndex, pageSize, selectedRowPaths }
     } = useTable(
         {
             columns,
             data,
-            initialState: { pageIndex: 0, pageSize: 10 }
+            initialState: { pageIndex: 0, pageSize: 10, selectedRowPaths: initiallySelectedRows }
         },
         useGlobalFilter,
         useSortBy,
-        usePagination
+        usePagination,
+        useRowSelect,
+        (hooks) => {
+            hooks.visibleColumns.push((columns) => [
+                {
+                    id: "selection",
+                    Header: ({ getToggleAllPageRowsSelectedProps }) => (
+                        <div>
+                            <IndeterminateCheckbox {...getToggleAllPageRowsSelectedProps()} />
+                        </div>
+                    ),
+                    Cell: ({ row }) => (
+                        <div>
+                            <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
+                        </div>
+                    )
+                },
+                ...columns
+            ]);
+        } 
     );
 
-    const [isOpen, setIsOpen] = useState(false);
-    const [isOpenAddChapter, setOpenAddChapter] = useState(false);
-    let history = useHistory();
 
-    const addingChapter = () => {
-        history.push('/admin-portal/addChapters');
-        setIsOpen(true);
+    
+
+    const multiDelete = async (status) => {
+
+        console.log("selectedFlatRows", selectedFlatRows);
+        const chapterIds = [];
+        selectedFlatRows.map((item) => {
+            chapterIds.push(item.original.chapter_id)
+        })
+
+        if (chapterIds.length > 0) {
+
+            MySwal.fire({
+                title: 'Are you sure?',
+                text: `Confirm ${pageLocation === 'active-chapter' ? "deleting" : "restoring"} the selected Chapter(s)!`,
+                type: 'warning',
+                showCloseButton: true,
+                showCancelButton: true
+            }).then(async (willDelete) => {
+
+                if (willDelete.value) {
+
+                    var payload = {
+                        "chapter_status": status,
+                        "chapter_array": chapterIds
+                    }
+
+                    const ResultData = await toggleMultiChapterStatus(payload)
+                    if (ResultData.Error) {
+                        if (ResultData.Error.response.data == 'Invalid Token') {
+                            sessionStorage.clear();
+                            localStorage.clear();
+                            history.push('/auth/signin-1');
+                            window.location.reload();
+                        } else {
+                            return MySwal.fire('Error', ResultData.Error.response.data, 'error').then(() => {
+                                window.location.reload();
+                            });
+                        }
+                    } else {
+                        return MySwal.fire('success', `Selected Chapters have been ${status === 'Active' ? 'restored' : "deleted"} successfully!`, 'success').then(() => {
+                            window.location.reload();
+                        });
+                    }
+
+                }
+            });
+
+        } else {
+            return MySwal.fire('Sorry', 'No Chapters Selected!', 'warning').then(() => {
+                // window.location.reload();
+            });
+        }
     }
+
+
 
     return (
         <>
@@ -83,11 +179,31 @@ function Table({ columns, data, modalOpen }) {
                     Entries
                 </Col>
 
-                <Col className="d-flex justify-content-end">
+                <Col className="mb-3" style={{ display: 'contents' }}>
                     <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
-                    <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={() => { setOpenAddChapter(true) }}>
-                        <i className="feather icon-plus" /> Add Chapter
-                    </Button>
+
+                    {chapterStatus === 'Active' ? (
+                        <>
+                            <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={() => { setOpenAddChapter(true) }}>
+                                <i className="feather icon-plus" /> Add Chapter
+                            </Button>
+
+                            <Button variant="success" className='btn-sm btn-round has-ripple ml-2 btn btn-danger'
+                                onClick={() => { multiDelete("Archived") }}
+                                style={{ marginRight: '15px' }}
+                            >
+                                <i className="feather icon-trash-2" />  Multi Delete
+                            </Button>
+                        </>
+                    ) : (
+                        <Button className='btn-sm btn-round has-ripple ml-2 btn btn-primary'
+                            onClick={() => { multiDelete("Active") }}
+                            style={{ marginRight: '15px' }}
+                        >
+                            <i className="feather icon-plus" />   Multi Restore
+                        </Button>
+                    )}
+
                 </Col>
             </Row>
 
@@ -278,7 +394,6 @@ const ChaptersListChild = (props) => {
                             hideLoader();
                         }
                     });
-            } else {
             }
         });
     };
@@ -350,9 +465,13 @@ const ChaptersListChild = (props) => {
 
     const allChaptersList = () => {
         const chapterStatus = pageLocation === "active-chapter" ? 'Active' : 'Archived';
-
+        console.log("chapterStatus", chapterStatus);
         setIsLoading(true);
-        axios.post(dynamicUrl.fetchAllChapters, {}, {
+        axios.post(dynamicUrl.fetchChaptersBasedonStatus, {
+            data: {
+                chapter_status: chapterStatus
+            }
+        }, {
             headers: { Authorization: sessionStorage.getItem('user_jwt') }
         })
             .then((response) => {
@@ -361,20 +480,18 @@ const ChaptersListChild = (props) => {
                 let finalDataArray = [];
 
                 if (chapterStatus === 'Active') {
-                    let ActiveresultData = (dataResponse && dataResponse.filter(e => e.chapter_status === 'Active'))
-                    console.log("ActiveresultData", ActiveresultData);
-
-                    for (let index = 0; index < ActiveresultData.length; index++) {
-                        ActiveresultData[index].index_no = index + 1;
-                        ActiveresultData[index]['actions'] = (
+                    let resultData = (dataResponse && dataResponse.filter(e => e.chapter_status === 'Archived'))
+                    for (let index = 0; index < dataResponse.length; index++) {
+                        dataResponse[index].index_no = index + 1;
+                        dataResponse[index]['actions'] = (
                             <>
                                 <>
                                     <Button
                                         size="sm"
                                         className="btn btn-icon btn-rounded btn-primary"
-                                        // onClick={(e) => history.push(`/admin-portal/editChapter/${ActiveresultData[index].chapter_id}`)}
+                                        // onClick={(e) => history.push(`/admin-portal/editChapter/${dataResponse[index].chapter_id}`)}
                                         onClick={(e) => {
-                                            setChapterId(ActiveresultData[index].chapter_id);
+                                            setChapterId(dataResponse[index].chapter_id);
                                             setOpenEditChapter(true)
                                         }}
                                     >
@@ -385,7 +502,7 @@ const ChaptersListChild = (props) => {
                                     <Button
                                         size="sm"
                                         className="btn btn-icon btn-rounded btn-danger"
-                                        onClick={(e) => deleteChapter(ActiveresultData[index].chapter_id, ActiveresultData[index].chapter_title)}
+                                        onClick={(e) => deleteChapter(dataResponse[index].chapter_id, dataResponse[index].chapter_title)}
                                     >
                                         <i className="feather icon-trash-2 " /> &nbsp; Delete
                                     </Button>
@@ -393,20 +510,19 @@ const ChaptersListChild = (props) => {
                                 </>
                             </>
                         );
-                        finalDataArray.push(ActiveresultData[index]);
+                        finalDataArray.push(dataResponse[index]);
                         console.log('finalDataArray: ', finalDataArray)
                     }
                 } else {
-                    let resultData = (dataResponse && dataResponse.filter(e => e.chapter_status === 'Archived'))
-                    for (let index = 0; index < resultData.length; index++) {
-                        resultData[index].index_no = index + 1;
-                        resultData[index]['actions'] = (
+                    for (let index = 0; index < dataResponse.length; index++) {
+                        dataResponse[index].index_no = index + 1;
+                        dataResponse[index]['actions'] = (
                             <>
                                 <>
                                     <Button
                                         size="sm"
                                         className="btn btn-icon btn-rounded btn-primary"
-                                        onClick={(e) => restoreChapter(resultData[index].chapter_id, resultData[index].chapter_title)}
+                                        onClick={(e) => restoreChapter(dataResponse[index].chapter_id, dataResponse[index].chapter_title)}
                                     >
                                         <i className="feather icon-plus" /> &nbsp; Restore
                                     </Button>
@@ -414,12 +530,12 @@ const ChaptersListChild = (props) => {
                                 </>
                             </>
                         );
-                        finalDataArray.push(resultData[index]);
+                        finalDataArray.push(dataResponse[index]);
                         console.log('finalDataArray: ', finalDataArray)
                     }
                 }
                 setChapterData(finalDataArray);
-                console.log('resultData: ', finalDataArray);
+                console.log('dataResponse: ', finalDataArray);
                 setIsLoading(false);
 
             })
@@ -507,7 +623,10 @@ const ChaptersListChild = (props) => {
                                             <Col sm={12}>
                                                 <Card>
                                                     <Card.Header>
-                                                        <Card.Title as="h5">Chapters List</Card.Title>
+                                                        <Card.Title as="h5" className='d-flex justify-content-between'>
+                                                            <h5>Chapters List</h5>
+                                                            <h5>Total Entries :- {chapterData.length}</h5>
+                                                        </Card.Title>
                                                     </Card.Header>
                                                     <Card.Body>
                                                         <Table columns={columns} data={chapterData} />

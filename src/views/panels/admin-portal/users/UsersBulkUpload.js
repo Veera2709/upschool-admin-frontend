@@ -186,7 +186,11 @@ const UsersBulkUpload = ({ className, ...rest }) => {
 
             if (uploadResponse2.data.length === 0) {
 
-              sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.FilesUploaded });
+              sweetAlertHandler({
+                // title: MESSAGES.TTTLES.Goodjob,
+                type: 'success',
+                text: MESSAGES.SUCCESS.FilesUploaded
+              });
               hideLoader();
               setDisableButton(false);
 
@@ -204,7 +208,10 @@ const UsersBulkUpload = ({ className, ...rest }) => {
         }
       } else {
         console.log('No files uploaded');
-        sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.FilesUploaded });
+        sweetAlertHandler({ 
+          // title: MESSAGES.TTTLES.Goodjob, 
+          type: 'success',
+           text: MESSAGES.SUCCESS.FilesUploaded });
         hideLoader();
         setDisableButton(false);
       }

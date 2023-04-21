@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import Select from 'react-select';
+// import Select from 'react-select';
+import Select from "react-draggable-multi-select";
 import { useHistory } from 'react-router-dom';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
@@ -20,6 +21,8 @@ const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive 
     const [imgFile, setImgFile] = useState([]);
     const [subscription_active, setSubscription_active] = useState('');
     const [previousData, setPreviousData] = useState([]);
+    const [schoolLabel, setSchoolLabel] = useState('Upschool');
+    const [previousLabel, setPreviousLabel] = useState([])
     const [previousBoards, setPreviousBoards] = useState([]);
     const [selectedBoards, setSelectedBoards] = useState([]);
     const [copy, setCopy] = useState(false);
@@ -48,14 +51,26 @@ const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive 
         { value: 'IB', label: 'IB' }
     ];
 
+
+
+    const schoolLabelling = [
+        { value: 'Upschool', label: 'Upschool' },
+        { value: 'Co-brand', label: 'Co-brand' },
+        { value: 'White-label', label: 'White-label' }
+
+    ]
+
+
     const handleSelectChange = (event) => {
 
         setSchoolBoardErrMsg(false);
         console.log(event);
 
         let valuesArr = [];
-        for (let i = 0; i < event.length; i++) {
-            valuesArr.push(event[i].value)
+        if (event) {
+            for (let i = 0; i < event.length; i++) {
+                valuesArr.push(event[i].value)
+            }
         }
 
         console.log(valuesArr);
@@ -128,6 +143,8 @@ const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive 
                             valuesArr.push(individual_client_data.school_board[index])
                         }
                     }
+                    console.log("------------- data", individual_client_data.school_labelling);
+                    setPreviousLabel({ value: individual_client_data.school_labelling, label: individual_client_data.school_labelling });
 
                     console.log(boardArr);
 
@@ -174,6 +191,13 @@ const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive 
             });
 
     }, []);
+
+
+    const handleSchoolLabelling = (selectedSchoolLabel) => {
+        console.log("--------------", selectedSchoolLabel.value);
+        setSchoolLabel(selectedSchoolLabel.value)
+    }
+
 
 
     return (
@@ -248,6 +272,7 @@ const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive 
                                                             school_id: id,
                                                             school_name: values.schoolName,
                                                             school_board: selectedBoards,
+                                                            school_labelling: schoolLabel,
                                                             school_logo: updatedImage === "" ? previousData.school_logo : updatedImage,
                                                             subscription_active: subscription_active,
                                                             school_contact_info: {
@@ -354,7 +379,7 @@ const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive 
 
                                                                                 const MySwal = withReactContent(Swal);
                                                                                 MySwal.fire({
-                                                                                    title: MESSAGES.TTTLES.Goodjob,
+                                                                                    // title: MESSAGES.TTTLES.Goodjob,
                                                                                     type: 'success',
                                                                                     text: 'Your school has been updated!',
                                                                                     icon: 'success',
@@ -472,7 +497,7 @@ const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive 
                                                                             // setIsOpenEditSchool(false);
                                                                             const MySwal = withReactContent(Swal);
                                                                             MySwal.fire({
-                                                                                title: MESSAGES.TTTLES.Goodjob,
+                                                                                // title: MESSAGES.TTTLES.Goodjob,
                                                                                 type: 'success',
                                                                                 text: 'Your school has been updated!',
                                                                                 icon: 'success',
@@ -590,7 +615,7 @@ const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive 
 
                                                                         const MySwal = withReactContent(Swal);
                                                                         MySwal.fire({
-                                                                            title: MESSAGES.TTTLES.Goodjob,
+                                                                            // title: MESSAGES.TTTLES.Goodjob,
                                                                             type: 'success',
                                                                             text: 'Your school has been updated!',
                                                                             icon: 'success',
@@ -706,7 +731,7 @@ const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive 
                                                                         <div className="col">
                                                                             <label className="floating-label" >
                                                                                 <small className="text-danger">
-                                                                                    * </small>
+                                                                                </small>
                                                                                 Subscription Active
                                                                             </label>
                                                                         </div>
@@ -770,6 +795,59 @@ const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive 
                                                                 <img width={150} src={imgFile} alt="" className="img-fluid mb-3" />
                                                             </div>
                                                         </div>
+
+
+
+                                                        <div className="row">
+                                                            <div className='col-sm-6'>
+                                                                <div className="form-group fill">
+
+                                                                    <label className="floating-label">
+                                                                        <>School labelling </>
+
+                                                                    </label>
+
+
+                                                                    {console.log("HERE : ", previousLabel)}
+
+                                                                    <Select
+                                                                        defaultValue={previousLabel}
+                                                                        name="boards"
+                                                                        options={schoolLabelling}
+                                                                        className="basic-select"
+                                                                        classNamePrefix="Select"
+                                                                        onBlur={handleBlur}
+                                                                        // onChange={handleChange}
+                                                                        // onChange={event => handleSelectChange(event)}
+                                                                        onChange={(e) => {
+                                                                            handleSchoolLabelling(e)
+                                                                        }}
+                                                                    //     onChange={event => {
+                                                                    //         setSchoolBoardErrMsg(false);
+                                                                    //         handleSelectChange(event)
+                                                                    //     }}
+                                                                    // // onSelect={handleSelectBoard}
+                                                                    // onRemove={handleOnRemove}
+                                                                    />
+
+                                                                    {schoolBoardErrMsg && (
+                                                                        <small className="text-danger form-text">{'Please select School Board'}</small>
+                                                                    )}
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+
+
+
+
+
+
+
+
+
+
 
                                                         <div className="row">
                                                             <div className="col-md-6">
@@ -1106,7 +1184,7 @@ const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive 
                     </>
                 )
             }
-        </div>
+        </div >
     )
 }
 

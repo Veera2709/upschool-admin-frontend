@@ -5,6 +5,7 @@ import "../digicard/Styles/suneditor.min.css";
 import '../digicard/suneditor/dist/suneditor.css'
 import katex from 'katex'
 import 'katex/dist/katex.min.css'
+import fontList from "../../../../helper/fontList";
 
 import 'suneditor/dist/css/suneditor.min.css';
 // import EditTable from './Table'
@@ -52,26 +53,10 @@ function ArticleRTE({ setArticleSize, articleData, setArticleData, imageCount, s
         onChange={handleEditorChange}
         setDefaultStyle="height: 40vh; font-size: 16px;font-family: Cerebri Sans Pro;"
         setOptions={{
-          // imageUploadSizeLimit: "250000",
+          imageUploadSizeLimit: "25000000",
           katex: katex,
           plugins: plugins,
-          font: [
-            'Arial',
-            'tohoma',
-            'Courier New,Courier',
-            'Verdana',
-            'Trebuchet MS',
-            'Times New Roman',
-            'Georgia',
-            'Garamond',
-            'Courier New',
-            'Brush Script MT',
-            'Times',
-            'Helvetica',
-            'Geneva',
-            'Courier New',
-
-          ],
+          font: fontList,
           preview: [{ pathpath: '/admin-portal/admin-dashboard' }
           ],
           buttonList: [

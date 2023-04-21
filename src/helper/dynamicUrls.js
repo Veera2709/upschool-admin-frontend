@@ -1,4 +1,5 @@
-// const baseUrl = 'https://n4w2247vsi.execute-api.ap-south-1.amazonaws.com/dev/v1'; // Dev env URL
+// const baseUrl = 'https://w72a5si42a.execute-api.ap-south-1.amazonaws.com/dev/v1'; // Dev env URL
+//const baseUrl = 'https://n4w2247vsi.execute-api.ap-south-1.amazonaws.com/dev/v1'; // Old Dev env URL
 // const baseUrl = 'https://dssqy2gip2.execute-api.ap-south-1.amazonaws.com/testing/v1'; // testing env URL
 const baseUrl = process.env.REACT_APP_LAMBDA_URL;
 
@@ -10,38 +11,44 @@ const dynamicUrl = {
     loginWithOTP: baseUrl + '/loginWithOTP',
     validateOTP: baseUrl + '/validateOTP',
     logout: baseUrl + '/logout',
+    resetOrCreatePassword: baseUrl + '/resetOrCreatePassword',
 
     // Digicard
     insertDigicard: baseUrl + '/addDigiCard',
-    fetchAllDigiCards: baseUrl + '/fetchAllDigiCards',
+    fetchDigiCardsBasedonStatus: baseUrl + '/fetchDigiCardsBasedonStatus',
     fetchIndividualDigiCard: baseUrl + '/fetchIndividualDigiCard',
     editDigiCard: baseUrl + '/editDigiCard',
     toggleDigiCardStatus: baseUrl + '/toggleDigiCardStatus',
+    bulkToggleDigiCardStatuss: baseUrl + '/bulkToggleDigiCardStatus',
+    fetchDigiCardAudioContent: baseUrl + '/fetchDigiCardAudioContent',
 
     // School
     insertSchool: baseUrl + '/insertSchool',
-    fetchAllSchool: baseUrl + '/fetchAllSchool',
+    fetchArchivedSchool: baseUrl + '/fetchArchivedSchool',
     updateSchool: baseUrl + '/updateSchool',
     fetchIndividualSchool: baseUrl + '/fetchIndividualSchool',
     deleteSchool: baseUrl + '/deleteSchool',
     fetchUpschoolAndClientClasses: baseUrl + '/fetchUpschoolAndClientClasses',
     classSubscribe: baseUrl + '/classSubscribe',
     setQuizConfiguration: baseUrl + '/setQuizConfiguration',
+    schoolubscriptionFeatures: baseUrl + '/schoolubscriptionFeatures',
 
-    //chapters
-    fetchAllChapters: baseUrl + '/fetchAllChapters',
-    fetchAllTopics: baseUrl + '/fetchAllTopics',
+    // chapters
+    fetchChaptersBasedonStatus: baseUrl + '/fetchChaptersBasedonStatus',
+    fetchTopicsBasedonStatus: baseUrl + '/fetchTopicsBasedonStatus',
     addChapter: baseUrl + '/addChapter',
     toggleChapterStatus: baseUrl + '/toggleChapterStatus',
     fetchIndividualChapter: baseUrl + '/fetchIndividualChapter',
     editChapter: baseUrl + '/editChapter',
     fetchPreLearningTopics: baseUrl + '/fetchPreLearningTopics',
     fetchPostLearningTopics: baseUrl + '/fetchPostLearningTopics',
+    bulkToggleChapterStatus: baseUrl + '/bulkToggleChapterStatus',
 
     // Users
     fetchSchoolIdNames: baseUrl + '/fetchSchoolIdNames',
     fetchAllUsersData: baseUrl + '/fetchAllUsersData',
     fetchInactiveUsersData: baseUrl + '/fetchInactiveUsersData',
+    fetchActiveSchool: baseUrl + '/fetchActiveSchool',
     getUserBulkuploadUrl: baseUrl + '/getUserBulkuploadUrl',
     bulkUsersUpload: baseUrl + '/bulkUsersUpload',
     fetchIndividualUser: baseUrl + '/fetchIndividualUser',
@@ -53,13 +60,16 @@ const dynamicUrl = {
     fetchSubjectForClientClass: baseUrl + '/fetchSubjectForClientClass',
     mappingSubjectToTeacher: baseUrl + '/mappingSubjectToTeacher',
     fetchMappedSubjectForTeacher: baseUrl + '/fetchMappedSubjectForTeacher',
+    bulkToggleUsersStatus: baseUrl + "/bulkToggleUsersStatus",
+    bulkToggleCMSUserStatus: baseUrl + "/bulkToggleCMSUserStatus",
 
-    //units
-    fetchAllUnits: baseUrl + '/fetchAllUnits',
+    // units
+    fetchUnitsBasedonStatus: baseUrl + '/fetchUnitsBasedonStatus',
     addUnit: baseUrl + '/addUnit',
     fetchIndividualUnit: baseUrl + '/fetchIndividualUnit',
     editUnit: baseUrl + '/editUnit',
     toggleUnitStatus: baseUrl + '/toggleUnitStatus',
+    bulkToggleUnitStatus: baseUrl + '/bulkToggleUnitStatus',
 
     // Concepts
     fetchAllConcepts: baseUrl + '/fetchAllConcepts',
@@ -69,16 +79,16 @@ const dynamicUrl = {
     fetchIndividualConcept: baseUrl + '/fetchIndividualConcept',
     updateConcept: baseUrl + '/updateConcept',
     fetchAllTypesOfGroups: baseUrl + '/fetchAllTypesOfGroups',
+    bulkToggleConceptStatus: baseUrl + '/bulkToggleConceptStatus',
 
     // Topics
     addTopic: baseUrl + '/addTopic',
-    getTopics: baseUrl + '/fetchAllTopics',
     getIndividualTopic: baseUrl + '/fetchIndividualTopic',
     editTopic: baseUrl + '/editTopic',
     toggleTopicStatus: baseUrl + '/toggleTopicStatus',
     getConcepts: baseUrl + '/fetchAllConcepts',
     toggleSchoolStatus: baseUrl + '/toggleSchoolStatus',
-    fetchInactiveSchool: baseUrl + '/fetchInactiveSchool',
+    bulkToggleTopicStatus: baseUrl + '/bulkToggleTopicStatus',
 
     // Subjects
     fetchUnitAndSubject: baseUrl + '/fetchUnitAndSubject',
@@ -87,14 +97,16 @@ const dynamicUrl = {
     addSubject: baseUrl + '/addSubject',
     fetchIndividualSubject: baseUrl + '/fetchIndividualSubject',
     updateSubject: baseUrl + '/updateSubject',
+    bulkToggleSubjectStatus: baseUrl + '/bulkToggleSubjectStatus',
 
     // Classes
     addClass: baseUrl + '/addClass',
-    fetchAllClass: baseUrl + '/fetchAllClass',
+    fetchClassesBasedonStatus: baseUrl + '/fetchClassesBasedonStatus',
     fetchSubjectIdName: baseUrl + '/fetchSubjectIdName',
     fetchIndividualClass: baseUrl + '/fetchIndividualClass',
     toggleClassStatus: baseUrl + '/toggleClassStatus',
     editClass: baseUrl + '/editClass',
+    bulkToggleClassStatus: baseUrl + '/bulkToggleClassStatus',
 
     // Questions
     fetchIndividualQuestionData: baseUrl + '/fetchIndividualQuestionData',
@@ -102,6 +114,9 @@ const dynamicUrl = {
     editQuestion: baseUrl + '/editQuestion',
     fetchAllQuestionsData: baseUrl + '/fetchAllQuestionsData',
     addQuestions: baseUrl + '/addQuestions',
+    fetchAllQuestionCategories: baseUrl + '/fetchAllQuestionCategories',
+    fetchDisclaimersandCategories: baseUrl + '/fetchDisclaimersandCategories',
+    bulkToggleQuestionStatus: baseUrl + '/bulkToggleQuestionStatus',
 
     // Sections
     addSection: baseUrl + '/addSection',
@@ -120,12 +135,28 @@ const dynamicUrl = {
     editGroup: baseUrl + '/editGroup',
     fetchDigicardIdAndName: baseUrl + '/fetchDigicardIdAndName',
 
-    //CMS users
+    // CMS users
     addCMSUser: baseUrl + '/addCMSUser',
-    fetchCMSUsersBasedonRoleStatus  : baseUrl + '/fetchCMSUsersBasedonRoleStatus',
+    fetchCMSUsersBasedonRoleStatus: baseUrl + '/fetchCMSUsersBasedonRoleStatus',
     fetchIndividualCMSUser: baseUrl + '/fetchIndividualCMSUser',
     toggleCMSUserStatus: baseUrl + '/toggleCMSUserStatus',
     editCMSUser: baseUrl + '/editCMSUser',
+
+    // settings - Question Category
+    bulkToggleQuestionCategoryStatus: baseUrl + '/bulkToggleQuestionCategoryStatus',
+    fetchAllQuestionCategories: baseUrl + '/fetchAllQuestionCategories',
+    toggleQuestionCategoryStatus: baseUrl + '/toggleQuestionCategoryStatus',
+    addQuestionCategory: baseUrl + '/addQuestionCategory',
+    fetchIndividualCategory: baseUrl + '/fetchIndividualCategory',
+    updateQuestionCategory: baseUrl + '/updateQuestionCategory',
+
+    // settings - Question Disclaimer
+    bulkToggleQuestionDisclaimerStatus: baseUrl + '/bulkToggleQuestionDisclaimerStatus',
+    toggleQuestionDisclaimerStatus: baseUrl + '/toggleQuestionDisclaimerStatus',
+    fetchAllQuestionDisclaimers: baseUrl + '/fetchAllQuestionDisclaimers',
+    addQuestionDisclaimer: baseUrl + '/addQuestionDisclaimer',
+    fetchIndividualDisclaimer: baseUrl + '/fetchIndividualDisclaimer',
+    updateQuestionDisclaimer: baseUrl + '/updateQuestionDisclaimer',
 }
 
 export default dynamicUrl;
