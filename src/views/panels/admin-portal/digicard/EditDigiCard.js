@@ -881,7 +881,7 @@ const EditDigiCard = () => {
                                                                 Save And Preview
                                                             </Button>
                                                         </Col>
-                                                        <Col>
+                                                        {/* <Col>
                                                             <Button
                                                                 className="btn-block"
                                                                 color="success"
@@ -895,7 +895,7 @@ const EditDigiCard = () => {
                                                             >
                                                                 Save As New
                                                             </Button>
-                                                        </Col>
+                                                        </Col> */}
                                                         <Col>
                                                             <Button
                                                                 className="btn-block"
