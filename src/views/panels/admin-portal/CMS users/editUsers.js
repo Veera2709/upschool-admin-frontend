@@ -22,7 +22,7 @@ import CmsRoles from './cmsRoles';
 
 
 
-const AddUsers = ({ setOpenAddTopic }) => {
+const AddUsers = () => {
     let history = useHistory();
     const MySwal = withReactContent(Swal);
     const { id } = useParams();
@@ -436,7 +436,7 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                                                 }}
                                                                 type="date"
                                                                 value={isDate && isDate}
-                                                max={today}
+                                                                max={today}
 
 
                                                             />
@@ -577,7 +577,7 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                                                     <small className="text-danger form-text">Entity Not selected!</small>
                                                                 )}
                                                                 <br />
-                                                                <button type='button' onClick={(e)=>{addOneRole(e);setIsSelected(false)}}>+</button>
+                                                                <button type='button' onClick={(e) => { addOneRole(e); setIsSelected(false) }}>+</button>
                                                             </Col>
 
                                                         </Row>

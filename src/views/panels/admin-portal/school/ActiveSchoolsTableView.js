@@ -424,14 +424,16 @@ const SchoolChild = (props) => {
                                             <Col sm={12}>
                                                 <Card>
                                                     <Card.Header>
-                                                        <Card.Title as="h5">Schools List</Card.Title>
+                                                        <Card.Title as="h5" className='d-flex justify-content-between'>
+                                                            <h5>Schools List</h5>
+                                                            <h5>Total Entries :- {schoolData.length}</h5>
+                                                        </Card.Title>
+                                                        
                                                     </Card.Header>
                                                     <Card.Body>
                                                         <Table columns={columns} data={schoolData} modalOpen={openHandler} />
                                                     </Card.Body>
                                                 </Card>
-
-
                                                 <Modal dialogClassName="my-modal" show={isOpen} onHide={() => setIsOpen(false)}>
                                                     <Modal.Header closeButton>
                                                         <Modal.Title as="h5">Add School</Modal.Title>

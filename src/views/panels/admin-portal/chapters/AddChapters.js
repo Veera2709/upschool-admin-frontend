@@ -240,6 +240,7 @@ const AddChapter = ({ setOpenAddChapter }) => {
                                 }
                             })
                             .catch((error) => {
+                                setOpenAddChapter(false)
                                 if (error.response) {
                                     // Request made and server responded
                                     console.log(error.response.data);

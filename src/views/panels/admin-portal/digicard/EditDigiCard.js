@@ -871,15 +871,15 @@ const EditDigiCard = () => {
                                                 <Col>
                                                     <Row>
                                                         <Col>
-                                                            <Button
+                                                            {/* <Button
                                                                 className="btn-block"
                                                                 color="success"
                                                                 size="large"
                                                                 variant="success"
                                                                 onClick={previewData}
                                                             >
-                                                                preview
-                                                            </Button>
+                                                                Save And Preview
+                                                            </Button> */}
                                                         </Col>
                                                         <Col>
                                                             <Button

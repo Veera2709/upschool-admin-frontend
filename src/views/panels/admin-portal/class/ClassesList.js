@@ -540,7 +540,10 @@ const StandardList = (props) => {
                       <Col sm={12}>
                         <Card>
                           <Card.Header>
-                            <Card.Title as="h5">Class List</Card.Title>
+                            <Card.Title as="h5" className='d-flex justify-content-between'>
+                              <h5> Class List</h5>
+                              <h5>Total Entries :- {classData.length}</h5>
+                            </Card.Title>
                           </Card.Header>
                           <Card.Body>
                             <Table columns={columns} data={classData} />
