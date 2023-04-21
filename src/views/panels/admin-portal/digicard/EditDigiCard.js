@@ -871,7 +871,7 @@ const EditDigiCard = () => {
                                                 <Col>
                                                     <Row>
                                                         <Col>
-                                                            <Button
+                                                            {/* <Button
                                                                 className="btn-block"
                                                                 color="success"
                                                                 size="large"
@@ -879,9 +879,9 @@ const EditDigiCard = () => {
                                                                 onClick={previewData}
                                                             >
                                                                 Save And Preview
-                                                            </Button>
+                                                            </Button> */}
                                                         </Col>
-                                                        {/* <Col>
+                                                        <Col>
                                                             <Button
                                                                 className="btn-block"
                                                                 color="success"
@@ -895,7 +895,7 @@ const EditDigiCard = () => {
                                                             >
                                                                 Save As New
                                                             </Button>
-                                                        </Col> */}
+                                                        </Col>
                                                         <Col>
                                                             <Button
                                                                 className="btn-block"
