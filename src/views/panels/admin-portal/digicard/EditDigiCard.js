@@ -878,7 +878,7 @@ const EditDigiCard = () => {
                                                                 variant="success"
                                                                 onClick={previewData}
                                                             >
-                                                                    
+                                                                Save And Preview
                                                             </Button>
                                                         </Col>
                                                         <Col>
