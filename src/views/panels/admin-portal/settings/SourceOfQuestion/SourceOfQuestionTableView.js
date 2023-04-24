@@ -750,7 +750,10 @@ const SourceOfQuestionTableView = ({ userStatus }) => {
                                             <Col sm={12}>
                                                 <Card>
                                                     <Card.Header>
-                                                        <Card.Title as="h5">Source of Question List</Card.Title>
+                                                        <Card.Title as="h5" className='d-flex justify-content-between'>
+                                                            <h5>Source of Question List</h5>
+                                                            <h5>Total Entries :- {sourceOfQuestion.length}</h5>
+                                                        </Card.Title>
                                                     </Card.Header>
                                                     {
                                                         _showLoader === true && (

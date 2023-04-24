@@ -750,7 +750,10 @@ const CognitiveSkillsTableView = ({ userStatus }) => {
                                             <Col sm={12}>
                                                 <Card>
                                                     <Card.Header>
-                                                        <Card.Title as="h5">Cognitive Skills List</Card.Title>
+                                                        <Card.Title as="h5" className='d-flex justify-content-between'>
+                                                            <h5>Cognitive Skills List</h5>
+                                                            <h5>Total Entries :- {cognitiveSkills.length}</h5>
+                                                        </Card.Title>
                                                     </Card.Header>
                                                     {
                                                         _showLoader === true && (
