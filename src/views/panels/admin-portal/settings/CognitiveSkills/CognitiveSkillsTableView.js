@@ -9,35 +9,37 @@ import { useTable, useSortBy, usePagination, useGlobalFilter, useRowSelect } fro
 import MESSAGES from '../../../../../helper/messages';
 import { GlobalFilter } from '../../../../common-ui-components/tables/GlobalFilter';
 import useFullPageLoader from '../../../../../helper/useFullPageLoader';
-import AddQuestionCategory from './AddQuestionsCategory';
-import EditQuestionsCategory from './EditQuestionsCategory';
+import AddCognitiveSkills from './AddCognitiveSkills';
+import EditCognitiveSkills from './EditCognitiveSkills';
+
+
 import BasicSpinner from '../../../../../helper/BasicSpinner';
 import {
-    toggleMultiQuestionCategoryStatus,
-    toggleQuestionCategoryStatus,
-    fetchAllQuestionCategories
+    bulkToggleCognitiveSkillStatus,
+    toggleCognitiveSkillStatus,
+    fetchSkillsBasedonStatus
 } from '../../../../api/CommonApi';
 
 function Table({ columns, data }) {
 
     const history = useHistory();
     const [isLoading, setIsLoading] = useState(false);
-    const [questionCategoryData, setQuestionCategoryData] = useState([]);
-    const [_questionCategoryID, _setQuestionCategoryID] = useState('');
+    const [cognitiveSkills, setCognitiveSkills] = useState([]);
+    const [cognitiveSkillsID, setCognitiveSkillsID] = useState('');
     const [loader, showLoader, hideLoader] = useFullPageLoader();
     const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[3]);
-    const [editQuestionCategoryID, setEditQuestionCategoryID] = useState('');
+    const [editCognitiveSkillsID, setEditCognitiveSkillsID] = useState('');
 
-    const [isOpenAddQuestionCategory, setIsOpenAddQuestionCategory] = useState(false);
-    const [isOpenEditQuestionCategory, setIsOpenEditQuestionCategory] = useState(false);
+    const [isOpenAddCognitiveSkills, setIsOpenAddCognitiveSkills] = useState(false);
+    const [isOpenEditCognitiveSkills, setIsOpenEditCognitiveSkills] = useState(false);
 
     const MySwal = withReactContent(Swal);
     console.log(pageLocation);
     useEffect(() => {
-        fetchAllQuestionCategoryData();
+        fetchAllCognitiveSkillsData();
     }, []);
 
-    const sweetConfirmHandler = (alert, category_id, updateStatus) => {
+    const sweetConfirmHandler = (alert, cognitive_id, updateStatus) => {
 
         MySwal.fire({
             title: alert.title,
@@ -48,31 +50,31 @@ function Table({ columns, data }) {
         }).then((willDelete) => {
             if (willDelete.value) {
                 showLoader();
-                deleteQuestionCategory(category_id, updateStatus);
+                deleteCognitiveSkills(cognitive_id, updateStatus);
             }
         });
     };
 
-    const saveQuestionCategoryIdDelete = (e, category_id, updateStatus) => {
+    const saveQuestionCategoryIdDelete = (e, cognitive_id, updateStatus) => {
         e.preventDefault();
 
-        pageLocation === 'active-questionCategory' ? (
-            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: MESSAGES.INFO.ABLE_TO_RECOVER }, category_id, updateStatus)
+        pageLocation === 'active-cognitiveSkills' ? (
+            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: MESSAGES.INFO.ABLE_TO_RECOVER }, cognitive_id, updateStatus)
         ) : (
-            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: 'This will restore the Question Category!' }, category_id, updateStatus)
+            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: 'This will restore the Question Category!' }, cognitive_id, updateStatus)
         )
 
     };
 
-    const fetchAllQuestionCategoryData = async () => {
+    const fetchAllCognitiveSkillsData = async () => {
 
         setIsLoading(true);
         showLoader();
         console.log(pageLocation);
 
-        const questionCategoryStatus = pageLocation === 'active-questionCategory' ? 'Active' : 'Archived';
+        const cognitiveStatus = pageLocation === 'active-cognitiveSkills' ? 'Active' : 'Archived';
 
-        const ResultData = await fetchAllQuestionCategories({ category_status: questionCategoryStatus });
+        const ResultData = await fetchSkillsBasedonStatus({ cognitive_status: cognitiveStatus });
 
         if (ResultData.Error) {
 
@@ -107,14 +109,14 @@ function Table({ columns, data }) {
                     responseData[index]['action'] = (
                         <>
                             {console.log(pageLocation)}
-                            {pageLocation === 'active-questionCategory' ? (
+                            {pageLocation === 'active-cognitiveSkills' ? (
                                 <>
                                     <Button
                                         size="sm"
                                         className="btn btn-icon btn-rounded btn-info"
                                         onClick={(e) => {
-                                            setEditQuestionCategoryID(responseData[index].category_id);
-                                            setIsOpenEditQuestionCategory(true);
+                                            setEditCognitiveSkillsID(responseData[index].cognitive_id);
+                                            setIsOpenEditCognitiveSkills(true);
                                         }}
                                     >
                                         <i className="feather icon-edit" /> &nbsp; Edit
@@ -123,7 +125,7 @@ function Table({ columns, data }) {
                                     <Button
                                         size="sm"
                                         className="btn btn-icon btn-rounded btn-danger"
-                                        onClick={(e) => saveQuestionCategoryIdDelete(e, responseData[index].category_id, 'Archived')}
+                                        onClick={(e) => saveQuestionCategoryIdDelete(e, responseData[index].cognitive_id, 'Archived')}
                                     >
                                         <i className="feather icon-trash-2" /> &nbsp; Delete
                                     </Button>
@@ -134,7 +136,7 @@ function Table({ columns, data }) {
                                     <Button
                                         size="sm"
                                         className="btn btn-icon btn-rounded btn-primary"
-                                        onClick={(e) => saveQuestionCategoryIdDelete(e, responseData[index].category_id, 'Active')}
+                                        onClick={(e) => saveQuestionCategoryIdDelete(e, responseData[index].cognitive_id, 'Active')}
                                     >
                                         <i className="feather icon-plus" /> &nbsp;Restore
                                     </Button>
@@ -148,7 +150,7 @@ function Table({ columns, data }) {
                 }
 
                 console.log(finalDataArray);
-                setQuestionCategoryData(finalDataArray);
+                setCognitiveSkills(finalDataArray);
                 setIsLoading(false);
             }
 
@@ -157,22 +159,22 @@ function Table({ columns, data }) {
     };
 
 
-    const handleAddQuestionCategory = (e) => {
+    const handleAddSourceOfQuestion = (e) => {
 
         console.log("No Question Category, add Question Category");
         e.preventDefault();
-        setIsOpenAddQuestionCategory(true);
+        setIsOpenAddCognitiveSkills(true);
     }
 
-    const deleteQuestionCategory = async (category_id, updateStatus) => {
+    const deleteCognitiveSkills = async (cognitive_id, updateStatus) => {
         const values = {
-            category_id: category_id,
-            category_status: updateStatus
+            cognitive_id: cognitive_id,
+            cognitive_status: updateStatus
         };
 
         console.log(values);
 
-        const ResultData = await toggleQuestionCategoryStatus(values);
+        const ResultData = await toggleCognitiveSkillStatus(values);
         if (ResultData.Error) {
             if (ResultData.Error.response.data == 'Invalid Token') {
                 sessionStorage.clear();
@@ -188,12 +190,12 @@ function Table({ columns, data }) {
 
             hideLoader()
             updateStatus === 'Active' ? (
-                MySwal.fire('', MESSAGES.INFO.QUESTION_CATEGORY_RESTORED, 'success')
+                MySwal.fire('', MESSAGES.INFO.COGNITIVE_RESTORED, 'success')
 
             ) : (
-                MySwal.fire('', MESSAGES.INFO.QUESTION_CATEGORY_DELETED, 'success')
+                MySwal.fire('', MESSAGES.INFO.COGNITIVE_DELETED, 'success')
             )
-            fetchAllQuestionCategoryData();
+            fetchAllCognitiveSkillsData();
         }
     };
 
@@ -267,17 +269,17 @@ function Table({ columns, data }) {
     const multiDelete = async (status) => {
 
         console.log("selectedFlatRows", selectedFlatRows);
-        const questionCategoryIDs = [];
+        const cognitiveSkillsIDs = [];
 
         selectedFlatRows.map((item) => {
-            questionCategoryIDs.push(item.original.category_id)
+            cognitiveSkillsIDs.push(item.original.cognitive_id)
         })
 
-        if (questionCategoryIDs.length > 0) {
+        if (cognitiveSkillsIDs.length > 0) {
 
             MySwal.fire({
                 title: 'Are you sure?',
-                text: `Confirm ${pageLocation === 'active-questionCategory' ? "deleting" : "restoring"} the selected Question Categories!`,
+                text: `Confirm ${pageLocation === 'active-cognitiveSkills' ? "deleting" : "restoring"} the selected Question Categories!`,
                 type: 'warning',
                 showCloseButton: true,
                 showCancelButton: true
@@ -288,11 +290,11 @@ function Table({ columns, data }) {
                     showLoader();
 
                     var payload = {
-                        "category_status": status,
-                        "category_array": questionCategoryIDs
+                        "cognitive_status": status,
+                        "cognitive_skill_array": cognitiveSkillsIDs
                     }
 
-                    const ResultData = await toggleMultiQuestionCategoryStatus(payload);
+                    const ResultData = await bulkToggleCognitiveSkillStatus(payload);
                     if (ResultData.Error) {
                         if (ResultData.Error.response.data == 'Invalid Token') {
                             sessionStorage.clear();
@@ -341,16 +343,16 @@ function Table({ columns, data }) {
                 <Col className="d-flex justify-content-end">
                     <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
 
-                    {pageLocation === 'active-questionCategory' ? (
+                    {pageLocation === 'active-cognitiveSkills' ? (
                         <>
                             <Button
                                 variant="success"
                                 className="btn-sm btn-round has-ripple ml-2"
                                 onClick={(e) => {
-                                    handleAddQuestionCategory(e);
+                                    handleAddSourceOfQuestion(e);
                                 }}
                             >
-                                <i className="feather icon-plus" /> Add Question Categories
+                                <i className="feather icon-plus" /> Add Cognitive Skills
                             </Button>
 
                             <Button
@@ -453,34 +455,34 @@ function Table({ columns, data }) {
             <Modal
                 size="sm"
                 dialogClassName="my-modal"
-                show={isOpenAddQuestionCategory}
-                onHide={() => setIsOpenAddQuestionCategory(false)}
+                show={isOpenAddCognitiveSkills}
+                onHide={() => setIsOpenAddCognitiveSkills(false)}
             >
                 <Modal.Header closeButton>
-                    <Modal.Title as="h5">Add Questions Category</Modal.Title>
+                    <Modal.Title as="h5">Add Cognitive Skills</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <AddQuestionCategory setIsOpenAddQuestionCategory={setIsOpenAddQuestionCategory} />
+                    <AddCognitiveSkills setIsOpenAddCognitiveSkills={setIsOpenAddCognitiveSkills} />
                 </Modal.Body>
             </Modal>
 
             <Modal
                 size="sm"
                 dialogClassName="my-modal"
-                show={isOpenEditQuestionCategory}
-                onHide={() => setIsOpenEditQuestionCategory(false)}>
+                show={isOpenEditCognitiveSkills}
+                onHide={() => setIsOpenEditCognitiveSkills(false)}>
                 <Modal.Header closeButton>
-                    <Modal.Title as="h5">Edit Questions Category</Modal.Title>
+                    <Modal.Title as="h5">Edit Cognitive Skills</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <EditQuestionsCategory editQuestionCategoryID={editQuestionCategoryID} setIsOpenEditQuestionCategory={setIsOpenEditQuestionCategory} />
+                    <EditCognitiveSkills editCognitiveSkillsID={editCognitiveSkillsID} setIsOpenEditCognitiveSkills={setIsOpenEditCognitiveSkills} />
                 </Modal.Body>
             </Modal>
         </>
     );
 }
 
-const QuestionCategoryTableView = ({ userStatus }) => {
+const CognitiveSkillsTableView = ({ userStatus }) => {
 
     const columns = React.useMemo(
         () => [
@@ -489,8 +491,8 @@ const QuestionCategoryTableView = ({ userStatus }) => {
                 accessor: 'id'
             },
             {
-                Header: 'Questions Category Name',
-                accessor: 'category_name'
+                Header: 'Cognitive Name',
+                accessor: 'cognitive_name'
             },
             {
                 Header: 'Options',
@@ -502,23 +504,23 @@ const QuestionCategoryTableView = ({ userStatus }) => {
 
     const history = useHistory();
     const [isLoading, setIsLoading] = useState(false);
-    const [questionCategoryData, setQuestionCategoryData] = useState([]);
-    const [_questionCategoryID, _setQuestionCategoryID] = useState('');
+    const [cognitiveSkills, setCognitiveSkills] = useState([]);
+    const [cognitiveSkillsID, setCognitiveSkillsID] = useState('');
     const [loader, showLoader, hideLoader] = useFullPageLoader();
     const [_showLoader, _setShowLoader] = useState(false);
     const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[3]);
 
-    const [isOpenAddQuestionCategory, setIsOpenAddQuestionCategory] = useState(false);
-    const [isOpenEditQuestionCategory, setIsOpenEditQuestionCategory] = useState(false);
-    const [editQuestionCategoryID, setEditQuestionCategoryID] = useState('');
+    const [isOpenAddCognitiveSkills, setIsOpenAddCognitiveSkills] = useState(false);
+    const [isOpenEditCognitiveSkills, setIsOpenEditCognitiveSkills] = useState(false);
+    const [editCognitiveSkillsID, setEditCognitiveSkillsID] = useState('');
 
     const MySwal = withReactContent(Swal);
 
     useEffect(() => {
-        fetchAllQuestionCategoryData();
+        fetchAllCognitiveSkillsData();
     }, []);
 
-    const sweetConfirmHandler = (alert, category_id, updateStatus) => {
+    const sweetConfirmHandler = (alert, cognitive_id, updateStatus) => {
 
         MySwal.fire({
 
@@ -532,32 +534,32 @@ const QuestionCategoryTableView = ({ userStatus }) => {
             if (willDelete.value) {
                 showLoader();
                 _setShowLoader(true);
-                deleteQuestionCategory(category_id, updateStatus);
+                deleteCognitiveSkills(cognitive_id, updateStatus);
             }
         });
     };
 
-    const saveQuestionCategoryIdDelete = (e, category_id, updateStatus) => {
+    const saveQuestionCategoryIdDelete = (e, cognitive_id, updateStatus) => {
         e.preventDefault();
 
-        pageLocation === 'active-questionCategory' ? (
-            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: MESSAGES.INFO.ABLE_TO_RECOVER }, category_id, updateStatus)
+        pageLocation === 'active-cognitiveSkills' ? (
+            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: MESSAGES.INFO.ABLE_TO_RECOVER }, cognitive_id, updateStatus)
         ) : (
-            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: 'This will restore the Question Category!' }, category_id, updateStatus)
+            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: 'This will restore the Question Category!' }, cognitive_id, updateStatus)
         );
 
     };
 
-    const fetchAllQuestionCategoryData = async () => {
+    const fetchAllCognitiveSkillsData = async () => {
 
         setIsLoading(true);
         showLoader();
         _setShowLoader(true);
         console.log(pageLocation);
 
-        const questionCategoryStatus = pageLocation === 'active-questionCategory' ? 'Active' : 'Archived';
+        const cognitiveStatus = pageLocation === 'active-cognitiveSkills' ? 'Active' : 'Archived';
 
-        const ResultData = await fetchAllQuestionCategories({ category_status: questionCategoryStatus });
+        const ResultData = await fetchSkillsBasedonStatus({ cognitive_status: cognitiveStatus });
 
         if (ResultData.Error) {
 
@@ -597,15 +599,15 @@ const QuestionCategoryTableView = ({ userStatus }) => {
                     responseData[index]['action'] = (
                         <>
                             {console.log(pageLocation)}
-                            {pageLocation === 'active-questionCategory' ? (
+                            {pageLocation === 'active-cognitiveSkills' ? (
 
                                 <>
                                     <Button
                                         size="sm"
                                         className="btn btn-icon btn-rounded btn-info"
                                         onClick={(e) => {
-                                            setEditQuestionCategoryID(responseData[index].category_id);
-                                            setIsOpenEditQuestionCategory(true);
+                                            setEditCognitiveSkillsID(responseData[index].cognitive_id);
+                                            setIsOpenEditCognitiveSkills(true);
                                         }}>
                                         <i className="feather icon-edit" /> &nbsp; Edit
                                     </Button>{' '}
@@ -613,7 +615,7 @@ const QuestionCategoryTableView = ({ userStatus }) => {
                                     <Button
                                         size="sm"
                                         className="btn btn-icon btn-rounded btn-danger"
-                                        onClick={(e) => saveQuestionCategoryIdDelete(e, responseData[index].category_id, 'Archived')}
+                                        onClick={(e) => saveQuestionCategoryIdDelete(e, responseData[index].cognitive_id, 'Archived')}
                                     >
                                         <i className="feather icon-trash-2" /> &nbsp; Delete
                                     </Button>
@@ -625,7 +627,7 @@ const QuestionCategoryTableView = ({ userStatus }) => {
                                     <Button
                                         size="sm"
                                         className="btn btn-icon btn-round btn-primary"
-                                        onClick={(e) => saveQuestionCategoryIdDelete(e, responseData[index].category_id, 'Active')}
+                                        onClick={(e) => saveQuestionCategoryIdDelete(e, responseData[index].cognitive_id, 'Active')}
                                     >
                                         <i className="feather icon-plus" /> &nbsp;Restore
                                     </Button>
@@ -639,7 +641,7 @@ const QuestionCategoryTableView = ({ userStatus }) => {
                 }
 
                 console.log(finalDataArray);
-                setQuestionCategoryData(finalDataArray);
+                setCognitiveSkills(finalDataArray);
                 setIsLoading(false);
 
             }
@@ -648,22 +650,22 @@ const QuestionCategoryTableView = ({ userStatus }) => {
 
     };
 
-    const handleAddQuestionCategory = (e) => {
+    const handleAddSourceOfQuestion = (e) => {
 
         e.preventDefault();
-        setIsOpenAddQuestionCategory(true);
+        setIsOpenAddCognitiveSkills(true);
     }
 
-    const deleteQuestionCategory = async (category_id, updateStatus) => {
+    const deleteCognitiveSkills = async (cognitive_id, updateStatus) => {
 
         const values = {
-            category_id: category_id,
-            category_status: updateStatus
+            cognitive_id: cognitive_id,
+            cognitive_status: updateStatus
         };
 
         console.log(values);
 
-        const ResultData = await toggleQuestionCategoryStatus(values);
+        const ResultData = await toggleCognitiveSkillStatus(values);
         if (ResultData.Error) {
             if (ResultData.Error.response.data == 'Invalid Token') {
                 sessionStorage.clear();
@@ -680,12 +682,12 @@ const QuestionCategoryTableView = ({ userStatus }) => {
             hideLoader();
             _setShowLoader(false);
             updateStatus === 'Active' ? (
-                MySwal.fire('', MESSAGES.INFO.QUESTION_CATEGORY_RESTORED, 'success')
+                MySwal.fire('', MESSAGES.INFO.COGNITIVE_RESTORED, 'success')
 
             ) : (
-                MySwal.fire('', MESSAGES.INFO.QUESTION_CATEGORY_DELETED, 'success')
+                MySwal.fire('', MESSAGES.INFO.COGNITIVE_DELETED, 'success')
             )
-            fetchAllQuestionCategoryData();
+            fetchAllCognitiveSkillsData();
         }
     };
 
@@ -699,23 +701,23 @@ const QuestionCategoryTableView = ({ userStatus }) => {
 
                     <>
                         {
-                            questionCategoryData.length <= 0 ? (
+                            cognitiveSkills.length <= 0 ? (
                                 <>
                                     {
-                                        pageLocation === 'active-questionCategory' ? (
+                                        pageLocation === 'active-cognitiveSkills' ? (
                                             < React.Fragment >
                                                 <div>
-                                                    <h3 style={{ textAlign: 'center' }}>No {pageLocation === "active-questionCategory" ? 'Active Question Categories' : 'Archived Question Categories'} Found</h3>
+                                                    <h3 style={{ textAlign: 'center' }}>No {pageLocation === "active-cognitiveSkills" ? 'Active Question Categories' : 'Archived Question Categories'} Found</h3>
                                                     <div className="form-group fill text-center">
                                                         <br></br>
                                                         <Button
                                                             variant="success"
                                                             className="btn-sm btn-round has-ripple ml-2"
                                                             onClick={(e) => {
-                                                                handleAddQuestionCategory(e);
+                                                                handleAddSourceOfQuestion(e);
                                                             }}
                                                         >
-                                                            <i className="feather icon-plus" /> Add Question Categories
+                                                            <i className="feather icon-plus" /> Add Cognitive Skills
                                                         </Button>
                                                     </div>
                                                 </div>
@@ -723,19 +725,19 @@ const QuestionCategoryTableView = ({ userStatus }) => {
                                                 <Modal
                                                     size="sm"
                                                     dialogClassName="my-modal"
-                                                    show={isOpenAddQuestionCategory}
-                                                    onHide={() => setIsOpenAddQuestionCategory(false)}
+                                                    show={isOpenAddCognitiveSkills}
+                                                    onHide={() => setIsOpenAddCognitiveSkills(false)}
                                                 >
                                                     <Modal.Header closeButton>
-                                                        <Modal.Title as="h5">Add Questions Category</Modal.Title>
+                                                        <Modal.Title as="h5">Add Cognitive Skills</Modal.Title>
                                                     </Modal.Header>
                                                     <Modal.Body>
-                                                        <AddQuestionCategory setIsOpenAddQuestionCategory={setIsOpenAddQuestionCategory} />
+                                                        <AddCognitiveSkills setIsOpenAddCognitiveSkills={setIsOpenAddCognitiveSkills} />
                                                     </Modal.Body>
                                                 </Modal>
                                             </React.Fragment>
                                         ) : (
-                                            <h3 style={{ textAlign: 'center' }}>No {pageLocation === "active-questionCategory" ? 'Active Question Categories' : 'Archived Question Categories'} Found</h3>
+                                            <h3 style={{ textAlign: 'center' }}>No {pageLocation === "active-cognitiveSkills" ? 'Active Question Categories' : 'Archived Question Categories'} Found</h3>
                                         )
                                     }
 
@@ -749,8 +751,8 @@ const QuestionCategoryTableView = ({ userStatus }) => {
                                                 <Card>
                                                     <Card.Header>
                                                         <Card.Title as="h5" className='d-flex justify-content-between'>
-                                                            <h5>Questions Category List</h5>
-                                                            <h5>Total Entries :- {questionCategoryData.length}</h5>
+                                                            <h5>Cognitive Skills List</h5>
+                                                            <h5>Total Entries :- {cognitiveSkills.length}</h5>
                                                         </Card.Title>
                                                     </Card.Header>
                                                     {
@@ -759,7 +761,7 @@ const QuestionCategoryTableView = ({ userStatus }) => {
                                                         )
                                                     }
                                                     <Card.Body>
-                                                        <Table columns={columns} data={questionCategoryData} />
+                                                        <Table columns={columns} data={cognitiveSkills} />
                                                     </Card.Body>
                                                 </Card>
 
@@ -770,28 +772,28 @@ const QuestionCategoryTableView = ({ userStatus }) => {
                                     <Modal
                                         size="sm"
                                         dialogClassName="my-modal"
-                                        show={isOpenAddQuestionCategory}
-                                        onHide={() => setIsOpenAddQuestionCategory(false)}
+                                        show={isOpenAddCognitiveSkills}
+                                        onHide={() => setIsOpenAddCognitiveSkills(false)}
                                     >
                                         <Modal.Header closeButton>
-                                            <Modal.Title as="h5">Add Questions Category</Modal.Title>
+                                            <Modal.Title as="h5">Add Cognitive Skills</Modal.Title>
                                         </Modal.Header>
                                         <Modal.Body>
-                                            <AddQuestionCategory setIsOpenAddQuestionCategory={setIsOpenAddQuestionCategory} />
+                                            <AddCognitiveSkills setIsOpenAddCognitiveSkills={setIsOpenAddCognitiveSkills} />
                                         </Modal.Body>
                                     </Modal>
 
                                     <Modal
                                         size="sm"
                                         dialogClassName="my-modal"
-                                        show={isOpenEditQuestionCategory}
-                                        onHide={() => setIsOpenEditQuestionCategory(false)}
+                                        show={isOpenEditCognitiveSkills}
+                                        onHide={() => setIsOpenEditCognitiveSkills(false)}
                                     >
                                         <Modal.Header closeButton>
-                                            <Modal.Title as="h5">Edit Questions Category</Modal.Title>
+                                            <Modal.Title as="h5">Edit Cognitive Skills</Modal.Title>
                                         </Modal.Header>
                                         <Modal.Body>
-                                            <EditQuestionsCategory editQuestionCategoryID={editQuestionCategoryID} setIsOpenEditQuestionCategory={setIsOpenEditQuestionCategory} />
+                                            <EditCognitiveSkills editCognitiveSkillsID={editCognitiveSkillsID} setIsOpenEditCognitiveSkills={setIsOpenEditCognitiveSkills} />
                                         </Modal.Body>
                                     </Modal>
 
@@ -805,4 +807,4 @@ const QuestionCategoryTableView = ({ userStatus }) => {
     );
 };
 
-export default QuestionCategoryTableView;
+export default CognitiveSkillsTableView;
