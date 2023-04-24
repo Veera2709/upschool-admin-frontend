@@ -180,26 +180,8 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                     setTopicConceptId(topicData.Items[0].topic_concept_id)
                 });
 
-              
-                // conceptArr.map((item)=>{
-                //     result.topic_concept_id.map((childItem)=>{
-                //        console.log("childItem",childItem);
-                //     })
-                // })
-                console.log("result.topic_concept_id : ", result.topic_concept_id);
-                console.log("conceptArr : ", conceptArr);
-                // result.topic_concept_id.map((item)=>{
-
-                //     conceptArr.filter((e)=>{
-                //         console.log("Check : ", e.value === item);
-
-                //         // if(e.value === item){
-                //         //     console.log("conceptArr",e);
-                //         // }
-                //     })
-                // })
-
-
+    
+                
                 topicData.Items[0].related_topics.forEach(function (entry) {
                     topicArr.forEach(function (childrenEntry) {
                         if (entry === childrenEntry.value) {

@@ -186,6 +186,15 @@ export const AddQuestionDisclaimer = {
   QuestionDisclaimerLabelTooShort: 'Question Disclaimer Title is too short!',
 };
 
+export const AddCognitiveSkills = {
+  CognitiveSkillsRequired: 'Cognitive Skills required!',
+  CognitiveSkillsTooShort: 'Cognitive Skills is too short!',
+  CognitiveSkillsTooLong: "Cognitive Skills is too long!"
+};
+
+
+
+
 export const AddSection = {
 
   SectionTitleRequired: 'Section name is required!',

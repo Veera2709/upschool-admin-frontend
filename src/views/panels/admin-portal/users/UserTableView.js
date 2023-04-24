@@ -1171,7 +1171,10 @@ const UserTableView = ({ _userRole }) => {
                           <Col sm={12}>
                             <Card>
                               <Card.Header>
-                                <Card.Title as="h5">User List</Card.Title>
+                                <Card.Title as="h5" className='d-flex justify-content-between'>
+                                  <h5>User List</h5>
+                                  <h5>Total Entries :- {userData.length}</h5>
+                                </Card.Title>
                               </Card.Header>
 
                               <Card.Body>

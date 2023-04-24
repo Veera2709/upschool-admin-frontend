@@ -778,13 +778,113 @@ export const toggleMultipleGroupStatus = (payLoad) => {
         }, {
             headers: { Authorization: sessionStorage.getItem('user_jwt') }
         })
-        .then((response) => {
-            console.log(response);
-            resolve(response.data);
-        })
-        .catch((error) => {
-            console.log("Error", error);
-            resolve({ Error: error });
-        })
-});
+            .then((response) => {
+                console.log(response);
+                resolve(response.data);
+            })
+            .catch((error) => {
+                console.log("Error", error);
+                resolve({ Error: error });
+            })
+    });
+}
+
+
+export const fetchSourcesBasedonStatus = (payload) => {
+
+    return new Promise((resolve, reject) => {
+        axios.post(url.fetchSourcesBasedonStatus,
+            { data: payload },
+            { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
+            .then((response) => {
+                console.log(response);
+                resolve(response.data);
+            })
+            .catch((error) => {
+                console.log("Error", error);
+                // resolve({ Error: error });
+                resolve([]);
+            })
+    });
+}
+export const toggleQuestionSourceStatus = (payLoad) => {
+    console.log("payLoad : ", payLoad);
+    return new Promise((resolve, reject) => {
+        axios.post(url.toggleQuestionSourceStatus,
+            { data: payLoad },
+            { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
+            .then((response) => {
+                console.log(response);
+                resolve(response.data);
+            })
+            .catch((error) => {
+                console.log("Error", error);
+                resolve({ Error: error });
+            })
+    });
+}
+export const bulkToggleQuestionSourceStatus = (payLoad) => {
+    console.log("payLoad : ", payLoad);
+    return new Promise((resolve, reject) => {
+        axios.post(url.bulkToggleQuestionSourceStatus,
+            { data: payLoad },
+            { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
+            .then((response) => {
+                console.log(response);
+                resolve(response.data);
+            })
+            .catch((error) => {
+                console.log("Error", error);
+                resolve({ Error: error });
+            })
+    });
+}
+export const fetchSkillsBasedonStatus = (payload) => {
+
+    return new Promise((resolve, reject) => {
+        axios.post(url.fetchSkillsBasedonStatus,
+            { data: payload },
+            { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
+            .then((response) => {
+                console.log(response);
+                resolve(response.data);
+            })
+            .catch((error) => {
+                console.log("Error", error);
+                // resolve({ Error: error });
+                resolve([]);
+            })
+    });
+}
+export const toggleCognitiveSkillStatus = (payLoad) => {
+    console.log("payLoad : ", payLoad);
+    return new Promise((resolve, reject) => {
+        axios.post(url.toggleCognitiveSkillStatus,
+            { data: payLoad },
+            { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
+            .then((response) => {
+                console.log(response);
+                resolve(response.data);
+            })
+            .catch((error) => {
+                console.log("Error", error);
+                resolve({ Error: error });
+            })
+    });
+}
+export const bulkToggleCognitiveSkillStatus = (payLoad) => {
+    console.log("payLoad : ", payLoad);
+    return new Promise((resolve, reject) => {
+        axios.post(url.bulkToggleCognitiveSkillStatus,
+            { data: payLoad },
+            { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
+            .then((response) => {
+                console.log(response);
+                resolve(response.data);
+            })
+            .catch((error) => {
+                console.log("Error", error);
+                resolve({ Error: error });
+            })
+    });
 }

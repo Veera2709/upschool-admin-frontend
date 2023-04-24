@@ -11,15 +11,14 @@ import useFullPageLoader from '../../../../../helper/useFullPageLoader';
 import dynamicUrl from '../../../../../helper/dynamicUrls';
 import * as Constants from '../../../../../helper/constants';
 
-const AddQuestionDisclaimer = ({ setIsOpenAddQuestionDisclaimer }) => {
+const AddSourceOfQuestion = ({ setIsOpenAddSourceOfQuestion }) => {
 
     const MySwal = withReactContent(Swal);
 
     const history = useHistory();
     const [loader, showLoader, hideLoader] = useFullPageLoader();
-    const [questionDisclaimerLabelErr, setQuestionDisclaimerLabelErr] = useState(false);
-    const [questionDisclaimerLabelErrMessage, setQuestionDisclaimerLabelErrMessage] = useState('');
-
+    const [sourceOfQuestionTitleErr, setSourceOfQuestionTitleErr] = useState(false);
+    const [sourceOfQuestionTitleErrMessge, setSourceOfQuestionTitleErrMessge] = useState('');
 
     return (
 
@@ -30,22 +29,17 @@ const AddQuestionDisclaimer = ({ setIsOpenAddQuestionDisclaimer }) => {
 
                     initialValues={
                         {
-                            questionDisclaimer: "",
-                            questionDisclaimerLabel: "",
+                            sourceOfQuestion: "",
                             submit: null
                         }
                     }
                     validationSchema={
                         Yup.object().shape({
-                            questionDisclaimer: Yup.string()
+                            sourceOfQuestion: Yup.string()
                                 .trim()
-                                .min(2, Constants.AddQuestionDisclaimer.QuestionDisclaimerTooShort)
-                                .required(Constants.AddQuestionDisclaimer.QuestionDisclaimerRequired),
-                            questionDisclaimerLabel: Yup.string()
-                                .trim()
-                                .min(2, Constants.AddQuestionDisclaimer.QuestionDisclaimerLabelTooShort)
-                                .max(32, Constants.AddQuestionDisclaimer.QuestionDisclaimerLabelTooLong)
-                                .required(Constants.AddQuestionDisclaimer.QuestionDisclaimerLabelRequired),
+                                .min(2, Constants.AddQuestionCategory.QuestionCategoryTooShort)
+                                .max(32, Constants.AddQuestionCategory.QuestionCategoryTooLong)
+                                .required(Constants.AddQuestionCategory.QuestionCategoryRequired)
                         })
                     }
                     onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
@@ -58,8 +52,7 @@ const AddQuestionDisclaimer = ({ setIsOpenAddQuestionDisclaimer }) => {
 
                         const formData = {
                             data: {
-                                disclaimer: values.questionDisclaimer,
-                                disclaimer_label: values.questionDisclaimerLabel
+                                source_name: values.sourceOfQuestion
                             }
                         };
 
@@ -67,7 +60,7 @@ const AddQuestionDisclaimer = ({ setIsOpenAddQuestionDisclaimer }) => {
 
                         axios
                             .post(
-                                dynamicUrl.addQuestionDisclaimer,
+                                dynamicUrl.addQuestionSource,
                                 formData,
                                 {
                                     headers: { Authorization: sessionStorage.getItem('user_jwt') }
@@ -84,11 +77,11 @@ const AddQuestionDisclaimer = ({ setIsOpenAddQuestionDisclaimer }) => {
 
                                     console.log('inside res edit');
                                     hideLoader();
-                                    setIsOpenAddQuestionDisclaimer(false);
+                                    setIsOpenAddSourceOfQuestion(false);
 
                                     MySwal.fire({
                                         type: 'success',
-                                        title: 'Question Disclaimer added successfully!',
+                                        title: 'Source of Question  added successfully!',
                                         icon: 'success',
                                     }).then((willDelete) => {
                                         window.location.reload();
@@ -99,8 +92,8 @@ const AddQuestionDisclaimer = ({ setIsOpenAddQuestionDisclaimer }) => {
                                     console.log('else res');
                                     hideLoader();
                                     // Request made and server responded
-                                    setQuestionDisclaimerLabelErr(true);
-                                    setQuestionDisclaimerLabelErrMessage("err");
+                                    setSourceOfQuestionTitleErr(true);
+                                    setSourceOfQuestionTitleErrMessge("err");
                                     // window.location.reload();
 
 
@@ -122,8 +115,8 @@ const AddQuestionDisclaimer = ({ setIsOpenAddQuestionDisclaimer }) => {
 
                                     } else {
 
-                                        setQuestionDisclaimerLabelErr(true);
-                                        setQuestionDisclaimerLabelErrMessage(error.response.data);
+                                        setSourceOfQuestionTitleErr(true);
+                                        setSourceOfQuestionTitleErrMessge(error.response.data);
                                     }
 
 
@@ -131,14 +124,14 @@ const AddQuestionDisclaimer = ({ setIsOpenAddQuestionDisclaimer }) => {
                                     // The request was made but no response was received
                                     console.log(error.request);
                                     hideLoader();
-                                    setQuestionDisclaimerLabelErr(true);
-                                    setQuestionDisclaimerLabelErrMessage(error.request);
+                                    setSourceOfQuestionTitleErr(true);
+                                    setSourceOfQuestionTitleErrMessge(error.request);
                                 } else {
                                     // Something happened in setting up the request that triggered an Error
                                     console.log('Error', error.message);
                                     hideLoader();
-                                    setQuestionDisclaimerLabelErr(true);
-                                    setQuestionDisclaimerLabelErrMessage(error.request);
+                                    setSourceOfQuestionTitleErr(true);
+                                    setSourceOfQuestionTitleErrMessge(error.request);
 
                                 }
                             })
@@ -146,63 +139,40 @@ const AddQuestionDisclaimer = ({ setIsOpenAddQuestionDisclaimer }) => {
 
                     }}>
 
-                    {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
+                    {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, setFieldValue }) => (
                         <form noValidate onSubmit={handleSubmit} >
 
                             <Row>
 
                                 <Col>
                                     <Row>
-                                        <Col xs={6}>
+                                        <Col>
+
                                             <div className="form-group fill">
-                                                <label className="floating-label" htmlFor="questionDisclaimerLabel">
-                                                    <small className="text-danger">* </small>Question Disclaimer Label
+                                                <label className="floating-label" htmlFor="sourceOfQuestion">
+                                                    <small className="text-danger">* </small>Source Of Question
                                                 </label>
                                                 <input
                                                     className="form-control"
-                                                    error={touched.questionDisclaimerLabel && errors.questionDisclaimerLabel}
-                                                    name="questionDisclaimerLabel"
+                                                    error={touched.sourceOfQuestion && errors.sourceOfQuestion}
+                                                    name="sourceOfQuestion"
                                                     onBlur={handleBlur}
                                                     // onChange={handleChange}
                                                     type="text"
-                                                    value={values.questionDisclaimerLabel}
+                                                    value={values.sourceOfQuestion}
                                                     onChange={(e) => {
-                                                        handleChange("questionDisclaimerLabel")(e);
-                                                        setQuestionDisclaimerLabelErr(false);
+                                                        handleChange("sourceOfQuestion")(e);
+                                                        setSourceOfQuestionTitleErr(false);
                                                     }}
 
                                                 />
 
-                                                {touched.questionDisclaimerLabel && errors.questionDisclaimerLabel && <small className="text-danger form-text">{errors.questionDisclaimerLabel}</small>}
+                                                {touched.sourceOfQuestion && errors.sourceOfQuestion && <small className="text-danger form-text">{errors.sourceOfQuestion}</small>}
 
-                                                {questionDisclaimerLabelErr && questionDisclaimerLabelErrMessage &&
-                                                    <small className="text-danger form-text">{questionDisclaimerLabelErrMessage}</small>
+                                                {sourceOfQuestionTitleErr && sourceOfQuestionTitleErrMessge &&
+                                                    <small className="text-danger form-text">{sourceOfQuestionTitleErrMessge}</small>
                                                 }
                                             </div>
-                                        </Col>
-                                    </Row>
-
-                                    <Row>
-                                        <Col>
-                                            <div className="form-group fill">
-                                                <label className="floating-label" htmlFor="questionDisclaimer">
-                                                    <small className="text-danger">* </small>Question Disclaimer
-                                                </label>
-                                                <textarea
-                                                    className="form-control"
-                                                    error={touched.questionDisclaimer && errors.questionDisclaimer}
-                                                    name="questionDisclaimer"
-                                                    onBlur={handleBlur}
-                                                    onChange={handleChange}
-                                                    type="text"
-                                                    value={values.questionDisclaimer}
-                                                    rows="8"
-                                                    placeholder="Enter your comment"
-                                                />
-                                            </div>
-                                            {touched.questionDisclaimer && errors.questionDisclaimer && (
-                                                <small className="text-danger form-text">{errors.questionDisclaimer}</small>
-                                            )}
                                         </Col>
                                     </Row>
 
@@ -220,7 +190,8 @@ const AddQuestionDisclaimer = ({ setIsOpenAddQuestionDisclaimer }) => {
                                                         disabled={isSubmitting}
                                                         type="submit"
                                                         className="btn-block btn-rounded btn btn-success btn-large"
-                                                    >Submit
+                                                    >
+                                                        Submit
                                                     </button>
                                                 </Col>
                                             </Row>
@@ -242,4 +213,4 @@ const AddQuestionDisclaimer = ({ setIsOpenAddQuestionDisclaimer }) => {
 
 }
 
-export default AddQuestionDisclaimer
+export default AddSourceOfQuestion
