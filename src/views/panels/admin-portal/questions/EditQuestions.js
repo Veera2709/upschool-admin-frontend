@@ -8,8 +8,8 @@ import * as Yup from 'yup';
 import { Row, Col, Card, CloseButton, Form, Button, OverlayTrigger, Tooltip, Modal } from 'react-bootstrap';
 import { useHistory, useParams } from 'react-router-dom';
 import MathJax from "react-mathjax";
-import * as Constants from '../../../../helper/constants';
 
+import * as Constants from '../../../../helper/constants';
 import ArticleRTE from './ArticleRTE';
 import dynamicUrl from '../../../../helper/dynamicUrls';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
@@ -27,10 +27,11 @@ const EditQuestions = () => {
     const [displayHeader, setDisplayHeader] = useState(true);
     const displayHeading = sessionStorage.getItem('question_active_status');
     const _questionStatus = sessionStorage.getItem('click_event');
-    let displaySuccessMsg;
+    
     const questionTypeOptions = [
         { value: 'Objective', label: 'Objective' },
-        { value: 'Subjective', label: 'Subjective' }
+        { value: 'Subjective', label: 'Subjective' },
+        { value: 'Descriptive', label: 'Descriptive' }
     ];
 
     const [questionTypeErrMsg, setQuestionTypeErrMsg] = useState(false);
@@ -42,6 +43,7 @@ const EditQuestions = () => {
     const [selectedQuestionCategory, setSelectedQuestionCategory] = useState([]);
     const [selectedQuestionDisclaimer, setSelectedQuestionDisclaimer] = useState([]);
     const [showMathKeyboard, setShowMathKeyboard] = useState('No');
+    const [workSheetOrTest, setWorkSheetOrTest] = useState('Test');
     const [answerTypeOptions, setAnswerTypeOptions] = useState([]);
     const [selectedAnswerType, setSelectedAnswerType] = useState([]);
     const [questionVoiceError, setQuestionVoiceError] = useState(true);
@@ -62,7 +64,9 @@ const EditQuestions = () => {
     const [fileValues, setFileValues] = useState([]);
     const [voiceNoteFileValues, setVoiceNoteFileValues] = useState('');
     const [previewAudios, setPreviewAudios] = useState([]);
-    const [_radio, _setRadio] = useState(false);
+    const [_radioShowMathKeyboard, _setRadioShowMathKeyboard] = useState(false);
+    const [_radioWorkSheetOrTest, _setRadioWorkSheetOrTest] = useState(false);
+
     const [previousData, setPreviousData] = useState([]);
     const [count, setCount] = useState(0);
 
@@ -89,7 +93,7 @@ const EditQuestions = () => {
         }
     ]);
 
-    displaySuccessMsg = _questionStatus === 'Save' ? 'Question Saved!' : _questionStatus === 'Submit' ? 'Question Submitted!' : _questionStatus === 'Accept' ? 'Question Accepted!' : _questionStatus === 'Reject' ? 'Question Rejected!' : _questionStatus === 'Revisit' ? 'Question set as Revisit!' : _questionStatus === 'DesignReady' ? 'Question set as Design Ready!' : _questionStatus === 'Publish' ? 'Question Published!' : 'Question Updated!';
+    let displaySuccessMsg = _questionStatus === 'Save' ? 'Question Saved!' : _questionStatus === 'Submit' ? 'Question Submitted!' : _questionStatus === 'Accept' ? 'Question Accepted!' : _questionStatus === 'Reject' ? 'Question Rejected!' : _questionStatus === 'Revisit' ? 'Question set as Revisit!' : _questionStatus === 'DesignReady' ? 'Question set as Design Ready!' : _questionStatus === 'Publish' ? 'Question Published!' : 'Question Updated!';
 
     useEffect(() => {
 
@@ -193,12 +197,16 @@ const EditQuestions = () => {
                             setSelectedQuestionDisclaimer(selectedDisclaimer[0].value);
                         }
 
-                        const radioValue = individual_user_data.show_math_keyboard === 'Yes' ? true : false;
+                        const radioValueShowMathKeyboard = individual_user_data.show_math_keyboard === 'Yes' ? true : false;
+                        const radioValueWorkSheetOrTest = individual_user_data.appears_in === 'Yes' ? true : false;
 
                         setIsLoading(false);
 
                         setShowMathKeyboard(individual_user_data.show_math_keyboard);
-                        _setRadio(radioValue);
+                        setWorkSheetOrTest(individual_user_data.appears_in);
+
+                        _setRadioShowMathKeyboard(radioValueShowMathKeyboard);
+                        _setRadioWorkSheetOrTest(radioValueWorkSheetOrTest);
 
                         setSelectedQuestionType(individual_user_data.question_type);
                         setQuestionLabelValue(individual_user_data.question_label);
@@ -480,10 +488,16 @@ const EditQuestions = () => {
         setCount(tempCount);
     }
 
-    const handleRadioChange = (e) => {
+    const handleShowMathKeyboard = (e) => {
 
-        _setRadio(!_radio);
-        _radio === true ? setShowMathKeyboard('No') : setShowMathKeyboard('Yes');
+        _setRadioShowMathKeyboard(!_radioShowMathKeyboard);
+        _radioShowMathKeyboard === true ? setShowMathKeyboard('No') : setShowMathKeyboard('Yes');
+    }
+
+    const handleWorkSheetOrTest = (e) => {
+
+        _setRadioWorkSheetOrTest(!_radioWorkSheetOrTest);
+        _radioWorkSheetOrTest === true ? setWorkSheetOrTest('Test') : setWorkSheetOrTest('Worksheet');
     }
 
     const [answerBlanksOptions, setAnswerBlanksOptions] = useState([]);
@@ -1024,6 +1038,7 @@ const EditQuestions = () => {
                 question_status: 'Save',
                 question_disclaimer: selectedQuestionDisclaimer,
                 show_math_keyboard: showMathKeyboard,
+                appears_in: workSheetOrTest,
                 question_label: document.getElementById('newQuestionLabel').value
             }
 
@@ -1157,6 +1172,7 @@ const EditQuestions = () => {
                                                                         question_status: 'Save',
                                                                         question_disclaimer: selectedQuestionDisclaimer,
                                                                         show_math_keyboard: showMathKeyboard,
+                                                                        appears_in: workSheetOrTest,
                                                                         question_label: questionLabelValue
                                                                     }
 
@@ -1203,6 +1219,7 @@ const EditQuestions = () => {
                                                                         question_status: sessionStorage.getItem('click_event'),
                                                                         question_disclaimer: selectedQuestionDisclaimer,
                                                                         show_math_keyboard: showMathKeyboard,
+                                                                        appears_in: workSheetOrTest,
                                                                         question_label: questionLabelValue
                                                                     }
 
@@ -1438,20 +1455,44 @@ const EditQuestions = () => {
                                                                     <div className="col">
                                                                         <div className="row profile-view-radio-button-view">
                                                                             <Form.Check
-                                                                                id={`radio-fresher`}
+                                                                                id={`radio-mathKeyboard`}
                                                                                 // label="Yes"
+                                                                                error={touched.mathKeyboard && errors.mathKeyboard}
+                                                                                type="switch"
+                                                                                variant={'outline-primary'}
+                                                                                name="radio-mathKeyboard"
+                                                                                checked={_radioShowMathKeyboard}
+                                                                                onChange={(e) => handleShowMathKeyboard(e)}
+                                                                            // className='ml-3 col-md-6'
+                                                                            /> &nbsp;
+
+                                                                            <Form.Label className="profile-view-question" id={`radio-mathKeyboard`}>
+                                                                                {_radioShowMathKeyboard === true ? 'Yes' : 'No'}
+                                                                            </Form.Label>
+                                                                        </div>
+                                                                    </div>
+                                                                </Col>
+
+                                                                <Col>
+                                                                    <label className="floating-label">
+                                                                        <small className="text-danger"></small>
+                                                                        Question Appears in
+                                                                    </label>
+
+                                                                    <div className="col">
+                                                                        <div className="row profile-view-radio-button-view">
+                                                                            <Form.Check
+                                                                                id={`radio-fresher`}
                                                                                 error={touched.fresher && errors.fresher}
                                                                                 type="switch"
                                                                                 variant={'outline-primary'}
                                                                                 name="radio-fresher"
-                                                                                // value={showMathKeyboard}
-                                                                                checked={_radio}
-                                                                                onChange={(e) => handleRadioChange(e)}
-                                                                            // className='ml-3 col-md-6'
+                                                                                checked={_radioWorkSheetOrTest}
+                                                                                onChange={(e) => handleWorkSheetOrTest(e)}
                                                                             /> &nbsp;
 
                                                                             <Form.Label className="profile-view-question" id={`radio-fresher`}>
-                                                                                {_radio === true ? 'Yes' : 'No'}
+                                                                                {_radioWorkSheetOrTest === true ? 'Worksheet' : 'Test'}
                                                                             </Form.Label>
                                                                         </div>
                                                                     </div>

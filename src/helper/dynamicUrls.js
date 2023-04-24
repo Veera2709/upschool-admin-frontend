@@ -115,6 +115,7 @@ const dynamicUrl = {
     addQuestions: baseUrl + '/addQuestions',
     fetchAllQuestionCategories: baseUrl + '/fetchAllQuestionCategories',
     fetchDisclaimersandCategories: baseUrl + '/fetchDisclaimersandCategories',
+    fetchQuestionMasters: baseUrl + '/fetchQuestionMasters',
     bulkToggleQuestionStatus: baseUrl + '/bulkToggleQuestionStatus',
 
     // Sections
