@@ -20,7 +20,9 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [loader, showLoader, hideLoader] = useFullPageLoader();
     const [previousDataPreQuiz, setPreviousDataPreQuiz] = useState([]);
-    const [previousDataPostQuiz, setPreviousDataPostQuiz] = useState([]);
+    const [paperMatrixBasic, setPaperMatrixBasic] = useState();
+    const [paperMatrixIntermediate, setPaperMatrixIntermediate] = useState();
+    const [paperMatrixAdvanced, setPaperMatrixAdvanced] = useState();
     const [_radioL2MandatoryPre, _setRadioL2MandatoryPre] = useState(false);
     const [_radioReadDigicardPre, _setRadioReadDigicardPre] = useState(false);
     const [_radioTopicSelection, _setRadioTopicSelection] = useState(false);
@@ -72,6 +74,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
     const [onlineErr, setOnlineErr] = useState(false)
     const [varientErr, setVarientErr] = useState(false)
     const [noOdrderQuizErr, setNoOdrderQuizErr] = useState(false)
+    const [matrixCountErr, setMatrixCountErr] = useState(false)
 
 
     const [focusAreaErr, setFocusAreaErr] = useState(false);
@@ -84,12 +87,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
         { value: 'Highly Difficult', label: 'Highly Difficult' },
     ])
 
-    const [isTestType, setIsTestType] = useState([
-        { value: 'Automated', label: 'Automated' },
-        { value: 'Express', label: 'Express' },
-        { value: 'Manual', label: 'Manual' },
-        { value: 'Default', label: 'Default' },
-    ])
+
 
     const MySwal = withReactContent(Swal);
 
@@ -165,9 +163,9 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
 
     const validateValue = (e) => {
         console.log("validateValue",);
-        if(e.target.value<=0){
+        if (e.target.value <= 0) {
             setNoOdrderQuizErr(true)
-        }else{
+        } else {
             setNoOdrderQuizErr(false)
         }
     }
@@ -197,46 +195,77 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                 hideLoader();
                 if (result) {
 
-                    console.log('inside res initial data', response.data);
+                    console.log('inside res initial data', response.data.Items[0].pre_quiz_config);
 
-                    let previousDataPreQuiz = response.data.Items[0].school_quiz_config.pre_learning;
-                    let previousCommonData = response.data.Items[0].school_quiz_config;
-                    let previousDataPostQuiz = response.data.Items[0].school_quiz_config.post_learning;
+                    let previousDataPreQuiz = response.data.Items[0].pre_quiz_config;
+
                     console.log(previousDataPreQuiz);
-                    console.log("previousCommonData", previousCommonData);
-                    console.log(previousDataPostQuiz.pass_pct_quiz_l3);
-                    console.log(previousDataPostQuiz.pct_of_student_for_focus);
 
-                    const radioValueL2MandatoryPre = previousDataPreQuiz.l2_mandatory === 'Yes' ? true : false;
+
                     const radioValueReadDigicardPre = previousDataPreQuiz.read_digicard_mandatory === 'Yes' ? true : false;
                     const radioValueRecommendTeachersPre = previousDataPreQuiz.recommend_teacher_on_focus_area === 'Yes' ? true : false;
-                    const radioValueReadDigicardPost = previousDataPostQuiz.read_digicard_mandatory === 'Yes' ? true : false;
-                    const radioValueRecommendTeachersPost = previousDataPostQuiz.recommend_teacher_on_focus_area === 'Yes' ? true : false;
-                    const topicSelectionRadioValue = previousCommonData.topic_selection === 'Yes' ? true : false;
+                    const topicSelectionRadioValue = previousDataPreQuiz.topic_archive === 'Yes' ? true : false;
+                    const unlockDigicard = previousDataPreQuiz.unlock_digicard_mandatory === 'Yes' ? true : false;
 
 
-                    _setRadioTopicSelection(topicSelectionRadioValue)
-                    _setRadioL2MandatoryPre(radioValueL2MandatoryPre);
                     _setRadioReadDigicardPre(radioValueReadDigicardPre);
+                    _setRadioTopicSelection(topicSelectionRadioValue);
                     _setRadioRecommendTeachersPre(radioValueRecommendTeachersPre);
-                    _setRadioReadDigicardPost(radioValueReadDigicardPost);
-                    _setRadioRecommendTeachersPost(radioValueRecommendTeachersPost);
+                    _setRadioUnlockDigicard(unlockDigicard);
 
-                    setSlectedL2MandatoryPre(previousDataPreQuiz.l2_mandatory);
                     setSlectedReadDigicardPre(previousDataPreQuiz.read_digicard_mandatory);
                     setSlectedRecommendTeachersPre(previousDataPreQuiz.recommend_teacher_on_focus_area);
+                    setSlectedTopicSelection(previousDataPreQuiz.topic_archive);
+                    setRadioUnlockDigicardSelected(previousDataPreQuiz.unlock_digicard_mandatory);
 
-                    setSlectedReadDigicardPost(previousDataPostQuiz.read_digicard_mandatory);
-                    setSlectedRecommendTeachersPost(previousDataPostQuiz.recommend_teacher_on_focus_area);
+                    //testMode
+                    const onlineTest = previousDataPreQuiz.online_test === "Enabled" ? true : false;
+                    const offlineTest = previousDataPreQuiz.offline_test === "Enabled" ? true : false;
+
+                    _setOnlineTest(onlineTest);
+                    _setPaperBased(offlineTest);
+
+                    setRadioOnlineTestSelected(previousDataPreQuiz.online_test);
+                    setRadioPaperBasedSelected(previousDataPreQuiz.offline_test);
+
+                    //testMode
+                    const automateType = previousDataPreQuiz.automated_mode === "Enabled" ? true : false;
+                    const expressType = previousDataPreQuiz.express_mode === "Enabled" ? true : false;
+                    const manualType = previousDataPreQuiz.manual_mode === "Enabled" ? true : false;
+
+                    _setRadioAutomate(automateType);
+                    _setRadioExpress(expressType);
+                    _setRadioManual(manualType)
+
+                    setRadioAutomateSelected(previousDataPreQuiz.automated_mode);
+                    setRadioExpressSelected(previousDataPreQuiz.express_mode);
+                    setRadioManualSelected(previousDataPreQuiz.manual_mode);
+
+                    //test Difficult
+                    SetSelectedTestMode(previousDataPreQuiz.test_level)
+
+                    //Paper Varients
+                    const questionVarient = previousDataPreQuiz.randomized_questions_varient === "Enabled" ? true : false;
+                    const orderVarient = previousDataPreQuiz.randomized_order_varient === "Enabled" ? true : false;
+
+                    _setRadioRandomizedQuestions(questionVarient);
+                    _setRadioRandomizedOrder(orderVarient);
+
+                    setRadioRandomizedQuestionsSelected(previousDataPreQuiz.randomized_questions_varient);
+                    setRadioRandomizedOrderSelected(previousDataPreQuiz.randomized_order_varient);
 
 
-                    SetSelectedTestMode(previousCommonData.test_mode);
-                    SetSelectedTestType(previousCommonData.test_type);
-                    setSlectedTopicSelection(previousCommonData.topic_selection);
-
-                    setIsPreviousCommonData(previousCommonData)
+                    //Matrix
                     setPreviousDataPreQuiz(previousDataPreQuiz);
-                    setPreviousDataPostQuiz(previousDataPostQuiz);
+                    setPaperMatrixBasic(previousDataPreQuiz.test_matrix.Basic)
+                    setPaperMatrixIntermediate(previousDataPreQuiz.test_matrix.Intermediate)
+                    setPaperMatrixAdvanced(previousDataPreQuiz.test_matrix.Advanced)
+
+                    //Concept Compulsorialy
+                    const conceptCompulsorialy = previousDataPreQuiz.concept_mandatory === 'Yes' ? true : false;
+                    _setConceptCompulsorialy(conceptCompulsorialy)
+                    setConceptCompulsorialySelected(previousDataPreQuiz.concept_mandatory)
+
                     setIsLoading(false);
                 } else {
                     console.log('else res');
@@ -276,8 +305,8 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
 
     useEffect(() => {
 
-        // setIsLoading(true);
-        // fetchIndividualSchoolDetails();
+        setIsLoading(true);
+        fetchIndividualSchoolDetails();
 
 
     }, []);
@@ -300,30 +329,21 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                     </Card.Title>
                                     <Formik
                                         initialValues={{
-                                            passPercentageL1Pre: '',
-                                            passPercentageL2Pre: '',
-                                            minStudentsPre: '',
-                                            noOfAttemptsPre: '',
-                                            percentageOfStudentsPre: '',
-                                            passPercentageL1Post: '',
-                                            passPercentageL2Post: '',
-                                            passPercentageL3Post: '',
-                                            minStudentsPost: '',
-                                            noOfAttemptsPost: '',
-                                            percentageOfStudentsPost: '',
+                                            passPercentageL1Pre: previousDataPreQuiz.pass_pct_quiz_l1 === '' ? '' : previousDataPreQuiz.pass_pct_quiz_l1,
+                                            passPercentageL2Pre: previousDataPreQuiz.pass_pct_quiz_l2 === '' ? '' : previousDataPreQuiz.pass_pct_quiz_l2,
+                                            minStudentsPre: previousDataPreQuiz.pct_of_student_for_reteach === '' ? '' : previousDataPreQuiz.pct_of_student_for_reteach,
+                                            noOfAttemptsPre: previousDataPreQuiz.no_of_attempt_to_unlock === '' ? '' : previousDataPreQuiz.no_of_attempt_to_unlock,
+                                            percentageOfStudentsPre: previousDataPreQuiz.pct_of_student_for_focus === '' ? '' : previousDataPreQuiz.pct_of_student_for_focus,
                                             submit: null,
-                                            min_no_of_questions: '',
-                                            classPercentageRep: '',
-                                            martix_basic: '',
-                                            martix_intermediate: '',
-                                            martix_advanced: '',
-                                            noOfTestPapers: '',
-                                            noOfWorksheets: '',
-                                            classPercentageRep: '',
-                                            minNoQustionManual_express: '',
-                                            minNoQustionAutomate: '',
-                                            radioAutomate: '',
-                                            noOrderQuiz: ''
+                                            classPercentageRep: previousDataPreQuiz.class_percentage_for_report === '' ? '' : previousDataPreQuiz.class_percentage_for_report,
+                                            martix_basic: paperMatrixBasic === '' ? '' : paperMatrixBasic,
+                                            martix_intermediate: paperMatrixIntermediate === '' ? '' : paperMatrixIntermediate,
+                                            martix_advanced: paperMatrixAdvanced === '' ? '' : paperMatrixAdvanced,
+                                            noOfTestPapers: previousDataPreQuiz.no_of_test === '' ? '' : previousDataPreQuiz.no_of_test,
+                                            noOfWorksheets: previousDataPreQuiz.no_of_worksheet === '' ? '' : previousDataPreQuiz.no_of_worksheet,
+                                            minNoQustionManual_express: previousDataPreQuiz.min_qn_at_topic_level === '' ? '' : previousDataPreQuiz.min_qn_at_topic_level,
+                                            minNoQustionAutomate: previousDataPreQuiz.min_qn_at_chapter_level === '' ? '' : previousDataPreQuiz.min_qn_at_chapter_level,
+                                            noOrderQuiz: previousDataPreQuiz.no_of_randomized_order === '' ? '' : previousDataPreQuiz.no_of_randomized_order
                                         }}
                                         validationSchema={
                                             _radioAutomate === true && _radioExpress === false && _radioManual === false && _radioRecommendTeachersPre === false ?
@@ -338,7 +358,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                             console.log("insideSubmit");
                                             setStatus({ success: true });
                                             setSubmitting(true);
-
+                                            const matrixCount = values.martix_basic + values.martix_intermediate + values.martix_advanced
 
                                             if (_radioRecommendTeachersPre === true && values.percentageOfStudentsPre === '') {
                                                 setFocusAreaErr(true)
@@ -356,6 +376,8 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                 setVarientErr(true)
                                             } else if (_radioRandomizedOrder === true && values.noOrderQuiz === '') {
                                                 setNoOdrderQuizErr(true)
+                                            } else if (matrixCount > 100) {
+                                                setMatrixCountErr(true)
                                             } else {
                                                 const formData = {
                                                     data: {
@@ -381,7 +403,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                             manual_mode: radioManualSelected,
                                                             express_mode: radioExpressSelected,
                                                             online_test: radioOnlineTestSelected,
-                                                            paper_test: radioPaperBasedSelected,
+                                                            offline_test: radioPaperBasedSelected,
                                                             unlock_digicard_mandatory: radioUnlockDigicardSelected,
                                                             class_percentage_for_report: values.classPercentageRep,
                                                             topic_archive: selectedTopicSelection,
@@ -397,88 +419,84 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
 
                                                 console.log("formData", formData);
 
-                                                // axios
-                                                //     .post(
-                                                //         dynamicUrl.setQuizConfiguration,
-                                                //         formData,
-                                                //         {
-                                                //             headers: { Authorization: sessionStorage.getItem('user_jwt') }
-                                                //         }
-                                                //     )
-                                                //     .then((response) => {
+                                                axios
+                                                    .post(
+                                                        dynamicUrl.setQuizConfiguration,
+                                                        formData,
+                                                        {
+                                                            headers: { Authorization: sessionStorage.getItem('user_jwt') }
+                                                        }
+                                                    )
+                                                    .then((response) => {
 
-                                                //         console.log({ response });
+                                                        console.log({ response });
 
-                                                //         let result = response.status === 200;
-                                                //         hideLoader();
+                                                        let result = response.status === 200;
+                                                        hideLoader();
 
-                                                //         if (result) {
+                                                        if (result) {
 
-                                                //             console.log('inside res edit');
+                                                            console.log('inside res edit');
 
-                                                //             if (response.status === 200) {
+                                                            if (response.status === 200) {
 
-                                                //                 const MySwal = withReactContent(Swal);
-                                                //                 MySwal.fire({
-                                                //                     // title: MESSAGES.TTTLES.Goodjob,
-                                                //                     type: 'success',
-                                                //                     text: MESSAGES.SUCCESS.UpdatingQuizConfiguration,
-                                                //                     icon: 'success',
-                                                //                 }).then((willDelete) => {
-                                                //                     window.location.reload();
-                                                //                 });
+                                                                const MySwal = withReactContent(Swal);
+                                                                MySwal.fire({
+                                                                    // title: MESSAGES.TTTLES.Goodjob,
+                                                                    type: 'success',
+                                                                    text: MESSAGES.SUCCESS.UpdatingQuizConfiguration,
+                                                                    icon: 'success',
+                                                                }).then((willDelete) => {
+                                                                    window.location.reload();
+                                                                });
 
-                                                //             } else {
+                                                            } else {
 
-                                                //                 setStatus({ success: false });
-                                                //                 setErrors({ submit: 'Error in Editing School' });
-                                                //             }
-                                                //         } else {
+                                                                setStatus({ success: false });
+                                                                setErrors({ submit: 'Error in Editing School' });
+                                                            }
+                                                        } else {
 
-                                                //             console.log('else res');
+                                                            console.log('else res');
 
-                                                //             setStatus({ success: false });
-                                                //             setErrors({ submit: 'Error in Editing School' });
-                                                //         }
-                                                //     })
-                                                //     .catch((error) => {
-                                                //         if (error.response) {
+                                                            setStatus({ success: false });
+                                                            setErrors({ submit: 'Error in Editing School' });
+                                                        }
+                                                    })
+                                                    .catch((error) => {
+                                                        if (error.response) {
 
-                                                //             hideLoader();
-                                                //             // Request made and server responded
-                                                //             console.log(error.response.data);
+                                                            hideLoader();
+                                                            // Request made and server responded
+                                                            console.log(error.response.data);
 
-                                                //             if (error.response.data === "Invalid Token") {
+                                                            if (error.response.data === "Invalid Token") {
 
-                                                //                 sessionStorage.clear();
-                                                //                 localStorage.clear();
+                                                                sessionStorage.clear();
+                                                                localStorage.clear();
 
-                                                //                 history.push('/auth/signin-1');
-                                                //                 window.location.reload();
-                                                //             } else {
-                                                //                 setStatus({ success: false });
-                                                //                 setErrors({ submit: error.response.data });
-                                                //             }
+                                                                history.push('/auth/signin-1');
+                                                                window.location.reload();
+                                                            } else {
+                                                                setStatus({ success: false });
+                                                                setErrors({ submit: error.response.data });
+                                                            }
 
 
 
-                                                //         } else if (error.request) {
-                                                //             // The request was made but no response was received
-                                                //             console.log(error.request);
-                                                //             hideLoader();
+                                                        } else if (error.request) {
+                                                            // The request was made but no response was received
+                                                            console.log(error.request);
+                                                            hideLoader();
 
-                                                //         } else {
-                                                //             // Something happened in setting up the request that triggered an Error
-                                                //             console.log('Error', error.message);
-                                                //             hideLoader();
+                                                        } else {
+                                                            // Something happened in setting up the request that triggered an Error
+                                                            console.log('Error', error.message);
+                                                            hideLoader();
 
-                                                //         }
-                                                //     })
+                                                        }
+                                                    })
                                             }
-
-
-
-
                                         }}
                                     >
                                         {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, setFieldValue }) => (
@@ -615,7 +633,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                     onBlur={handleBlur}
                                                                     onChange={handleChange}
                                                                     type="number"
-                                                                // value={values.noOfWorksheets}
+                                                                    value={values.noOfWorksheets}
                                                                 />
 
                                                                 {touched.noOfWorksheets && errors.noOfWorksheets && <small className="text-danger form-text">{errors.noOfWorksheets}</small>}
@@ -991,7 +1009,8 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                             onChange={(e) => {
                                                                                 setFieldValue('minNoQustionManual_express', '');
                                                                                 setNoOptionInTestMode(false);
-                                                                                handleManual(e)
+                                                                                handleManual(e);
+                                                                                _setConceptCompulsorialy(false)
                                                                             }}
                                                                         // className='ml-3 col-md-6'
                                                                         />
@@ -1115,7 +1134,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                             <div className="form-group fill">
                                                                 <label className="floating-label" >
                                                                     <small className="text-danger">* </small>
-                                                                    Test Mode
+                                                                    Test Level
                                                                 </label>
                                                                 <select
                                                                     className="form-control"
@@ -1153,7 +1172,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                             <div>
                                                                 <label className="floating-label">
                                                                     <small className="text-danger">* </small>
-                                                                    % Questions From Basic Group
+                                                                    % of Questions From Basic Group
                                                                 </label>
                                                                 <input
                                                                     className="form-control"
@@ -1161,10 +1180,13 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                     label="martix_basic"
                                                                     name="martix_basic"
                                                                     onBlur={handleBlur}
-                                                                    onChange={handleChange}
+                                                                    onChange={(e) => {
+                                                                        handleChange(e);
+                                                                        setMatrixCountErr(false);
+                                                                    }}
                                                                     type="number"
                                                                     value={values.martix_basic}
-                                                                    placeholder="Minimum Number Of Questions"
+                                                                    placeholder="% Questions "
                                                                 />
                                                                 {touched.martix_basic && errors.martix_basic && <small className="text-danger form-text">{errors.martix_basic}</small>}
                                                             </div>
@@ -1173,7 +1195,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                             <div>
                                                                 <label className="floating-label">
                                                                     <small className="text-danger">* </small>
-                                                                    % Questions From Intermediate Group
+                                                                    % of Questions From Intermediate Group
                                                                 </label>
                                                                 <input
                                                                     className="form-control"
@@ -1181,10 +1203,13 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                     label="martix_intermediate"
                                                                     name="martix_intermediate"
                                                                     onBlur={handleBlur}
-                                                                    onChange={handleChange}
+                                                                    onChange={(e) => {
+                                                                        handleChange(e);
+                                                                        setMatrixCountErr(false);
+                                                                    }}
                                                                     type="number"
                                                                     value={values.martix_intermediate}
-                                                                    placeholder="Minimum Number Of Questions"
+                                                                    placeholder="% Questions "
                                                                 />
                                                                 {touched.martix_intermediate && errors.martix_intermediate && <small className="text-danger form-text">{errors.martix_intermediate}</small>}
                                                             </div>
@@ -1193,7 +1218,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                             <div>
                                                                 <label className="floating-label">
                                                                     <small className="text-danger">* </small>
-                                                                    % Questions From Advanced Group
+                                                                    % of Questions From Advanced Group
                                                                 </label>
                                                                 <input
                                                                     className="form-control"
@@ -1201,15 +1226,22 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                     label="martix_advanced"
                                                                     name="martix_advanced"
                                                                     onBlur={handleBlur}
-                                                                    onChange={handleChange}
+                                                                    onChange={(e) => {
+                                                                        handleChange(e);
+                                                                        setMatrixCountErr(false);
+                                                                    }}
                                                                     type="number"
                                                                     value={values.martix_advanced}
-                                                                    placeholder="Minimum Number Of Questions"
+                                                                    placeholder="% Questions "
                                                                 />
                                                                 {touched.martix_advanced && errors.martix_advanced && <small className="text-danger form-text">{errors.martix_advanced}</small>}
                                                             </div>
                                                         </Col>
                                                     </Row>
+                                                    <br />
+                                                    {matrixCountErr && (
+                                                        <small style={{ color: 'red' }}> % of Questions From Basic,Intermediate and Advanced Group Exceed More then 100%!</small>
+                                                    )}
                                                 </div>
                                                 <br />
                                                 <hr />
