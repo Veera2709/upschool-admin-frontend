@@ -14,7 +14,7 @@ import * as Constants from '../../../../config/constant';
 import BasicSpinner from '../../../../helper/BasicSpinner';
 import { commonValidation, AutomateValidation, ManulExpress, AutomateExpress, focusAreasAutomate, focusAreasManual, focusAreasAutomateExpress } from "./validation";
 
-const PreQuizConfiguration = ({ className, rest, id }) => {
+const PostQuizConfiguration = ({ className, rest, id }) => {
 
     let history = useHistory();
     const [isLoading, setIsLoading] = useState(false);
@@ -37,6 +37,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
     const [_radioUnlockDigicard, _setRadioUnlockDigicard] = useState(false);
     const [_radioRandomizedQuestions, _setRadioRandomizedQuestions] = useState(false);
     const [_radioRandomizedOrder, _setRadioRandomizedOrder] = useState(false);
+    const [_radioPermitChooseTopic, _setRadioPermitChooseTopic] = useState(false);
 
     const [radioAutomateSelected, setRadioAutomateSelected] = useState('Disabled');
     const [radioExpressSelected, setRadioExpressSelected] = useState('Disabled');
@@ -58,6 +59,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
     const [selectedReadDigicardPre, setSlectedReadDigicardPre] = useState('No');
     const [selectedRecommendTeachersPre, setSlectedRecommendTeachersPre] = useState('No');
     const [selectedTopicSelection, setSlectedTopicSelection] = useState('No');
+    const [permitTopicChoose, setPermitTopicChoose] = useState('No');
 
     const [selectedReadDigicardPost, setSlectedReadDigicardPost] = useState('No');
     const [selectedRecommendTeachersPost, setSlectedRecommendTeachersPost] = useState('No');
@@ -104,6 +106,11 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
     const handleTopicSelection = () => {
         _setRadioTopicSelection(!_radioTopicSelection);
         _radioTopicSelection === true ? setSlectedTopicSelection('No') : setSlectedTopicSelection('Yes');
+    }
+
+    const handlePermitTopic = () => {
+        _setRadioPermitChooseTopic(!_radioPermitChooseTopic);
+        _radioPermitChooseTopic === true ? setPermitTopicChoose('No') : setPermitTopicChoose('Yes');
     }
 
     const handleReadDigicardPre = (e) => {
@@ -195,9 +202,9 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                 hideLoader();
                 if (result) {
 
-                    console.log('inside res initial data', response.data.Items[0].pre_quiz_config);
+                    console.log('post quiz configuration', response.data.Items[0].post_quiz_config);
 
-                    let previousDataPreQuiz = response.data.Items[0].pre_quiz_config;
+                    let previousDataPreQuiz = response.data.Items[0].post_quiz_config;
 
                     console.log(previousDataPreQuiz);
 
@@ -266,6 +273,11 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                     _setConceptCompulsorialy(conceptCompulsorialy)
                     setConceptCompulsorialySelected(previousDataPreQuiz.concept_mandatory)
 
+                    //permit topic
+                    var permitTopic = previousDataPreQuiz.choose_topic === 'Yes' ? true : false;
+                    _setRadioPermitChooseTopic(permitTopic);
+                    setPermitTopicChoose(previousDataPreQuiz.choose_topic)
+
                     setIsLoading(false);
                 } else {
                     console.log('else res');
@@ -325,7 +337,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
 
                                 <Card.Body>
                                     <Card.Title>
-                                        Pre Quiz Configuration
+                                        Post Quiz Configuration
                                     </Card.Title>
                                     <Formik
                                         initialValues={{
@@ -343,7 +355,8 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                             noOfWorksheets: previousDataPreQuiz.no_of_worksheet === '' ? '' : previousDataPreQuiz.no_of_worksheet,
                                             minNoQustionManual_express: previousDataPreQuiz.min_qn_at_topic_level === '' ? '' : previousDataPreQuiz.min_qn_at_topic_level,
                                             minNoQustionAutomate: previousDataPreQuiz.min_qn_at_chapter_level === '' ? '' : previousDataPreQuiz.min_qn_at_chapter_level,
-                                            noOrderQuiz: previousDataPreQuiz.no_of_randomized_order === '' ? '' : previousDataPreQuiz.no_of_randomized_order
+                                            noOrderQuiz: previousDataPreQuiz.no_of_randomized_order === '' ? '' : previousDataPreQuiz.no_of_randomized_order,
+                                            passPercentageL3Post: previousDataPreQuiz.pass_pct_quiz_l3 === '' ? '' : previousDataPreQuiz.pass_pct_quiz_l3,
                                         }}
                                         validationSchema={
                                             _radioAutomate === true && _radioExpress === false && _radioManual === false && _radioRecommendTeachersPre === false ?
@@ -382,9 +395,10 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                 const formData = {
                                                     data: {
                                                         school_id: id,
-                                                        pre_quiz_config: {
+                                                        post_quiz_config: {
                                                             pass_pct_quiz_l1: values.passPercentageL1Pre,
                                                             pass_pct_quiz_l2: values.passPercentageL2Pre,
+                                                            pass_pct_quiz_l3: values.passPercentageL3Post,
                                                             pct_of_student_for_reteach: values.minStudentsPre,
                                                             no_of_attempt_to_unlock: values.noOfAttemptsPre,
                                                             l2_mandatory: selectedL2MandatoryPre,
@@ -412,7 +426,8 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                             min_qn_at_chapter_level: values.minNoQustionAutomate,
                                                             randomized_order_varient: radioRandomizedOrdersSelected,
                                                             randomized_questions_varient: radioRandomizedQuestionsSelected,
-                                                            no_of_randomized_order: values.noOrderQuiz
+                                                            no_of_randomized_order: values.noOrderQuiz,
+                                                            choose_topic:permitTopicChoose
                                                         }
                                                     }
                                                 }
@@ -550,6 +565,26 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                     <br />
                                                     <Row>
                                                         <Col xs={6}>
+                                                            <label className="floating-label">
+                                                                <small className="text-danger">* </small>
+                                                                Pass Percentage for Quiz Level -3
+                                                            </label>
+                                                            <input
+                                                                className="form-control"
+                                                                error={touched.passPercentageL3Post && errors.passPercentageL3Post}
+                                                                label="passPercentageL3Post"
+                                                                name="passPercentageL3Post"
+                                                                onBlur={handleBlur}
+                                                                onChange={handleChange}
+                                                                type="number"
+                                                                value={values.passPercentageL3Post}
+                                                            // placeholder="To clear the Quiz"
+                                                            />
+
+                                                            {touched.passPercentageL3Post && errors.passPercentageL3Post && <small className="text-danger form-text">{errors.passPercentageL3Post}</small>}
+                                                        </Col>
+
+                                                        <Col xs={6}>
                                                             <OverlayTrigger
                                                                 placement="top"
                                                                 overlay={
@@ -578,44 +613,8 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                     {touched.minStudentsPre && errors.minStudentsPre && <small className="text-danger form-text">{errors.minStudentsPre}</small>}
                                                                 </div>
                                                             </OverlayTrigger>
-
-                                                        </Col>
-                                                        <Col>
-                                                            <OverlayTrigger
-                                                                placement="top"
-                                                                overlay={
-                                                                    <Tooltip id={`tooltip-top`}
-                                                                        style={{ zIndex: 1151, fontSize: '10px' }}
-                                                                    >
-                                                                        After unlocking from Need Attention
-                                                                    </Tooltip>}>
-                                                                <div className="form-group fill">
-
-                                                                    <label className="floating-label">
-                                                                        <small className="text-danger">* </small>
-                                                                        No. of attempts
-                                                                    </label>
-
-                                                                    <input
-                                                                        className="form-control"
-                                                                        error={touched.noOfAttemptsPre && errors.noOfAttemptsPre}
-                                                                        label="noOfAttemptsPre"
-                                                                        name="noOfAttemptsPre"
-                                                                        onBlur={handleBlur}
-                                                                        onChange={handleChange}
-                                                                        type="number"
-                                                                        // placeholder="After unlocking from Need Attention"
-                                                                        value={values.noOfAttemptsPre}
-                                                                    />
-
-                                                                    {touched.noOfAttemptsPre && errors.noOfAttemptsPre && <small className="text-danger form-text">{errors.noOfAttemptsPre}</small>}
-                                                                </div>
-                                                            </OverlayTrigger>
-
                                                         </Col>
                                                     </Row>
-
-
                                                     <Row>
                                                         <Col>
                                                             <div className="form-group fill">
@@ -663,6 +662,39 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                         </Col>
                                                     </Row>
                                                     <Row>
+                                                        <Col>
+                                                            <OverlayTrigger
+                                                                placement="top"
+                                                                overlay={
+                                                                    <Tooltip id={`tooltip-top`}
+                                                                        style={{ zIndex: 1151, fontSize: '10px' }}
+                                                                    >
+                                                                        After unlocking from Need Attention
+                                                                    </Tooltip>}>
+                                                                <div className="form-group fill">
+
+                                                                    <label className="floating-label">
+                                                                        <small className="text-danger">* </small>
+                                                                        No. of attempts
+                                                                    </label>
+
+                                                                    <input
+                                                                        className="form-control"
+                                                                        error={touched.noOfAttemptsPre && errors.noOfAttemptsPre}
+                                                                        label="noOfAttemptsPre"
+                                                                        name="noOfAttemptsPre"
+                                                                        onBlur={handleBlur}
+                                                                        onChange={handleChange}
+                                                                        type="number"
+                                                                        // placeholder="After unlocking from Need Attention"
+                                                                        value={values.noOfAttemptsPre}
+                                                                    />
+
+                                                                    {touched.noOfAttemptsPre && errors.noOfAttemptsPre && <small className="text-danger form-text">{errors.noOfAttemptsPre}</small>}
+                                                                </div>
+                                                            </OverlayTrigger>
+
+                                                        </Col>
                                                         <Col sm={6}>
                                                             <label className="floating-label">
                                                                 <small className="text-danger">* </small>
@@ -695,17 +727,17 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                 <Col xs={3}>
                                                                     <div className="row profile-view-radio-button-view">
                                                                         <Form.Check
-                                                                            id={`radio-Topic_selection`}
+                                                                            id={`topic_selection`}
                                                                             // label="Yes"
-                                                                            error={touched.Topic_selection && errors.Topic_selection}
+                                                                            error={touched.topic_selection && errors.topic_selection}
                                                                             type="switch"
                                                                             variant={'outline-primary'}
-                                                                            name="radio-Topic_selection"
+                                                                            name="topic_selection"
                                                                             checked={_radioTopicSelection}
                                                                             onChange={() => handleTopicSelection()}
                                                                         // className='ml-3 col-md-6'
                                                                         />
-                                                                        <Form.Label className="profile-view-question" id={`radio-Topic_selection`}>
+                                                                        <Form.Label className="profile-view-question" id={`topic_selection`}>
                                                                             {_radioTopicSelection === true ? 'Yes' : 'No'}
                                                                         </Form.Label>
                                                                     </div>
@@ -725,17 +757,17 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                 <Col xs={3}>
                                                                     <div className="row profile-view-radio-button-view">
                                                                         <Form.Check
-                                                                            id={`radio_unlockDigicard`}
+                                                                            id={`unlockDigicard`}
                                                                             // label="Yes"
-                                                                            error={touched.radio_unlockDigicard && errors.radio_unlockDigicard}
+                                                                            error={touched.radioUnlockDigicard && errors.radioUnlockDigicard}
                                                                             type="switch"
                                                                             variant={'outline-primary'}
-                                                                            name="radio_unlockDigicard"
+                                                                            name="unlockDigicard"
                                                                             checked={_radioUnlockDigicard}
                                                                             onChange={(e) => handleUnlockDigicard(e)}
                                                                         // className='ml-3 col-md-6'
                                                                         />
-                                                                        <Form.Label className="profile-view-question" id={`radio_unlockDigicard`}>
+                                                                        <Form.Label className="profile-view-question" id={`unlockDigicard`}>
                                                                             {_radioUnlockDigicard === true ? 'Yes' : 'No'}
                                                                         </Form.Label>
                                                                     </div>
@@ -757,27 +789,54 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                 <Col xs={3}>
                                                                     <div className="row profile-view-radio-button-view">
                                                                         <Form.Check
-                                                                            id={`radio-readDigicardPre`}
+                                                                            id={`readDigicardPre`}
                                                                             // label="Yes"
                                                                             error={touched.readDigicardPre && errors.readDigicardPre}
                                                                             type="switch"
                                                                             variant={'outline-primary'}
-                                                                            name="radio-readDigicardPre"
+                                                                            name="readDigicardPre"
                                                                             checked={_radioReadDigicardPre}
                                                                             onChange={(e) => handleReadDigicardPre(e)}
                                                                         // className='ml-3 col-md-6'
                                                                         />
-                                                                        <Form.Label className="profile-view-question" id={`radio-readDigicardPre`}>
+                                                                        <Form.Label className="profile-view-question" id={`readDigicardPre`}>
                                                                             {_radioReadDigicardPre === true ? 'Yes' : 'No'}
                                                                         </Form.Label>
                                                                     </div>
                                                                 </Col>
                                                             </Row>
                                                         </Col>
-
-
                                                     </Row>
-
+                                                    <br />
+                                                    <Row>
+                                                        <Col xs={6}>
+                                                            <Row>
+                                                                <Col>
+                                                                    <label className="floating-label">
+                                                                        <small className="text-danger"></small>Permit to Choose Topic?
+                                                                    </label>
+                                                                </Col>
+                                                                <Col xs={3}>
+                                                                    <div className="row profile-view-radio-button-view">
+                                                                        <Form.Check
+                                                                            id={`radioPermitTopic`}
+                                                                            // label="Yes"
+                                                                            error={touched.radioPermitTopic && errors.radioPermitTopic}
+                                                                            type="switch"
+                                                                            variant={'outline-primary'}
+                                                                            name="radioPermitTopic"
+                                                                            checked={_radioPermitChooseTopic}
+                                                                            onChange={() => handlePermitTopic()}
+                                                                        // className='ml-3 col-md-6'
+                                                                        />
+                                                                        <Form.Label className="profile-view-question" id={`radioPermitTopic`}>
+                                                                            {_radioPermitChooseTopic === true ? 'Yes' : 'No'}
+                                                                        </Form.Label>
+                                                                    </div>
+                                                                </Col>
+                                                            </Row>
+                                                        </Col>
+                                                    </Row>
                                                     <br />
                                                     <Row>
                                                         <Col xs={6}>
@@ -790,18 +849,18 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                 <Col xs={3}>
                                                                     <div className="row profile-view-radio-button-view">
                                                                         <Form.Check
-                                                                            id={`radioRecommendTeachersPre1`}
+                                                                            id={`radioRecommendTeachersPost`}
                                                                             error={touched.recommendTeachersPre && errors.recommendTeachersPre}
                                                                             type="switch"
                                                                             variant={'outline-primary'}
-                                                                            name="radioRecommendTeachersPre1"
+                                                                            name="radioRecommendTeachersPost"
                                                                             checked={_radioRecommendTeachersPre && _radioRecommendTeachersPre}
                                                                             onChange={(e) => {
                                                                                 setFieldValue('percentageOfStudentsPre', '');
                                                                                 handleRecommendTeachersPre(e);
                                                                             }}
                                                                         />
-                                                                        <Form.Label className="profile-view-question" id={`radioRecommendTeachersPre1`}>
+                                                                        <Form.Label className="profile-view-question" id={`radioRecommendTeachersPost`}>
                                                                             {_radioRecommendTeachersPre === true ? 'Yes' : 'No'}
                                                                         </Form.Label>
                                                                     </div>
@@ -869,7 +928,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                 <Col xs={3}>
                                                                     <div className="row profile-view-radio-button-view">
                                                                         <Form.Check
-                                                                            id={`radio-onlineTest`}
+                                                                            id={`onlineTest`}
                                                                             error={touched.onlineTest && errors.onlineTest}
                                                                             type="switch"
                                                                             variant={'outline-primary'}
@@ -880,7 +939,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                                 handleOnlineTest(e);
                                                                             }}
                                                                         />
-                                                                        <Form.Label className="profile-view-question" id={`radio_online_test`}>
+                                                                        <Form.Label className="profile-view-question" id={`onlineTest`}>
                                                                             {_radioOnlineTest === true ? 'Enabled' : 'Disabled'}
                                                                         </Form.Label>
                                                                     </div>
@@ -901,18 +960,18 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                 <Col xs={3}>
                                                                     <div className="row profile-view-radio-button-view">
                                                                         <Form.Check
-                                                                            id={`radioOfflineMode`}
-                                                                            error={touched.radioOfflineMode && errors.radioOfflineMode}
+                                                                            id={`offlineMode`}
+                                                                            error={touched.offlineMode && errors.offlineMode}
                                                                             type="switch"
                                                                             variant={'outline-primary'}
-                                                                            name="radioOfflineMode"
+                                                                            name="offlineMode"
                                                                             checked={_radioPaperBased && _radioPaperBased}
                                                                             onChange={(e) => {
                                                                                 setOnlineErr(false);
                                                                                 handlePaperBased(e);
                                                                             }}
                                                                         />
-                                                                        <Form.Label className="profile-view-question" id={`radioOfflineMode`}>
+                                                                        <Form.Label className="profile-view-question" id={`offlineMode`}>
                                                                             {_radioPaperBased === true ? 'Enabled' : 'Disabled'}
                                                                         </Form.Label>
                                                                     </div>
@@ -939,12 +998,12 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                 <Col xs={3}>
                                                                     <div className="row profile-view-radio-button-view">
                                                                         <Form.Check
-                                                                            id={`radioAutomate`}
+                                                                            id={`radioAutomateType`}
                                                                             // label="Yes"
-                                                                            error={touched.radioAutomate && errors.radioAutomate}
+                                                                            error={touched.radioAutomateType && errors.radioAutomateType}
                                                                             type="switch"
                                                                             variant={'outline-primary'}
-                                                                            name="radioAutomate"
+                                                                            name="radioAutomateType"
                                                                             checked={_radioAutomate}
                                                                             onChange={(e) => {
                                                                                 setFieldValue('minNoQustionAutomate', '');
@@ -953,7 +1012,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                             }}
                                                                         // className='ml-3 col-md-6'
                                                                         />
-                                                                        <Form.Label className="profile-view-question" id={`radioAutomate`}>
+                                                                        <Form.Label className="profile-view-question" id={`radioAutomateType`}>
                                                                             {_radioAutomate === true ? 'Enabled' : 'Disabled'}
                                                                         </Form.Label>
                                                                     </div>
@@ -969,12 +1028,12 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                 <Col xs={3}>
                                                                     <div className="row profile-view-radio-button-view">
                                                                         <Form.Check
-                                                                            id={`radioExpress`}
+                                                                            id={`radioExpressType`}
                                                                             // label="Yes"
-                                                                            error={touched.radioExpress && errors.radioExpress}
+                                                                            error={touched.radioExpressType && errors.radioExpressType}
                                                                             type="switch"
                                                                             variant={'outline-primary'}
-                                                                            name="radioExpress"
+                                                                            name="radioExpressType"
                                                                             checked={_radioExpress}
                                                                             onChange={(e) => {
                                                                                 setFieldValue('minNoQustionManual_express', '');
@@ -983,7 +1042,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                             }}
                                                                         // className='ml-3 col-md-6'
                                                                         />
-                                                                        <Form.Label className="profile-view-question" id={`radioExpress`}>
+                                                                        <Form.Label className="profile-view-question" id={`radioExpressType`}>
                                                                             {_radioExpress === true ? 'Enabled' : 'Disabled'}
                                                                         </Form.Label>
                                                                     </div>
@@ -999,12 +1058,12 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                 <Col xs={3}>
                                                                     <div className="row profile-view-radio-button-view">
                                                                         <Form.Check
-                                                                            id={`radioManual`}
+                                                                            id={`radioManualType`}
                                                                             // label="Yes"
-                                                                            error={touched.radioManual && errors.radioManual}
+                                                                            error={touched.radioManualType && errors.radioManualType}
                                                                             type="switch"
                                                                             variant={'outline-primary'}
-                                                                            name="radioManual"
+                                                                            name="radioManualType"
                                                                             checked={_radioManual}
                                                                             onChange={(e) => {
                                                                                 setFieldValue('minNoQustionManual_express', '');
@@ -1014,7 +1073,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                             }}
                                                                         // className='ml-3 col-md-6'
                                                                         />
-                                                                        <Form.Label className="profile-view-question" id={`radioManual`}>
+                                                                        <Form.Label className="profile-view-question" id={`radioManualType`}>
                                                                             {_radioManual === true ? 'Enabled' : 'Disabled'}
                                                                         </Form.Label>
                                                                     </div>
@@ -1095,17 +1154,17 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                             <Col xs={3}>
                                                                                 <div className="row profile-view-radio-button-view">
                                                                                     <Form.Check
-                                                                                        id={`radio-conceptCompulsorialy`}
+                                                                                        id={`conceptCompulsorialy`}
                                                                                         // label="Yes"
                                                                                         error={touched.conceptCompulsorialy && errors.conceptCompulsorialy}
                                                                                         type="switch"
                                                                                         variant={'outline-primary'}
-                                                                                        name="radio_conceptCompulsorialy"
+                                                                                        name="conceptCompulsorialy"
                                                                                         checked={_radioConceptCompulsorialy}
                                                                                         onChange={(e) => handleconceptCompulsorialy(e)}
                                                                                     // className='ml-3 col-md-6'
                                                                                     />
-                                                                                    <Form.Label className="profile-view-question" id={`radio-conceptCompulsorialy`}>
+                                                                                    <Form.Label className="profile-view-question" id={`conceptCompulsorialy`}>
                                                                                         {_radioConceptCompulsorialy === true ? 'Yes' : 'No'}
                                                                                     </Form.Label>
                                                                                 </div>
@@ -1257,12 +1316,12 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                 <Col xs={3}>
                                                                     <div className="row profile-view-radio-button-view">
                                                                         <Form.Check
-                                                                            id={`randomizedQuestions`}
+                                                                            id={`randomizedQuestionsPaper`}
                                                                             // label="Yes"
-                                                                            error={touched.randomizedQuestions && errors.randomizedQuestions}
+                                                                            error={touched.randomizedQuestionsPaper && errors.randomizedQuestionsPaper}
                                                                             type="switch"
                                                                             variant={'outline-primary'}
-                                                                            name="randomizedQuestions"
+                                                                            name="randomizedQuestionsPaper"
                                                                             checked={_radioRandomizedQuestions}
                                                                             onChange={(e) => {
                                                                                 setVarientErr(false);
@@ -1270,7 +1329,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                             }}
                                                                         // className='ml-3 col-md-6'
                                                                         />
-                                                                        <Form.Label className="profile-view-question" id={`randomizedQuestions`}>
+                                                                        <Form.Label className="profile-view-question" id={`randomizedQuestionsPaper`}>
                                                                             {_radioRandomizedQuestions === true ? 'Enabled' : 'Disabled'}
                                                                         </Form.Label>
                                                                     </div>
@@ -1286,12 +1345,12 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                 <Col xs={3}>
                                                                     <div className="row profile-view-radio-button-view">
                                                                         <Form.Check
-                                                                            id={`randomizedOrder`}
+                                                                            id={`randomizedOrderPaper`}
                                                                             // label="Yes"
-                                                                            error={touched.randomizedOrder && errors.randomizedOrder}
+                                                                            error={touched.randomizedOrderPaper && errors.randomizedOrderPaper}
                                                                             type="switch"
                                                                             variant={'outline-primary'}
-                                                                            name="randomizedOrder"
+                                                                            name="randomizedOrderPaper"
                                                                             checked={_radioRandomizedOrder}
                                                                             onChange={(e) => {
                                                                                 setVarientErr(false);
@@ -1300,7 +1359,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                             }}
                                                                         // className='ml-3 col-md-6'
                                                                         />
-                                                                        <Form.Label className="profile-view-question" id={`randomizedOrder`}>
+                                                                        <Form.Label className="profile-view-question" id={`randomizedOrderPaper`}>
                                                                             {_radioRandomizedOrder === true ? 'Enabled' : 'Disabled'}
                                                                         </Form.Label>
                                                                     </div>
@@ -1381,4 +1440,4 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
 
 }
 
-export default PreQuizConfiguration
+export default PostQuizConfiguration
