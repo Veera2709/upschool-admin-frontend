@@ -31,7 +31,7 @@ export const commonValidation = Yup.object().shape({
     martix_intermediate: Yup.string()
         .matches(Constants.Common.passPercentageRegex, 'Invalid Percentage!')
         .required('Field is required/Invalid Percentage!'),
-    martix_advanced: Yup.string()
+    passPercentageL3Post: Yup.string()
         .matches(Constants.Common.passPercentageRegex, 'Invalid Percentage!')
         .required('Field is required/Invalid Percentage!'),
 })

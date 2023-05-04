@@ -353,8 +353,8 @@ const QuizConfiguration = ({ className, rest, id }) => {
 
     useEffect(() => {
 
-        setIsLoading(true);
-        fetchIndividualSchoolDetails();
+        // setIsLoading(true);
+        // fetchIndividualSchoolDetails();
 
 
     }, []);
