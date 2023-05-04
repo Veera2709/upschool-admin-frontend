@@ -218,28 +218,28 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                     setSlectedTopicSelection(previousDataPreQuiz.topic_archive);
                     setRadioUnlockDigicardSelected(previousDataPreQuiz.unlock_digicard_mandatory);
 
-                    //testMode
-                    const onlineTest = previousDataPreQuiz.online_test === "Enabled" ? true : false;
-                    const offlineTest = previousDataPreQuiz.offline_test === "Enabled" ? true : false;
+                    //test mode
+                    const onlineTest = previousDataPreQuiz.online_mode === "Enabled" ? true : false;
+                    const offlineTest = previousDataPreQuiz.offline_mode === "Enabled" ? true : false;
 
                     _setOnlineTest(onlineTest);
                     _setPaperBased(offlineTest);
 
-                    setRadioOnlineTestSelected(previousDataPreQuiz.online_test);
-                    setRadioPaperBasedSelected(previousDataPreQuiz.offline_test);
+                    setRadioOnlineTestSelected(previousDataPreQuiz.online_mode);
+                    setRadioPaperBasedSelected(previousDataPreQuiz.offline_mode);
 
                     //testMode
-                    const automateType = previousDataPreQuiz.automated_mode === "Enabled" ? true : false;
-                    const expressType = previousDataPreQuiz.express_mode === "Enabled" ? true : false;
-                    const manualType = previousDataPreQuiz.manual_mode === "Enabled" ? true : false;
+                    const automateType = previousDataPreQuiz.automated_type === "Enabled" ? true : false;
+                    const expressType = previousDataPreQuiz.express_type === "Enabled" ? true : false;
+                    const manualType = previousDataPreQuiz.manual_type === "Enabled" ? true : false;
 
                     _setRadioAutomate(automateType);
                     _setRadioExpress(expressType);
                     _setRadioManual(manualType)
 
-                    setRadioAutomateSelected(previousDataPreQuiz.automated_mode);
-                    setRadioExpressSelected(previousDataPreQuiz.express_mode);
-                    setRadioManualSelected(previousDataPreQuiz.manual_mode);
+                    setRadioAutomateSelected(previousDataPreQuiz.automated_type);
+                    setRadioExpressSelected(previousDataPreQuiz.express_type);
+                    setRadioManualSelected(previousDataPreQuiz.manual_type);
 
                     //test Difficult
                     SetSelectedTestMode(previousDataPreQuiz.test_level)
@@ -399,11 +399,11 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                             },
                                                             no_of_test: values.noOfTestPapers,
                                                             no_of_worksheet: values.noOfWorksheets,
-                                                            automated_mode: radioAutomateSelected,
-                                                            manual_mode: radioManualSelected,
-                                                            express_mode: radioExpressSelected,
-                                                            online_test: radioOnlineTestSelected,
-                                                            offline_test: radioPaperBasedSelected,
+                                                            automated_type: radioAutomateSelected,
+                                                            manual_type: radioManualSelected,
+                                                            express_type: radioExpressSelected,
+                                                            online_mode: radioOnlineTestSelected,
+                                                            offline_mode: radioPaperBasedSelected,
                                                             unlock_digicard_mandatory: radioUnlockDigicardSelected,
                                                             class_percentage_for_report: values.classPercentageRep,
                                                             topic_archive: selectedTopicSelection,
