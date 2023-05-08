@@ -233,7 +233,6 @@ const AddQuestions = ({ className, ...rest }) => {
     const handleQuestionType = (event) => {
 
         setAnswerTypeOptions((currentOptions) => currentOptions.filter((currentOption) => !selectedAnswerType.includes(currentOption)));
-        setSelectedQuestionCategory([]);
         setSelectedQuestionCognitiveSkill([]);
         setSelectedQuestionSource([]);
 
