@@ -120,7 +120,7 @@ function Table({ columns, data }) {
                                         }}
                                     >
                                         <i className="feather icon-edit" /> &nbsp; Edit
-                                    </Button>{' '}
+                                    </Button>
                                     &nbsp;
                                     <Button
                                         size="sm"
