@@ -353,8 +353,8 @@ const QuizConfiguration = ({ className, rest, id }) => {
 
     useEffect(() => {
 
-        setIsLoading(true);
-        fetchIndividualSchoolDetails();
+        // setIsLoading(true);
+        // fetchIndividualSchoolDetails();
 
 
     }, []);
@@ -620,7 +620,7 @@ const QuizConfiguration = ({ className, rest, id }) => {
                                                     </Col>
                                                     <Col style={{ display: 'flex', gap: '55px', marginTop: 'auto' }}>
                                                         <label className="floating-label">
-                                                            <small className="text-danger"></small>Topic_selection?
+                                                            <small className="text-danger"></small>Topic Selection?
                                                         </label>
                                                         <div className="row profile-view-radio-button-view">
                                                             <Form.Check
