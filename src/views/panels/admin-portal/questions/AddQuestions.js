@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { Row, Col, Button, Card, CloseButton, Form, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import Select from 'react-select';
 import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
 import axios from 'axios';
 import ArticleRTE from './ArticleRTE'
 import * as Yup from 'yup';
 import { Formik } from 'formik';
 import { useHistory } from 'react-router-dom';
-import withReactContent from 'sweetalert2-react-content';
 import MathJax from "react-mathjax";
 
 import dynamicUrl from '../../../../helper/dynamicUrls';
@@ -79,7 +79,7 @@ const AddQuestions = ({ className, ...rest }) => {
 
     const [errorMessage, setErrorMessage] = useState("");//for question category
 
-    const [selectedValueDisclaimer, setSelectedValueDisclaimer] = useState([]);
+    const [selectedValueDisclaimer, setSelectedValueDisclaimer] = useState("N.A.");
 
     const [questionLabelAlreadyExists, setQuestionLabelAlreadyExists] = useState(false);
     const [answerOptionsForm, setAnswerOptionsForm] = useState([
