@@ -10,7 +10,6 @@ import { useHistory } from 'react-router-dom';
 import dynamicUrl from "../../../../helper/dynamicUrls";
 import MESSAGES from '../../../../helper/messages';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
-import * as Constants from '../../../../config/constant';
 import BasicSpinner from '../../../../helper/BasicSpinner';
 import { commonValidation, AutomateValidation, ManulExpress, AutomateExpress, focusAreasAutomate, focusAreasManual, focusAreasAutomateExpress } from "./validation";
 
