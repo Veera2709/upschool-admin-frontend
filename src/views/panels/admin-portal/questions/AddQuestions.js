@@ -77,7 +77,7 @@ const AddQuestions = ({ className, ...rest }) => {
     const [optionsSource, setOptionsSource] = useState([]);
     const [optionsDisclaimer, setOptionsDisclaimer] = useState([]);
 
-    const [errorMessage, setErrorMessage] = useState("");//for question category
+    const [errorMessage, setErrorMessage] = useState("");
 
     const [selectedValueDisclaimer, setSelectedValueDisclaimer] = useState("N.A.");
 
@@ -100,7 +100,7 @@ const AddQuestions = ({ className, ...rest }) => {
             }
         });
         axios
-            // .post("api-url")
+           
             .post(
                 dynamicUrl.fetchQuestionMasters,
                 {
