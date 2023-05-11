@@ -178,7 +178,7 @@ const EditSourceOfQuestion = ({ editSourceOfQuestionID, setIsOpenEditSourceOfQue
 
                                                     MySwal.fire({
                                                         type: 'success',
-                                                        title: 'Question Category updated successfully!',
+                                                        title: 'Source of Question updated successfully!',
                                                         icon: 'success',
                                                     }).then((willDelete) => {
                                                         window.location.reload();

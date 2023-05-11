@@ -133,6 +133,7 @@ const dynamicUrl = {
     toggleGroupStatus: baseUrl + '/toggleGroupStatus',
     editGroup: baseUrl + '/editGroup',
     fetchDigicardIdAndName: baseUrl + '/fetchDigicardIdAndName',
+    bulkToggleGroupsStatus: baseUrl + '/bulkToggleGroupsStatus',
 
     // CMS users
     addCMSUser: baseUrl + '/addCMSUser',
@@ -156,6 +157,24 @@ const dynamicUrl = {
     addQuestionDisclaimer: baseUrl + '/addQuestionDisclaimer',
     fetchIndividualDisclaimer: baseUrl + '/fetchIndividualDisclaimer',
     updateQuestionDisclaimer: baseUrl + '/updateQuestionDisclaimer',
+
+
+    //settings - Source of Question
+    fetchSourcesBasedonStatus: baseUrl + '/fetchSourcesBasedonStatus',
+    addQuestionSource: baseUrl + '/addQuestionSource',
+    fetchIndividualSource: baseUrl + '/fetchIndividualSource',
+    toggleQuestionSourceStatus: baseUrl + '/toggleQuestionSourceStatus',
+    bulkToggleQuestionSourceStatus: baseUrl + '/bulkToggleQuestionSourceStatus',
+    updateQuestionSource: baseUrl + '/updateQuestionSource',
+
+    //settings - cognitive Skills
+    fetchSkillsBasedonStatus: baseUrl + '/fetchSkillsBasedonStatus',
+    toggleCognitiveSkillStatus: baseUrl + '/toggleCognitiveSkillStatus',
+    bulkToggleCognitiveSkillStatus: baseUrl + '/bulkToggleCognitiveSkillStatus',
+    addCognitiveSkill: baseUrl + '/addCognitiveSkill',
+    updateCognitiveSkill: baseUrl + '/updateCognitiveSkill',
+    fetchIndividualCognitiveSkill: baseUrl + '/fetchIndividualCognitiveSkill',
+
 }
 
 export default dynamicUrl;

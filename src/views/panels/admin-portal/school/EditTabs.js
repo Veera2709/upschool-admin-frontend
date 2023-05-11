@@ -9,6 +9,8 @@ import SectionsTableView from './SectionsTableView'
 import QuizConfiguration from './QuizConfiguration';
 import SubscriptionFeatures from './SubscriptionFeatures';
 import BasicSpinner from '../../../../helper/BasicSpinner';
+import PreQuizConfiguration from './PreQuizConfiguration'
+import PostQuizConfiguration from './PostQuizConfiguration';
 
 const EditTabs = () => {
     const [_data, _setData] = useState([]);
@@ -67,13 +69,19 @@ const EditTabs = () => {
                         <Tab eventKey={2} title="Subscription Features">
                             <SubscriptionFeatures id={school_id} />
                         </Tab>
-                        <Tab eventKey={3} title="Quiz Configuration">
+                        {/* <Tab eventKey={7} title="Quiz Configuration">
                             <QuizConfiguration id={school_id} />
+                        </Tab> */}
+                        <Tab eventKey={3} title=" Pre Quiz Configuration">
+                            <PreQuizConfiguration id={school_id} />
                         </Tab>
-                        <Tab eventKey={4} title="Subscribe Class">
+                        <Tab eventKey={4} title="Post Quiz Configuration">
+                            <PostQuizConfiguration id={school_id} />
+                        </Tab>
+                        <Tab eventKey={5} title="Subscribe Class">
                             <SubscribeClass id={school_id} />
                         </Tab>
-                        <Tab eventKey={5} title="Add Section">
+                        <Tab eventKey={6} title="Add Section">
                             <SectionsTableView id={school_id} />
                         </Tab>
                     </Tabs>
