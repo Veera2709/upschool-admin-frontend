@@ -308,6 +308,44 @@ const menuItems = {
                   url: '/admin-portal/admin-settings/archived-questionDisclaimer'
                 },
               ]
+            },
+            {
+              id: 'sourceOfQuestion',
+              title: 'Source of Question',
+              type: 'collapse',
+              children: [
+                {
+                  id: 'activeSourceOfQuestion',
+                  title: 'Active',
+                  type: 'item',
+                  url: '/admin-portal/admin-settings/active-sourceOfQuestion'
+                },
+                {
+                  id: 'archivedSourceOfQuestion',
+                  title: 'Archived',
+                  type: 'item',
+                  url: '/admin-portal/admin-settings/archived-sourceOfQuestion'
+                },
+              ]
+            },
+            {
+              id: 'cognitiveSkills',
+              title: 'Cognitive Skills',
+              type: 'collapse',
+              children: [
+                {
+                  id: 'activeCognitiveSkills',
+                  title: 'Active',
+                  type: 'item',
+                  url: '/admin-portal/admin-settings/active-cognitiveSkills'
+                },
+                {
+                  id: 'archivedCognitiveSkills',
+                  title: 'Archived',
+                  type: 'item',
+                  url: '/admin-portal/admin-settings/archived-cognitiveSkills'
+                },
+              ]
             }
           ]
         }

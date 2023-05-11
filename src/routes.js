@@ -383,6 +383,27 @@ const routes = [
       },
       {
         exact: true,
+        path: '/admin-portal/admin-settings/active-sourceOfQuestion',
+        component: lazy(() => import('./views/panels/admin-portal/settings/SourceOfQuestion/SourceOfQuestionTableView'))
+      },
+      {
+        exact: true,
+        path: '/admin-portal/admin-settings/archived-sourceOfQuestion',
+        component: lazy(() => import('./views/panels/admin-portal/settings/SourceOfQuestion/SourceOfQuestionTableView'))
+      },
+      {
+        exact: true,
+        path: '/admin-portal/admin-settings/active-cognitiveSkills',
+        component: lazy(() => import('./views/panels/admin-portal/settings/CognitiveSkills/CognitiveSkillsTableView'))
+      },
+      {
+        exact: true,
+        path: '/admin-portal/admin-settings/archived-cognitiveSkills',
+        component: lazy(() => import('./views/panels/admin-portal/settings/CognitiveSkills/CognitiveSkillsTableView'))
+      },
+
+      {
+        exact: true,
         path: '/admin-portal/editCMSUser/:id',
         component: lazy(() => import('./views/panels/admin-portal/CMS users/editUsers'))
       },

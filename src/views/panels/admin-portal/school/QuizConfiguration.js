@@ -22,6 +22,7 @@ const QuizConfiguration = ({ className, rest, id }) => {
     const [previousDataPostQuiz, setPreviousDataPostQuiz] = useState([]);
     const [_radioL2MandatoryPre, _setRadioL2MandatoryPre] = useState(false);
     const [_radioReadDigicardPre, _setRadioReadDigicardPre] = useState(false);
+    const [_radioTopicSelection, _setRadioTopicSelection] = useState(false);
     const [_radioRecommendTeachersPre, _setRadioRecommendTeachersPre] = useState(true);
 
     const [_radioReadDigicardPost, _setRadioReadDigicardPost] = useState(false);
@@ -30,9 +31,31 @@ const QuizConfiguration = ({ className, rest, id }) => {
     const [selectedL2MandatoryPre, setSlectedL2MandatoryPre] = useState('No');
     const [selectedReadDigicardPre, setSlectedReadDigicardPre] = useState('No');
     const [selectedRecommendTeachersPre, setSlectedRecommendTeachersPre] = useState('No');
+    const [selectedTopicSelection, setSlectedTopicSelection] = useState('No');
 
     const [selectedReadDigicardPost, setSlectedReadDigicardPost] = useState('No');
     const [selectedRecommendTeachersPost, setSlectedRecommendTeachersPost] = useState('No');
+
+    const [selectedTestMode, SetSelectedTestMode] = useState()
+    const [selectedTestType, SetSelectedTestType] = useState()
+
+    const [isTestModeErr, setTestModeErr] = useState(false);
+    const [isTestTypeErr, setTestTypeErr] = useState(false);
+
+    const [ispreviousCommonData, setIsPreviousCommonData] = useState([])
+
+    const [isTestMode, setIsTestMode] = useState([
+        { value: 'Easy', label: 'Easy' },
+        { value: 'Medium', label: 'Medium' },
+        { value: 'Hard', label: 'Hard' },
+    ])
+
+    const [isTestType, setIsTestType] = useState([
+        { value: 'Automated', label: 'Automated' },
+        { value: 'Express', label: 'Express' },
+        { value: 'Manual', label: 'Manual' },
+        { value: 'Default', label: 'Default' },
+    ])
 
     const MySwal = withReactContent(Swal);
 
@@ -48,6 +71,12 @@ const QuizConfiguration = ({ className, rest, id }) => {
 
         _setRadioL2MandatoryPre(!_radioL2MandatoryPre);
         _radioL2MandatoryPre === true ? setSlectedL2MandatoryPre('No') : setSlectedL2MandatoryPre('Yes');
+    }
+
+    const handleTopicSelection = () => {
+
+        _setRadioTopicSelection(!_radioTopicSelection);
+        _radioTopicSelection === true ? setSlectedTopicSelection('No') : setSlectedTopicSelection('Yes');
     }
 
     const handleReadDigicardPre = (e) => {
@@ -220,6 +249,8 @@ const QuizConfiguration = ({ className, rest, id }) => {
         noOfAttemptsPost: Yup.string()
             .matches(Constants.Common.numOfAttemptsRegex, 'Invalid Number!')
             .required('Field is required/Invalid Number!'),
+        min_no_of_questions: Yup.number()
+            .required('Field is required!'),
     }
 
     const fetchIndividualSchoolDetails = () => {
@@ -243,11 +274,13 @@ const QuizConfiguration = ({ className, rest, id }) => {
                 hideLoader();
                 if (result) {
 
-                    console.log('inside res initial data');
+                    console.log('inside res initial data', response.data);
 
                     let previousDataPreQuiz = response.data.Items[0].school_quiz_config.pre_learning;
+                    let previousCommonData = response.data.Items[0].school_quiz_config;
                     let previousDataPostQuiz = response.data.Items[0].school_quiz_config.post_learning;
                     console.log(previousDataPreQuiz);
+                    console.log("previousCommonData", previousCommonData);
                     console.log(previousDataPostQuiz.pass_pct_quiz_l3);
                     console.log(previousDataPostQuiz.pct_of_student_for_focus);
 
@@ -256,7 +289,10 @@ const QuizConfiguration = ({ className, rest, id }) => {
                     const radioValueRecommendTeachersPre = previousDataPreQuiz.recommend_teacher_on_focus_area === 'Yes' ? true : false;
                     const radioValueReadDigicardPost = previousDataPostQuiz.read_digicard_mandatory === 'Yes' ? true : false;
                     const radioValueRecommendTeachersPost = previousDataPostQuiz.recommend_teacher_on_focus_area === 'Yes' ? true : false;
+                    const topicSelectionRadioValue = previousCommonData.topic_selection === 'Yes' ? true : false;
 
+
+                    _setRadioTopicSelection(topicSelectionRadioValue)
                     _setRadioL2MandatoryPre(radioValueL2MandatoryPre);
                     _setRadioReadDigicardPre(radioValueReadDigicardPre);
                     _setRadioRecommendTeachersPre(radioValueRecommendTeachersPre);
@@ -271,6 +307,11 @@ const QuizConfiguration = ({ className, rest, id }) => {
                     setSlectedRecommendTeachersPost(previousDataPostQuiz.recommend_teacher_on_focus_area);
 
 
+                    SetSelectedTestMode(previousCommonData.test_mode);
+                    SetSelectedTestType(previousCommonData.test_type);
+                    setSlectedTopicSelection(previousCommonData.topic_selection);
+
+                    setIsPreviousCommonData(previousCommonData)
                     setPreviousDataPreQuiz(previousDataPreQuiz);
                     setPreviousDataPostQuiz(previousDataPostQuiz);
                     setIsLoading(false);
@@ -312,8 +353,8 @@ const QuizConfiguration = ({ className, rest, id }) => {
 
     useEffect(() => {
 
-        setIsLoading(true);
-        fetchIndividualSchoolDetails();
+        // setIsLoading(true);
+        // fetchIndividualSchoolDetails();
 
 
     }, []);
@@ -344,7 +385,8 @@ const QuizConfiguration = ({ className, rest, id }) => {
                                             minStudentsPost: previousDataPostQuiz.pct_of_student_for_reteach === '' ? '' : previousDataPostQuiz.pct_of_student_for_reteach,
                                             noOfAttemptsPost: previousDataPostQuiz.no_of_attempt_to_unlock === '' ? '' : previousDataPostQuiz.no_of_attempt_to_unlock,
                                             percentageOfStudentsPost: previousDataPostQuiz.pct_of_student_for_focus === '' ? '' : previousDataPostQuiz.pct_of_student_for_focus,
-                                            submit: null
+                                            submit: null,
+                                            min_no_of_questions: ispreviousCommonData.min_no_of_questions === '' ? '' : ispreviousCommonData.min_no_of_questions
                                         }}
                                         validationSchema={Yup.object().shape(schemaValues)}
                                         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
@@ -352,113 +394,125 @@ const QuizConfiguration = ({ className, rest, id }) => {
                                             setStatus({ success: true });
                                             setSubmitting(true);
 
-                                            const formData = {
-                                                data: {
-                                                    school_id: id,
-                                                    school_quiz_config: {
-                                                        pre_learning: {
-                                                            pass_pct_quiz_l1: values.passPercentageL1Pre,
-                                                            pass_pct_quiz_l2: values.passPercentageL2Pre,
-                                                            pct_of_student_for_reteach: values.minStudentsPre,
-                                                            no_of_attempt_to_unlock: values.noOfAttemptsPre,
-                                                            l2_mandatory: selectedL2MandatoryPre,
-                                                            read_digicard_mandatory: selectedReadDigicardPre,
-                                                            recommend_teacher_on_focus_area: selectedRecommendTeachersPre,
-                                                            pct_of_student_for_focus: selectedRecommendTeachersPre === 'Yes' ? values.percentageOfStudentsPre : '',
-                                                        },
-                                                        post_learning: {
-                                                            pass_pct_quiz_l1: values.passPercentageL1Post,
-                                                            pass_pct_quiz_l2: values.passPercentageL2Post,
-                                                            pass_pct_quiz_l3: values.passPercentageL3Post,
-                                                            pct_of_student_for_reteach: values.minStudentsPost,
-                                                            no_of_attempt_to_unlock: values.noOfAttemptsPost,
-                                                            read_digicard_mandatory: selectedReadDigicardPost,
-                                                            recommend_teacher_on_focus_area: selectedRecommendTeachersPost,
-                                                            pct_of_student_for_focus: selectedRecommendTeachersPost === 'Yes' ? values.percentageOfStudentsPost : '',
+                                            if (selectedTestMode === '' || selectedTestMode === undefined || selectedTestMode === null|| selectedTestMode === 'Select...') {
+                                                setTestModeErr(true)
+                                            } else if (selectedTestType === '' || selectedTestType === undefined || selectedTestType === null|| selectedTestType === 'Select...') {
+                                                setTestTypeErr(true)
+                                            } else {
+                                                const formData = {
+                                                    data: {
+                                                        school_id: id,
+                                                        school_quiz_config: {
+                                                            pre_learning: {
+                                                                pass_pct_quiz_l1: values.passPercentageL1Pre,
+                                                                pass_pct_quiz_l2: values.passPercentageL2Pre,
+                                                                pct_of_student_for_reteach: values.minStudentsPre,
+                                                                no_of_attempt_to_unlock: values.noOfAttemptsPre,
+                                                                l2_mandatory: selectedL2MandatoryPre,
+                                                                read_digicard_mandatory: selectedReadDigicardPre,
+                                                                recommend_teacher_on_focus_area: selectedRecommendTeachersPre,
+                                                                pct_of_student_for_focus: selectedRecommendTeachersPre === 'Yes' ? values.percentageOfStudentsPre : '',
+                                                            },
+                                                            post_learning: {
+                                                                pass_pct_quiz_l1: values.passPercentageL1Post,
+                                                                pass_pct_quiz_l2: values.passPercentageL2Post,
+                                                                pass_pct_quiz_l3: values.passPercentageL3Post,
+                                                                pct_of_student_for_reteach: values.minStudentsPost,
+                                                                no_of_attempt_to_unlock: values.noOfAttemptsPost,
+                                                                read_digicard_mandatory: selectedReadDigicardPost,
+                                                                recommend_teacher_on_focus_area: selectedRecommendTeachersPost,
+                                                                pct_of_student_for_focus: selectedRecommendTeachersPost === 'Yes' ? values.percentageOfStudentsPost : '',
+                                                            },
+                                                            test_mode: selectedTestMode,
+                                                            min_no_of_questions: values.min_no_of_questions,
+                                                            test_type: selectedTestType,
+                                                            topic_selection: selectedTopicSelection
                                                         }
                                                     }
                                                 }
-                                            }
 
-                                            console.log(formData);
+                                                console.log(formData);
 
-                                            axios
-                                                .post(
-                                                    dynamicUrl.setQuizConfiguration,
-                                                    formData,
-                                                    {
-                                                        headers: { Authorization: sessionStorage.getItem('user_jwt') }
-                                                    }
-                                                )
-                                                .then((response) => {
+                                                axios
+                                                    .post(
+                                                        dynamicUrl.setQuizConfiguration,
+                                                        formData,
+                                                        {
+                                                            headers: { Authorization: sessionStorage.getItem('user_jwt') }
+                                                        }
+                                                    )
+                                                    .then((response) => {
 
-                                                    console.log({ response });
+                                                        console.log({ response });
 
-                                                    let result = response.status === 200;
-                                                    hideLoader();
+                                                        let result = response.status === 200;
+                                                        hideLoader();
 
-                                                    if (result) {
+                                                        if (result) {
 
-                                                        console.log('inside res edit');
+                                                            console.log('inside res edit');
 
-                                                        if (response.status === 200) {
+                                                            if (response.status === 200) {
 
-                                                            const MySwal = withReactContent(Swal);
-                                                            MySwal.fire({
-                                                                // title: MESSAGES.TTTLES.Goodjob,
-                                                                type: 'success',
-                                                                text: MESSAGES.SUCCESS.UpdatingQuizConfiguration,
-                                                                icon: 'success',
-                                                            }).then((willDelete) => {
-                                                                window.location.reload();
-                                                            });
+                                                                const MySwal = withReactContent(Swal);
+                                                                MySwal.fire({
+                                                                    // title: MESSAGES.TTTLES.Goodjob,
+                                                                    type: 'success',
+                                                                    text: MESSAGES.SUCCESS.UpdatingQuizConfiguration,
+                                                                    icon: 'success',
+                                                                }).then((willDelete) => {
+                                                                    window.location.reload();
+                                                                });
 
+                                                            } else {
+
+                                                                setStatus({ success: false });
+                                                                setErrors({ submit: 'Error in Editing School' });
+                                                            }
                                                         } else {
+
+                                                            console.log('else res');
 
                                                             setStatus({ success: false });
                                                             setErrors({ submit: 'Error in Editing School' });
                                                         }
-                                                    } else {
+                                                    })
+                                                    .catch((error) => {
+                                                        if (error.response) {
 
-                                                        console.log('else res');
+                                                            hideLoader();
+                                                            // Request made and server responded
+                                                            console.log(error.response.data);
 
-                                                        setStatus({ success: false });
-                                                        setErrors({ submit: 'Error in Editing School' });
-                                                    }
-                                                })
-                                                .catch((error) => {
-                                                    if (error.response) {
+                                                            if (error.response.data === "Invalid Token") {
 
-                                                        hideLoader();
-                                                        // Request made and server responded
-                                                        console.log(error.response.data);
+                                                                sessionStorage.clear();
+                                                                localStorage.clear();
 
-                                                        if (error.response.data === "Invalid Token") {
+                                                                history.push('/auth/signin-1');
+                                                                window.location.reload();
+                                                            } else {
+                                                                setStatus({ success: false });
+                                                                setErrors({ submit: error.response.data });
+                                                            }
 
-                                                            sessionStorage.clear();
-                                                            localStorage.clear();
 
-                                                            history.push('/auth/signin-1');
-                                                            window.location.reload();
+
+                                                        } else if (error.request) {
+                                                            // The request was made but no response was received
+                                                            console.log(error.request);
+                                                            hideLoader();
+
                                                         } else {
-                                                            setStatus({ success: false });
-                                                            setErrors({ submit: error.response.data });
+                                                            // Something happened in setting up the request that triggered an Error
+                                                            console.log('Error', error.message);
+                                                            hideLoader();
+
                                                         }
+                                                    })
+                                            }
 
 
-
-                                                    } else if (error.request) {
-                                                        // The request was made but no response was received
-                                                        console.log(error.request);
-                                                        hideLoader();
-
-                                                    } else {
-                                                        // Something happened in setting up the request that triggered an Error
-                                                        console.log('Error', error.message);
-                                                        hideLoader();
-
-                                                    }
-                                                })
 
 
                                         }}
@@ -467,7 +521,129 @@ const QuizConfiguration = ({ className, rest, id }) => {
                                             <form noValidate onSubmit={handleSubmit} className={className} {...rest}>
 
                                                 <Card.Title>
-                                                    Pre-level Quiz
+                                                    Common
+                                                </Card.Title>
+                                                <hr />
+                                                <Row>
+                                                    <Col>
+                                                        <div className="form-group fill">
+                                                            <label className="floating-label" >
+                                                                <small className="text-danger">* </small>
+                                                                Test Mode
+                                                            </label>
+                                                            <select
+                                                                className="form-control"
+
+                                                                name="test_mode"
+                                                                onBlur={handleBlur}
+                                                                type="text"
+                                                                value={selectedTestMode}
+                                                                onChange={(e) => {
+                                                                    SetSelectedTestMode(e.target.value);
+                                                                    setTestModeErr(false);
+                                                                }}
+                                                            >
+                                                                <option>
+                                                                    Select...
+                                                                </option>
+                                                                {isTestMode.map((optionsData) => {
+
+                                                                    return <option
+                                                                        value={optionsData.value}
+                                                                        key={optionsData.value}
+                                                                    >
+                                                                        {optionsData.value}
+                                                                    </option>
+                                                                })}
+                                                            </select>
+                                                        </div>
+                                                        {isTestModeErr && (
+                                                            <small style={{ color: 'red' }}>Field is required!</small>
+                                                        )}
+                                                    </Col>
+                                                    <Col>
+                                                        <div className="form-group fill">
+                                                            <label className="floating-label" >
+                                                                <small className="text-danger">* </small>
+                                                                Test Type
+                                                            </label>
+                                                            <select
+                                                                className="form-control"
+                                                                error={touched.test_type && errors.test_type}
+                                                                name="test_type"
+                                                                onBlur={handleBlur}
+                                                                type="text"
+                                                                value={selectedTestType}
+                                                                onChange={(e) => {
+                                                                    SetSelectedTestType(e.target.value);
+                                                                    setTestTypeErr(false)
+                                                                }}
+                                                            >
+                                                                <option>
+                                                                    Select...
+                                                                </option>
+                                                                {isTestType.map((optionsData) => {
+
+                                                                    return <option
+                                                                        value={optionsData.value}
+                                                                        key={optionsData.value}
+                                                                    >
+                                                                        {optionsData.value}
+                                                                    </option>
+                                                                })}
+                                                            </select>
+                                                        </div>
+                                                        {isTestTypeErr && (
+                                                            <small style={{ color: 'red' }}>Field is required!</small>
+                                                        )}
+                                                    </Col>
+                                                </Row>
+                                                <Row>
+                                                    <Col>
+                                                        <label className="floating-label">
+                                                            <small className="text-danger">* </small>
+                                                            Minimum Number Of Questions
+                                                        </label>
+                                                        <input
+                                                            className="form-control"
+                                                            error={touched.min_no_of_questions && errors.min_no_of_questions}
+                                                            label="min_no_of_questions"
+                                                            name="min_no_of_questions"
+                                                            onBlur={handleBlur}
+                                                            onChange={handleChange}
+                                                            type="number"
+                                                            value={values.min_no_of_questions}
+                                                            placeholder="Minimum Number Of Questions"
+                                                        />
+                                                        {touched.min_no_of_questions && errors.min_no_of_questions && <small className="text-danger form-text">{errors.min_no_of_questions}</small>}
+
+                                                    </Col>
+                                                    <Col style={{ display: 'flex', gap: '55px', marginTop: 'auto' }}>
+                                                        <label className="floating-label">
+                                                            <small className="text-danger"></small>Topic Selection?
+                                                        </label>
+                                                        <div className="row profile-view-radio-button-view">
+                                                            <Form.Check
+                                                                id={`radio-Topic_selection`}
+                                                                // label="Yes"
+                                                                error={touched.Topic_selection && errors.Topic_selection}
+                                                                type="switch"
+                                                                variant={'outline-primary'}
+                                                                name="radio-Topic_selection"
+                                                                checked={_radioTopicSelection}
+                                                                onChange={() => handleTopicSelection()}
+                                                            // className='ml-3 col-md-6'
+                                                            />
+                                                            <Form.Label className="profile-view-question" id={`radio-Topic_selection`}>
+                                                                {_radioTopicSelection === true ? 'Yes' : 'No'}
+                                                            </Form.Label>
+                                                        </div>
+
+                                                    </Col>
+                                                </Row>
+                                                <br />
+                                                <Card.Title>
+                                                    Pre-level
                                                 </Card.Title>
                                                 <hr />
                                                 <Row>
@@ -736,7 +912,7 @@ const QuizConfiguration = ({ className, rest, id }) => {
 
                                                 <br />
                                                 <Card.Title>
-                                                    Post-level Quiz
+                                                    Post-level
                                                 </Card.Title>
                                                 <hr />
 

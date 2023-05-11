@@ -11,15 +11,14 @@ import useFullPageLoader from '../../../../../helper/useFullPageLoader';
 import dynamicUrl from '../../../../../helper/dynamicUrls';
 import * as Constants from '../../../../../helper/constants';
 
-const AddQuestionDisclaimer = ({ setIsOpenAddQuestionDisclaimer }) => {
+const AddCognitiveSkills = ({ setIsOpenAddCognitiveSkills }) => {
 
     const MySwal = withReactContent(Swal);
 
     const history = useHistory();
     const [loader, showLoader, hideLoader] = useFullPageLoader();
-    const [questionDisclaimerLabelErr, setQuestionDisclaimerLabelErr] = useState(false);
-    const [questionDisclaimerLabelErrMessage, setQuestionDisclaimerLabelErrMessage] = useState('');
-
+    const [cognitiveSkillsTitleErr, setCognitiveSkillsTitleErr] = useState(false);
+    const [cognitiveSkillsTitleErrMessage, setCognitiveSkillsTitleErrMessage] = useState('');
 
     return (
 
@@ -30,22 +29,17 @@ const AddQuestionDisclaimer = ({ setIsOpenAddQuestionDisclaimer }) => {
 
                     initialValues={
                         {
-                            questionDisclaimer: "",
-                            questionDisclaimerLabel: "",
+                            cognitiveSkills: "",
                             submit: null
                         }
                     }
                     validationSchema={
                         Yup.object().shape({
-                            questionDisclaimer: Yup.string()
+                            cognitiveSkills: Yup.string()
                                 .trim()
-                                .min(2, Constants.AddQuestionDisclaimer.QuestionDisclaimerTooShort)
-                                .required(Constants.AddQuestionDisclaimer.QuestionDisclaimerRequired),
-                            questionDisclaimerLabel: Yup.string()
-                                .trim()
-                                .min(2, Constants.AddQuestionDisclaimer.QuestionDisclaimerLabelTooShort)
-                                .max(32, Constants.AddQuestionDisclaimer.QuestionDisclaimerLabelTooLong)
-                                .required(Constants.AddQuestionDisclaimer.QuestionDisclaimerLabelRequired),
+                                .min(2, Constants.AddCognitiveSkills.CognitiveSkillsTooShort)
+                                .max(32, Constants.AddCognitiveSkills.CognitiveSkillsTooLong)
+                                .required(Constants.AddCognitiveSkills.CognitiveSkillsRequired)
                         })
                     }
                     onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
@@ -58,8 +52,7 @@ const AddQuestionDisclaimer = ({ setIsOpenAddQuestionDisclaimer }) => {
 
                         const formData = {
                             data: {
-                                disclaimer: values.questionDisclaimer,
-                                disclaimer_label: values.questionDisclaimerLabel
+                                cognitive_name: values.cognitiveSkills
                             }
                         };
 
@@ -67,7 +60,7 @@ const AddQuestionDisclaimer = ({ setIsOpenAddQuestionDisclaimer }) => {
 
                         axios
                             .post(
-                                dynamicUrl.addQuestionDisclaimer,
+                                dynamicUrl.addCognitiveSkill,
                                 formData,
                                 {
                                     headers: { Authorization: sessionStorage.getItem('user_jwt') }
@@ -84,13 +77,14 @@ const AddQuestionDisclaimer = ({ setIsOpenAddQuestionDisclaimer }) => {
 
                                     console.log('inside res edit');
                                     hideLoader();
-                                    setIsOpenAddQuestionDisclaimer(false);
+                                    setIsOpenAddCognitiveSkills(false);
 
                                     MySwal.fire({
                                         type: 'success',
-                                        title: 'Question Disclaimer added successfully!',
+                                        title: 'Cognitive Skills added successfully!',
                                         icon: 'success',
                                     }).then((willDelete) => {
+                                        console.log("REload : ")
                                         window.location.reload();
                                     });
 
@@ -99,8 +93,8 @@ const AddQuestionDisclaimer = ({ setIsOpenAddQuestionDisclaimer }) => {
                                     console.log('else res');
                                     hideLoader();
                                     // Request made and server responded
-                                    setQuestionDisclaimerLabelErr(true);
-                                    setQuestionDisclaimerLabelErrMessage("err");
+                                    setCognitiveSkillsTitleErr(true);
+                                    setCognitiveSkillsTitleErrMessage("err");
                                     // window.location.reload();
 
 
@@ -122,8 +116,8 @@ const AddQuestionDisclaimer = ({ setIsOpenAddQuestionDisclaimer }) => {
 
                                     } else {
 
-                                        setQuestionDisclaimerLabelErr(true);
-                                        setQuestionDisclaimerLabelErrMessage(error.response.data);
+                                        setCognitiveSkillsTitleErr(true);
+                                        setCognitiveSkillsTitleErrMessage(error.response.data);
                                     }
 
 
@@ -131,14 +125,14 @@ const AddQuestionDisclaimer = ({ setIsOpenAddQuestionDisclaimer }) => {
                                     // The request was made but no response was received
                                     console.log(error.request);
                                     hideLoader();
-                                    setQuestionDisclaimerLabelErr(true);
-                                    setQuestionDisclaimerLabelErrMessage(error.request);
+                                    setCognitiveSkillsTitleErr(true);
+                                    setCognitiveSkillsTitleErrMessage(error.request);
                                 } else {
                                     // Something happened in setting up the request that triggered an Error
                                     console.log('Error', error.message);
                                     hideLoader();
-                                    setQuestionDisclaimerLabelErr(true);
-                                    setQuestionDisclaimerLabelErrMessage(error.request);
+                                    setCognitiveSkillsTitleErr(true);
+                                    setCognitiveSkillsTitleErrMessage(error.request);
 
                                 }
                             })
@@ -146,63 +140,40 @@ const AddQuestionDisclaimer = ({ setIsOpenAddQuestionDisclaimer }) => {
 
                     }}>
 
-                    {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
+                    {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, setFieldValue }) => (
                         <form noValidate onSubmit={handleSubmit} >
 
                             <Row>
 
                                 <Col>
                                     <Row>
-                                        <Col xs={6}>
+                                        <Col>
+
                                             <div className="form-group fill">
-                                                <label className="floating-label" htmlFor="questionDisclaimerLabel">
-                                                    <small className="text-danger">* </small>Question Disclaimer Label
+                                                <label className="floating-label" htmlFor="cognitiveSkills">
+                                                    <small className="text-danger">* </small>Cognitive Skills
                                                 </label>
                                                 <input
                                                     className="form-control"
-                                                    error={touched.questionDisclaimerLabel && errors.questionDisclaimerLabel}
-                                                    name="questionDisclaimerLabel"
+                                                    error={touched.cognitiveSkills && errors.cognitiveSkills}
+                                                    name="cognitiveSkills"
                                                     onBlur={handleBlur}
                                                     // onChange={handleChange}
                                                     type="text"
-                                                    value={values.questionDisclaimerLabel}
+                                                    value={values.cognitiveSkills}
                                                     onChange={(e) => {
-                                                        handleChange("questionDisclaimerLabel")(e);
-                                                        setQuestionDisclaimerLabelErr(false);
+                                                        handleChange("cognitiveSkills")(e);
+                                                        setCognitiveSkillsTitleErr(false);
                                                     }}
 
                                                 />
 
-                                                {touched.questionDisclaimerLabel && errors.questionDisclaimerLabel && <small className="text-danger form-text">{errors.questionDisclaimerLabel}</small>}
+                                                {touched.cognitiveSkills && errors.cognitiveSkills && <small className="text-danger form-text">{errors.cognitiveSkills}</small>}
 
-                                                {questionDisclaimerLabelErr && questionDisclaimerLabelErrMessage &&
-                                                    <small className="text-danger form-text">{questionDisclaimerLabelErrMessage}</small>
+                                                {cognitiveSkillsTitleErr && cognitiveSkillsTitleErrMessage &&
+                                                    <small className="text-danger form-text">{cognitiveSkillsTitleErrMessage}</small>
                                                 }
                                             </div>
-                                        </Col>
-                                    </Row>
-
-                                    <Row>
-                                        <Col>
-                                            <div className="form-group fill">
-                                                <label className="floating-label" htmlFor="questionDisclaimer">
-                                                    <small className="text-danger">* </small>Question Disclaimer
-                                                </label>
-                                                <textarea
-                                                    className="form-control"
-                                                    error={touched.questionDisclaimer && errors.questionDisclaimer}
-                                                    name="questionDisclaimer"
-                                                    onBlur={handleBlur}
-                                                    onChange={handleChange}
-                                                    type="text"
-                                                    value={values.questionDisclaimer}
-                                                    rows="8"
-                                                    placeholder="Enter your comment"
-                                                />
-                                            </div>
-                                            {touched.questionDisclaimer && errors.questionDisclaimer && (
-                                                <small className="text-danger form-text">{errors.questionDisclaimer}</small>
-                                            )}
                                         </Col>
                                     </Row>
 
@@ -242,4 +213,4 @@ const AddQuestionDisclaimer = ({ setIsOpenAddQuestionDisclaimer }) => {
 
 }
 
-export default AddQuestionDisclaimer
+export default AddCognitiveSkills
