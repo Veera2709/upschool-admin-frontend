@@ -10,9 +10,8 @@ import { useHistory } from 'react-router-dom';
 import dynamicUrl from "../../../../helper/dynamicUrls";
 import MESSAGES from '../../../../helper/messages';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
-import * as Constants from '../../../../config/constant';
 import BasicSpinner from '../../../../helper/BasicSpinner';
-import { commonValidation, AutomateValidation, ManulExpress, AutomateExpress, focusAreasAutomate, focusAreasManual, focusAreasAutomateExpress } from "./validation";
+import { commonValidationPre, AutomateValidation, ManulExpress, AutomateExpress, focusAreasAutomate, focusAreasManual, focusAreasAutomateExpress } from "./validation";
 
 const PreQuizConfiguration = ({ className, rest, id }) => {
 
@@ -352,7 +351,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                         AutomateExpress : _radioRecommendTeachersPre === true && _radioAutomate === true && _radioExpress === false && _radioManual === false ?
                                                             focusAreasAutomate : _radioRecommendTeachersPre === true && _radioAutomate === false && (_radioExpress === true || _radioManual === true) ?
                                                                 focusAreasManual : _radioRecommendTeachersPre === true && _radioAutomate === true && (_radioExpress === true || _radioManual === true) ?
-                                                                    focusAreasAutomateExpress : commonValidation
+                                                                    focusAreasAutomateExpress : commonValidationPre
                                         }
                                         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
                                             console.log("insideSubmit");
@@ -360,25 +359,20 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                             setSubmitting(true);
                                             const matrixCount = values.martix_basic + values.martix_intermediate + values.martix_advanced
 
-                                            if (_radioRecommendTeachersPre === true && values.percentageOfStudentsPre === '') {
-                                                setFocusAreaErr(true)
-                                            } else if (_radioOnlineTest === false && _radioPaperBased === false) {
+                                          
+
+                                            if (_radioOnlineTest === false && _radioPaperBased === false) {
                                                 setOnlineErr(true)
                                             } else if (_radioAutomate === false && _radioExpress === false && _radioManual === false) {
                                                 setNoOptionInTestMode(true)
                                             } else if (selectedTestMode === '' || selectedTestMode === undefined || selectedTestMode === null || selectedTestMode === 'Select...') {
                                                 setTestModeErr(true)
-                                            } else if (_radioAutomate === true && values.minNoQustionAutomate === '') {
-                                                setAutomateErr(true)
-                                            } else if ((_radioExpress === true || _radioManual === true) && values.minNoQustionManual_express === '') {
-                                                setExpManualErr(true)
                                             } else if (_radioRandomizedQuestions === false && _radioRandomizedOrder === false) {
                                                 setVarientErr(true)
-                                            } else if (_radioRandomizedOrder === true && values.noOrderQuiz === '') {
-                                                setNoOdrderQuizErr(true)
                                             } else if (matrixCount > 100) {
                                                 setMatrixCountErr(true)
-                                            } else {
+                                            }
+                                            else {
                                                 const formData = {
                                                     data: {
                                                         school_id: id,
@@ -920,8 +914,8 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                             </Row>
                                                         </Col>
                                                     </Row>
-                                                    {onlineErr && (
-                                                        <small style={{ color: 'red' }}>No Options Selected!</small>
+                                                    {onlineErr && onlineErr && (
+                                                        <small style={{ color: 'red' }}>Please, select either of the options!</small>
                                                     )}
                                                     <br />
                                                 </div>
@@ -1118,10 +1112,10 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                             )}
                                                         </Col>
                                                     </Row>
-                                                    <br />
-                                                    {noOptionInTestMode && (
+
+                                                    {noOptionInTestMode && noOptionInTestMode && (
                                                         <small style={{ color: 'red' }}>
-                                                            No Options Selected!
+                                                            Please, select either of the options!
                                                         </small>
                                                     )}
 
@@ -1162,7 +1156,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                     })}
                                                                 </select>
                                                             </div>
-                                                            {isTestModeErr && (
+                                                            {isTestModeErr && isTestModeErr && (
                                                                 <small style={{ color: 'red' }}>Field is required!</small>
                                                             )}
                                                         </Col>
@@ -1309,8 +1303,8 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                             <br />
                                                         </Col>
                                                     </Row>
-                                                    {varientErr && (
-                                                        <small style={{ color: 'red' }}>No Options Selected!</small>
+                                                    {varientErr && varientErr && (
+                                                        <small style={{ color: 'red' }}>Please, select either of the options!</small>
                                                     )}
                                                     <br />
                                                     {_radioRandomizedOrder && (

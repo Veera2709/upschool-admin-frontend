@@ -34,6 +34,7 @@ const AddTopics = ({ setOpenAddTopic }) => {
     const [relatedTopicNames, setRelatedTopicNames] = useState([]);
     const [isShownConcept, setIsShownConcept] = useState(true);
     const [isShownTopic, setIsShownTopic] = useState(true);
+    const [conceptErr, setConceptErr] = useState(false);
     // const [topicDuration, setTopicDuration] = useState(false);
     // const [timeLimit, setTimeLimit] = useState(false);
     const [displayNameErr, setDisplayNameErr] = useState(false);
@@ -51,27 +52,7 @@ const AddTopics = ({ setOpenAddTopic }) => {
         });
     };
 
-    // const topicQuizTemplatePre = [
-    //     { level: 'Level-1', duration: "" },
-    //     { level: 'Level-2', duration: "" }]
-    // const topicQuizTemplatePost = [
-    //     { level: 'Level-1', duration: "" },
-    //     { level: 'Level-2', duration: "" },
-    //     { level: 'Level-3', duration: "" }]
-    // const [topicQuiz, setTopicQuiz] = useState(topicQuizTemplatePre)
-    // console.log("topicQuiz : ", topicQuiz);
 
-
-    // const onDynamicFormChange = (e, index, fieldType) => {
-    //     console.log("e", e)
-    //     console.log("Field", fieldType)
-    //     const updatedTopics = topicQuiz.map((topic, i) =>
-    //         index == i
-    //             ? Object.assign(topic, { [e.target.name]: e.target.value })
-    //             : topic
-    //     )
-    //     setTopicQuiz(updatedTopics)
-    // }
 
 
     const postTopic = (formData) => {
@@ -233,51 +214,25 @@ const AddTopics = ({ setOpenAddTopic }) => {
                 })}
                 // validationSchema
                 onSubmit={(values, { setErrors, setStatus, setSubmitting }) => {
-                    // setSubmitting(true);
-                    // let emptyFieldValidation = topicQuiz.find(o => o.duration === "" || o.duration === 0 || o.duration <= 0)
-                    // let TopicDurationLimit = topicQuiz.find(o => o.duration > 150)
-                    // if (topicConceptId == '') {
-                    //     setIsShownConcept(false)
-                    // } else if (emptyFieldValidation) {
-                    //     setTopicDuration(true)
-                    // } else if (TopicDurationLimit) {
-                    //     setTimeLimit(true)
-                    // }
-                    // else {
-                    let formData;
-
-                    if (prePostLearning === 'Pre-Learning') {
-                        formData = {
-                            topic_title: values.topic_title,
-                            display_name: values.display_name,
-                            topic_description: values.topic_description,
-                            topic_concept_id: topicConceptId,
-                            pre_post_learning: prePostLearning,
-                            related_topics: relatedTopicsId,
-                            // topic_quiz_config: topicQuiz
-                            // Level_1: { duration: topicQuiz[0].duration },
-                            // Level_2: { duration: topicQuiz[1].duration },
-
-                        }
+                   
+                    if (topicConceptId.length <= 0) {
+                        setConceptErr(true)
                     } else {
-                        formData = {
+                        let formData = {
                             topic_title: values.topic_title,
                             display_name: values.display_name,
                             topic_description: values.topic_description,
                             topic_concept_id: topicConceptId,
                             pre_post_learning: prePostLearning,
                             related_topics: relatedTopicsId,
-                            // topic_quiz_config: topicQuiz
-                            // Level_1: { duration: topicQuiz[0].duration },
-                            // Level_2: { duration: topicQuiz[1].duration },
-                            // Level_3: { duration: topicQuiz[2].duration },
-
                         }
+                        console.log('formData: ', formData)
+                        postTopic(formData)
                     }
 
-                    console.log('formData: ', formData)
-                    postTopic(formData)
-                    // }
+
+
+
 
                 }}
             >
@@ -344,11 +299,14 @@ const AddTopics = ({ setOpenAddTopic }) => {
                                     name="color"
                                     isMulti
                                     closeMenuOnSelect={false}
-                                    onChange={(e) => { getconceptId(e); setIsShownConcept(true) }}
+                                    onChange={(e) => { getconceptId(e); setConceptErr(false) }}
                                     options={conceptTitles}
                                     placeholder="Select the Concept Title"
                                 />
-                                <small className="text-danger form-text" style={{ display: isShownConcept ? 'none' : 'block' }}>concept Id Field Required</small>
+                                {/* <small className="text-danger form-text" style={{ display: isShownConcept ? 'none' : 'block' }}>concept Id Field Required</small> */}
+                                {conceptErr && (
+                                    <small style={{ color: 'red' }}>Concept Field Required!</small>
+                                )}
                             </Form.Group>
                         </Col>
 
@@ -386,67 +344,7 @@ const AddTopics = ({ setOpenAddTopic }) => {
                             </Form.Group>
                         </Col>
 
-                        {/* <Row>
-                            <Col sm={4}>
-                                <Form.Label className="floating-label" ><small className="text-danger">* </small>Topic Quiz Levels</Form.Label>
-                            </Col>
-                            <Col sm={6}>
-                                <Form.Label className="floating-label" ><small className="text-danger">* </small>Topic Quiz Minutes</Form.Label>
-                            </Col>
-                        </Row>
-                        {topicQuiz.map((topic, index) => (
-                            <div className='row ml-1 mb-2' key={index}>
-                                <div className='col-md-4'>
-                                    <Form.Control
-                                        type='text'
-                                        name='topic_level'
-                                        value={topic.level}
-                                        onChange={(e) => { onDynamicFormChange(e, index, 'level'); handleChange(e) }}
-                                        autoComplete='off'
-                                        onBlur={handleBlur}
-                                        disabled={"disabled"}
-                                        key={index}
-                                    />
-                                </div>
-                                <p></p>
-                                <div className='col-md-4'>
-                                    <div className='row'>
-                                        <div className='col-md-6'>
-                                            <Form.Control
-                                                type='number'
-                                                name='duration'
-                                                placeholder='Minutes'
-                                                value={topic.duration}
-                                                onChange={(e) => {
-                                                    onDynamicFormChange(e, index, 'duration');
-                                                    handleChange(e);
-                                                    setTopicDuration(false)
-                                                    setTimeLimit(false);
-                                                }}
-                                                autoComplete='off'
-                                                onBlur={handleBlur}
-                                                key={index}
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        ))} */}
-                        {/* <Row>
-                            <Col sm={4}>
-                            </Col>
-                            <Col sm={6}>
-                                {touched.duration && errors.duration && <small className="text-danger form-text">{errors.duration}</small>}
-                                {topicDuration && (
-                                    <small className="text-danger form-text">Quiz Minutes are required!</small>
-                                )}
-                                {timeLimit && (
-                                    <small className="text-danger form-text">Quiz Minutes exceeds more 150min !</small>
-                                )}
-                            </Col>
-                        </Row> */}
-                        <p></p>
-                        {/* <button type="button" className="btn btn-primary" onClick={addTopic} >Add another Quiz</button> */}
+                        
 
                         <div className="row d-flex justify-content-end">
                             <div className="form-group fill">
