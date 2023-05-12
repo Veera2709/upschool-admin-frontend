@@ -468,6 +468,8 @@ const AddGroups = ({ className, ...rest }) => {
 
                                                         {touched.group_name && errors.group_name && <small className="text-danger form-text">{errors.group_name}</small>}
 
+                                                        {groupNameExistsErrMsg && <small className="text-danger form-text">{'Group Name Already Exist!'}</small>}
+
                                                     </Col>
 
                                                     <Col xs={6}>

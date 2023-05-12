@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { Row, Col, Button, Card, CloseButton, Form, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import Select from 'react-select';
 import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
 import axios from 'axios';
 import ArticleRTE from './ArticleRTE'
 import * as Yup from 'yup';
 import { Formik } from 'formik';
 import { useHistory } from 'react-router-dom';
-import withReactContent from 'sweetalert2-react-content';
 import MathJax from "react-mathjax";
 
 import dynamicUrl from '../../../../helper/dynamicUrls';
@@ -77,9 +77,9 @@ const AddQuestions = ({ className, ...rest }) => {
     const [optionsSource, setOptionsSource] = useState([]);
     const [optionsDisclaimer, setOptionsDisclaimer] = useState([]);
 
-    const [errorMessage, setErrorMessage] = useState("");//for question category
+    const [errorMessage, setErrorMessage] = useState("");
 
-    const [selectedValueDisclaimer, setSelectedValueDisclaimer] = useState([]);
+    const [selectedValueDisclaimer, setSelectedValueDisclaimer] = useState("N.A.");
 
     const [questionLabelAlreadyExists, setQuestionLabelAlreadyExists] = useState(false);
     const [answerOptionsForm, setAnswerOptionsForm] = useState([
@@ -100,7 +100,7 @@ const AddQuestions = ({ className, ...rest }) => {
             }
         });
         axios
-            // .post("api-url")
+           
             .post(
                 dynamicUrl.fetchQuestionMasters,
                 {
@@ -812,7 +812,8 @@ const AddQuestions = ({ className, ...rest }) => {
                                                     question_voice_note: selectedQuestionVoiceNote,
                                                     question_content: articleDataTitle,
                                                     answers_of_question: descriptiveAnswerOptionsForm,
-                                                    question_status: sessionStorage.getItem('click_event'),
+                                                    // question_status: sessionStorage.getItem('click_event'),
+                                                    question_status: 'Publish',
                                                     question_disclaimer: selectedValueDisclaimer,
                                                     show_math_keyboard: showMathKeyboard,
                                                     appears_in: workSheetOrTest,
@@ -852,7 +853,8 @@ const AddQuestions = ({ className, ...rest }) => {
                                                     question_voice_note: selectedQuestionVoiceNote,
                                                     question_content: articleDataTitle,
                                                     answers_of_question: answerOptionsForm,
-                                                    question_status: sessionStorage.getItem('click_event'),
+                                                    // question_status: sessionStorage.getItem('click_event'),
+                                                    question_status: 'Publish',
                                                     question_disclaimer: selectedValueDisclaimer,
                                                     show_math_keyboard: showMathKeyboard,
                                                     appears_in: workSheetOrTest,
