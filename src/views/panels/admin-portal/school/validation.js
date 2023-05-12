@@ -2,7 +2,7 @@ import * as Yup from 'yup';
 import * as Constants from '../../../../config/constant';
 
 
-export const commonValidation = Yup.object().shape({
+export const commonValidationPost = Yup.object().shape({
     passPercentageL1Pre: Yup.string()
         .matches(Constants.Common.passPercentageRegex, 'Invalid Percentage!')
         .required('Field is required/Invalid Percentage!')
@@ -31,7 +31,45 @@ export const commonValidation = Yup.object().shape({
     martix_intermediate: Yup.string()
         .matches(Constants.Common.passPercentageRegex, 'Invalid Percentage!')
         .required('Field is required/Invalid Percentage!'),
+    martix_advanced: Yup.string()
+        .matches(Constants.Common.passPercentageRegex, 'Invalid Percentage!')
+        .required('Field is required/Invalid Percentage!'),
     passPercentageL3Post: Yup.string()
+        .matches(Constants.Common.passPercentageRegex, 'Invalid Percentage!')
+        .required('Field is required/Invalid Percentage!'),
+})
+
+
+export const commonValidationPre = Yup.object().shape({
+    passPercentageL1Pre: Yup.string()
+        .matches(Constants.Common.passPercentageRegex, 'Invalid Percentage!')
+        .required('Field is required/Invalid Percentage!')
+        .min(1, 'Field is required!'),
+    passPercentageL2Pre: Yup.string()
+        .matches(Constants.Common.passPercentageRegex, 'Invalid Percentage!')
+        .required('Field is required/Invalid Percentage!'),
+    minStudentsPre: Yup.string()
+        .matches(Constants.Common.passPercentageRegex, 'Invalid Percentage!')
+        .required('Field is required/Invalid Percentage!'),
+    noOfAttemptsPre: Yup.string()
+        .matches(Constants.Common.numOfAttemptsRegex, 'Invalid Number!')
+        .required('Field is required/Invalid Number!'),
+    noOfWorksheets: Yup.string()
+        .required('Field is required/Invalid Percentage!')
+        .min(1, 'Field is required!'),
+    noOfTestPapers: Yup.string()
+        .required('Field is required/Invalid Percentage!')
+        .min(1, 'Field is required!'),
+    classPercentageRep: Yup.string()
+        .matches(Constants.Common.passPercentageRegex, 'Invalid Percentage!')
+        .required('Field is required/Invalid Percentage!'),
+    martix_basic: Yup.string()
+        .matches(Constants.Common.passPercentageRegex, 'Invalid Percentage!')
+        .required('Field is required/Invalid Percentage!'),
+    martix_intermediate: Yup.string()
+        .matches(Constants.Common.passPercentageRegex, 'Invalid Percentage!')
+        .required('Field is required/Invalid Percentage!'),
+    martix_advanced: Yup.string()
         .matches(Constants.Common.passPercentageRegex, 'Invalid Percentage!')
         .required('Field is required/Invalid Percentage!'),
 })
