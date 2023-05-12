@@ -501,7 +501,7 @@ const QuestionsTableView = ({ _questionStatus }) => {
         } else {
           hideLoader();
           setIsEditModalOpen(false);
-          sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.UpdatingUser });
+          sweetAlertHandler({  type: 'success', text: MESSAGES.SUCCESS.UpdatingUser });
 
           fetchUserData();
 

@@ -44,8 +44,7 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
     const [timeLimit, setTimeLimit] = useState(false);
     const MySwal = withReactContent(Swal);
     const [isLoading, setIsLoading] = useState(false);
-    // const [topicQuiz, setTopicQuiz] = useState([])
-
+    const [conceptErr, setConceptErr] = useState(false);
 
 
     // console.log("topicQuiz", topicQuiz);
@@ -66,16 +65,7 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
 
 
 
-    // const onDynamicFormChange = (e, index, fieldType) => {
-    //     console.log("e", e)
-    //     console.log("Field", fieldType)
-    //     const updatedTopics = topicQuiz.map((topic, i) =>
-    //         index == i
-    //             ? Object.assign(topic, { [e.target.name]: e.target.value })
-    //             : topic
-    //     )
-    //     setTopicQuiz(updatedTopics)
-    // }
+
 
     const data = [{ id: 'ac05006b-2351-59e1-a5bf-aa88e249ad05', name: 'ac05006b-2351-59e1-a5bf-aa88e249ad05' }]
 
@@ -168,7 +158,7 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                 let tempTopic = [];
 
                 result.topic_concept_id.forEach(function (entry_concept) {
-                    conceptArr.forEach(function (childrenEntry_concept,index) {
+                    conceptArr.forEach(function (childrenEntry_concept, index) {
                         if (entry_concept === childrenEntry_concept.value) {
                             console.log("entry_concept", entry_concept);
                             tempArr.push(childrenEntry_concept)
@@ -180,8 +170,8 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                     setTopicConceptId(topicData.Items[0].topic_concept_id)
                 });
 
-    
-                
+
+
                 topicData.Items[0].related_topics.forEach(function (entry) {
                     topicArr.forEach(function (childrenEntry) {
                         if (entry === childrenEntry.value) {
@@ -264,8 +254,6 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                                                 topic_concept_id: '',
                                                 pre_post_learning: '',
                                                 related_topics: '',
-                                                topic_quiz_config: '',
-                                                // duration: ''
                                             }}
 
                                             validationSchema={Yup.object().shape({
@@ -293,16 +281,8 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
 
                                                 let formData;
 
-                                                if (prePostLearning === 'Pre-Learning') {
-                                                    formData = {
-                                                        topic_id: topicId,
-                                                        topic_title: values.topic_title,
-                                                        display_name: values.display_name,
-                                                        topic_description: values.topic_description,
-                                                        topic_concept_id: topicConceptId,
-                                                        pre_post_learning: prePostLearning,
-                                                        related_topics: relatedTopicsId,
-                                                    }
+                                                if (topicConceptId.length <= 0) {
+                                                    setConceptErr(true)
                                                 } else {
                                                     formData = {
                                                         topic_id: topicId,
@@ -313,28 +293,9 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                                                         pre_post_learning: prePostLearning,
                                                         related_topics: relatedTopicsId,
                                                     }
+                                                    console.log('formData: ', formData)
+                                                    submitEditTopic(formData)
                                                 }
-
-                                                // console.log("SUBMIT SIDE QUIZ : ", topicQuiz);
-
-                                                // let emptyFieldValidation = topicQuiz.find(o => o.duration === "" || o.duration === 0 || o.duration <= 0)
-                                                // // let TopicDuration = topicQuiz.find(o => o.duration <= 0)
-                                                // let TopicDurationLimit = topicQuiz.find(o => o.duration > 150)
-                                                // if (emptyFieldValidation) {
-                                                //     setTopicDuration(false)
-                                                // } else if (TopicDurationLimit) {
-                                                //     setTimeLimit(true)
-                                                // } else {
-                                                //     if (topicConceptId == '') {
-                                                //         setIsShown(false)
-                                                //     } else {
-
-
-                                                console.log('formData: ', formData)
-                                                submitEditTopic(formData)
-                                                //     }
-                                                // }
-
                                             }}
                                         >
                                             {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
@@ -422,7 +383,7 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                                                                     className="basic-multi-select"
                                                                     isMulti
                                                                     closeMenuOnSelect={false}
-                                                                    onChange={(e) => { getconceptId(e); setIsShown(true) }}
+                                                                    onChange={(e) => { getconceptId(e); setConceptErr(false) }}
                                                                     options={conceptTitles}
                                                                     placeholder="Select the concept Title"
                                                                 />
@@ -436,7 +397,7 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                                                                             className="basic-multi-select"
                                                                             isMulti
                                                                             closeMenuOnSelect={false}
-                                                                            onChange={(e) => { getconceptId(e); setIsShown(true) }}
+                                                                            onChange={(e) => { getconceptId(e); setConceptErr(false) }}
                                                                             options={conceptTitles}
                                                                             placeholder="Select the Concept Title"
                                                                         />
@@ -445,7 +406,9 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                                                                 </>
 
                                                             )}
-                                                            <small className="text-danger form-text" style={{ display: isShown ? 'none' : 'block' }}>concepts Required</small>
+                                                            {conceptErr && (
+                                                                <small style={{ color: 'red' }}>Concept Field Required!</small>
+                                                            )}
                                                         </div>)}
 
                                                         {defaultTopicOption && (<div className="form-group fill" style={{ position: "relative", zIndex: 20 }}>
