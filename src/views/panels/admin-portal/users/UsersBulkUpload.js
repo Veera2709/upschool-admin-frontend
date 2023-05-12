@@ -25,6 +25,7 @@ const UsersBulkUpload = ({ className, ...rest }) => {
   const [displayHeader, setDisplayHeader] = useState(true);
   const displayHeading = sessionStorage.getItem('user_type');
   const threadLinks = document.getElementsByClassName('page-header');
+  const [selectedSchoolId, setSelectedSchoolId] = useState('');
 
   const sweetAlertHandler = (alert) => {
     const MySwal = withReactContent(Swal);
@@ -208,15 +209,21 @@ const UsersBulkUpload = ({ className, ...rest }) => {
         }
       } else {
         console.log('No files uploaded');
-        sweetAlertHandler({ 
+        sweetAlertHandler({
           // title: MESSAGES.TTTLES.Goodjob, 
           type: 'success',
-           text: MESSAGES.SUCCESS.FilesUploaded });
+          text: MESSAGES.SUCCESS.FilesUploaded
+        });
         hideLoader();
         setDisableButton(false);
       }
     }
   };
+
+  const getSelectedSchoolDetails = (e) => {
+    console.log('School ID', e.target.value);
+    setSelectedSchoolId(e.target.value);
+  }
 
   return (
 
@@ -271,11 +278,10 @@ const UsersBulkUpload = ({ className, ...rest }) => {
 
                     let excelFile = document.getElementById('excelFileUploadUrl').files[0];
 
-                    const filteredResult = schoolName_ID.Items.find((e) => e.school_name.trim() === schoolNameRef.current.value.trim());
+                    const filteredResult = schoolName_ID.Items.find((e) => e.school_id === selectedSchoolId);
 
                     console.log(filteredResult);
                     console.log(schoolName_ID.Items);
-                    console.log(schoolNameRef.current.value);
 
                     let sendData = {
                       school_id: '',
@@ -320,7 +326,10 @@ const UsersBulkUpload = ({ className, ...rest }) => {
                                 error={touched.schoolName && errors.schoolName}
                                 name="schoolName"
                                 onBlur={handleBlur}
-                                onChange={handleChange}
+                                onChange={e => {
+                                  handleChange(e);
+                                  getSelectedSchoolDetails(e);
+                                }}
                                 type="text"
                                 ref={schoolNameRef}
                                 value={values.schoolName}
@@ -328,7 +337,9 @@ const UsersBulkUpload = ({ className, ...rest }) => {
 
                                 {schoolName_ID.Items.map((schoolData) => {
 
-                                  return <option key={schoolData.school_id}>
+                                  return <option
+                                    value={schoolData.school_id}
+                                    key={schoolData.school_id}>
                                     {schoolData.school_name}
                                   </option>
 

@@ -857,7 +857,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                             <Row>
                                                                 <Col>
                                                                     <label className="floating-label">
-                                                                        <small className="text-danger"></small>online Mode?
+                                                                        <small className="text-danger"></small>Online Mode?
                                                                     </label>
                                                                 </Col>
                                                                 <Col xs={3}>
