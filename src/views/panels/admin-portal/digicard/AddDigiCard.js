@@ -264,7 +264,6 @@ const AddDigiCard = (
                   .trim()
                   .min(2, Constants.AddDigiCard.DigiCardtitleTooShort)
                   .max(32, Constants.AddDigiCard.DigiCardtitleTooLong)
-                  .matches(Constants.AddDigiCard.DigiCardtitleRegex, Constants.AddDigiCard.DigiCardtitleValidation)
                   .required(Constants.AddDigiCard.DigiCardtitleRequired),
                 digicard_image: Yup.string()
                   .trim()
@@ -459,15 +458,7 @@ const AddDigiCard = (
                             {touched.displayname && errors.displayname && <small className="text-danger form-text">{errors.displayname}</small>}
                           </div>
                         </Col>
-
-
                       </Row>
-
-
-
-
-
-
                       <div className="form-group fill">
                         <label className="floating-label" htmlFor="digicard_image">
                           <small className="text-danger">* </small>DigiCard Logo
