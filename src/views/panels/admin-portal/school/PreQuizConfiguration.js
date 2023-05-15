@@ -359,7 +359,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                             setSubmitting(true);
                                             const matrixCount = values.martix_basic + values.martix_intermediate + values.martix_advanced
 
-                                          
+
 
                                             if (_radioOnlineTest === false && _radioPaperBased === false) {
                                                 setOnlineErr(true)
@@ -369,6 +369,8 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                 setTestModeErr(true)
                                             } else if (_radioRandomizedQuestions === false && _radioRandomizedOrder === false) {
                                                 setVarientErr(true)
+                                            } else if (_radioRandomizedOrder === true && values.noOrderQuiz === '') {
+                                                setNoOdrderQuizErr(true)
                                             } else if (matrixCount > 100) {
                                                 setMatrixCountErr(true)
                                             }
