@@ -6,6 +6,7 @@ import * as Yup from 'yup';
 import { Formik } from 'formik';
 import { useHistory } from 'react-router-dom';
 import withReactContent from 'sweetalert2-react-content';
+import Select from 'react-select';
 
 import MESSAGES from '../../../../helper/messages';
 import dynamicUrl from '../../../../helper/dynamicUrls';
@@ -321,7 +322,20 @@ const UsersBulkUpload = ({ className, ...rest }) => {
                               <label>School</label>
                             </Col>
                             <Col sm={12}>
-                              <select
+
+                              <Select
+                                name="schoolName"
+                                options={schoolName_ID.Items}
+                                className="basic-multi-select"
+                                classNamePrefix="Select"
+                                onChange={(event) => {
+                                  getSelectedSchoolDetails(event)
+                                }}
+                                menuPortalTarget={document.body}
+                                styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                              />
+
+                              {/* <select
                                 className="form-control"
                                 error={touched.schoolName && errors.schoolName}
                                 name="schoolName"
@@ -345,7 +359,7 @@ const UsersBulkUpload = ({ className, ...rest }) => {
 
                                 })}
 
-                              </select>
+                              </select> */}
                               {touched.schoolName && errors.schoolName && (
                                 <small className="text-danger form-text">{errors.schoolName}</small>
                               )}

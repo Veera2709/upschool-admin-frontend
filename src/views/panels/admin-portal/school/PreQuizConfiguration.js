@@ -371,7 +371,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                 setVarientErr(true)
                                             } else if (_radioRandomizedOrder === true && values.noOrderQuiz === '') {
                                                 setNoOdrderQuizErr(true)
-                                            } else if (matrixCount > 100) {
+                                            } else if (matrixCount > 100 || matrixCount < 100) {
                                                 setMatrixCountErr(true)
                                             }
                                             else {
@@ -1236,7 +1236,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                     </Row>
                                                     <br />
                                                     {matrixCountErr && (
-                                                        <small style={{ color: 'red' }}> % of Questions From Basic,Intermediate and Advanced Group Exceed More then 100%!</small>
+                                                        <small style={{ color: 'red' }}> % of Questions From Basic,Intermediate and Advanced Group Exceed More then 100% or Less then 100%!</small>
                                                     )}
                                                 </div>
                                                 <br />
