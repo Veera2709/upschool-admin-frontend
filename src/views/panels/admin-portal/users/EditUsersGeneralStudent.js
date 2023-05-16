@@ -70,7 +70,7 @@ const EditUsersGeneralStudent = ({ user_id, user_role }) => {
                     history.push('/admin-portal/active-users');
                 } else {
                     hideLoader();
-                    sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.UpdatingUser });
+                    sweetAlertHandler({  type: 'success', text: MESSAGES.SUCCESS.UpdatingUser });
                     history.push('/admin-portal/active-users');
                 }
             })

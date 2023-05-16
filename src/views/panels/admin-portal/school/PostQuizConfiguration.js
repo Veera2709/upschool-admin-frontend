@@ -12,7 +12,7 @@ import MESSAGES from '../../../../helper/messages';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import * as Constants from '../../../../config/constant';
 import BasicSpinner from '../../../../helper/BasicSpinner';
-import { commonValidation, AutomateValidation, ManulExpress, AutomateExpress, focusAreasAutomate, focusAreasManual, focusAreasAutomateExpress } from "./validation";
+import { commonValidationPost, AutomateValidation, ManulExpress, AutomateExpress, focusAreasAutomate, focusAreasManual, focusAreasAutomateExpress } from "./validation";
 
 const PostQuizConfiguration = ({ className, rest, id }) => {
 
@@ -365,7 +365,7 @@ const PostQuizConfiguration = ({ className, rest, id }) => {
                                                         AutomateExpress : _radioRecommendTeachersPre === true && _radioAutomate === true && _radioExpress === false && _radioManual === false ?
                                                             focusAreasAutomate : _radioRecommendTeachersPre === true && _radioAutomate === false && (_radioExpress === true || _radioManual === true) ?
                                                                 focusAreasManual : _radioRecommendTeachersPre === true && _radioAutomate === true && (_radioExpress === true || _radioManual === true) ?
-                                                                    focusAreasAutomateExpress : commonValidation
+                                                                    focusAreasAutomateExpress : commonValidationPost
                                         }
                                         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
                                             console.log("insideSubmit");
@@ -389,7 +389,7 @@ const PostQuizConfiguration = ({ className, rest, id }) => {
                                                 setVarientErr(true)
                                             } else if (_radioRandomizedOrder === true && values.noOrderQuiz === '') {
                                                 setNoOdrderQuizErr(true)
-                                            } else if (matrixCount > 100) {
+                                            } else if (matrixCount > 100 || matrixCount < 100) {
                                                 setMatrixCountErr(true)
                                             } else {
                                                 const formData = {
@@ -427,7 +427,7 @@ const PostQuizConfiguration = ({ className, rest, id }) => {
                                                             randomized_order_varient: radioRandomizedOrdersSelected,
                                                             randomized_questions_varient: radioRandomizedQuestionsSelected,
                                                             no_of_randomized_order: values.noOrderQuiz,
-                                                            choose_topic:permitTopicChoose
+                                                            choose_topic: permitTopicChoose
                                                         }
                                                     }
                                                 }
@@ -980,7 +980,7 @@ const PostQuizConfiguration = ({ className, rest, id }) => {
                                                         </Col>
                                                     </Row>
                                                     {onlineErr && (
-                                                        <small style={{ color: 'red' }}>No Options Selected!</small>
+                                                        <small style={{ color: 'red' }}>Please, select either of the options!</small>
                                                     )}
                                                     <br />
                                                 </div>
@@ -1177,10 +1177,10 @@ const PostQuizConfiguration = ({ className, rest, id }) => {
                                                             )}
                                                         </Col>
                                                     </Row>
-                                                    <br />
+
                                                     {noOptionInTestMode && (
                                                         <small style={{ color: 'red' }}>
-                                                            No Options Selected!
+                                                            Please, select either of the options!
                                                         </small>
                                                     )}
 
@@ -1299,7 +1299,7 @@ const PostQuizConfiguration = ({ className, rest, id }) => {
                                                     </Row>
                                                     <br />
                                                     {matrixCountErr && (
-                                                        <small style={{ color: 'red' }}> % of Questions From Basic,Intermediate and Advanced Group Exceed More then 100%!</small>
+                                                        <small style={{ color: 'red' }}> % of Questions From Basic,Intermediate and Advanced Group Exceed More then 100% or Less then 100%!</small>
                                                     )}
                                                 </div>
                                                 <br />
@@ -1369,7 +1369,7 @@ const PostQuizConfiguration = ({ className, rest, id }) => {
                                                         </Col>
                                                     </Row>
                                                     {varientErr && (
-                                                        <small style={{ color: 'red' }}>No Options Selected!</small>
+                                                        <small style={{ color: 'red' }}>Please, select either of the options!</small>
                                                     )}
                                                     <br />
                                                     {_radioRandomizedOrder && (
