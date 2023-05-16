@@ -100,7 +100,7 @@ const AddQuestions = ({ className, ...rest }) => {
             }
         });
         axios
-           
+
             .post(
                 dynamicUrl.fetchQuestionMasters,
                 {
@@ -130,20 +130,10 @@ const AddQuestions = ({ className, ...rest }) => {
                 (response.data.cognitive_skills.map(e => { tempCognitiveSkillArr.push({ value: e.cognitive_id, label: e.cognitive_name }) }));
                 (response.data.question_sources.map(e => { tempSourceArr.push({ value: e.source_id, label: e.source_name }) }));
 
-                if (isEmptyArray(tempCategoryArr)) {
-
-                    setOptionsCategory([]);
-                    setOptionsDisclaimer([]);
-                    setOptionsCongnitiveSkills([]);
-                    setOptionsSource([]);
-
-                } else {
-
-                    setOptionsCategory(tempCategoryArr);
-                    setOptionsDisclaimer(tempDisclaimerArr);
-                    setOptionsCongnitiveSkills(tempCognitiveSkillArr);
-                    setOptionsSource(tempSourceArr);
-                }
+                isEmptyArray(tempCategoryArr) ? setOptionsCategory([]) : setOptionsCategory(tempCategoryArr);
+                isEmptyArray(tempDisclaimerArr) ? setOptionsDisclaimer([]) : setOptionsDisclaimer(tempDisclaimerArr);
+                isEmptyArray(tempCognitiveSkillArr) ? setOptionsCongnitiveSkills([]) : setOptionsCongnitiveSkills(tempCognitiveSkillArr);
+                isEmptyArray(tempSourceArr) ? setOptionsSource([]) : setOptionsSource(tempSourceArr);
 
             })
 
@@ -233,6 +223,7 @@ const AddQuestions = ({ className, ...rest }) => {
     const handleQuestionType = (event) => {
 
         setAnswerTypeOptions((currentOptions) => currentOptions.filter((currentOption) => !selectedAnswerType.includes(currentOption)));
+        setSelectedQuestionCategory([]);
         setSelectedQuestionCognitiveSkill([]);
         setSelectedQuestionSource([]);
 
@@ -266,18 +257,19 @@ const AddQuestions = ({ className, ...rest }) => {
 
         if (valuesSelected === 'Descriptive') {
 
-            _setRadioWorkSheetOrTest(true);
-            setWorkSheetOrTest('Worksheet');
+            // _setRadioWorkSheetOrTest(true);
+            // setWorkSheetOrTest('Worksheet');
             setDescriptiveAnswerOptionsForm([{
                 answer_type: '',
                 answer_content: '',
                 answer_weightage: ''
             }]);
 
-        } else {
-            _setRadioWorkSheetOrTest(false);
-            setWorkSheetOrTest('Test');
         }
+        // else {
+        //     _setRadioWorkSheetOrTest(false);
+        //     setWorkSheetOrTest('Test');
+        // }
 
         valuesSelected === 'Subjective' ? setAnswerTypeOptions([
             { value: 'Words', label: 'Words' },
@@ -388,7 +380,6 @@ const AddQuestions = ({ className, ...rest }) => {
         if (event.target.value === "Alpha Numeric" && event.target.name === 'unit_weightage') {
             data[index][event.target.name] = Number(event.target.value);
         }
-
 
         console.log(data);
 
@@ -812,15 +803,15 @@ const AddQuestions = ({ className, ...rest }) => {
                                                     question_voice_note: selectedQuestionVoiceNote,
                                                     question_content: articleDataTitle,
                                                     answers_of_question: descriptiveAnswerOptionsForm,
-                                                    // question_status: sessionStorage.getItem('click_event'),
-                                                    question_status: 'Publish',
+                                                    question_status: sessionStorage.getItem('click_event'),
+                                                    // question_status: 'Publish',
                                                     question_disclaimer: selectedValueDisclaimer,
                                                     show_math_keyboard: showMathKeyboard,
                                                     appears_in: workSheetOrTest,
                                                     question_label: questionLabelValue,
                                                     display_answer: values.descriptive_answer,
                                                     marks: values.marks,
-                                                    answer_explanation: values.answer_explanation === undefined || values.answer_explanation === "undefined" ? "N.A." : values.answer_explanation
+                                                    answer_explanation: values.answer_explanation === undefined || values.answer_explanation === "undefined" || values.answer_explanation === "" ? "N.A." : values.answer_explanation
 
                                                 }
 
@@ -853,15 +844,15 @@ const AddQuestions = ({ className, ...rest }) => {
                                                     question_voice_note: selectedQuestionVoiceNote,
                                                     question_content: articleDataTitle,
                                                     answers_of_question: answerOptionsForm,
-                                                    // question_status: sessionStorage.getItem('click_event'),
-                                                    question_status: 'Publish',
+                                                    question_status: sessionStorage.getItem('click_event'),
+                                                    // question_status: 'Publish',
                                                     question_disclaimer: selectedValueDisclaimer,
                                                     show_math_keyboard: showMathKeyboard,
                                                     appears_in: workSheetOrTest,
                                                     question_label: questionLabelValue,
                                                     display_answer: "N.A.",
                                                     marks: values.marks,
-                                                    answer_explanation: values.answer_explanation === undefined || values.answer_explanation === "undefined" ? "N.A." : values.answer_explanation
+                                                    answer_explanation: values.answer_explanation === undefined || values.answer_explanation === "undefined" || values.answer_explanation === "" ? "N.A." : values.answer_explanation
                                                 };
 
                                                 console.log("payLoad", payLoad);
