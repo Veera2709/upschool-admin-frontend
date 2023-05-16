@@ -15,6 +15,7 @@ import { bgvAlerts } from '../../../common-ui-components/sow/bgv-api/bgvAlerts';
 import { areFilesInvalidBulkUpload, isEmptyObject } from '../../../../util/utils';
 import { bulkUpload } from './user-bulk-upload-api/bulkUpload';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
+import { isEmptyArray } from '../../../../util/utils';
 
 const UsersBulkUpload = ({ className, ...rest }) => {
 
@@ -27,6 +28,7 @@ const UsersBulkUpload = ({ className, ...rest }) => {
   const displayHeading = sessionStorage.getItem('user_type');
   const threadLinks = document.getElementsByClassName('page-header');
   const [selectedSchoolId, setSelectedSchoolId] = useState('');
+  const [schoolMandatoryErr, setSchoolMandatoryErr] = useState(false);
 
   const sweetAlertHandler = (alert) => {
     const MySwal = withReactContent(Swal);
@@ -73,8 +75,10 @@ const UsersBulkUpload = ({ className, ...rest }) => {
           if (result) {
             console.log('inside res');
 
-            let responseData = response.data;
-            setSchoolName_ID(responseData);
+            let tempCategoryArr = [];
+            (response.data.Items.map(e => { tempCategoryArr.push({ value: e.school_id, label: e.school_name }) }));
+            isEmptyArray(tempCategoryArr) ? setSchoolName_ID([]) : setSchoolName_ID(tempCategoryArr);
+
             hideLoader();
 
             console.log(threadLinks);
@@ -222,8 +226,8 @@ const UsersBulkUpload = ({ className, ...rest }) => {
   };
 
   const getSelectedSchoolDetails = (e) => {
-    console.log('School ID', e.target.value);
-    setSelectedSchoolId(e.target.value);
+    console.log('School ID', e.value);
+    setSelectedSchoolId(e.value);
   }
 
   return (
@@ -275,39 +279,47 @@ const UsersBulkUpload = ({ className, ...rest }) => {
                   onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
 
                     setSubmitting(true);
-                    showLoader();
 
                     let excelFile = document.getElementById('excelFileUploadUrl').files[0];
 
-                    const filteredResult = schoolName_ID.Items.find((e) => e.school_id === selectedSchoolId);
+                    console.log(selectedSchoolId);
 
-                    console.log(filteredResult);
-                    console.log(schoolName_ID.Items);
-
-                    let sendData = {
-                      school_id: '',
-                      ExcelFile: ''
-                    }
-
-                    if (excelFile) {
-
-                      sendData.school_id = filteredResult.school_id;
-                      sendData.ExcelFile = excelFile.name;
-
-                      console.log('Submitting', sendData);
-
-                      if (areFilesInvalidBulkUpload([excelFile]) !== 0) {
-                        sweetAlertHandler(bgvAlerts.invalidFilesPresentBulkUpload);
-                        hideLoader();
-                      } else {
-                        showLoader();
-                        setDisableButton(true);
-                        _uploadBulk(sendData);
-                      }
+                    if (selectedSchoolId === "" || selectedSchoolId === 'undefined' || selectedSchoolId === undefined) {
+                      setSchoolMandatoryErr(true);
                     } else {
-                      sweetAlertHandler(bgvAlerts.noFilesPresentBulkUpload);
-                      hideLoader();
+
+                      showLoader();
+                      const filteredResult = schoolName_ID.find((e) => e.value === selectedSchoolId);
+
+                      console.log(filteredResult);
+                      console.log(schoolName_ID);
+
+                      let sendData = {
+                        school_id: '',
+                        ExcelFile: ''
+                      }
+
+                      if (excelFile) {
+
+                        sendData.school_id = filteredResult.school_id;
+                        sendData.ExcelFile = excelFile.name;
+
+                        console.log('Submitting', sendData);
+
+                        if (areFilesInvalidBulkUpload([excelFile]) !== 0) {
+                          sweetAlertHandler(bgvAlerts.invalidFilesPresentBulkUpload);
+                          hideLoader();
+                        } else {
+                          showLoader();
+                          setDisableButton(true);
+                          _uploadBulk(sendData);
+                        }
+                      } else {
+                        sweetAlertHandler(bgvAlerts.noFilesPresentBulkUpload);
+                        hideLoader();
+                      }
                     }
+
 
                   }}
                 >
@@ -325,44 +337,26 @@ const UsersBulkUpload = ({ className, ...rest }) => {
 
                               <Select
                                 name="schoolName"
-                                options={schoolName_ID.Items}
+                                options={schoolName_ID}
                                 className="basic-multi-select"
                                 classNamePrefix="Select"
                                 onChange={(event) => {
+                                  setSchoolMandatoryErr(false)
                                   getSelectedSchoolDetails(event)
                                 }}
                                 menuPortalTarget={document.body}
                                 styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                               />
 
-                              {/* <select
-                                className="form-control"
-                                error={touched.schoolName && errors.schoolName}
-                                name="schoolName"
-                                onBlur={handleBlur}
-                                onChange={e => {
-                                  handleChange(e);
-                                  getSelectedSchoolDetails(e);
-                                }}
-                                type="text"
-                                ref={schoolNameRef}
-                                value={values.schoolName}
-                              >
-
-                                {schoolName_ID.Items.map((schoolData) => {
-
-                                  return <option
-                                    value={schoolData.school_id}
-                                    key={schoolData.school_id}>
-                                    {schoolData.school_name}
-                                  </option>
-
-                                })}
-
-                              </select> */}
                               {touched.schoolName && errors.schoolName && (
                                 <small className="text-danger form-text">{errors.schoolName}</small>
                               )}
+
+                              {
+                                schoolMandatoryErr === true && (
+                                  <small className="text-danger form-text">{'School is required'}</small>
+                                )
+                              }
                             </Col>
                           </Row>
 
