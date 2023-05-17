@@ -27,7 +27,7 @@ const EditQuestions = () => {
     const [displayHeader, setDisplayHeader] = useState(true);
     const displayHeading = sessionStorage.getItem('question_active_status');
     const _questionStatus = sessionStorage.getItem('click_event');
-
+    
     const questionTypeOptions = [
         { value: 'Objective', label: 'Objective' },
         { value: 'Subjective', label: 'Subjective' },
@@ -74,7 +74,7 @@ const EditQuestions = () => {
     const [newdIgicardErrMin, setNewDigicardErrMin] = useState(false);
     const [newdIgicardErrReq, setNewDigicardErrReq] = useState(false);
 
-    const [optionsCategory, setOptionsCategory] = useState([]);
+    const [options, setOptions] = useState([]);
     const [errorMessage, setErrorMessage] = useState("");//for question category
 
     const [optionsDisclaimer, setOptionsDisclaimer] = useState([]);
@@ -105,17 +105,13 @@ const EditQuestions = () => {
         axios
             // .post("api-url")
             .post(
-                dynamicUrl.fetchQuestionMasters,
+                dynamicUrl.fetchDisclaimersandCategories,
                 {
                     data: {
                         disclaimer_type: "Question",
                         disclaimer_status: "Active",
                         category_type: "Question",
-                        category_status: "Active",
-                        cognitive_type: "Question",
-                        cognitive_status: "Active",
-                        source_type: "Question",
-                        source_status: "Active"
+                        category_status: "Active"
                     }
                 },
                 {
@@ -132,7 +128,7 @@ const EditQuestions = () => {
 
                 console.log("tempCategoryArr : ", tempCategoryArr);
                 console.log("tempDisclaimerArr : ", tempDisclaimerArr);
-                setOptionsCategory(tempCategoryArr);
+                setOptions(tempCategoryArr);
                 setOptionsDisclaimer(tempDisclaimerArr);
 
 
@@ -145,7 +141,7 @@ const EditQuestions = () => {
     }, []);
 
     const IndividualQuestionData = () => {
-        console.log("Options : ", optionsCategory, optionsDisclaimer);
+        console.log("Options : ", options, optionsDisclaimer);
 
         let userJWT = sessionStorage.getItem('user_jwt');
 
@@ -181,7 +177,7 @@ const EditQuestions = () => {
 
                         let individual_user_data = response.data.Items[0];
                         console.log({ individual_user_data });
-                        let selectedCategory = optionsCategory.length > 0 && optionsCategory.filter((e) => e.value === individual_user_data.question_category)
+                        let selectedCategory = options.length > 0 && options.filter((e) => e.value === individual_user_data.question_category)
                         console.log("selectedCategory ", selectedCategory[0].value);
 
                         setSelectedValueCategory(selectedCategory);
@@ -418,12 +414,12 @@ const EditQuestions = () => {
         }
     }
     useEffect(() => {
-        if (!isEmptyArray(optionsDisclaimer) && !isEmptyArray(optionsCategory)) {
-            console.log("Inside UE!", optionsCategory, optionsDisclaimer);
+        if (!isEmptyArray(optionsDisclaimer) && !isEmptyArray(options)) {
+            console.log("Inside UE!", options, optionsDisclaimer);
 
             IndividualQuestionData();
         }
-    }, [optionsDisclaimer, optionsCategory]);
+    }, [optionsDisclaimer, options]);
 
     const handleQuestionCategory = (event) => {
         console.log(event);
@@ -1403,7 +1399,7 @@ const EditQuestions = () => {
                                                                     <Select
                                                                         defaultValue={selectedValueCategory}
                                                                         name="questionCategory"
-                                                                        options={optionsCategory}
+                                                                        options={options}
                                                                         className="basic-multi-select"
                                                                         classNamePrefix="Select"
                                                                         onChange={(event) => {
