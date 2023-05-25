@@ -48,7 +48,7 @@ const AddQuestions = ({ className, ...rest }) => {
     const [displayHeading, setDisplayHeading] = useState(sessionStorage.getItem('question_active_status'));
     const threadLinks = document.getElementsByClassName('page-header');
     const [showMathKeyboard, setShowMathKeyboard] = useState('No');
-    const [workSheetOrTest, setWorkSheetOrTest] = useState('Test');
+    const [workSheetOrTest, setWorkSheetOrTest] = useState('preOrPost');
     const [answerTypeOptions, setAnswerTypeOptions] = useState([]);
     const [descriptiveAnswerOptionsForm, setDescriptiveAnswerOptionsForm] = useState([]);
     const [selectedAnswerType, setSelectedAnswerType] = useState('');
@@ -209,7 +209,7 @@ const AddQuestions = ({ className, ...rest }) => {
     const handleWorkSheetOrTest = (e) => {
 
         _setRadioWorkSheetOrTest(!_radioWorkSheetOrTest);
-        _radioWorkSheetOrTest === true ? setWorkSheetOrTest('Test') : setWorkSheetOrTest('Worksheet');
+        _radioWorkSheetOrTest === true ? setWorkSheetOrTest('preOrPost') : setWorkSheetOrTest('worksheetOrTest');
     }
 
     const [answerBlanksOptions, setAnswerBlanksOptions] = useState([]);
@@ -223,9 +223,9 @@ const AddQuestions = ({ className, ...rest }) => {
     const handleQuestionType = (event) => {
 
         setAnswerTypeOptions((currentOptions) => currentOptions.filter((currentOption) => !selectedAnswerType.includes(currentOption)));
-        setSelectedQuestionCategory([]);
-        setSelectedQuestionCognitiveSkill([]);
-        setSelectedQuestionSource([]);
+        // setSelectedQuestionCategory([]);
+        // setSelectedQuestionCognitiveSkill([]);
+        // setSelectedQuestionSource([]);
 
         console.log(answerTypeOptions);
         // setAnswerTypeOptions([]);
@@ -257,8 +257,6 @@ const AddQuestions = ({ className, ...rest }) => {
 
         if (valuesSelected === 'Descriptive') {
 
-            // _setRadioWorkSheetOrTest(true);
-            // setWorkSheetOrTest('Worksheet');
             setDescriptiveAnswerOptionsForm([{
                 answer_type: '',
                 answer_content: '',
@@ -266,10 +264,6 @@ const AddQuestions = ({ className, ...rest }) => {
             }]);
 
         }
-        // else {
-        //     _setRadioWorkSheetOrTest(false);
-        //     setWorkSheetOrTest('Test');
-        // }
 
         valuesSelected === 'Subjective' ? setAnswerTypeOptions([
             { value: 'Words', label: 'Words' },
@@ -1172,44 +1166,24 @@ const AddQuestions = ({ className, ...rest }) => {
                                                     Question Appears in
                                                 </label>
 
-                                                {selectedQuestionType === 'Descriptive' ? (<>
-                                                    <div className="col">
-                                                        <div className="row profile-view-radio-button-view">
-                                                            <Form.Check
-                                                                disabled
-                                                                id={`radio-fresher`}
-                                                                error={touched.fresher && errors.fresher}
-                                                                type="switch"
-                                                                variant={'outline-primary'}
-                                                                name="radio-fresher"
-                                                                checked={_radioWorkSheetOrTest}
-                                                                onChange={(e) => handleWorkSheetOrTest(e)}
-                                                            /> &nbsp;
+                                                <div className="col">
+                                                    <div className="row profile-view-radio-button-view">
+                                                        <Form.Check
+                                                            id={`radio-fresher`}
+                                                            error={touched.fresher && errors.fresher}
+                                                            type="switch"
+                                                            variant={'outline-primary'}
+                                                            name="radio-fresher"
+                                                            checked={_radioWorkSheetOrTest}
+                                                            onChange={(e) => handleWorkSheetOrTest(e)}
+                                                        /> &nbsp;
 
-                                                            <Form.Label className="profile-view-question" id={`radio-fresher`}>
-                                                                {_radioWorkSheetOrTest === true ? 'Worksheet' : 'Test'}
-                                                            </Form.Label>
-                                                        </div>
+                                                        <Form.Label className="profile-view-question" id={`radio-fresher`}>
+                                                            {_radioWorkSheetOrTest === true ? 'Worksheet/Test' : 'Pre/Post'}
+                                                        </Form.Label>
                                                     </div>
-                                                </>) : (<>
-                                                    <div className="col">
-                                                        <div className="row profile-view-radio-button-view">
-                                                            <Form.Check
-                                                                id={`radio-fresher`}
-                                                                error={touched.fresher && errors.fresher}
-                                                                type="switch"
-                                                                variant={'outline-primary'}
-                                                                name="radio-fresher"
-                                                                checked={_radioWorkSheetOrTest}
-                                                                onChange={(e) => handleWorkSheetOrTest(e)}
-                                                            /> &nbsp;
+                                                </div>
 
-                                                            <Form.Label className="profile-view-question" id={`radio-fresher`}>
-                                                                {_radioWorkSheetOrTest === true ? 'Worksheet' : 'Test'}
-                                                            </Form.Label>
-                                                        </div>
-                                                    </div>
-                                                </>)}
                                             </Col>
                                         </Row>
 
@@ -1661,21 +1635,29 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                     Preview
                                                                                 </label>
 
-                                                                                {equation.length >= 1 && (
-                                                                                    <MathJax.Provider>
-                                                                                        {
-                                                                                            (
-                                                                                                equation[index] && (
-                                                                                                    <div>
-                                                                                                        <MathJax.Node inline formula={equation[index]} />
-                                                                                                    </div>
+                                                                                <div>
+                                                                                    {equation.length >= 1 && (
+                                                                                        <MathJax.Provider>
+                                                                                            {
+                                                                                                (
+                                                                                                    equation[index] && (
+                                                                                                        <div>
+                                                                                                            <MathJax.Node
+                                                                                                                styles={{
+                                                                                                                    ".MathJax_Display": {
+                                                                                                                        textAlign: "center",
+                                                                                                                        margin: "1em 0em"
+                                                                                                                    }
+                                                                                                                }}
+                                                                                                                inline formula={equation[index]} />
+                                                                                                        </div>
+                                                                                                    )
                                                                                                 )
-                                                                                            )
-                                                                                        }
+                                                                                            }
 
-                                                                                    </MathJax.Provider>
-                                                                                )}
-
+                                                                                        </MathJax.Provider>
+                                                                                    )}
+                                                                                </div>
                                                                             </Col>
                                                                         </Row>
 
@@ -2907,8 +2889,13 @@ const AddQuestions = ({ className, ...rest }) => {
 
                                                                                     {descriptiveEquation.length >= 1 && (
                                                                                         <MathJax.Provider>
-                                                                                            {(descriptiveEquation[index] && (<div>
-                                                                                                <MathJax.Node inline formula={descriptiveEquation[index]} />
+                                                                                            {(descriptiveEquation[index] && (<div styles={{ display: "contents" }}>
+                                                                                                <MathJax.Node styles={{
+                                                                                                    ".MathJax_Display": {
+                                                                                                        display: "contents"
+                                                                                                    }
+                                                                                                }}
+                                                                                                    inline formula={descriptiveEquation[index]} />
                                                                                             </div>))}
                                                                                         </MathJax.Provider>
                                                                                     )}

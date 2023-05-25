@@ -56,7 +56,7 @@ const EditQuestions = () => {
     const [selectedQuestionSource, setSelectedQuestionSource] = useState({});
     const [selectedQuestionDisclaimer, setSelectedQuestionDisclaimer] = useState([]);
     const [showMathKeyboard, setShowMathKeyboard] = useState('No');
-    const [workSheetOrTest, setWorkSheetOrTest] = useState('Test');
+    const [workSheetOrTest, setWorkSheetOrTest] = useState('preOrPost');
     const [answerTypeOptions, setAnswerTypeOptions] = useState([]);
     const [descriptiveAnswerOptionsForm, setDescriptiveAnswerOptionsForm] = useState([]);
     const [selectedAnswerType, setSelectedAnswerType] = useState([]);
@@ -237,7 +237,7 @@ const EditQuestions = () => {
                         }
 
                         const radioValueShowMathKeyboard = individual_user_data.show_math_keyboard === 'Yes' ? true : false;
-                        const radioValueWorkSheetOrTest = individual_user_data.appears_in === 'Worksheet' ? true : false;
+                        const radioValueWorkSheetOrTest = individual_user_data.appears_in === 'worksheetOrTest' ? true : false;
 
                         setIsLoading(false);
 
@@ -583,7 +583,7 @@ const EditQuestions = () => {
     const handleWorkSheetOrTest = (e) => {
 
         _setRadioWorkSheetOrTest(!_radioWorkSheetOrTest);
-        _radioWorkSheetOrTest === true ? setWorkSheetOrTest('Test') : setWorkSheetOrTest('Worksheet');
+        _radioWorkSheetOrTest === true ? setWorkSheetOrTest('preOrPost') : setWorkSheetOrTest('worksheetOrTest');
     }
 
     const [answerBlanksOptions, setAnswerBlanksOptions] = useState([]);
@@ -631,8 +631,6 @@ const EditQuestions = () => {
 
         if (valuesSelected === 'Descriptive') {
 
-            // _setRadioWorkSheetOrTest(true);
-            // setWorkSheetOrTest('Worksheet');
             setDescriptiveAnswerOptionsForm([{
                 answer_type: '',
                 answer_content: '',
@@ -640,10 +638,6 @@ const EditQuestions = () => {
             }]);
 
         }
-        // else {
-        //     _setRadioWorkSheetOrTest(false);
-        //     setWorkSheetOrTest('Test');
-        // }
 
         valuesSelected === 'Subjective' ? setAnswerTypeOptions([
             { value: 'Words', label: 'Words' },
@@ -1848,7 +1842,7 @@ const EditQuestions = () => {
                                                                             /> &nbsp;
 
                                                                             <Form.Label className="profile-view-question" id={`radio-fresher`}>
-                                                                                {_radioWorkSheetOrTest === true ? 'Worksheet' : 'Test'}
+                                                                            {_radioWorkSheetOrTest === true ? 'Worksheet/Test' : 'Pre/Post'}
                                                                             </Form.Label>
                                                                         </div>
                                                                     </div>
