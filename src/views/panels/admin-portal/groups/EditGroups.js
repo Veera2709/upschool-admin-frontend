@@ -111,7 +111,8 @@ const EditGroups = ({ className, ...rest }) => {
                 {
                     data: {
                         question_status: "Publish",
-                        question_active_status: "Active"
+                        question_active_status: "Active",
+                        questions_type: "preOrPost"
                     }
                 },
                 {
