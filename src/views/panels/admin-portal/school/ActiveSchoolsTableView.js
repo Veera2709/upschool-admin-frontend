@@ -428,7 +428,7 @@ const SchoolChild = (props) => {
                                                             <h5>Schools List</h5>
                                                             <h5>Total Entries :- {schoolData.length}</h5>
                                                         </Card.Title>
-                                                        
+
                                                     </Card.Header>
                                                     <Card.Body>
                                                         <Table columns={columns} data={schoolData} modalOpen={openHandler} />
