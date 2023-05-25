@@ -501,7 +501,7 @@ const QuestionsTableView = ({ _questionStatus }) => {
         } else {
           hideLoader();
           setIsEditModalOpen(false);
-          sweetAlertHandler({  type: 'success', text: MESSAGES.SUCCESS.UpdatingUser });
+          sweetAlertHandler({ type: 'success', text: MESSAGES.SUCCESS.UpdatingUser });
 
           fetchUserData();
 
@@ -640,10 +640,13 @@ const QuestionsTableView = ({ _questionStatus }) => {
     axios.post(dynamicUrl.fetchAllQuestionsData, {
       data: {
         question_status: _questionStatus,
-        question_active_status: payLoadStatus
+        question_active_status: payLoadStatus,
+        questions_type: "All"
       }
     }, {
-      headers: { Authorization: sessionStorage.getItem('user_jwt') }
+      headers: {
+        Authorization: sessionStorage.getItem('user_jwt')
+      }
     })
       .then((response) => {
 
@@ -670,11 +673,7 @@ const QuestionsTableView = ({ _questionStatus }) => {
           history.push('/auth/signin-1');
           window.location.reload();
 
-        } else {
-
-          fetchUserData();
         }
-
       })
 
   };

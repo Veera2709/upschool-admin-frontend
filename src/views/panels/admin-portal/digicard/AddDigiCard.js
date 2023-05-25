@@ -558,11 +558,6 @@ const AddDigiCard = (
                         <small className="text-danger form-text" style={{ display: docError ? 'none' : 'block' }}>Invalid File Type or File size is Exceed More Than 10MB</small>
                       </div>
 
-
-
-
-
-
                       <div className='ReactTags'>
                         <label className="floating-label">
                           <small className="text-danger"> </small>KeyWords
