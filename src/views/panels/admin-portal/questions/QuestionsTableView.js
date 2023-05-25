@@ -340,6 +340,10 @@ const QuestionsTableView = ({ _questionStatus }) => {
       Header: 'Question',
       accessor: 'question_label'
     },
+    {
+      Header: 'Appears in',
+      accessor: 'appears_in'
+    },
     // {
     //   Header: 'Status',
     //   accessor: 'question_status'
@@ -555,6 +559,7 @@ const QuestionsTableView = ({ _questionStatus }) => {
     for (let index = 0; index < responseData.length; index++) {
 
       responseData[index].id = index + 1;
+      responseData[index].appears_in = responseData[index].appears_in === 'preOrPost' ? 'Pre/Post' : responseData[index].appears_in === 'worksheetOrTest' ? 'Worksheet/Test' : 'N.A.' ;
 
       responseData[index]['action'] = (
         <>
