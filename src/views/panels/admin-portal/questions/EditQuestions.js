@@ -113,8 +113,6 @@ const EditQuestions = () => {
         }
     ]);
 
-    let displaySuccessMsg = _questionStatus === 'Save' ? 'Question Saved!' : _questionStatus === 'Submit' ? 'Question Submitted!' : _questionStatus === 'Accept' ? 'Question Accepted!' : _questionStatus === 'Reject' ? 'Question Rejected!' : _questionStatus === 'Revisit' ? 'Question set as Revisit!' : _questionStatus === 'DesignReady' ? 'Question set as Design Ready!' : _questionStatus === 'Publish' ? 'Question Published!' : 'Question Updated!';
-
     useEffect(() => {
 
         console.log("Request : ", {
@@ -171,6 +169,7 @@ const EditQuestions = () => {
 
     const IndividualQuestionData = () => {
         console.log("Options : ", optionsCategory, optionsDisclaimer, optionsCongnitiveSkills, optionsSource);
+        setIsLoading(true);
 
         let userJWT = sessionStorage.getItem('user_jwt');
 
@@ -185,7 +184,7 @@ const EditQuestions = () => {
 
             threadLinks.length === 1 ? setDisplayHeader(false) : setDisplayHeader(true);
 
-            setIsLoading(true);
+           
             axios
                 .post(
                     dynamicUrl.fetchIndividualQuestionData,
@@ -224,12 +223,12 @@ const EditQuestions = () => {
                         setSelectedValueSource(selectedSource);
                         setSelectedQuestionSource(selectedSource[0].value);
 
-                        if (individual_user_data.question_disclaimer === "" || isEmptyArray(individual_user_data.question_disclaimer)) {
+                        if (individual_user_data.question_disclaimer === "" || individual_user_data.question_disclaimer === "N.A." || isEmptyArray(individual_user_data.question_disclaimer)) {
                             console.log("Disclaimer is not selected");
                             setSelectedValueDisclaimer([]);
                             setSelectedQuestionDisclaimer([]);
                         } else {
-                            console.log("Disclaimer is not selected else");
+                            console.log("Disclaimer selected else");
 
                             let selectedDisclaimer = optionsDisclaimer.filter((e) => e.value === individual_user_data.question_disclaimer);
                             console.log("selectedDisclaimer ", selectedDisclaimer[0].value);
@@ -541,7 +540,6 @@ const EditQuestions = () => {
 
         let tempFileValue = [...fileValues];
         tempFileValue.splice(count, 1);
-        // tempFileValue[count] = '';
         setFileValues(tempFileValue);
 
         let data = [...answerOptionsForm];
@@ -565,7 +563,6 @@ const EditQuestions = () => {
 
         let tempFileValue = [...fileValues];
         tempFileValue.splice(count, 1);
-        // tempFileValue[count] = '';
         setFileValues(tempFileValue);
 
         let data = [...answerOptionsForm];
@@ -1234,16 +1231,6 @@ const EditQuestions = () => {
             setQuestionSourceErrMsg(true);
         } else if (articleDataTitle === "" || articleDataTitle === undefined || articleDataTitle === 'undefined' || articleDataTitle === "<p><br></p>" || articleDataTitle === "<p></p>" || articleDataTitle === "<br>") {
             setQuestionEmptyErrMsg(true);
-            // } else if (answerOptionsForm) {
-
-            //     let tempWeightage = answerOptionsForm.filter(value => value.answer_weightage < 0);
-
-            //     if (tempWeightage.length !== 0) {
-            //         setAnsWeightageErrMsg(true);
-            //     } else {
-            //         setnNewDigicard(true);
-            //     }
-            // }
         } else if (selectedQuestionType === 'Descriptive') {
 
             console.log(document.getElementById('descriptive_answer').value);
@@ -1410,20 +1397,6 @@ const EditQuestions = () => {
                                                                 } else {
 
                                                                     console.log('Data inserted!');
-
-                                                                    // let payLoad = {
-
-                                                                    //     question_type: selectedQuestionType,
-                                                                    //     question_category: selectedQuestionCategory,
-                                                                    //     question_voice_note: selectedQuestionVoiceNote,
-                                                                    //     question_content: articleDataTitle,
-                                                                    //     answers_of_question: answerOptionsForm,
-                                                                    //     question_status: 'Save',
-                                                                    //     question_disclaimer: selectedQuestionDisclaimer,
-                                                                    //     show_math_keyboard: showMathKeyboard,
-                                                                    //     appears_in: workSheetOrTest,
-                                                                    //     question_label: questionLabelValue
-                                                                    // }
 
                                                                     let payLoad = {
 
