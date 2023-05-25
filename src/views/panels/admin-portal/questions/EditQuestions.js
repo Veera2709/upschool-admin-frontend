@@ -184,7 +184,7 @@ const EditQuestions = () => {
 
             threadLinks.length === 1 ? setDisplayHeader(false) : setDisplayHeader(true);
 
-           
+
             axios
                 .post(
                     dynamicUrl.fetchIndividualQuestionData,
@@ -1842,7 +1842,7 @@ const EditQuestions = () => {
                                                                             /> &nbsp;
 
                                                                             <Form.Label className="profile-view-question" id={`radio-fresher`}>
-                                                                            {_radioWorkSheetOrTest === true ? 'Worksheet/Test' : 'Pre/Post'}
+                                                                                {_radioWorkSheetOrTest === true ? 'Worksheet/Test' : 'Pre/Post'}
                                                                             </Form.Label>
                                                                         </div>
                                                                     </div>
@@ -2273,7 +2273,7 @@ const EditQuestions = () => {
 
                                                                                             <br />
                                                                                             <Row>
-                                                                                                <Col xs={6}>
+                                                                                                <Col xs={12}>
                                                                                                     <label className="floating-label">
                                                                                                         <small className="text-danger"></small>
                                                                                                         Equation
@@ -2295,20 +2295,23 @@ const EditQuestions = () => {
                                                                                                     />
                                                                                                 </Col>
 
-                                                                                                <Col xs={6}>
+                                                                                            </Row>
+
+                                                                                            <br />
+                                                                                            <Row>
+                                                                                                <Col xs={12}>
                                                                                                     <label className="floating-label">
                                                                                                         <small className="text-danger"></small>
                                                                                                         Preview
                                                                                                     </label>
 
-                                                                                                    {commonPreview.length >= 1 && (
+                                                                                                    {commonPreview.length >= 1 && form.answer_content && (commonPreview[index] !== 'N.A.') && (
                                                                                                         <MathJax.Provider>
                                                                                                             {
                                                                                                                 (
-                                                                                                                    commonPreview[index] && (
-                                                                                                                        <div>
-                                                                                                                            <MathJax.Node inline formula={commonPreview[index]} />
-                                                                                                                        </div>
+                                                                                                                    (commonPreview[index]) && (<div>
+                                                                                                                        <MathJax.Node inline formula={commonPreview[index]} />
+                                                                                                                    </div>
                                                                                                                     )
                                                                                                                 )
                                                                                                             }
@@ -3530,46 +3533,50 @@ const EditQuestions = () => {
                                                                                             )}
 
                                                                                             {form.answer_type === "Equation" && descriptiveAnswerOptionsForm && (
+                                                                                                <>
+                                                                                                    <Row key={index}>
 
-                                                                                                <Row key={index}>
+                                                                                                        <Col>
+                                                                                                            <label className="floating-label">
+                                                                                                                <small className="text-danger"></small>
+                                                                                                                Keyword
+                                                                                                            </label>
+                                                                                                            <textarea
+                                                                                                                value={form.answer_content}
+                                                                                                                className="form-control"
+                                                                                                                error={touched.answer_content && errors.answer_content}
+                                                                                                                label="answer_content"
+                                                                                                                name="answer_content"
+                                                                                                                onBlur={handleBlur}
+                                                                                                                type="textarea"
+                                                                                                                onChange={(event) => {
+                                                                                                                    handleDescriptiveAnswerBlanks(event, index);
+                                                                                                                }}
+                                                                                                                placeholder="Enter Keyword"
+                                                                                                            />
+                                                                                                        </Col>
+                                                                                                    </Row>
 
-                                                                                                    <Col xs={6}>
-                                                                                                        <label className="floating-label">
-                                                                                                            <small className="text-danger"></small>
-                                                                                                            Keyword
-                                                                                                        </label>
-                                                                                                        <textarea
-                                                                                                            value={form.answer_content}
-                                                                                                            className="form-control"
-                                                                                                            error={touched.answer_content && errors.answer_content}
-                                                                                                            label="answer_content"
-                                                                                                            name="answer_content"
-                                                                                                            onBlur={handleBlur}
-                                                                                                            type="textarea"
-                                                                                                            onChange={(event) => {
-                                                                                                                handleDescriptiveAnswerBlanks(event, index);
-                                                                                                            }}
-                                                                                                            placeholder="Enter Keyword"
-                                                                                                        />
-                                                                                                    </Col>
+                                                                                                    <br />
+                                                                                                    <Row key={index}>
+                                                                                                        <Col>
+                                                                                                            <label className="floating-label">
+                                                                                                                <small className="text-danger"></small>
+                                                                                                                Preview
+                                                                                                            </label>
 
-                                                                                                    <Col xs={6}>
-                                                                                                        <label className="floating-label">
-                                                                                                            <small className="text-danger"></small>
-                                                                                                            Preview
-                                                                                                        </label>
+                                                                                                            {descriptiveEquation.length >= 1 && form.answer_content && (descriptiveEquation[index] !== 'N.A.') && (
+                                                                                                                <MathJax.Provider>
+                                                                                                                    {(descriptiveEquation[index] && (<div>
+                                                                                                                        <MathJax.Node inline formula={descriptiveEquation[index]} />
+                                                                                                                    </div>))}
+                                                                                                                </MathJax.Provider>
+                                                                                                            )}
 
-                                                                                                        {descriptiveEquation.length >= 1 && (
-                                                                                                            <MathJax.Provider>
-                                                                                                                {(descriptiveEquation[index] && (<div>
-                                                                                                                    <MathJax.Node inline formula={descriptiveEquation[index]} />
-                                                                                                                </div>))}
-                                                                                                            </MathJax.Provider>
-                                                                                                        )}
+                                                                                                        </Col>
 
-                                                                                                    </Col>
-
-                                                                                                </Row>
+                                                                                                    </Row>
+                                                                                                </>
 
                                                                                             )}
 

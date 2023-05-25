@@ -1609,7 +1609,7 @@ const AddQuestions = ({ className, ...rest }) => {
 
                                                                         <br />
                                                                         <Row>
-                                                                            <Col xs={6}>
+                                                                            <Col xs={12}>
                                                                                 <label className="floating-label">
                                                                                     <small className="text-danger"></small>
                                                                                     Answer
@@ -1628,36 +1628,37 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                     placeholder="Enter Equation"
                                                                                 />
                                                                             </Col>
+                                                                        </Row>
 
-                                                                            <Col xs={6}>
+                                                                        <br />
+                                                                        <Row>
+                                                                            <Col xs={12}>
                                                                                 <label className="floating-label">
                                                                                     <small className="text-danger"></small>
                                                                                     Preview
                                                                                 </label>
 
-                                                                                <div>
-                                                                                    {equation.length >= 1 && (
-                                                                                        <MathJax.Provider>
-                                                                                            {
-                                                                                                (
-                                                                                                    equation[index] && (
-                                                                                                        <div>
-                                                                                                            <MathJax.Node
-                                                                                                                styles={{
-                                                                                                                    ".MathJax_Display": {
-                                                                                                                        textAlign: "center",
-                                                                                                                        margin: "1em 0em"
-                                                                                                                    }
-                                                                                                                }}
-                                                                                                                inline formula={equation[index]} />
-                                                                                                        </div>
-                                                                                                    )
+                                                                                {equation.length >= 1 && form.answer_content && (
+                                                                                    <MathJax.Provider>
+                                                                                        {
+                                                                                            (
+                                                                                                equation[index] && (
+                                                                                                    <div>
+                                                                                                        <MathJax.Node
+                                                                                                            styles={{
+                                                                                                                ".MathJax_Display": {
+                                                                                                                    textAlign: "center",
+                                                                                                                    margin: "1em 0em"
+                                                                                                                }
+                                                                                                            }}
+                                                                                                            inline formula={equation[index]} />
+                                                                                                    </div>
                                                                                                 )
-                                                                                            }
+                                                                                            )
+                                                                                        }
 
-                                                                                        </MathJax.Provider>
-                                                                                    )}
-                                                                                </div>
+                                                                                    </MathJax.Provider>
+                                                                                )}
                                                                             </Col>
                                                                         </Row>
 
@@ -2858,52 +2859,57 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                         )}
 
                                                                         {form.answer_type === "Equation" && descriptiveAnswerOptionsForm && (
+                                                                            <>
+                                                                                <Row key={index}>
 
-                                                                            <Row key={index}>
+                                                                                    <Col xs={12}>
+                                                                                        <label className="floating-label">
+                                                                                            <small className="text-danger"></small>
+                                                                                            Keyword
+                                                                                        </label>
+                                                                                        <textarea
+                                                                                            value={form.answer_content}
+                                                                                            className="form-control"
+                                                                                            error={touched.answer_content && errors.answer_content}
+                                                                                            label="answer_content"
+                                                                                            name="answer_content"
+                                                                                            onBlur={handleBlur}
+                                                                                            type="textarea"
+                                                                                            onChange={(event) => {
+                                                                                                handleDescriptiveAnswerBlanks(event, index);
+                                                                                            }}
+                                                                                            placeholder="Enter Keyword"
+                                                                                        />
+                                                                                    </Col>
 
-                                                                                <Col xs={6}>
-                                                                                    <label className="floating-label">
-                                                                                        <small className="text-danger"></small>
-                                                                                        Keyword
-                                                                                    </label>
-                                                                                    <textarea
-                                                                                        value={form.answer_content}
-                                                                                        className="form-control"
-                                                                                        error={touched.answer_content && errors.answer_content}
-                                                                                        label="answer_content"
-                                                                                        name="answer_content"
-                                                                                        onBlur={handleBlur}
-                                                                                        type="textarea"
-                                                                                        onChange={(event) => {
-                                                                                            handleDescriptiveAnswerBlanks(event, index);
-                                                                                        }}
-                                                                                        placeholder="Enter Keyword"
-                                                                                    />
-                                                                                </Col>
+                                                                                </Row>
 
-                                                                                <Col xs={6}>
-                                                                                    <label className="floating-label">
-                                                                                        <small className="text-danger"></small>
-                                                                                        Preview
-                                                                                    </label>
+                                                                                <br />
+                                                                                <Row key={index}>
 
-                                                                                    {descriptiveEquation.length >= 1 && (
-                                                                                        <MathJax.Provider>
-                                                                                            {(descriptiveEquation[index] && (<div styles={{ display: "contents" }}>
-                                                                                                <MathJax.Node styles={{
-                                                                                                    ".MathJax_Display": {
-                                                                                                        display: "contents"
-                                                                                                    }
-                                                                                                }}
-                                                                                                    inline formula={descriptiveEquation[index]} />
-                                                                                            </div>))}
-                                                                                        </MathJax.Provider>
-                                                                                    )}
+                                                                                    <Col xs={12}>
+                                                                                        <label className="floating-label">
+                                                                                            <small className="text-danger"></small>
+                                                                                            Preview
+                                                                                        </label>
 
-                                                                                </Col>
+                                                                                        {descriptiveEquation.length >= 1 && form.answer_content && (
+                                                                                            <MathJax.Provider>
+                                                                                                {(descriptiveEquation[index] && (<div styles={{ display: "contents" }}>
+                                                                                                    <MathJax.Node styles={{
+                                                                                                        ".MathJax_Display": {
+                                                                                                            display: "contents"
+                                                                                                        }
+                                                                                                    }}
+                                                                                                        inline formula={descriptiveEquation[index]} />
+                                                                                                </div>))}
+                                                                                            </MathJax.Provider>
+                                                                                        )}
 
-                                                                            </Row>
+                                                                                    </Col>
 
+                                                                                </Row>
+                                                                            </>
                                                                         )}
 
                                                                     </Card.Body>
