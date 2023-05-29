@@ -46,6 +46,7 @@ const EditGroups = ({ className, ...rest }) => {
     const [selectedQuestions, setSelectedQuestions] = useState([]);
     const [selectedDigicards, setSelectedDigicards] = useState([]);
     const [selectedLevels, setSelectedLevels] = useState([]);
+    const [selectedQuestionsErrMsg, setSelectedQuestionsErrMsg] = useState(false);
 
     const [previousGroupData, setPreviousGroupData] = useState([]);
     const [previousGroupType, setPreviousGroupType] = useState([]);
@@ -63,6 +64,7 @@ const EditGroups = ({ className, ...rest }) => {
     const handleQuestionsChange = (event) => {
 
         console.log(event);
+        setSelectedQuestionsErrMsg(false);
 
         let valuesArr = [];
         if (event) {
@@ -111,7 +113,8 @@ const EditGroups = ({ className, ...rest }) => {
                 {
                     data: {
                         question_status: "Publish",
-                        question_active_status: "Active"
+                        question_active_status: "Active",
+                        questions_type: "preOrPost"
                     }
                 },
                 {
@@ -455,14 +458,12 @@ const EditGroups = ({ className, ...rest }) => {
 
                                                     console.log('Data inserted!', values.group_name);
 
-                                                    if (isEmptyArray(selectedGroupType)) {
-
-                                                        setGroupTypeErrMsg(true);
-
+                                                    if (isEmptyArray(selectedQuestions)) {
+                                                        setSelectedQuestionsErrMsg(true);
                                                     } else if (isEmptyArray(selectedLevels)) {
-
                                                         setLevelsErrMsg(true);
-
+                                                    } else if (isEmptyArray(selectedGroupType)) {
+                                                        setGroupTypeErrMsg(true);
                                                     } else {
 
                                                         let payLoad = {
@@ -674,6 +675,7 @@ const EditGroups = ({ className, ...rest }) => {
                                                                             <Row>
                                                                                 <Col>
                                                                                     <label className="floating-label">
+                                                                                        <small className="text-danger">* </small>
                                                                                         Questions
                                                                                     </label>
                                                                                 </Col>
@@ -690,6 +692,10 @@ const EditGroups = ({ className, ...rest }) => {
                                                                                 classNamePrefix="Select"
                                                                                 onChange={event => handleQuestionsChange(event)}
                                                                             />
+
+                                                                            {selectedQuestionsErrMsg && (
+                                                                                <small className="text-danger form-text">{'Questions required!'}</small>
+                                                                            )}
                                                                         </>
                                                                     )
                                                                 }

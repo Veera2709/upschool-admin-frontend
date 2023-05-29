@@ -21,6 +21,7 @@ import { Link, useHistory } from 'react-router-dom';
 function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
     const [imgFile, setImgFile] = useState('');
     const [data, setData] = useState({});
+    const [isFormValid, setIsFormValid] = useState(false);
     const [_radio, _setRadio] = useState(false);
     const [previousBoards, setPreviousBoards] = useState([]);
     const [previousLabel, setPreviousLabel] = useState([])
@@ -83,6 +84,9 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
         _setRadio(!_radio);
         _radio === true ? setScbscription_active('No') : setScbscription_active('Yes');
     }
+    // const handleRadioChange = (e) => {
+    //     _setRadio(e.target.checked);
+    // };
 
     const schoolBoardOptions = [
         { value: 'ICSE', label: 'ICSE' },
@@ -130,26 +134,46 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
         <>
             <Formik
                 enableReinitialize={true}
+                // initialValues={{
+                //     school_name: data === {} ? '' : data.school_name,
+                //     // school_board: data === {} ? '' : data.school_board,
+                //     school_logo: data === {} ? '' : data.school_logo,
+                //     subscription_active: scbscription_active,
+
+                //     contact_name: data === {} ? '' : data.contact_name,
+                //     address_line1: data === {} ? '' : data.address_line1,
+                //     address_line2: data === {} ? '' : data.address_line2,
+                //     city: data === {} ? '' : data.city,
+                //     pincode: data === {} ? '' : data.pincode,
+                //     phone_no: data === {} ? '' : data.phoneNumber,
+
+                //     contact_name2: data === {} ? '' : data.contact_name,
+                //     addres_line1_2: data === {} ? '' : data.address_line1,
+                //     address_line2_2: data === {} ? '' : data.address_line2,
+                //     city2: data === {} ? '' : data.city,
+                //     pincode2: data === {} ? '' : data.pincode,
+                //     phone_no2: data === {} ? '' : data.phoneNumber,
+                //     GST_no: data === {} ? '' : data.GST_no,
+                // }}
                 initialValues={{
-                    school_name: data === {} ? '' : data.school_name,
-                    // school_board: data === {} ? '' : data.school_board,
-                    school_logo: data === {} ? '' : data.school_logo,
-                    subscription_active: scbscription_active,
+                    school_name: "",
+                    school_logo: "",
+                    subscription_active: "",
 
-                    contact_name: data === {} ? '' : data.contact_name,
-                    address_line1: data === {} ? '' : data.address_line1,
-                    address_line2: data === {} ? '' : data.address_line2,
-                    city: data === {} ? '' : data.city,
-                    pincode: data === {} ? '' : data.pincode,
-                    phone_no: data === {} ? '' : data.phoneNumber,
+                    contact_name: "",
+                    address_line1: "",
+                    address_line2: "",
+                    city: "",
+                    pincode: "",
+                    phone_no: "",
 
-                    contact_name2: data === {} ? '' : data.contact_name,
-                    addres_line1_2: data === {} ? '' : data.address_line1,
-                    address_line2_2: data === {} ? '' : data.address_line2,
-                    city2: data === {} ? '' : data.city,
-                    pincode2: data === {} ? '' : data.pincode,
-                    phone_no2: data === {} ? '' : data.phoneNumber,
-                    GST_no: data === {} ? '' : data.GST_no,
+                    contact_name2: "",
+                    addres_line1_2: "",
+                    address_line2_2: "",
+                    city2: "",
+                    pincode2: "",
+                    phone_no2: "",
+                    GST_no: "",
                 }}
 
                 validationSchema={
@@ -161,6 +185,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                         contact_name: Yup.string().matches(Constants.Common.alphabetsWithSpaceRegex, 'Contact Name must contain only alphabets!').max(255).required('Contact Name is required'),
 
                         address_line1: Yup.string().max(255).required('Address Line 1 is required'),
+
 
                         address_line2: Yup.string().max(255).required('Address Line 2 is required'),
 
@@ -377,15 +402,17 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                                 allFilesData.push(selectedFile);
                             }
                         });
+
                     }
                     else {
-                        
+
                         console.log("CHOOSE SCHOOL BOARD");
                         setSchoolBoardErrMsg(true);
                         if (!imageFile) {
                             setImgEmptyErr(true);
                         }
                     }
+
                 }
                 }
             >
@@ -944,7 +971,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                         </div>
                     </form>
                 )}
-            </Formik>
+            </Formik >
             {loader}
         </>
     )

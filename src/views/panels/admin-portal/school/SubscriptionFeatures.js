@@ -199,31 +199,10 @@ const SubscriptionFeatures = ({ className, rest, id }) => {
 
                                     <Formik
                                         initialValues={{
-                                            testTypePre: previousSubscriptionData.pre_test_type === '' ? '' : previousSubscriptionData.pre_test_type,
-                                            testTypePost: previousSubscriptionData.post_test_type === '' ? '' : previousSubscriptionData.post_test_type,
-                                            noOfTestPapers: previousSubscriptionData.no_of_test === '' ? '' : previousSubscriptionData.no_of_test,
-                                            noOfWorksheets: previousSubscriptionData.no_of_worksheet === '' ? '' : previousSubscriptionData.no_of_worksheet,
                                             submit: null
                                         }}
 
-                                        validationSchema={Yup.object().shape(
-                                            {
-                                                testTypePre: Yup.string()
-                                                    .min(1, 'Please, select Test Type!')
-                                                    .oneOf([testTypePre.map((ele) => ele.value)], "Please, provide a valid Test Type!")
-                                                    .required('Please, select Test Type!'),
-                                                testTypePost: Yup.string()
-                                                    .min(1, 'Please, select Test Type!')
-                                                    .oneOf([testTypePre.map((ele) => ele.value)], "Please, provide a valid Test Type!")
-                                                    .required('Please, select Test Type!'),
-                                                noOfWorksheets: Yup.string()
-                                                    .matches(Constants.Common.numOfWorksheetsAndTestPapersRegex, 'Invalid Number of Worksheets!')
-                                                    .required('Field is required/Invalid Number!'),
-                                                noOfTestPapers: Yup.string()
-                                                    .matches(Constants.Common.numOfWorksheetsAndTestPapersRegex, 'Invalid Number of Test Papers!')
-                                                    .required('Field is required/Invalid Number!'),
-                                            }
-                                        )}
+                                        validationSchema={Yup.object().shape()}
                                         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
 
                                             setStatus({ success: true });
@@ -233,11 +212,7 @@ const SubscriptionFeatures = ({ className, rest, id }) => {
                                                 data: {
                                                     school_id: id,
                                                     school_subscribe_feature: {
-                                                        pre_test_type: values.testTypePre,
-                                                        post_test_type: values.testTypePost,
                                                         types_of_report: selectedtypeOfReports,
-                                                        no_of_worksheet: values.noOfWorksheets,
-                                                        no_of_test: values.noOfTestPapers,
                                                         library_enable_on_app: selectedLibraryFeature,
                                                         automated_evaluation: slectedAutomateEvaluation
                                                     }
@@ -335,61 +310,8 @@ const SubscriptionFeatures = ({ className, rest, id }) => {
                                         {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, setFieldValue }) => (
                                             <form noValidate onSubmit={handleSubmit} className={className} {...rest}>
 
-                                                <br />
-                                                <Row>
-                                                    <Col>
-                                                        <label className="floating-label">
-                                                            <small className="text-danger">* </small>
-                                                            Test Type for Pre-learning
-                                                        </label>
-                                                        <select
-                                                            className="form-control"
-                                                            error={touched.testTypePre && errors.testTypePre}
-                                                            name="testTypePre"
-                                                            onBlur={handleBlur}
-                                                            type="text"
-                                                            defaultValue={previousSubscriptionData.pre_test_type}
-                                                            onChange={e => {
-                                                                handleChange(e);
-                                                            }}
-                                                        >
-                                                            <option value={testTypePre}>Select</option>
-                                                            {(testTypePre.map((ele, i) => {
-                                                                return <option key={i} value={ele.value}>{ele.label}</option>
-                                                            }))}
-                                                        </select>
-                                                        {touched.testTypePre && errors.testTypePre ? (
-                                                            <small className="text-danger form-text">{errors.testTypePre}</small>
-                                                        ) : null}
-                                                    </Col>
 
-                                                    <Col>
-                                                        <label className="floating-label">
-                                                            <small className="text-danger">* </small>
-                                                            Test Type for Post-learning
-                                                        </label>
-                                                        <select
-                                                            className="form-control"
-                                                            error={touched.testTypePost && errors.testTypePost}
-                                                            name="testTypePost"
-                                                            onBlur={handleBlur}
-                                                            type="text"
-                                                            defaultValue={previousSubscriptionData.post_test_type}
-                                                            onChange={e => {
-                                                                handleChange(e);
-                                                            }}
-                                                        >
-                                                            <option value={testTypePost}>Select</option>
-                                                            {(testTypePost.map((ele, i) => {
-                                                                return <option key={i} value={ele.value}>{ele.label}</option>
-                                                            }))}
-                                                        </select>
-                                                        {touched.testTypePost && errors.testTypePost ? (
-                                                            <small className="text-danger form-text">{errors.testTypePost}</small>
-                                                        ) : null}
-                                                    </Col>
 
-                                                </Row>
 
                                                 <br />
                                                 <Row>
@@ -416,62 +338,11 @@ const SubscriptionFeatures = ({ className, rest, id }) => {
                                                         </div>
 
                                                     </Col>
-                                                    <Col xs={6}>
 
-                                                        <div className="form-group fill">
-
-                                                            <label className="floating-label">
-                                                                <small className="text-danger">* </small>
-                                                                No. of Worksheets to be generated
-                                                            </label>
-
-                                                            <input
-                                                                className="form-control"
-                                                                error={touched.noOfWorksheets && errors.noOfWorksheets}
-                                                                label="noOfWorksheets"
-                                                                name="noOfWorksheets"
-                                                                onBlur={handleBlur}
-                                                                onChange={handleChange}
-                                                                type="number"
-                                                                value={values.noOfWorksheets}
-                                                            />
-
-                                                            {touched.noOfWorksheets && errors.noOfWorksheets && <small className="text-danger form-text">{errors.noOfWorksheets}</small>}
-                                                        </div>
-
-                                                    </Col>
                                                 </Row>
 
                                                 <br />
-                                                <Row>
 
-                                                    <Col xs={6}>
-
-                                                        <div className="form-group fill">
-
-                                                            <label className="floating-label">
-                                                                <small className="text-danger">* </small>
-                                                                No. of Test Papers to be generated
-                                                            </label>
-
-                                                            <input
-                                                                className="form-control"
-                                                                error={touched.noOfTestPapers && errors.noOfTestPapers}
-                                                                label="noOfTestPapers"
-                                                                name="noOfTestPapers"
-                                                                onBlur={handleBlur}
-                                                                onChange={handleChange}
-                                                                type="number"
-                                                                value={values.noOfTestPapers}
-                                                            />
-
-                                                            {touched.noOfTestPapers && errors.noOfTestPapers && <small className="text-danger form-text">{errors.noOfTestPapers}</small>}
-                                                        </div>
-
-                                                    </Col>
-
-                                                    <Col xs={6}></Col>
-                                                </Row>
 
                                                 <br />
                                                 <Row>
