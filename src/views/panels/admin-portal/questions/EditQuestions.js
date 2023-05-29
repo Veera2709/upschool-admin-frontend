@@ -417,7 +417,7 @@ const EditQuestions = () => {
 
                                         tempArrayDescriptive.push(object = {
                                             answer_type: '',
-                                            answer_option: '',
+                                            answer_content: '',
                                             answer_weightage: ''
                                         })
 
