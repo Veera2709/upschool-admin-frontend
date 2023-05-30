@@ -301,7 +301,7 @@ const UsersBulkUpload = ({ className, ...rest }) => {
 
                       if (excelFile) {
 
-                        sendData.school_id = filteredResult.school_id;
+                        sendData.school_id = filteredResult.value;
                         sendData.ExcelFile = excelFile.name;
 
                         console.log('Submitting', sendData);

@@ -15,7 +15,8 @@ import { SessionStorage } from '../../../../util/SessionStorage';
 import BasicSpinner from '../../../../helper/BasicSpinner';
 import * as Constants from '../../../../helper/constants';
 
-const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEditConcept, fetchAllConceptsData, _basicGroups, _intermediateGroups, _advancedGroups }) => {
+const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEditConcept, fetchAllConceptsData, _basicGroups, _intermediateGroups, _advancedGroups, _workSheetQuestions }) => {
+    console.log("_workSheetQuestions", _workSheetQuestions);
 
     const history = useHistory();
     const [isLoading, setIsLoading] = useState(false);
@@ -49,6 +50,11 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
     const [displayNameErr, setDisplayNameErr] = useState(false);
 
     const [displayNameErrMessage, setDisplayNameErrMessage] = useState('');
+
+    const [workSheetQuestions, setWorkSheetQuestions] = useState()
+    const [selectedWorkSheetQue, setSelectedWorkSheetQue] = useState([])
+    const [workSheetQueErr, setWorkSheetQueErr] = useState(false)
+    const [previousWorksheetQue, setPreviousWorksheetQue] = useState([])
 
     const [previousData, setPreviousData] = useState([]);
     const [tags, setTags] = useState([]);
@@ -124,6 +130,11 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
             setDropdownAdvancedGroups(valuesArr);
         }
 
+
+        if (_workSheetQuestions) {
+            setWorkSheetQuestions(_workSheetQuestions);
+        }
+
         axios
             .post(
                 dynamicUrl.fetchIndividualConcept,
@@ -158,6 +169,17 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
 
                     let previousDigicardsArr = [];
                     let getData;
+
+                    response.data.Items[0].concept_question_id.forEach(function (entry) {
+                        _workSheetQuestions && _workSheetQuestions.forEach(function (childrenEntry) {
+                            if (entry === childrenEntry.value) {
+                                previousWorksheetQue.push(childrenEntry);
+                                selectedWorkSheetQue.push(entry)
+                            }
+                        });
+                    });
+                    setSelectedWorkSheetQue(response.data.Items[0].concept_question_id)
+
 
                     function getPreviousDigicards(i) {
 
@@ -361,6 +383,8 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
 
                     } getPreviousConcepts(0);
 
+
+
                 } else {
 
                     setIsOpenEditConcept(true);
@@ -533,6 +557,18 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
         setSelectedRelatedConcepts(valuesArr);
     }
 
+    const handleWorkSheetQueChange = (event) => {
+        console.log(event);
+        let valuesArr = [];
+        if (event) {
+            for (let i = 0; i < event.length; i++) {
+                valuesArr.push(event[i].value)
+            }
+        }
+        console.log(valuesArr);
+        setSelectedWorkSheetQue(valuesArr);
+    }
+
     return (
 
 
@@ -595,7 +631,8 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
                                                             basic: selectedBasicGroups,
                                                             intermediate: selectedIntermediateGroups,
                                                             advanced: selectedAdvancedGroups
-                                                        }
+                                                        },
+                                                        concept_question_id: selectedWorkSheetQue
 
                                                     }
                                                 };
@@ -611,67 +648,71 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
 
                                                             if (selectedAdvancedGroups.length > 0) {
 
-                                                                showLoader();
+                                                                if (selectedWorkSheetQue.length > 0) {
+                                                                    showLoader();
 
-                                                                axios
-                                                                    .post(
-                                                                        dynamicUrl.updateConcept,
-                                                                        formData,
-                                                                        {
-                                                                            headers: { Authorization: sessionStorage.getItem('user_jwt') }
-                                                                        }
-                                                                    )
-                                                                    .then((response) => {
+                                                                    axios
+                                                                        .post(
+                                                                            dynamicUrl.updateConcept,
+                                                                            formData,
+                                                                            {
+                                                                                headers: { Authorization: sessionStorage.getItem('user_jwt') }
+                                                                            }
+                                                                        )
+                                                                        .then((response) => {
 
-                                                                        console.log({ response });
+                                                                            console.log({ response });
 
-                                                                        let result = response.status === 200;
-                                                                        hideLoader();
-
-                                                                        if (result) {
-
-                                                                            console.log('inside res edit');
+                                                                            let result = response.status === 200;
                                                                             hideLoader();
-                                                                            setIsOpenEditConcept(false);
-                                                                            sweetAlertHandler({ title: 'Success', type: 'success', text: 'Concept updated successfully!' });
-                                                                            fetchAllConceptsData();
-                                                                            // window.location.reload();
 
-                                                                        } else {
+                                                                            if (result) {
 
-                                                                            console.log('else res');
-                                                                            hideLoader();
-                                                                            // Request made and server responded
-                                                                            setConceptTitleErr(true);
-                                                                            setConceptTitleErrMessage("err");
-                                                                            // window.location.reload();
+                                                                                console.log('inside res edit');
+                                                                                hideLoader();
+                                                                                setIsOpenEditConcept(false);
+                                                                                sweetAlertHandler({ title: 'Success', type: 'success', text: 'Concept updated successfully!' });
+                                                                                fetchAllConceptsData();
+                                                                                // window.location.reload();
+
+                                                                            } else {
+
+                                                                                console.log('else res');
+                                                                                hideLoader();
+                                                                                // Request made and server responded
+                                                                                setConceptTitleErr(true);
+                                                                                setConceptTitleErrMessage("err");
+                                                                                // window.location.reload();
 
 
-                                                                        }
-                                                                    })
-                                                                    .catch((error) => {
-                                                                        if (error.response) {
-                                                                            hideLoader();
-                                                                            // Request made and server responded
-                                                                            console.log(error.response.data);
-                                                                            setConceptTitleErr(true);
-                                                                            setConceptTitleErrMessage(error.response.data);
+                                                                            }
+                                                                        })
+                                                                        .catch((error) => {
+                                                                            if (error.response) {
+                                                                                hideLoader();
+                                                                                // Request made and server responded
+                                                                                console.log(error.response.data);
+                                                                                setConceptTitleErr(true);
+                                                                                setConceptTitleErrMessage(error.response.data);
 
-                                                                        } else if (error.request) {
-                                                                            // The request was made but no response was received
-                                                                            console.log(error.request);
-                                                                            hideLoader();
-                                                                            setConceptTitleErr(true);
-                                                                            setConceptTitleErrMessage(error.request);
-                                                                        } else {
-                                                                            // Something happened in setting up the request that triggered an Error
-                                                                            console.log('Error', error.message);
-                                                                            hideLoader();
-                                                                            setConceptTitleErr(true);
-                                                                            setConceptTitleErrMessage(error.request);
+                                                                            } else if (error.request) {
+                                                                                // The request was made but no response was received
+                                                                                console.log(error.request);
+                                                                                hideLoader();
+                                                                                setConceptTitleErr(true);
+                                                                                setConceptTitleErrMessage(error.request);
+                                                                            } else {
+                                                                                // Something happened in setting up the request that triggered an Error
+                                                                                console.log('Error', error.message);
+                                                                                hideLoader();
+                                                                                setConceptTitleErr(true);
+                                                                                setConceptTitleErrMessage(error.request);
 
-                                                                        }
-                                                                    })
+                                                                            }
+                                                                        })
+                                                                } else {
+                                                                    setWorkSheetQueErr(true)
+                                                                }
                                                             } else {
 
                                                                 console.log("Advanced Groups empty");
@@ -737,26 +778,6 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
 
                                                                 </Col>
                                                                 <Col>
-
-                                                                    <label className="floating-label" htmlFor="keywords">
-                                                                        <small className="text-danger"></small>Keywords
-                                                                    </label>
-
-                                                                    <ReactTags
-                                                                        classNames={{ root: 'react-tags bootstrap-tagsinput', selectedTag: 'react-tags__selected-tag btn-primary' }}
-                                                                        allowNew={true}
-                                                                        addOnBlur={true}
-                                                                        tags={tags}
-                                                                        onDelete={handleDeleteKeywords}
-                                                                        onAddition={(e) => handleAddKeywords(e)}
-                                                                    />
-
-                                                                </Col>
-                                                            </Row>
-                                                            <br />
-                                                            <Row>
-                                                                <Col>
-
                                                                     <div className="form-group fill">
                                                                         <label className="floating-label" htmlFor="displayName">
                                                                             <small className="text-danger">* </small>Display Name
@@ -783,10 +804,29 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
                                                                         }
 
                                                                     </div>
+                                                                </Col>
+                                                            </Row>
+
+                                                            <Row>
+                                                                <Col>
+                                                                    <div>
+                                                                        <label className="floating-label" htmlFor="keywords">
+                                                                            <small className="text-danger"></small>Keywords
+                                                                        </label>
+
+                                                                        <ReactTags
+                                                                            classNames={{ root: 'react-tags bootstrap-tagsinput', selectedTag: 'react-tags__selected-tag btn-primary' }}
+                                                                            allowNew={true}
+                                                                            addOnBlur={true}
+                                                                            tags={tags}
+                                                                            onDelete={handleDeleteKeywords}
+                                                                            onAddition={(e) => handleAddKeywords(e)}
+                                                                        />
+                                                                    </div>
 
                                                                 </Col>
-                                                                <Col></Col>
                                                             </Row>
+                                                            <hr />
                                                             <Row>
                                                                 <Col>
                                                                     <div className="form-group fill">
@@ -851,7 +891,7 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
                                                                     </div>
                                                                 </Col>
                                                             </Row>
-                                                            <br />
+                                                            <hr />
                                                             <Row>
                                                                 <Col>
                                                                     <div className="form-group fill">
@@ -913,6 +953,29 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
                                                                             onChange={event => handleAdvancedGroupChange(event)}
                                                                         />
                                                                         {showAdvancedGroupErr && <small className="text-danger form-text">{'Please, select Advanced Groups!'}</small>}
+                                                                    </div>
+                                                                </Col>
+                                                            </Row>
+                                                            <hr />
+                                                            <Row>
+                                                                <Col xs={6} >
+                                                                    {console.log({ previousWorksheetQue })}
+                                                                    <div className="form-group fill">
+
+                                                                        <label className="floating-label">
+                                                                            <small className="text-danger">* </small>
+                                                                            WorkSheet/Test Questions
+                                                                        </label>
+                                                                        <Select
+                                                                            defaultValue={previousWorksheetQue}
+                                                                            isMulti
+                                                                            name="workSheetOrTest"
+                                                                            options={workSheetQuestions}
+                                                                            className="basic-multi-select"
+                                                                            classNamePrefix="Select"
+                                                                            onChange={event => handleWorkSheetQueChange(event)}
+                                                                        />
+                                                                        {workSheetQueErr && <small className="text-danger form-text">{'Please, select Worksheet Questions!'}</small>}
                                                                     </div>
                                                                 </Col>
                                                             </Row>

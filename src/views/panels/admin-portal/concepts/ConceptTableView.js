@@ -22,8 +22,10 @@ import useFullPageLoader from "../../../../helper/useFullPageLoader";
 import AddConcepts from "./AddConcepts";
 import EditConcepts from "./EditConcepts";
 import BasicSpinner from "../../../../helper/BasicSpinner";
+import { getAllworkSheetQuestions } from '../../../api/CommonApi';
 
-function Table({ columns, data }) {
+
+function Table({ columns, data, _workSheetQuestions }) {
   const history = useHistory();
   const [isLoading, setIsLoading] = useState(false);
   const [conceptData, setConceptData] = useState([]);
@@ -56,6 +58,8 @@ function Table({ columns, data }) {
       icon: alert.type,
     });
   };
+
+
 
   useEffect(() => {
     fetchAllConceptsData();
@@ -185,6 +189,8 @@ function Table({ columns, data }) {
         }
       });
   }, [fetchAllGroups]);
+
+
 
   const sweetConfirmHandler = (alert, concept_id, updateStatus) => {
     MySwal.fire({
@@ -755,6 +761,7 @@ function Table({ columns, data }) {
                 _basicGroups={_basicGroups}
                 _intermediateGroups={_intermediateGroups}
                 _advancedGroups={_advancedGroups}
+                _workSheetQuestions={_workSheetQuestions}
               />
             </Modal.Body>
           </Modal>
@@ -841,6 +848,8 @@ const ConceptTableView = ({ userStatus }) => {
   const [isOpenAddConcept, setIsOpenAddConcept] = useState(false);
   const [isEditAddConcept, setIsOpenEditConcept] = useState(false);
   const [editConceptID, setEditConceptID] = useState("");
+  const [_workSheetQuestions, _setWorkSheetQuestions] = useState([])
+
 
   const MySwal = withReactContent(Swal);
 
@@ -851,6 +860,30 @@ const ConceptTableView = ({ userStatus }) => {
       icon: alert.type,
     });
   };
+
+  const getAllQuestions = async () => {
+    let data = {
+      question_active_status: "Active",
+      question_status: "Publish",
+      questions_type: "worksheetOrTest"
+    }
+    const allQuestionsData = await getAllworkSheetQuestions(data);
+    if (allQuestionsData.Error) {
+      if (allQuestionsData.Error.response.data === 'Invalid Token') {
+        sessionStorage.clear();
+        localStorage.clear();
+        history.push('/auth/signin-1');
+      } else {
+        console.log("allQuestionsData.Error:", allQuestionsData.Error);
+      }
+    } else {
+      let data = allQuestionsData.Items;
+      console.log("allQuestionsData.Items", data);
+      data.map((item) => {
+        _workSheetQuestions.push({ value: item.question_id, label: item.question_label })
+      })
+    }
+  }
 
   useEffect(() => {
     fetchAllConceptsData();
@@ -977,6 +1010,10 @@ const ConceptTableView = ({ userStatus }) => {
         }
       });
   }, [fetchAllGroups]);
+
+  useEffect(() => {
+    getAllQuestions()
+  }, [])
 
   const sweetConfirmHandler = (alert, concept_id, updateStatus) => {
     MySwal.fire({
@@ -1291,6 +1328,7 @@ const ConceptTableView = ({ userStatus }) => {
                         _basicGroups={_basicGroups}
                         _intermediateGroups={_intermediateGroups}
                         _advancedGroups={_advancedGroups}
+                        _workSheetQuestions={_workSheetQuestions}
                       />
                     </Modal.Body>
                   </Modal>
@@ -1318,7 +1356,7 @@ const ConceptTableView = ({ userStatus }) => {
                         </Card.Title>
                       </Card.Header>
                       <Card.Body>
-                        <Table columns={columns} data={conceptData} />
+                        <Table columns={columns} data={conceptData} _workSheetQuestions={_workSheetQuestions} />
                       </Card.Body>
                     </Card>
                   </Col>
@@ -1345,6 +1383,7 @@ const ConceptTableView = ({ userStatus }) => {
                     _basicGroups={_basicGroups}
                     _intermediateGroups={_intermediateGroups}
                     _advancedGroups={_advancedGroups}
+                    _workSheetQuestions={_workSheetQuestions}
                   />
                 </Modal.Body>
               </Modal>
@@ -1368,6 +1407,7 @@ const ConceptTableView = ({ userStatus }) => {
                     _basicGroups={_basicGroups}
                     _intermediateGroups={_intermediateGroups}
                     _advancedGroups={_advancedGroups}
+                    _workSheetQuestions={_workSheetQuestions}
                   />
                 </Modal.Body>
               </Modal>

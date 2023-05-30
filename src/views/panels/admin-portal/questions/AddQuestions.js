@@ -48,7 +48,7 @@ const AddQuestions = ({ className, ...rest }) => {
     const [displayHeading, setDisplayHeading] = useState(sessionStorage.getItem('question_active_status'));
     const threadLinks = document.getElementsByClassName('page-header');
     const [showMathKeyboard, setShowMathKeyboard] = useState('No');
-    const [workSheetOrTest, setWorkSheetOrTest] = useState('Test');
+    const [workSheetOrTest, setWorkSheetOrTest] = useState('preOrPost');
     const [answerTypeOptions, setAnswerTypeOptions] = useState([]);
     const [descriptiveAnswerOptionsForm, setDescriptiveAnswerOptionsForm] = useState([]);
     const [selectedAnswerType, setSelectedAnswerType] = useState('');
@@ -207,9 +207,8 @@ const AddQuestions = ({ className, ...rest }) => {
     }
 
     const handleWorkSheetOrTest = (e) => {
-
         _setRadioWorkSheetOrTest(!_radioWorkSheetOrTest);
-        _radioWorkSheetOrTest === true ? setWorkSheetOrTest('Test') : setWorkSheetOrTest('Worksheet');
+        _radioWorkSheetOrTest === true ? setWorkSheetOrTest('preOrPost') : setWorkSheetOrTest('worksheetOrTest');
     }
 
     const [answerBlanksOptions, setAnswerBlanksOptions] = useState([]);
@@ -258,7 +257,7 @@ const AddQuestions = ({ className, ...rest }) => {
         if (valuesSelected === 'Descriptive') {
 
             // _setRadioWorkSheetOrTest(true);
-            // setWorkSheetOrTest('Worksheet');
+            // setWorkSheetOrTest('worksheetOrTest');
             setDescriptiveAnswerOptionsForm([{
                 answer_type: '',
                 answer_content: '',
@@ -268,7 +267,7 @@ const AddQuestions = ({ className, ...rest }) => {
         }
         // else {
         //     _setRadioWorkSheetOrTest(false);
-        //     setWorkSheetOrTest('Test');
+        //     setWorkSheetOrTest('preOrPost');
         // }
 
         valuesSelected === 'Subjective' ? setAnswerTypeOptions([
@@ -1187,7 +1186,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                             /> &nbsp;
 
                                                             <Form.Label className="profile-view-question" id={`radio-fresher`}>
-                                                                {_radioWorkSheetOrTest === true ? 'Worksheet' : 'Test'}
+                                                                {_radioWorkSheetOrTest === true ? 'Worksheet/Test' : 'Pre/Post'}
                                                             </Form.Label>
                                                         </div>
                                                     </div>
@@ -1205,7 +1204,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                             /> &nbsp;
 
                                                             <Form.Label className="profile-view-question" id={`radio-fresher`}>
-                                                                {_radioWorkSheetOrTest === true ? 'Worksheet' : 'Test'}
+                                                                {_radioWorkSheetOrTest === true ? 'Worksheet/Test Paper' : 'Pre/Post Quiz'}
                                                             </Form.Label>
                                                         </div>
                                                     </div>
