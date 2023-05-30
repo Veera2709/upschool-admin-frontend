@@ -40,6 +40,7 @@ const AddGroups = ({ className, ...rest }) => {
     const [groupNameExistsErrMsg, setGroupNameExistsErrMsg] = useState(false);
     const [groupTypeErrMsg, setGroupTypeErrMsg] = useState(false);
     const [levelsErrMsg, setLevelsErrMsg] = useState(false);
+    const [selectedQuestionsErrMsg, setSelectedQuestionsErrMsg] = useState(false);
 
     const [selectedGroupType, setSelectedGroupType] = useState([]);
     const [selectedQuestions, setSelectedQuestions] = useState([]);
@@ -55,6 +56,7 @@ const AddGroups = ({ className, ...rest }) => {
 
     const handleQuestionsChange = (event) => {
 
+        setSelectedQuestionsErrMsg(false);
         console.log(event);
 
         let valuesArr = [];
@@ -105,7 +107,8 @@ const AddGroups = ({ className, ...rest }) => {
                 {
                     data: {
                         question_status: "Publish",
-                        question_active_status: "Active"
+                        question_active_status: "Active",
+                        questions_type: "preOrPost"
                     }
                 },
                 {
@@ -337,14 +340,12 @@ const AddGroups = ({ className, ...rest }) => {
 
                                             console.log('Data inserted!', values.group_name);
 
-                                            if (isEmptyArray(selectedGroupType)) {
-
-                                                setGroupTypeErrMsg(true);
-
+                                            if (isEmptyArray(selectedQuestions)) {
+                                                setSelectedQuestionsErrMsg(true);
                                             } else if (isEmptyArray(selectedLevels)) {
-
                                                 setLevelsErrMsg(true);
-
+                                            } else if (isEmptyArray(selectedGroupType)) {
+                                                setGroupTypeErrMsg(true);
                                             } else {
 
                                                 let payLoad = {
@@ -555,6 +556,7 @@ const AddGroups = ({ className, ...rest }) => {
                                                                     <Row>
                                                                         <Col>
                                                                             <label className="floating-label">
+                                                                                <small className="text-danger">* </small>
                                                                                 Questions
                                                                             </label>
                                                                         </Col>
@@ -571,6 +573,10 @@ const AddGroups = ({ className, ...rest }) => {
                                                                         classNamePrefix="Select"
                                                                         onChange={event => handleQuestionsChange(event)}
                                                                     />
+
+                                                                    {selectedQuestionsErrMsg && (
+                                                                        <small className="text-danger form-text">{'Questions required!'}</small>
+                                                                    )}
                                                                 </>
                                                             )
                                                         }

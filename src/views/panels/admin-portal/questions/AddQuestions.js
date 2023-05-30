@@ -222,9 +222,9 @@ const AddQuestions = ({ className, ...rest }) => {
     const handleQuestionType = (event) => {
 
         setAnswerTypeOptions((currentOptions) => currentOptions.filter((currentOption) => !selectedAnswerType.includes(currentOption)));
-        setSelectedQuestionCategory([]);
-        setSelectedQuestionCognitiveSkill([]);
-        setSelectedQuestionSource([]);
+        // setSelectedQuestionCategory([]);
+        // setSelectedQuestionCognitiveSkill([]);
+        // setSelectedQuestionSource([]);
 
         console.log(answerTypeOptions);
         // setAnswerTypeOptions([]);
@@ -256,8 +256,6 @@ const AddQuestions = ({ className, ...rest }) => {
 
         if (valuesSelected === 'Descriptive') {
 
-            // _setRadioWorkSheetOrTest(true);
-            // setWorkSheetOrTest('worksheetOrTest');
             setDescriptiveAnswerOptionsForm([{
                 answer_type: '',
                 answer_content: '',
@@ -265,10 +263,6 @@ const AddQuestions = ({ className, ...rest }) => {
             }]);
 
         }
-        // else {
-        //     _setRadioWorkSheetOrTest(false);
-        //     setWorkSheetOrTest('preOrPost');
-        // }
 
         valuesSelected === 'Subjective' ? setAnswerTypeOptions([
             { value: 'Words', label: 'Words' },
@@ -1171,47 +1165,26 @@ const AddQuestions = ({ className, ...rest }) => {
                                                     Question Appears in
                                                 </label>
 
-                                                {selectedQuestionType === 'Descriptive' ? (<>
-                                                    <div className="col">
-                                                        <div className="row profile-view-radio-button-view">
-                                                            <Form.Check
-                                                                disabled
-                                                                id={`radio-fresher`}
-                                                                error={touched.fresher && errors.fresher}
-                                                                type="switch"
-                                                                variant={'outline-primary'}
-                                                                name="radio-fresher"
-                                                                checked={_radioWorkSheetOrTest}
-                                                                onChange={(e) => handleWorkSheetOrTest(e)}
-                                                            /> &nbsp;
+                                                <div className="col">
+                                                    <div className="row profile-view-radio-button-view">
+                                                        <Form.Check
+                                                            id={`radio-fresher`}
+                                                            error={touched.fresher && errors.fresher}
+                                                            type="switch"
+                                                            variant={'outline-primary'}
+                                                            name="radio-fresher"
+                                                            checked={_radioWorkSheetOrTest}
+                                                            onChange={(e) => handleWorkSheetOrTest(e)}
+                                                        /> &nbsp;
 
-                                                            <Form.Label className="profile-view-question" id={`radio-fresher`}>
-                                                                {_radioWorkSheetOrTest === true ? 'Worksheet/Test' : 'Pre/Post'}
-                                                            </Form.Label>
-                                                        </div>
+                                                        <Form.Label className="profile-view-question" id={`radio-fresher`}>
+                                                            {_radioWorkSheetOrTest === true ? 'Worksheet/Test' : 'Pre/Post'}
+                                                        </Form.Label>
                                                     </div>
-                                                </>) : (<>
-                                                    <div className="col">
-                                                        <div className="row profile-view-radio-button-view">
-                                                            <Form.Check
-                                                                id={`radio-fresher`}
-                                                                error={touched.fresher && errors.fresher}
-                                                                type="switch"
-                                                                variant={'outline-primary'}
-                                                                name="radio-fresher"
-                                                                checked={_radioWorkSheetOrTest}
-                                                                onChange={(e) => handleWorkSheetOrTest(e)}
-                                                            /> &nbsp;
+                                                </div>
 
-                                                            <Form.Label className="profile-view-question" id={`radio-fresher`}>
-                                                                {_radioWorkSheetOrTest === true ? 'Worksheet/Test Paper' : 'Pre/Post Quiz'}
-                                                            </Form.Label>
-                                                        </div>
-                                                    </div>
-                                                </>)}
                                             </Col>
                                         </Row>
-
                                         <br />
                                         <Row>
                                             <Col>
@@ -1634,7 +1607,7 @@ const AddQuestions = ({ className, ...rest }) => {
 
                                                                         <br />
                                                                         <Row>
-                                                                            <Col xs={6}>
+                                                                            <Col xs={12}>
                                                                                 <label className="floating-label">
                                                                                     <small className="text-danger"></small>
                                                                                     Answer
@@ -1653,20 +1626,30 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                     placeholder="Enter Equation"
                                                                                 />
                                                                             </Col>
+                                                                        </Row>
 
-                                                                            <Col xs={6}>
+                                                                        <br />
+                                                                        <Row>
+                                                                            <Col xs={12}>
                                                                                 <label className="floating-label">
                                                                                     <small className="text-danger"></small>
                                                                                     Preview
                                                                                 </label>
 
-                                                                                {equation.length >= 1 && (
+                                                                                {equation.length >= 1 && form.answer_content && (
                                                                                     <MathJax.Provider>
                                                                                         {
                                                                                             (
                                                                                                 equation[index] && (
                                                                                                     <div>
-                                                                                                        <MathJax.Node inline formula={equation[index]} />
+                                                                                                        <MathJax.Node
+                                                                                                            styles={{
+                                                                                                                ".MathJax_Display": {
+                                                                                                                    textAlign: "center",
+                                                                                                                    margin: "1em 0em"
+                                                                                                                }
+                                                                                                            }}
+                                                                                                            inline formula={equation[index]} />
                                                                                                     </div>
                                                                                                 )
                                                                                             )
@@ -1674,7 +1657,6 @@ const AddQuestions = ({ className, ...rest }) => {
 
                                                                                     </MathJax.Provider>
                                                                                 )}
-
                                                                             </Col>
                                                                         </Row>
 
@@ -2875,47 +2857,57 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                         )}
 
                                                                         {form.answer_type === "Equation" && descriptiveAnswerOptionsForm && (
+                                                                            <>
+                                                                                <Row key={index}>
 
-                                                                            <Row key={index}>
+                                                                                    <Col xs={12}>
+                                                                                        <label className="floating-label">
+                                                                                            <small className="text-danger"></small>
+                                                                                            Keyword
+                                                                                        </label>
+                                                                                        <textarea
+                                                                                            value={form.answer_content}
+                                                                                            className="form-control"
+                                                                                            error={touched.answer_content && errors.answer_content}
+                                                                                            label="answer_content"
+                                                                                            name="answer_content"
+                                                                                            onBlur={handleBlur}
+                                                                                            type="textarea"
+                                                                                            onChange={(event) => {
+                                                                                                handleDescriptiveAnswerBlanks(event, index);
+                                                                                            }}
+                                                                                            placeholder="Enter Keyword"
+                                                                                        />
+                                                                                    </Col>
 
-                                                                                <Col xs={6}>
-                                                                                    <label className="floating-label">
-                                                                                        <small className="text-danger"></small>
-                                                                                        Keyword
-                                                                                    </label>
-                                                                                    <textarea
-                                                                                        value={form.answer_content}
-                                                                                        className="form-control"
-                                                                                        error={touched.answer_content && errors.answer_content}
-                                                                                        label="answer_content"
-                                                                                        name="answer_content"
-                                                                                        onBlur={handleBlur}
-                                                                                        type="textarea"
-                                                                                        onChange={(event) => {
-                                                                                            handleDescriptiveAnswerBlanks(event, index);
-                                                                                        }}
-                                                                                        placeholder="Enter Keyword"
-                                                                                    />
-                                                                                </Col>
+                                                                                </Row>
 
-                                                                                <Col xs={6}>
-                                                                                    <label className="floating-label">
-                                                                                        <small className="text-danger"></small>
-                                                                                        Preview
-                                                                                    </label>
+                                                                                <br />
+                                                                                <Row key={index}>
 
-                                                                                    {descriptiveEquation.length >= 1 && (
-                                                                                        <MathJax.Provider>
-                                                                                            {(descriptiveEquation[index] && (<div>
-                                                                                                <MathJax.Node inline formula={descriptiveEquation[index]} />
-                                                                                            </div>))}
-                                                                                        </MathJax.Provider>
-                                                                                    )}
+                                                                                    <Col xs={12}>
+                                                                                        <label className="floating-label">
+                                                                                            <small className="text-danger"></small>
+                                                                                            Preview
+                                                                                        </label>
 
-                                                                                </Col>
+                                                                                        {descriptiveEquation.length >= 1 && form.answer_content && (
+                                                                                            <MathJax.Provider>
+                                                                                                {(descriptiveEquation[index] && (<div styles={{ display: "contents" }}>
+                                                                                                    <MathJax.Node styles={{
+                                                                                                        ".MathJax_Display": {
+                                                                                                            display: "contents"
+                                                                                                        }
+                                                                                                    }}
+                                                                                                        inline formula={descriptiveEquation[index]} />
+                                                                                                </div>))}
+                                                                                            </MathJax.Provider>
+                                                                                        )}
 
-                                                                            </Row>
+                                                                                    </Col>
 
+                                                                                </Row>
+                                                                            </>
                                                                         )}
 
                                                                     </Card.Body>
