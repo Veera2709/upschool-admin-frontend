@@ -28,6 +28,12 @@ const AddQuestions = ({ className, ...rest }) => {
         { value: 'Equation', label: 'Equation' }
     ];
 
+    const difficultylevel = [
+        { value: 'lessDifficult', label: 'Less Difficult' },
+        { value: 'moderatelyDifficult', label: 'Moderately Difficult' },
+        { value: 'highlyDifficult', label: 'Highly Difficult' },
+    ]
+
     const [descriptiveAnswerErrMsg, setDescriptiveAnswerErrMsg] = useState(false);
     const [questionTypeErrMsg, setQuestionTypeErrMsg] = useState(false);
     const [questionCategoryErrMsg, setQuestionCategoryErrMsg] = useState(false);
@@ -80,6 +86,9 @@ const AddQuestions = ({ className, ...rest }) => {
     const [errorMessage, setErrorMessage] = useState("");
 
     const [selectedValueDisclaimer, setSelectedValueDisclaimer] = useState("N.A.");
+
+    const [selectedDifficultyLevel, setSelectedDifficultyLevel] = useState();
+    const [isDefficultyLevelErr, setIsDefficultyLevelErr] = useState(false)
 
     const [questionLabelAlreadyExists, setQuestionLabelAlreadyExists] = useState(false);
     const [answerOptionsForm, setAnswerOptionsForm] = useState([
@@ -779,6 +788,8 @@ const AddQuestions = ({ className, ...rest }) => {
                                             setQuestionCognitiveSkillErrMsg(true);
                                         } else if (isEmptyArray(selectedQuestionSource)) {
                                             setQuestionSourceErrMsg(true);
+                                        } else if (_radioWorkSheetOrTest === true && (selectedDifficultyLevel === '' || selectedDifficultyLevel === undefined)) {
+                                            setIsDefficultyLevelErr(true)
                                         } else if (articleDataTitle === "" || articleDataTitle === undefined || articleDataTitle === 'undefined' || articleDataTitle === "<p><br></p>" || articleDataTitle === "<p></p>" || articleDataTitle === "<br>") {
                                             setQuestionEmptyErrMsg(true);
                                         } else if (selectedQuestionType === 'Descriptive') {
@@ -804,6 +815,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                     question_label: questionLabelValue,
                                                     display_answer: values.descriptive_answer,
                                                     marks: values.marks,
+                                                    difficulty_level: _radioWorkSheetOrTest ? selectedDifficultyLevel : 'N.A',
                                                     answer_explanation: values.answer_explanation === undefined || values.answer_explanation === "undefined" || values.answer_explanation === "" ? "N.A." : values.answer_explanation
 
                                                 }
@@ -818,11 +830,15 @@ const AddQuestions = ({ className, ...rest }) => {
 
                                             let tempAnsWeightage = answerOptionsForm.filter(value => value.answer_weightage < 0);
                                             let tempUnitWeightage = answerOptionsForm.filter(value => value.unit_weightage < 0);
+                                            console.log("selectedDifficultyLevel", selectedDifficultyLevel);
+
 
                                             if (Number(values.marks) < 0) {
                                                 setNegativeMarksErrMsg(true);
                                             } else if (tempAnsWeightage.length !== 0) {
                                                 setAnsWeightageErrMsg(true);
+                                            } else if (_radioWorkSheetOrTest === true && (selectedDifficultyLevel === '' || selectedDifficultyLevel === undefined)) {
+                                                setIsDefficultyLevelErr(true)
                                             } else if (tempUnitWeightage.length !== 0) {
                                                 setUnitWeightageErrMsg(true);
                                             } else {
@@ -845,6 +861,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                     question_label: questionLabelValue,
                                                     display_answer: "N.A.",
                                                     marks: values.marks,
+                                                    difficulty_level: _radioWorkSheetOrTest ? selectedDifficultyLevel : 'N.A',
                                                     answer_explanation: values.answer_explanation === undefined || values.answer_explanation === "undefined" || values.answer_explanation === "" ? "N.A." : values.answer_explanation
                                                 };
 
@@ -1174,7 +1191,11 @@ const AddQuestions = ({ className, ...rest }) => {
                                                             variant={'outline-primary'}
                                                             name="radio-fresher"
                                                             checked={_radioWorkSheetOrTest}
-                                                            onChange={(e) => handleWorkSheetOrTest(e)}
+                                                            onChange={(e) => {
+                                                                handleWorkSheetOrTest(e);
+                                                                setSelectedDifficultyLevel('');
+                                                                setIsDefficultyLevelErr(false)
+                                                            }}
                                                         /> &nbsp;
 
                                                         <Form.Label className="profile-view-question" id={`radio-fresher`}>
@@ -1185,6 +1206,39 @@ const AddQuestions = ({ className, ...rest }) => {
 
                                             </Col>
                                         </Row>
+                                        <br />
+                                        {
+                                            _radioWorkSheetOrTest && (
+                                                <>
+                                                    <Row>
+                                                        <Col sm={6}>
+
+                                                            <div className="form-group fill" style={{ position: 'relative', zIndex: 10 }}>
+                                                                <label className="floating-label" >
+                                                                    <small className="text-danger">* </small>
+                                                                    Level of Difficulty
+                                                                </label>
+                                                                <Select
+                                                                    className="basic-single"
+                                                                    classNamePrefix="select"
+                                                                    name="color"
+                                                                    options={difficultylevel}
+                                                                    onChange={(e) => { 
+                                                                        setSelectedDifficultyLevel(e.value) ;
+                                                                        setIsDefficultyLevelErr(false)
+                                                                    }}
+                                                                    styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+
+                                                                />
+                                                            </div>
+                                                            {isDefficultyLevelErr && (
+                                                                <small style={{ color: 'red' }}>Field required!</small>
+                                                            )}
+                                                        </Col>
+                                                    </Row>
+                                                </>
+                                            )
+                                        }
                                         <br />
                                         <Row>
                                             <Col>
