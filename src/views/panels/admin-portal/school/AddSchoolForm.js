@@ -566,9 +566,6 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                                         }}
                                     />
 
-                                    {schoolBoardErrMsg && (
-                                        <small className="text-danger form-text">{'Please select an option'}</small>
-                                    )}
 
                                 </div>
                             </div>
