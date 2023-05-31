@@ -12,14 +12,16 @@ import { useHistory } from 'react-router-dom';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import dynamicUrl from '../../../../helper/dynamicUrls';
 import * as Constants from '../../../../helper/constants';
+// import { getAllworkSheetQuestions } from '../../../api/CommonApi';
 
-const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchAllConceptsData, setDigicardsAndConcepts, _basicGroups, _intermediateGroups, _advancedGroups }) => {
+const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchAllConceptsData, setDigicardsAndConcepts, _basicGroups, _intermediateGroups, _advancedGroups, _workSheetQuestions }) => {
 
     console.log(_digicards);
     console.log(_relatedConcepts);
     console.log("basic", _basicGroups);
     console.log("intermediate", _intermediateGroups);
     console.log("advanced", _advancedGroups);
+    console.log("_workSheetQuestions", _workSheetQuestions);
 
     const MySwal = withReactContent(Swal);
 
@@ -56,6 +58,11 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
 
     const [displayNameErrMessage, setDisplayNameErrMessage] = useState('');
     const [conceptTitleErrMessage, setConceptTitleErrMessage] = useState('');
+
+    const [workSheetQuestions, setWorkSheetQuestions] = useState()
+    const [selectedWorkSheetQue, setSelectedWorkSheetQue] = useState([])
+    const [workSheetQueErr, setWorkSheetQueErr] = useState(false)
+
 
     useEffect(() => {
 
@@ -119,6 +126,10 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
                 }
             }
             setDropdownAdvancedGroups(valuesArr)
+        }
+
+        if (_workSheetQuestions) {
+            setWorkSheetQuestions(_workSheetQuestions)
         }
 
     }, []);
@@ -206,9 +217,7 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
     }
 
     const handleRelatedConcepts = (event) => {
-
         console.log(event);
-
         let valuesArr = [];
         if (event) {
             for (let i = 0; i < event.length; i++) {
@@ -217,6 +226,18 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
         }
         console.log(valuesArr);
         setSelectedRelatedConcepts(valuesArr);
+    }
+
+    const handleWorkSheetQueChange = (event) => {
+        console.log(event);
+        let valuesArr = [];
+        if (event) {
+            for (let i = 0; i < event.length; i++) {
+                valuesArr.push(event[i].value)
+            }
+        }
+        console.log(valuesArr);
+        setSelectedWorkSheetQue(valuesArr);
     }
 
     return (
@@ -252,7 +273,6 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
 
 
 
-
                                 })
                             }
                             onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
@@ -272,7 +292,8 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
                                             basic: selectedBasicGroups,
                                             intermediate: selectedIntermediateGroups,
                                             advanced: selectedAdvancedGroups
-                                        }
+                                        },
+                                        concept_question_id: selectedWorkSheetQue
                                     }
                                 };
 
@@ -287,87 +308,92 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
                                         if (selectedIntermediateGroups.length > 0) {
 
                                             if (selectedAdvancedGroups.length > 0) {
+                                                if (selectedWorkSheetQue.length > 0) {
+                                                    showLoader();
 
-                                                showLoader();
+                                                    axios
+                                                        .post(
+                                                            dynamicUrl.addConcepts,
+                                                            formData
+                                                            ,
+                                                            {
+                                                                headers: { Authorization: sessionStorage.getItem('user_jwt') }
+                                                            }
+                                                        )
+                                                        .then((response) => {
 
-                                                axios
-                                                    .post(
-                                                        dynamicUrl.addConcepts,
-                                                        formData
-                                                        ,
-                                                        {
-                                                            headers: { Authorization: sessionStorage.getItem('user_jwt') }
-                                                        }
-                                                    )
-                                                    .then((response) => {
+                                                            console.log({ response });
 
-                                                        console.log({ response });
-
-                                                        let result = response.status === 200;
-                                                        hideLoader();
-
-                                                        if (result) {
-
-                                                            console.log('inside res edit');
+                                                            let result = response.status === 200;
                                                             hideLoader();
-                                                            setIsOpenAddConcept(false);
-                                                            // fetchAllConceptsData();
-                                                            // sweetAlertHandler({ title: 'Success', type: 'success', text: 'Concept added successfully!' });
 
-                                                            MySwal.fire({
+                                                            if (result) {
 
-                                                                title: 'Concept added successfully!',
-                                                                icon: 'success',
-                                                            }).then((willDelete) => {
-                                                                window.location.reload();
-                                                            });
-                                                            setDigicardsAndConcepts(true);
+                                                                console.log('inside res edit');
+                                                                hideLoader();
+                                                                setIsOpenAddConcept(false);
+                                                                // fetchAllConceptsData();
+                                                                // sweetAlertHandler({ title: 'Success', type: 'success', text: 'Concept added successfully!' });
 
-                                                        } else {
+                                                                MySwal.fire({
 
-                                                            console.log('else res');
-                                                            hideLoader();
-                                                            // Request made and server responded
-                                                            setConceptTitleErr(true);
-                                                            setConceptTitleErrMessage("err");
-                                                            // window.location.reload();
-
-                                                        }
-                                                    })
-                                                    .catch((error) => {
-                                                        if (error.response) {
-                                                            hideLoader();
-                                                            // Request made and server responded
-                                                            console.log(error.response.data);
-
-                                                            if (error.response.data === 'Invalid Token') {
-
-                                                                sessionStorage.clear();
-                                                                localStorage.clear();
-
-                                                                history.push('/auth/signin-1');
-                                                                window.location.reload();
+                                                                    title: 'Concept added successfully!',
+                                                                    icon: 'success',
+                                                                }).then((willDelete) => {
+                                                                    window.location.reload();
+                                                                });
+                                                                setDigicardsAndConcepts(true);
 
                                                             } else {
 
+                                                                console.log('else res');
+                                                                hideLoader();
+                                                                // Request made and server responded
                                                                 setConceptTitleErr(true);
-                                                                setConceptTitleErrMessage(error.response.data);
-                                                            }
+                                                                setConceptTitleErrMessage("err");
+                                                                // window.location.reload();
 
-                                                        } else if (error.request) {
-                                                            // The request was made but no response was received
-                                                            console.log(error.request);
-                                                            hideLoader();
-                                                            setConceptTitleErr(true);
-                                                            setConceptTitleErrMessage(error.request);
-                                                        } else {
-                                                            // Something happened in setting up the request that triggered an Error
-                                                            console.log('Error', error.message);
-                                                            hideLoader();
-                                                            setConceptTitleErr(true);
-                                                            setConceptTitleErrMessage(error.request);
-                                                        }
-                                                    })
+                                                            }
+                                                        })
+                                                        .catch((error) => {
+                                                            if (error.response) {
+                                                                hideLoader();
+                                                                // Request made and server responded
+                                                                console.log(error.response.data);
+
+                                                                if (error.response.data === 'Invalid Token') {
+
+                                                                    sessionStorage.clear();
+                                                                    localStorage.clear();
+
+                                                                    history.push('/auth/signin-1');
+                                                                    window.location.reload();
+
+                                                                } else {
+
+                                                                    setConceptTitleErr(true);
+                                                                    setConceptTitleErrMessage(error.response.data);
+                                                                }
+
+                                                            } else if (error.request) {
+                                                                // The request was made but no response was received
+                                                                console.log(error.request);
+                                                                hideLoader();
+                                                                setConceptTitleErr(true);
+                                                                setConceptTitleErrMessage(error.request);
+                                                            } else {
+                                                                // Something happened in setting up the request that triggered an Error
+                                                                console.log('Error', error.message);
+                                                                hideLoader();
+                                                                setConceptTitleErr(true);
+                                                                setConceptTitleErrMessage(error.request);
+                                                            }
+                                                        })
+                                                } else {
+                                                    console.log("Advanced Groups empty");
+                                                    setWorkSheetQueErr(true);
+                                                }
+
                                             } else {
 
                                                 console.log("Advanced Groups empty");
@@ -432,26 +458,6 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
 
                                                 </Col>
                                                 <Col>
-
-                                                    <label className="floating-label" htmlFor="keywords">
-                                                        <small className="text-danger"></small>Keywords
-                                                    </label>
-
-                                                    <ReactTags
-                                                        classNames={{ root: 'react-tags bootstrap-tagsinput', selectedTag: 'react-tags__selected-tag btn-primary' }}
-                                                        allowNew={true}
-                                                        addOnBlur={true}
-                                                        tags={tags}
-                                                        onDelete={handleDeleteKeywords}
-                                                        onAddition={(e) => handleAddKeywords(e)}
-                                                    />
-
-                                                </Col>
-                                            </Row>
-                                            <br />
-                                            <Row>
-                                                <Col>
-
                                                     <div className="form-group fill">
                                                         <label className="floating-label" htmlFor="displayName">
                                                             <small className="text-danger">* </small>Display Name
@@ -479,9 +485,30 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
 
                                                     </div>
 
+
+
                                                 </Col>
-                                                <Col></Col>
                                             </Row>
+
+                                            <Row>
+                                                <Col>
+                                                    <div>
+                                                        <label className="floating-label" htmlFor="keywords">
+                                                            <small className="text-danger"></small>Keywords
+                                                        </label>
+
+                                                        <ReactTags
+                                                            classNames={{ root: 'react-tags bootstrap-tagsinput', selectedTag: 'react-tags__selected-tag btn-primary' }}
+                                                            allowNew={true}
+                                                            addOnBlur={true}
+                                                            tags={tags}
+                                                            onDelete={handleDeleteKeywords}
+                                                            onAddition={(e) => handleAddKeywords(e)}
+                                                        />
+                                                    </div>
+                                                </Col>
+                                            </Row>
+                                            <hr />
 
                                             <Row>
                                                 <Col>
@@ -524,6 +551,7 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
                                                     </div>
                                                 </Col>
                                             </Row>
+                                            <hr />
                                             <Row>
                                                 <Col>
                                                     <div className="form-group fill">
@@ -588,6 +616,30 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
                                                     </div>
                                                 </Col>
                                             </Row>
+                                            <hr />
+                                            <Row>
+                                                <Col xs={6} >
+                                                    <div className="form-group fill">
+
+                                                        <label className="floating-label">
+                                                            <small className="text-danger">* </small>
+                                                            WorkSheet/Test Questions
+                                                        </label>
+                                                        {/* {console.log(previousBoards)} */}
+                                                        <Select
+                                                            // defaultValue={previousBoards}
+                                                            isMulti
+                                                            name="workSheetOrTest"
+                                                            options={workSheetQuestions}
+                                                            className="basic-multi-select"
+                                                            classNamePrefix="Select"
+                                                            onChange={event => handleWorkSheetQueChange(event)}
+                                                        />
+                                                        {workSheetQueErr && <small className="text-danger form-text">{'Please, select Worksheet Questions!'}</small>}
+                                                    </div>
+                                                </Col>
+                                            </Row>
+
                                             {loader}
                                             <br />
                                             <hr />

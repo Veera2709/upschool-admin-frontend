@@ -47,6 +47,8 @@ const MESSAGES = {
   SUCCESS: {
     SchoolRestoredSuccessfully: 'School restored Successfully!',
     UpdatingQuizConfiguration: 'Updated Quiz Configuration settings successfully!',
+    UpdatingPreQuizConfiguration: 'Updated Pre Quiz Configuration settings successfully!',
+    UpdatingPostQuizConfiguration: 'Updated Post Quiz Configuration settings successfully!',
     UpdatingSubscriptionFeatures: 'Updated Subscription Features successfully!',
     AddingDigiCard: 'Added DigiCard Successfully',
     EditDigiCard: 'DigiCard Updated Successfully',

@@ -51,7 +51,6 @@ const EditDigiCard = () => {
     const [newdIgicardErrMax, setNewDigicardErrMax] = useState(false);
     const [newdIgicardErrMin, setNewDigicardErrMin] = useState(false);
     const [newdIgicardErrReq, setNewDigicardErrReq] = useState(false);
-    const [newdIgicardErrRegex, setNewDigicardErrRegex] = useState(false);
     const [imageErr, setImageErr] = useState(false);
     const [status, setStatus] = useState('');
     const [newDigicard, setnNewDigicard] = useState(false);
@@ -300,9 +299,6 @@ const EditDigiCard = () => {
             setnNewDigicard(true)
         } else if (name.trim().length === 0) {
             setNewDigicardErrReq(true)
-            setnNewDigicard(true)
-        } else if (DigiCardtitleRegex.test(name) === false) {
-            setNewDigicardErrRegex(true)
             setnNewDigicard(true)
         } else if (individualDigiCardData[0].digicard_image === '' || individualDigiCardData[0].digicard_image === undefined) {
             setImageErr(true)
@@ -915,7 +911,14 @@ const EditDigiCard = () => {
                             </Card.Body>
 
                         </Card>
-                        <Modal dialogClassName="my-modal" show={newDigicard} onHide={() => setnNewDigicard(false)}>
+                        <Modal dialogClassName="my-modal" show={newDigicard}
+                            onHide={() => {
+                                setnNewDigicard(false);
+                                setNewDigicardErrMin(false);
+                                setNewDigicardErrMax(false);
+                                setNewDigicardErrReq(false);
+                            }
+                            }>
                             <Modal.Header closeButton>
                                 <Modal.Title as="h5">New Digicard Title</Modal.Title>
                             </Modal.Header>
@@ -952,9 +955,7 @@ const EditDigiCard = () => {
                                         {newdIgicardErrReq && (
                                             <small className="text-danger form-text">Digicard title is required!</small>
                                         )}
-                                        {newdIgicardErrRegex && (
-                                            <small className="text-danger form-text">Digicard title should contain only alphabets and numbers!</small>
-                                        )}
+
                                     </Col>
                                     <Col>
                                         <Button variant="primary" onClick={(e) => {
