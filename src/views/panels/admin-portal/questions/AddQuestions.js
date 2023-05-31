@@ -1626,7 +1626,15 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                         handleAnswerBlanks(event, index);
                                                                                     }}
                                                                                     placeholder="Enter Equation"
+                                                                                    style={{
+                                                                                        height: '250px',
+                                                                                        resize: 'vertical',
+                                                                                        fontSize: '14px',
+                                                                                        lineHeight: '1.5',
+
+                                                                                    }}
                                                                                 />
+
                                                                             </Col>
                                                                         </Row>
 
@@ -1637,28 +1645,31 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                     <small className="text-danger"></small>
                                                                                     Preview
                                                                                 </label>
+                                                                                <div className="preview-container" style={{
+                                                                                    maxHeight: '80px',
+                                                                                    overflowY: 'auto',
+                                                                                    overflowX: 'auto',
+                                                                                    resize: 'vertical',
+                                                                                    whiteSpace: 'pre-wrap',
+                                                                                    backgroundColor: '#f5f5f5', // Add background color
+                                                                                }}>
+                                                                                    {equation.length >= 1 && form.answer_content && (
+                                                                                        <MathJax.Provider>
+                                                                                            {equation[index] && (
+                                                                                                <div style={{
+                                                                                                    fontSize: '14px', fontWeight: 'normal',
+                                                                                                    marginBottom: '10px',
+                                                                                                    marginTop: '10px',
+                                                                                                    fontFamily: 'Arial'
+                                                                                                }}>
+                                                                                                    <MathJax.Node formula={equation[index]}
 
-                                                                                {equation.length >= 1 && form.answer_content && (
-                                                                                    <MathJax.Provider>
-                                                                                        {
-                                                                                            (
-                                                                                                equation[index] && (
-                                                                                                    <div>
-                                                                                                        <MathJax.Node
-                                                                                                            styles={{
-                                                                                                                ".MathJax_Display": {
-                                                                                                                    textAlign: "center",
-                                                                                                                    margin: "1em 0em"
-                                                                                                                }
-                                                                                                            }}
-                                                                                                            inline formula={equation[index]} />
-                                                                                                    </div>
-                                                                                                )
-                                                                                            )
-                                                                                        }
-
-                                                                                    </MathJax.Provider>
-                                                                                )}
+                                                                                                    />
+                                                                                                </div>
+                                                                                            )}
+                                                                                        </MathJax.Provider>
+                                                                                    )}
+                                                                                </div>
                                                                             </Col>
                                                                         </Row>
 
