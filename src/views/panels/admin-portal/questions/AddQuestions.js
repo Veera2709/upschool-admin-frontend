@@ -1646,18 +1646,19 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                     Preview
                                                                                 </label>
                                                                                 <div className="preview-container" style={{
-                                                                                    maxHeight: '80px',
+                                                                                    maxHeight: '100px',
                                                                                     overflowY: 'auto',
                                                                                     overflowX: 'auto',
                                                                                     resize: 'vertical',
                                                                                     whiteSpace: 'pre-wrap',
-                                                                                    backgroundColor: '#f5f5f5', // Add background color
+                                                                                    backgroundColor: '#f5f5f5',
                                                                                 }}>
                                                                                     {equation.length >= 1 && form.answer_content && (
                                                                                         <MathJax.Provider>
                                                                                             {equation[index] && (
                                                                                                 <div style={{
-                                                                                                    fontSize: '14px', fontWeight: 'normal',
+                                                                                                    fontSize: '14px',
+                                                                                                    fontWeight: 'normal',
                                                                                                     marginBottom: '10px',
                                                                                                     marginTop: '10px',
                                                                                                     fontFamily: 'Arial'
@@ -1672,6 +1673,50 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                 </div>
                                                                             </Col>
                                                                         </Row>
+                                                                        {/* ////////////////////////////////////////////////// */}
+
+                                                                        {/* <Row>
+                                                                            <Col xs={12}>
+                                                                                <label className="floating-label">
+                                                                                    <small className="text-danger"></small>
+                                                                                    Preview
+                                                                                </label>
+                                                                                <div className="preview-container" style={{
+                                                                                    maxHeight: '100px',
+                                                                                    overflowY: 'auto',
+                                                                                    // overflowX: 'auto',
+                                                                                    resize: 'vertical',
+                                                                                    whiteSpace: 'pre-wrap',
+                                                                                    backgroundColor: '#f5f5f5',
+                                                                                }}>
+                                                                                    {equation.length >= 1 && form.answer_content && (
+                                                                                        <MathJax.Provider options={{
+                                                                                            tex: {
+                                                                                                packages: { '[+]': ['base', 'autoload-all'] },
+                                                                                                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                                                                                                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                                                                                                processEscapes: true
+                                                                                            },
+                                                                                            'HTML-CSS': {
+                                                                                                linebreaks: { automatic: true }
+                                                                                            }
+                                                                                        }}>
+                                                                                            {equation[index] && (
+                                                                                                <div style={{
+                                                                                                    fontSize: '14px',
+                                                                                                    fontWeight: 'normal',
+                                                                                                    marginBottom: '10px',
+                                                                                                    marginTop: '10px',
+                                                                                                    fontFamily: 'Arial'
+                                                                                                }}>
+                                                                                                    <MathJax.Node formula={equation[index]} />
+                                                                                                </div>
+                                                                                            )}
+                                                                                        </MathJax.Provider>
+                                                                                    )}
+                                                                                </div>
+                                                                            </Col>
+                                                                        </Row> */}
 
                                                                     </>
 
