@@ -6,7 +6,7 @@ import withReactContent from 'sweetalert2-react-content';
 import Swal from 'sweetalert2';
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
-
+import Select from 'react-select';
 import dynamicUrl from "../../../../helper/dynamicUrls";
 import MESSAGES from '../../../../helper/messages';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
@@ -84,10 +84,13 @@ const PostQuizConfiguration = ({ className, rest, id }) => {
     const [ispreviousCommonData, setIsPreviousCommonData] = useState([])
 
     const [isTestMode, setIsTestMode] = useState([
-        { value: 'Less Difficult', label: 'Less Difficult' },
-        { value: 'Moderatly Difficult', label: 'Moderatly Difficult' },
-        { value: 'Highly Difficult', label: 'Highly Difficult' },
+        { value: 'lessDifficult', label: 'Less Difficult' },
+        { value: 'moderatelyDifficult', label: 'Moderately Difficult' },
+        { value: 'highlyDifficult', label: 'Highly Difficult' },
     ])
+
+    const [defaultTestLevel, setDefaultTestLevel] = useState();
+
 
 
 
@@ -249,7 +252,9 @@ const PostQuizConfiguration = ({ className, rest, id }) => {
                     setRadioManualSelected(previousDataPreQuiz.manual_type);
 
                     //test Difficult
+                    const testLevelData = isTestMode.filter((e) => e.value === previousDataPreQuiz.test_level)
                     SetSelectedTestMode(previousDataPreQuiz.test_level)
+                    setDefaultTestLevel(testLevelData)
 
                     //Paper Varients
                     const questionVarient = previousDataPreQuiz.randomized_questions_varient === "Enabled" ? true : false;
@@ -379,7 +384,7 @@ const PostQuizConfiguration = ({ className, rest, id }) => {
                                                 setOnlineErr(true)
                                             } else if (_radioAutomate === false && _radioExpress === false && _radioManual === false) {
                                                 setNoOptionInTestMode(true)
-                                            } else if (selectedTestMode === '' || selectedTestMode === undefined || selectedTestMode === null || selectedTestMode === 'Select...') {
+                                            } else if (selectedTestMode === '' || selectedTestMode === undefined || selectedTestMode === null) {
                                                 setTestModeErr(true)
                                             } else if (_radioAutomate === true && values.minNoQustionAutomate === '') {
                                                 setAutomateErr(true)
@@ -459,7 +464,7 @@ const PostQuizConfiguration = ({ className, rest, id }) => {
                                                                 MySwal.fire({
                                                                     // title: MESSAGES.TTTLES.Goodjob,
                                                                     type: 'success',
-                                                                    text: MESSAGES.SUCCESS.UpdatingQuizConfiguration,
+                                                                    text: MESSAGES.SUCCESS.UpdatingPostQuizConfiguration,
                                                                     icon: 'success',
                                                                 }).then((willDelete) => {
                                                                     window.location.reload();
@@ -1190,7 +1195,7 @@ const PostQuizConfiguration = ({ className, rest, id }) => {
                                                 <div id='paperType'>
                                                     <Row>
                                                         <Col sm={6}>
-                                                            <div className="form-group fill">
+                                                            {/* <div className="form-group fill">
                                                                 <label className="floating-label" >
                                                                     <small className="text-danger">* </small>
                                                                     Test Level
@@ -1220,6 +1225,25 @@ const PostQuizConfiguration = ({ className, rest, id }) => {
                                                                         </option>
                                                                     })}
                                                                 </select>
+                                                            </div> */}
+                                                            <div className="form-group fill" style={{ position: 'relative', zIndex: 10 }}>
+                                                                <label className="floating-label" >
+                                                                    <small className="text-danger">* </small>
+                                                                    Test Level
+                                                                </label>
+                                                                <Select
+                                                                    defaultValue={defaultTestLevel}
+                                                                    className="basic-single"
+                                                                    classNamePrefix="select"
+                                                                    name="color"
+                                                                    options={isTestMode}
+                                                                    onChange={(e) => {
+                                                                        SetSelectedTestMode(e.value)
+                                                                        setTestModeErr(false);
+                                                                    }}
+                                                                    styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+
+                                                                />
                                                             </div>
                                                             {isTestModeErr && (
                                                                 <small style={{ color: 'red' }}>Field is required!</small>

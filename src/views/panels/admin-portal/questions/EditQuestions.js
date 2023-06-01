@@ -39,6 +39,12 @@ const EditQuestions = () => {
         { value: 'Equation', label: 'Equation' }
     ];
 
+    const difficultylevel = [
+        { value: 'lessDifficult', label: 'Less Difficult' },
+        { value: 'moderatelyDifficult', label: 'Moderately Difficult' },
+        { value: 'highlyDifficult', label: 'Highly Difficult' },
+    ]
+
     const [descriptiveAnswerErrMsg, setDescriptiveAnswerErrMsg] = useState(false);
     const [questionTypeErrMsg, setQuestionTypeErrMsg] = useState(false);
     const [questionCategoryErrMsg, setQuestionCategoryErrMsg] = useState(false);
@@ -102,6 +108,10 @@ const EditQuestions = () => {
     const [selectedValueCognitiveSkill, setSelectedValueCognitiveSkill] = useState([]);
 
     const [questionLabelAlreadyExists, setQuestionLabelAlreadyExists] = useState(false);
+
+    const [selectedDifficultyLevel, setSelectedDifficultyLevel] = useState();
+    const [isDefficultyLevelErr, setIsDefficultyLevelErr] = useState(false);
+    const [defaultLevel, setDefaultLevel] = useState();
 
     const [answerOptionsForm, setAnswerOptionsForm] = useState([
         {
@@ -249,6 +259,10 @@ const EditQuestions = () => {
 
                         setSelectedQuestionType(individual_user_data.question_type);
                         setQuestionLabelValue(individual_user_data.question_label);
+
+                        var difficultyLevelData = difficultylevel.filter((e) => e.value === individual_user_data.difficulty_level);
+                        setDefaultLevel(difficultyLevelData)
+                        setSelectedDifficultyLevel(individual_user_data.difficulty_level);
 
                         individual_user_data.question_type === 'Subjective' ? setAnswerTypeOptions([
                             { value: 'Words', label: 'Words' },
@@ -481,7 +495,7 @@ const EditQuestions = () => {
                     } else {
                         // Something happened in setting up the request that triggered an Error
                         hideLoader();
-                        console.log('Error', error.message);
+                        console.log('Error', error);
                         // fetchUserData();
                     }
                 });
@@ -1203,7 +1217,8 @@ const EditQuestions = () => {
                 question_source: selectedQuestionSource,
                 marks: document.getElementById('marks').value,
                 display_answer: selectedQuestionType === 'Subjective' || selectedQuestionType === 'Objective' ? 'N.A.' : document.getElementById('descriptive_answer').value,
-                answer_explanation: answerExplanation === undefined || answerExplanation === "undefined" || answerExplanation === "" ? "N.A." : answerExplanation
+                answer_explanation: answerExplanation === undefined || answerExplanation === "undefined" || answerExplanation === "" ? "N.A." : answerExplanation,
+                difficulty_level: _radioWorkSheetOrTest ? selectedDifficultyLevel : 'N.A',
             }
 
             _addQuestions(payLoad)
@@ -1212,7 +1227,7 @@ const EditQuestions = () => {
 
     const addnewQuestion = () => {
 
-        let DigiCardtitleRegex = Constants.AddDigiCard.DigiCardtitleRegex;
+
         if (questionLabelValue === "" || questionLabelValue === undefined || questionLabelValue === "undefined") {
             setQuestionLabelErr(true);
         } else if (isEmptyArray(selectedQuestionType)) {
@@ -1223,6 +1238,8 @@ const EditQuestions = () => {
             setQuestionCognitiveSkillErrMsg(true);
         } else if (isEmptyArray(selectedQuestionSource)) {
             setQuestionSourceErrMsg(true);
+        } else if (_radioWorkSheetOrTest === true && (selectedDifficultyLevel === '' || selectedDifficultyLevel === undefined)) {
+            setIsDefficultyLevelErr(true)
         } else if (articleDataTitle === "" || articleDataTitle === undefined || articleDataTitle === 'undefined' || articleDataTitle === "<p><br></p>" || articleDataTitle === "<p></p>" || articleDataTitle === "<br>") {
             setQuestionEmptyErrMsg(true);
         } else if (selectedQuestionType === 'Descriptive') {
@@ -1254,6 +1271,8 @@ const EditQuestions = () => {
                 setNegativeMarksErrMsg(true);
             } else if (tempAnsWeightage.length !== 0) {
                 setAnsWeightageErrMsg(true);
+            } else if (_radioWorkSheetOrTest === true && (selectedDifficultyLevel === '' || selectedDifficultyLevel === undefined)) {
+                setIsDefficultyLevelErr(true)
             } else if (tempUnitWeightage.length !== 0) {
                 setUnitWeightageErrMsg(true);
             } else {
@@ -1358,6 +1377,8 @@ const EditQuestions = () => {
                                                                 setQuestionCognitiveSkillErrMsg(true);
                                                             } else if (isEmptyArray(selectedQuestionSource)) {
                                                                 setQuestionSourceErrMsg(true);
+                                                            } else if (_radioWorkSheetOrTest === true && (selectedDifficultyLevel === '' || selectedDifficultyLevel === undefined)) {
+                                                                setIsDefficultyLevelErr(true)
                                                             } else if (articleDataTitle === "" || articleDataTitle === undefined || articleDataTitle === 'undefined' || articleDataTitle === "<p><br></p>" || articleDataTitle === "<p></p>" || articleDataTitle === "<br>") {
                                                                 setQuestionEmptyErrMsg(true);
                                                             } else if (selectedQuestionType === 'Descriptive') {
@@ -1388,6 +1409,8 @@ const EditQuestions = () => {
                                                                     setAnsWeightageErrMsg(true);
                                                                 } else if (tempUnitWeightage.length !== 0) {
                                                                     setUnitWeightageErrMsg(true);
+                                                                } else if (_radioWorkSheetOrTest === true && (selectedDifficultyLevel === '' || selectedDifficultyLevel === undefined)) {
+                                                                    setIsDefficultyLevelErr(true)
                                                                 } else {
 
                                                                     console.log('Data inserted!');
@@ -1408,7 +1431,9 @@ const EditQuestions = () => {
                                                                         question_source: selectedQuestionSource,
                                                                         marks: values.marks,
                                                                         display_answer: "N.A.",
-                                                                        answer_explanation: values.answer_explanation === undefined || values.answer_explanation === "undefined" || values.answer_explanation === "" ? "N.A." : values.answer_explanation
+                                                                        answer_explanation: values.answer_explanation === undefined || values.answer_explanation === "undefined" || values.answer_explanation === "" ? "N.A." : values.answer_explanation,
+                                                                        difficulty_level: _radioWorkSheetOrTest ? selectedDifficultyLevel : 'N.A',
+
 
                                                                     }
 
@@ -1439,6 +1464,8 @@ const EditQuestions = () => {
                                                                 setQuestionSourceErrMsg(true);
                                                             } else if (articleDataTitle === "" || articleDataTitle === undefined || articleDataTitle === 'undefined' || articleDataTitle === "<p><br></p>" || articleDataTitle === "<p></p>" || articleDataTitle === "<br>") {
                                                                 setQuestionEmptyErrMsg(true);
+                                                            } else if (_radioWorkSheetOrTest === true && (selectedDifficultyLevel === '' || selectedDifficultyLevel === undefined)) {
+                                                                setIsDefficultyLevelErr(true)
                                                             } else if (selectedQuestionType === 'Descriptive') {
 
                                                                 console.log(values.descriptive_answer);
@@ -1469,7 +1496,8 @@ const EditQuestions = () => {
                                                                         question_source: selectedQuestionSource,
                                                                         marks: values.marks,
                                                                         display_answer: values.descriptive_answer,
-                                                                        answer_explanation: values.answer_explanation === undefined || values.answer_explanation === "undefined" || values.answer_explanation === "" ? "N.A." : values.answer_explanation
+                                                                        answer_explanation: values.answer_explanation === undefined || values.answer_explanation === "undefined" || values.answer_explanation === "" ? "N.A." : values.answer_explanation,
+                                                                        difficulty_level: _radioWorkSheetOrTest ? selectedDifficultyLevel : 'N.A',
 
                                                                     }
 
@@ -1490,6 +1518,8 @@ const EditQuestions = () => {
                                                                     setNegativeMarksErrMsg(true);
                                                                 } else if (tempAnsWeightage.length !== 0) {
                                                                     setAnsWeightageErrMsg(true);
+                                                                } else if (_radioWorkSheetOrTest === true && (selectedDifficultyLevel === '' || selectedDifficultyLevel === undefined)) {
+                                                                    setIsDefficultyLevelErr(true)
                                                                 } else if (tempUnitWeightage.length !== 0) {
                                                                     setUnitWeightageErrMsg(true);
                                                                 } else {
@@ -1513,8 +1543,8 @@ const EditQuestions = () => {
                                                                         question_source: selectedQuestionSource,
                                                                         marks: values.marks,
                                                                         display_answer: "N.A.",
-                                                                        answer_explanation: values.answer_explanation === undefined || values.answer_explanation === "undefined" || values.answer_explanation === "" ? "N.A." : values.answer_explanation
-
+                                                                        answer_explanation: values.answer_explanation === undefined || values.answer_explanation === "undefined" || values.answer_explanation === "" ? "N.A." : values.answer_explanation,
+                                                                        difficulty_level: _radioWorkSheetOrTest ? selectedDifficultyLevel : 'N.A',
                                                                     }
 
                                                                     console.log("payLoad", payLoad);
@@ -1838,7 +1868,12 @@ const EditQuestions = () => {
                                                                                 variant={'outline-primary'}
                                                                                 name="radio-fresher"
                                                                                 checked={_radioWorkSheetOrTest}
-                                                                                onChange={(e) => handleWorkSheetOrTest(e)}
+                                                                                onChange={(e) => {
+                                                                                    handleWorkSheetOrTest(e);
+                                                                                    setDefaultLevel([]);
+                                                                                    setSelectedDifficultyLevel('');
+                                                                                    setIsDefficultyLevelErr(false)
+                                                                                }}
                                                                             /> &nbsp;
 
                                                                             <Form.Label className="profile-view-question" id={`radio-fresher`}>
@@ -1849,6 +1884,40 @@ const EditQuestions = () => {
                                                                 </Col>
                                                             </Row>
 
+                                                            <br />
+                                                            {
+                                                                _radioWorkSheetOrTest && (
+                                                                    <>
+                                                                        <Row>
+                                                                            <Col sm={6}>
+
+                                                                                <div className="form-group fill" style={{ position: 'relative', zIndex: 10 }}>
+                                                                                    <label className="floating-label" >
+                                                                                        <small className="text-danger">* </small>
+                                                                                        Level of Difficulty
+                                                                                    </label>
+                                                                                    <Select
+                                                                                        defaultValue={defaultLevel}
+                                                                                        className="basic-single"
+                                                                                        classNamePrefix="select"
+                                                                                        name="color"
+                                                                                        options={difficultylevel}
+                                                                                        onChange={(e) => {
+                                                                                            setSelectedDifficultyLevel(e.value);
+                                                                                            setIsDefficultyLevelErr(false)
+                                                                                        }}
+                                                                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+
+                                                                                    />
+                                                                                </div>
+                                                                                {isDefficultyLevelErr && (
+                                                                                    <small style={{ color: 'red' }}>Field required!</small>
+                                                                                )}
+                                                                            </Col>
+                                                                        </Row>
+                                                                    </>
+                                                                )
+                                                            }
                                                             <br />
                                                             <Row>
                                                                 <Col>
