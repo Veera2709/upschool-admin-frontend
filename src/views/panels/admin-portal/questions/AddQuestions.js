@@ -13,6 +13,7 @@ import MathJax from "react-mathjax";
 import dynamicUrl from '../../../../helper/dynamicUrls';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import { isEmptyArray, areFilesInvalid, voiceInvalid } from '../../../../util/utils';
+import { updateSyncWarnings } from 'redux-form';
 
 const AddQuestions = ({ className, ...rest }) => {
 
@@ -33,7 +34,7 @@ const AddQuestions = ({ className, ...rest }) => {
         { value: 'moderatelyDifficult', label: 'Moderately Difficult' },
         { value: 'highlyDifficult', label: 'Highly Difficult' },
     ]
-
+    const [isDuplicatePresent, setIsDuplicatePresent] = useState(false);/////////
     const [descriptiveAnswerErrMsg, setDescriptiveAnswerErrMsg] = useState(false);
     const [questionTypeErrMsg, setQuestionTypeErrMsg] = useState(false);
     const [questionCategoryErrMsg, setQuestionCategoryErrMsg] = useState(false);
@@ -100,6 +101,12 @@ const AddQuestions = ({ className, ...rest }) => {
             answer_weightage: ''
         }
     ]);
+
+
+    const handleChildStateChange = (newState) => {
+        setIsDuplicatePresent(newState);
+    };
+
 
     useEffect(() => {
 
@@ -769,6 +776,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                 onSubmit={async (values, { setErrors, setStatus, setSubmitting, }) => {
 
                                     console.log(values);
+
                                     setSubmitting(true);
 
                                     console.log(sessionStorage.getItem('click_event') !== "");
@@ -867,9 +875,19 @@ const AddQuestions = ({ className, ...rest }) => {
 
                                                 console.log("payLoad", payLoad);
 
-                                                showLoader();
-                                                _addQuestions(payLoad);
+                                                if (isDuplicatePresent) {
 
+                                                    console.log("Duplicates are present, skip form submission");
+                                                    Swal.fire({
+                                                        title: 'Duplicates Found',
+                                                        text: 'Duplicate values are present between $$ markers in Question Field ',
+                                                        icon: 'warning',
+                                                    });
+                                                    return
+                                                } else {
+                                                    showLoader();
+                                                    _addQuestions(payLoad);
+                                                }
                                             }
                                         } else {
                                             console.log("Invalid option!");
@@ -1223,8 +1241,8 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                     classNamePrefix="select"
                                                                     name="color"
                                                                     options={difficultylevel}
-                                                                    onChange={(e) => { 
-                                                                        setSelectedDifficultyLevel(e.value) ;
+                                                                    onChange={(e) => {
+                                                                        setSelectedDifficultyLevel(e.value);
                                                                         setIsDefficultyLevelErr(false)
                                                                     }}
                                                                     styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
@@ -1248,6 +1266,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                 </label>
 
                                                 <ArticleRTE
+                                                    onChildStateChange={handleChildStateChange}////
                                                     setArticleSize={setArticleSize}
                                                     setImageCount={setImageCount}
                                                     imageCount={imageCount}
