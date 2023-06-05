@@ -489,12 +489,12 @@ const EditQuestions = () => {
     }
 
     useEffect(() => {
-        if (!isEmptyArray(optionsDisclaimer) && !isEmptyArray(optionsCategory) && !isEmptyArray(optionsCongnitiveSkills) && !isEmptyArray(optionsSource)) {
+        if (!isEmptyArray(optionsCategory) && !isEmptyArray(optionsCongnitiveSkills) && !isEmptyArray(optionsSource)) {
             console.log("Inside UE!", optionsCategory, optionsDisclaimer, optionsCongnitiveSkills, optionsSource);
 
             IndividualQuestionData();
         }
-    }, [optionsDisclaimer, optionsCategory, optionsCongnitiveSkills, optionsSource]);
+    }, [optionsCategory, optionsCongnitiveSkills, optionsSource]);
 
     const handleCategoryChange = (event) => {
         console.log(event);
