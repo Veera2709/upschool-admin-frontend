@@ -3,6 +3,7 @@
 // const baseUrl = 'https://dssqy2gip2.execute-api.ap-south-1.amazonaws.com/testing/v1'; // testing env URL
 const baseUrl = process.env.REACT_APP_LAMBDA_URL;
 
+
 const dynamicUrl = {
 
     // Login
@@ -175,6 +176,10 @@ const dynamicUrl = {
     updateCognitiveSkill: baseUrl + '/updateCognitiveSkill',
     fetchIndividualCognitiveSkill: baseUrl + '/fetchIndividualCognitiveSkill',
 
+    //Blue print
+    addBluePrint: baseUrl + '/addBluePrint',
+    fetchBluePrintsBasedonStatus:baseUrl+'/fetchBluePrintsBasedonStatus',
+    toggleBluePrintStatus:baseUrl+'/toggleBluePrintStatus',
 }
 
 export default dynamicUrl;
