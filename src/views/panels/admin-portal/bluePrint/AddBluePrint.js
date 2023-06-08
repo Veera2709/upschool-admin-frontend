@@ -50,6 +50,7 @@ const AddBluePrint = () => {
     const [displayHeader, setDisplayHeader] = useState(true);
     const [cognitiveSkillOpptions, setCognitiveSkillOpptions] = useState();
     const [categoryOpptions, setCategoryOpptions] = useState();
+    const [sectionRepErr, setSectionRepErr] = useState(false);
     const [questionTypeOption, setQuestionTypeOption] = useState(["Objective", "Subjective", "Descriptive"])
     const [questionDifficulty, setQuestionDifficulty] = useState(
         [
@@ -267,7 +268,7 @@ const AddBluePrint = () => {
                                     .required("Blue Print Name is required!"),
                                 bluePrintDuration: Yup.number()
                                     .min(1, "Duration is Less Then 1min!")
-                                    .max(100, "Duration is More Then 100min!")
+                                    .max(200, "Duration is More Then 100min!")
                                     .required("Time Duration is required!"),
                                 displayName: Yup.string()
                                     .trim()
@@ -283,13 +284,17 @@ const AddBluePrint = () => {
                                 console.log("bluePrintDatabluePrintData", bluePrintData);
                                 var finalData = JSON.parse(JSON.stringify(bluePrintData));
 
-                                let filterSectionData = []
-                                let filterQuestionData = []
+                                let filterSectionData = [];
+                                let filterQuestionData = [];
                                 bluePrintData.map((item) => {
                                     if (item.isError === 'yes') {
                                         filterSectionData.push(item)
                                     }
                                 })
+
+                                const unique = new Set();
+                                const showError = finalData.some(element => unique.size === unique.add(element.section_name).size);
+                                console.log("showError", showError);
 
                                 bluePrintData.map((item) => {
                                     item.questions.map((e) => {
@@ -298,7 +303,7 @@ const AddBluePrint = () => {
                                             filterQuestionData.push(e)
                                         } else if (e.question_name === '' || e.question_name === undefined || e.question_name.length > 4) {
                                             filterQuestionData.push(e)
-                                        } else if (e.marks === '' || e.marks === undefined || e.marks<=0) {
+                                        } else if (e.marks === '' || e.marks === undefined || e.marks <= 0) {
                                             filterQuestionData.push(e)
                                         }
                                     })
@@ -306,8 +311,11 @@ const AddBluePrint = () => {
 
                                 console.log("filterQuestionData", filterQuestionData);
 
+
                                 if (values.bluePrintDec.trim().length <= 0 || values.bluePrintDec === '' || values.bluePrintDec === undefined) {
                                     setErrors({ bluePrintDec: "Description is required!" });
+                                } else if (showError) {
+                                    setSectionRepErr(true)
                                 } else if (filterSectionData.length > 0) {
 
                                 } else if (filterQuestionData.length > 0) {
@@ -649,7 +657,7 @@ const AddBluePrint = () => {
                                                                                                             value={e.marks}
                                                                                                             id='title'
                                                                                                         />
-                                                                                                        {(e.marks.trim().length <= 0 || e.marks<=0) && (errors.submit) ? (
+                                                                                                        {(e.marks.trim().length <= 0 || e.marks <= 0) && (errors.submit) ? (
                                                                                                             <>
                                                                                                                 <p style={{ display: "none" }}>{e.isError = 'yes'}</p>
                                                                                                                 <small style={{ color: "red" }}>Field Required!</small>
@@ -757,6 +765,12 @@ const AddBluePrint = () => {
                                                                                 </>
                                                                             )
                                                                         })}
+                                                                        {sectionRepErr && (
+                                                                            <>
+                                                                                <smal className='text-danger'>Section Name Repeated!</smal>
+                                                                                <br />
+                                                                            </>
+                                                                        )}
                                                                     </div>
                                                                 </Col>
                                                             </Row>
