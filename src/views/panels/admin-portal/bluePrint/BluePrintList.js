@@ -24,7 +24,7 @@ import BasicSpinner from '../../../../helper/BasicSpinner';
 function Table({ columns, data, modalOpen }) {
     const [isOpenAddChapter, setOpenAddChapter] = useState(false);
     const initiallySelectedRows = React.useMemo(() => new Set(["1"]), []);
-    const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[3]);
+    const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
     const bluePrintStatus = pageLocation === "active-blueprint" ? 'Active' : 'Archived';
     const MySwal = withReactContent(Swal);
     let history = useHistory();
@@ -81,9 +81,9 @@ function Table({ columns, data, modalOpen }) {
     );
 
 
-    
 
- 
+
+
 
 
     return (
@@ -109,9 +109,16 @@ function Table({ columns, data, modalOpen }) {
 
                 <Col className="mb-3" style={{ display: 'contents' }}>
                     <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
-                            <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={() => {history.push('/admin-portal/add-bluePrint')  }}>
-                                <i className="feather icon-plus" /> Add Blue Print
-                            </Button>
+                    {
+                        bluePrintStatus === 'Active' ? (
+                            <>
+                                <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={() => { history.push('/admin-portal/add-bluePrint') }}>
+                                    <i className="feather icon-plus" /> Add Blue Print
+                                </Button>
+                            </>
+                        ) : (<></>)
+                    }
+
                 </Col>
             </Row>
 
@@ -184,7 +191,7 @@ function Table({ columns, data, modalOpen }) {
                     </Pagination>
                 </Col>
             </Row>
-         
+
         </>
     );
 }
@@ -201,8 +208,8 @@ const BluePrintList = (props) => {
                 accessor: 'blueprint_name'
             },
             {
-                Header:'Test Duration',
-                accessor:'test_duration'
+                Header: 'Test Duration',
+                accessor: 'test_duration'
             },
             {
                 Header: 'Options',
@@ -224,7 +231,7 @@ const BluePrintList = (props) => {
     const [isOpenAddChapter, setOpenAddChapter] = useState(false);
 
 
-  
+
 
 
     // console.log('data: ', data)
@@ -377,7 +384,7 @@ const BluePrintList = (props) => {
             .then((response) => {
                 console.log(response);
                 let dataResponse = response.data
-                console.log({dataResponse});
+                console.log({ dataResponse });
                 let finalDataArray = [];
 
                 if (bluePrintStatus === 'Active') {
@@ -499,7 +506,7 @@ const BluePrintList = (props) => {
                                                         </Button>
                                                     </div>
                                                 </div>
-                                           
+
                                             </React.Fragment>
                                         ) : (
                                             <React.Fragment>

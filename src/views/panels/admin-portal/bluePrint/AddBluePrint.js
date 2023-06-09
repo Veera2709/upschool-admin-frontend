@@ -432,7 +432,7 @@ const AddBluePrint = () => {
                                             </div>
                                         </Col>
                                         <Col>
-                                            <div className="form-group fill">
+                                            <div className="form-group fill" style={{marginTop:'-9px'}}>
                                                 <label className="floating-label" htmlFor="bluePrintDuration">
                                                     <small className="text-danger">* </small>Test Duration <label style={{ color: 'red' }}>&nbsp;(min)</label>
                                                 </label>
