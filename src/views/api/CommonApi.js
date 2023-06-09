@@ -907,3 +907,44 @@ export const getAllworkSheetQuestions = (payLoad) => {
             })
     });
 }
+
+export const getAllcognitiveSkills = (payLoad) => {
+    return new Promise((resolve, reject) => {
+        axios.post(url.fetchSkillsBasedonStatus,
+            {
+                data: {
+                    cognitive_status:'Active'
+                }
+            },
+            { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
+            .then((response) => {
+                console.log(response);
+                resolve(response.data);
+            })
+            .catch((error) => {
+                console.log("Error", error);
+                resolve({ Error: error });
+            })
+    });
+}
+
+
+export const allQuestionCategories = (payLoad) => {
+    return new Promise((resolve, reject) => {
+        axios.post(url.fetchAllQuestionCategories,
+            {
+                data: {
+                    category_status:'Active'
+                }
+            },
+            { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
+            .then((response) => {
+                console.log(response);
+                resolve(response.data);
+            })
+            .catch((error) => {
+                console.log("Error", error);
+                resolve({ Error: error });
+            })
+    });
+}

@@ -266,6 +266,26 @@ const menuItems = {
           ]
         },
         {
+          id: 'blue_print',
+          title: 'Blue Print',
+          type: 'collapse',
+          icon: 'fas fa-map',
+          children: [
+            {
+              id: 'active-blueprint',
+              title: 'Active Blue Print',
+              type: 'item',
+              url: '/admin-portal/active-blueprint'
+            },
+            {
+              id: 'archived-blueprint',
+              title: 'Archived Blue Print',
+              type: 'item',
+              url: '/admin-portal/archived-blueprint'
+            }
+          ]
+        },
+        {
           id: 'settings',
           title: 'Settings',
           icon: 'feather icon-settings',
