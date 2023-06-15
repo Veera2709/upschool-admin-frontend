@@ -458,7 +458,7 @@ const EditQuestions = () => {
                                         setQuestionVoiceNote(individual_user_data.question_voice_note_url);
                                         // setVoiceNoteFileValues(individual_user_data.question_voice_note_url);
                                     }
-                                    setPreviousData(individual_user_data);
+                                    setPreviousData();
                                 }
 
                             } setValues(0);

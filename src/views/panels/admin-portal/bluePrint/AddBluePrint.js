@@ -27,9 +27,10 @@ const AddBluePrint = () => {
     const sectionsData = [
         {
             section_name: '',
+            section_description: '',
             questions: [
                 {
-                    question_name: "",
+                    // question_name: "",
                     marks: "",
                     category_id: "",
                     difficulty_level: "",
@@ -77,9 +78,10 @@ const AddBluePrint = () => {
     const addSection = () => {
         let data = {
             section_name: '',
+            section_description: '',
             questions: [
                 {
-                    question_name: "",
+                    // question_name: "",
                     marks: "",
                     category_id: "",
                     difficulty_level: "",
@@ -94,7 +96,7 @@ const AddBluePrint = () => {
     const addQuestion = (index) => {
         let data = [...bluePrintData]
         data[index].questions.push({
-            question_name: "",
+            // question_name: "",
             marks: "",
             category_id: "",
             difficulty_level: "",
@@ -187,12 +189,17 @@ const AddBluePrint = () => {
         data[index].section_name = event.target.value;
         setBluePrintData(data);
     }
-
-    const getQuestionName = (event, index, ind) => {
+    const getSectionDescription = (event, index) => {
         let data = [...bluePrintData];
-        data[index].questions[ind].question_name = event.target.value;
+        data[index].section_description = event.target.value;
         setBluePrintData(data);
     }
+
+    // const getQuestionName = (event, index, ind) => {
+    //     let data = [...bluePrintData];
+    //     data[index].questions[ind].question_name = event.target.value;
+    //     setBluePrintData(data);
+    // }
 
     const getMarks = (event, index, ind) => {
         let data = [...bluePrintData];
@@ -296,9 +303,12 @@ const AddBluePrint = () => {
                                         console.log("item.questions", e);
                                         if (e.isError === 'yes') {
                                             filterQuestionData.push(e)
-                                        } else if (e.question_name === '' || e.question_name === undefined || e.question_name.length > 4) {
-                                            filterQuestionData.push(e)
-                                        } else if (e.marks === '' || e.marks === undefined || e.marks<=0) {
+                                        }
+                                        // else if (e.question_name === '' || e.question_name === undefined || e.question_name.length > 4) {
+                                        //     filterQuestionData.push(e)
+
+                                        // } 
+                                        else if (e.marks === '' || e.marks === undefined || e.marks <= 0) {
                                             filterQuestionData.push(e)
                                         }
                                     })
@@ -343,7 +353,7 @@ const AddBluePrint = () => {
                                                 setDisableButton(false);
                                             } else {
 
-                                                // sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingChapter });
+                                                sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingChapter });
                                                 MySwal.fire({
                                                     title: 'Blue Print added successfully!',
                                                     icon: 'success',
@@ -490,6 +500,31 @@ const AddBluePrint = () => {
                                                                             <p style={{ display: "none" }}>{item.isError = 'no'}</p>
                                                                         )}
                                                                     </div>
+
+                                                                    <div className="form-group fill">
+                                                                        <label className="floating-label" htmlFor="sectionName">
+                                                                            <small className="text-danger">* </small>Section description
+                                                                        </label>
+                                                                        <textarea
+                                                                            className="form-control"
+                                                                            name="sectionName"
+                                                                            onBlur={handleBlur}
+                                                                            onChange={(e) => {
+                                                                                getSectionDescription(e, index);
+                                                                            }}
+                                                                            type="text"
+                                                                            value={item.section_description}
+                                                                            id='title'
+                                                                        />
+                                                                        {item.section_description.trim().length <= 0 && (errors.submit) ? (
+                                                                            <>
+                                                                                <p style={{ display: "none" }}>{item.isError = 'yes'}</p>
+                                                                                <small style={{ color: 'red' }}>Field Required!</small>
+                                                                            </>
+                                                                        ) : (
+                                                                            <p style={{ display: "none" }}>{item.isError = 'no'}</p>
+                                                                        )}
+                                                                    </div>
                                                                     {console.log({ bluePrintData })}
                                                                     <div>
                                                                         {item.questions.map((e, ind) => {
@@ -504,7 +539,7 @@ const AddBluePrint = () => {
                                                                                             ) : (null)}
                                                                                             <Row>
                                                                                                 <Col>
-                                                                                                    <div className="form-group fill">
+                                                                                                    {/* <div className="form-group fill">
                                                                                                         <label className="floating-label" htmlFor="questionName">
                                                                                                             <small className="text-danger">* </small>Question Name
                                                                                                         </label>
@@ -539,7 +574,7 @@ const AddBluePrint = () => {
 
                                                                                                             </>
                                                                                                         )}
-                                                                                                    </div>
+                                                                                                    </div> */}
 
                                                                                                     <div className="form-group fill">
                                                                                                         <label className="floating-label" >
@@ -649,7 +684,7 @@ const AddBluePrint = () => {
                                                                                                             value={e.marks}
                                                                                                             id='title'
                                                                                                         />
-                                                                                                        {(e.marks.trim().length <= 0 || e.marks<=0) && (errors.submit) ? (
+                                                                                                        {(e.marks.trim().length <= 0 || e.marks <= 0) && (errors.submit) ? (
                                                                                                             <>
                                                                                                                 <p style={{ display: "none" }}>{e.isError = 'yes'}</p>
                                                                                                                 <small style={{ color: "red" }}>Field Required!</small>
