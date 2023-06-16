@@ -81,9 +81,9 @@ function Table({ columns, data, modalOpen }) {
     );
 
 
-    
 
- 
+
+
 
 
     return (
@@ -109,9 +109,9 @@ function Table({ columns, data, modalOpen }) {
 
                 <Col className="mb-3" style={{ display: 'contents' }}>
                     <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
-                            <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={() => {history.push('/admin-portal/add-bluePrint')  }}>
-                                <i className="feather icon-plus" /> Add Blue Print
-                            </Button>
+                    <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={() => { history.push('/admin-portal/add-bluePrint') }}>
+                        <i className="feather icon-plus" /> Add Blue Print
+                    </Button>
                 </Col>
             </Row>
 
@@ -184,7 +184,7 @@ function Table({ columns, data, modalOpen }) {
                     </Pagination>
                 </Col>
             </Row>
-         
+
         </>
     );
 }
@@ -201,8 +201,8 @@ const BluePrintList = (props) => {
                 accessor: 'blueprint_name'
             },
             {
-                Header:'Test Duration',
-                accessor:'test_duration'
+                Header: 'Test Duration',
+                accessor: 'test_duration'
             },
             {
                 Header: 'Options',
@@ -224,7 +224,7 @@ const BluePrintList = (props) => {
     const [isOpenAddChapter, setOpenAddChapter] = useState(false);
 
 
-  
+
 
 
     // console.log('data: ', data)
@@ -377,7 +377,7 @@ const BluePrintList = (props) => {
             .then((response) => {
                 console.log(response);
                 let dataResponse = response.data
-                console.log({dataResponse});
+                console.log({ dataResponse });
                 let finalDataArray = [];
 
                 if (bluePrintStatus === 'Active') {
@@ -407,6 +407,21 @@ const BluePrintList = (props) => {
                                         <i className="feather icon-trash-2 " /> &nbsp; Delete
                                     </Button>
                                     &nbsp;
+
+                                    {/* <Button
+                                        size="sm"
+                                        className="btn btn-icon btn-rounded btn-danger"
+                                        onClick={(e) => deleteBluePrint(dataResponse[index].blueprint_id, dataResponse[index].blueprint_name)}
+                                    >
+                                        <i className="feather icon-trash-2 " /> &nbsp; view
+                                    </Button> */}
+                                    <Button
+                                        size="sm"
+                                        className="btn btn-icon btn-rounded btn-info"
+                                        onClick={(e) => history.push(`/admin-portal/view-bluePrint/${dataResponse[index].blueprint_id}`)}
+                                    >
+                                        <i className="feather icon-eye" /> &nbsp;View
+                                    </Button>
                                 </>
                             </>
                         );
@@ -499,7 +514,7 @@ const BluePrintList = (props) => {
                                                         </Button>
                                                     </div>
                                                 </div>
-                                           
+
                                             </React.Fragment>
                                         ) : (
                                             <React.Fragment>

@@ -431,6 +431,11 @@ const routes = [
         path: '/admin-portal/add-bluePrint',
         component: lazy(() => import('./views/panels/admin-portal/bluePrint/AddBluePrint'))
       },
+      {
+        exact: true,
+        path: '/admin-portal/view-bluePrint/:blueprint_id',
+        component: lazy(() => import('./views/panels/admin-portal/bluePrint/ViewBluePrint'))
+      },
 
       // Add Standards
       // {
