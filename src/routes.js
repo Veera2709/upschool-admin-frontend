@@ -412,6 +412,30 @@ const routes = [
         path: '/admin-portal/add_UpSchoolusers',
         component: lazy(() => import('./views/panels/admin-portal/CMS users/addUsers'))
       },
+      //Blue Prints
+      {
+        exact: true,
+        path: '/admin-portal/active-blueprint',
+        component: lazy(() => import('./views/panels/admin-portal/bluePrint/BluePrintList'))
+      },
+
+      {
+        exact: true,
+        path: '/admin-portal/archived-blueprint',
+        component: lazy(() => import('./views/panels/admin-portal/bluePrint/BluePrintList'))
+      },
+
+      //add Blue print
+      {
+        exact: true,
+        path: '/admin-portal/add-bluePrint',
+        component: lazy(() => import('./views/panels/admin-portal/bluePrint/AddBluePrint'))
+      },
+      {
+        exact: true,
+        path: '/admin-portal/view-bluePrint/:blueprint_id',
+        component: lazy(() => import('./views/panels/admin-portal/bluePrint/ViewBluePrint'))
+      },
 
       // Add Standards
       // {

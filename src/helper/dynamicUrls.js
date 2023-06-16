@@ -175,6 +175,11 @@ const dynamicUrl = {
     updateCognitiveSkill: baseUrl + '/updateCognitiveSkill',
     fetchIndividualCognitiveSkill: baseUrl + '/fetchIndividualCognitiveSkill',
 
+    //Blue print
+    addBluePrint: baseUrl + '/addBluePrint',
+    fetchBluePrintsBasedonStatus: baseUrl + '/fetchBluePrintsBasedonStatus',
+    toggleBluePrintStatus: baseUrl + '/toggleBluePrintStatus',
+    fetchIndividualBluePrint: baseUrl + '/fetchIndividualBluePrint'
 }
 
 export default dynamicUrl;
