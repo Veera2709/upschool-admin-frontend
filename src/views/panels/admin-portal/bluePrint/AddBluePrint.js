@@ -51,6 +51,7 @@ const AddBluePrint = () => {
     const [displayHeader, setDisplayHeader] = useState(true);
     const [cognitiveSkillOpptions, setCognitiveSkillOpptions] = useState();
     const [categoryOpptions, setCategoryOpptions] = useState();
+    const [sectionRepErr, setSectionRepErr] = useState(false);
     const [questionTypeOption, setQuestionTypeOption] = useState(["Objective", "Subjective", "Descriptive"])
     const [questionDifficulty, setQuestionDifficulty] = useState(
         [
@@ -274,7 +275,7 @@ const AddBluePrint = () => {
                                     .required("Blue Print Name is required!"),
                                 bluePrintDuration: Yup.number()
                                     .min(1, "Duration is Less Then 1min!")
-                                    .max(100, "Duration is More Then 100min!")
+                                    .max(200, "Duration is More Then 100min!")
                                     .required("Time Duration is required!"),
                                 displayName: Yup.string()
                                     .trim()
@@ -290,13 +291,17 @@ const AddBluePrint = () => {
                                 console.log("bluePrintDatabluePrintData", bluePrintData);
                                 var finalData = JSON.parse(JSON.stringify(bluePrintData));
 
-                                let filterSectionData = []
-                                let filterQuestionData = []
+                                let filterSectionData = [];
+                                let filterQuestionData = [];
                                 bluePrintData.map((item) => {
                                     if (item.isError === 'yes') {
                                         filterSectionData.push(item)
                                     }
                                 })
+
+                                const unique = new Set();
+                                const showError = finalData.some(element => unique.size === unique.add(element.section_name).size);
+                                console.log("showError", showError);
 
                                 bluePrintData.map((item) => {
                                     item.questions.map((e) => {
@@ -316,8 +321,11 @@ const AddBluePrint = () => {
 
                                 console.log("filterQuestionData", filterQuestionData);
 
+
                                 if (values.bluePrintDec.trim().length <= 0 || values.bluePrintDec === '' || values.bluePrintDec === undefined) {
                                     setErrors({ bluePrintDec: "Description is required!" });
+                                } else if (showError) {
+                                    setSectionRepErr(true)
                                 } else if (filterSectionData.length > 0) {
 
                                 } else if (filterQuestionData.length > 0) {
@@ -434,7 +442,7 @@ const AddBluePrint = () => {
                                             </div>
                                         </Col>
                                         <Col>
-                                            <div className="form-group fill">
+                                            <div className="form-group fill" style={{marginTop:'-9px'}}>
                                                 <label className="floating-label" htmlFor="bluePrintDuration">
                                                     <small className="text-danger">* </small>Test Duration <label style={{ color: 'red' }}>&nbsp;(min)</label>
                                                 </label>
@@ -792,6 +800,12 @@ const AddBluePrint = () => {
                                                                                 </>
                                                                             )
                                                                         })}
+                                                                        {sectionRepErr && (
+                                                                            <>
+                                                                                <smal className='text-danger'>Section Name Repeated!</smal>
+                                                                                <br />
+                                                                            </>
+                                                                        )}
                                                                     </div>
                                                                 </Col>
                                                             </Row>
