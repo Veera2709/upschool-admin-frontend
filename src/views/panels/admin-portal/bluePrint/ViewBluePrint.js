@@ -385,8 +385,8 @@ const ViewBluePrint = () => {
                                                     .required("Blue Print Name is required!"),
                                                 bluePrintDuration: Yup.number()
                                                     .min(1, "Duration is Less Then 1min!")
-                                                    .max(100, "Duration is More Then 100min!")
-                                                    .required("Time Duration is required!"),
+                                                    .max(100, "Duration is More Then 100min!"),
+                                                // .required("Time Duration is required!"),
                                                 displayName: Yup.string()
                                                     .trim()
                                                     .min(2, "Display Name To short!")
@@ -531,7 +531,6 @@ const ViewBluePrint = () => {
                                                     {console.log(bluePrintData)}
 
                                                     {
-
                                                         bluePrintData && bluePrintData.map((item, index) => {
                                                             return (
                                                                 <>
@@ -558,8 +557,9 @@ const ViewBluePrint = () => {
                                                                                             type="text"
                                                                                             value={item.section_name}
                                                                                             id='title'
+                                                                                            disabled
                                                                                         />
-                                                                                        {item.section_name.trim().length <= 0 && (errors.submit) ? (
+                                                                                        z                                                                      {item.section_name.trim().length <= 0 && (errors.submit) ? (
                                                                                             <>
                                                                                                 <p style={{ display: "none" }}>{item.isError = 'yes'}</p>
                                                                                                 <small style={{ color: 'red' }}>Field Required!</small>
@@ -583,6 +583,7 @@ const ViewBluePrint = () => {
                                                                                             type="text"
                                                                                             value={item.section_description}
                                                                                             id='title'
+                                                                                            disabled
                                                                                         />
                                                                                         {item.section_description.trim().length <= 0 && (errors.submit) ? (
                                                                                             <>
@@ -608,41 +609,41 @@ const ViewBluePrint = () => {
                                                                                                             <Row>
                                                                                                                 <Col>
                                                                                                                     {/* <div className="form-group fill">
-                                                                                                        <label className="floating-label" htmlFor="questionName">
-                                                                                                            <small className="text-danger">* </small>Question Name
-                                                                                                        </label>
-                                                                                                        <input
-                                                                                                            className="form-control"
-                                                                                                            error={touched.questionName && errors.questionName}
-                                                                                                            name="questionName"
-                                                                                                            onBlur={handleBlur}
-                                                                                                            onChange={(e) => {
-                                                                                                                getQuestionName(e, index, ind)
-                                                                                                            }}
-                                                                                                            type="text"
-                                                                                                            value={e.question_name}
-                                                                                                            id='title'
-                                                                                                        />
+                                                                                                                                    <label className="floating-label" htmlFor="questionName">
+                                                                                                                                        <small className="text-danger">* </small>Question Name
+                                                                                                                                    </label>
+                                                                                                                                    <input
+                                                                                                                                        className="form-control"
+                                                                                                                                        error={touched.questionName && errors.questionName}
+                                                                                                                                        name="questionName"
+                                                                                                                                        onBlur={handleBlur}
+                                                                                                                                        onChange={(e) => {
+                                                                                                                                            getQuestionName(e, index, ind)
+                                                                                                                                        }}
+                                                                                                                                        type="text"
+                                                                                                                                        value={e.question_name}
+                                                                                                                                        id='title'
+                                                                                                                                    />
 
-                                                                                                        {(e.question_name.trim().length <= 0) && (errors.submit) ? (
-                                                                                                            <>
-                                                                                                                <p style={{ display: "none" }}>{e.isError = 'yes'}</p>
-                                                                                                                <small style={{ color: "red" }}>Field Required!</small>
-                                                                                                            </>
+                                                                                                                                    {(e.question_name.trim().length <= 0) && (errors.submit) ? (
+                                                                                                                                        <>
+                                                                                                                                            <p style={{ display: "none" }}>{e.isError = 'yes'}</p>
+                                                                                                                                            <small style={{ color: "red" }}>Field Required!</small>
+                                                                                                                                        </>
 
-                                                                                                        ) : (e.question_name.length > 4) && (errors.submit) ? (
-                                                                                                            <>
-                                                                                                                <p style={{ display: "none" }}>{e.isError = 'yes'}</p>
-                                                                                                                <small style={{ color: "red" }}> Question Name Must be less then 4 characters!</small>
+                                                                                                                                    ) : (e.question_name.length > 4) && (errors.submit) ? (
+                                                                                                                                        <>
+                                                                                                                                            <p style={{ display: "none" }}>{e.isError = 'yes'}</p>
+                                                                                                                                            <small style={{ color: "red" }}> Question Name Must be less then 4 characters!</small>
 
-                                                                                                            </>
-                                                                                                        ) : (
-                                                                                                            <>
-                                                                                                                <p style={{ display: "none" }}>{e.isError = 'no'}</p>
+                                                                                                                                        </>
+                                                                                                                                    ) : (
+                                                                                                                                        <>
+                                                                                                                                            <p style={{ display: "none" }}>{e.isError = 'no'}</p>
 
-                                                                                                            </>
-                                                                                                        )}
-                                                                                                    </div> */}
+                                                                                                                                        </>
+                                                                                                                                    )}
+                                                                                                                                </div> */}
 
                                                                                                                     <div className="form-group fill">
                                                                                                                         <label className="floating-label" >
@@ -658,6 +659,7 @@ const ViewBluePrint = () => {
                                                                                                                             value={e.question_type}
                                                                                                                             key={index}
                                                                                                                             onChange={event => getQuestinType(event, index, ind)}
+                                                                                                                            disabled
                                                                                                                         >
 
                                                                                                                             <option>
@@ -704,6 +706,7 @@ const ViewBluePrint = () => {
                                                                                                                             value={e.category_id}
                                                                                                                             key={index}
                                                                                                                             onChange={event => getCategoryId(event, index, ind)}
+                                                                                                                            disabled
                                                                                                                         >
 
                                                                                                                             <option>
@@ -751,6 +754,7 @@ const ViewBluePrint = () => {
                                                                                                                             type="number"
                                                                                                                             value={e.marks}
                                                                                                                             id='title'
+                                                                                                                            disabled
                                                                                                                         />
                                                                                                                         {(e.marks.trim().length <= 0 || e.marks <= 0) && (errors.submit) ? (
                                                                                                                             <>
@@ -780,6 +784,7 @@ const ViewBluePrint = () => {
                                                                                                                             value={e.cognitive_id}
                                                                                                                             key={index}
                                                                                                                             onChange={event => getCognitiveId(event, index, ind)}
+                                                                                                                            disabled
                                                                                                                         >
 
                                                                                                                             <option>
@@ -825,6 +830,7 @@ const ViewBluePrint = () => {
                                                                                                                             value={e.difficulty_level}
                                                                                                                             key={index}
                                                                                                                             onChange={event => getQuestionDifficult(event, index, ind)}
+                                                                                                                            disabled
                                                                                                                         >
 
                                                                                                                             <option>
@@ -863,21 +869,21 @@ const ViewBluePrint = () => {
                                                                                     </div>
                                                                                 </Col>
                                                                             </Row>
-                                                                            <Button style={{ backgroundColor: '#4e5256' }} onClick={(e) => { addQuestion(index) }}>
+                                                                            {/* <Button style={{ backgroundColor: '#4e5256' }} onClick={(e) => { addQuestion(index) }}>
                                                                                 <i className='fas fa-plus' />&nbsp; Add Question
-                                                                            </Button>
+                                                                            </Button> */}
                                                                         </Card.Body>
                                                                     </Card>
                                                                 </>
                                                             )
                                                         })
                                                     }
-                                                    <Button style={{ backgroundColor: '#4e5256' }} onClick={addSection}>
+                                                    {/* <Button style={{ backgroundColor: '#4e5256' }} onClick={addSection}>
                                                         <i className='fas fa-plus' />&nbsp; Add Section
                                                     </Button>
                                                     <div className='d-flex justify-content-end'>
                                                         <Button type='submit'>Submit</Button>
-                                                    </div>
+                                                    </div> */}
                                                 </form>
                                             )}
 
@@ -891,14 +897,8 @@ const ViewBluePrint = () => {
                     </>
                 )
             }
-
         </>
-
-
-
-
     )
-
 };
 
 export default ViewBluePrint;
