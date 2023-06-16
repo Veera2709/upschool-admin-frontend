@@ -116,11 +116,11 @@ const ViewBluePrint = () => {
 
     }
 
-    const removeSection = (index) => {
-        let data = [...bluePrintData];
-        data.splice(index, 1);
-        setBluePrintData(data)
-    }
+    // const removeSection = (index) => {
+    //     let data = [...bluePrintData];
+    //     data.splice(index, 1);
+    //     setBluePrintData(data)
+    // }
 
     const removeQuestion = (index, ind) => {
         console.log("index,ind", index, ind);
@@ -369,7 +369,7 @@ const ViewBluePrint = () => {
                             <React.Fragment>
                                 <Card>
                                     <Card.Body>
-                                        <Card.Title>Add Blue Print</Card.Title>
+                                        <Card.Title> Blue Print</Card.Title>
                                         <Formik
                                             initialValues={{
                                                 bluePrintName: '',
@@ -538,7 +538,7 @@ const ViewBluePrint = () => {
                                                                         <Card.Body style={{ background: '#e0eeff' }}>
                                                                             {bluePrintData.length > 1 ? (
                                                                                 <div className='d-flex justify-content-end'>
-                                                                                    <Button variant='danger' onClick={(e) => { removeSection(index) }}><i className='feather icon-trash' /></Button>
+                                                                                    {/* <Button variant='danger' onClick={(e) => { removeSection(index) }}><i className='feather icon-trash' /></Button> */}
                                                                                 </div>
                                                                             ) : (null)}
                                                                             <Row>
@@ -737,6 +737,54 @@ const ViewBluePrint = () => {
                                                                                                                             </>
                                                                                                                         )}
                                                                                                                     </div>
+
+                                                                                                                    <div className="form-group fill">
+                                                                                                                        <label className="floating-label" >
+                                                                                                                            <small className="text-danger">* </small>
+                                                                                                                            Difficulty level
+                                                                                                                        </label>
+                                                                                                                        <select
+                                                                                                                            className="form-control"
+                                                                                                                            error={touched.upschool_class_id && errors.upschool_class_id}
+                                                                                                                            name="upschool_class_id"
+                                                                                                                            onBlur={handleBlur}
+                                                                                                                            type="text"
+                                                                                                                            value={e.difficulty_level}
+                                                                                                                            key={index}
+                                                                                                                            onChange={event => getQuestionDifficult(event, index, ind)}
+                                                                                                                            disabled
+                                                                                                                        >
+
+                                                                                                                            <option>
+                                                                                                                                Select Question Difficulty
+                                                                                                                            </option>
+
+                                                                                                                            {console.log(questionDifficulty)}
+                                                                                                                            {questionDifficulty && questionDifficulty.map((skillsData) => {
+                                                                                                                                return <option
+                                                                                                                                    value={skillsData.value}
+                                                                                                                                    key={skillsData.value}
+                                                                                                                                >
+                                                                                                                                    {skillsData.label}
+                                                                                                                                </option>
+                                                                                                                            })}
+
+                                                                                                                        </select>
+                                                                                                                        {(e.difficulty_level === '' || e.difficulty_level === undefined || e.difficulty_level === "Select Question Difficulty") && (errors.submit) ? (
+                                                                                                                            <>
+                                                                                                                                <p style={{ display: "none" }}>{e.isError = 'yes'}</p>
+                                                                                                                                <small style={{ color: "red" }}>Field Required!</small>
+                                                                                                                            </>
+                                                                                                                        ) : (
+                                                                                                                            <>
+                                                                                                                                <p style={{ display: "none" }}>{e.isError = 'no'}</p>
+                                                                                                                            </>
+                                                                                                                        )}
+                                                                                                                    </div>
+
+
+
+
                                                                                                                 </Col>
                                                                                                                 <Col>
                                                                                                                     <div className="form-group fill">
@@ -816,49 +864,7 @@ const ViewBluePrint = () => {
 
                                                                                                                         )}
                                                                                                                     </div>
-                                                                                                                    <div className="form-group fill">
-                                                                                                                        <label className="floating-label" >
-                                                                                                                            <small className="text-danger">* </small>
-                                                                                                                            Difficulty level
-                                                                                                                        </label>
-                                                                                                                        <select
-                                                                                                                            className="form-control"
-                                                                                                                            error={touched.upschool_class_id && errors.upschool_class_id}
-                                                                                                                            name="upschool_class_id"
-                                                                                                                            onBlur={handleBlur}
-                                                                                                                            type="text"
-                                                                                                                            value={e.difficulty_level}
-                                                                                                                            key={index}
-                                                                                                                            onChange={event => getQuestionDifficult(event, index, ind)}
-                                                                                                                            disabled
-                                                                                                                        >
 
-                                                                                                                            <option>
-                                                                                                                                Select Question Difficulty
-                                                                                                                            </option>
-
-                                                                                                                            {console.log(questionDifficulty)}
-                                                                                                                            {questionDifficulty && questionDifficulty.map((skillsData) => {
-                                                                                                                                return <option
-                                                                                                                                    value={skillsData.value}
-                                                                                                                                    key={skillsData.value}
-                                                                                                                                >
-                                                                                                                                    {skillsData.label}
-                                                                                                                                </option>
-                                                                                                                            })}
-
-                                                                                                                        </select>
-                                                                                                                        {(e.difficulty_level === '' || e.difficulty_level === undefined || e.difficulty_level === "Select Question Difficulty") && (errors.submit) ? (
-                                                                                                                            <>
-                                                                                                                                <p style={{ display: "none" }}>{e.isError = 'yes'}</p>
-                                                                                                                                <small style={{ color: "red" }}>Field Required!</small>
-                                                                                                                            </>
-                                                                                                                        ) : (
-                                                                                                                            <>
-                                                                                                                                <p style={{ display: "none" }}>{e.isError = 'no'}</p>
-                                                                                                                            </>
-                                                                                                                        )}
-                                                                                                                    </div>
                                                                                                                 </Col>
                                                                                                             </Row>
                                                                                                         </Card.Body>
