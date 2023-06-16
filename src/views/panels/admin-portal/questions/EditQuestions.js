@@ -8,7 +8,6 @@ import * as Yup from 'yup';
 import { Row, Col, Card, CloseButton, Form, Button, OverlayTrigger, Tooltip, Modal } from 'react-bootstrap';
 import { useHistory, useParams } from 'react-router-dom';
 import MathJax from "react-mathjax";
-
 import * as Constants from '../../../../helper/constants';
 import ArticleRTE from './ArticleRTE';
 import dynamicUrl from '../../../../helper/dynamicUrls';
@@ -459,7 +458,7 @@ const EditQuestions = () => {
                                         setQuestionVoiceNote(individual_user_data.question_voice_note_url);
                                         // setVoiceNoteFileValues(individual_user_data.question_voice_note_url);
                                     }
-                                    setPreviousData(individual_user_data);
+                                    setPreviousData();
                                 }
 
                             } setValues(0);

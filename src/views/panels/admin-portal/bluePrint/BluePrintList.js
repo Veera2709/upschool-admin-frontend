@@ -414,6 +414,21 @@ const BluePrintList = (props) => {
                                         <i className="feather icon-trash-2 " /> &nbsp; Delete
                                     </Button>
                                     &nbsp;
+
+                                    {/* <Button
+                                        size="sm"
+                                        className="btn btn-icon btn-rounded btn-danger"
+                                        onClick={(e) => deleteBluePrint(dataResponse[index].blueprint_id, dataResponse[index].blueprint_name)}
+                                    >
+                                        <i className="feather icon-trash-2 " /> &nbsp; view
+                                    </Button> */}
+                                    <Button
+                                        size="sm"
+                                        className="btn btn-icon btn-rounded btn-info"
+                                        onClick={(e) => history.push(`/admin-portal/view-bluePrint/${dataResponse[index].blueprint_id}`)}
+                                    >
+                                        <i className="feather icon-eye" /> &nbsp;View
+                                    </Button>
                                 </>
                             </>
                         );
