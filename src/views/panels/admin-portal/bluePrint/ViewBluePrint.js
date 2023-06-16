@@ -559,7 +559,7 @@ const ViewBluePrint = () => {
                                                                                             id='title'
                                                                                             disabled
                                                                                         />
-                                                                                        z                                                                      {item.section_name.trim().length <= 0 && (errors.submit) ? (
+                                                                                        {item.section_name.trim().length <= 0 && (errors.submit) ? (
                                                                                             <>
                                                                                                 <p style={{ display: "none" }}>{item.isError = 'yes'}</p>
                                                                                                 <small style={{ color: 'red' }}>Field Required!</small>
