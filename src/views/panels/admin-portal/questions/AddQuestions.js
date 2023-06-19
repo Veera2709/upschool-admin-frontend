@@ -2985,10 +2985,10 @@ const AddQuestions = ({ className, ...rest }) => {
 
                                                                         )}
 
+
                                                                         {form.answer_type === "Equation" && descriptiveAnswerOptionsForm && (
                                                                             <>
                                                                                 <Row key={index}>
-
                                                                                     <Col xs={12}>
                                                                                         <label className="floating-label">
                                                                                             <small className="text-danger"></small>
@@ -3008,36 +3008,47 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                             placeholder="Enter Keyword"
                                                                                         />
                                                                                     </Col>
-
                                                                                 </Row>
-
                                                                                 <br />
                                                                                 <Row key={index}>
-
                                                                                     <Col xs={12}>
                                                                                         <label className="floating-label">
                                                                                             <small className="text-danger"></small>
                                                                                             Preview
                                                                                         </label>
-
-                                                                                        {descriptiveEquation.length >= 1 && form.answer_content && (
-                                                                                            <MathJax.Provider>
-                                                                                                {(descriptiveEquation[index] && (<div styles={{ display: "contents" }}>
-                                                                                                    <MathJax.Node styles={{
-                                                                                                        ".MathJax_Display": {
-                                                                                                            display: "contents"
-                                                                                                        }
-                                                                                                    }}
-                                                                                                        inline formula={descriptiveEquation[index]} />
-                                                                                                </div>))}
-                                                                                            </MathJax.Provider>
-                                                                                        )}
-
+                                                                                        <div
+                                                                                            style={{
+                                                                                                maxHeight: "200px", // Set the maximum height of the preview container
+                                                                                                overflowY: "auto", // Enable vertical scrolling when content exceeds the height
+                                                                                            }}
+                                                                                        >
+                                                                                            {descriptiveEquation.length >= 1 && form.answer_content && (
+                                                                                                <MathJax.Provider>
+                                                                                                    {descriptiveEquation[index] && (
+                                                                                                        <div
+                                                                                                            style={{
+                                                                                                                display: "contents",
+                                                                                                            }}
+                                                                                                        >
+                                                                                                            <MathJax.Node
+                                                                                                                styles={{
+                                                                                                                    ".MathJax_Display": {
+                                                                                                                        display: "contents",
+                                                                                                                    },
+                                                                                                                }}
+                                                                                                                inline
+                                                                                                                formula={descriptiveEquation[index]}
+                                                                                                            />
+                                                                                                        </div>
+                                                                                                    )}
+                                                                                                </MathJax.Provider>
+                                                                                            )}
+                                                                                        </div>
                                                                                     </Col>
-
                                                                                 </Row>
                                                                             </>
                                                                         )}
+
 
                                                                     </Card.Body>
                                                                 </Card>
