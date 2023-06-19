@@ -75,7 +75,7 @@ const UsersBulkUpload = ({ className, ...rest }) => {
 
           if (result) {
             console.log('inside res');
-            response = []
+
             if (response.length === 0) {
               Swal.fire({
                 title: 'No Users Available',
