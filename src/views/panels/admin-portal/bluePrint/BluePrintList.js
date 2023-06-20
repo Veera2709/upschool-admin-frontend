@@ -539,7 +539,7 @@ const BluePrintList = (props) => {
                                                 <Card>
                                                     <Card.Header>
                                                         <Card.Title as="h5" className='d-flex justify-content-between'>
-                                                            <h5>Chapters List</h5>
+                                                            <h5>BluePrint List</h5>
                                                             <h5>Total Entries :- {bluePrintData.length}</h5>
                                                         </Card.Title>
                                                     </Card.Header>
@@ -556,7 +556,7 @@ const BluePrintList = (props) => {
                     </>
                 )
             }
-        </div >
+        </div>
     );
 };
 export default BluePrintList;

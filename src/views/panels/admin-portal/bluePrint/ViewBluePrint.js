@@ -603,7 +603,9 @@ const ViewBluePrint = () => {
                                                                                                         <Card.Body style={{ background: '#aaaaaa' }}>
                                                                                                             {item.questions.length > 1 ? (
                                                                                                                 <div className='d-flex justify-content-end'>
-                                                                                                                    <Button variant='danger' onClick={(e) => { removeQuestion(index, ind) }}><i className='feather icon-trash' /></Button>
+                                                                                                                    {/* <Button variant='danger' onClick={(e) => { removeQuestion(index, ind) }}> */}
+                                                                                                                    {/* <i className='feather icon-trash' /> */}
+                                                                                                                    {/* </Button> */}
                                                                                                                 </div>
                                                                                                             ) : (null)}
                                                                                                             <Row>
