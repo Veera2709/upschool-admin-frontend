@@ -342,7 +342,7 @@ const ViewBluePrint = () => {
                     <>
 
                         <div>
-                            {
+                            {/* {
                                 displayHeader && (
                                     <div className="page-header">
                                         <div className="page-block">
@@ -350,7 +350,8 @@ const ViewBluePrint = () => {
                                                 <div className="col-md-12">
                                                     <div className="page-header-title">
                                                         <h5 className="m-b-10">Active Blue Print</h5>
-                                                    </div><ul className="breadcrumb  ">
+                                                    </div>
+                                                    <ul className="breadcrumb  ">
                                                         <li className="breadcrumb-item  ">
                                                             <a href="/upschool/admin-portal/admin-dashboard">
                                                                 <i className="feather icon-home">
@@ -365,7 +366,7 @@ const ViewBluePrint = () => {
                                         </div>
                                     </div>
                                 )
-                            }
+                            } */}
                             <React.Fragment>
                                 <Card>
                                     <Card.Body>
