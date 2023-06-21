@@ -1536,6 +1536,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                     min="0.01"
                                                                                     onChange={event => handleAnswerBlanks(event, index)}
                                                                                     placeholder="Enter Weightage"
+                                                                                    onWheel={(e) => e.target.blur()}
                                                                                 />
                                                                             </Col>
 
