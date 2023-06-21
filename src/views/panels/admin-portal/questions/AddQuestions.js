@@ -1677,6 +1677,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                         handleAnswerBlanks(event, index)
                                                                                     }}
                                                                                     placeholder="Enter Weightage"
+                                                                                    onWheel={(e) => e.target.blur()}
                                                                                 />
                                                                             </Col>
 
@@ -1939,6 +1940,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                     value={form.answer_weightage}
                                                                                     onChange={event => handleAnswerBlanks(event, index)}
                                                                                     placeholder="Enter Weightage"
+                                                                                    onWheel={(e) => e.target.blur()}
                                                                                 />
                                                                             </Col>
 
@@ -2117,6 +2119,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                             value={form.answer_weightage}
                                                                                             onChange={event => handleAnswerBlanks(event, index)}
                                                                                             placeholder="Enter Weightage for Answer"
+                                                                                            onWheel={(e) => e.target.blur()}
                                                                                         />
                                                                                     </Col>
 
@@ -2137,6 +2140,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                             value={form.unit_weightage}
                                                                                             onChange={event => handleAnswerBlanks(event, index)}
                                                                                             placeholder="Enter Weightage for Unit"
+                                                                                            onWheel={(e) => e.target.blur()}
                                                                                         />
                                                                                     </Col>
 
@@ -2367,6 +2371,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                             value={form.answer_weightage}
                                                                                             onChange={event => handleAnswerBlanks(event, index)}
                                                                                             placeholder="Enter Weightage"
+                                                                                            onWheel={(e) => e.target.blur()}
                                                                                         />
                                                                                     </Col>
 
@@ -2508,6 +2513,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                         handleAnswerBlanks(event, index)
                                                                                     }}
                                                                                     placeholder="Enter Weightage"
+                                                                                    onWheel={(e) => e.target.blur()}
                                                                                 />
                                                                             </Col>
 
@@ -2720,6 +2726,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                     value={form.answer_weightage}
                                                                                     onChange={event => handleAnswerBlanks(event, index)}
                                                                                     placeholder="Enter Weightage"
+                                                                                    onWheel={(e) => e.target.blur()}
                                                                                 />
                                                                             </Col>
 
@@ -2942,6 +2949,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                         min="0.01"
                                                                                         onChange={event => handleDescriptiveAnswerBlanks(event, index)}
                                                                                         placeholder="Enter Weightage"
+                                                                                        onWheel={(e) => e.target.blur()}
                                                                                     />
                                                                                 </Col>
                                                                             )}
