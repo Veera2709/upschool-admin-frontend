@@ -1309,6 +1309,9 @@ const AddQuestions = ({ className, ...rest }) => {
                                                             type="number"
                                                             min="0.01"
                                                             placeholder="Enter the total marks this question carries"
+                                                            // onWheel={e => e.preventDefault()}
+                                                            onWheel={(e) => e.target.blur()}
+
                                                         />
 
                                                         {

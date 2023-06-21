@@ -342,7 +342,7 @@ const ViewBluePrint = () => {
                     <>
 
                         <div>
-                            {
+                            {/* {
                                 displayHeader && (
                                     <div className="page-header">
                                         <div className="page-block">
@@ -358,14 +358,15 @@ const ViewBluePrint = () => {
                                                                 </i>
                                                             </a>
                                                         </li>
-
+                                                        <li className="breadcrumb-item  ">Blue Print</li>
+                                                        <li className="breadcrumb-item  ">Active Blue Print</li>
                                                     </ul>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 )
-                            }
+                            } */}
                             <React.Fragment>
                                 <Card>
                                     <Card.Body>
