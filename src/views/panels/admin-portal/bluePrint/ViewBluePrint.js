@@ -350,15 +350,15 @@ const ViewBluePrint = () => {
                                                 <div className="col-md-12">
                                                     <div className="page-header-title">
                                                         <h5 className="m-b-10">Active Blue Print</h5>
-                                                    </div><ul className="breadcrumb  ">
+                                                    </div>
+                                                    <ul className="breadcrumb  ">
                                                         <li className="breadcrumb-item  ">
                                                             <a href="/upschool/admin-portal/admin-dashboard">
                                                                 <i className="feather icon-home">
                                                                 </i>
                                                             </a>
                                                         </li>
-                                                        <li className="breadcrumb-item  ">Blue Print</li>
-                                                        <li className="breadcrumb-item  ">Active Blue Print</li>
+
                                                     </ul>
                                                 </div>
                                             </div>
