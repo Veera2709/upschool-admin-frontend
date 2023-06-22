@@ -75,10 +75,9 @@ const UsersBulkUpload = ({ className, ...rest }) => {
 
           if (result) {
             console.log('inside res');
-
-            if (response.length === 0) {
+            if (response.data.Items.length === 0) {
               Swal.fire({
-                title: 'No Users Available',
+                title: 'No Schools Available',
                 text: 'There is no data to display.',
                 icon: 'warning',
                 confirmButtonText: 'OK'
