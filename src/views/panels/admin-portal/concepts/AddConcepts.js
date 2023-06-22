@@ -633,7 +633,10 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
                                                             options={workSheetQuestions}
                                                             className="basic-multi-select"
                                                             classNamePrefix="Select"
-                                                            onChange={event => handleWorkSheetQueChange(event)}
+                                                            onChange={(event) => {
+                                                                handleWorkSheetQueChange(event);
+                                                                setWorkSheetQueErr(false);
+                                                            }}
                                                         />
                                                         {workSheetQueErr && <small className="text-danger form-text">{'Please, select Worksheet Questions!'}</small>}
                                                     </div>
