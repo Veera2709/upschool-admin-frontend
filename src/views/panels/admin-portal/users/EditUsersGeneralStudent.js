@@ -638,6 +638,7 @@ const EditUsersGeneralStudent = ({ user_id, user_role }) => {
                                                                                     onBlur={handleBlur}
                                                                                     onChange={handleChange}
                                                                                     type="number"
+                                                                                    onWheel={(e) => e.target.blur()}
                                                                                     value={values.phoneNumber}
                                                                                     readOnly={true}
                                                                                 />
@@ -680,6 +681,7 @@ const EditUsersGeneralStudent = ({ user_id, user_role }) => {
                                                                                     onBlur={handleBlur}
                                                                                     onChange={handleChange}
                                                                                     type="number"
+                                                                                    onWheel={(e) => e.target.blur()}
                                                                                     value={values.phoneNumber}
 
                                                                                 />

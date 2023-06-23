@@ -870,6 +870,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                                                 onChange={handleChange}
                                                 onWheel={(e) => e.target.blur()}
                                                 type="number"
+
                                                 // ref={permCrimPhoneNoRef}
                                                 value={values.pincode2}
                                             />

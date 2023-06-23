@@ -517,6 +517,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                 onBlur={handleBlur}
                                                                 onChange={handleChange}
                                                                 type="number"
+                                                                onWheel={(e) => e.target.blur()}
                                                                 value={values.passPercentageL1Pre}
                                                             // placeholder="To clear the Quiz"
                                                             />
@@ -537,6 +538,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                 onBlur={handleBlur}
                                                                 onChange={handleChange}
                                                                 type="number"
+                                                                onWheel={(e) => e.target.blur()}
                                                                 value={values.passPercentageL2Pre}
                                                             // placeholder="To clear the Quiz"
                                                             />
@@ -571,6 +573,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                         onBlur={handleBlur}
                                                                         onChange={handleChange}
                                                                         type="number"
+                                                                        onWheel={(e) => e.target.blur()}
                                                                         value={values.minStudentsPre}
                                                                     // placeholder="To clear the Quiz"
                                                                     />
@@ -603,6 +606,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                         onBlur={handleBlur}
                                                                         onChange={handleChange}
                                                                         type="number"
+                                                                        onWheel={(e) => e.target.blur()}
                                                                         // placeholder="After unlocking from Need Attention"
                                                                         value={values.noOfAttemptsPre}
                                                                     />
@@ -632,6 +636,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                     onBlur={handleBlur}
                                                                     onChange={handleChange}
                                                                     type="number"
+                                                                    onWheel={(e) => e.target.blur()}
                                                                     value={values.noOfWorksheets}
                                                                 />
 
@@ -654,6 +659,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                     onBlur={handleBlur}
                                                                     onChange={handleChange}
                                                                     type="number"
+                                                                    onWheel={(e) => e.target.blur()}
                                                                     value={values.noOfTestPapers}
                                                                 />
 
@@ -675,6 +681,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                 onBlur={handleBlur}
                                                                 onChange={handleChange}
                                                                 type="number"
+                                                                onWheel={(e) => e.target.blur()}
                                                                 value={values.classPercentageRep}
                                                             // placeholder="To clear the Quiz"
                                                             />
@@ -841,6 +848,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                                             setFocusAreaErr(false)
                                                                                         }}
                                                                                         type="number"
+                                                                                        onWheel={(e) => e.target.blur()}
                                                                                         // placeholder="After unlocking from Need Attention"
                                                                                         value={values.percentageOfStudentsPre}
                                                                                     />
@@ -1043,6 +1051,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                             setAutomateErr(false)
                                                                         }}
                                                                         type="number"
+                                                                        onWheel={(e) => e.target.blur()}
                                                                         // placeholder="After unlocking from Need Attention"
                                                                         value={values.minNoQustionAutomate}
                                                                     />
@@ -1074,6 +1083,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                                 setExpManualErr(false)
                                                                             }}
                                                                             type="number"
+                                                                            onWheel={(e) => e.target.blur()}
                                                                             // placeholder="After unlocking from Need Attention"
                                                                             value={values.minNoQustionManual_express}
                                                                         />
@@ -1172,6 +1182,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                         setMatrixCountErr(false);
                                                                     }}
                                                                     type="number"
+                                                                    onWheel={(e) => e.target.blur()}
                                                                     value={values.martix_basic}
                                                                     placeholder="% Questions "
                                                                 />
@@ -1195,6 +1206,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                         setMatrixCountErr(false);
                                                                     }}
                                                                     type="number"
+                                                                    onWheel={(e) => e.target.blur()}
                                                                     value={values.martix_intermediate}
                                                                     placeholder="% Questions "
                                                                 />
@@ -1218,6 +1230,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                         setMatrixCountErr(false);
                                                                     }}
                                                                     type="number"
+                                                                    onWheel={(e) => e.target.blur()}
                                                                     value={values.martix_advanced}
                                                                     placeholder="% Questions "
                                                                 />
@@ -1319,6 +1332,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                                 validateValue(e);
                                                                             }}
                                                                             type="number"
+                                                                            onWheel={(e) => e.target.blur()}
                                                                             value={values.noOrderQuiz}
                                                                             id='title'
                                                                         />

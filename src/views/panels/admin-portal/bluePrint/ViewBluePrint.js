@@ -513,6 +513,7 @@ const ViewBluePrint = () => {
                                                                     type="number"
                                                                     value={individualBluePrintData.test_duration}
                                                                     id='title'
+                                                                    onWheel={(e) => e.target.blur()}
                                                                 />
                                                                 {touched.bluePrintDuration && errors.bluePrintDuration && <small className="text-danger form-text">{errors.bluePrintDuration}</small>}
                                                             </div>
@@ -766,6 +767,7 @@ const ViewBluePrint = () => {
                                                                                                                                 getMarks(e, index, ind)
                                                                                                                             }}
                                                                                                                             type="number"
+                                                                                                                            onWheel={(e) => e.target.blur()}
                                                                                                                             value={e.marks}
                                                                                                                             id='title'
                                                                                                                             disabled

@@ -299,12 +299,12 @@ function Table({ columns, data, modalOpen }) {
             <input
               className="form-control ml-2"
               type="number"
+
               defaultValue={pageIndex + 1}
               onChange={(e) => {
                 const page = e.target.value ? Number(e.target.value) - 1 : 0;
                 gotoPage(page);
               }}
-              onWheel={(e) => e.target.blur()}
               style={{ width: '100px' }}
             />
           </span>
@@ -559,7 +559,7 @@ const QuestionsTableView = ({ _questionStatus }) => {
     for (let index = 0; index < responseData.length; index++) {
 
       responseData[index].id = index + 1;
-      responseData[index].appears_in = responseData[index].appears_in === 'preOrPost' ? 'Pre/Post' : responseData[index].appears_in === 'worksheetOrTest' ? 'Worksheet/Test' : 'N.A.' ;
+      responseData[index].appears_in = responseData[index].appears_in === 'preOrPost' ? 'Pre/Post' : responseData[index].appears_in === 'worksheetOrTest' ? 'Worksheet/Test' : 'N.A.';
 
       responseData[index]['action'] = (
         <>

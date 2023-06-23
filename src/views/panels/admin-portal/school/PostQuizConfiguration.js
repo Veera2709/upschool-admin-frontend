@@ -538,6 +538,7 @@ const PostQuizConfiguration = ({ className, rest, id }) => {
                                                                 onBlur={handleBlur}
                                                                 onChange={handleChange}
                                                                 type="number"
+                                                                onWheel={(e) => e.target.blur()}
                                                                 value={values.passPercentageL1Pre}
                                                             // placeholder="To clear the Quiz"
                                                             />
@@ -558,6 +559,7 @@ const PostQuizConfiguration = ({ className, rest, id }) => {
                                                                 onBlur={handleBlur}
                                                                 onChange={handleChange}
                                                                 type="number"
+                                                                onWheel={(e) => e.target.blur()}
                                                                 value={values.passPercentageL2Pre}
                                                             // placeholder="To clear the Quiz"
                                                             />
@@ -582,6 +584,7 @@ const PostQuizConfiguration = ({ className, rest, id }) => {
                                                                 onBlur={handleBlur}
                                                                 onChange={handleChange}
                                                                 type="number"
+                                                                onWheel={(e) => e.target.blur()}
                                                                 value={values.passPercentageL3Post}
                                                             // placeholder="To clear the Quiz"
                                                             />
@@ -612,6 +615,7 @@ const PostQuizConfiguration = ({ className, rest, id }) => {
                                                                         onBlur={handleBlur}
                                                                         onChange={handleChange}
                                                                         type="number"
+                                                                        onWheel={(e) => e.target.blur()}
                                                                         value={values.minStudentsPre}
                                                                     // placeholder="To clear the Quiz"
                                                                     />
@@ -637,6 +641,7 @@ const PostQuizConfiguration = ({ className, rest, id }) => {
                                                                     onBlur={handleBlur}
                                                                     onChange={handleChange}
                                                                     type="number"
+                                                                    onWheel={(e) => e.target.blur()}
                                                                     value={values.noOfWorksheets}
                                                                 />
 
@@ -659,6 +664,7 @@ const PostQuizConfiguration = ({ className, rest, id }) => {
                                                                     onBlur={handleBlur}
                                                                     onChange={handleChange}
                                                                     type="number"
+                                                                    onWheel={(e) => e.target.blur()}
                                                                     value={values.noOfTestPapers}
                                                                 />
 
@@ -691,6 +697,7 @@ const PostQuizConfiguration = ({ className, rest, id }) => {
                                                                         onBlur={handleBlur}
                                                                         onChange={handleChange}
                                                                         type="number"
+                                                                        onWheel={(e) => e.target.blur()}
                                                                         // placeholder="After unlocking from Need Attention"
                                                                         value={values.noOfAttemptsPre}
                                                                     />
@@ -713,6 +720,7 @@ const PostQuizConfiguration = ({ className, rest, id }) => {
                                                                 onBlur={handleBlur}
                                                                 onChange={handleChange}
                                                                 type="number"
+                                                                onWheel={(e) => e.target.blur()}
                                                                 value={values.classPercentageRep}
                                                             // placeholder="To clear the Quiz"
                                                             />
@@ -906,6 +914,7 @@ const PostQuizConfiguration = ({ className, rest, id }) => {
                                                                                             setFocusAreaErr(false)
                                                                                         }}
                                                                                         type="number"
+                                                                                        onWheel={(e) => e.target.blur()}
                                                                                         // placeholder="After unlocking from Need Attention"
                                                                                         value={values.percentageOfStudentsPre}
                                                                                     />
@@ -1108,6 +1117,7 @@ const PostQuizConfiguration = ({ className, rest, id }) => {
                                                                             setAutomateErr(false)
                                                                         }}
                                                                         type="number"
+                                                                        onWheel={(e) => e.target.blur()}
                                                                         // placeholder="After unlocking from Need Attention"
                                                                         value={values.minNoQustionAutomate}
                                                                     />
@@ -1139,6 +1149,7 @@ const PostQuizConfiguration = ({ className, rest, id }) => {
                                                                                 setExpManualErr(false)
                                                                             }}
                                                                             type="number"
+                                                                            onWheel={(e) => e.target.blur()}
                                                                             // placeholder="After unlocking from Need Attention"
                                                                             value={values.minNoQustionManual_express}
                                                                         />
@@ -1268,6 +1279,7 @@ const PostQuizConfiguration = ({ className, rest, id }) => {
                                                                         setMatrixCountErr(false);
                                                                     }}
                                                                     type="number"
+                                                                    onWheel={(e) => e.target.blur()}
                                                                     value={values.martix_basic}
                                                                     placeholder="% Questions "
                                                                 />
@@ -1291,6 +1303,7 @@ const PostQuizConfiguration = ({ className, rest, id }) => {
                                                                         setMatrixCountErr(false);
                                                                     }}
                                                                     type="number"
+                                                                    onWheel={(e) => e.target.blur()}
                                                                     value={values.martix_intermediate}
                                                                     placeholder="% Questions "
                                                                 />
@@ -1314,6 +1327,7 @@ const PostQuizConfiguration = ({ className, rest, id }) => {
                                                                         setMatrixCountErr(false);
                                                                     }}
                                                                     type="number"
+                                                                    onWheel={(e) => e.target.blur()}
                                                                     value={values.martix_advanced}
                                                                     placeholder="% Questions "
                                                                 />
@@ -1415,6 +1429,7 @@ const PostQuizConfiguration = ({ className, rest, id }) => {
                                                                                 validateValue(e);
                                                                             }}
                                                                             type="number"
+                                                                            onWheel={(e) => e.target.blur()}
                                                                             value={values.noOrderQuiz}
                                                                             id='title'
                                                                         />
