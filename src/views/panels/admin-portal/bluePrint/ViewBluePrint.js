@@ -2,23 +2,25 @@ import React, { useState, useCallback } from 'react';
 // import './style.css'
 import { Row, Col, Card, Button, Modal, Dropdown, Form } from 'react-bootstrap';
 // import CkDecoupledEditor from '../../../components/CK-Editor/CkDecoupledEditor';
-import * as Constants from '../../../../helper/constants';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
-import dynamicUrl from '../../../../helper/dynamicUrls';
 import ReactTags from 'react-tag-autocomplete';
-import 'jodit';
-import 'jodit/build/jodit.min.css';
-import MESSAGES from '../../../../helper/messages';
-import Swal from 'sweetalert2';
-import useFullPageLoader from '../../../../helper/useFullPageLoader';
-import withReactContent from 'sweetalert2-react-content';
-import { areFilesInvalid, isEmptyObject } from '../../../../util/utils';
 import { useEffect } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import Select from 'react-draggable-multi-select';
+import 'jodit';
+import 'jodit/build/jodit.min.css';
+import Swal from 'sweetalert2';
+
+import dynamicUrl from '../../../../helper/dynamicUrls';
+import useFullPageLoader from '../../../../helper/useFullPageLoader';
+import MESSAGES from '../../../../helper/messages';
+import withReactContent from 'sweetalert2-react-content';
+import { areFilesInvalid, isEmptyObject } from '../../../../util/utils';
 import { getAllcognitiveSkills, allQuestionCategories } from '../../../api/CommonApi';
+import * as Constants from '../../../../helper/constants';
+import BasicSpinner from '../../../../helper/BasicSpinner';
 
 
 
@@ -28,6 +30,7 @@ const ViewBluePrint = () => {
     const { blueprint_id } = useParams();
     const [individualBluePrintData, setIndividualBluePrintData] = useState([]);//
     const [sectionData, setsectionData] = useState([]);//s
+    const [isLoading, setIsLoading] = useState(false)
 
 
     // const sectionsData = [
@@ -217,7 +220,7 @@ const ViewBluePrint = () => {
     }
 
     const getIndividualData = () => {
-
+        setIsLoading(true)
         axios
             .post(dynamicUrl.fetchIndividualBluePrint, {
                 "data": {
@@ -262,6 +265,7 @@ const ViewBluePrint = () => {
                     hideLoader();
                 }
             });
+        setIsLoading(false)
     }
 
     useEffect(() => {
@@ -277,599 +281,555 @@ const ViewBluePrint = () => {
                 setDisplayHeader(false);
             } else {
                 setDisplayHeader(true);
-                //             axios
-                //                 .post(dynamicUrl.fetchIndividualBluePrint, {
-                //                     "data": {
-                //                         blueprint_id: blueprint_id
-                //                     }
-
-                //                 },
-                //                     {
-                //                         headers: { Authorization: sessionStorage.getItem('user_jwt') }
-                //                     }
-                //                 )
-
-                //                 .then(response => response.json())
-                //                 .then(data => {
-                //                     setIndividualBluePrintData(data);
-                //                 })
-
-                //                 .catch((error) => {
-                //                     if (error.response) {
-                //                         // Request made and server responded
-                //                         console.log(error.response.data);
-
-                //                         console.log(error.response.data);
-                //                         if (error.response.status === 400) {
-                //                             console.log();
-                //                             hideLoader();
-                //                             // setIsClientExists(true);
-                //                             sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
-
-                //                         } else {
-                //                             console.log("error", error);
-                //                         }
-                //                     } else if (error.request) {
-                //                         // The request was made but no response was received
-                //                         console.log(error.request);
-                //                         setDisableButton(false);
-                //                         hideLoader();
-                //                     } else {
-                //                         // Something happened in setting up the request that triggered an Error
-                //                         console.log('Error', error.message);
-                //                         setDisableButton(false);
-                //                         hideLoader();
-                //                     }
-                //                 });
-                //         }
-
-                //         getAllRequiredData();
-                //     }
-                // }, [blueprint_id])
-                getIndividualData();
-
-
             }
-            // getAllRequiredData();
+            getIndividualData();
+
         }
     }, [blueprint_id])
 
     return (
 
-        <>  {console.log(sectionData)}
+        <>
             {
-                individualBluePrintData.length === 0 || individualBluePrintData.length === "0" ? <></> : (
-                    <>
-
-                        <div>
-                            {/* {
-                                displayHeader && (
-                                    <div className="page-header">
-                                        <div className="page-block">
-                                            <div className="row align-items-center">
-                                                <div className="col-md-12">
-                                                    <div className="page-header-title">
-                                                        <h5 className="m-b-10">Active Blue Print</h5>
-                                                    </div>
-                                                    <ul className="breadcrumb  ">
-                                                        <li className="breadcrumb-item  ">
-                                                            <a href="/upschool/admin-portal/admin-dashboard">
-                                                                <i className="feather icon-home">
-                                                                </i>
-                                                            </a>
-                                                        </li>
-                                                        <li className="breadcrumb-item  ">Blue Print</li>
-                                                        <li className="breadcrumb-item  ">Active Blue Print</li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
+                displayHeader && (
+                    <div className="page-header">
+                        <div className="page-block">
+                            <div className="row align-items-center">
+                                <div className="col-md-12">
+                                    <div className="page-header-title">
+                                        <h5 className="m-b-10">Active Blue Print</h5>
                                     </div>
-                                )
-                            } */}
-                            <React.Fragment>
-                                <Card>
-                                    <Card.Body>
-                                        <Card.Title> Blue Print</Card.Title>
-                                        <Formik
-                                            initialValues={{
-                                                bluePrintName: '',
-                                                bluePrintDuration: '',
-                                                bluePrintDec: '',
-                                                displayName: ''
-                                            }}
-                                            validationSchema={Yup.object().shape({
-                                                bluePrintName: Yup.string()
-                                                    .trim()
-                                                    .min(2, "Blue Print Name To short!")
-                                                    .max(32, "Blue Print Name To Long!")
-                                                    .required("Blue Print Name is required!"),
-                                                bluePrintDuration: Yup.number()
-                                                    .min(1, "Duration is Less Then 1min!")
-                                                    .max(100, "Duration is More Then 100min!"),
-                                                // .required("Time Duration is required!"),
-                                                displayName: Yup.string()
-                                                    .trim()
-                                                    .min(2, "Display Name To short!")
-                                                    .max(32, "Display Name To Long!")
-                                                    .required("Display Name is required!"),
-                                            })}
+                                    <ul className="breadcrumb  ">
+                                        <li className="breadcrumb-item  ">
+                                            <a href="/upschool/admin-portal/admin-dashboard">
+                                                <i className="feather icon-home">
+                                                </i>
+                                            </a>
+                                        </li>
+                                        <li className="breadcrumb-item  ">Blue Print</li>
+                                        <li className="breadcrumb-item  ">Active Blue Print</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )
+            }
+            {
+
+                <>
+                    {
+                        isLoading === true ? (
+                            <BasicSpinner />
+                        ) : (
+                            <div>
+
+                                <React.Fragment>
+                                    <Card>
+                                        <Card.Body>
+                                            <Card.Title> Blue Print</Card.Title>
+                                            <Formik
+                                                initialValues={{
+                                                    bluePrintName: individualBluePrintData.blueprint_name,
+                                                    bluePrintDuration: individualBluePrintData.test_duration,
+                                                    bluePrintDec: individualBluePrintData.display_name,
+                                                    displayName: individualBluePrintData.description
+                                                }}
+                                                validationSchema={Yup.object().shape({
+                                                    bluePrintName: Yup.string()
+                                                        .trim()
+                                                        .min(2, "Blue Print Name To short!")
+                                                        .max(32, "Blue Print Name To Long!")
+                                                        .required("Blue Print Name is required!"),
+                                                    bluePrintDuration: Yup.number()
+                                                        .min(1, "Duration is Less Then 1min!")
+                                                        .max(100, "Duration is More Then 100min!"),
+                                                    // .required("Time Duration is required!"),
+                                                    displayName: Yup.string()
+                                                        .trim()
+                                                        .min(2, "Display Name To short!")
+                                                        .max(32, "Display Name To Long!")
+                                                        .required("Display Name is required!"),
+                                                })}
 
 
 
-                                            onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-                                                setErrors({ submit: 'Err' })
-                                                console.log("bluePrintDatabluePrintData", bluePrintData);
-                                                var finalData = JSON.parse(JSON.stringify(bluePrintData));
+                                                onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
+                                                    setErrors({ submit: 'Err' })
+                                                    console.log("bluePrintDatabluePrintData", bluePrintData);
+                                                    var finalData = JSON.parse(JSON.stringify(bluePrintData));
 
-                                                let filterSectionData = []
-                                                let filterQuestionData = []
-                                                bluePrintData.map((item) => {
-                                                    if (item.isError === 'yes') {
-                                                        filterSectionData.push(item)
-                                                    }
-                                                })
-
-                                                bluePrintData.map((item) => {
-                                                    item.questions.map((e) => {
-                                                        console.log("item.questions", e);
-                                                        if (e.isError === 'yes') {
-                                                            filterQuestionData.push(e)
-                                                        }
-                                                        // else if (e.question_name === '' || e.question_name === undefined || e.question_name.length > 4) {
-                                                        //     filterQuestionData.push(e)
-
-                                                        // } 
-                                                        else if (e.marks === '' || e.marks === undefined || e.marks <= 0) {
-                                                            filterQuestionData.push(e)
+                                                    let filterSectionData = []
+                                                    let filterQuestionData = []
+                                                    bluePrintData.map((item) => {
+                                                        if (item.isError === 'yes') {
+                                                            filterSectionData.push(item)
                                                         }
                                                     })
-                                                })
 
-                                                console.log("filterQuestionData", filterQuestionData);
+                                                    bluePrintData.map((item) => {
+                                                        item.questions.map((e) => {
+                                                            console.log("item.questions", e);
+                                                            if (e.isError === 'yes') {
+                                                                filterQuestionData.push(e)
+                                                            }
+                                                            // else if (e.question_name === '' || e.question_name === undefined || e.question_name.length > 4) {
+                                                            //     filterQuestionData.push(e)
 
-                                                if (values.bluePrintDec.trim().length <= 0 || values.bluePrintDec === '' || values.bluePrintDec === undefined) {
-                                                    setErrors({ bluePrintDec: "Description is required!" });
-                                                } else if (filterSectionData.length > 0) {
-
-                                                } else if (filterQuestionData.length > 0) {
-
-                                                } else {
-                                                    await finalData.forEach((item, index) => {
-                                                        delete finalData[index].isError;
-                                                        finalData[index].questions.forEach((e, i) => {
-                                                            delete finalData[index].questions[i].isError
+                                                            // } 
+                                                            else if (e.marks === '' || e.marks === undefined || e.marks <= 0) {
+                                                                filterQuestionData.push(e)
+                                                            }
                                                         })
                                                     })
 
-                                                    console.log("finalData", finalData);
+                                                    console.log("filterQuestionData", filterQuestionData);
 
-                                                    let formData = {
-                                                        blueprint_name: values.bluePrintName,
-                                                        test_duration: values.bluePrintDuration,
-                                                        description: values.bluePrintDec,
-                                                        display_name: values.displayName,
-                                                        sections: finalData
+                                                    if (values.bluePrintDec.trim().length <= 0 || values.bluePrintDec === '' || values.bluePrintDec === undefined) {
+                                                        setErrors({ bluePrintDec: "Description is required!" });
+                                                    } else if (filterSectionData.length > 0) {
+
+                                                    } else if (filterQuestionData.length > 0) {
+
+                                                    } else {
+                                                        await finalData.forEach((item, index) => {
+                                                            delete finalData[index].isError;
+                                                            finalData[index].questions.forEach((e, i) => {
+                                                                delete finalData[index].questions[i].isError
+                                                            })
+                                                        })
+
+                                                        console.log("finalData", finalData);
+
+                                                        let formData = {
+                                                            blueprint_name: values.bluePrintName,
+                                                            test_duration: values.bluePrintDuration,
+                                                            description: values.bluePrintDec,
+                                                            display_name: values.displayName,
+                                                            sections: finalData
+                                                        }
+
+                                                        console.log({ formData })
+
                                                     }
-
-                                                    console.log({ formData })
 
                                                 }
+                                                }
+                                            >
+                                                {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
 
-                                            }
-                                            }
-                                        >
-                                            {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
+                                                    < form noValidate onSubmit={handleSubmit}>
+                                                        <Row>
+                                                            <Col>
 
-                                                < form noValidate onSubmit={handleSubmit}>
-                                                    <Row>
-                                                        <Col>
+                                                                <div className="form-group fill">
+                                                                    <label className="floating-label" htmlFor="bluePrintName">
+                                                                        <small className="text-danger">* </small>BluePrint Name
+                                                                    </label>
+                                                                    <input
+                                                                        className="form-control"
+                                                                        error={touched.bluePrintName && errors.bluePrintName}
+                                                                        name="bluePrintName"
+                                                                        onBlur={handleBlur}
+                                                                        onChange={handleChange}
+                                                                        type="text"
+                                                                        value={individualBluePrintData.blueprint_name}
+                                                                        // individualBluePrintData[0].blueprint_name
+                                                                        id='title'
+                                                                    />
+                                                                    {touched.bluePrintName && errors.bluePrintName && <small className="text-danger form-text">{errors.bluePrintName}</small>}
+                                                                </div>
+                                                                <div className="form-group fill">
+                                                                    <label className="floating-label" htmlFor="displayName">
+                                                                        <small className="text-danger">* </small>Display Name
+                                                                    </label>
+                                                                    <input
+                                                                        className="form-control"
+                                                                        error={touched.displayName && errors.displayName}
+                                                                        name="displayName"
+                                                                        onBlur={handleBlur}
+                                                                        onChange={handleChange}
+                                                                        type="text"
+                                                                        value={individualBluePrintData.display_name}
+                                                                        id='title'
+                                                                    />
+                                                                    {touched.displayName && errors.displayName && <small className="text-danger form-text">{errors.displayName}</small>}
+                                                                </div>
+                                                            </Col>
+                                                            <Col>
+                                                                <div className="form-group fill">
+                                                                    <label className="floating-label" htmlFor="bluePrintDuration">
+                                                                        <small className="text-danger">* </small>Test Duration <label style={{ color: 'red' }}>&nbsp;(min)</label>
+                                                                    </label>
+                                                                    <input
+                                                                        className="form-control"
+                                                                        error={touched.bluePrintDuration && errors.bluePrintDuration}
+                                                                        name="bluePrintDuration"
+                                                                        onBlur={handleBlur}
+                                                                        onChange={handleChange}
+                                                                        type="number"
+                                                                        value={individualBluePrintData.test_duration}
+                                                                        id='title'
+                                                                    />
+                                                                    {touched.bluePrintDuration && errors.bluePrintDuration && <small className="text-danger form-text">{errors.bluePrintDuration}</small>}
+                                                                </div>
+                                                            </Col>
+                                                        </Row>
+                                                        <Row>
+                                                            <Col>
+                                                                <div className="form-group fill">
+                                                                    <label><small className='text-danger'>*</small> BluePrint Description</label>
+                                                                    <Form.Control as="textarea" name='bluePrintDec' onBlur={handleBlur} value={individualBluePrintData.description}
+                                                                        onChange={handleChange} rows="4" />
+                                                                    {touched.bluePrintDec && errors.bluePrintDec && <small className="text-danger form-text">{errors.bluePrintDec}</small>}
+                                                                </div>
+                                                            </Col>
+                                                        </Row>
+                                                        <br />
+                                                        {console.log(bluePrintData)}
 
-                                                            <div className="form-group fill">
-                                                                <label className="floating-label" htmlFor="bluePrintName">
-                                                                    <small className="text-danger">* </small>BluePrint Name
-                                                                </label>
-                                                                <input
-                                                                    className="form-control"
-                                                                    error={touched.bluePrintName && errors.bluePrintName}
-                                                                    name="bluePrintName"
-                                                                    onBlur={handleBlur}
-                                                                    onChange={handleChange}
-                                                                    type="text"
-                                                                    value={individualBluePrintData.blueprint_name}
-                                                                    // individualBluePrintData[0].blueprint_name
-                                                                    id='title'
-                                                                />
-                                                                {touched.bluePrintName && errors.bluePrintName && <small className="text-danger form-text">{errors.bluePrintName}</small>}
-                                                            </div>
-                                                            <div className="form-group fill">
-                                                                <label className="floating-label" htmlFor="displayName">
-                                                                    <small className="text-danger">* </small>Display Name
-                                                                </label>
-                                                                <input
-                                                                    className="form-control"
-                                                                    error={touched.displayName && errors.displayName}
-                                                                    name="displayName"
-                                                                    onBlur={handleBlur}
-                                                                    onChange={handleChange}
-                                                                    type="text"
-                                                                    value={individualBluePrintData.display_name}
-                                                                    id='title'
-                                                                />
-                                                                {touched.displayName && errors.displayName && <small className="text-danger form-text">{errors.displayName}</small>}
-                                                            </div>
-                                                        </Col>
-                                                        <Col>
-                                                            <div className="form-group fill">
-                                                                <label className="floating-label" htmlFor="bluePrintDuration">
-                                                                    <small className="text-danger">* </small>Test Duration <label style={{ color: 'red' }}>&nbsp;(min)</label>
-                                                                </label>
-                                                                <input
-                                                                    className="form-control"
-                                                                    error={touched.bluePrintDuration && errors.bluePrintDuration}
-                                                                    name="bluePrintDuration"
-                                                                    onBlur={handleBlur}
-                                                                    onChange={handleChange}
-                                                                    type="number"
-                                                                    value={individualBluePrintData.test_duration}
-                                                                    id='title'
-                                                                    onWheel={(e) => e.target.blur()}
-                                                                />
-                                                                {touched.bluePrintDuration && errors.bluePrintDuration && <small className="text-danger form-text">{errors.bluePrintDuration}</small>}
-                                                            </div>
-                                                        </Col>
-                                                    </Row>
-                                                    <Row>
-                                                        <Col>
-                                                            <div className="form-group fill">
-                                                                <label><small className='text-danger'>*</small> BluePrint Description</label>
-                                                                <Form.Control as="textarea" name='bluePrintDec' onBlur={handleBlur} value={individualBluePrintData.description}
-                                                                    onChange={handleChange} rows="4" />
-                                                                {touched.bluePrintDec && errors.bluePrintDec && <small className="text-danger form-text">{errors.bluePrintDec}</small>}
-                                                            </div>
-                                                        </Col>
-                                                    </Row>
-                                                    <br />
-                                                    {console.log(bluePrintData)}
-
-                                                    {
-                                                        bluePrintData && bluePrintData.map((item, index) => {
-                                                            return (
-                                                                <>
-                                                                    <Card >
-                                                                        <Card.Body style={{ background: '#e0eeff' }}>
-                                                                            {bluePrintData.length > 1 ? (
-                                                                                <div className='d-flex justify-content-end'>
-                                                                                    {/* <Button variant='danger' onClick={(e) => { removeSection(index) }}><i className='feather icon-trash' /></Button> */}
-                                                                                </div>
-                                                                            ) : (null)}
-                                                                            <Row>
-                                                                                <Col>
-                                                                                    <div className="form-group fill">
-                                                                                        <label className="floating-label" htmlFor="sectionName">
-                                                                                            <small className="text-danger">* </small>Section Name
-                                                                                        </label>
-                                                                                        <input
-                                                                                            className="form-control"
-                                                                                            name="sectionName"
-                                                                                            onBlur={handleBlur}
-                                                                                            onChange={(e) => {
-                                                                                                getSectionName(e, index);
-                                                                                            }}
-                                                                                            type="text"
-                                                                                            value={item.section_name}
-                                                                                            id='title'
-                                                                                            disabled
-                                                                                        />
-                                                                                        {item.section_name.trim().length <= 0 && (errors.submit) ? (
-                                                                                            <>
-                                                                                                <p style={{ display: "none" }}>{item.isError = 'yes'}</p>
-                                                                                                <small style={{ color: 'red' }}>Field Required!</small>
-                                                                                            </>
-                                                                                        ) : (
-                                                                                            <p style={{ display: "none" }}>{item.isError = 'no'}</p>
-                                                                                        )}
+                                                        {
+                                                            bluePrintData && bluePrintData.map((item, index) => {
+                                                                return (
+                                                                    <>
+                                                                        <Card >
+                                                                            <Card.Body style={{ background: '#e0eeff' }}>
+                                                                                {bluePrintData.length > 1 ? (
+                                                                                    <div className='d-flex justify-content-end'>
+                                                                                        {/* <Button variant='danger' onClick={(e) => { removeSection(index) }}><i className='feather icon-trash' /></Button> */}
                                                                                     </div>
-
-                                                                                    <div className="form-group fill">
-                                                                                        <label className="floating-label" htmlFor="sectionName">
-                                                                                            <small className="text-danger">* </small>Section description
-                                                                                        </label>
-                                                                                        <textarea
-                                                                                            className="form-control"
-                                                                                            name="sectionName"
-                                                                                            onBlur={handleBlur}
-                                                                                            onChange={(e) => {
-                                                                                                getSectionDescription(e, index);
-                                                                                            }}
-                                                                                            type="text"
-                                                                                            value={item.section_description}
-                                                                                            id='title'
-                                                                                            disabled
-                                                                                        />
-                                                                                        {item.section_description.trim().length <= 0 && (errors.submit) ? (
-                                                                                            <>
-                                                                                                <p style={{ display: "none" }}>{item.isError = 'yes'}</p>
-                                                                                                <small style={{ color: 'red' }}>Field Required!</small>
-                                                                                            </>
-                                                                                        ) : (
-                                                                                            <p style={{ display: "none" }}>{item.isError = 'no'}</p>
-                                                                                        )}
-                                                                                    </div>
-                                                                                    {console.log(bluePrintData)}
-                                                                                    <div>
-                                                                                        {item.questions.map((e, ind) => {
-                                                                                            return (
+                                                                                ) : (null)}
+                                                                                <Row>
+                                                                                    <Col>
+                                                                                        <div className="form-group fill">
+                                                                                            <label className="floating-label" htmlFor="sectionName">
+                                                                                                <small className="text-danger">* </small>Section Name
+                                                                                            </label>
+                                                                                            <input
+                                                                                                className="form-control"
+                                                                                                name="sectionName"
+                                                                                                onBlur={handleBlur}
+                                                                                                onChange={(e) => {
+                                                                                                    getSectionName(e, index);
+                                                                                                }}
+                                                                                                type="text"
+                                                                                                value={item.section_name}
+                                                                                                id='title'
+                                                                                                disabled
+                                                                                            />
+                                                                                            {item.section_name.trim().length <= 0 && (errors.submit) ? (
                                                                                                 <>
-                                                                                                    <Card>
-                                                                                                        <Card.Body style={{ background: '#aaaaaa' }}>
-                                                                                                            {item.questions.length > 1 ? (
-                                                                                                                <div className='d-flex justify-content-end'>
-                                                                                                                    {/* <Button variant='danger' onClick={(e) => { removeQuestion(index, ind) }}> */}
-                                                                                                                    {/* <i className='feather icon-trash' /> */}
-                                                                                                                    {/* </Button> */}
-                                                                                                                </div>
-                                                                                                            ) : (null)}
-                                                                                                            <Row>
-                                                                                                                <Col>
-                                                                                                                    <div className="form-group fill">
-                                                                                                                        <label className="floating-label" >
-                                                                                                                            <small className="text-danger">* </small>
-                                                                                                                            Question Type
-                                                                                                                        </label>
-                                                                                                                        <select
-                                                                                                                            className="form-control"
-                                                                                                                            error={touched.upschool_class_id && errors.upschool_class_id}
-                                                                                                                            name="upschool_class_id"
-                                                                                                                            onBlur={handleBlur}
-                                                                                                                            type="text"
-                                                                                                                            value={e.question_type}
-                                                                                                                            key={index}
-                                                                                                                            onChange={event => getQuestinType(event, index, ind)}
-                                                                                                                            disabled
-                                                                                                                        >
-
-                                                                                                                            <option>
-                                                                                                                                Select Question Type
-                                                                                                                            </option>
-
-                                                                                                                            {console.log(questionTypeOption)}
-                                                                                                                            {questionTypeOption && questionTypeOption.map((skillsData) => {
-                                                                                                                                return <option
-                                                                                                                                    value={skillsData}
-                                                                                                                                    key={skillsData}
-                                                                                                                                >
-                                                                                                                                    {skillsData}
-                                                                                                                                </option>
-                                                                                                                            })}
-
-                                                                                                                        </select>
-                                                                                                                        {(e.question_type === '' || e.question_type === undefined || e.question_type === 'Select Question Type') && (errors.submit) ? (
-                                                                                                                            <>
-                                                                                                                                <p style={{ display: "none" }}>{e.isError = 'yes'}</p>
-                                                                                                                                <small style={{ color: "red" }}>Field Required!</small>
-                                                                                                                            </>
-
-                                                                                                                        ) : (
-                                                                                                                            <>
-                                                                                                                                <p style={{ display: "none" }}>{e.isError = 'no'}</p>
-
-                                                                                                                            </>
-                                                                                                                        )}
-                                                                                                                    </div>
-
-                                                                                                                    <div className="form-group fill">
-                                                                                                                        <label className="floating-label" >
-                                                                                                                            <small className="text-danger">* </small>
-                                                                                                                            Question Category
-                                                                                                                        </label>
-
-                                                                                                                        <select
-                                                                                                                            className="form-control"
-                                                                                                                            error={touched.upschool_class_id && errors.upschool_class_id}
-                                                                                                                            name="upschool_class_id"
-                                                                                                                            onBlur={handleBlur}
-                                                                                                                            type="text"
-                                                                                                                            value={e.category_id}
-                                                                                                                            key={index}
-                                                                                                                            onChange={event => getCategoryId(event, index, ind)}
-                                                                                                                            disabled
-                                                                                                                        >
-
-                                                                                                                            <option>
-                                                                                                                                Select Category
-                                                                                                                            </option>
-
-                                                                                                                            {console.log(categoryOpptions)}
-                                                                                                                            {categoryOpptions && categoryOpptions.map((skillsData) => {
-                                                                                                                                return <option
-                                                                                                                                    value={skillsData.value}
-                                                                                                                                    key={skillsData.value}
-                                                                                                                                >
-                                                                                                                                    {skillsData.label}
-                                                                                                                                </option>
-                                                                                                                            })}
-
-                                                                                                                        </select>
-                                                                                                                        {(e.category_id === '' || e.category_id === undefined || e.category_id === "Select Category") && (errors.submit) ? (
-                                                                                                                            <>
-                                                                                                                                <p style={{ display: "none" }}>{e.isError = 'yes'}</p>
-                                                                                                                                <small style={{ color: "red" }}>Field Required!</small>
-                                                                                                                            </>
-
-                                                                                                                        ) : (
-                                                                                                                            <>
-                                                                                                                                <p style={{ display: "none" }}>{e.isError = 'no'}</p>
-
-                                                                                                                            </>
-                                                                                                                        )}
-                                                                                                                    </div>
-
-                                                                                                                    <div className="form-group fill">
-                                                                                                                        <label className="floating-label" >
-                                                                                                                            <small className="text-danger">* </small>
-                                                                                                                            Difficulty level
-                                                                                                                        </label>
-                                                                                                                        <select
-                                                                                                                            className="form-control"
-                                                                                                                            error={touched.upschool_class_id && errors.upschool_class_id}
-                                                                                                                            name="upschool_class_id"
-                                                                                                                            onBlur={handleBlur}
-                                                                                                                            type="text"
-                                                                                                                            value={e.difficulty_level}
-                                                                                                                            key={index}
-                                                                                                                            onChange={event => getQuestionDifficult(event, index, ind)}
-                                                                                                                            disabled
-                                                                                                                        >
-
-                                                                                                                            <option>
-                                                                                                                                Select Question Difficulty
-                                                                                                                            </option>
-
-                                                                                                                            {console.log(questionDifficulty)}
-                                                                                                                            {questionDifficulty && questionDifficulty.map((skillsData) => {
-                                                                                                                                return <option
-                                                                                                                                    value={skillsData.value}
-                                                                                                                                    key={skillsData.value}
-                                                                                                                                >
-                                                                                                                                    {skillsData.label}
-                                                                                                                                </option>
-                                                                                                                            })}
-
-                                                                                                                        </select>
-                                                                                                                        {(e.difficulty_level === '' || e.difficulty_level === undefined || e.difficulty_level === "Select Question Difficulty") && (errors.submit) ? (
-                                                                                                                            <>
-                                                                                                                                <p style={{ display: "none" }}>{e.isError = 'yes'}</p>
-                                                                                                                                <small style={{ color: "red" }}>Field Required!</small>
-                                                                                                                            </>
-                                                                                                                        ) : (
-                                                                                                                            <>
-                                                                                                                                <p style={{ display: "none" }}>{e.isError = 'no'}</p>
-                                                                                                                            </>
-                                                                                                                        )}
-                                                                                                                    </div>
-
-
-
-
-                                                                                                                </Col>
-                                                                                                                <Col>
-                                                                                                                    <div className="form-group fill">
-                                                                                                                        <label className="floating-label" htmlFor="questionMarks">
-                                                                                                                            <small className="text-danger">* </small>Marks
-                                                                                                                        </label>
-                                                                                                                        <input
-                                                                                                                            className="form-control"
-                                                                                                                            error={touched.questionMarks && errors.questionMarks}
-                                                                                                                            name="questionMarks"
-                                                                                                                            onBlur={handleBlur}
-                                                                                                                            onChange={(e) => {
-                                                                                                                                getMarks(e, index, ind)
-                                                                                                                            }}
-                                                                                                                            type="number"
-                                                                                                                            onWheel={(e) => e.target.blur()}
-                                                                                                                            value={e.marks}
-                                                                                                                            id='title'
-                                                                                                                            disabled
-                                                                                                                        />
-                                                                                                                        {(e.marks.trim().length <= 0 || e.marks <= 0) && (errors.submit) ? (
-                                                                                                                            <>
-                                                                                                                                <p style={{ display: "none" }}>{e.isError = 'yes'}</p>
-                                                                                                                                <small style={{ color: "red" }}>Field Required!</small>
-                                                                                                                            </>
-
-                                                                                                                        ) : (
-                                                                                                                            <>
-                                                                                                                                <p style={{ display: "none" }}>{e.isError = 'no'}</p>
-
-                                                                                                                            </>
-
-                                                                                                                        )}
-                                                                                                                    </div>
-                                                                                                                    <div className="form-group fill">
-                                                                                                                        <label className="floating-label" >
-                                                                                                                            <small className="text-danger">* </small>
-                                                                                                                            Cognitive Skill
-                                                                                                                        </label>
-                                                                                                                        <select
-                                                                                                                            className="form-control"
-                                                                                                                            error={touched.upschool_class_id && errors.upschool_class_id}
-                                                                                                                            name="upschool_class_id"
-                                                                                                                            onBlur={handleBlur}
-                                                                                                                            type="text"
-                                                                                                                            value={e.cognitive_id}
-                                                                                                                            key={index}
-                                                                                                                            onChange={event => getCognitiveId(event, index, ind)}
-                                                                                                                            disabled
-                                                                                                                        >
-
-                                                                                                                            <option>
-                                                                                                                                Select Skill
-                                                                                                                            </option>
-
-                                                                                                                            {console.log(cognitiveSkillOpptions)}
-                                                                                                                            {cognitiveSkillOpptions && cognitiveSkillOpptions.map((skillsData) => {
-                                                                                                                                return <option
-                                                                                                                                    value={skillsData.value}
-                                                                                                                                    key={skillsData.value}
-                                                                                                                                >
-                                                                                                                                    {skillsData.label}
-                                                                                                                                </option>
-                                                                                                                            })}
-
-                                                                                                                        </select>
-                                                                                                                        {(e.cognitive_id === '' || e.cognitive_id === undefined || e.cognitive_id === "Select Skill") && (errors.submit) ? (
-                                                                                                                            <>
-                                                                                                                                <p style={{ display: "none" }}>{e.isError = 'yes'}</p>
-                                                                                                                                <small style={{ color: "red" }}>Field Required!</small>
-
-                                                                                                                            </>
-                                                                                                                        ) : (
-                                                                                                                            <>
-                                                                                                                                <p style={{ display: "none" }}>{e.isError = 'no'}</p>
-
-                                                                                                                            </>
-
-                                                                                                                        )}
-                                                                                                                    </div>
-
-                                                                                                                </Col>
-                                                                                                            </Row>
-                                                                                                        </Card.Body>
-                                                                                                    </Card>
+                                                                                                    <p style={{ display: "none" }}>{item.isError = 'yes'}</p>
+                                                                                                    <small style={{ color: 'red' }}>Field Required!</small>
                                                                                                 </>
-                                                                                            )
-                                                                                        })}
-                                                                                    </div>
-                                                                                </Col>
-                                                                            </Row>
-                                                                            {/* <Button style={{ backgroundColor: '#4e5256' }} onClick={(e) => { addQuestion(index) }}>
+                                                                                            ) : (
+                                                                                                <p style={{ display: "none" }}>{item.isError = 'no'}</p>
+                                                                                            )}
+                                                                                        </div>
+
+                                                                                        <div className="form-group fill">
+                                                                                            <label className="floating-label" htmlFor="sectionName">
+                                                                                                <small className="text-danger">* </small>Section description
+                                                                                            </label>
+                                                                                            <textarea
+                                                                                                className="form-control"
+                                                                                                name="sectionName"
+                                                                                                onBlur={handleBlur}
+                                                                                                onChange={(e) => {
+                                                                                                    getSectionDescription(e, index);
+                                                                                                }}
+                                                                                                type="text"
+                                                                                                value={item.section_description}
+                                                                                                id='title'
+                                                                                                disabled
+                                                                                            />
+                                                                                            {item.section_description.trim().length <= 0 && (errors.submit) ? (
+                                                                                                <>
+                                                                                                    <p style={{ display: "none" }}>{item.isError = 'yes'}</p>
+                                                                                                    <small style={{ color: 'red' }}>Field Required!</small>
+                                                                                                </>
+                                                                                            ) : (
+                                                                                                <p style={{ display: "none" }}>{item.isError = 'no'}</p>
+                                                                                            )}
+                                                                                        </div>
+                                                                                        {console.log(bluePrintData)}
+                                                                                        <div>
+                                                                                            {item.questions.map((e, ind) => {
+                                                                                                return (
+                                                                                                    <>
+                                                                                                        <Card>
+                                                                                                            <Card.Body style={{ background: '#aaaaaa' }}>
+                                                                                                                {item.questions.length > 1 ? (
+                                                                                                                    <div className='d-flex justify-content-end'>
+                                                                                                                        {/* <Button variant='danger' onClick={(e) => { removeQuestion(index, ind) }}> */}
+                                                                                                                        {/* <i className='feather icon-trash' /> */}
+                                                                                                                        {/* </Button> */}
+                                                                                                                    </div>
+                                                                                                                ) : (null)}
+                                                                                                                <Row>
+                                                                                                                    <Col>
+                                                                                                                        <div className="form-group fill">
+                                                                                                                            <label className="floating-label" >
+                                                                                                                                <small className="text-danger">* </small>
+                                                                                                                                Question Type
+                                                                                                                            </label>
+                                                                                                                            <select
+                                                                                                                                className="form-control"
+                                                                                                                                error={touched.upschool_class_id && errors.upschool_class_id}
+                                                                                                                                name="upschool_class_id"
+                                                                                                                                onBlur={handleBlur}
+                                                                                                                                type="text"
+                                                                                                                                value={e.question_type}
+                                                                                                                                key={index}
+                                                                                                                                onChange={event => getQuestinType(event, index, ind)}
+                                                                                                                                disabled
+                                                                                                                            >
+
+                                                                                                                                <option>
+                                                                                                                                    Select Question Type
+                                                                                                                                </option>
+
+                                                                                                                                {console.log(questionTypeOption)}
+                                                                                                                                {questionTypeOption && questionTypeOption.map((skillsData) => {
+                                                                                                                                    return <option
+                                                                                                                                        value={skillsData}
+                                                                                                                                        key={skillsData}
+                                                                                                                                    >
+                                                                                                                                        {skillsData}
+                                                                                                                                    </option>
+                                                                                                                                })}
+
+                                                                                                                            </select>
+                                                                                                                            {(e.question_type === '' || e.question_type === undefined || e.question_type === 'Select Question Type') && (errors.submit) ? (
+                                                                                                                                <>
+                                                                                                                                    <p style={{ display: "none" }}>{e.isError = 'yes'}</p>
+                                                                                                                                    <small style={{ color: "red" }}>Field Required!</small>
+                                                                                                                                </>
+
+                                                                                                                            ) : (
+                                                                                                                                <>
+                                                                                                                                    <p style={{ display: "none" }}>{e.isError = 'no'}</p>
+
+                                                                                                                                </>
+                                                                                                                            )}
+                                                                                                                        </div>
+
+                                                                                                                        <div className="form-group fill">
+                                                                                                                            <label className="floating-label" >
+                                                                                                                                <small className="text-danger">* </small>
+                                                                                                                                Question Category
+                                                                                                                            </label>
+
+                                                                                                                            <select
+                                                                                                                                className="form-control"
+                                                                                                                                error={touched.upschool_class_id && errors.upschool_class_id}
+                                                                                                                                name="upschool_class_id"
+                                                                                                                                onBlur={handleBlur}
+                                                                                                                                type="text"
+                                                                                                                                value={e.category_id}
+                                                                                                                                key={index}
+                                                                                                                                onChange={event => getCategoryId(event, index, ind)}
+                                                                                                                                disabled
+                                                                                                                            >
+
+                                                                                                                                <option>
+                                                                                                                                    Select Category
+                                                                                                                                </option>
+
+                                                                                                                                {console.log(categoryOpptions)}
+                                                                                                                                {categoryOpptions && categoryOpptions.map((skillsData) => {
+                                                                                                                                    return <option
+                                                                                                                                        value={skillsData.value}
+                                                                                                                                        key={skillsData.value}
+                                                                                                                                    >
+                                                                                                                                        {skillsData.label}
+                                                                                                                                    </option>
+                                                                                                                                })}
+
+                                                                                                                            </select>
+                                                                                                                            {(e.category_id === '' || e.category_id === undefined || e.category_id === "Select Category") && (errors.submit) ? (
+                                                                                                                                <>
+                                                                                                                                    <p style={{ display: "none" }}>{e.isError = 'yes'}</p>
+                                                                                                                                    <small style={{ color: "red" }}>Field Required!</small>
+                                                                                                                                </>
+
+                                                                                                                            ) : (
+                                                                                                                                <>
+                                                                                                                                    <p style={{ display: "none" }}>{e.isError = 'no'}</p>
+
+                                                                                                                                </>
+                                                                                                                            )}
+                                                                                                                        </div>
+
+                                                                                                                        <div className="form-group fill">
+                                                                                                                            <label className="floating-label" >
+                                                                                                                                <small className="text-danger">* </small>
+                                                                                                                                Difficulty level
+                                                                                                                            </label>
+                                                                                                                            <select
+                                                                                                                                className="form-control"
+                                                                                                                                error={touched.upschool_class_id && errors.upschool_class_id}
+                                                                                                                                name="upschool_class_id"
+                                                                                                                                onBlur={handleBlur}
+                                                                                                                                type="text"
+                                                                                                                                value={e.difficulty_level}
+                                                                                                                                key={index}
+                                                                                                                                onChange={event => getQuestionDifficult(event, index, ind)}
+                                                                                                                                disabled
+                                                                                                                            >
+
+                                                                                                                                <option>
+                                                                                                                                    Select Question Difficulty
+                                                                                                                                </option>
+
+                                                                                                                                {console.log(questionDifficulty)}
+                                                                                                                                {questionDifficulty && questionDifficulty.map((skillsData) => {
+                                                                                                                                    return <option
+                                                                                                                                        value={skillsData.value}
+                                                                                                                                        key={skillsData.value}
+                                                                                                                                    >
+                                                                                                                                        {skillsData.label}
+                                                                                                                                    </option>
+                                                                                                                                })}
+
+                                                                                                                            </select>
+                                                                                                                            {(e.difficulty_level === '' || e.difficulty_level === undefined || e.difficulty_level === "Select Question Difficulty") && (errors.submit) ? (
+                                                                                                                                <>
+                                                                                                                                    <p style={{ display: "none" }}>{e.isError = 'yes'}</p>
+                                                                                                                                    <small style={{ color: "red" }}>Field Required!</small>
+                                                                                                                                </>
+                                                                                                                            ) : (
+                                                                                                                                <>
+                                                                                                                                    <p style={{ display: "none" }}>{e.isError = 'no'}</p>
+                                                                                                                                </>
+                                                                                                                            )}
+                                                                                                                        </div>
+
+
+
+
+                                                                                                                    </Col>
+                                                                                                                    <Col>
+                                                                                                                        <div className="form-group fill">
+                                                                                                                            <label className="floating-label" htmlFor="questionMarks">
+                                                                                                                                <small className="text-danger">* </small>Marks
+                                                                                                                            </label>
+                                                                                                                            <input
+                                                                                                                                className="form-control"
+                                                                                                                                error={touched.questionMarks && errors.questionMarks}
+                                                                                                                                name="questionMarks"
+                                                                                                                                onBlur={handleBlur}
+                                                                                                                                onChange={(e) => {
+                                                                                                                                    getMarks(e, index, ind)
+                                                                                                                                }}
+                                                                                                                                type="number"
+                                                                                                                                value={e.marks}
+                                                                                                                                id='title'
+                                                                                                                                disabled
+                                                                                                                            />
+                                                                                                                            {(e.marks.trim().length <= 0 || e.marks <= 0) && (errors.submit) ? (
+                                                                                                                                <>
+                                                                                                                                    <p style={{ display: "none" }}>{e.isError = 'yes'}</p>
+                                                                                                                                    <small style={{ color: "red" }}>Field Required!</small>
+                                                                                                                                </>
+
+                                                                                                                            ) : (
+                                                                                                                                <>
+                                                                                                                                    <p style={{ display: "none" }}>{e.isError = 'no'}</p>
+
+                                                                                                                                </>
+
+                                                                                                                            )}
+                                                                                                                        </div>
+                                                                                                                        <div className="form-group fill">
+                                                                                                                            <label className="floating-label" >
+                                                                                                                                <small className="text-danger">* </small>
+                                                                                                                                Cognitive Skill
+                                                                                                                            </label>
+                                                                                                                            <select
+                                                                                                                                className="form-control"
+                                                                                                                                error={touched.upschool_class_id && errors.upschool_class_id}
+                                                                                                                                name="upschool_class_id"
+                                                                                                                                onBlur={handleBlur}
+                                                                                                                                type="text"
+                                                                                                                                value={e.cognitive_id}
+                                                                                                                                key={index}
+                                                                                                                                onChange={event => getCognitiveId(event, index, ind)}
+                                                                                                                                disabled
+                                                                                                                            >
+
+                                                                                                                                <option>
+                                                                                                                                    Select Skill
+                                                                                                                                </option>
+
+                                                                                                                                {console.log(cognitiveSkillOpptions)}
+                                                                                                                                {cognitiveSkillOpptions && cognitiveSkillOpptions.map((skillsData) => {
+                                                                                                                                    return <option
+                                                                                                                                        value={skillsData.value}
+                                                                                                                                        key={skillsData.value}
+                                                                                                                                    >
+                                                                                                                                        {skillsData.label}
+                                                                                                                                    </option>
+                                                                                                                                })}
+
+                                                                                                                            </select>
+                                                                                                                            {(e.cognitive_id === '' || e.cognitive_id === undefined || e.cognitive_id === "Select Skill") && (errors.submit) ? (
+                                                                                                                                <>
+                                                                                                                                    <p style={{ display: "none" }}>{e.isError = 'yes'}</p>
+                                                                                                                                    <small style={{ color: "red" }}>Field Required!</small>
+
+                                                                                                                                </>
+                                                                                                                            ) : (
+                                                                                                                                <>
+                                                                                                                                    <p style={{ display: "none" }}>{e.isError = 'no'}</p>
+
+                                                                                                                                </>
+
+                                                                                                                            )}
+                                                                                                                        </div>
+
+                                                                                                                    </Col>
+                                                                                                                </Row>
+                                                                                                            </Card.Body>
+                                                                                                        </Card>
+                                                                                                    </>
+                                                                                                )
+                                                                                            })}
+                                                                                        </div>
+                                                                                    </Col>
+                                                                                </Row>
+                                                                                {/* <Button style={{ backgroundColor: '#4e5256' }} onClick={(e) => { addQuestion(index) }}>
                                                                                 <i className='fas fa-plus' />&nbsp; Add Question
                                                                             </Button> */}
-                                                                        </Card.Body>
-                                                                    </Card>
-                                                                </>
-                                                            )
-                                                        })
-                                                    }
-                                                    {/* <Button style={{ backgroundColor: '#4e5256' }} onClick={addSection}>
+                                                                            </Card.Body>
+                                                                        </Card>
+                                                                    </>
+                                                                )
+                                                            })
+                                                        }
+                                                        {/* <Button style={{ backgroundColor: '#4e5256' }} onClick={addSection}>
                                                         <i className='fas fa-plus' />&nbsp; Add Section
                                                     </Button>
                                                     <div className='d-flex justify-content-end'>
                                                         <Button type='submit'>Submit</Button>
                                                     </div> */}
-                                                </form>
-                                            )}
+                                                    </form>
+                                                )}
 
-                                        </Formik>
-                                    </Card.Body>
+                                            </Formik>
+                                        </Card.Body>
 
-                                </Card>
+                                    </Card>
 
-                            </React.Fragment>
-                        </div >
-                    </>
-                )
+                                </React.Fragment>
+                            </div >
+                        )
+                    }
+
+
+
+                </>
+
             }
         </>
     )
