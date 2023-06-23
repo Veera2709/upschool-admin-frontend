@@ -158,7 +158,8 @@ const EditDigiCard = () => {
     }
 
     const previewVoiceNote = (e) => {
-        setVoiceNote(URL.createObjectURL(e.target.files[0]));
+        let FileLength = e.target.files.length
+        FileLength === 1 ? setVoiceNote(URL.createObjectURL(e.target.files[0])) : setVoiceNote()
     }
 
     const fetchAllData = async () => {
