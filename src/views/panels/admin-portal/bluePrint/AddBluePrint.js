@@ -442,7 +442,7 @@ const AddBluePrint = () => {
                                             </div>
                                         </Col>
                                         <Col>
-                                            <div className="form-group fill" style={{marginTop:'-9px'}}>
+                                            <div className="form-group fill" style={{ marginTop: '-9px' }}>
                                                 <label className="floating-label" htmlFor="bluePrintDuration">
                                                     <small className="text-danger">* </small>Test Duration <label style={{ color: 'red' }}>&nbsp;(min)</label>
                                                 </label>
@@ -455,6 +455,7 @@ const AddBluePrint = () => {
                                                     type="number"
                                                     value={values.bluePrintDuration}
                                                     id='title'
+                                                    onWheel={(e) => e.target.blur()}
                                                 />
                                                 {touched.bluePrintDuration && errors.bluePrintDuration && <small className="text-danger form-text">{errors.bluePrintDuration}</small>}
                                             </div>
@@ -547,7 +548,7 @@ const AddBluePrint = () => {
                                                                                             ) : (null)}
                                                                                             <Row>
                                                                                                 <Col>
-                                                                                                    
+
 
                                                                                                     <div className="form-group fill">
                                                                                                         <label className="floating-label" >
@@ -699,6 +700,7 @@ const AddBluePrint = () => {
                                                                                                             type="number"
                                                                                                             value={e.marks}
                                                                                                             id='title'
+                                                                                                            onWheel={(e) => e.target.blur()}
                                                                                                         />
                                                                                                         {(e.marks.trim().length <= 0 || e.marks <= 0) && (errors.submit) ? (
                                                                                                             <>
@@ -759,7 +761,7 @@ const AddBluePrint = () => {
 
                                                                                                         )}
                                                                                                     </div>
-                                                                                                   
+
                                                                                                 </Col>
                                                                                             </Row>
                                                                                         </Card.Body>
