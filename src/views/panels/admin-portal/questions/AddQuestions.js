@@ -1872,6 +1872,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                     name="answer_content"
                                                                                     onBlur={handleBlur}
                                                                                     type="number"
+                                                                                    onWheel={(e) => e.target.blur()}
                                                                                     value={values.answer_content}
                                                                                     onChange={event => handleAnswerBlanks(event, index)}
                                                                                     placeholder="Enter Answer"
@@ -1966,6 +1967,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                             name="answer_range_from"
                                                                                             onBlur={handleBlur}
                                                                                             type="number"
+                                                                                            onWheel={(e) => e.target.blur()}
                                                                                             value={values.answer_range_from}
                                                                                             onChange={event => handleAnswerBlanks(event, index)}
                                                                                             placeholder="From"
@@ -1984,6 +1986,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                             name="answer_range_to"
                                                                                             onBlur={handleBlur}
                                                                                             type="number"
+                                                                                            onWheel={(e) => e.target.blur()}
                                                                                             value={values.answer_range_to}
                                                                                             onChange={event => handleAnswerBlanks(event, index)}
                                                                                             placeholder="To"
@@ -2072,6 +2075,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                             name="answer_content"
                                                                                             onBlur={handleBlur}
                                                                                             type="number"
+                                                                                            onWheel={(e) => e.target.blur()}
                                                                                             value={values.answer_content}
                                                                                             onChange={event => handleAnswerBlanks(event, index)}
                                                                                             placeholder="Enter Answer"
@@ -2115,11 +2119,12 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                             onBlur={handleBlur}
                                                                                             // onChange={handleChange}
                                                                                             type="number"
+                                                                                            onWheel={(e) => e.target.blur()}
                                                                                             min="0.01"
                                                                                             value={form.answer_weightage}
                                                                                             onChange={event => handleAnswerBlanks(event, index)}
                                                                                             placeholder="Enter Weightage for Answer"
-                                                                                            onWheel={(e) => e.target.blur()}
+
                                                                                         />
                                                                                     </Col>
 
@@ -2208,6 +2213,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                             name="answer_range_from"
                                                                                             onBlur={handleBlur}
                                                                                             type="number"
+                                                                                            onWheel={(e) => e.target.blur()}
                                                                                             value={values.answer_range_from}
                                                                                             onChange={event => handleAnswerBlanks(event, index)}
                                                                                             placeholder="From"
@@ -2226,6 +2232,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                             name="answer_range_to"
                                                                                             onBlur={handleBlur}
                                                                                             type="number"
+                                                                                            onWheel={(e) => e.target.blur()}
                                                                                             value={values.answer_range_to}
                                                                                             onChange={event => handleAnswerBlanks(event, index)}
                                                                                             placeholder="To"

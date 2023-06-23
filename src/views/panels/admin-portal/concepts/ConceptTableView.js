@@ -707,6 +707,7 @@ function Table({ columns, data, _workSheetQuestions }) {
                 <input
                   className="form-control ml-2"
                   type="number"
+                  onWheel={(e) => e.target.blur()}
                   defaultValue={pageIndex + 1}
                   onChange={(e) => {
                     const page = e.target.value
@@ -714,7 +715,7 @@ function Table({ columns, data, _workSheetQuestions }) {
                       : 0;
                     gotoPage(page);
                   }}
-                  onWheel={(e) => e.target.blur()}
+
                   style={{ width: "100px" }}
                 />
               </span>

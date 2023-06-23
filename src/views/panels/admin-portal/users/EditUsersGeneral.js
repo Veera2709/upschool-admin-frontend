@@ -66,7 +66,7 @@ const EditUsersGeneral = ({ user_id, user_role }) => {
                     history.push('/admin-portal/active-users');
                 } else {
                     hideLoader();
-                    sweetAlertHandler({  type: 'success', text: MESSAGES.SUCCESS.UpdatingUser });
+                    sweetAlertHandler({ type: 'success', text: MESSAGES.SUCCESS.UpdatingUser });
                     history.push('/admin-portal/active-users');
                 }
             })
@@ -557,6 +557,7 @@ const EditUsersGeneral = ({ user_id, user_role }) => {
                                                                             onBlur={handleBlur}
                                                                             onChange={handleChange}
                                                                             type="number"
+                                                                            onWheel={(e) => e.target.blur()}
                                                                             value={values.phoneNumber}
 
                                                                         />

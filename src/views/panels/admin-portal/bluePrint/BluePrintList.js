@@ -178,6 +178,7 @@ function Table({ columns, data, modalOpen }) {
                                 const page = e.target.value ? Number(e.target.value) - 1 : 0;
                                 gotoPage(page);
                             }}
+                            onWheel={(e) => e.target.blur()}
                             style={{ width: '100px' }}
                         />
                     </span>
