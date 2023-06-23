@@ -366,6 +366,7 @@ const AddUsers = ({ setOpenAddTopic }) => {
                                                 onBlur={handleBlur}
                                                 onChange={handleChange}
                                                 type="number"
+                                                onWheel={(e) => e.target.blur()}
                                                 value={values.phoneNumber}
 
                                             />

@@ -414,6 +414,7 @@ const AddUsers = () => {
                                                                 onBlur={handleBlur}
                                                                 onChange={handleChange}
                                                                 type="number"
+                                                                onWheel={(e) => e.target.blur()}
                                                                 value={values.phoneNumber}
 
                                                             />

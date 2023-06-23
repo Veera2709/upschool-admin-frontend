@@ -223,8 +223,9 @@ const EditUnit = ({ setOpenEditUnit, unitId }) => {
                                             if (error.response.status === 401) {
                                                 console.log();
                                                 hideLoader();
-                                                // setIsClientExists(true);
-                                                sweetAlertHandler({ title: 'Error', type: 'error', text: MESSAGES.ERROR.DigiCardNameExists });
+                                                setErrors(
+                                                    {unittitle :error.response.data}
+                                                )
 
                                             } else {
                                                 sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });

@@ -55,36 +55,6 @@ const AddTopics = ({ setOpenAddTopic }) => {
 
 
 
-    const postTopic = (formData) => {
-        axios.post(dynamicUrl.addTopic, { data: formData }, {
-            headers: { Authorization: sessionStorage.getItem('user_jwt') }
-        })
-            .then((response) => {
-                const result = response.data;
-                if (result == 200) {
-                    setOpenAddTopic(false)
-                    // sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingTopic });
-                    MySwal.fire({
-
-                        title: 'Topic added successfully!',
-                        icon: 'success',
-                    }).then((willDelete) => {
-
-                        window.location.reload();
-                    })
-
-                } else {
-                    console.log("error");
-                }
-                console.log('result: ', result);
-            })
-            .catch((err) => {
-                console.log(err.response.data);
-                if (err.response.data === 'Topic Name Already Exists') {
-                    sweetAlertHandler({ title: 'Sorry', type: 'error', text: 'Topic Name Already Exists!' })
-                }
-            })
-    }
 
     const fetchAllConceptsData = async () => {
         const allConceptsData = await fetchAllConcepts();
@@ -227,7 +197,37 @@ const AddTopics = ({ setOpenAddTopic }) => {
                             related_topics: relatedTopicsId,
                         }
                         console.log('formData: ', formData)
-                        postTopic(formData)
+
+                        axios.post(dynamicUrl.addTopic, { data: formData }, {
+                            headers: { Authorization: sessionStorage.getItem('user_jwt') }
+                        })
+                            .then((response) => {
+                                const result = response.data;
+                                if (result == 200) {
+                                    setOpenAddTopic(false)
+                                    // sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.AddingTopic });
+                                    MySwal.fire({
+                
+                                        title: 'Topic added successfully!',
+                                        icon: 'success',
+                                    }).then((willDelete) => {
+                
+                                        window.location.reload();
+                                    })
+                
+                                } else {
+                                    console.log("error");
+                                }
+                                console.log('result: ', result);
+                            })
+                            .catch((err) => {
+                                console.log(err.response.data);
+                                if (err.response.data === 'Topic Name Already Exists') {
+                                    setErrors({
+                                        topic_title:'Topic Name Already Exists'
+                                    })
+                                }
+                            })
                     }
 
 
