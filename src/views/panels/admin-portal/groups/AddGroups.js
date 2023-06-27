@@ -642,6 +642,7 @@ const AddGroups = ({ className, ...rest }) => {
                                                             name="question_duration"
                                                             onBlur={handleBlur}
                                                             type='number'
+                                                            onWheel={(e) => e.target.blur()}
                                                             onChange={e => {
                                                                 setGroupNameExistsErrMsg(false);
                                                                 handleChange(e);
