@@ -275,7 +275,7 @@ const AddBluePrint = () => {
                                     .required("Blue Print Name is required!"),
                                 bluePrintDuration: Yup.number()
                                     .min(1, "Duration is Less Then 1min!")
-                                    .max(200, "Duration is More Then 100min!")
+                                    .max(200, "Duration is More Then 200min!")
                                     .required("Time Duration is required!"),
                                 displayName: Yup.string()
                                     .trim()
