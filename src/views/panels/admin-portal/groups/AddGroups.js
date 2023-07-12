@@ -54,6 +54,10 @@ const AddGroups = ({ className, ...rest }) => {
         setSelectedGroupType(event.value);
     }
 
+    const handleWheel = (event) => {
+        event.target.blur()
+    };
+
     const handleQuestionsChange = (event) => {
 
         setSelectedQuestionsErrMsg(false);
@@ -642,7 +646,7 @@ const AddGroups = ({ className, ...rest }) => {
                                                             name="question_duration"
                                                             onBlur={handleBlur}
                                                             type='number'
-                                                            onWheel={(e) => e.target.blur()}
+                                                            onWheel={handleWheel}
                                                             onChange={e => {
                                                                 setGroupNameExistsErrMsg(false);
                                                                 handleChange(e);

@@ -76,7 +76,7 @@ function Preview() {
 
     return isEmptyObject(previewData) ? null : (
 
-        <div>
+        <div >
             <Row>
                 <Col sm={2}>
 
