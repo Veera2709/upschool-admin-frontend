@@ -56,7 +56,7 @@ const AddGroups = ({ className, ...rest }) => {
 
     const handleWheel = (event) => {
         event.target.blur()
-      };
+    };
 
     const handleQuestionsChange = (event) => {
 
