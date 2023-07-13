@@ -21,7 +21,7 @@ const EditTabs = () => {
     const { school_id } = useParams();
 
     useEffect(() => {
-        if (threadLinks.length === 2) {
+        if (threadLinks.length === 2 || threadLinks.length ===1) {
             setDisplayHeader(false);
             setIsLoading(false);
         } else {
