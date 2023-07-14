@@ -948,3 +948,21 @@ export const allQuestionCategories = (payLoad) => {
             })
     });
 }
+
+export const multideleteUnit = (payLoad) => {
+    return new Promise((resolve, reject) => {
+        axios.post(url.bulkToggleUnitStatus,
+            {
+                data: payLoad
+            },
+            { headers: { Authorization: sessionStorage.getItem('user_jwt') } })
+            .then((response) => {
+                console.log(response);
+                resolve(response.data);
+            })
+            .catch((error) => {
+                console.log("Error", error);
+                resolve({ Error: error });
+            })
+    });
+}
