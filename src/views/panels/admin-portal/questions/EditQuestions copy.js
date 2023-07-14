@@ -27,7 +27,7 @@ const EditQuestions = () => {
     const [displayHeader, setDisplayHeader] = useState(true);
     const displayHeading = sessionStorage.getItem('question_active_status');
     const _questionStatus = sessionStorage.getItem('click_event');
-    
+
     const questionTypeOptions = [
         { value: 'Objective', label: 'Objective' },
         { value: 'Subjective', label: 'Subjective' },
@@ -1727,6 +1727,7 @@ const EditQuestions = () => {
                                                                                                     onBlur={handleBlur}
                                                                                                     // onChange={handleChange}
                                                                                                     type="number"
+                                                                                                    onWheel={(e) => e.target.blur()}
                                                                                                     min="0.01"
                                                                                                     onChange={event => handleAnswerBlanks(event, index)}
                                                                                                     placeholder="Enter Weightage"
@@ -1864,6 +1865,7 @@ const EditQuestions = () => {
                                                                                                     onBlur={handleBlur}
                                                                                                     // onChange={handleChange}
                                                                                                     type="number"
+                                                                                                    onWheel={(e) => e.target.blur()}
                                                                                                     min="0.01"
                                                                                                     onChange={event => {
 
@@ -2004,6 +2006,7 @@ const EditQuestions = () => {
                                                                                                     name="answer_content"
                                                                                                     onBlur={handleBlur}
                                                                                                     type="number"
+                                                                                                    onWheel={(e) => e.target.blur()}
                                                                                                     value={form.answer_content}
                                                                                                     onChange={event => handleAnswerBlanks(event, index)}
                                                                                                     placeholder="Enter Answer"
@@ -2071,6 +2074,7 @@ const EditQuestions = () => {
                                                                                                     onBlur={handleBlur}
                                                                                                     // onChange={handleChange}
                                                                                                     type="number"
+                                                                                                    onWheel={(e) => e.target.blur()}
                                                                                                     min="0.01"
                                                                                                     value={form.answer_weightage}
                                                                                                     onChange={event => handleAnswerBlanks(event, index)}
@@ -2101,6 +2105,7 @@ const EditQuestions = () => {
                                                                                                                 name="answer_range_from"
                                                                                                                 onBlur={handleBlur}
                                                                                                                 type="number"
+                                                                                                                onWheel={(e) => e.target.blur()}
                                                                                                                 value={form.answer_range_from}
                                                                                                                 onChange={event => handleAnswerBlanks(event, index)}
                                                                                                                 placeholder="From"
@@ -2119,6 +2124,7 @@ const EditQuestions = () => {
                                                                                                                 name="answer_range_to"
                                                                                                                 onBlur={handleBlur}
                                                                                                                 type="number"
+                                                                                                                onWheel={(e) => e.target.blur()}
                                                                                                                 value={form.answer_range_to}
                                                                                                                 onChange={event => handleAnswerBlanks(event, index)}
                                                                                                                 placeholder="To"
@@ -2207,6 +2213,7 @@ const EditQuestions = () => {
                                                                                                             name="answer_content"
                                                                                                             onBlur={handleBlur}
                                                                                                             type="number"
+                                                                                                            onWheel={(e) => e.target.blur()}
                                                                                                             value={form.answer_content}
                                                                                                             onChange={event => handleAnswerBlanks(event, index)}
                                                                                                             placeholder="Enter Answer"
@@ -2250,6 +2257,7 @@ const EditQuestions = () => {
                                                                                                             onBlur={handleBlur}
                                                                                                             // onChange={handleChange}
                                                                                                             type="number"
+                                                                                                            onWheel={(e) => e.target.blur()}
                                                                                                             min="0.01"
                                                                                                             value={form.answer_weightage}
                                                                                                             onChange={event => handleAnswerBlanks(event, index)}
@@ -2270,6 +2278,7 @@ const EditQuestions = () => {
                                                                                                             onBlur={handleBlur}
                                                                                                             // onChange={handleChange}
                                                                                                             type="number"
+                                                                                                            onWheel={(e) => e.target.blur()}
                                                                                                             min="0.01"
                                                                                                             value={form.unit_weightage}
                                                                                                             onChange={event => handleAnswerBlanks(event, index)}
@@ -2341,6 +2350,7 @@ const EditQuestions = () => {
                                                                                                             name="answer_range_from"
                                                                                                             onBlur={handleBlur}
                                                                                                             type="number"
+                                                                                                            onWheel={(e) => e.target.blur()}
                                                                                                             value={form.answer_range_from}
                                                                                                             onChange={event => handleAnswerBlanks(event, index)}
                                                                                                             placeholder="From"
@@ -2359,6 +2369,7 @@ const EditQuestions = () => {
                                                                                                             name="answer_range_to"
                                                                                                             onBlur={handleBlur}
                                                                                                             type="number"
+                                                                                                            onWheel={(e) => e.target.blur()}
                                                                                                             value={form.answer_range_to}
                                                                                                             onChange={event => handleAnswerBlanks(event, index)}
                                                                                                             placeholder="To"
@@ -2499,6 +2510,7 @@ const EditQuestions = () => {
                                                                                                             onBlur={handleBlur}
                                                                                                             // onChange={handleChange}
                                                                                                             type="number"
+                                                                                                            onWheel={(e) => e.target.blur()}
                                                                                                             min="0.01"
                                                                                                             value={form.answer_weightage}
                                                                                                             onChange={event => handleAnswerBlanks(event, index)}
@@ -2642,6 +2654,7 @@ const EditQuestions = () => {
                                                                                                     onBlur={handleBlur}
                                                                                                     // onChange={handleChange}
                                                                                                     type="number"
+                                                                                                    onWheel={(e) => e.target.blur()}
                                                                                                     min="0.01"
                                                                                                     value={form.answer_weightage}
                                                                                                     onChange={event => {
@@ -2862,6 +2875,7 @@ const EditQuestions = () => {
                                                                                                     name="answer_weightage"
                                                                                                     onBlur={handleBlur}
                                                                                                     type="number"
+                                                                                                    onWheel={(e) => e.target.blur()}
                                                                                                     min="0.01"
                                                                                                     value={form.answer_weightage}
                                                                                                     onChange={event => handleAnswerBlanks(event, index)}

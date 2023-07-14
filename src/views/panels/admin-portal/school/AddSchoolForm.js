@@ -566,9 +566,6 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                                         }}
                                     />
 
-                                    {schoolBoardErrMsg && (
-                                        <small className="text-danger form-text">{'Please select an option'}</small>
-                                    )}
 
                                 </div>
                             </div>
@@ -873,6 +870,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                                                 onChange={handleChange}
                                                 onWheel={(e) => e.target.blur()}
                                                 type="number"
+
                                                 // ref={permCrimPhoneNoRef}
                                                 value={values.pincode2}
                                             />

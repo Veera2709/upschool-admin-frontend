@@ -13,6 +13,7 @@ import MathJax from "react-mathjax";
 import dynamicUrl from '../../../../helper/dynamicUrls';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import { isEmptyArray, areFilesInvalid, voiceInvalid } from '../../../../util/utils';
+import { updateSyncWarnings } from 'redux-form';
 
 const AddQuestions = ({ className, ...rest }) => {
 
@@ -28,6 +29,12 @@ const AddQuestions = ({ className, ...rest }) => {
         { value: 'Equation', label: 'Equation' }
     ];
 
+    const difficultylevel = [
+        { value: 'lessDifficult', label: 'Less Difficult' },
+        { value: 'moderatelyDifficult', label: 'Moderately Difficult' },
+        { value: 'highlyDifficult', label: 'Highly Difficult' },
+    ]
+    const [isDuplicatePresent, setIsDuplicatePresent] = useState(false);/////////
     const [descriptiveAnswerErrMsg, setDescriptiveAnswerErrMsg] = useState(false);
     const [questionTypeErrMsg, setQuestionTypeErrMsg] = useState(false);
     const [questionCategoryErrMsg, setQuestionCategoryErrMsg] = useState(false);
@@ -81,6 +88,9 @@ const AddQuestions = ({ className, ...rest }) => {
 
     const [selectedValueDisclaimer, setSelectedValueDisclaimer] = useState("N.A.");
 
+    const [selectedDifficultyLevel, setSelectedDifficultyLevel] = useState();
+    const [isDefficultyLevelErr, setIsDefficultyLevelErr] = useState(false)
+
     const [questionLabelAlreadyExists, setQuestionLabelAlreadyExists] = useState(false);
     const [answerOptionsForm, setAnswerOptionsForm] = useState([
         {
@@ -91,6 +101,12 @@ const AddQuestions = ({ className, ...rest }) => {
             answer_weightage: ''
         }
     ]);
+
+
+    const handleChildStateChange = (newState) => {
+        setIsDuplicatePresent(newState);
+    };
+
 
     useEffect(() => {
 
@@ -207,7 +223,6 @@ const AddQuestions = ({ className, ...rest }) => {
     }
 
     const handleWorkSheetOrTest = (e) => {
-
         _setRadioWorkSheetOrTest(!_radioWorkSheetOrTest);
         _radioWorkSheetOrTest === true ? setWorkSheetOrTest('preOrPost') : setWorkSheetOrTest('worksheetOrTest');
     }
@@ -761,6 +776,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                 onSubmit={async (values, { setErrors, setStatus, setSubmitting, }) => {
 
                                     console.log(values);
+
                                     setSubmitting(true);
 
                                     console.log(sessionStorage.getItem('click_event') !== "");
@@ -780,6 +796,8 @@ const AddQuestions = ({ className, ...rest }) => {
                                             setQuestionCognitiveSkillErrMsg(true);
                                         } else if (isEmptyArray(selectedQuestionSource)) {
                                             setQuestionSourceErrMsg(true);
+                                        } else if (_radioWorkSheetOrTest === true && (selectedDifficultyLevel === '' || selectedDifficultyLevel === undefined)) {
+                                            setIsDefficultyLevelErr(true)
                                         } else if (articleDataTitle === "" || articleDataTitle === undefined || articleDataTitle === 'undefined' || articleDataTitle === "<p><br></p>" || articleDataTitle === "<p></p>" || articleDataTitle === "<br>") {
                                             setQuestionEmptyErrMsg(true);
                                         } else if (selectedQuestionType === 'Descriptive') {
@@ -805,6 +823,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                     question_label: questionLabelValue,
                                                     display_answer: values.descriptive_answer,
                                                     marks: values.marks,
+                                                    difficulty_level: _radioWorkSheetOrTest ? selectedDifficultyLevel : 'N.A',
                                                     answer_explanation: values.answer_explanation === undefined || values.answer_explanation === "undefined" || values.answer_explanation === "" ? "N.A." : values.answer_explanation
 
                                                 }
@@ -819,11 +838,15 @@ const AddQuestions = ({ className, ...rest }) => {
 
                                             let tempAnsWeightage = answerOptionsForm.filter(value => value.answer_weightage < 0);
                                             let tempUnitWeightage = answerOptionsForm.filter(value => value.unit_weightage < 0);
+                                            console.log("selectedDifficultyLevel", selectedDifficultyLevel);
+
 
                                             if (Number(values.marks) < 0) {
                                                 setNegativeMarksErrMsg(true);
                                             } else if (tempAnsWeightage.length !== 0) {
                                                 setAnsWeightageErrMsg(true);
+                                            } else if (_radioWorkSheetOrTest === true && (selectedDifficultyLevel === '' || selectedDifficultyLevel === undefined)) {
+                                                setIsDefficultyLevelErr(true)
                                             } else if (tempUnitWeightage.length !== 0) {
                                                 setUnitWeightageErrMsg(true);
                                             } else {
@@ -846,14 +869,25 @@ const AddQuestions = ({ className, ...rest }) => {
                                                     question_label: questionLabelValue,
                                                     display_answer: "N.A.",
                                                     marks: values.marks,
+                                                    difficulty_level: _radioWorkSheetOrTest ? selectedDifficultyLevel : 'N.A',
                                                     answer_explanation: values.answer_explanation === undefined || values.answer_explanation === "undefined" || values.answer_explanation === "" ? "N.A." : values.answer_explanation
                                                 };
 
                                                 console.log("payLoad", payLoad);
 
-                                                showLoader();
-                                                _addQuestions(payLoad);
+                                                if (isDuplicatePresent) {
 
+                                                    console.log("Duplicates are present, skip form submission");
+                                                    Swal.fire({
+                                                        title: 'Duplicates Found',
+                                                        text: 'Duplicate values are present between $$ markers in Question Field ',
+                                                        icon: 'warning',
+                                                    });
+                                                    return
+                                                } else {
+                                                    showLoader();
+                                                    _addQuestions(payLoad);
+                                                }
                                             }
                                         } else {
                                             console.log("Invalid option!");
@@ -1175,7 +1209,11 @@ const AddQuestions = ({ className, ...rest }) => {
                                                             variant={'outline-primary'}
                                                             name="radio-fresher"
                                                             checked={_radioWorkSheetOrTest}
-                                                            onChange={(e) => handleWorkSheetOrTest(e)}
+                                                            onChange={(e) => {
+                                                                handleWorkSheetOrTest(e);
+                                                                setSelectedDifficultyLevel('');
+                                                                setIsDefficultyLevelErr(false)
+                                                            }}
                                                         /> &nbsp;
 
                                                         <Form.Label className="profile-view-question" id={`radio-fresher`}>
@@ -1186,7 +1224,39 @@ const AddQuestions = ({ className, ...rest }) => {
 
                                             </Col>
                                         </Row>
+                                        <br />
+                                        {
+                                            _radioWorkSheetOrTest && (
+                                                <>
+                                                    <Row>
+                                                        <Col sm={6}>
 
+                                                            <div className="form-group fill" style={{ position: 'relative', zIndex: 10 }}>
+                                                                <label className="floating-label" >
+                                                                    <small className="text-danger">* </small>
+                                                                    Level of Difficulty
+                                                                </label>
+                                                                <Select
+                                                                    className="basic-single"
+                                                                    classNamePrefix="select"
+                                                                    name="color"
+                                                                    options={difficultylevel}
+                                                                    onChange={(e) => {
+                                                                        setSelectedDifficultyLevel(e.value);
+                                                                        setIsDefficultyLevelErr(false)
+                                                                    }}
+                                                                    styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+
+                                                                />
+                                                            </div>
+                                                            {isDefficultyLevelErr && (
+                                                                <small style={{ color: 'red' }}>Field required!</small>
+                                                            )}
+                                                        </Col>
+                                                    </Row>
+                                                </>
+                                            )
+                                        }
                                         <br />
                                         <Row>
                                             <Col>
@@ -1196,6 +1266,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                 </label>
 
                                                 <ArticleRTE
+                                                    onChildStateChange={handleChildStateChange}////
                                                     setArticleSize={setArticleSize}
                                                     setImageCount={setImageCount}
                                                     imageCount={imageCount}
@@ -1238,6 +1309,9 @@ const AddQuestions = ({ className, ...rest }) => {
                                                             type="number"
                                                             min="0.01"
                                                             placeholder="Enter the total marks this question carries"
+                                                            // onWheel={e => e.preventDefault()}
+                                                            onWheel={(e) => e.target.blur()}
+
                                                         />
 
                                                         {
@@ -1462,6 +1536,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                     min="0.01"
                                                                                     onChange={event => handleAnswerBlanks(event, index)}
                                                                                     placeholder="Enter Weightage"
+                                                                                    onWheel={(e) => e.target.blur()}
                                                                                 />
                                                                             </Col>
 
@@ -1602,6 +1677,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                         handleAnswerBlanks(event, index)
                                                                                     }}
                                                                                     placeholder="Enter Weightage"
+                                                                                    onWheel={(e) => e.target.blur()}
                                                                                 />
                                                                             </Col>
 
@@ -1626,7 +1702,15 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                         handleAnswerBlanks(event, index);
                                                                                     }}
                                                                                     placeholder="Enter Equation"
+                                                                                    style={{
+                                                                                        height: '250px',
+                                                                                        resize: 'vertical',
+                                                                                        fontSize: '14px',
+                                                                                        lineHeight: '1.5',
+
+                                                                                    }}
                                                                                 />
+
                                                                             </Col>
                                                                         </Row>
 
@@ -1637,30 +1721,78 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                     <small className="text-danger"></small>
                                                                                     Preview
                                                                                 </label>
+                                                                                <div className="preview-container" style={{
+                                                                                    maxHeight: '100px',
+                                                                                    overflowY: 'auto',
+                                                                                    overflowX: 'auto',
+                                                                                    resize: 'vertical',
+                                                                                    whiteSpace: 'pre-wrap',
+                                                                                    backgroundColor: '#f5f5f5',
+                                                                                }}>
+                                                                                    {equation.length >= 1 && form.answer_content && (
+                                                                                        <MathJax.Provider>
+                                                                                            {equation[index] && (
+                                                                                                <div style={{
+                                                                                                    fontSize: '14px',
+                                                                                                    fontWeight: 'normal',
+                                                                                                    marginBottom: '10px',
+                                                                                                    marginTop: '10px',
+                                                                                                    fontFamily: 'Arial'
+                                                                                                }}>
+                                                                                                    <MathJax.Node formula={equation[index]}
 
-                                                                                {equation.length >= 1 && form.answer_content && (
-                                                                                    <MathJax.Provider>
-                                                                                        {
-                                                                                            (
-                                                                                                equation[index] && (
-                                                                                                    <div>
-                                                                                                        <MathJax.Node
-                                                                                                            styles={{
-                                                                                                                ".MathJax_Display": {
-                                                                                                                    textAlign: "center",
-                                                                                                                    margin: "1em 0em"
-                                                                                                                }
-                                                                                                            }}
-                                                                                                            inline formula={equation[index]} />
-                                                                                                    </div>
-                                                                                                )
-                                                                                            )
-                                                                                        }
-
-                                                                                    </MathJax.Provider>
-                                                                                )}
+                                                                                                    />
+                                                                                                </div>
+                                                                                            )}
+                                                                                        </MathJax.Provider>
+                                                                                    )}
+                                                                                </div>
                                                                             </Col>
                                                                         </Row>
+                                                                        {/* ////////////////////////////////////////////////// */}
+
+                                                                        {/* <Row>
+                                                                            <Col xs={12}>
+                                                                                <label className="floating-label">
+                                                                                    <small className="text-danger"></small>
+                                                                                    Preview
+                                                                                </label>
+                                                                                <div className="preview-container" style={{
+                                                                                    maxHeight: '100px',
+                                                                                    overflowY: 'auto',
+                                                                                    // overflowX: 'auto',
+                                                                                    resize: 'vertical',
+                                                                                    whiteSpace: 'pre-wrap',
+                                                                                    backgroundColor: '#f5f5f5',
+                                                                                }}>
+                                                                                    {equation.length >= 1 && form.answer_content && (
+                                                                                        <MathJax.Provider options={{
+                                                                                            tex: {
+                                                                                                packages: { '[+]': ['base', 'autoload-all'] },
+                                                                                                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                                                                                                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                                                                                                processEscapes: true
+                                                                                            },
+                                                                                            'HTML-CSS': {
+                                                                                                linebreaks: { automatic: true }
+                                                                                            }
+                                                                                        }}>
+                                                                                            {equation[index] && (
+                                                                                                <div style={{
+                                                                                                    fontSize: '14px',
+                                                                                                    fontWeight: 'normal',
+                                                                                                    marginBottom: '10px',
+                                                                                                    marginTop: '10px',
+                                                                                                    fontFamily: 'Arial'
+                                                                                                }}>
+                                                                                                    <MathJax.Node formula={equation[index]} />
+                                                                                                </div>
+                                                                                            )}
+                                                                                        </MathJax.Provider>
+                                                                                    )}
+                                                                                </div>
+                                                                            </Col>
+                                                                        </Row> */}
 
                                                                     </>
 
@@ -1740,6 +1872,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                     name="answer_content"
                                                                                     onBlur={handleBlur}
                                                                                     type="number"
+                                                                                    onWheel={(e) => e.target.blur()}
                                                                                     value={values.answer_content}
                                                                                     onChange={event => handleAnswerBlanks(event, index)}
                                                                                     placeholder="Enter Answer"
@@ -1808,6 +1941,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                     value={form.answer_weightage}
                                                                                     onChange={event => handleAnswerBlanks(event, index)}
                                                                                     placeholder="Enter Weightage"
+                                                                                    onWheel={(e) => e.target.blur()}
                                                                                 />
                                                                             </Col>
 
@@ -1833,6 +1967,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                             name="answer_range_from"
                                                                                             onBlur={handleBlur}
                                                                                             type="number"
+                                                                                            onWheel={(e) => e.target.blur()}
                                                                                             value={values.answer_range_from}
                                                                                             onChange={event => handleAnswerBlanks(event, index)}
                                                                                             placeholder="From"
@@ -1851,6 +1986,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                             name="answer_range_to"
                                                                                             onBlur={handleBlur}
                                                                                             type="number"
+                                                                                            onWheel={(e) => e.target.blur()}
                                                                                             value={values.answer_range_to}
                                                                                             onChange={event => handleAnswerBlanks(event, index)}
                                                                                             placeholder="To"
@@ -1939,6 +2075,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                             name="answer_content"
                                                                                             onBlur={handleBlur}
                                                                                             type="number"
+                                                                                            onWheel={(e) => e.target.blur()}
                                                                                             value={values.answer_content}
                                                                                             onChange={event => handleAnswerBlanks(event, index)}
                                                                                             placeholder="Enter Answer"
@@ -1982,10 +2119,12 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                             onBlur={handleBlur}
                                                                                             // onChange={handleChange}
                                                                                             type="number"
+                                                                                            onWheel={(e) => e.target.blur()}
                                                                                             min="0.01"
                                                                                             value={form.answer_weightage}
                                                                                             onChange={event => handleAnswerBlanks(event, index)}
                                                                                             placeholder="Enter Weightage for Answer"
+
                                                                                         />
                                                                                     </Col>
 
@@ -2006,6 +2145,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                             value={form.unit_weightage}
                                                                                             onChange={event => handleAnswerBlanks(event, index)}
                                                                                             placeholder="Enter Weightage for Unit"
+                                                                                            onWheel={(e) => e.target.blur()}
                                                                                         />
                                                                                     </Col>
 
@@ -2073,6 +2213,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                             name="answer_range_from"
                                                                                             onBlur={handleBlur}
                                                                                             type="number"
+                                                                                            onWheel={(e) => e.target.blur()}
                                                                                             value={values.answer_range_from}
                                                                                             onChange={event => handleAnswerBlanks(event, index)}
                                                                                             placeholder="From"
@@ -2091,6 +2232,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                             name="answer_range_to"
                                                                                             onBlur={handleBlur}
                                                                                             type="number"
+                                                                                            onWheel={(e) => e.target.blur()}
                                                                                             value={values.answer_range_to}
                                                                                             onChange={event => handleAnswerBlanks(event, index)}
                                                                                             placeholder="To"
@@ -2236,6 +2378,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                             value={form.answer_weightage}
                                                                                             onChange={event => handleAnswerBlanks(event, index)}
                                                                                             placeholder="Enter Weightage"
+                                                                                            onWheel={(e) => e.target.blur()}
                                                                                         />
                                                                                     </Col>
 
@@ -2377,6 +2520,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                         handleAnswerBlanks(event, index)
                                                                                     }}
                                                                                     placeholder="Enter Weightage"
+                                                                                    onWheel={(e) => e.target.blur()}
                                                                                 />
                                                                             </Col>
 
@@ -2589,6 +2733,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                     value={form.answer_weightage}
                                                                                     onChange={event => handleAnswerBlanks(event, index)}
                                                                                     placeholder="Enter Weightage"
+                                                                                    onWheel={(e) => e.target.blur()}
                                                                                 />
                                                                             </Col>
 
@@ -2811,6 +2956,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                         min="0.01"
                                                                                         onChange={event => handleDescriptiveAnswerBlanks(event, index)}
                                                                                         placeholder="Enter Weightage"
+                                                                                        onWheel={(e) => e.target.blur()}
                                                                                     />
                                                                                 </Col>
                                                                             )}
@@ -2858,10 +3004,10 @@ const AddQuestions = ({ className, ...rest }) => {
 
                                                                         )}
 
+
                                                                         {form.answer_type === "Equation" && descriptiveAnswerOptionsForm && (
                                                                             <>
                                                                                 <Row key={index}>
-
                                                                                     <Col xs={12}>
                                                                                         <label className="floating-label">
                                                                                             <small className="text-danger"></small>
@@ -2881,36 +3027,47 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                             placeholder="Enter Keyword"
                                                                                         />
                                                                                     </Col>
-
                                                                                 </Row>
-
                                                                                 <br />
                                                                                 <Row key={index}>
-
                                                                                     <Col xs={12}>
                                                                                         <label className="floating-label">
                                                                                             <small className="text-danger"></small>
                                                                                             Preview
                                                                                         </label>
-
-                                                                                        {descriptiveEquation.length >= 1 && form.answer_content && (
-                                                                                            <MathJax.Provider>
-                                                                                                {(descriptiveEquation[index] && (<div styles={{ display: "contents" }}>
-                                                                                                    <MathJax.Node styles={{
-                                                                                                        ".MathJax_Display": {
-                                                                                                            display: "contents"
-                                                                                                        }
-                                                                                                    }}
-                                                                                                        inline formula={descriptiveEquation[index]} />
-                                                                                                </div>))}
-                                                                                            </MathJax.Provider>
-                                                                                        )}
-
+                                                                                        <div
+                                                                                            style={{
+                                                                                                maxHeight: "200px", // Set the maximum height of the preview container
+                                                                                                overflowY: "auto", // Enable vertical scrolling when content exceeds the height
+                                                                                            }}
+                                                                                        >
+                                                                                            {descriptiveEquation.length >= 1 && form.answer_content && (
+                                                                                                <MathJax.Provider>
+                                                                                                    {descriptiveEquation[index] && (
+                                                                                                        <div
+                                                                                                            style={{
+                                                                                                                display: "contents",
+                                                                                                            }}
+                                                                                                        >
+                                                                                                            <MathJax.Node
+                                                                                                                styles={{
+                                                                                                                    ".MathJax_Display": {
+                                                                                                                        display: "contents",
+                                                                                                                    },
+                                                                                                                }}
+                                                                                                                inline
+                                                                                                                formula={descriptiveEquation[index]}
+                                                                                                            />
+                                                                                                        </div>
+                                                                                                    )}
+                                                                                                </MathJax.Provider>
+                                                                                            )}
+                                                                                        </div>
                                                                                     </Col>
-
                                                                                 </Row>
                                                                             </>
                                                                         )}
+
 
                                                                     </Card.Body>
                                                                 </Card>

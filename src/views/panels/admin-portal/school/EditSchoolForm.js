@@ -945,8 +945,8 @@ const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive 
                                                                             name="pincode"
                                                                             onBlur={handleBlur}
                                                                             onChange={handleChange}
-                                                                            onWheel={(e) => e.target.blur()}
                                                                             type="number"
+                                                                            onWheel={(e) => e.target.blur()}
                                                                             ref={pincodeRef}
                                                                             value={values.pincode}
                                                                         />
@@ -963,8 +963,8 @@ const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive 
                                                                             name="phoneNumber"
                                                                             onBlur={handleBlur}
                                                                             onChange={handleChange}
-                                                                            onWheel={(e) => e.target.blur()}
                                                                             type="number"
+                                                                            onWheel={(e) => e.target.blur()}
                                                                             ref={phoneNumberRef}
                                                                             value={values.phoneNumber}
                                                                         />
@@ -1069,8 +1069,8 @@ const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive 
                                                                             name="pincode2"
                                                                             onBlur={handleBlur}
                                                                             onChange={handleChange}
-                                                                            onWheel={(e) => e.target.blur()}
                                                                             type="number"
+                                                                            onWheel={(e) => e.target.blur()}
                                                                             value={values.pincode2}
                                                                         />
                                                                         {touched.pincode2 && errors.pincode2 && (
@@ -1089,8 +1089,8 @@ const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive 
                                                                             name="phoneNumber2"
                                                                             onBlur={handleBlur}
                                                                             onChange={handleChange}
-                                                                            onWheel={(e) => e.target.blur()}
                                                                             type="number"
+                                                                            onWheel={(e) => e.target.blur()}
                                                                             value={values.phoneNumber2}
                                                                         />
                                                                         {touched.phoneNumber2 && errors.phoneNumber2 && (

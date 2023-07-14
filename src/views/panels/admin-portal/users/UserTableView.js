@@ -1127,6 +1127,8 @@ const UserTableView = ({ _userRole }) => {
 
   }, [_userRole]);
 
+
+
   return (
 
     <React.Fragment>
@@ -1147,11 +1149,23 @@ const UserTableView = ({ _userRole }) => {
                         <div className="form-group fill text-center">
                           <br></br>
 
+
+
+                          {/* <Button variant="success" className="btn-sm btn-round has-ripple ml-2"
+                            onClick={handleButtonClicked}
+                          >
+                            <i className="feather icon-plus" /> Add Users
+                          </Button> */}
+
+
                           <Link to={'/admin-portal/add-users'}>
-                            <Button variant="success" className="btn-sm btn-round has-ripple ml-2">
+                            <Button variant="success" className="btn-sm btn-round has-ripple ml-2"
+                            >
                               <i className="feather icon-plus" /> Add Users
                             </Button>
                           </Link>
+
+
                         </div>
                       </div>
                     ) : (

@@ -70,34 +70,7 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
     const data = [{ id: 'ac05006b-2351-59e1-a5bf-aa88e249ad05', name: 'ac05006b-2351-59e1-a5bf-aa88e249ad05' }]
 
 
-    const submitEditTopic = (formData) => {
-        axios.post(dynamicUrl.editTopic, { data: formData }, {
-            headers: { Authorization: sessionStorage.getItem('user_jwt') }
-        })
-            .then((response) => {
-                const result = response.data;
-                console.log('result: ', result);
-                if (result == 200) {
-                    setOpenEditTopic(false)
-                    // sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.EditTopic });
-                    MySwal.fire({
-
-                        title: 'Topic Updated successfully!',
-                        icon: 'success',
-                    }).then((willDelete) => {
-                        history.push('/admin-portal/Topics/active-topics');
-                        window.location.reload();
-
-                    })
-                }
-            })
-            .catch((err) => {
-                console.log(err);
-                if (err.response.data === 'Topic Name Already Exists') {
-                    sweetAlertHandler({ title: 'Sorry', type: 'error', text: 'Topic Name Already Exists!' })
-                }
-            })
-    }
+   
 
     const fetchAllConceptsData = async () => {
         setIsLoading(true)
@@ -294,7 +267,34 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                                                         related_topics: relatedTopicsId,
                                                     }
                                                     console.log('formData: ', formData)
-                                                    submitEditTopic(formData)
+                                                    axios.post(dynamicUrl.editTopic, { data: formData }, {
+                                                        headers: { Authorization: sessionStorage.getItem('user_jwt') }
+                                                    })
+                                                        .then((response) => {
+                                                            const result = response.data;
+                                                            console.log('result: ', result);
+                                                            if (result == 200) {
+                                                                setOpenEditTopic(false)
+                                                                // sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.EditTopic });
+                                                                MySwal.fire({
+                                            
+                                                                    title: 'Topic Updated successfully!',
+                                                                    icon: 'success',
+                                                                }).then((willDelete) => {
+                                                                    history.push('/admin-portal/Topics/active-topics');
+                                                                    window.location.reload();
+                                            
+                                                                })
+                                                            }
+                                                        })
+                                                        .catch((err) => {
+                                                            console.log(err);
+                                                            if (err.response.data === 'Topic Name Already Exists') {
+                                                                setErrors({
+                                                                    topic_title:'Topic Name Already Exists'
+                                                                })
+                                                            }
+                                                        })
                                                 }
                                             }}
                                         >

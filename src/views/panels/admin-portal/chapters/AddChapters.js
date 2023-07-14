@@ -240,17 +240,15 @@ const AddChapter = ({ setOpenAddChapter }) => {
                                 }
                             })
                             .catch((error) => {
-                                setOpenAddChapter(false)
                                 if (error.response) {
                                     // Request made and server responded
                                     console.log(error.response.data);
 
                                     console.log(error.response.data);
                                     if (error.response.status === 400) {
-                                        console.log();
-                                        hideLoader();
-                                        // setIsClientExists(true);
-                                        sweetAlertHandler({ title: 'Error', type: 'error', text: MESSAGES.ERROR.ChapterNameExists });
+                                        setErrors({
+                                            chaptertitle:error.response.data
+                                        })
 
                                     } else {
                                         sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
