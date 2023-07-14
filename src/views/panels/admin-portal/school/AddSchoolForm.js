@@ -35,6 +35,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
     const [loader, showLoader, hideLoader] = useFullPageLoader();
     const [imgEmptyErr, setImgEmptyErr] = useState(false);
     const [schoolBoardErrMsg, setSchoolBoardErrMsg] = useState(false);
+    const [imageErr, setImageErr] = useState(false);
     const history = useHistory();
 
     const schoolNameRef = useRef('');
@@ -68,16 +69,24 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
     }
 
     const previewImage = (e) => {
+        console.log("event", e);
         console.log('imageURL: ', e.target.files[0]);
-        setImgFile(URL.createObjectURL(e.target.files[0]));
-        let imageFile = e.target.files[0];
-        setImgEmptyErr(false);
-        if (areFilesInvalid([imageFile]) !== 0) {
-            setIsOpen(false);
-            setImageStatus(true);
-            sweetAlertHandler({ title: 'Sorry', type: 'error', text: 'Invalid File or File size exceeds 2 MB!' });
-            hideLoader();
+        let FileLength = e.target.files.length
+        if (FileLength === 1) {
+            let imageFile = e.target.files[0];
+            // setImgEmptyErr(false);
+            if (areFilesInvalid([imageFile]) !== 0) {
+                console.log("if condition!");
+                setImageErr(true)
+                setImgFile('')
+            } else {
+                setImageErr(false)
+                setImgFile(URL.createObjectURL(e.target.files[0]));
+            }
+        } else {
+            setImgFile('')
         }
+
     }
 
     const handleRadioChange = (e) => {
@@ -266,9 +275,10 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                             console.log('Submitting', sendData);
 
                             if (areFilesInvalid([imageFile]) !== 0) {
-                                setIsOpen(false);
-                                sweetAlertHandler({ title: 'Sorry', type: 'error', text: 'Invalid File or File size exceeds 2 MB!' });
-                                hideLoader();
+                                // setIsOpen(false);
+                                // sweetAlertHandler({ title: 'Sorry', type: 'error', text: 'Invalid File or File size exceeds 2 MB!' });
+                                // hideLoader();
+                                setImageErr(true)
                             } else {
                                 // console.log('formData: ', JSON.stringify(formData))
                                 console.log('formData: ', JSON.stringify({ data: formData }))
@@ -534,6 +544,9 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                                     )}
                                     {imgEmptyErr && (
                                         <small className="text-danger form-text">Logo required</small>
+                                    )}
+                                    {imageErr && (
+                                        <small className='text-danger'>Invalid File or File size exceeds 2 MB!</small>
                                     )}
                                 </div>
                             </div>
