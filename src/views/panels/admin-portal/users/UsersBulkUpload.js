@@ -17,6 +17,7 @@ import { bulkUpload } from './user-bulk-upload-api/bulkUpload';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import { isEmptyArray } from '../../../../util/utils';
 
+
 const UsersBulkUpload = ({ className, ...rest }) => {
 
   const history = useHistory();
@@ -74,6 +75,16 @@ const UsersBulkUpload = ({ className, ...rest }) => {
 
           if (result) {
             console.log('inside res');
+            if (response.data.Items.length === 0) {
+              Swal.fire({
+                title: 'No Schools Available',
+                text: 'There is no data to display.',
+                icon: 'warning',
+                confirmButtonText: 'OK'
+              }).then(() => {
+                window.history.back();
+              });
+            }
 
             let tempCategoryArr = [];
             (response.data.Items.map(e => { tempCategoryArr.push({ value: e.school_id, label: e.school_name }) }));

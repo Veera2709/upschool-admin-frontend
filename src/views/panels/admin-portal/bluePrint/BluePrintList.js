@@ -4,7 +4,7 @@ import { Row, Col, Card, Pagination, Button, Modal } from 'react-bootstrap';
 import BTable from 'react-bootstrap/Table';
 import withReactContent from 'sweetalert2-react-content';
 import Swal from 'sweetalert2';
-import { GlobalFilter } from './GlobalFilter';
+import { GlobalFilter } from '../chapters/GlobalFilter';
 
 import { useTable, useSortBy, usePagination, useGlobalFilter, useRowSelect } from 'react-table';
 
@@ -18,16 +18,14 @@ import MESSAGES from '../../../../helper/messages';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import { useLocation } from "react-router-dom";
 import BasicSpinner from '../../../../helper/BasicSpinner';
-import AddChapter from './AddChapters';
-import EditChapter from './EditChapter';
-import { toggleMultiChapterStatus } from '../../../api/CommonApi';
+
 
 
 function Table({ columns, data, modalOpen }) {
     const [isOpenAddChapter, setOpenAddChapter] = useState(false);
     const initiallySelectedRows = React.useMemo(() => new Set(["1"]), []);
-    const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[3]);
-    const chapterStatus = pageLocation === "active-chapter" ? 'Active' : 'Archived';
+    const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
+    const bluePrintStatus = pageLocation === "active-blueprint" ? 'Active' : 'Archived';
     const MySwal = withReactContent(Swal);
     let history = useHistory();
 
@@ -80,81 +78,11 @@ function Table({ columns, data, modalOpen }) {
         useSortBy,
         usePagination,
         useRowSelect,
-        (hooks) => {
-            hooks.visibleColumns.push((columns) => [
-                {
-                    id: "selection",
-                    Header: ({ getToggleAllPageRowsSelectedProps }) => (
-                        <div>
-                            <IndeterminateCheckbox {...getToggleAllPageRowsSelectedProps()} />
-                        </div>
-                    ),
-                    Cell: ({ row }) => (
-                        <div>
-                            <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
-                        </div>
-                    )
-                },
-                ...columns
-            ]);
-        }
     );
 
 
 
 
-    const multiDelete = async (status) => {
-
-        console.log("selectedFlatRows", selectedFlatRows);
-        const chapterIds = [];
-        selectedFlatRows.map((item) => {
-            chapterIds.push(item.original.chapter_id)
-        })
-
-        if (chapterIds.length > 0) {
-
-            MySwal.fire({
-                title: 'Are you sure?',
-                text: `Confirm ${pageLocation === 'active-chapter' ? "deleting" : "restoring"} the selected Chapter(s)!`,
-                type: 'warning',
-                showCloseButton: true,
-                showCancelButton: true
-            }).then(async (willDelete) => {
-
-                if (willDelete.value) {
-
-                    var payload = {
-                        "chapter_status": status,
-                        "chapter_array": chapterIds
-                    }
-
-                    const ResultData = await toggleMultiChapterStatus(payload)
-                    if (ResultData.Error) {
-                        if (ResultData.Error.response.data == 'Invalid Token') {
-                            sessionStorage.clear();
-                            localStorage.clear();
-                            history.push('/auth/signin-1');
-                            window.location.reload();
-                        } else {
-                            return MySwal.fire('Error', ResultData.Error.response.data, 'error').then(() => {
-                                window.location.reload();
-                            });
-                        }
-                    } else {
-                        return MySwal.fire('success', `Selected Chapters have been ${status === 'Active' ? 'restored' : "deleted"} successfully!`, 'success').then(() => {
-                            window.location.reload();
-                        });
-                    }
-
-                }
-            });
-
-        } else {
-            return MySwal.fire('Sorry', 'No Chapters Selected!', 'warning').then(() => {
-                // window.location.reload();
-            });
-        }
-    }
 
 
 
@@ -181,28 +109,15 @@ function Table({ columns, data, modalOpen }) {
 
                 <Col className="mb-3" style={{ display: 'contents' }}>
                     <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
-
-                    {chapterStatus === 'Active' ? (
-                        <>
-                            <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={() => { setOpenAddChapter(true) }}>
-                                <i className="feather icon-plus" /> Add Chapter
-                            </Button>
-
-                            <Button variant="success" className='btn-sm btn-round has-ripple ml-2 btn btn-danger'
-                                onClick={() => { multiDelete("Archived") }}
-                                style={{ marginRight: '15px' }}
-                            >
-                                <i className="feather icon-trash-2" />  Multi Delete
-                            </Button>
-                        </>
-                    ) : (
-                        <Button className='btn-sm btn-round has-ripple ml-2 btn btn-primary'
-                            onClick={() => { multiDelete("Active") }}
-                            style={{ marginRight: '15px' }}
-                        >
-                            <i className="feather icon-plus" />   Multi Restore
-                        </Button>
-                    )}
+                    {
+                        bluePrintStatus === 'Active' ? (
+                            <>
+                                <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={() => { history.push('/admin-portal/add-bluePrint') }}>
+                                    <i className="feather icon-plus" /> Add Blue Print
+                                </Button>
+                            </>
+                        ) : (<></>)
+                    }
 
                 </Col>
             </Row>
@@ -257,13 +172,13 @@ function Table({ columns, data, modalOpen }) {
                         | Go to page:{' '}
                         <input
                             type="number"
-                            onWheel={(e) => e.target.blur()}
                             className="form-control ml-2"
                             defaultValue={pageIndex + 1}
                             onChange={(e) => {
                                 const page = e.target.value ? Number(e.target.value) - 1 : 0;
                                 gotoPage(page);
                             }}
+                            onWheel={(e) => e.target.blur()}
                             style={{ width: '100px' }}
                         />
                     </span>
@@ -277,19 +192,12 @@ function Table({ columns, data, modalOpen }) {
                     </Pagination>
                 </Col>
             </Row>
-            <Modal dialogClassName="my-modal" show={isOpenAddChapter} onHide={() => setOpenAddChapter(false)}>
-                <Modal.Header closeButton>
-                    <Modal.Title as="h5">Add Chapter</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <AddChapter setOpenAddChapter={setOpenAddChapter} />
-                </Modal.Body>
-            </Modal>
+
         </>
     );
 }
 
-const ChaptersListChild = (props) => {
+const BluePrintList = (props) => {
     const columns = React.useMemo(
         () => [
             {
@@ -297,8 +205,12 @@ const ChaptersListChild = (props) => {
                 accessor: "index_no"
             },
             {
-                Header: ' Chapter Title',
-                accessor: 'chapter_title'
+                Header: 'Blue Print Name',
+                accessor: 'blueprint_name'
+            },
+            {
+                Header: 'Test Duration',
+                accessor: 'test_duration'
             },
             {
                 Header: 'Options',
@@ -309,21 +221,18 @@ const ChaptersListChild = (props) => {
     );
 
     // const data = React.useMemo(() => makeData(80), []);
-    const [chapterData, setChapterData] = useState([]);
+    const [bluePrintData, setBluePrintData] = useState([]);
     const [reloadAllData, setReloadAllData] = useState('Fetched');
     const [statusUrl, setStatusUrl] = useState('');
     const [loader, showLoader, hideLoader] = useFullPageLoader();
-    const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[3]);
+    const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
     const [isLoading, setIsLoading] = useState(false);
     const [isOpenEditChapter, setOpenEditChapter] = useState(false);
     const [chapterId, setChapterId] = useState();
     const [isOpenAddChapter, setOpenAddChapter] = useState(false);
 
 
-    const handleAddChapter = (e) => {
-        e.preventDefault();
-        setOpenAddChapter(true)
-    }
+
 
 
     // console.log('data: ', data)
@@ -338,35 +247,34 @@ const ChaptersListChild = (props) => {
         });
     }
 
-    function deleteChapter(chapter_id, chapter_title) {
-        console.log("chapter_id", chapter_id);
+    function deleteBluePrint(blueprint_id, blueprint_name) {
+        console.log("blueprint_id", blueprint_id);
 
-        confirmHandler(chapter_id, chapter_title)
+        confirmHandler(blueprint_id, blueprint_name)
     }
 
-    const confirmHandler = (chapter_id, chapter_title) => {
+    const confirmHandler = (blueprint_id, blueprint_name) => {
         var data = {
-            "chapter_id": chapter_id,
-            "chapter_status": "Archived"
+            "blueprint_id": blueprint_id,
+            "blueprint_status": "Archived"
         }
         MySwal.fire({
             title: 'Are you sure?',
-            text: 'Confirm deleting ' + chapter_title + ' Chapter',
+            text: 'Confirm deleting ' + blueprint_name + ' Blue Print',
             type: 'warning',
             showCloseButton: true,
             showCancelButton: true
         }).then((willDelete) => {
             if (willDelete.value) {
                 axios
-                    .post(dynamicUrl.toggleChapterStatus, { data: data }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
+                    .post(dynamicUrl.toggleBluePrintStatus, { data: data }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
                     .then((response) => {
                         if (response.Error) {
                             hideLoader();
-                            sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
                         } else {
-                            allChaptersList()
+                            allBluePritData()
                             setReloadAllData("Deleted");
-                            return MySwal.fire('', 'The ' + chapter_title + ' is Deleted', 'success');
+                            return MySwal.fire('', 'The ' + blueprint_name + ' is Deleted', 'success');
                             // window. location. reload() 
                             //  MySwal.fire('', MESSAGES.INFO.CLIENT_DELETED, 'success');
 
@@ -403,33 +311,32 @@ const ChaptersListChild = (props) => {
 
 
 
-    function restoreChapter(chapter_id, chapter_title) {
-        console.log("chapter_id", chapter_id);
+    function restoreBluePrint(blueprint_id, blueprint_name) {
+        console.log("blueprint_id", blueprint_id);
         var data = {
-            "chapter_id": chapter_id,
-            "chapter_status": 'Active'
+            "blueprint_id": blueprint_id,
+            "blueprint_status": 'Active'
         }
 
         const sweetConfirmHandler = () => {
             const MySwal = withReactContent(Swal);
             MySwal.fire({
                 title: 'Are you sure?',
-                text: 'Confirm to Restore ' + chapter_title + ' Chapter',
+                text: 'Confirm to Restore ' + blueprint_name + ' Blue Print',
                 type: 'warning',
                 showCloseButton: true,
                 showCancelButton: true
             }).then((willDelete) => {
                 if (willDelete.value) {
                     axios
-                        .post(dynamicUrl.toggleChapterStatus, { data: data }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
+                        .post(dynamicUrl.toggleBluePrintStatus, { data: data }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
                         .then((response) => {
                             if (response.Error) {
                                 hideLoader();
-                                sweetConfirmHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
                             } else {
-                                allChaptersList()
+                                allBluePritData()
                                 setReloadAllData("Deleted");
-                                return MySwal.fire('', 'The ' + chapter_title + ' is Restored', 'success');
+                                return MySwal.fire('', 'The ' + blueprint_name + ' is Restored', 'success');
                                 // window. location. reload() 
                                 //  MySwal.fire('', MESSAGES.INFO.CLIENT_DELETED, 'success');
                             }
@@ -464,50 +371,65 @@ const ChaptersListChild = (props) => {
     }
 
 
-    const allChaptersList = () => {
-        const chapterStatus = pageLocation === "active-chapter" ? 'Active' : 'Archived';
-        console.log("chapterStatus", chapterStatus);
+    const allBluePritData = () => {
+        const bluePrintStatus = pageLocation === "active-blueprint" ? 'Active' : 'Archived';
+        console.log("bluePrintStatus", bluePrintStatus);
         setIsLoading(true);
-        axios.post(dynamicUrl.fetchChaptersBasedonStatus, {
+        axios.post(dynamicUrl.fetchBluePrintsBasedonStatus, {
             data: {
-                chapter_status: chapterStatus
+                blueprint_status: bluePrintStatus
             }
         }, {
             headers: { Authorization: sessionStorage.getItem('user_jwt') }
         })
             .then((response) => {
                 console.log(response);
-                let dataResponse = response.data.Items
+                let dataResponse = response.data
+                console.log({ dataResponse });
                 let finalDataArray = [];
 
-                if (chapterStatus === 'Active') {
-                    let resultData = (dataResponse && dataResponse.filter(e => e.chapter_status === 'Archived'))
+                if (bluePrintStatus === 'Active') {
                     for (let index = 0; index < dataResponse.length; index++) {
                         dataResponse[index].index_no = index + 1;
                         dataResponse[index]['actions'] = (
                             <>
                                 <>
-                                    <Button
+                                    {/* <Button
                                         size="sm"
                                         className="btn btn-icon btn-rounded btn-primary"
                                         // onClick={(e) => history.push(`/admin-portal/editChapter/${dataResponse[index].chapter_id}`)}
-                                        onClick={(e) => {
-                                            setChapterId(dataResponse[index].chapter_id);
-                                            setOpenEditChapter(true)
-                                        }}
+                                        // onClick={(e) => {
+                                        //     setChapterId(dataResponse[index].chapter_id);
+                                        //     setOpenEditChapter(true)
+                                        // }}
                                     >
                                         <i className="feather icon-edit" /> &nbsp; Edit
-                                    </Button>
+                                    </Button> */}
                                     &nbsp;
                                     {/* if(resultData[index].chapter_status=='Active') */}
                                     <Button
                                         size="sm"
                                         className="btn btn-icon btn-rounded btn-danger"
-                                        onClick={(e) => deleteChapter(dataResponse[index].chapter_id, dataResponse[index].chapter_title)}
+                                        onClick={(e) => deleteBluePrint(dataResponse[index].blueprint_id, dataResponse[index].blueprint_name)}
                                     >
                                         <i className="feather icon-trash-2 " /> &nbsp; Delete
                                     </Button>
                                     &nbsp;
+
+                                    {/* <Button
+                                        size="sm"
+                                        className="btn btn-icon btn-rounded btn-danger"
+                                        onClick={(e) => deleteBluePrint(dataResponse[index].blueprint_id, dataResponse[index].blueprint_name)}
+                                    >
+                                        <i className="feather icon-trash-2 " /> &nbsp; view
+                                    </Button> */}
+                                    <Button
+                                        size="sm"
+                                        className="btn btn-icon btn-rounded btn-info"
+                                        onClick={(e) => history.push(`/admin-portal/view-bluePrint/${dataResponse[index].blueprint_id}`)}
+                                    >
+                                        <i className="feather icon-eye" /> &nbsp;View
+                                    </Button>
                                 </>
                             </>
                         );
@@ -523,7 +445,7 @@ const ChaptersListChild = (props) => {
                                     <Button
                                         size="sm"
                                         className="btn btn-icon btn-rounded btn-primary"
-                                        onClick={(e) => restoreChapter(dataResponse[index].chapter_id, dataResponse[index].chapter_title)}
+                                        onClick={(e) => restoreBluePrint(dataResponse[index].blueprint_id, dataResponse[index].blueprint_name)}
                                     >
                                         <i className="feather icon-plus" /> &nbsp; Restore
                                     </Button>
@@ -535,7 +457,7 @@ const ChaptersListChild = (props) => {
                         console.log('finalDataArray: ', finalDataArray)
                     }
                 }
-                setChapterData(finalDataArray);
+                setBluePrintData(finalDataArray);
                 console.log('dataResponse: ', finalDataArray);
                 setIsLoading(false);
 
@@ -573,9 +495,9 @@ const ChaptersListChild = (props) => {
             history.push('/auth/signin-1');
             window.location.reload();
         } else {
-            allChaptersList();
+            allBluePritData();
         }
-    }, [reloadAllData])
+    }, [])
 
     return (
         <div>
@@ -585,33 +507,26 @@ const ChaptersListChild = (props) => {
                 ) : (
                     <>
                         {
-                            chapterData.length <= 0 ? (
+                            bluePrintData.length <= 0 ? (
                                 <>
                                     {
-                                        pageLocation === 'active-chapter' ? (
+                                        pageLocation === 'active-blueprint' ? (
                                             < React.Fragment >
                                                 <div>
 
-                                                    <h3 style={{ textAlign: 'center' }}>No {pageLocation === "active-chapter" ? 'Active Chapters' : 'Archived Chapters'} Found</h3>
+                                                    <h3 style={{ textAlign: 'center' }}>No {pageLocation === "active-blueprint" ? 'Active Blue Print' : 'Archived Blue Print'} Found</h3>
                                                     <div className="form-group fill text-center">
                                                         <br></br>
-                                                        <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={(e) => { handleAddChapter(e) }}>
-                                                            <i className="feather icon-plus" /> Add Chapter
+                                                        <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={(e) => { history.push('/admin-portal/add-bluePrint') }}>
+                                                            <i className="feather icon-plus" /> Add Blue Print
                                                         </Button>
                                                     </div>
                                                 </div>
-                                                <Modal dialogClassName="my-modal" show={isOpenAddChapter} onHide={() => setOpenAddChapter(false)}>
-                                                    <Modal.Header closeButton>
-                                                        <Modal.Title as="h5">Add Chapter</Modal.Title>
-                                                    </Modal.Header>
-                                                    <Modal.Body>
-                                                        <AddChapter setOpenAddChapter={setOpenAddChapter} />
-                                                    </Modal.Body>
-                                                </Modal>
+
                                             </React.Fragment>
                                         ) : (
                                             <React.Fragment>
-                                                <h3 style={{ textAlign: 'center' }}>No {pageLocation === "active-chapter" ? 'Active Chapters' : 'Archived Chapters'} Found</h3>
+                                                <h3 style={{ textAlign: 'center' }}>No {pageLocation === "active-blueprint" ? 'Active Blue Print' : 'Archived Blue Print'} Found</h3>
                                             </React.Fragment>
                                         )
                                     }
@@ -625,24 +540,16 @@ const ChaptersListChild = (props) => {
                                                 <Card>
                                                     <Card.Header>
                                                         <Card.Title as="h5" className='d-flex justify-content-between'>
-                                                            <h5>Chapters List</h5>
-                                                            <h5>Total Entries :- {chapterData.length}</h5>
+                                                            <h5>BluePrint List</h5>
+                                                            <h5>Total Entries :- {bluePrintData.length}</h5>
                                                         </Card.Title>
                                                     </Card.Header>
                                                     <Card.Body>
-                                                        <Table columns={columns} data={chapterData} />
+                                                        <Table columns={columns} data={bluePrintData} />
                                                     </Card.Body>
                                                 </Card>
                                             </Col>
                                         </Row>
-                                        <Modal dialogClassName="my-modal" show={isOpenEditChapter} onHide={() => setOpenEditChapter(false)}>
-                                            <Modal.Header closeButton>
-                                                <Modal.Title as="h5">Edit Chapter</Modal.Title>
-                                            </Modal.Header>
-                                            <Modal.Body>
-                                                <EditChapter setOpenEditChapter={setOpenEditChapter} chapterId={chapterId} />
-                                            </Modal.Body>
-                                        </Modal>
                                     </React.Fragment>
                                 </>
                             )
@@ -650,7 +557,7 @@ const ChaptersListChild = (props) => {
                     </>
                 )
             }
-        </div >
+        </div>
     );
 };
-export default ChaptersListChild;
+export default BluePrintList;

@@ -193,10 +193,8 @@ const EditClass = ({ setOpenEditClass, classId }) => {
                         let errStatus = editClassRes.Error.response.status;
                         console.log("errStatus", errStatus);
                         errStatus === 400
-                          ? sweetAlertHandler({
-                            title: "Error",
-                            type: "error",
-                            text: MESSAGES.ERROR.ClassNameExists,
+                          ? setErrors({
+                            classTitle: MESSAGES.ERROR.ClassNameExists,
                           })
                           : errStatus === 502
                             ? sweetAlertHandler({

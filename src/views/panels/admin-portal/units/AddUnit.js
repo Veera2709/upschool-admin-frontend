@@ -3,7 +3,7 @@ import React, { useState, useCallback } from 'react';
 import { Row, Col, Card, Button, OverlayTrigger, Tooltip, Form, ModalBody } from 'react-bootstrap';
 // import CkDecoupledEditor from '../../../components/CK-Editor/CkDecoupledEditor';
 import * as Constants from '../../../../helper/constants';
-import { Formik } from 'formik';    
+import { Formik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
 import dynamicUrl from '../../../../helper/dynamicUrls';
@@ -41,7 +41,7 @@ const AddUnit = ({ setOpenAddUnit }) => {
     const [isShownDes, setIsShownDes] = useState(true);
     const [topicDigiCardIds, setTopicDigiCardIds] = useState([]);
     const [topicTitles, setTopicTitles] = useState([]);
-
+   
 
 
 
@@ -182,11 +182,9 @@ const AddUnit = ({ setOpenAddUnit }) => {
 
                                     console.log(error.response.data);
                                     if (error.response.status === 401) {
-                                        console.log();
-                                        hideLoader();
-                                        // setIsClientExists(true);
-                                        sweetAlertHandler({ title: 'Error', type: 'error', text: MESSAGES.ERROR.UnitNameExists });
-
+                                        setErrors(
+                                            {unittitle :error.response.data}
+                                        )
                                     } else {
                                         sweetAlertHandler({ title: 'Error', type: 'error', text: error.response.data });
                                     }

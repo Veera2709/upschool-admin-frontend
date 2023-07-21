@@ -76,7 +76,7 @@ function Preview() {
 
     return isEmptyObject(previewData) ? null : (
 
-        <div>
+        <div >
             <Row>
                 <Col sm={2}>
 
@@ -116,16 +116,16 @@ function Preview() {
                                 {/* {ReactHtmlParser(previewData[0].digi_card_content)} */}
                                 {ReactHtmlParser(previewData[0].preview_content)}
                                 <br />
-                                <div>
+                                {previewData[0].digicard_voice_noteURL && (<div>
                                     <label className="floating-label" htmlFor="digicard">
                                         Digicard Voice Note
                                     </label><br />
                                     <audio controls>
                                         <source src={previewData[0].digicard_voice_noteURL} alt="Audio" type="audio/mp3" />
                                     </audio>
-                                </div>
+                                </div>)}
                                 <br />
-                                <Button  className='float-right' variant="primary" onClick={(e) => { setIsShown(true); reloadPage() }}>Close</Button>
+                                <Button className='float-right' variant="primary" onClick={(e) => { setIsShown(true); reloadPage() }}>Close</Button>
                             </div>
                         </Scrollbars>
                     </DeviceFrameset>

@@ -716,8 +716,8 @@ const Address = ({ className, rest, newUpload }) => {
                         value={values.addressProof1}
                       />
                       {addressData !== 'N.A.' &&
-                      addressData.currentAddress.addressProof !== '' &&
-                      addressData.currentAddress.addressProofURL ? (
+                        addressData.currentAddress.addressProof !== '' &&
+                        addressData.currentAddress.addressProofURL ? (
                         <small style={{ cursor: 'pointer' }} className="text-primary form-text">
                           <a href={addressData.currentAddress.addressProofURL} target="_blank" rel="noopener noreferrer">
                             View existing image
@@ -875,7 +875,7 @@ const Address = ({ className, rest, newUpload }) => {
                         value={values.permPostalCode}
                         onBlur={handleBlur}
                         onChange={handleChange}
-                        onWheel={(e) => e.target.blur()}
+
                       />
                       {touched.permPostalCode && errors.permPostalCode ? (
                         <small className="text-danger form-text">{errors.permPostalCode}</small>
@@ -917,6 +917,7 @@ const Address = ({ className, rest, newUpload }) => {
                         onWheel={(e) => e.target.blur()}
                         type="number"
                         value={values.permPhoneNo}
+
                       />
                       {touched.permPhoneNo && errors.permPhoneNo ? (
                         <small className="text-danger form-text">{errors.permPhoneNo}</small>
@@ -940,8 +941,8 @@ const Address = ({ className, rest, newUpload }) => {
                         value={values.addressProof2}
                       />
                       {addressData !== 'N.A.' &&
-                      addressData.permanentAddress.addressProof !== '' &&
-                      addressData.permanentAddress.addressProofURL ? (
+                        addressData.permanentAddress.addressProof !== '' &&
+                        addressData.permanentAddress.addressProofURL ? (
                         <small style={{ cursor: 'pointer' }} className="text-primary form-text">
                           <a href={addressData.permanentAddress.addressProofURL} target="_blank" rel="noopener noreferrer">
                             View existing image
@@ -1132,7 +1133,7 @@ const Address = ({ className, rest, newUpload }) => {
                             value={values.interPostalCode1}
                             onBlur={handleBlur}
                             onChange={handleChange}
-                            onWheel={(e) => e.target.blur()}
+
                           />
                           {touched.interPostalCode1 && errors.interPostalCode1 ? (
                             <small className="text-danger form-text">{errors.interPostalCode1}</small>
@@ -1174,6 +1175,7 @@ const Address = ({ className, rest, newUpload }) => {
                             onWheel={(e) => e.target.blur()}
                             type="number"
                             value={values.interPhoneNo1}
+
                           />
                           {touched.interPhoneNo1 && errors.interPhoneNo1 ? (
                             <small className="text-danger form-text">{errors.interPhoneNo1}</small>
@@ -1197,8 +1199,8 @@ const Address = ({ className, rest, newUpload }) => {
                             value={values.addressProof3}
                           />
                           {addressData !== 'N.A.' &&
-                          addressData.intermediateAddressOne.addressProof !== '' &&
-                          addressData.intermediateAddressOne.addressProofURL ? (
+                            addressData.intermediateAddressOne.addressProof !== '' &&
+                            addressData.intermediateAddressOne.addressProofURL ? (
                             <small style={{ cursor: 'pointer' }} className="text-primary form-text">
                               <a href={addressData.intermediateAddressOne.addressProofURL} target="_blank" rel="noopener noreferrer">
                                 {Constants.Common.ViewExistingFile}
@@ -1391,7 +1393,7 @@ const Address = ({ className, rest, newUpload }) => {
                             value={values.interPostalCode2}
                             onBlur={handleBlur}
                             onChange={handleChange}
-                            onWheel={(e) => e.target.blur()}
+
                           />
                           {touched.interPostalCode2 && errors.interPostalCode2 ? (
                             <small className="text-danger form-text">{errors.interPostalCode2}</small>
@@ -1433,6 +1435,7 @@ const Address = ({ className, rest, newUpload }) => {
                             onWheel={(e) => e.target.blur()}
                             type="number"
                             value={values.interPhoneNo2}
+
                           />
                           {touched.interPhoneNo2 && errors.interPhoneNo2 ? (
                             <small className="text-danger form-text">{errors.interPhoneNo2}</small>
@@ -1456,8 +1459,8 @@ const Address = ({ className, rest, newUpload }) => {
                             value={values.addressProof4}
                           />
                           {addressData !== 'N.A.' &&
-                          addressData.intermediateAddressTwo.addressProof !== '' &&
-                          addressData.intermediateAddressTwo.addressProofURL ? (
+                            addressData.intermediateAddressTwo.addressProof !== '' &&
+                            addressData.intermediateAddressTwo.addressProofURL ? (
                             <small style={{ cursor: 'pointer' }} className="text-primary form-text">
                               <a href={addressData.intermediateAddressTwo.addressProofURL} target="_blank" rel="noopener noreferrer">
                                 {Constants.Common.ViewExistingFile}
@@ -1495,7 +1498,7 @@ const Address = ({ className, rest, newUpload }) => {
         )}
       </Formik>
       {sessionStorage.getItem('user_category') === 'Operation Supervisor' ||
-      sessionStorage.getItem('user_category') === 'Operation Team' ? (
+        sessionStorage.getItem('user_category') === 'Operation Team' ? (
         <AddressBgv addressData={addressData} reloadData={handleDataChange} />
       ) : null}
       {loader}

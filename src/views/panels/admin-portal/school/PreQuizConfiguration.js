@@ -6,7 +6,7 @@ import withReactContent from 'sweetalert2-react-content';
 import Swal from 'sweetalert2';
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
-
+import Select from 'react-select';
 import dynamicUrl from "../../../../helper/dynamicUrls";
 import MESSAGES from '../../../../helper/messages';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
@@ -79,11 +79,12 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
     const [focusAreaErr, setFocusAreaErr] = useState(false);
 
     const [ispreviousCommonData, setIsPreviousCommonData] = useState([])
+    const [defaultTestLevel, setDefaultTestLevel] = useState();
 
     const [isTestMode, setIsTestMode] = useState([
-        { value: 'Less Difficult', label: 'Less Difficult' },
-        { value: 'Moderatly Difficult', label: 'Moderatly Difficult' },
-        { value: 'Highly Difficult', label: 'Highly Difficult' },
+        { value: 'lessDifficult', label: 'Less Difficult' },
+        { value: 'moderatelyDifficult', label: 'Moderately Difficult' },
+        { value: 'highlyDifficult', label: 'Highly Difficult' },
     ])
 
 
@@ -241,7 +242,9 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                     setRadioManualSelected(previousDataPreQuiz.manual_type);
 
                     //test Difficult
+                    const testLevelData = isTestMode.filter((e) => e.value === previousDataPreQuiz.test_level)
                     SetSelectedTestMode(previousDataPreQuiz.test_level)
+                    setDefaultTestLevel(testLevelData)
 
                     //Paper Varients
                     const questionVarient = previousDataPreQuiz.randomized_questions_varient === "Enabled" ? true : false;
@@ -365,7 +368,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                 setOnlineErr(true)
                                             } else if (_radioAutomate === false && _radioExpress === false && _radioManual === false) {
                                                 setNoOptionInTestMode(true)
-                                            } else if (selectedTestMode === '' || selectedTestMode === undefined || selectedTestMode === null || selectedTestMode === 'Select...') {
+                                            } else if (selectedTestMode === '' || selectedTestMode === undefined || selectedTestMode === null) {
                                                 setTestModeErr(true)
                                             } else if (_radioRandomizedQuestions === false && _radioRandomizedOrder === false) {
                                                 setVarientErr(true)
@@ -440,7 +443,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                 MySwal.fire({
                                                                     // title: MESSAGES.TTTLES.Goodjob,
                                                                     type: 'success',
-                                                                    text: MESSAGES.SUCCESS.UpdatingQuizConfiguration,
+                                                                    text: MESSAGES.SUCCESS.UpdatingPreQuizConfiguration,
                                                                     icon: 'success',
                                                                 }).then((willDelete) => {
                                                                     window.location.reload();
@@ -514,6 +517,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                 onBlur={handleBlur}
                                                                 onChange={handleChange}
                                                                 type="number"
+                                                                onWheel={(e) => e.target.blur()}
                                                                 value={values.passPercentageL1Pre}
                                                             // placeholder="To clear the Quiz"
                                                             />
@@ -534,6 +538,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                 onBlur={handleBlur}
                                                                 onChange={handleChange}
                                                                 type="number"
+                                                                onWheel={(e) => e.target.blur()}
                                                                 value={values.passPercentageL2Pre}
                                                             // placeholder="To clear the Quiz"
                                                             />
@@ -568,6 +573,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                         onBlur={handleBlur}
                                                                         onChange={handleChange}
                                                                         type="number"
+                                                                        onWheel={(e) => e.target.blur()}
                                                                         value={values.minStudentsPre}
                                                                     // placeholder="To clear the Quiz"
                                                                     />
@@ -600,6 +606,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                         onBlur={handleBlur}
                                                                         onChange={handleChange}
                                                                         type="number"
+                                                                        onWheel={(e) => e.target.blur()}
                                                                         // placeholder="After unlocking from Need Attention"
                                                                         value={values.noOfAttemptsPre}
                                                                     />
@@ -629,6 +636,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                     onBlur={handleBlur}
                                                                     onChange={handleChange}
                                                                     type="number"
+                                                                    onWheel={(e) => e.target.blur()}
                                                                     value={values.noOfWorksheets}
                                                                 />
 
@@ -651,6 +659,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                     onBlur={handleBlur}
                                                                     onChange={handleChange}
                                                                     type="number"
+                                                                    onWheel={(e) => e.target.blur()}
                                                                     value={values.noOfTestPapers}
                                                                 />
 
@@ -672,6 +681,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                 onBlur={handleBlur}
                                                                 onChange={handleChange}
                                                                 type="number"
+                                                                onWheel={(e) => e.target.blur()}
                                                                 value={values.classPercentageRep}
                                                             // placeholder="To clear the Quiz"
                                                             />
@@ -838,6 +848,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                                             setFocusAreaErr(false)
                                                                                         }}
                                                                                         type="number"
+                                                                                        onWheel={(e) => e.target.blur()}
                                                                                         // placeholder="After unlocking from Need Attention"
                                                                                         value={values.percentageOfStudentsPre}
                                                                                     />
@@ -1040,6 +1051,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                             setAutomateErr(false)
                                                                         }}
                                                                         type="number"
+                                                                        onWheel={(e) => e.target.blur()}
                                                                         // placeholder="After unlocking from Need Attention"
                                                                         value={values.minNoQustionAutomate}
                                                                     />
@@ -1071,6 +1083,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                                 setExpManualErr(false)
                                                                             }}
                                                                             type="number"
+                                                                            onWheel={(e) => e.target.blur()}
                                                                             // placeholder="After unlocking from Need Attention"
                                                                             value={values.minNoQustionManual_express}
                                                                         />
@@ -1127,36 +1140,24 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                 <div id='paperType'>
                                                     <Row>
                                                         <Col sm={6}>
-                                                            <div className="form-group fill">
+                                                            <div className="form-group fill" style={{ position: 'relative', zIndex: 10 }}>
                                                                 <label className="floating-label" >
                                                                     <small className="text-danger">* </small>
                                                                     Test Level
                                                                 </label>
-                                                                <select
-                                                                    className="form-control"
-
-                                                                    name="test_mode"
-                                                                    onBlur={handleBlur}
-                                                                    type="text"
-                                                                    value={selectedTestMode}
+                                                                <Select
+                                                                    defaultValue={defaultTestLevel}
+                                                                    className="basic-single"
+                                                                    classNamePrefix="select"
+                                                                    name="color"
+                                                                    options={isTestMode}
                                                                     onChange={(e) => {
-                                                                        SetSelectedTestMode(e.target.value);
+                                                                        SetSelectedTestMode(e.value)
                                                                         setTestModeErr(false);
                                                                     }}
-                                                                >
-                                                                    <option>
-                                                                        Select...
-                                                                    </option>
-                                                                    {isTestMode.map((optionsData) => {
+                                                                    styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
 
-                                                                        return <option
-                                                                            value={optionsData.value}
-                                                                            key={optionsData.value}
-                                                                        >
-                                                                            {optionsData.value}
-                                                                        </option>
-                                                                    })}
-                                                                </select>
+                                                                />
                                                             </div>
                                                             {isTestModeErr && isTestModeErr && (
                                                                 <small style={{ color: 'red' }}>Field is required!</small>
@@ -1181,6 +1182,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                         setMatrixCountErr(false);
                                                                     }}
                                                                     type="number"
+                                                                    onWheel={(e) => e.target.blur()}
                                                                     value={values.martix_basic}
                                                                     placeholder="% Questions "
                                                                 />
@@ -1204,6 +1206,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                         setMatrixCountErr(false);
                                                                     }}
                                                                     type="number"
+                                                                    onWheel={(e) => e.target.blur()}
                                                                     value={values.martix_intermediate}
                                                                     placeholder="% Questions "
                                                                 />
@@ -1227,6 +1230,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                         setMatrixCountErr(false);
                                                                     }}
                                                                     type="number"
+                                                                    onWheel={(e) => e.target.blur()}
                                                                     value={values.martix_advanced}
                                                                     placeholder="% Questions "
                                                                 />
@@ -1328,6 +1332,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                                 validateValue(e);
                                                                             }}
                                                                             type="number"
+                                                                            onWheel={(e) => e.target.blur()}
                                                                             value={values.noOrderQuiz}
                                                                             id='title'
                                                                         />

@@ -61,6 +61,10 @@ const EditGroups = ({ className, ...rest }) => {
         setSelectedGroupType(event.value);
     }
 
+    const handleWheel = (event) => {
+        event.target.blur()
+    };
+
     const handleQuestionsChange = (event) => {
 
         console.log(event);
@@ -761,6 +765,7 @@ const EditGroups = ({ className, ...rest }) => {
                                                                     name="question_duration"
                                                                     onBlur={handleBlur}
                                                                     type='number'
+                                                                    onWheel={handleWheel}
                                                                     onChange={e => {
                                                                         setGroupNameExistsErrMsg(false);
                                                                         handleChange(e);
