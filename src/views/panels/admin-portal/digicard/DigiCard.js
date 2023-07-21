@@ -623,7 +623,7 @@ const DigiCard = () => {
                                                 </Card>
                                             </Col>
                                         </Row>
-                                    </React.Fragment >
+                                    </React.Fragment>
                                 </>
                             )
                         }
