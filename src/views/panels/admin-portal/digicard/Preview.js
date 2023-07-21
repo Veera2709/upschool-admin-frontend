@@ -101,8 +101,10 @@ function Preview() {
                                         <Card.Img variant="top" src={previewData[0].digicard_imageURL} className='img-fluid  wid-160' />
                                         <Card.Body style={{ whiteSpace: 'pre-wrap', overflowWrap: 'break-word' }}>
                                             <Card.Title>{previewData[0].digi_card_title}</Card.Title>
-                                            <Card.Text >
-                                                {ReactHtmlParser(previewData[0].digi_card_excerpt)}
+                                            <Card.Text className='d-flex flex-wrap'>
+                                                <div>
+                                                    {ReactHtmlParser(previewData[0].digi_card_excerpt)}
+                                                </div>
                                             </Card.Text>
                                         </Card.Body>
                                         <Card.Footer>
