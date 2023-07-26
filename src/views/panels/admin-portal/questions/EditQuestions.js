@@ -44,6 +44,7 @@ const EditQuestions = () => {
         { value: 'highlyDifficult', label: 'Highly Difficult' },
     ]
 
+    const [isDuplicatePresent, setIsDuplicatePresent] = useState(false);/////////
     const [descriptiveAnswerErrMsg, setDescriptiveAnswerErrMsg] = useState(false);
     const [questionTypeErrMsg, setQuestionTypeErrMsg] = useState(false);
     const [questionCategoryErrMsg, setQuestionCategoryErrMsg] = useState(false);
@@ -598,6 +599,10 @@ const EditQuestions = () => {
         _setRadioWorkSheetOrTest(!_radioWorkSheetOrTest);
         _radioWorkSheetOrTest === true ? setWorkSheetOrTest('preOrPost') : setWorkSheetOrTest('worksheetOrTest');
     }
+
+    const handleChildStateChange = (newState) => {
+        setIsDuplicatePresent(newState);
+    };
 
     const [answerBlanksOptions, setAnswerBlanksOptions] = useState([]);
     const answerDisplayOptions = [
@@ -1220,7 +1225,20 @@ const EditQuestions = () => {
                 difficulty_level: _radioWorkSheetOrTest ? selectedDifficultyLevel : 'N.A',
             }
 
-            _addQuestions(payLoad)
+            if (isDuplicatePresent) {
+
+                console.log("Duplicates are present, skip form submission");
+                Swal.fire({
+                    title: 'Duplicates Found',
+                    text: 'Duplicate values are present between $$ markers in Question Field ',
+                    icon: 'warning',
+                });
+                return
+            } else {
+                showLoader();
+                _addQuestions(payLoad);
+            }
+
         }
     }
 
@@ -1437,9 +1455,19 @@ const EditQuestions = () => {
                                                                     }
 
                                                                     console.log("payLoad", payLoad);
+                                                                    if (isDuplicatePresent) {
 
-                                                                    showLoader();
-                                                                    _addQuestions(payLoad);
+                                                                        console.log("Duplicates are present, skip form submission");
+                                                                        Swal.fire({
+                                                                            title: 'Duplicates Found',
+                                                                            text: 'Duplicate values are present between $$ markers in Question Field ',
+                                                                            icon: 'warning',
+                                                                        });
+                                                                        return
+                                                                    } else {
+                                                                        showLoader();
+                                                                        _addQuestions(payLoad);
+                                                                    }
 
                                                                 }
                                                             }
@@ -1502,8 +1530,20 @@ const EditQuestions = () => {
 
                                                                     console.log("payLoad", payLoad);
 
-                                                                    showLoader();
-                                                                    _editQuestions(payLoad);
+                                                                    if (isDuplicatePresent) {
+
+                                                                        console.log("Duplicates are present, skip form submission");
+                                                                        Swal.fire({
+                                                                            title: 'Duplicates Found',
+                                                                            text: 'Duplicate values are present between $$ markers in Question Field ',
+                                                                            icon: 'warning',
+                                                                        });
+                                                                        return
+                                                                    } else {
+                                                                        showLoader();
+                                                                        _editQuestions(payLoad);
+                                                                    }
+
                                                                 }
 
                                                             } else if (selectedQuestionType === 'Subjective' || selectedQuestionType === 'Objective') {
@@ -1547,9 +1587,19 @@ const EditQuestions = () => {
                                                                     }
 
                                                                     console.log("payLoad", payLoad);
+                                                                    if (isDuplicatePresent) {
 
-                                                                    showLoader();
-                                                                    _editQuestions(payLoad);
+                                                                        console.log("Duplicates are present, skip form submission");
+                                                                        Swal.fire({
+                                                                            title: 'Duplicates Found',
+                                                                            text: 'Duplicate values are present between $$ markers in Question Field ',
+                                                                            icon: 'warning',
+                                                                        });
+                                                                        return
+                                                                    } else {
+                                                                        showLoader();
+                                                                        _editQuestions(payLoad);
+                                                                    }
 
                                                                 }
                                                             }
@@ -1926,6 +1976,7 @@ const EditQuestions = () => {
                                                                     </label>
 
                                                                     <ArticleRTE
+                                                                        onChildStateChange={handleChildStateChange}
                                                                         setArticleSize={setArticleSize}
                                                                         setImageCount={setImageCount}
                                                                         imageCount={imageCount}
@@ -1967,7 +2018,7 @@ const EditQuestions = () => {
                                                                                     setNegativeMarksErrMsg(false);
                                                                                 }}
                                                                                 type="number"
-                                                                                  onWheel={(e) => e.target.blur()}
+                                                                                onWheel={(e) => e.target.blur()}
                                                                                 min="0.01"
                                                                                 placeholder="Enter the total marks this question carries"
                                                                             />
@@ -1993,6 +2044,8 @@ const EditQuestions = () => {
                                                                     {answerOptionsForm.map((form, index) => {
 
                                                                         return (<>
+
+                                                                            {console.log(form.answer_option)}
 
                                                                             <Card
                                                                                 className="shadow p-3 mb-5 bg-white rounded"
