@@ -55,6 +55,10 @@ const EditUsersGeneralStudent = ({ user_id, user_role }) => {
 
     const phoneRegExp = /^(\+91[\-\s]?)?[0]?(91)?[6789]\d{9}$/;
 
+
+
+
+
     const _UpdateUser = (data) => {
         console.log(data);
         console.log('Submitted');
@@ -70,7 +74,7 @@ const EditUsersGeneralStudent = ({ user_id, user_role }) => {
                     history.push('/admin-portal/active-users');
                 } else {
                     hideLoader();
-                    sweetAlertHandler({  type: 'success', text: MESSAGES.SUCCESS.UpdatingUser });
+                    sweetAlertHandler({ type: 'success', text: MESSAGES.SUCCESS.UpdatingUser });
                     history.push('/admin-portal/active-users');
                 }
             })
@@ -356,7 +360,8 @@ const EditUsersGeneralStudent = ({ user_id, user_role }) => {
                                                 class: individualUserData.class_id,
                                                 section: individualUserData.section_id,
                                                 // school: individualUserData.school_id
-                                                school: previousSchool
+                                                school: previousSchool,
+                                                rollNumber: individualUserData.roll_no
 
                                                 //individualUserData.user_dob.yyyy_mm_dd
 
@@ -370,7 +375,11 @@ const EditUsersGeneralStudent = ({ user_id, user_role }) => {
                                                     userRole: Yup.string().max(255).required('User Role is required'),
                                                     class: Yup.string().max(255).required('Class is required'),
                                                     section: Yup.string().max(255).required('Section is required'),
-                                                    school: Yup.string().max(255).required('School is required')
+                                                    school: Yup.string().max(255).required('School is required'),
+                                                    rollNumber: Yup.string()
+                                                        .required('Roll number is required')
+                                                        .matches(/^[A-Za-z0-9_/ -]+$/, 'Invalid roll number format')
+                                                        .max(20, 'Roll number must be at most 20 characters long'),
                                                 })
                                             }
                                             onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
@@ -403,7 +412,8 @@ const EditUsersGeneralStudent = ({ user_id, user_role }) => {
                                                         user_lastname: values.lastName,
                                                         user_email: values.userEmail,
                                                         user_phone_no: values.phoneNumber,
-                                                        user_role: values.userRole
+                                                        user_role: values.userRole,
+                                                        roll_no: values.rollNumber
 
                                                     };
 
@@ -725,7 +735,26 @@ const EditUsersGeneralStudent = ({ user_id, user_role }) => {
                                                                     </div>
                                                                 </Col>
 
-                                                                <Col></Col>
+                                                                <Col>
+                                                                    <div className="form-group fill">
+                                                                        <label className="floating-label" htmlFor="rollNumber">
+                                                                            <small className="text-danger">* </small>Roll No
+                                                                        </label>
+                                                                        <input
+                                                                            id="rollNumber"
+                                                                            className="form-control"
+                                                                            error={touched.rollNumber && errors.rollNumber}
+                                                                            name="rollNumber"
+                                                                            onBlur={handleBlur}
+                                                                            onChange={handleChange}
+                                                                            type="text"
+                                                                            onWheel={(e) => e.target.blur()}
+                                                                            value={values.rollNumber}
+
+                                                                        />
+                                                                        {touched.rollNumber && errors.rollNumber && <small className="text-danger form-text">{errors.rollNumber}</small>}
+                                                                    </div>
+                                                                </Col>
                                                             </Row>
 
                                                             {errors.submit && (
