@@ -18,7 +18,6 @@ function Table({ columns, data, modalOpen, userRole }) {
     console.log("_userRole in Table", userRole);
     const initiallySelectedRows = React.useMemo(() => new Set(["1"]), []);
 
-    const [stateStudent, setStateStudent] = useState([])
     const {
         getTableProps,
         getTableBodyProps,
