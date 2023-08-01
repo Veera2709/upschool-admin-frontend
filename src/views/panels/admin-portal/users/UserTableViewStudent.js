@@ -22,7 +22,6 @@ function Table({ columns, data, modalOpen, userRole }) {
 
 
 
-    const [stateStudent, setStateStudent] = useState([])
     const {
         getTableProps,
         getTableBodyProps,
