@@ -229,10 +229,13 @@ import fontList from "../../../../helper/fontList";
 import 'suneditor/dist/css/suneditor.min.css';
 import plugins from '../digicard/suneditor/src/plugins'
 
-function ArticleRTE({ setArticleSize, articleData, setArticleData, imageCount, setImageCount, setAnswerBlanksOptions, onChildStateChange }) {
+function ArticleRTE({ setArticleSize, articleData, setArticleData, imageCount, setImageCount, setAnswerBlanksOptions, onChildStateChange, setQuestionEmptyErrMsg }) {
   const [isDuplicatePresent, setIsDuplicatePresent] = useState(false);
 
   const handleEditorChange = (content) => {
+
+    setQuestionEmptyErrMsg(false);
+
     console.log(content);
     let arr = content.split(/[,.!&;<>\s]+/).filter(p => p.startsWith('$$'));
     console.log("arr", arr);
