@@ -55,6 +55,13 @@ const EditQuestions = () => {
     const [unitWeightageErrMsg, setUnitWeightageErrMsg] = useState(false);
     const [negativeMarksErrMsg, setNegativeMarksErrMsg] = useState(false);
     const [answerTypeErrMsg, setAnswerTypeErrMsg] = useState(false);
+    const [weightageEmpty, setWeightageEmpty] = useState(false);
+    const [keyWordsEmptyErr, setKeyWordsEmptyErr] = useState(false);
+    const [answersEmptyErr, setAnswersEmptyErr] = useState(false);
+    const [optionsEmptyErr, setOptionsEmptyErr] = useState(false);
+    const [mismatchWeightageErr, setMismatchWeightageErr] = useState(false);
+    const [answerTypeEmptyErr, setAnswerTypeEmptyErr] = useState(false);
+    const [blanksMismatchErr, setBlanksMismatchErr] = useState(false);
 
     const [selectedQuestionType, setSelectedQuestionType] = useState([]);
     const [selectedQuestionCategory, setSelectedQuestionCategory] = useState([]);
@@ -639,6 +646,15 @@ const EditQuestions = () => {
         setAnsWeightageErrMsg(false);
         setUnitWeightageErrMsg(false);
 
+        setKeyWordsEmptyErr(false);
+        setAnswersEmptyErr(false);
+        setOptionsEmptyErr(false);
+        setWeightageEmpty(false);
+        setBlanksMismatchErr(false);
+        setMismatchWeightageErr(false);
+        setAnswerTypeEmptyErr(false);
+        setBlanksMismatchErr(false);
+
         setAddAnswerOptions(false);
 
         console.log(event.target);
@@ -674,6 +690,15 @@ const EditQuestions = () => {
     }
 
     const handleDescriptiveAnswerBlanks = (event, index) => {
+
+        setKeyWordsEmptyErr(false);
+        setAnswersEmptyErr(false);
+        setOptionsEmptyErr(false);
+        setWeightageEmpty(false);
+        setBlanksMismatchErr(false);
+        setMismatchWeightageErr(false);
+        setAnswerTypeEmptyErr(false);
+        setBlanksMismatchErr(false);
 
         let data = [...descriptiveAnswerOptionsForm];
 
@@ -734,6 +759,15 @@ const EditQuestions = () => {
     };
 
     const handleAnswerBlanks = (event, index) => {
+
+        setKeyWordsEmptyErr(false);
+        setAnswersEmptyErr(false);
+        setOptionsEmptyErr(false);
+        setWeightageEmpty(false);
+        setBlanksMismatchErr(false);
+        setMismatchWeightageErr(false);
+        setAnswerTypeEmptyErr(false);
+        setBlanksMismatchErr(false);
 
         console.log(event.target);
 
@@ -1244,7 +1278,6 @@ const EditQuestions = () => {
 
     const addnewQuestion = () => {
 
-
         if (questionLabelValue === "" || questionLabelValue === undefined || questionLabelValue === "undefined") {
             setQuestionLabelErr(true);
         } else if (isEmptyArray(selectedQuestionType)) {
@@ -1273,8 +1306,48 @@ const EditQuestions = () => {
                 setDescriptiveAnswerErrMsg(true);
             } else {
 
-                showLoader();
-                setnNewDigicard(true);
+                let answerTypeSelected = descriptiveAnswerOptionsForm.filter(value => (value.answer_type === '' || value.answer_type === 'N.A.' || value.answer_type === 'Select...' || value.answer_type === 'undefined' || value.answer_type === undefined) && sessionStorage.getItem('click_event') === 'Submit');
+
+                if (answerTypeSelected.length === 0) {
+
+                    let keywordsGiven = descriptiveAnswerOptionsForm.filter(value => (value.answer_content === '' || value.answer_content === 'N.A.' || value.answer_content === 'undefined' || value.answer_content === undefined) && sessionStorage.getItem('click_event') === 'Submit');
+
+                    if (keywordsGiven.length === 0) {
+
+                        if (sessionStorage.getItem('click_event') === 'Submit') {
+
+                            let weightageGiven = descriptiveAnswerOptionsForm.filter(value => (value.answer_weightage === '' || value.answer_weightage === 'N.A.' || value.answer_weightage === 'undefined' || value.answer_weightage === undefined) && sessionStorage.getItem('click_event') === 'Submit');
+
+                            if (weightageGiven.length === 0) {
+
+                                let sumOfAllWeightage = descriptiveAnswerOptionsForm.reduce((acc, item) => acc + Number(item.answer_weightage), 0);
+                                let allEqual = sumOfAllWeightage === Number(document.getElementById('marks').value);
+
+                                console.log("allEqual", allEqual);
+
+                                if (allEqual) {
+                                    showLoader();
+                                    setnNewDigicard(true);
+                                } else {
+                                    setMismatchWeightageErr(true);
+                                }
+
+                            } else {
+                                setWeightageEmpty(true);
+                            }
+
+                        } else {
+                            showLoader();
+                            setnNewDigicard(true);
+                        }
+
+                    } else {
+                        setKeyWordsEmptyErr(true);
+                    }
+
+                } else {
+                    setAnswerTypeEmptyErr(true);
+                }
             }
 
         } else if (selectedQuestionType === 'Subjective' || selectedQuestionType === 'Objective') {
@@ -1294,9 +1367,107 @@ const EditQuestions = () => {
                 setUnitWeightageErrMsg(true);
             } else {
 
-                showLoader();
-                setnNewDigicard(true);
+                let answerTypeSelected = answerOptionsForm.filter(value => (value.answer_type === '' || value.answer_type === 'N.A.' || value.answer_type === 'Select...' || value.answer_type === 'undefined' || value.answer_type === undefined) && sessionStorage.getItem('click_event') === 'Submit');
 
+                if (answerTypeSelected.length === 0) {
+
+                    let placegolderSelected = answerOptionsForm.filter(value => (value.answer_option === '' || value.answer_option === 'N.A.' || value.answer_option === 'Select...' || value.answer_option === 'undefined' || value.answer_option === undefined) && sessionStorage.getItem('click_event') === 'Submit');
+
+                    if (placegolderSelected.length === 0) {
+
+                        let answersGiven = answerOptionsForm.filter(value => (value.answer_content === '' || value.answer_content === 'N.A.' || value.answer_content === 'undefined' || value.answer_content === undefined) && sessionStorage.getItem('click_event') === 'Submit');
+
+                        if (answersGiven.length === 0) {
+
+                            if (sessionStorage.getItem('click_event') === 'Submit') {
+
+                                let weightageGiven = answerOptionsForm.filter(value => (value.answer_weightage === '' || value.answer_weightage === 'N.A.' || value.answer_weightage === 'undefined' || value.answer_weightage === undefined) && sessionStorage.getItem('click_event') === 'Submit');
+
+                                if (weightageGiven.length === 0) {
+
+                                    if (selectedQuestionType === 'Objective') {
+
+                                        let sumOfAllWeightage = answerOptionsForm.filter(item => item.answer_display === "Yes").reduce((acc, item) => acc + Number(item.answer_weightage), 0);
+
+                                        let allEqual = sumOfAllWeightage === Number(document.getElementById('marks').value);
+                                        console.log("allEqual", allEqual);
+
+                                        if (allEqual) {
+                                            if (isDuplicatePresent) {
+                                                console.log("Duplicates are present, skip form submission");
+                                                Swal.fire({
+                                                    title: 'Duplicates Found',
+                                                    text: 'Duplicate values are present between $$ markers in Question Field',
+                                                    icon: 'warning',
+                                                });
+                                                return;
+                                            } else {
+                                                showLoader();
+                                                setnNewDigicard(true);
+                                            }
+                                        } else {
+                                            setMismatchWeightageErr(true);
+                                        }
+                                    } else {
+
+                                        console.log("answerBlanksOptions", answerBlanksOptions.map(value => value.value));
+                                        console.log("answerOptionsForm", answerOptionsForm.map(value => value.answer_option));
+
+                                        let allOptionsPresent = answerBlanksOptions.map(value => value.value).every(item => answerOptionsForm.map(value => value.answer_option).includes(item));
+
+                                        console.log("allOptionsPresent", allOptionsPresent);
+
+                                        if (allOptionsPresent) {
+                                            if (isDuplicatePresent) {
+
+                                                console.log("Duplicates are present, skip form submission");
+                                                Swal.fire({
+                                                    title: 'Duplicates Found',
+                                                    text: 'Duplicate values are present between $$ markers in Question Field',
+                                                    icon: 'warning',
+                                                });
+                                                return
+                                            } else {
+                                                showLoader();
+                                                setnNewDigicard(true);
+                                            }
+                                        } else {
+                                            setBlanksMismatchErr(true);
+                                        }
+                                    }
+
+                                } else {
+                                    setWeightageEmpty(true);
+                                }
+
+                            } else {
+
+                                if (isDuplicatePresent) {
+
+                                    console.log("Duplicates are present, skip form submission");
+                                    Swal.fire({
+                                        title: 'Duplicates Found',
+                                        text: 'Duplicate values are present between $$ markers in Question Field',
+                                        icon: 'warning',
+                                    });
+                                    return
+                                } else {
+                                    showLoader();
+                                    setnNewDigicard(true);
+                                }
+                            }
+
+                        } else {
+                            setAnswersEmptyErr(true);
+                        }
+
+                    } else {
+                        setOptionsEmptyErr(true);
+                    }
+
+                } else {
+                    setAnswerTypeEmptyErr(true);
+                }
             }
         } else {
             console.log("Invalid option!");
@@ -1409,11 +1580,74 @@ const EditQuestions = () => {
                                                                     setDescriptiveAnswerErrMsg(true);
                                                                 } else {
 
-                                                                    showLoader();
-                                                                    setnNewDigicard(true);
+                                                                    let answerTypeSelected = descriptiveAnswerOptionsForm.filter(value => (value.answer_type === '' || value.answer_type === 'N.A.' || value.answer_type === 'Select...' || value.answer_type === 'undefined' || value.answer_type === undefined) && sessionStorage.getItem('click_event') === 'Submit');
+
+                                                                    if (answerTypeSelected.length === 0) {
+
+                                                                        let keywordsGiven = descriptiveAnswerOptionsForm.filter(value => (value.answer_content === '' || value.answer_content === 'N.A.' || value.answer_content === 'undefined' || value.answer_content === undefined) && sessionStorage.getItem('click_event') === 'Submit');
+
+                                                                        if (keywordsGiven.length === 0) {
+
+                                                                            if (sessionStorage.getItem('click_event') === 'Submit') {
+
+                                                                                let weightageGiven = descriptiveAnswerOptionsForm.filter(value => (value.answer_weightage === '' || value.answer_weightage === 'N.A.' || value.answer_weightage === 'undefined' || value.answer_weightage === undefined) && sessionStorage.getItem('click_event') === 'Submit');
+
+                                                                                if (weightageGiven.length === 0) {
+
+                                                                                    let sumOfAllWeightage = descriptiveAnswerOptionsForm.reduce((acc, item) => acc + Number(item.answer_weightage), 0);
+                                                                                    let allEqual = sumOfAllWeightage === Number(values.marks);
+
+                                                                                    console.log("allEqual", allEqual);
+
+                                                                                    if (allEqual) {
+                                                                                        showLoader();
+                                                                                        setnNewDigicard(true);
+                                                                                    } else {
+                                                                                        setMismatchWeightageErr(true);
+                                                                                    }
+
+                                                                                } else {
+                                                                                    setWeightageEmpty(true);
+                                                                                }
+
+                                                                            } else {
+                                                                                showLoader();
+                                                                                setnNewDigicard(true);
+                                                                            }
+
+                                                                        } else {
+                                                                            setKeyWordsEmptyErr(true);
+                                                                        }
+
+                                                                    } else {
+                                                                        setAnswerTypeEmptyErr(true);
+                                                                    }
+
                                                                 }
 
                                                             } else if (selectedQuestionType === 'Subjective' || selectedQuestionType === 'Objective') {
+
+                                                                let payLoad = {
+
+                                                                    question_type: selectedQuestionType,
+                                                                    question_category: selectedQuestionCategory,
+                                                                    question_voice_note: selectedQuestionVoiceNote,
+                                                                    question_content: articleDataTitle,
+                                                                    answers_of_question: answerOptionsForm,
+                                                                    question_status: sessionStorage.getItem('click_event'),
+                                                                    question_disclaimer: selectedQuestionDisclaimer,
+                                                                    show_math_keyboard: showMathKeyboard,
+                                                                    appears_in: workSheetOrTest,
+                                                                    question_label: questionLabelValue,
+                                                                    cognitive_skill: selectedQuestionCognitiveSkill,
+                                                                    question_source: selectedQuestionSource,
+                                                                    marks: values.marks,
+                                                                    display_answer: "N.A.",
+                                                                    answer_explanation: values.answer_explanation === undefined || values.answer_explanation === "undefined" || values.answer_explanation === "" ? "N.A." : values.answer_explanation,
+                                                                    difficulty_level: _radioWorkSheetOrTest ? selectedDifficultyLevel : 'N.A'
+                                                                }
+
+                                                                console.log("payLoad", payLoad);
 
                                                                 let tempAnsWeightage = answerOptionsForm.filter(value => value.answer_weightage < 0);
                                                                 let tempUnitWeightage = answerOptionsForm.filter(value => value.unit_weightage < 0);
@@ -1430,43 +1664,107 @@ const EditQuestions = () => {
                                                                     setIsDefficultyLevelErr(true)
                                                                 } else {
 
-                                                                    console.log('Data inserted!');
+                                                                    let answerTypeSelected = answerOptionsForm.filter(value => (value.answer_type === '' || value.answer_type === 'N.A.' || value.answer_type === 'Select...' || value.answer_type === 'undefined' || value.answer_type === undefined) && sessionStorage.getItem('click_event') === 'Submit');
 
-                                                                    let payLoad = {
+                                                                    if (answerTypeSelected.length === 0) {
 
-                                                                        question_type: selectedQuestionType,
-                                                                        question_category: selectedQuestionCategory,
-                                                                        question_voice_note: selectedQuestionVoiceNote,
-                                                                        question_content: articleDataTitle,
-                                                                        answers_of_question: answerOptionsForm,
-                                                                        question_status: sessionStorage.getItem('click_event'),
-                                                                        question_disclaimer: selectedQuestionDisclaimer,
-                                                                        show_math_keyboard: showMathKeyboard,
-                                                                        appears_in: workSheetOrTest,
-                                                                        question_label: questionLabelValue,
-                                                                        cognitive_skill: selectedQuestionCognitiveSkill,
-                                                                        question_source: selectedQuestionSource,
-                                                                        marks: values.marks,
-                                                                        display_answer: "N.A.",
-                                                                        answer_explanation: values.answer_explanation === undefined || values.answer_explanation === "undefined" || values.answer_explanation === "" ? "N.A." : values.answer_explanation,
-                                                                        difficulty_level: _radioWorkSheetOrTest ? selectedDifficultyLevel : 'N.A',
+                                                                        let placegolderSelected = answerOptionsForm.filter(value => (value.answer_option === '' || value.answer_option === 'N.A.' || value.answer_option === 'Select...' || value.answer_option === 'undefined' || value.answer_option === undefined) && sessionStorage.getItem('click_event') === 'Submit');
 
+                                                                        if (placegolderSelected.length === 0) {
 
-                                                                    }
+                                                                            let answersGiven = answerOptionsForm.filter(value => (value.answer_content === '' || value.answer_content === 'N.A.' || value.answer_content === 'undefined' || value.answer_content === undefined) && sessionStorage.getItem('click_event') === 'Submit');
 
-                                                                    console.log("payLoad", payLoad);
-                                                                    if (isDuplicatePresent) {
+                                                                            if (answersGiven.length === 0) {
 
-                                                                        console.log("Duplicates are present, skip form submission");
-                                                                        Swal.fire({
-                                                                            title: 'Duplicates Found',
-                                                                            text: 'Duplicate values are present between $$ markers in Question Field ',
-                                                                            icon: 'warning',
-                                                                        });
-                                                                        return
+                                                                                if (sessionStorage.getItem('click_event') === 'Submit') {
+
+                                                                                    let weightageGiven = answerOptionsForm.filter(value => (value.answer_weightage === '' || value.answer_weightage === 'N.A.' || value.answer_weightage === 'undefined' || value.answer_weightage === undefined) && sessionStorage.getItem('click_event') === 'Submit');
+
+                                                                                    if (weightageGiven.length === 0) {
+
+                                                                                        if (selectedQuestionType === 'Objective') {
+
+                                                                                            let sumOfAllWeightage = answerOptionsForm.filter(item => item.answer_display === "Yes").reduce((acc, item) => acc + Number(item.answer_weightage), 0);
+
+                                                                                            let allEqual = sumOfAllWeightage === Number(values.marks);
+                                                                                            console.log("allEqual", allEqual);
+
+                                                                                            if (allEqual) {
+                                                                                                if (isDuplicatePresent) {
+                                                                                                    console.log("Duplicates are present, skip form submission");
+                                                                                                    Swal.fire({
+                                                                                                        title: 'Duplicates Found',
+                                                                                                        text: 'Duplicate values are present between $$ markers in Question Field',
+                                                                                                        icon: 'warning',
+                                                                                                    });
+                                                                                                    return;
+                                                                                                } else {
+                                                                                                    showLoader();
+                                                                                                    _addQuestions(payLoad);
+                                                                                                }
+                                                                                            } else {
+                                                                                                setMismatchWeightageErr(true);
+                                                                                            }
+                                                                                        } else {
+
+                                                                                            console.log("answerBlanksOptions", answerBlanksOptions.map(value => value.value));
+                                                                                            console.log("answerOptionsForm", answerOptionsForm.map(value => value.answer_option));
+
+                                                                                            let allOptionsPresent = answerBlanksOptions.map(value => value.value).every(item => answerOptionsForm.map(value => value.answer_option).includes(item));
+
+                                                                                            console.log("allOptionsPresent", allOptionsPresent);
+
+                                                                                            if (allOptionsPresent) {
+                                                                                                if (isDuplicatePresent) {
+
+                                                                                                    console.log("Duplicates are present, skip form submission");
+                                                                                                    Swal.fire({
+                                                                                                        title: 'Duplicates Found',
+                                                                                                        text: 'Duplicate values are present between $$ markers in Question Field',
+                                                                                                        icon: 'warning',
+                                                                                                    });
+                                                                                                    return
+                                                                                                } else {
+                                                                                                    showLoader();
+                                                                                                    _addQuestions(payLoad);
+                                                                                                }
+                                                                                            } else {
+                                                                                                setBlanksMismatchErr(true);
+                                                                                            }
+
+                                                                                        }
+
+                                                                                    } else {
+                                                                                        setWeightageEmpty(true);
+                                                                                    }
+
+                                                                                } else {
+
+                                                                                    if (isDuplicatePresent) {
+
+                                                                                        console.log("Duplicates are present, skip form submission");
+                                                                                        Swal.fire({
+                                                                                            title: 'Duplicates Found',
+                                                                                            text: 'Duplicate values are present between $$ markers in Question Field',
+                                                                                            icon: 'warning',
+                                                                                        });
+                                                                                        return
+                                                                                    } else {
+                                                                                        showLoader();
+                                                                                        _addQuestions(payLoad);
+                                                                                    }
+                                                                                }
+
+                                                                            } else {
+                                                                                setAnswersEmptyErr(true);
+                                                                            }
+
+                                                                        } else {
+                                                                            setOptionsEmptyErr(true);
+                                                                        }
+
                                                                     } else {
-                                                                        showLoader();
-                                                                        _addQuestions(payLoad);
+                                                                        setAnswerTypeEmptyErr(true);
                                                                     }
 
                                                                 }
@@ -1530,20 +1828,48 @@ const EditQuestions = () => {
 
                                                                     console.log("payLoad", payLoad);
 
-                                                                    if (isDuplicatePresent) {
+                                                                    let answerTypeSelected = descriptiveAnswerOptionsForm.filter(value => (value.answer_type === '' || value.answer_type === 'N.A.' || value.answer_type === 'Select...' || value.answer_type === 'undefined' || value.answer_type === undefined) && sessionStorage.getItem('click_event') === 'Submit');
 
-                                                                        console.log("Duplicates are present, skip form submission");
-                                                                        Swal.fire({
-                                                                            title: 'Duplicates Found',
-                                                                            text: 'Duplicate values are present between $$ markers in Question Field ',
-                                                                            icon: 'warning',
-                                                                        });
-                                                                        return
+                                                                    if (answerTypeSelected.length === 0) {
+
+                                                                        let keywordsGiven = descriptiveAnswerOptionsForm.filter(value => (value.answer_content === '' || value.answer_content === 'N.A.' || value.answer_content === 'undefined' || value.answer_content === undefined) && sessionStorage.getItem('click_event') === 'Submit');
+
+                                                                        if (keywordsGiven.length === 0) {
+
+                                                                            if (sessionStorage.getItem('click_event') === 'Submit') {
+
+                                                                                let weightageGiven = descriptiveAnswerOptionsForm.filter(value => (value.answer_weightage === '' || value.answer_weightage === 'N.A.' || value.answer_weightage === 'undefined' || value.answer_weightage === undefined) && sessionStorage.getItem('click_event') === 'Submit');
+
+                                                                                if (weightageGiven.length === 0) {
+
+                                                                                    let sumOfAllWeightage = descriptiveAnswerOptionsForm.reduce((acc, item) => acc + Number(item.answer_weightage), 0);
+                                                                                    let allEqual = sumOfAllWeightage === Number(values.marks);
+
+                                                                                    console.log("allEqual", allEqual);
+
+                                                                                    if (allEqual) {
+                                                                                        showLoader();
+                                                                                        _editQuestions(payLoad);
+                                                                                    } else {
+                                                                                        setMismatchWeightageErr(true);
+                                                                                    }
+
+                                                                                } else {
+                                                                                    setWeightageEmpty(true);
+                                                                                }
+
+                                                                            } else {
+                                                                                showLoader();
+                                                                                _editQuestions(payLoad);
+                                                                            }
+
+                                                                        } else {
+                                                                            setKeyWordsEmptyErr(true);
+                                                                        }
+
                                                                     } else {
-                                                                        showLoader();
-                                                                        _editQuestions(payLoad);
+                                                                        setAnswerTypeEmptyErr(true);
                                                                     }
-
                                                                 }
 
                                                             } else if (selectedQuestionType === 'Subjective' || selectedQuestionType === 'Objective') {
@@ -1585,22 +1911,110 @@ const EditQuestions = () => {
                                                                         answer_explanation: values.answer_explanation === undefined || values.answer_explanation === "undefined" || values.answer_explanation === "" ? "N.A." : values.answer_explanation,
                                                                         difficulty_level: _radioWorkSheetOrTest ? selectedDifficultyLevel : 'N.A',
                                                                     }
-
                                                                     console.log("payLoad", payLoad);
-                                                                    if (isDuplicatePresent) {
 
-                                                                        console.log("Duplicates are present, skip form submission");
-                                                                        Swal.fire({
-                                                                            title: 'Duplicates Found',
-                                                                            text: 'Duplicate values are present between $$ markers in Question Field ',
-                                                                            icon: 'warning',
-                                                                        });
-                                                                        return
+                                                                    let answerTypeSelected = answerOptionsForm.filter(value => (value.answer_type === '' || value.answer_type === 'N.A.' || value.answer_type === 'Select...' || value.answer_type === 'undefined' || value.answer_type === undefined) && sessionStorage.getItem('click_event') === 'Submit');
+
+                                                                    if (answerTypeSelected.length === 0) {
+
+                                                                        let placegolderSelected = answerOptionsForm.filter(value => (value.answer_option === '' || value.answer_option === 'N.A.' || value.answer_option === 'Select...' || value.answer_option === 'undefined' || value.answer_option === undefined) && sessionStorage.getItem('click_event') === 'Submit');
+
+                                                                        if (placegolderSelected.length === 0) {
+
+                                                                            let answersGiven = answerOptionsForm.filter(value => (value.answer_content === '' || value.answer_content === 'N.A.' || value.answer_content === 'undefined' || value.answer_content === undefined) && sessionStorage.getItem('click_event') === 'Submit');
+
+                                                                            if (answersGiven.length === 0) {
+
+                                                                                if (sessionStorage.getItem('click_event') === 'Submit') {
+
+                                                                                    let weightageGiven = answerOptionsForm.filter(value => (value.answer_weightage === '' || value.answer_weightage === 'N.A.' || value.answer_weightage === 'undefined' || value.answer_weightage === undefined) && sessionStorage.getItem('click_event') === 'Submit');
+
+                                                                                    if (weightageGiven.length === 0) {
+
+                                                                                        if (selectedQuestionType === 'Objective') {
+
+                                                                                            let sumOfAllWeightage = answerOptionsForm.filter(item => item.answer_display === "Yes").reduce((acc, item) => acc + Number(item.answer_weightage), 0);
+
+                                                                                            let allEqual = sumOfAllWeightage === Number(values.marks);
+                                                                                            console.log("allEqual", allEqual);
+
+                                                                                            if (allEqual) {
+                                                                                                if (isDuplicatePresent) {
+                                                                                                    console.log("Duplicates are present, skip form submission");
+                                                                                                    Swal.fire({
+                                                                                                        title: 'Duplicates Found',
+                                                                                                        text: 'Duplicate values are present between $$ markers in Question Field',
+                                                                                                        icon: 'warning',
+                                                                                                    });
+                                                                                                    return;
+                                                                                                } else {
+                                                                                                    showLoader();
+                                                                                                    _editQuestions(payLoad);
+                                                                                                }
+                                                                                            } else {
+                                                                                                setMismatchWeightageErr(true);
+                                                                                            }
+                                                                                        } else {
+
+                                                                                            console.log("answerBlanksOptions", answerBlanksOptions.map(value => value.value));
+                                                                                            console.log("answerOptionsForm", answerOptionsForm.map(value => value.answer_option));
+
+                                                                                            let allOptionsPresent = answerBlanksOptions.map(value => value.value).every(item => answerOptionsForm.map(value => value.answer_option).includes(item));
+
+                                                                                            console.log("allOptionsPresent", allOptionsPresent);
+
+                                                                                            if (allOptionsPresent) {
+                                                                                                if (isDuplicatePresent) {
+
+                                                                                                    console.log("Duplicates are present, skip form submission");
+                                                                                                    Swal.fire({
+                                                                                                        title: 'Duplicates Found',
+                                                                                                        text: 'Duplicate values are present between $$ markers in Question Field',
+                                                                                                        icon: 'warning',
+                                                                                                    });
+                                                                                                    return
+                                                                                                } else {
+                                                                                                    showLoader();
+                                                                                                    _editQuestions(payLoad);
+                                                                                                }
+                                                                                            } else {
+                                                                                                setBlanksMismatchErr(true);
+                                                                                            }
+
+                                                                                        }
+
+                                                                                    } else {
+                                                                                        setWeightageEmpty(true);
+                                                                                    }
+
+                                                                                } else {
+
+                                                                                    if (isDuplicatePresent) {
+
+                                                                                        console.log("Duplicates are present, skip form submission");
+                                                                                        Swal.fire({
+                                                                                            title: 'Duplicates Found',
+                                                                                            text: 'Duplicate values are present between $$ markers in Question Field',
+                                                                                            icon: 'warning',
+                                                                                        });
+                                                                                        return
+                                                                                    } else {
+                                                                                        showLoader();
+                                                                                        _editQuestions(payLoad);
+                                                                                    }
+                                                                                }
+
+                                                                            } else {
+                                                                                setAnswersEmptyErr(true);
+                                                                            }
+
+                                                                        } else {
+                                                                            setOptionsEmptyErr(true);
+                                                                        }
+
                                                                     } else {
-                                                                        showLoader();
-                                                                        _editQuestions(payLoad);
+                                                                        setAnswerTypeEmptyErr(true);
                                                                     }
-
                                                                 }
                                                             }
                                                         }
@@ -3047,447 +3461,398 @@ const EditQuestions = () => {
 
                                                                                     )}
 
-                                                                                    {form.answer_type === 'Image' && answerBlanksOptions && (
+                                                                                    {form.answer_type === 'Image' && answerBlanksOptions && (<>
+                                                                                        <br />
+                                                                                        <Row key={index}>
 
-                                                                                        <>
-                                                                                            <br />
-                                                                                            <Row key={index}>
+                                                                                            <Col xs={3}>
+                                                                                                <label className="floating-label">
+                                                                                                    <small className="text-danger"></small>
+                                                                                                    Placeholder
+                                                                                                </label>
 
-                                                                                                <Col xs={3}>
-                                                                                                    <label className="floating-label">
-                                                                                                        <small className="text-danger"></small>
-                                                                                                        Placeholder
-                                                                                                    </label>
+                                                                                                <select
+                                                                                                    className="form-control"
+                                                                                                    error={touched.answer_option && errors.answer_option}
+                                                                                                    name="answer_option"
+                                                                                                    onBlur={handleBlur}
 
-                                                                                                    <select
-                                                                                                        className="form-control"
-                                                                                                        error={touched.answer_option && errors.answer_option}
-                                                                                                        name="answer_option"
-                                                                                                        onBlur={handleBlur}
+                                                                                                    type="text"
+                                                                                                    value={form.answer_option}
+                                                                                                    key={index}
+                                                                                                    onChange={event => {
+                                                                                                        handleAnswerBlanks(event, index)
+                                                                                                    }}
+                                                                                                >
 
-                                                                                                        type="text"
-                                                                                                        value={form.answer_option}
-                                                                                                        key={index}
-                                                                                                        onChange={event => {
-                                                                                                            handleAnswerBlanks(event, index)
-                                                                                                        }}
-                                                                                                    >
-
-                                                                                                        <option>
-                                                                                                            Select...
-                                                                                                        </option>
-
-                                                                                                        {
-                                                                                                            selectedQuestionType === 'Objective' ?
-                                                                                                                <>
-
-                                                                                                                    {selectedArr.map((optionsData) => {
-
-                                                                                                                        return <option
-                                                                                                                            value={optionsData.value}
-                                                                                                                            key={optionsData.value}
-                                                                                                                        >
-                                                                                                                            {optionsData.label}
-                                                                                                                        </option>
-
-                                                                                                                    })}
-                                                                                                                </> : <>
-
-                                                                                                                    {answerBlanksOptions.map((optionsData) => {
-
-                                                                                                                        return <option
-                                                                                                                            value={optionsData.value}
-                                                                                                                            key={optionsData.value}
-                                                                                                                        >
-                                                                                                                            {optionsData.label}
-                                                                                                                        </option>
-
-                                                                                                                    })}
-                                                                                                                </>
-
-                                                                                                        }
-
-                                                                                                    </select>
-
-
-                                                                                                </Col>
-
-                                                                                                <Col>
+                                                                                                    <option>
+                                                                                                        Select...
+                                                                                                    </option>
 
                                                                                                     {
-                                                                                                        selectedQuestionType === 'Objective' ? (
-                                                                                                            <label className="floating-label">
-                                                                                                                <small className="text-danger"></small>
-                                                                                                                Correct Answer
-                                                                                                            </label>
-                                                                                                        ) : (
-                                                                                                            <label className="floating-label">
-                                                                                                                <small className="text-danger"></small>
-                                                                                                                Answer Display
-                                                                                                            </label>
-                                                                                                        )
-                                                                                                    }
+                                                                                                        selectedQuestionType === 'Objective' ?
+                                                                                                            <> {selectedArr.map((optionsData) => {
 
-                                                                                                    <select
-                                                                                                        className="form-control"
-                                                                                                        error={touched.answer_display && errors.answer_display}
-                                                                                                        name="answer_display"
-                                                                                                        onBlur={handleBlur}
+                                                                                                                return <option
+                                                                                                                    value={optionsData.value}
+                                                                                                                    key={optionsData.value}
+                                                                                                                >
+                                                                                                                    {optionsData.label}
+                                                                                                                </option>
 
-                                                                                                        type="text"
-                                                                                                        value={form.answer_display}
-                                                                                                        key={index}
-                                                                                                        onChange={event => {
-                                                                                                            handleAnswerBlanks(event, index)
-                                                                                                        }}
-                                                                                                    >
+                                                                                                            })}
+                                                                                                            </> : <>{answerBlanksOptions.map((optionsData) => {
+                                                                                                                return <option
+                                                                                                                    value={optionsData.value}
+                                                                                                                    key={optionsData.value}
+                                                                                                                >
+                                                                                                                    {optionsData.label}
+                                                                                                                </option>
 
-                                                                                                        {/* <option>
+                                                                                                            })}
+                                                                                                            </>}
+
+                                                                                                </select>
+
+
+                                                                                            </Col>
+
+                                                                                            <Col>
+
+                                                                                                {selectedQuestionType === 'Objective' ? (
+                                                                                                    <label className="floating-label">
+                                                                                                        <small className="text-danger"></small>
+                                                                                                        Correct Answer
+                                                                                                    </label>
+                                                                                                ) : (<label className="floating-label">
+                                                                                                    <small className="text-danger"></small>
+                                                                                                    Answer Display
+                                                                                                </label>
+                                                                                                )}
+
+                                                                                                <select
+                                                                                                    className="form-control"
+                                                                                                    error={touched.answer_display && errors.answer_display}
+                                                                                                    name="answer_display"
+                                                                                                    onBlur={handleBlur}
+
+                                                                                                    type="text"
+                                                                                                    value={form.answer_display}
+                                                                                                    key={index}
+                                                                                                    onChange={event => {
+                                                                                                        handleAnswerBlanks(event, index)
+                                                                                                    }}
+                                                                                                >
+
+                                                                                                    {/* <option>
                                                                                                 Select...
                                                                                             </option> */}
 
-                                                                                                        {answerDisplayOptions.map((optionsData) => {
+                                                                                                    {answerDisplayOptions.map((optionsData) => {
 
-                                                                                                            return <option
-                                                                                                                value={optionsData.value}
-                                                                                                                key={optionsData.value}
-                                                                                                            >
-                                                                                                                {optionsData.label}
-                                                                                                            </option>
-
-                                                                                                        })}
-
-                                                                                                    </select>
-
-
-                                                                                                </Col>
-
-                                                                                                <Col>
-                                                                                                    <label className="floating-label">
-                                                                                                        <small className="text-danger"></small>
-                                                                                                        Weightage
-                                                                                                    </label>
-                                                                                                    <input
-                                                                                                        className="form-control"
-                                                                                                        error={touched.answer_weightage && errors.answer_weightage}
-                                                                                                        label="answer_weightage"
-                                                                                                        name="answer_weightage"
-                                                                                                        onBlur={handleBlur}
-                                                                                                        // onChange={handleChange}
-                                                                                                        type="number"
-                                                                                                        onWheel={(e) => e.target.blur()}
-                                                                                                        min="0.01"
-                                                                                                        value={form.answer_weightage}
-                                                                                                        onChange={event => {
-                                                                                                            handleAnswerBlanks(event, index)
-                                                                                                        }}
-                                                                                                        placeholder="Enter Weightage"
-                                                                                                    />
-                                                                                                </Col>
-
-                                                                                            </Row>
-
-                                                                                            <br />
-                                                                                            <Row>
-                                                                                                <Col xs={6}>
-
-                                                                                                    <label className="floating-label">
-                                                                                                        <small className="text-danger"></small>
-                                                                                                        Image
-                                                                                                    </label>
-                                                                                                    <div>
-                                                                                                        <input
-                                                                                                            class="hidden"
-                                                                                                            className="form-control"
-                                                                                                            error={touched.answer_content && errors.answer_content}
-                                                                                                            label="answer_content"
-                                                                                                            name="answer_content"
-                                                                                                            onBlur={handleBlur}
-                                                                                                            // onChange={handleChange}
-                                                                                                            type="file"
-                                                                                                            // value={form.answer_content}
-                                                                                                            title="&nbsp;"
-                                                                                                            onClick={() => {
-                                                                                                                let tempPreviewImg = [...previewImages];
-                                                                                                                tempPreviewImg[index] = '';
-                                                                                                                setPreviewImages(tempPreviewImg);
-                                                                                                                let tempPreviewCommon = [...commonPreview];
-                                                                                                                tempPreviewCommon[index] = '';
-                                                                                                                setCommonPreview(tempPreviewCommon);
-
-                                                                                                            }}
-                                                                                                            onChange={event => {
-                                                                                                                handleAnswerBlanks(event, index);
-                                                                                                            }}
-                                                                                                            placeholder="Enter Answer"
-                                                                                                        />
-                                                                                                    </div>
-                                                                                                </Col>
-                                                                                                <Col xs={3} style={{ display: "contents" }} >
-
-                                                                                                    <label className="floating-label">
-                                                                                                        <small className="text-danger"></small>
-                                                                                                        Preview
-                                                                                                    </label>
-
-
-                                                                                                    {commonPreview[index] && commonPreview[index] !== ""
-                                                                                                        && (
-
-                                                                                                            <>
-                                                                                                                <br />
-
-                                                                                                                <img width={150} src={commonPreview[index]} alt="" className="img-fluid mb-3" style={{
-                                                                                                                    marginTop: "20px",
-                                                                                                                    marginLeft: "-50px"
-                                                                                                                }} />
-
-
-                                                                                                                {
-                                                                                                                    commonPreview[index] && commonPreview[index] !== 'N.A.' && (
-
-                                                                                                                        <CloseButton
-
-
-                                                                                                                            onClick={() => {
-                                                                                                                                setFieldValue("answer_content", "")
-                                                                                                                                setFieldTouched("answer_content", false, false);
-                                                                                                                                removeSelectedImg(index)
-                                                                                                                            }}
-                                                                                                                            style={
-                                                                                                                                {
-                                                                                                                                    color: "#ff0000",
-                                                                                                                                    marginRight: "50px",
-                                                                                                                                    marginTop: "-80px"
-                                                                                                                                }
-                                                                                                                            }
-                                                                                                                        />
-                                                                                                                    )
-                                                                                                                }
-
-                                                                                                            </>
-                                                                                                        )
-                                                                                                    }
-                                                                                                </Col>
-                                                                                            </Row>
-                                                                                        </>
-
-                                                                                    )}
-
-                                                                                    {form.answer_type === 'Audio File' && answerBlanksOptions && (
-
-                                                                                        <>
-                                                                                            <br />
-
-                                                                                            <Row key={index}>
-
-                                                                                                <Col xs={3}>
-                                                                                                    <label className="floating-label">
-                                                                                                        <small className="text-danger"></small>
-                                                                                                        Placeholder
-                                                                                                    </label>
-
-                                                                                                    <select
-                                                                                                        className="form-control"
-                                                                                                        error={touched.answer_option && errors.answer_option}
-                                                                                                        name="answer_option"
-                                                                                                        onBlur={handleBlur}
-
-                                                                                                        type="text"
-                                                                                                        value={form.answer_option}
-                                                                                                        key={index}
-                                                                                                        onChange={event => handleAnswerBlanks(event, index)}
-                                                                                                    >
-
-                                                                                                        <option>
-                                                                                                            Select...
+                                                                                                        return <option
+                                                                                                            value={optionsData.value}
+                                                                                                            key={optionsData.value}
+                                                                                                        >
+                                                                                                            {optionsData.label}
                                                                                                         </option>
 
-                                                                                                        {
-                                                                                                            selectedQuestionType === 'Objective' ?
-                                                                                                                <>
+                                                                                                    })}
 
-                                                                                                                    {selectedArr.map((optionsData) => {
-                                                                                                                        return <option
-                                                                                                                            value={optionsData.value}
-                                                                                                                            key={optionsData.value}
-                                                                                                                        >
-                                                                                                                            {optionsData.label}
-                                                                                                                        </option>
-
-                                                                                                                    })}
-                                                                                                                </> : <>
-
-                                                                                                                    {answerBlanksOptions.map((optionsData) => {
-                                                                                                                        return <option
-                                                                                                                            value={optionsData.value}
-                                                                                                                            key={optionsData.value}
-                                                                                                                        >
-                                                                                                                            {optionsData.label}
-                                                                                                                        </option>
-
-                                                                                                                    })}
-                                                                                                                </>
-
-                                                                                                        }
-
-                                                                                                    </select>
-
-                                                                                                </Col>
+                                                                                                </select>
 
 
-                                                                                                <Col>
+                                                                                            </Col>
 
-                                                                                                    {
-                                                                                                        selectedQuestionType === 'Objective' ? (
-                                                                                                            <label className="floating-label">
-                                                                                                                <small className="text-danger"></small>
-                                                                                                                Correct Answer
-                                                                                                            </label>
-                                                                                                        ) : (
-                                                                                                            <label className="floating-label">
-                                                                                                                <small className="text-danger"></small>
-                                                                                                                Answer Display
-                                                                                                            </label>
-                                                                                                        )
-                                                                                                    }
+                                                                                            <Col>
+                                                                                                <label className="floating-label">
+                                                                                                    <small className="text-danger"></small>
+                                                                                                    Weightage
+                                                                                                </label>
+                                                                                                <input
+                                                                                                    className="form-control"
+                                                                                                    error={touched.answer_weightage && errors.answer_weightage}
+                                                                                                    label="answer_weightage"
+                                                                                                    name="answer_weightage"
+                                                                                                    onBlur={handleBlur}
+                                                                                                    // onChange={handleChange}
+                                                                                                    type="number"
+                                                                                                    onWheel={(e) => e.target.blur()}
+                                                                                                    min="0.01"
+                                                                                                    value={form.answer_weightage}
+                                                                                                    onChange={event => {
+                                                                                                        handleAnswerBlanks(event, index)
+                                                                                                    }}
+                                                                                                    placeholder="Enter Weightage"
+                                                                                                />
+                                                                                            </Col>
 
-                                                                                                    <select
-                                                                                                        className="form-control"
-                                                                                                        error={touched.answer_display && errors.answer_display}
-                                                                                                        name="answer_display"
-                                                                                                        onBlur={handleBlur}
+                                                                                        </Row>
 
-                                                                                                        type="text"
-                                                                                                        value={form.answer_display}
-                                                                                                        key={index}
-                                                                                                        onChange={event => handleAnswerBlanks(event, index)}
-                                                                                                    >
+                                                                                        <br />
+                                                                                        <Row>
+                                                                                            <Col xs={6}>
 
-                                                                                                        {/* <option>
-                                                                                                Select...
-                                                                                            </option> */}
-
-                                                                                                        {answerDisplayOptions.map((optionsData) => {
-
-                                                                                                            return <option
-                                                                                                                value={optionsData.value}
-                                                                                                                key={optionsData.value}
-                                                                                                            >
-                                                                                                                {optionsData.label}
-                                                                                                            </option>
-
-                                                                                                        })}
-
-                                                                                                    </select>
-
-
-                                                                                                </Col>
-
-                                                                                                <Col>
-                                                                                                    <label className="floating-label">
-                                                                                                        <small className="text-danger"></small>
-                                                                                                        Weightage
-                                                                                                    </label>
+                                                                                                <label className="floating-label">
+                                                                                                    <small className="text-danger"></small>
+                                                                                                    Image
+                                                                                                </label>
+                                                                                                <div>
                                                                                                     <input
-                                                                                                        className="form-control"
-                                                                                                        error={touched.answer_weightage && errors.answer_weightage}
-                                                                                                        label="answer_weightage"
-                                                                                                        name="answer_weightage"
-                                                                                                        onBlur={handleBlur}
-                                                                                                        type="number"
-                                                                                                        onWheel={(e) => e.target.blur()}
-                                                                                                        min="0.01"
-                                                                                                        value={form.answer_weightage}
-                                                                                                        onChange={event => handleAnswerBlanks(event, index)}
-                                                                                                        placeholder="Enter Weightage"
-                                                                                                    />
-                                                                                                </Col>
-
-                                                                                            </Row>
-
-                                                                                            <br />
-
-                                                                                            <Row>
-
-                                                                                                <Col xs={6}>
-                                                                                                    <label className="floating-label">
-                                                                                                        <small className="text-danger"></small>
-                                                                                                        Audio File
-                                                                                                    </label>
-                                                                                                    <input
+                                                                                                        class="hidden"
                                                                                                         className="form-control"
                                                                                                         error={touched.answer_content && errors.answer_content}
+                                                                                                        label="answer_content"
                                                                                                         name="answer_content"
-                                                                                                        id="answer_content"
                                                                                                         onBlur={handleBlur}
+                                                                                                        // onChange={handleChange}
+                                                                                                        type="file"
                                                                                                         // value={form.answer_content}
+                                                                                                        title="&nbsp;"
                                                                                                         onClick={() => {
-                                                                                                            let tempPreviewAudio = [...previewAudios];
-                                                                                                            tempPreviewAudio[index] = '';
-                                                                                                            setPreviewAudios(tempPreviewAudio);
+                                                                                                            let tempPreviewImg = [...previewImages];
+                                                                                                            tempPreviewImg[index] = '';
+                                                                                                            setPreviewImages(tempPreviewImg);
                                                                                                             let tempPreviewCommon = [...commonPreview];
                                                                                                             tempPreviewCommon[index] = '';
                                                                                                             setCommonPreview(tempPreviewCommon);
 
                                                                                                         }}
                                                                                                         onChange={event => {
-                                                                                                            handleAnswerBlanks(event, index)
+                                                                                                            handleAnswerBlanks(event, index);
                                                                                                         }}
-                                                                                                        type="file"
-                                                                                                        accept=".mp3,audio/*"
+                                                                                                        placeholder="Enter Answer"
                                                                                                     />
-                                                                                                </Col>
+                                                                                                </div>
+                                                                                            </Col>
+                                                                                            <Col xs={3} style={{ display: "contents" }} >
 
-                                                                                                <Col xs={3} style={{ display: "contents" }}>
-
-                                                                                                    <label className="floating-label">
-                                                                                                        <small className="text-danger"></small>
-                                                                                                        Preview
-                                                                                                    </label>
-
-                                                                                                    {commonPreview && commonPreview[index] && commonPreview[index] !== 'N.A.' &&
-                                                                                                        (
-                                                                                                            <>
-                                                                                                                <br />
-
-                                                                                                                <div className="form-group fill" style={{ marginTop: "25px", marginLeft: "-53px" }} >
-                                                                                                                    <audio controls>
-                                                                                                                        <source
-                                                                                                                            src={commonPreview[index]}
-                                                                                                                            alt="Audio"
-                                                                                                                            type="audio/mp3" />
-
-                                                                                                                    </audio>
-                                                                                                                </div>
-
-                                                                                                                {
-                                                                                                                    commonPreview[index] && (
-                                                                                                                        <CloseButton
-                                                                                                                            onClick={() => {
-                                                                                                                                setFieldValue("answer_content", "")
-                                                                                                                                setFieldTouched("answer_content", false, false);
-                                                                                                                                removeSelectedAudio(index)
-                                                                                                                            }}
-                                                                                                                            style={
-                                                                                                                                {
-                                                                                                                                    color: "#ff0000",
-                                                                                                                                    marginRight: "-95px",
-                                                                                                                                    marginTop:
-                                                                                                                                        "-55px"
-                                                                                                                                }
-                                                                                                                            }
-                                                                                                                        />
-                                                                                                                    )
-                                                                                                                }
+                                                                                                <label className="floating-label">
+                                                                                                    <small className="text-danger"></small>
+                                                                                                    Preview
+                                                                                                </label>
 
 
-                                                                                                            </>
+                                                                                                {commonPreview[index] && commonPreview[index] !== ""
+                                                                                                    && (<>
+                                                                                                        <br />
+
+                                                                                                        <img width={150} src={commonPreview[index]} alt="" className="img-fluid mb-3" style={{
+                                                                                                            marginTop: "20px",
+                                                                                                            marginLeft: "-50px"
+                                                                                                        }} />
+
+
+                                                                                                        {commonPreview[index] && commonPreview[index] !== 'N.A.' && (<CloseButton onClick={() => {
+                                                                                                            setFieldValue("answer_content", "")
+                                                                                                            setFieldTouched("answer_content", false, false);
+                                                                                                            removeSelectedImg(index)
+                                                                                                        }}
+                                                                                                            style={{
+                                                                                                                color: "#ff0000",
+                                                                                                                marginRight: "50px",
+                                                                                                                marginTop: "-80px"
+                                                                                                            }}
+                                                                                                        />
                                                                                                         )
-                                                                                                    }
-                                                                                                </Col>
-                                                                                            </Row>
-                                                                                        </>
+                                                                                                        }
+
+                                                                                                    </>
+                                                                                                    )
+                                                                                                }
+                                                                                            </Col>
+                                                                                        </Row>
+                                                                                    </>
+
+                                                                                    )}
+
+                                                                                    {form.answer_type === 'Audio File' && answerBlanksOptions && (<>
+                                                                                        <br />
+
+                                                                                        <Row key={index}><Col xs={3}>
+                                                                                            <label className="floating-label">
+                                                                                                <small className="text-danger"></small>
+                                                                                                Placeholder
+                                                                                            </label>
+
+                                                                                            <select
+                                                                                                className="form-control"
+                                                                                                error={touched.answer_option && errors.answer_option}
+                                                                                                name="answer_option"
+                                                                                                onBlur={handleBlur}
+
+                                                                                                type="text"
+                                                                                                value={form.answer_option}
+                                                                                                key={index}
+                                                                                                onChange={event => handleAnswerBlanks(event, index)}
+                                                                                            >
+
+                                                                                                <option>
+                                                                                                    Select...
+                                                                                                </option>
+
+                                                                                                {selectedQuestionType === 'Objective' ?
+                                                                                                    <>{selectedArr.map((optionsData) => {
+                                                                                                        return <option
+                                                                                                            value={optionsData.value}
+                                                                                                            key={optionsData.value}
+                                                                                                        >
+                                                                                                            {optionsData.label}
+                                                                                                        </option>
+
+                                                                                                    })}
+                                                                                                    </> : <>{answerBlanksOptions.map((optionsData) => {
+                                                                                                        return <option
+                                                                                                            value={optionsData.value}
+                                                                                                            key={optionsData.value}
+                                                                                                        >
+                                                                                                            {optionsData.label}
+                                                                                                        </option>
+
+                                                                                                    })}
+                                                                                                    </>
+
+                                                                                                }
+
+                                                                                            </select> </Col>
+
+
+                                                                                            <Col>   {selectedQuestionType === 'Objective' ? (
+                                                                                                <label className="floating-label">
+                                                                                                    <small className="text-danger"></small>
+                                                                                                    Correct Answer
+                                                                                                </label>
+                                                                                            ) : (
+                                                                                                <label className="floating-label">
+                                                                                                    <small className="text-danger"></small>
+                                                                                                    Answer Display
+                                                                                                </label>
+                                                                                            )}
+
+                                                                                                <select
+                                                                                                    className="form-control"
+                                                                                                    error={touched.answer_display && errors.answer_display}
+                                                                                                    name="answer_display"
+                                                                                                    onBlur={handleBlur}
+
+                                                                                                    type="text"
+                                                                                                    value={form.answer_display}
+                                                                                                    key={index}
+                                                                                                    onChange={event => handleAnswerBlanks(event, index)}
+                                                                                                >
+
+                                                                                                    {/* <option>
+                                                                                                Select...
+                                                                                            </option> */}
+
+                                                                                                    {answerDisplayOptions.map((optionsData) => {
+
+                                                                                                        return <option
+                                                                                                            value={optionsData.value}
+                                                                                                            key={optionsData.value}
+                                                                                                        >
+                                                                                                            {optionsData.label}
+                                                                                                        </option>
+
+                                                                                                    })}
+
+                                                                                                </select>
+
+
+                                                                                            </Col>
+
+                                                                                            <Col>
+                                                                                                <label className="floating-label">
+                                                                                                    <small className="text-danger"></small>
+                                                                                                    Weightage
+                                                                                                </label>
+                                                                                                <input
+                                                                                                    className="form-control"
+                                                                                                    error={touched.answer_weightage && errors.answer_weightage}
+                                                                                                    label="answer_weightage"
+                                                                                                    name="answer_weightage"
+                                                                                                    onBlur={handleBlur}
+                                                                                                    type="number"
+                                                                                                    onWheel={(e) => e.target.blur()}
+                                                                                                    min="0.01"
+                                                                                                    value={form.answer_weightage}
+                                                                                                    onChange={event => handleAnswerBlanks(event, index)}
+                                                                                                    placeholder="Enter Weightage"
+                                                                                                />
+                                                                                            </Col>
+
+                                                                                        </Row>
+
+                                                                                        <br />
+
+                                                                                        <Row> <Col xs={6}>
+                                                                                            <label className="floating-label">
+                                                                                                <small className="text-danger"></small>
+                                                                                                Audio File
+                                                                                            </label>
+                                                                                            <input
+                                                                                                className="form-control"
+                                                                                                error={touched.answer_content && errors.answer_content}
+                                                                                                name="answer_content"
+                                                                                                id="answer_content"
+                                                                                                onBlur={handleBlur}
+                                                                                                // value={form.answer_content}
+                                                                                                onClick={() => {
+                                                                                                    let tempPreviewAudio = [...previewAudios];
+                                                                                                    tempPreviewAudio[index] = '';
+                                                                                                    setPreviewAudios(tempPreviewAudio);
+                                                                                                    let tempPreviewCommon = [...commonPreview];
+                                                                                                    tempPreviewCommon[index] = '';
+                                                                                                    setCommonPreview(tempPreviewCommon);
+
+                                                                                                }}
+                                                                                                onChange={event => {
+                                                                                                    handleAnswerBlanks(event, index)
+                                                                                                }}
+                                                                                                type="file"
+                                                                                                accept=".mp3,audio/*"
+                                                                                            />
+                                                                                        </Col><Col xs={3} style={{ display: "contents" }}>
+
+                                                                                                <label className="floating-label">
+                                                                                                    <small className="text-danger"></small>
+                                                                                                    Preview
+                                                                                                </label>
+
+                                                                                                {commonPreview && commonPreview[index] && commonPreview[index] !== 'N.A.' && (<>
+                                                                                                    <br />
+
+                                                                                                    <div className="form-group fill" style={{ marginTop: "25px", marginLeft: "-53px" }} >
+                                                                                                        <audio controls>
+                                                                                                            <source
+                                                                                                                src={commonPreview[index]}
+                                                                                                                alt="Audio"
+                                                                                                                type="audio/mp3" />
+
+                                                                                                        </audio>
+                                                                                                    </div>
+
+                                                                                                    {commonPreview[index] && (<CloseButton
+                                                                                                        onClick={() => {
+                                                                                                            setFieldValue("answer_content", "")
+                                                                                                            setFieldTouched("answer_content", false, false);
+                                                                                                            removeSelectedAudio(index)
+                                                                                                        }}
+                                                                                                        style={{
+                                                                                                            color: "#ff0000",
+                                                                                                            marginRight: "-95px",
+                                                                                                            marginTop:
+                                                                                                                "-55px"
+                                                                                                        }}
+                                                                                                    />)}
+
+
+                                                                                                </>
+                                                                                                )
+                                                                                                }
+                                                                                            </Col>
+                                                                                        </Row>
+                                                                                    </>
 
                                                                                     )}
 
@@ -3670,29 +4035,28 @@ const EditQuestions = () => {
                                                                                             )}
 
                                                                                             {form.answer_type === "Equation" && descriptiveAnswerOptionsForm && (
-                                                                                                <>
-                                                                                                    <Row key={index}>
+                                                                                                <> <Row key={index}>
 
-                                                                                                        <Col>
-                                                                                                            <label className="floating-label">
-                                                                                                                <small className="text-danger"></small>
-                                                                                                                Keyword
-                                                                                                            </label>
-                                                                                                            <textarea
-                                                                                                                value={form.answer_content}
-                                                                                                                className="form-control"
-                                                                                                                error={touched.answer_content && errors.answer_content}
-                                                                                                                label="answer_content"
-                                                                                                                name="answer_content"
-                                                                                                                onBlur={handleBlur}
-                                                                                                                type="textarea"
-                                                                                                                onChange={(event) => {
-                                                                                                                    handleDescriptiveAnswerBlanks(event, index);
-                                                                                                                }}
-                                                                                                                placeholder="Enter Keyword"
-                                                                                                            />
-                                                                                                        </Col>
-                                                                                                    </Row>
+                                                                                                    <Col>
+                                                                                                        <label className="floating-label">
+                                                                                                            <small className="text-danger"></small>
+                                                                                                            Keyword
+                                                                                                        </label>
+                                                                                                        <textarea
+                                                                                                            value={form.answer_content}
+                                                                                                            className="form-control"
+                                                                                                            error={touched.answer_content && errors.answer_content}
+                                                                                                            label="answer_content"
+                                                                                                            name="answer_content"
+                                                                                                            onBlur={handleBlur}
+                                                                                                            type="textarea"
+                                                                                                            onChange={(event) => {
+                                                                                                                handleDescriptiveAnswerBlanks(event, index);
+                                                                                                            }}
+                                                                                                            placeholder="Enter Keyword"
+                                                                                                        />
+                                                                                                    </Col>
+                                                                                                </Row>
 
                                                                                                     <br />
                                                                                                     <Row key={index}>
@@ -3768,7 +4132,6 @@ const EditQuestions = () => {
 
                                                             <br />
                                                             <Row className="my-3">
-                                                                <Col xs={2}></Col>
                                                                 <Col>
                                                                     {ansWeightageErrMsg && (
                                                                         <>
@@ -3780,57 +4143,123 @@ const EditQuestions = () => {
 
                                                                         </>
                                                                     )}
+
+                                                                    {unitWeightageErrMsg && (
+                                                                        <>
+                                                                            <div
+                                                                                style={{ color: 'red' }}
+                                                                                className="error">
+                                                                                Invalid Unit Weightage
+                                                                            </div>
+
+                                                                        </>
+                                                                    )}
+
+                                                                    {weightageEmpty && (
+                                                                        <> <div
+                                                                            style={{ color: 'red' }}
+                                                                            className="error">
+                                                                            Weightage cannot be empty, please fill weightage in each option!
+                                                                        </div></>
+                                                                    )}
+
+                                                                    {keyWordsEmptyErr && (
+                                                                        <> <div
+                                                                            style={{ color: 'red' }}
+                                                                            className="error">
+                                                                            Keywords cannot be empty, please fill Keyword in each option!
+                                                                        </div> </>
+                                                                    )}
+
+                                                                    {answersEmptyErr && (
+                                                                        <> <div
+                                                                            style={{ color: 'red' }}
+                                                                            className="error">
+                                                                            Answers cannot be empty, please fill Answer in each option!
+                                                                        </div> </>
+                                                                    )}
+
+                                                                    {mismatchWeightageErr && (
+                                                                        <> <div
+                                                                            style={{ color: 'red' }}
+                                                                            className="error">
+                                                                            The addition of all the weightage options is not equal to Marks!
+                                                                        </div> </>
+                                                                    )}
+
+                                                                    {optionsEmptyErr && (
+                                                                        <> <div
+                                                                            style={{ color: 'red' }}
+                                                                            className="error">
+                                                                            Placeholder cannot be empty, please select any of the options!
+                                                                        </div> </>
+                                                                    )}
+
+                                                                    {answerTypeEmptyErr && (
+                                                                        <> <div
+                                                                            style={{ color: 'red' }}
+                                                                            className="error">
+                                                                            Answer Type cannot be empty, please select any of the types!
+                                                                        </div> </>
+                                                                    )}
+
+                                                                    {blanksMismatchErr && (
+                                                                        <> <div
+                                                                            style={{ color: 'red' }}
+                                                                            className="error">
+                                                                            Options is not provided for every blank, please re-check!
+                                                                        </div> </>
+                                                                    )}
                                                                 </Col>
 
-                                                                {
-                                                                    sessionStorage.getItem('question_status') === 'Save' && (
-                                                                        <Col>
-                                                                            <Row>
-                                                                                <Col xs={5}>
-                                                                                    <Button
-                                                                                        type="button"
-                                                                                        className="btn-block"
-                                                                                        color="secondary"
-                                                                                        size="large"
-                                                                                        variant="secondary"
-                                                                                        onClick={() => {
-                                                                                            sessionStorage.setItem('click_event', 'SaveAsNew');
-                                                                                            addnewQuestion()
-                                                                                        }
-                                                                                        }>
-                                                                                        Save As New
-                                                                                    </Button>
-                                                                                </Col>
-                                                                                <Col>
-                                                                                    <Button
-                                                                                        className="btn-block"
-                                                                                        color="info"
-                                                                                        size="small"
-                                                                                        type="submit"
-                                                                                        variant="info"
-                                                                                        onClick={() => sessionStorage.setItem('click_event', 'Save')}>
-                                                                                        Save
-                                                                                    </Button>
-                                                                                </Col>
-                                                                                <Col>
-                                                                                    <Button
-                                                                                        className="btn-block"
-                                                                                        color="success"
-                                                                                        size="small"
-                                                                                        type="submit"
-                                                                                        variant="success"
-                                                                                        onClick={() => sessionStorage.setItem('click_event', 'Submit')}>
-                                                                                        Submit
-                                                                                    </Button>
-                                                                                </Col>
-                                                                            </Row>
-                                                                        </Col>
-                                                                    )
+                                                                {sessionStorage.getItem('question_status') === 'Save' && (
+                                                                    <Col xs={5}>
+                                                                        <Row>
+                                                                            <Col xs={5}>
+                                                                                <Button
+                                                                                    type="button"
+                                                                                    className="btn-block"
+                                                                                    color="secondary"
+                                                                                    size="large"
+                                                                                    variant="secondary"
+                                                                                    onClick={() => {
+                                                                                        sessionStorage.setItem('click_event', 'SaveAsNew');
+                                                                                        addnewQuestion()
+                                                                                    }
+                                                                                    }>
+                                                                                    Save As New
+                                                                                </Button>
+                                                                            </Col>
+                                                                            <Col>
+                                                                                <Button
+                                                                                    className="btn-block"
+                                                                                    color="info"
+                                                                                    size="small"
+                                                                                    type="submit"
+                                                                                    variant="info"
+                                                                                    onClick={() => sessionStorage.setItem('click_event', 'Save')}>
+                                                                                    Save
+                                                                                </Button>
+                                                                            </Col>
+                                                                            <Col>
+                                                                                <Button
+                                                                                    className="btn-block"
+                                                                                    color="success"
+                                                                                    size="small"
+                                                                                    type="submit"
+                                                                                    variant="success"
+                                                                                    onClick={() => sessionStorage.setItem('click_event', 'Submit')}>
+                                                                                    Submit
+                                                                                </Button>
+                                                                            </Col>
+                                                                        </Row>
+                                                                    </Col>
+                                                                )
                                                                 }
 
                                                                 {sessionStorage.getItem('question_status') === 'Submit' && (
 
-                                                                    <Col >
+                                                                    <Col>
                                                                         <Row>
                                                                             <Col></Col>
                                                                             <Col>
