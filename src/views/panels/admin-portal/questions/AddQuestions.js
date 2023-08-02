@@ -45,6 +45,13 @@ const AddQuestions = ({ className, ...rest }) => {
     const [unitWeightageErrMsg, setUnitWeightageErrMsg] = useState(false);
     const [negativeMarksErrMsg, setNegativeMarksErrMsg] = useState(false);
     const [answerTypeErrMsg, setAnswerTypeErrMsg] = useState(false);
+    const [weightageEmpty, setWeightageEmpty] = useState(false);
+    const [keyWordsEmptyErr, setKeyWordsEmptyErr] = useState(false);
+    const [answersEmptyErr, setAnswersEmptyErr] = useState(false);
+    const [optionsEmptyErr, setOptionsEmptyErr] = useState(false);
+    const [mismatchWeightageErr, setMismatchWeightageErr] = useState(false);
+    const [answerTypeEmptyErr, setAnswerTypeEmptyErr] = useState(false);
+    const [blanksMismatchErr, setBlanksMismatchErr] = useState(false);
 
     const [selectedQuestionType, setSelectedQuestionType] = useState([]);
     const [selectedQuestionCategory, setSelectedQuestionCategory] = useState({});
@@ -259,7 +266,14 @@ const AddQuestions = ({ className, ...rest }) => {
         setQuestionSourceErrMsg(false);
         setQuestionEmptyErrMsg(false);
         setAnsWeightageErrMsg(false);
+        setWeightageEmpty(false);
+        setKeyWordsEmptyErr(false);
+        setAnswersEmptyErr(false);
+        setOptionsEmptyErr(false);
+        setMismatchWeightageErr(false);
         setUnitWeightageErrMsg(false);
+        setAnswerTypeEmptyErr(false);
+        setBlanksMismatchErr(false);
 
         setEquation([]);
         setDescriptiveEquation([]);
@@ -299,6 +313,13 @@ const AddQuestions = ({ className, ...rest }) => {
     const handleDescriptiveAnswerBlanks = (event, index) => {
 
         let data = [...descriptiveAnswerOptionsForm];
+        setWeightageEmpty(false);
+        setKeyWordsEmptyErr(false);
+        setAnswersEmptyErr(false);
+        setOptionsEmptyErr(false);
+        setMismatchWeightageErr(false);
+        setAnswerTypeEmptyErr(false);
+        setBlanksMismatchErr(false);
 
         if (event.target.name === 'answer_type') {
 
@@ -323,6 +344,13 @@ const AddQuestions = ({ className, ...rest }) => {
     }
 
     const handleAnswerBlanks = (event, index) => {
+
+        setKeyWordsEmptyErr(false);
+        setAnswersEmptyErr(false);
+        setOptionsEmptyErr(false);
+        setMismatchWeightageErr(false);
+        setAnswerTypeEmptyErr(false);
+        setBlanksMismatchErr(false);
 
         let data = [...answerOptionsForm];
 
@@ -396,6 +424,7 @@ const AddQuestions = ({ className, ...rest }) => {
 
         if (event.target.name === 'answer_weightage') {
             setAnsWeightageErrMsg(false);
+            setWeightageEmpty(false);
         }
 
         if (event.target.name === 'unit_weightage') {
@@ -802,91 +831,220 @@ const AddQuestions = ({ className, ...rest }) => {
                                             setQuestionEmptyErrMsg(true);
                                         } else if (selectedQuestionType === 'Descriptive') {
 
-                                            console.log(values.descriptive_answer);
+                                            let payLoad = {
+                                                question_type: selectedQuestionType,
+                                                question_category: selectedQuestionCategory,
+                                                question_source: selectedQuestionSource,
+                                                cognitive_skill: selectedQuestionCognitiveSkill,
+                                                question_voice_note: selectedQuestionVoiceNote,
+                                                question_content: articleDataTitle,
+                                                answers_of_question: descriptiveAnswerOptionsForm,
+                                                question_status: sessionStorage.getItem('click_event'),
+                                                question_disclaimer: selectedValueDisclaimer,
+                                                show_math_keyboard: showMathKeyboard,
+                                                appears_in: workSheetOrTest,
+                                                question_label: questionLabelValue,
+                                                display_answer: values.descriptive_answer,
+                                                marks: values.marks,
+                                                difficulty_level: _radioWorkSheetOrTest ? selectedDifficultyLevel : 'N.A',
+                                                answer_explanation: values.answer_explanation === undefined || values.answer_explanation === "undefined" || values.answer_explanation === "" ? "N.A." : values.answer_explanation
+
+                                            }
+
+                                            console.log("payLoad", payLoad);
+
                                             if (values.descriptive_answer === undefined || values.descriptive_answer === 'undefined' || values.descriptive_answer === "") {
                                                 setDescriptiveAnswerErrMsg(true);
                                             } else {
 
-                                                let payLoad = {
-                                                    question_type: selectedQuestionType,
-                                                    question_category: selectedQuestionCategory,
-                                                    question_source: selectedQuestionSource,
-                                                    cognitive_skill: selectedQuestionCognitiveSkill,
-                                                    question_voice_note: selectedQuestionVoiceNote,
-                                                    question_content: articleDataTitle,
-                                                    answers_of_question: descriptiveAnswerOptionsForm,
-                                                    question_status: sessionStorage.getItem('click_event'),
-                                                    // question_status: 'Publish',
-                                                    question_disclaimer: selectedValueDisclaimer,
-                                                    show_math_keyboard: showMathKeyboard,
-                                                    appears_in: workSheetOrTest,
-                                                    question_label: questionLabelValue,
-                                                    display_answer: values.descriptive_answer,
-                                                    marks: values.marks,
-                                                    difficulty_level: _radioWorkSheetOrTest ? selectedDifficultyLevel : 'N.A',
-                                                    answer_explanation: values.answer_explanation === undefined || values.answer_explanation === "undefined" || values.answer_explanation === "" ? "N.A." : values.answer_explanation
+                                                if (Number(values.marks) < 0) {
+                                                    setNegativeMarksErrMsg(true);
+                                                } else {
+
+                                                    let answerTypeSelected = descriptiveAnswerOptionsForm.filter(value => (value.answer_type === '' || value.answer_type === 'N.A.' || value.answer_type === 'Select...' || value.answer_type === 'undefined' || value.answer_type === undefined) && sessionStorage.getItem('click_event') === 'Submit');
+
+                                                    if (answerTypeSelected.length === 0) {
+
+                                                        let keywordsGiven = descriptiveAnswerOptionsForm.filter(value => (value.answer_content === '' || value.answer_content === 'N.A.' || value.answer_content === 'undefined' || value.answer_content === undefined) && sessionStorage.getItem('click_event') === 'Submit');
+
+                                                        if (keywordsGiven.length === 0) {
+
+                                                            if (sessionStorage.getItem('click_event') === 'Submit') {
+
+                                                                let weightageGiven = descriptiveAnswerOptionsForm.filter(value => (value.answer_weightage === '' || value.answer_weightage === 'N.A.' || value.answer_weightage === 'undefined' || value.answer_weightage === undefined) && sessionStorage.getItem('click_event') === 'Submit');
+
+                                                                if (weightageGiven.length === 0) {
+
+                                                                    let sumOfAllWeightage = descriptiveAnswerOptionsForm.reduce((acc, item) => acc + Number(item.answer_weightage), 0);
+                                                                    let allEqual = sumOfAllWeightage === Number(values.marks);
+
+                                                                    console.log("allEqual", allEqual);
+
+                                                                    if (allEqual) {
+                                                                        showLoader();
+                                                                        _addQuestions(payLoad);
+                                                                    } else {
+                                                                        setMismatchWeightageErr(true);
+                                                                    }
+
+                                                                } else {
+                                                                    setWeightageEmpty(true);
+                                                                }
+
+                                                            } else {
+                                                                showLoader();
+                                                                _addQuestions(payLoad);
+                                                            }
+
+                                                        } else {
+                                                            setKeyWordsEmptyErr(true);
+                                                        }
+
+                                                    } else {
+                                                        setAnswerTypeEmptyErr(true);
+                                                    }
 
                                                 }
-
-                                                console.log("payLoad", payLoad);
-
-                                                showLoader();
-                                                _addQuestions(payLoad);
                                             }
 
                                         } else if (selectedQuestionType === 'Subjective' || selectedQuestionType === 'Objective') {
 
+                                            let payLoad = {
+                                                question_type: selectedQuestionType,
+                                                question_category: selectedQuestionCategory,
+                                                question_source: selectedQuestionSource,
+                                                cognitive_skill: selectedQuestionCognitiveSkill,
+                                                question_voice_note: selectedQuestionVoiceNote,
+                                                question_content: articleDataTitle,
+                                                answers_of_question: answerOptionsForm,
+                                                question_status: sessionStorage.getItem('click_event'),
+                                                question_disclaimer: selectedValueDisclaimer,
+                                                show_math_keyboard: showMathKeyboard,
+                                                appears_in: workSheetOrTest,
+                                                question_label: questionLabelValue,
+                                                display_answer: "N.A.",
+                                                marks: values.marks,
+                                                difficulty_level: _radioWorkSheetOrTest ? selectedDifficultyLevel : 'N.A',
+                                                answer_explanation: values.answer_explanation === undefined || values.answer_explanation === "undefined" || values.answer_explanation === "" ? "N.A." : values.answer_explanation
+                                            };
+
+                                            console.log("payLoad", payLoad);
+
                                             let tempAnsWeightage = answerOptionsForm.filter(value => value.answer_weightage < 0);
                                             let tempUnitWeightage = answerOptionsForm.filter(value => value.unit_weightage < 0);
                                             console.log("selectedDifficultyLevel", selectedDifficultyLevel);
-
 
                                             if (Number(values.marks) < 0) {
                                                 setNegativeMarksErrMsg(true);
                                             } else if (tempAnsWeightage.length !== 0) {
                                                 setAnsWeightageErrMsg(true);
                                             } else if (_radioWorkSheetOrTest === true && (selectedDifficultyLevel === '' || selectedDifficultyLevel === undefined)) {
-                                                setIsDefficultyLevelErr(true)
+                                                setIsDefficultyLevelErr(true);
                                             } else if (tempUnitWeightage.length !== 0) {
                                                 setUnitWeightageErrMsg(true);
                                             } else {
 
-                                                console.log('Data inserted!', values.question_disclaimer);
+                                                let answerTypeSelected = answerOptionsForm.filter(value => (value.answer_type === '' || value.answer_type === 'N.A.' || value.answer_type === 'Select...' || value.answer_type === 'undefined' || value.answer_type === undefined) && sessionStorage.getItem('click_event') === 'Submit');
 
-                                                let payLoad = {
-                                                    question_type: selectedQuestionType,
-                                                    question_category: selectedQuestionCategory,
-                                                    question_source: selectedQuestionSource,
-                                                    cognitive_skill: selectedQuestionCognitiveSkill,
-                                                    question_voice_note: selectedQuestionVoiceNote,
-                                                    question_content: articleDataTitle,
-                                                    answers_of_question: answerOptionsForm,
-                                                    question_status: sessionStorage.getItem('click_event'),
-                                                    // question_status: 'Publish',
-                                                    question_disclaimer: selectedValueDisclaimer,
-                                                    show_math_keyboard: showMathKeyboard,
-                                                    appears_in: workSheetOrTest,
-                                                    question_label: questionLabelValue,
-                                                    display_answer: "N.A.",
-                                                    marks: values.marks,
-                                                    difficulty_level: _radioWorkSheetOrTest ? selectedDifficultyLevel : 'N.A',
-                                                    answer_explanation: values.answer_explanation === undefined || values.answer_explanation === "undefined" || values.answer_explanation === "" ? "N.A." : values.answer_explanation
-                                                };
+                                                if (answerTypeSelected.length === 0) {
 
-                                                console.log("payLoad", payLoad);
+                                                    let placegolderSelected = answerOptionsForm.filter(value => (value.answer_option === '' || value.answer_option === 'N.A.' || value.answer_option === 'Select...' || value.answer_option === 'undefined' || value.answer_option === undefined) && sessionStorage.getItem('click_event') === 'Submit');
 
-                                                if (isDuplicatePresent) {
+                                                    if (placegolderSelected.length === 0) {
 
-                                                    console.log("Duplicates are present, skip form submission");
-                                                    Swal.fire({
-                                                        title: 'Duplicates Found',
-                                                        text: 'Duplicate values are present between $$ markers in Question Field ',
-                                                        icon: 'warning',
-                                                    });
-                                                    return
+                                                        let answersGiven = answerOptionsForm.filter(value => (value.answer_content === '' || value.answer_content === 'N.A.' || value.answer_content === 'undefined' || value.answer_content === undefined) && sessionStorage.getItem('click_event') === 'Submit');
+
+                                                        if (answersGiven.length === 0) {
+
+                                                            if (sessionStorage.getItem('click_event') === 'Submit') {
+
+                                                                let weightageGiven = answerOptionsForm.filter(value => (value.answer_weightage === '' || value.answer_weightage === 'N.A.' || value.answer_weightage === 'undefined' || value.answer_weightage === undefined) && sessionStorage.getItem('click_event') === 'Submit');
+
+                                                                if (weightageGiven.length === 0) {
+
+                                                                    if (selectedQuestionType === 'Objective') {
+
+                                                                        let sumOfAllWeightage = answerOptionsForm.filter(item => item.answer_display === "Yes").reduce((acc, item) => acc + Number(item.answer_weightage), 0);
+
+                                                                        let allEqual = sumOfAllWeightage === Number(values.marks);
+                                                                        console.log("allEqual", allEqual);
+
+                                                                        if (allEqual) {
+                                                                            if (isDuplicatePresent) {
+                                                                                console.log("Duplicates are present, skip form submission");
+                                                                                Swal.fire({
+                                                                                    title: 'Duplicates Found',
+                                                                                    text: 'Duplicate values are present between $$ markers in Question Field',
+                                                                                    icon: 'warning',
+                                                                                });
+                                                                                return;
+                                                                            } else {
+                                                                                showLoader();
+                                                                                _addQuestions(payLoad);
+                                                                            }
+                                                                        } else {
+                                                                            setMismatchWeightageErr(true);
+                                                                        }
+                                                                    } else {
+
+                                                                        console.log("answerBlanksOptions", answerBlanksOptions.map(value => value.value));
+                                                                        console.log("answerOptionsForm", answerOptionsForm.map(value => value.answer_option));
+
+                                                                        let allOptionsPresent = answerBlanksOptions.map(value => value.value).every(item => answerOptionsForm.map(value => value.answer_option).includes(item));
+
+                                                                        console.log("allOptionsPresent", allOptionsPresent);
+
+                                                                        if (allOptionsPresent) {
+                                                                            if (isDuplicatePresent) {
+
+                                                                                console.log("Duplicates are present, skip form submission");
+                                                                                Swal.fire({
+                                                                                    title: 'Duplicates Found',
+                                                                                    text: 'Duplicate values are present between $$ markers in Question Field',
+                                                                                    icon: 'warning',
+                                                                                });
+                                                                                return
+                                                                            } else {
+                                                                                showLoader();
+                                                                                _addQuestions(payLoad);
+                                                                            }
+                                                                        } else {
+                                                                            setBlanksMismatchErr(true);
+                                                                        }
+
+                                                                    }
+
+                                                                } else {
+                                                                    setWeightageEmpty(true);
+                                                                }
+
+                                                            } else {
+
+                                                                if (isDuplicatePresent) {
+
+                                                                    console.log("Duplicates are present, skip form submission");
+                                                                    Swal.fire({
+                                                                        title: 'Duplicates Found',
+                                                                        text: 'Duplicate values are present between $$ markers in Question Field',
+                                                                        icon: 'warning',
+                                                                    });
+                                                                    return
+                                                                } else {
+                                                                    showLoader();
+                                                                    _addQuestions(payLoad);
+                                                                }
+                                                            }
+
+                                                        } else {
+                                                            setAnswersEmptyErr(true);
+                                                        }
+
+                                                    } else {
+                                                        setOptionsEmptyErr(true);
+                                                    }
+
                                                 } else {
-                                                    showLoader();
-                                                    _addQuestions(payLoad);
+                                                    setAnswerTypeEmptyErr(true);
                                                 }
                                             }
                                         } else {
@@ -1334,8 +1492,6 @@ const AddQuestions = ({ className, ...rest }) => {
                                                 <br />
                                                 {answerOptionsForm.map((form, index) => {
 
-                                                    console.log(answerOptionsForm);
-
                                                     return (
                                                         <Card
                                                             className="shadow p-3 mb-5 bg-white rounded"
@@ -1428,7 +1584,6 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                             <>
 
                                                                                                 {selectedArr.map((optionsData) => {
-                                                                                                    { console.log(optionsData) }
                                                                                                     return <option
                                                                                                         value={optionsData.value}
                                                                                                         key={optionsData.value}
@@ -3119,7 +3274,6 @@ const AddQuestions = ({ className, ...rest }) => {
 
                                         <br />
                                         <Row className="my-3">
-                                            <Col></Col>
                                             <Col>
                                                 {ansWeightageErrMsg && (
                                                     <>
@@ -3143,9 +3297,64 @@ const AddQuestions = ({ className, ...rest }) => {
                                                     </>
                                                 )}
 
+                                                {weightageEmpty && (
+                                                    <> <div
+                                                        style={{ color: 'red' }}
+                                                        className="error">
+                                                        Weightage cannot be empty, please fill weightage in each option!
+                                                    </div></>
+                                                )}
+
+                                                {keyWordsEmptyErr && (
+                                                    <> <div
+                                                        style={{ color: 'red' }}
+                                                        className="error">
+                                                        Keywords cannot be empty, please fill Keyword in each option!
+                                                    </div> </>
+                                                )}
+
+                                                {answersEmptyErr && (
+                                                    <> <div
+                                                        style={{ color: 'red' }}
+                                                        className="error">
+                                                        Answers cannot be empty, please fill Answer in each option!
+                                                    </div> </>
+                                                )}
+
+                                                {mismatchWeightageErr && (
+                                                    <> <div
+                                                        style={{ color: 'red' }}
+                                                        className="error">
+                                                        The addition of all the weightage options is not equal to Marks!
+                                                    </div> </>
+                                                )}
+
+                                                {optionsEmptyErr && (
+                                                    <> <div
+                                                        style={{ color: 'red' }}
+                                                        className="error">
+                                                        Placeholder cannot be empty, please select any of the options!
+                                                    </div> </>
+                                                )}
+
+                                                {answerTypeEmptyErr && (
+                                                    <> <div
+                                                        style={{ color: 'red' }}
+                                                        className="error">
+                                                        Answer Type cannot be empty, please select any of the types!
+                                                    </div> </>
+                                                )}
+
+                                                {blanksMismatchErr && (
+                                                    <> <div
+                                                        style={{ color: 'red' }}
+                                                        className="error">
+                                                        Options is not provided for every blank, please re-check!
+                                                    </div> </>
+                                                )}
 
                                             </Col>
-                                            <Col>
+                                            <Col xs={4}>
                                                 <Row>
                                                     <Col>
                                                         <Button
@@ -3164,7 +3373,18 @@ const AddQuestions = ({ className, ...rest }) => {
                                                             size="small"
                                                             type="submit"
                                                             variant="info"
-                                                            onClick={() => sessionStorage.setItem('click_event', 'Save')}>
+                                                            onClick={() => {
+                                                                setKeyWordsEmptyErr(false);
+                                                                setAnswersEmptyErr(false);
+                                                                setOptionsEmptyErr(false);
+                                                                setWeightageEmpty(false);
+                                                                setBlanksMismatchErr(false);
+                                                                setMismatchWeightageErr(false);
+                                                                setAnswerTypeEmptyErr(false);
+                                                                setBlanksMismatchErr(false);
+                                                                sessionStorage.setItem('click_event', 'Save');
+                                                            }}
+                                                        >
                                                             Save
                                                         </Button>
                                                     </Col>
@@ -3175,7 +3395,17 @@ const AddQuestions = ({ className, ...rest }) => {
                                                             size="small"
                                                             type="submit"
                                                             variant="success"
-                                                            onClick={() => sessionStorage.setItem('click_event', 'Submit')}>
+                                                            onClick={() => {
+                                                                setKeyWordsEmptyErr(false);
+                                                                setAnswersEmptyErr(false);
+                                                                setWeightageEmpty(false);
+                                                                setBlanksMismatchErr(false);
+                                                                setOptionsEmptyErr(false);
+                                                                setMismatchWeightageErr(false);
+                                                                setAnswerTypeEmptyErr(false);
+                                                                setBlanksMismatchErr(false);
+                                                                sessionStorage.setItem('click_event', 'Submit');
+                                                            }}>
                                                             Submit
                                                         </Button>
                                                     </Col>
