@@ -13,15 +13,16 @@ import dynamicUrl from '../../../../helper/dynamicUrls';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import BasicSpinner from '../../../../helper/BasicSpinner';
 
-function Table({ columns, data, modalOpen, userRole }) {
-
+function Table({ columns, data, modalOpen, userRole, sendDataToParent }) {
     console.log("_userRole in Table", userRole);
+    const [loader, showLoader, hideLoader] = useFullPageLoader();
+    const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
+    const MySwal = withReactContent(Swal);
+    const history = useHistory();
+    const [searchValue, setSearchValue] = useState('');
+
+
     const initiallySelectedRows = React.useMemo(() => new Set(["1"]), []);
-    const dataToSend = "Hello from child!";
-
-
-
-
     const {
         getTableProps,
         getTableBodyProps,
@@ -47,7 +48,7 @@ function Table({ columns, data, modalOpen, userRole }) {
         {
             columns,
             data,
-            initialState: { pageIndex: 0, pageSize: 10, selectedRowPaths: initiallySelectedRows },
+            initialState: { pageIndex: 0, pageSize: 10, selectedRowPaths: initiallySelectedRows, globalFilter: searchValue },
             userRole
         },
         useGlobalFilter,
@@ -56,12 +57,12 @@ function Table({ columns, data, modalOpen, userRole }) {
         useRowSelect
     );
 
-    const [loader, showLoader, hideLoader] = useFullPageLoader();
-    const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
 
 
-    const MySwal = withReactContent(Swal);
-    const history = useHistory();
+
+
+
+
     const sweetAlertHandler = (alert) => {
         MySwal.fire({
             title: alert.title,
@@ -72,23 +73,25 @@ function Table({ columns, data, modalOpen, userRole }) {
     const user_status = pageLocation === 'active-users' ? "Active" : "Archived"
     console.log("user_status : ", user_status);
 
+    useEffect(() => {
+        const data = {
+            page_size: pageSize,
+            user: userRole,
+            start_key: null,
+            searchedKeyword: searchValue
+        }
+
+        console.log('Data sent from stu child:', data);
+
+        sendDataToParent(data);
+        setGlobalFilter(searchValue);
+
+
+    }, [pageSize, userRole, searchValue, globalFilter, setGlobalFilter]);
+
+
     // const conformDelete = () => {
 
-    //     MySwal.fire({
-    //         title: 'Are you sure?',
-    //         text: 'Confirm deleting User',
-    //         type: 'warning',
-    //         showCloseButton: true,
-    //         showCancelButton: true
-    //     }).then((willDelete) => {
-    //         if (willDelete.value) {
-    //             console.log("api calling");
-    //             deleteStudentById();
-    //         } else {
-    //             return MySwal.fire('', 'User is safe!', 'error');
-    //         }
-    //     });
-    // }
     const restoreData = () => {
 
         MySwal.fire({
@@ -108,14 +111,6 @@ function Table({ columns, data, modalOpen, userRole }) {
     }
 
     const deleteStudentById = () => {
-        // let arrIds = [];
-        // stateStudent.forEach(d => {
-        //     if (d.select) {
-        //         arrIds.push(d.id)
-        //     }
-        // })
-        // console.log(arrIds)
-
         console.log("data check: ", data);
         console.log("userRole : ", userRole);
 
@@ -128,8 +123,6 @@ function Table({ columns, data, modalOpen, userRole }) {
         for (let k = 0; k < data.length; k++) {
 
             console.log(data[k][userId]);
-
-            // console.log("document.getElementById(data[k][userId]).checked ", document.getElementById(data[k][userId]).checked, "---", data[k][userId]);
 
             if (document.getElementById(data[k][userId]).checked) {
                 console.log("Inside Condition");
@@ -366,7 +359,7 @@ function Table({ columns, data, modalOpen, userRole }) {
                     Entries
                 </Col>
                 <Col className="d-flex justify-content-end">
-                    <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
+                    <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} setSearchValue={setSearchValue} />
 
                     {user_status === "Active" ? (
                         <>
@@ -480,9 +473,10 @@ function Table({ columns, data, modalOpen, userRole }) {
     );
 }
 
-const UserTableViewStudent = ({ _userRole }) => {
+const UserTableViewStudent = ({ _userRole, sendDataToGrandParent }) => {
 
     console.log(_userRole);
+    // console.log(sendDataToParent);
 
     const columns = React.useMemo(() => [
 
@@ -539,7 +533,20 @@ const UserTableViewStudent = ({ _userRole }) => {
     console.log("multiDropOptions", multiDropOptions);
     const [selectAllCheckbox, setSelectAllCheckbox] = useState(false);
 
+
+    ///
+    const [dataFromChild, setDataFromChild] = useState('');
+
+    const handleDataFromChild = (data) => {
+        console.log('Data received in Parent:', data);
+        setDataFromChild(data);
+
+        // Pass the data to the GrandParentComponent
+        sendDataToGrandParent(data);
+    };
+
     const MySwal = withReactContent(Swal);
+
 
     const sweetAlertHandler = (alert) => {
         MySwal.fire({
@@ -805,9 +812,14 @@ const UserTableViewStudent = ({ _userRole }) => {
         }
         else {
             fetchUserData();
+
+
         }
 
     }, [_userRole]);
+
+
+
 
     return (
 
@@ -858,7 +870,7 @@ const UserTableViewStudent = ({ _userRole }) => {
                                                                 </Card.Title>
                                                             </Card.Header>
                                                             <Card.Body>
-                                                                <Table columns={columns} data={userData} userRole={_userRole} selectAllCheckbox={selectAllCheckbox} />
+                                                                <Table columns={columns} data={userData} userRole={_userRole} selectAllCheckbox={selectAllCheckbox} sendDataToParent={handleDataFromChild} />
                                                             </Card.Body>
                                                         </Card>
 

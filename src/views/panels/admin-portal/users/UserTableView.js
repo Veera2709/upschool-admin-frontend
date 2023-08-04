@@ -19,7 +19,7 @@ import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import BasicSpinner from '../../../../helper/BasicSpinner';
 
 
-function Table({ columns, data, modalOpen, userRole }) {
+function Table({ columns, data, modalOpen, userRole, sendDataToParent }) {
 
   console.log("data", data);
   console.log("_userRole in Table", userRole);
@@ -33,6 +33,12 @@ function Table({ columns, data, modalOpen, userRole }) {
   const MySwal = withReactContent(Swal);
   const history = useHistory();
   const [_showLoader, _setShowLoader] = useState(false);
+  const [searchValue, setSearchValue] = useState('');
+  // const [dataToBeSent, setDataToBeSent] = useState({
+  //   page_size: 5,
+  //   user: '',
+  //   searchedKeyword: ''
+  // })
 
   const sweetAlertHandler = (alert) => {
     MySwal.fire({
@@ -47,10 +53,8 @@ function Table({ columns, data, modalOpen, userRole }) {
     getTableBodyProps,
     headerGroups,
     prepareRow,
-
     globalFilter,
     setGlobalFilter,
-
     page,
     canPreviousPage,
     canNextPage,
@@ -67,17 +71,38 @@ function Table({ columns, data, modalOpen, userRole }) {
     {
       columns,
       data,
-      initialState: { pageIndex: 0, pageSize: 10, selectedRowPaths: initiallySelectedRows },
-      userRole
+      initialState: { pageIndex: 0, pageSize: 10, selectedRowPaths: initiallySelectedRows, globalFilter: searchValue },
+      userRole,
+
     },
     useGlobalFilter,
     useSortBy,
     usePagination,
     useRowSelect
   );
+
   const user_status = pageLocation === 'active-users' ? "Active" : "Archived"
 
   console.log("user_status : ", user_status);
+
+  useEffect(() => {
+    const data = {
+      page_size: pageSize,
+      user: userRole,
+      start_key: null,
+      searchedKeyword: searchValue
+    }
+
+    console.log('Data sent from child:', data);
+
+    sendDataToParent(data);
+    setGlobalFilter(searchValue);
+
+
+  }, [pageSize, userRole, searchValue, globalFilter, setGlobalFilter]);
+
+
+
 
   // const MySwal = withReactContent(Swal);
   const conformDelete = () => {
@@ -374,17 +399,12 @@ function Table({ columns, data, modalOpen, userRole }) {
     }
   }
 
+
+  // console.log("Value of search input:", dataToBeSent);
+
   return (
     <>
       <Row className="mb-3">
-
-        {/* {user_status === "Active" ?
-
-          <Button onClick={(e) => { getAlldata() }} variant="danger" className="btn-sm btn-round has-ripple ml-2" style={{ marginLeft: "1.5rem" }} >Delete</Button> :
-
-          <Button onClick={getAlldata} variant="primary" className="btn-sm btn-round has-ripple ml-2" style={{ marginLeft: "1.5rem" }} >Restore</Button>
-        } */}
-
         <Col className="d-flex align-items-center">
           Show
           <select
@@ -410,7 +430,7 @@ function Table({ columns, data, modalOpen, userRole }) {
           }
         </Col>
         <Col className="d-flex justify-content-end">
-          <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
+          <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} setSearchValue={setSearchValue} />
 
           {user_status === "Active" ? (
             <>
@@ -526,10 +546,20 @@ function Table({ columns, data, modalOpen, userRole }) {
   );
 }
 
-const UserTableView = ({ _userRole }) => {
+const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
 
   console.log("_userRole : ", _userRole);
 
+
+  const [dataFromChild, setDataFromChild] = useState('');
+
+  const handleDataFromChild = (data) => {
+    console.log('Data received in Parent:', data);
+    setDataFromChild(data);
+
+    // Pass the data to the GrandParentComponent
+    sendDataToGrandParent(data);
+  };
   const [users, setUsers] = useState([])
   const history = useHistory();
   const [userData, setUserData] = useState([]);
@@ -913,7 +943,7 @@ const UserTableView = ({ _userRole }) => {
 
     let allCheckBoxIds = [];
     for (let index = 0; index < responseData.length; index++) {
-      console.log("responseData[index][userId] : ", responseData[index][userId]);
+      // console.log("responseData[index][userId] : ", responseData[index][userId]);
 
       allCheckBoxIds.push(responseData[index][userId]);
 
@@ -1129,6 +1159,8 @@ const UserTableView = ({ _userRole }) => {
 
 
 
+
+
   return (
 
     <React.Fragment>
@@ -1192,7 +1224,7 @@ const UserTableView = ({ _userRole }) => {
                               </Card.Header>
 
                               <Card.Body>
-                                <Table columns={columns} data={userData} modalOpen={openHandler} userRole={_userRole} selectAllCheckbox={selectAllCheckbox} />
+                                <Table columns={columns} data={userData} modalOpen={openHandler} userRole={_userRole} selectAllCheckbox={selectAllCheckbox} sendDataToParent={handleDataFromChild} dataFromChild={dataFromChild} />
                               </Card.Body>
                             </Card>
 
