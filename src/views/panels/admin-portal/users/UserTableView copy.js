@@ -34,11 +34,6 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent }) {
   const history = useHistory();
   const [_showLoader, _setShowLoader] = useState(false);
   const [searchValue, setSearchValue] = useState('');
-
-  const [pageIndexValue, setPageIndexValue] = useState(1);
-
-  const [dataFromChild, setDataFromChild] = useState('');
-
   // const [dataToBeSent, setDataToBeSent] = useState({
   //   page_size: 5,
   //   user: '',
@@ -95,15 +90,14 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent }) {
       page_size: pageSize,
       user: userRole,
       start_key: null,
-      searchedKeyword: searchValue,
-      pageIndexValue: pageIndexValue
+      searchedKeyword: searchValue
     }
 
     console.log('Data sent from child:', data);
 
     sendDataToParent(data);
     setGlobalFilter(searchValue);
-    setDataFromChild(data);
+
 
   }, [pageSize, userRole, searchValue, globalFilter, setGlobalFilter]);
 
@@ -404,15 +398,7 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent }) {
 
     }
   }
-  const nextCustomPage = () => {
 
-    setPageIndexValue(pageIndexValue + 1);
-
-    sendDataToParent(dataFromChild.pageIndexValue = pageIndexValue);
-
-    console.log("dataFromChild : ", dataFromChild);
-
-  }
 
   // console.log("Value of search input:", dataToBeSent);
 
@@ -549,17 +535,10 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent }) {
         </Col>
         <Col>
           <Pagination className="justify-content-end">
-            {/* <Pagination.First onClick={() => gotoPage(0)} disabled={!canPreviousPage} />
+            <Pagination.First onClick={() => gotoPage(0)} disabled={!canPreviousPage} />
             <Pagination.Prev onClick={() => previousPage()} disabled={!canPreviousPage} />
             <Pagination.Next onClick={() => nextPage()} disabled={!canNextPage} />
-            <Pagination.Last onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage} /> */}
-
-            <Pagination.First onClick={() => gotoPage(0)} />
-            <Pagination.Prev onClick={() => previousPage()} />
-            <Pagination.Next onClick={() => nextCustomPage()} />
-            <Pagination.Last onClick={() => gotoPage(pageCount - 1)} />
-
-
+            <Pagination.Last onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage} />
           </Pagination>
         </Col>
       </Row>
@@ -601,8 +580,6 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
   const [checkedStatus, setCheckedStatus] = useState([]);
 
   const [isLoading, setIsLoading] = useState(false);
-  const [isShow, setIsSHow] = useState(false);
-
   const { user_id } = decodeJWT(sessionStorage.getItem('user_jwt'));
   const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
   const [selectClassErr, setSelectClassErr] = useState(false);
@@ -617,12 +594,6 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
   // const [outPutData, setOutPutData] = useState(response.data);
 
   const [tempData, setTemData] = useState([]);
-
-  const [startKeys, setStartKeys] = useState({
-    Teachers: null,
-    Students: null,
-    Parents: null,
-  });
 
   console.log("check : ", check);
 
@@ -945,7 +916,7 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
   };
 
   const updateValues = async (_data) => {
-    let responseData = _data.Items;
+    let responseData = _data;
 
     console.log("updateValues responseData", responseData);
     setCheckedStatus(new Array(responseData.length).fill(false));
@@ -1102,33 +1073,19 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
   const fetchUserData = () => {
 
     console.log("fetch User Data calling");
-    // setIsLoading(true);
-    showLoader();
-    setIsSHow(true);
+    setIsLoading(true);
+    // showLoader();
 
     const payLoadStatus = pageLocation === "active-users" ? 'Active' : 'Archived';
 
-    // axios.post(dynamicUrl.fetchAllUsersData, {
-    //   data: {
-    //     user_role: _userRole,
-    //     user_status: payLoadStatus
-    //   }
-    // },
-
-    axios.post(
-      dynamicUrl.usersPagination,
-      {
-        data: {
-          page_size: dataFromChild.page_size === undefined ? 10 : dataFromChild.page_size,
-          user: _userRole,
-          // user: dataFromChild.user,
-          start_key: startKeys[_userRole],
-          searchedKeyword: dataFromChild.searchedKeyword === undefined ? "" : dataFromChild.searchedKeyword,
-        }
-      },
-      {
-        headers: { Authorization: sessionStorage.getItem('user_jwt') }
-      })
+    axios.post(dynamicUrl.fetchAllUsersData, {
+      data: {
+        user_role: _userRole,
+        user_status: payLoadStatus
+      }
+    }, {
+      headers: { Authorization: sessionStorage.getItem('user_jwt') }
+    })
       .then((response) => {
 
         let resultData = response.data;
@@ -1140,9 +1097,7 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
           setIsLoading(false);
           updateValues(resultData);
           setTemData(resultData)
-          hideLoader();
-          // setIsSHow(false);
-          setStartKeys(startKeys[_userRole] = resultData.lastKey);
+
         }
 
       })
@@ -1202,23 +1157,8 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
 
   }, [_userRole]);
 
-  useEffect(() => {
-    const validateJWT = sessionStorage.getItem('user_jwt');
 
-    if (validateJWT === "" || validateJWT === null || validateJWT === undefined || validateJWT === "undefined") {
 
-      sessionStorage.clear();
-      localStorage.clear();
-
-      history.push('/auth/signin-1');
-      window.location.reload();
-
-    }
-    else {
-      fetchUserData();
-    }
-
-  }, [dataFromChild.page_size, dataFromChild.searchedKeyword, dataFromChild.pageIndexValue]);
 
 
   return (
@@ -1226,88 +1166,79 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
     <React.Fragment>
       <div>
 
-        {
+        {isLoading ? (
+          <BasicSpinner />
+        ) : (
+          <>
 
-          isLoading ? (
-            <BasicSpinner />
-          ) :
-
-
-
-            (
-              <>
-
-                {
-                  userData.length <= 0 && _data ? (
-                    <>
-                      {
-                        pageLocation === 'active-users' ? (
-                          <div>
-                            <h3 style={{ textAlign: 'center' }}>No {sessionStorage.getItem('user_type')} Found</h3>
-                            <div className="form-group fill text-center">
-                              <br></br>
+            {
+              userData.length <= 0 && _data ? (
+                <>
+                  {
+                    pageLocation === 'active-users' ? (
+                      <div>
+                        <h3 style={{ textAlign: 'center' }}>No {sessionStorage.getItem('user_type')} Found</h3>
+                        <div className="form-group fill text-center">
+                          <br></br>
 
 
 
-                              {/* <Button variant="success" className="btn-sm btn-round has-ripple ml-2"
+                          {/* <Button variant="success" className="btn-sm btn-round has-ripple ml-2"
                             onClick={handleButtonClicked}
                           >
                             <i className="feather icon-plus" /> Add Users
                           </Button> */}
 
 
-                              <Link to={'/admin-portal/add-users'}>
-                                <Button variant="success" className="btn-sm btn-round has-ripple ml-2"
-                                >
-                                  <i className="feather icon-plus" /> Add Users
-                                </Button>
-                              </Link>
+                          <Link to={'/admin-portal/add-users'}>
+                            <Button variant="success" className="btn-sm btn-round has-ripple ml-2"
+                            >
+                              <i className="feather icon-plus" /> Add Users
+                            </Button>
+                          </Link>
 
 
-                            </div>
-                          </div>
-                        ) : (
-                          <h3 style={{ textAlign: 'center' }}>No {sessionStorage.getItem('user_type')} Found</h3>
-                        )
-                      }
-                    </>
+                        </div>
+                      </div>
+                    ) : (
+                      <h3 style={{ textAlign: 'center' }}>No {sessionStorage.getItem('user_type')} Found</h3>
+                    )
+                  }
+                </>
 
-                  ) : (
+              ) : (
+
+                <>
+                  {_data && (
 
                     <>
-                      {_data && (
+                      <React.Fragment>
+                        <Row>
+                          <Col sm={12}>
+                            <Card>
+                              <Card.Header>
+                                <Card.Title as="h5" className='d-flex justify-content-between'>
+                                  <h5>User List</h5>
+                                  <h5>Total Entries :- {userData.length}</h5>
+                                </Card.Title>
+                              </Card.Header>
 
-                        <>
-                          <React.Fragment>
-                            <Row>
-                              <Col sm={12}>
-                                <Card>
-                                  <Card.Header>
-                                    <Card.Title as="h5" className='d-flex justify-content-between'>
-                                      <h5>User List</h5>
-                                      <h5>Total Entries :- {userData.length}</h5>
-                                    </Card.Title>
-                                  </Card.Header>
+                              <Card.Body>
+                                <Table columns={columns} data={userData} modalOpen={openHandler} userRole={_userRole} selectAllCheckbox={selectAllCheckbox} sendDataToParent={handleDataFromChild} dataFromChild={dataFromChild} />
+                              </Card.Body>
+                            </Card>
 
-                                  <Card.Body>
-
-
-                                    <Table columns={columns} data={userData} modalOpen={openHandler} userRole={_userRole} selectAllCheckbox={selectAllCheckbox} sendDataToParent={handleDataFromChild} dataFromChild={dataFromChild} />
-
-                                  </Card.Body>
-                                </Card>
-
-                              </Col>
-                            </Row>
-                          </React.Fragment>
-                        </>
-                      )}
-
+                          </Col>
+                        </Row>
+                      </React.Fragment>
                     </>
-                  )
-                }
-              </>
-            )
+                  )}
+
+                </>
+              )
+            }
+          </>
+        )
 
         }
 

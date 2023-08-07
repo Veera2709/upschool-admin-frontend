@@ -22,6 +22,7 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent }) {
     const [searchValue, setSearchValue] = useState('');
 
 
+
     const initiallySelectedRows = React.useMemo(() => new Set(["1"]), []);
     const {
         getTableProps,
@@ -664,7 +665,7 @@ const UserTableViewStudent = ({ _userRole, sendDataToGrandParent }) => {
     };
 
     const updateValues = (_data) => {
-        let responseData = _data;
+        let responseData = _data.Items;
         // let responseData = [];
 
         let userId = (_userRole === "Students") ? "student_id" : "N.A.";
@@ -733,19 +734,25 @@ const UserTableViewStudent = ({ _userRole, sendDataToGrandParent }) => {
     const fetchUserData = () => {
 
         console.log("fetch User Data calling");
-        setIsLoading(true);
-        // showLoader();
+        // setIsLoading(true);
+        showLoader();
 
         const payLoadStatus = pageLocation === "active-users" ? 'Active' : 'Archived';
 
-        axios.post(dynamicUrl.fetchAllUsersData, {
-            data: {
-                user_role: _userRole,
-                user_status: payLoadStatus
-            }
-        }, {
-            headers: { Authorization: sessionStorage.getItem('user_jwt') }
-        })
+        axios.post(
+            dynamicUrl.usersPagination,
+            {
+                data: {
+                    page_size: dataFromChild.page_size === undefined ? 10 : dataFromChild.page_size,
+                    user: _userRole,
+                    // user: dataFromChild.user,
+                    start_key: null,
+                    searchedKeyword: dataFromChild.searchedKeyword === undefined ? "" : dataFromChild.searchedKeyword,
+                }
+            },
+            {
+                headers: { Authorization: sessionStorage.getItem('user_jwt') }
+            })
             .then((response) => {
 
                 let resultData = response.data;
@@ -756,6 +763,7 @@ const UserTableViewStudent = ({ _userRole, sendDataToGrandParent }) => {
 
                     setIsLoading(false);
                     updateValues(resultData);
+                    hideLoader();
 
                 }
 
@@ -818,7 +826,23 @@ const UserTableViewStudent = ({ _userRole, sendDataToGrandParent }) => {
 
     }, [_userRole]);
 
+    useEffect(() => {
+        const validateJWT = sessionStorage.getItem('user_jwt');
 
+        if (validateJWT === "" || validateJWT === null || validateJWT === undefined || validateJWT === "undefined") {
+
+            sessionStorage.clear();
+            localStorage.clear();
+
+            history.push('/auth/signin-1');
+            window.location.reload();
+
+        }
+        else {
+            fetchUserData();
+        }
+
+    }, [dataFromChild.page_size]);
 
 
     return (

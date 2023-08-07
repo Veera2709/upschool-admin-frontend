@@ -14,41 +14,49 @@ const ListUsers = () => {
     const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
     const [data, setData] = useState(null);
     const [dataFromChild, setDataFromChild] = useState({});
+
+
     // const [startKey, setStartKey] = useState(null)
-    const [startKeys, setStartKeys] = useState({
-        Teachers: null,
-        Students: null,
-        Parents: null,
-    });
+    // const [startKeys, setStartKeys] = useState({
+    //     Teachers: null,
+    //     Students: null,
+    //     Parents: null,
+    // });
 
     const [_userRole, _setUserRole] = useState('Teachers');
-    const setStartKeyForUserRole = (userRole, key) => {
-        setStartKeys((prevStartKeys) => ({
-            ...prevStartKeys,
-            [userRole]: key,
-        }));
-    };
+
+    // const setStartKeyForUserRole = (userRole, key) => {
+    //     setStartKeys((prevStartKeys) => ({
+    //         ...prevStartKeys,
+    //         [userRole]: key,
+    //     }));
+    // };
 
     const handleUserChange = (key) => {
         console.log("KEY ====================================== : ", key);
-        console.log("USER ROLE : ============================== ", _userRole);
         // setStartKey(null);
-        if (key === '1') {
+        if (key === '0') {
+            console.log(" Tab 1");
             _setUserRole('Teachers');
-            UsePaginationApi()
+            // UsePaginationApi()
+        }
+        else if (key === '1') {
+            console.log(" Tab 2");
+
+            _setUserRole('Students');
+            // UsePaginationApi()
         }
         else if (key === '2') {
-            _setUserRole('Students');
-            UsePaginationApi()
-        }
-        else if (key === '3') {
+            console.log(" Tab 3");
+
             _setUserRole('Parents');
-            UsePaginationApi()
+            // UsePaginationApi()
         } else {
             console.log("Invalid option!");
         }
     }
     console.log("dataFromChild", dataFromChild)
+    console.log("USER ROLE : ============================== ", _userRole);
 
     const handleDataFromParent = (data) => {
         console.log('Data received in GrandParent:', data);
@@ -75,7 +83,7 @@ const ListUsers = () => {
             setState(true);
         }
         if (dataFromChild !== {}) {
-            UsePaginationApi()
+            // UsePaginationApi()
         }
     }, [dataFromChild, _userRole])
 
@@ -122,42 +130,43 @@ const ListUsers = () => {
     //             console.log(error)
     //         });
     // }
-    const UsePaginationApi = () => {
-        console.log("USER ROLE : ", _userRole);
-        console.log("START KEY : ", startKeys[_userRole]); // Use the start key specific to the current user role
 
-        // ... (existing code)
+    // const UsePaginationApi = () => {
+    //     console.log("USER ROLE : ", _userRole);
+    //     console.log("START KEY : ", startKeys[_userRole]); //
 
-        axios
-            .post(
-                dynamicUrl.usersPagination,
-                {
-                    data: {
-                        page_size: dataFromChild.page_size,
-                        user: dataFromChild.user,
-                        start_key: startKeys[_userRole], // Use the start key specific to the current user role
-                        searchedKeyword: dataFromChild.searchedKeyword,
-                    },
-                },
-                {
-                    headers: { Authorization: sessionStorage.getItem("user_jwt") },
-                }
-            )
-            .then((response) => {
-                let result = response.status === 200;
-                if (result) {
-                    console.log("userresult", response.data.Items.length);
-                    setStartKeyForUserRole(_userRole, response.data.lastKey); // Set the start key for the current user role
-                } else {
-                    // Throw Error :
-                    alert(response.error);
-                }
-            })
-            .catch((error) => {
-                // alert(error)
-                console.log(error);
-            });
-    };
+    //     // ... (existing code)
+
+    //     axios
+    //         .post(
+    //             dynamicUrl.usersPagination,
+    //             {
+    //                 data: {
+    //                     page_size: dataFromChild.page_size,
+    //                     user: dataFromChild.user,
+    //                     start_key: startKeys[_userRole],
+    //                     searchedKeyword: dataFromChild.searchedKeyword,
+    //                 },
+    //             },
+    //             {
+    //                 headers: { Authorization: sessionStorage.getItem("user_jwt") },
+    //             }
+    //         )
+    //         .then((response) => {
+    //             let result = response.status === 200;
+    //             if (result) {
+    //                 console.log("userresult", response.data.Items.length);
+    //                 setStartKeyForUserRole(_userRole, response.data.lastKey); // 
+    //             } else {
+    //                 // Throw Error :
+    //                 alert(response.error);
+    //             }
+    //         })
+    //         .catch((error) => {
+    //             // alert(error)
+    //             console.log(error);
+    //         });
+    // };
 
 
 
@@ -167,31 +176,44 @@ const ListUsers = () => {
                 <>
                     <Tabs
                         defaultActiveKey={0}
+                        // activeKey={activeTab}
                         onSelect={handleUserChange}
                         className="mb-3"
                     >
                         {userRolesArray.map((userRole, userRoleIndex) => {
 
-                            return userRole === "Students" ?
+                            return _userRole === "Students" ?
 
                                 <Tab key={userRoleIndex} eventKey={userRoleIndex} title={userRole} >
-                                    {sessionStorage.setItem('user_role', userRole)}
+                                    {sessionStorage.setItem('user_role', _userRole)}
                                     <UserTableViewStudent
-                                        _userRole={userRole}
+                                        _userRole={_userRole}
                                         sendDataToGrandParent={handleDataFromParent}
 
                                     />
                                 </Tab>
                                 :
-                                <Tab key={userRoleIndex} eventKey={userRoleIndex} title={userRole} >
-                                    {sessionStorage.setItem('user_role', userRole)}
-                                    <UserTableView
-                                        _userRole={userRole}
-                                        sendDataToGrandParent={handleDataFromParent}
+                                (
+                                    _userRole === "Teachers" ?
 
+                                        <Tab key={userRoleIndex} eventKey={userRoleIndex} title={userRole} >
+                                            {sessionStorage.setItem('user_role', _userRole)}
+                                            <UserTableView
+                                                _userRole={_userRole}
+                                                sendDataToGrandParent={handleDataFromParent}
+                                            />
+                                        </Tab>
+                                        :
+                                        <Tab key={userRoleIndex} eventKey={userRoleIndex} title={userRole} >
+                                            {sessionStorage.setItem('user_role', _userRole)}
+                                            <UserTableView
+                                                _userRole={_userRole}
+                                                sendDataToGrandParent={handleDataFromParent}
+                                            />
+                                        </Tab>
 
-                                    />
-                                </Tab>
+                                )
+
                         })}
 
                     </Tabs>
