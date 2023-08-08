@@ -410,7 +410,7 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent }) {
 
     sendDataToParent(dataFromChild.pageIndexValue = pageIndexValue);
 
-    console.log("dataFromChild : ", dataFromChild);
+    console.log("dataFromChild utv : ", dataFromChild);
 
   }
 
@@ -1114,14 +1114,13 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
     //     user_status: payLoadStatus
     //   }
     // },
-
+    console.log("startKeys[_userRole]", startKeys[_userRole])
     axios.post(
       dynamicUrl.usersPagination,
       {
         data: {
           page_size: dataFromChild.page_size === undefined ? 10 : dataFromChild.page_size,
           user: _userRole,
-          // user: dataFromChild.user,
           start_key: startKeys[_userRole],
           searchedKeyword: dataFromChild.searchedKeyword === undefined ? "" : dataFromChild.searchedKeyword,
         }
@@ -1143,6 +1142,8 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
           hideLoader();
           // setIsSHow(false);
           setStartKeys(startKeys[_userRole] = resultData.lastKey);
+          console.log("resultData.lastKey", resultData.lastKey);
+
         }
 
       })
