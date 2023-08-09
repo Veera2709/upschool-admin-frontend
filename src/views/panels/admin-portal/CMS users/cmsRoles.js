@@ -3,7 +3,7 @@ import { Button, Card, Col, Form, Row, CloseButton } from 'react-bootstrap';
 
 function CmsRoles({ topic, setIsSelected, userRoles, index }) {
     console.log(topic.roles);
-    const [creatorActive, setCreatorActive] = useState(false);
+    const [ creatorActive, setCreatorActive] = useState(false);
     const [reviewerActive, setReviewerActive] = useState(false);
     const [publisherActive, setPublisherActive] = useState(false);
 

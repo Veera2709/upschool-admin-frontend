@@ -352,6 +352,10 @@ const EditDigiCard = () => {
 
                                 let tempObj = uploadParams[index];
 
+                                console.log({
+                                    tempObj,
+                                });
+
                                 let result = await fetch(tempObj[keyName], {
                                     method: 'PUT',
                                     body: blobField
@@ -532,6 +536,10 @@ const EditDigiCard = () => {
                                                                 });
 
                                                                 let tempObj = uploadParams[index];
+
+                                                                console.log({
+                                                                    tempObj
+                                                                });
 
                                                                 let result = await fetch(tempObj[keyName], {
                                                                     method: 'PUT',
