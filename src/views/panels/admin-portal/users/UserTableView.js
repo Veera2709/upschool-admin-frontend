@@ -950,20 +950,20 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
     console.log("updateValues responseData", responseData);
     setCheckedStatus(new Array(responseData.length).fill(false));
 
-    const handleCheckStatus = (e) => {
-      // console.log("handleCheckStatus", e.target.id);
-      console.log("boolean here ", document.getElementById(e.target.id).checked)
-      // console.log("check: ", check);
+    // const handleCheckStatus = (e) => {
+    //   // console.log("handleCheckStatus", e.target.id);
+    //   console.log("boolean here ", document.getElementById(e.target.id).checked)
+    //   // console.log("check: ", check);
 
-      // document.getElementById(e.target.id).checked =
-      // setCheck();
+    //   // document.getElementById(e.target.id).checked =
+    //   // setCheck();
 
-      // console.log("checked status", checkedStatus);
-      // const updateStatus = checkedStatus.map((item, index) =>
-      //   index === position ? !item : item
-      // );
-      // setCheckedStatus(updateStatus);
-    }
+    //   // console.log("checked status", checkedStatus);
+    //   // const updateStatus = checkedStatus.map((item, index) =>
+    //   //   index === position ? !item : item
+    //   // );
+    //   // setCheckedStatus(updateStatus);
+    // }
 
     let finalDataArray = [];
     let userId = (_userRole === "Teachers") ? "teacher_id" : (_userRole === "Students") ? "student_id" : (_userRole === "Parents") ? "parent_id" : "N.A.";
@@ -1108,13 +1108,15 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
 
     const payLoadStatus = pageLocation === "active-users" ? 'Active' : 'Archived';
 
-    // axios.post(dynamicUrl.fetchAllUsersData, {
-    //   data: {
-    //     user_role: _userRole,
-    //     user_status: payLoadStatus
-    //   }
-    // },
-    console.log("startKeys[_userRole]", startKeys[_userRole])
+
+    console.log("startKeys[_userRole] : ", startKeys);
+    console.log("Request for Pagination : ", {
+      page_size: dataFromChild.page_size === undefined ? 10 : dataFromChild.page_size,
+      user: _userRole,
+      start_key: startKeys[_userRole],
+      searchedKeyword: dataFromChild.searchedKeyword === undefined ? "" : dataFromChild.searchedKeyword,
+    });
+
     axios.post(
       dynamicUrl.usersPagination,
       {
@@ -1131,7 +1133,6 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
       .then((response) => {
 
         let resultData = response.data;
-        console.log("resultData", response.data);
         console.log("resultData", resultData);
 
         if (resultData) {
@@ -1142,6 +1143,9 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
           hideLoader();
           // setIsSHow(false);
           setStartKeys(startKeys[_userRole] = resultData.lastKey);
+
+
+
           console.log("resultData.lastKey", resultData.lastKey);
 
         }
