@@ -20,13 +20,11 @@ import BasicSpinner from '../../../../helper/BasicSpinner';
 
 
 function Table({ columns, data, modalOpen, userRole, sendDataToParent }) {
-
   console.log("data", data);
   console.log("_userRole in Table", userRole);
 
   const [stateUser, setStateUser] = useState([])
   const [check, setCheck] = useState(false)
-
   const [loader, showLoader, hideLoader] = useFullPageLoader();
   const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
   const initiallySelectedRows = React.useMemo(() => new Set(["1"]), []);
@@ -568,19 +566,10 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent }) {
 }
 
 const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
-
   console.log("_userRole : ", _userRole);
 
 
   const [dataFromChild, setDataFromChild] = useState('');
-
-  const handleDataFromChild = (data) => {
-    console.log('Data received in Parent:', data);
-    setDataFromChild(data);
-
-    // Pass the data to the GrandParentComponent
-    sendDataToGrandParent(data);
-  };
   const [users, setUsers] = useState([])
   const history = useHistory();
   const [userData, setUserData] = useState([]);
@@ -592,17 +581,14 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
   const [previousSchool, setPreviousSchool] = useState('');
   const [previousClass, setPreviousClass] = useState('');
   const [_userID, _setUserID] = useState('');
-
   const [isOpen, setIsOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isOpenSectionAllocation, setOpenSectionAllocation] = useState(false);
   const [teacherId, setTeacherId] = useState();
   const [selectDOBErr, setSelectDOBErr] = useState(false);
   const [checkedStatus, setCheckedStatus] = useState([]);
-
   const [isLoading, setIsLoading] = useState(false);
   const [isShow, setIsSHow] = useState(false);
-
   const { user_id } = decodeJWT(sessionStorage.getItem('user_jwt'));
   const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
   const [selectClassErr, setSelectClassErr] = useState(false);
@@ -610,19 +596,27 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
   const [checkBoxId, _setAllCheckId] = useState([]);
   const classNameRef = useRef('');
   const schoolNameRef = useRef('');
-
   const [check, setCheck] = useState(false);
-
   const [selectAllCheckbox, setSelectAllCheckbox] = useState(false);
   // const [outPutData, setOutPutData] = useState(response.data);
 
   const [tempData, setTemData] = useState([]);
 
-  const [startKeys, setStartKeys] = useState({
-    Teachers: null,
-    Students: null,
-    Parents: null,
-  });
+  // const [startKeys, setStartKeys] = useState({
+  //   Teachers: null,
+  //   Students: null,
+  //   Parents: null,
+  // });
+  const [startKeys, setStartKeys] = useState(null)
+
+  const handleDataFromChild = (data) => {
+    console.log('Data received in Parent:', data);
+    setDataFromChild(data);
+
+    // Pass the data to the GrandParentComponent
+    sendDataToGrandParent(data);
+  };
+
 
   console.log("check : ", check);
 
@@ -1099,6 +1093,9 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
     setIsLoading(false);
   }
 
+
+
+
   const fetchUserData = () => {
 
     console.log("fetch User Data calling");
@@ -1109,11 +1106,11 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
     const payLoadStatus = pageLocation === "active-users" ? 'Active' : 'Archived';
 
 
-    console.log("startKeys[_userRole] : ", startKeys);
+    console.log("startKeys : ", startKeys);
     console.log("Request for Pagination : ", {
       page_size: dataFromChild.page_size === undefined ? 10 : dataFromChild.page_size,
       user: _userRole,
-      start_key: startKeys[_userRole],
+      start_key: startKeys,
       searchedKeyword: dataFromChild.searchedKeyword === undefined ? "" : dataFromChild.searchedKeyword,
     });
 
@@ -1123,7 +1120,7 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
         data: {
           page_size: dataFromChild.page_size === undefined ? 10 : dataFromChild.page_size,
           user: _userRole,
-          start_key: startKeys[_userRole],
+          start_key: startKeys,
           searchedKeyword: dataFromChild.searchedKeyword === undefined ? "" : dataFromChild.searchedKeyword,
         }
       },
@@ -1141,12 +1138,16 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
           updateValues(resultData);
           setTemData(resultData)
           hideLoader();
-          // setIsSHow(false);
-          setStartKeys(startKeys[_userRole] = resultData.lastKey);
+          // handleStartKeysUpdate(resultData.lastKey);
+          // setStartKeys(resultData.lastKey);
+          // console.log("resultData.lastKey", resultData.lastKey);
+
+          const newStartKey = resultData.lastKey;
+          if (newStartKey !== startKeys) {
+            handleStartKeysUpdate(newStartKey);
+          }
 
 
-
-          console.log("resultData.lastKey", resultData.lastKey);
 
         }
 
@@ -1162,7 +1163,8 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
           history.push('/auth/signin-1');
           window.location.reload();
 
-        } else {
+        }
+        else {
 
           fetchUserData();
         }
@@ -1170,61 +1172,108 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
       })
 
   };
+  /////
+  const handleStartKeysUpdate = (newStartKey) => {
+
+    // if (newStartKey !== startKeys) {
+    setStartKeys(newStartKey);
+    // }
+  };
+
+  // useEffect(() => {
+  //   console.log('useEffect triggered');
+  //   if (startKeys !== null) {
+  //     fetchUserData();
+  //   }
+  //   // }, [])
+  // }, [startKeys]);
+
+
+
+  // useEffect(() => {
+  //   if (startKeys !== null) {
+  //     fetchUserData();
+  //   }
+  // }, [startKeys]);
+
+
+
+
+
+
+
+  // useEffect(() => {
+  //   const validateJWT = sessionStorage.getItem('user_jwt');
+
+  //   if (validateJWT === "" || validateJWT === null || validateJWT === undefined || validateJWT === "undefined") {
+
+  //     sessionStorage.clear();
+  //     localStorage.clear();
+
+  //     history.push('/auth/signin-1');
+  //     window.location.reload();
+
+  //   }
+  //   else {
+  //     fetchUserData();
+  //   }
+
+  // }, [pageLocation]);
+
+  // useEffect(() => {
+  //   const validateJWT = sessionStorage.getItem('user_jwt');
+
+  //   if (validateJWT === "" || validateJWT === null || validateJWT === undefined || validateJWT === "undefined") {
+
+  //     sessionStorage.clear();
+  //     localStorage.clear();
+
+  //     history.push('/auth/signin-1');
+  //     window.location.reload();
+
+  //   }
+  //   else {
+  //     fetchUserData();
+  //   }
+
+  // }, [_userRole]);
+
+  // useEffect(() => {
+  //   const validateJWT = sessionStorage.getItem('user_jwt');
+
+  //   if (validateJWT === "" || validateJWT === null || validateJWT === undefined || validateJWT === "undefined") {
+
+  //     sessionStorage.clear();
+  //     localStorage.clear();
+
+  //     history.push('/auth/signin-1');
+  //     window.location.reload();
+
+  //   }
+  //   else {
+  //     fetchUserData();
+  //   }
+
+  // }, [dataFromChild.page_size, dataFromChild.searchedKeyword, dataFromChild.pageIndexValue]);
+
 
   useEffect(() => {
     const validateJWT = sessionStorage.getItem('user_jwt');
 
     if (validateJWT === "" || validateJWT === null || validateJWT === undefined || validateJWT === "undefined") {
-
       sessionStorage.clear();
       localStorage.clear();
-
       history.push('/auth/signin-1');
       window.location.reload();
-
     }
-    else {
+    else if (startKeys !== null) {
       fetchUserData();
     }
 
-  }, [pageLocation]);
-
-  useEffect(() => {
-    const validateJWT = sessionStorage.getItem('user_jwt');
-
-    if (validateJWT === "" || validateJWT === null || validateJWT === undefined || validateJWT === "undefined") {
-
-      sessionStorage.clear();
-      localStorage.clear();
-
-      history.push('/auth/signin-1');
-      window.location.reload();
-
-    }
     else {
       fetchUserData();
     }
-
-  }, [_userRole]);
-
-  useEffect(() => {
-    const validateJWT = sessionStorage.getItem('user_jwt');
-
-    if (validateJWT === "" || validateJWT === null || validateJWT === undefined || validateJWT === "undefined") {
-
-      sessionStorage.clear();
-      localStorage.clear();
-
-      history.push('/auth/signin-1');
-      window.location.reload();
-
-    }
-    else {
-      fetchUserData();
-    }
-
-  }, [dataFromChild.page_size, dataFromChild.searchedKeyword, dataFromChild.pageIndexValue]);
-
+  }, [pageLocation, _userRole, dataFromChild.page_size, dataFromChild.searchedKeyword, dataFromChild.pageIndexValue]);
 
   return (
 
@@ -1232,16 +1281,11 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
       <div>
 
         {
-
           isLoading ? (
             <BasicSpinner />
           ) :
-
-
-
             (
               <>
-
                 {
                   userData.length <= 0 && _data ? (
                     <>
@@ -1251,24 +1295,17 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
                             <h3 style={{ textAlign: 'center' }}>No {sessionStorage.getItem('user_type')} Found</h3>
                             <div className="form-group fill text-center">
                               <br></br>
-
-
-
                               {/* <Button variant="success" className="btn-sm btn-round has-ripple ml-2"
                             onClick={handleButtonClicked}
                           >
                             <i className="feather icon-plus" /> Add Users
                           </Button> */}
-
-
                               <Link to={'/admin-portal/add-users'}>
                                 <Button variant="success" className="btn-sm btn-round has-ripple ml-2"
                                 >
                                   <i className="feather icon-plus" /> Add Users
                                 </Button>
                               </Link>
-
-
                             </div>
                           </div>
                         ) : (
