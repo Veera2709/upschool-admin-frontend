@@ -602,12 +602,7 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
 
   const [tempData, setTemData] = useState([]);
 
-  // const [startKeys, setStartKeys] = useState({
-  //   Teachers: null,
-  //   Students: null,
-  //   Parents: null,
-  // });
-  const [startKeys, setStartKeys] = useState(null)
+  const [startKeys, setStartKeys] = useState("0");
 
   const handleDataFromChild = (data) => {
     console.log('Data received in Parent:', data);
@@ -1138,7 +1133,6 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
           updateValues(resultData);
           setTemData(resultData)
           hideLoader();
-          // handleStartKeysUpdate(resultData.lastKey);
           // setStartKeys(resultData.lastKey);
           // console.log("resultData.lastKey", resultData.lastKey);
 
@@ -1146,14 +1140,12 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
           if (newStartKey !== startKeys) {
             handleStartKeysUpdate(newStartKey);
           }
-
-
-
         }
 
       })
       .catch((error) => {
-        console.log(error.response.data);
+        console.log(error);
+        console.log(error.response);
 
         if (error.response.data === 'Invalid Token') {
 
@@ -1266,14 +1258,14 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
       history.push('/auth/signin-1');
       window.location.reload();
     }
-    else if (startKeys !== null) {
-      fetchUserData();
-    }
-
+    // else if (startKeys !== null) {
+    //   fetchUserData();
+    // }
     else {
       fetchUserData();
     }
   }, [pageLocation, _userRole, dataFromChild.page_size, dataFromChild.searchedKeyword, dataFromChild.pageIndexValue]);
+
 
   return (
 
