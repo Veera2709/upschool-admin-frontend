@@ -1352,9 +1352,6 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
                         )
 
                 }
-
-
-
             </div>
             {loader}
         </React.Fragment>

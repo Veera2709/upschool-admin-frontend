@@ -21,6 +21,9 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent }) {
     const history = useHistory();
     const [searchValue, setSearchValue] = useState('');
 
+    const [pageIndexValue, setPageIndexValue] = useState(1);
+
+    const [dataFromChild, setDataFromChild] = useState('');
 
 
     const initiallySelectedRows = React.useMemo(() => new Set(["1"]), []);
@@ -79,13 +82,15 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent }) {
             page_size: pageSize,
             user: userRole,
             start_key: null,
-            searchedKeyword: searchValue
+            searchedKeyword: searchValue,
+            pageIndexValue: pageIndexValue
         }
 
         console.log('Data sent from stu child:', data);
 
         sendDataToParent(data);
         setGlobalFilter(searchValue);
+        setDataFromChild(data);
 
 
     }, [pageSize, userRole, searchValue, globalFilter, setGlobalFilter]);
@@ -338,6 +343,16 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent }) {
         }
     }
 
+    const nextCustomPage = () => {
+
+        setPageIndexValue(pageIndexValue + 1);
+
+        sendDataToParent(dataFromChild.pageIndexValue = pageIndexValue);
+
+        console.log("dataFromChild utv : ", dataFromChild);
+
+    }
+
     return (
         <>
             <Row className="mb-3">
@@ -465,7 +480,9 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent }) {
                     <Pagination className="justify-content-end">
                         <Pagination.First onClick={() => gotoPage(0)} disabled={!canPreviousPage} />
                         <Pagination.Prev onClick={() => previousPage()} disabled={!canPreviousPage} />
-                        <Pagination.Next onClick={() => nextPage()} disabled={!canNextPage} />
+                        {/* <Pagination.Next onClick={() => nextPage()} disabled={!canNextPage} />
+                         */}
+                        <Pagination.Next onClick={() => nextCustomPage()} />
                         <Pagination.Last onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage} />
                     </Pagination>
                 </Col>
@@ -533,10 +550,9 @@ const UserTableViewStudent = ({ _userRole, sendDataToGrandParent }) => {
     console.log("options", options);
     console.log("multiDropOptions", multiDropOptions);
     const [selectAllCheckbox, setSelectAllCheckbox] = useState(false);
-
-
     ///
     const [dataFromChild, setDataFromChild] = useState('');
+    console.log("datafrom child ", dataFromChild)
 
     const handleDataFromChild = (data) => {
         console.log('Data received in Parent:', data);
@@ -894,7 +910,7 @@ const UserTableViewStudent = ({ _userRole, sendDataToGrandParent }) => {
                                                                 </Card.Title>
                                                             </Card.Header>
                                                             <Card.Body>
-                                                                <Table columns={columns} data={userData} userRole={_userRole} selectAllCheckbox={selectAllCheckbox} sendDataToParent={handleDataFromChild} />
+                                                                <Table columns={columns} data={userData} userRole={_userRole} selectAllCheckbox={selectAllCheckbox} sendDataToParent={handleDataFromChild} dataFromChild={dataFromChild} />
                                                             </Card.Body>
                                                         </Card>
 

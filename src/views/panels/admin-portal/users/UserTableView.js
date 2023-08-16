@@ -23,6 +23,7 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent }) {
   console.log("data", data);
   console.log("_userRole in Table", userRole);
 
+
   const [stateUser, setStateUser] = useState([])
   const [check, setCheck] = useState(false)
   const [loader, showLoader, hideLoader] = useFullPageLoader();
