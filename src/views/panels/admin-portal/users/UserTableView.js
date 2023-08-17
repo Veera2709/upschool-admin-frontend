@@ -19,7 +19,7 @@ import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import BasicSpinner from '../../../../helper/BasicSpinner';
 
 
-function Table({ columns, data, modalOpen, userRole, sendDataToParent }) {
+function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParentFunction }) {
   console.log("data", data);
   console.log("_userRole in Table", userRole);
 
@@ -35,14 +35,21 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent }) {
   const [searchValue, setSearchValue] = useState('');
 
   const [pageIndexValue, setPageIndexValue] = useState(1);
-
   const [dataFromChild, setDataFromChild] = useState('');
+  const [startKeys, setStartKeys] = useState("0");
 
-  // const [dataToBeSent, setDataToBeSent] = useState({
-  //   page_size: 5,
-  //   user: '',
-  //   searchedKeyword: ''
-  // })
+  const [pageIndex, setPageIndex] = useState(0);
+
+
+
+  const itemsPerPage = 10; // Number of items per page
+  const totalItems = data.length; // Total number of items
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+  const startIndex = pageIndex * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentPageData = data.slice(startIndex, endIndex);
+
 
   const sweetAlertHandler = (alert) => {
     MySwal.fire({
@@ -70,7 +77,7 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent }) {
     setPageSize,
     selectedFlatRows,
     toggleAllRowsSelected,
-    state: { pageIndex, pageSize, selectedRowPaths }
+    state: { pageSize, selectedRowPaths }
   } = useTable(
     {
       columns,
@@ -89,11 +96,12 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent }) {
 
   console.log("user_status : ", user_status);
 
+
   useEffect(() => {
     const data = {
       page_size: pageSize,
       user: userRole,
-      start_key: null,
+      start_key: startKeys,
       searchedKeyword: searchValue,
       pageIndexValue: pageIndexValue
     }
@@ -104,7 +112,7 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent }) {
     setGlobalFilter(searchValue);
     setDataFromChild(data);
 
-  }, [pageSize, userRole, searchValue, globalFilter, setGlobalFilter]);
+  }, [pageSize, userRole, searchValue, globalFilter, setGlobalFilter, startKeys]);
 
 
 
@@ -405,15 +413,30 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent }) {
   }
   const nextCustomPage = () => {
 
-    setPageIndexValue(pageIndexValue + 1);
+    // setPageIndexValue(pageIndexValue + 1);
+    setPageIndex(Math.min(pageIndex + 1, totalPages - 1));
 
     sendDataToParent(dataFromChild.pageIndexValue = pageIndexValue);
+    callParentFunction()
 
     console.log("dataFromChild utv : ", dataFromChild);
 
   }
 
-  // console.log("Value of search input:", dataToBeSent);
+  const prevCustomPage = () => {
+
+    // setPageIndexValue(pageIndexValue - 1);
+    setPageIndex(Math.min(pageIndex + 1, totalPages - 1));
+    sendDataToParent(dataFromChild.pageIndexValue = pageIndexValue);
+    callParentFunction()
+
+    console.log("dataFromChild utv : ", dataFromChild);
+
+  }
+
+  const goToPage = (page) => {
+    setPageIndex(Math.max(Math.min(page, totalPages - 1), 0));
+  }
 
   return (
     <>
@@ -530,17 +553,19 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent }) {
             Page{' '}
             <strong>
               {' '}
-              {pageIndex + 1} of {pageOptions.length}{' '}
+              {/* {pageIndex + 1} of {pageOptions.length}{' '} */}
+              {pageIndex + 1} of {totalPages}
             </strong>{' '}
             | Go to page:{' '}
             <input
               className="form-control ml-2"
               type="number"
               defaultValue={pageIndex + 1}
-              onChange={(e) => {
-                const page = e.target.value ? Number(e.target.value) - 1 : 0;
-                gotoPage(page);
-              }}
+              // onChange={(e) => {
+              //   const page = e.target.value ? Number(e.target.value) - 1 : 0;
+              //   gotoPage(page);
+              // }}
+              onChange={(e) => goToPage(parseInt(e.target.value, 10) - 1)}
               onWheel={(e) => e.target.blur()}
               style={{ width: '100px' }}
             />
@@ -553,9 +578,14 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent }) {
             <Pagination.Next onClick={() => nextPage()} disabled={!canNextPage} />
             <Pagination.Last onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage} /> */}
 
-            <Pagination.First onClick={() => gotoPage(0)} />
-            <Pagination.Prev onClick={() => previousPage()} />
+            {/* <Pagination.First onClick={() => gotoPage(0)} />
+            <Pagination.Prev onClick={() => prevCustomPage()} />
             <Pagination.Next onClick={() => nextCustomPage()} />
+            <Pagination.Last onClick={() => gotoPage(pageCount - 1)} /> */}
+
+            <Pagination.First onClick={() => gotoPage(0)} />
+            <Pagination.Prev onClick={prevCustomPage} disabled={pageIndex === 0} />
+            <Pagination.Next onClick={nextCustomPage} disabled={pageIndex === totalPages - 1} />
             <Pagination.Last onClick={() => gotoPage(pageCount - 1)} />
 
 
@@ -1327,7 +1357,16 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
                                   <Card.Body>
 
 
-                                    <Table columns={columns} data={userData} modalOpen={openHandler} userRole={_userRole} selectAllCheckbox={selectAllCheckbox} sendDataToParent={handleDataFromChild} dataFromChild={dataFromChild} />
+                                    <Table
+                                      columns={columns}
+                                      data={userData}
+                                      modalOpen={openHandler}
+                                      userRole={_userRole}
+                                      selectAllCheckbox={selectAllCheckbox}
+                                      sendDataToParent={handleDataFromChild}
+                                      dataFromChild={dataFromChild}
+                                      callParentFunction={fetchUserData}
+                                    />
 
                                   </Card.Body>
                                 </Card>

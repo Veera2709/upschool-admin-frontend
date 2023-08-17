@@ -13,7 +13,7 @@ import dynamicUrl from '../../../../helper/dynamicUrls';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import BasicSpinner from '../../../../helper/BasicSpinner';
 
-function Table({ columns, data, modalOpen, userRole, sendDataToParent }) {
+function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParentFunction }) {
     console.log("_userRole in Table", userRole);
     const [loader, showLoader, hideLoader] = useFullPageLoader();
     const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
@@ -24,6 +24,7 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent }) {
     const [pageIndexValue, setPageIndexValue] = useState(1);
 
     const [dataFromChild, setDataFromChild] = useState('');
+    const [startKeys, setStartKeys] = useState("0");
 
 
     const initiallySelectedRows = React.useMemo(() => new Set(["1"]), []);
@@ -81,7 +82,7 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent }) {
         const data = {
             page_size: pageSize,
             user: userRole,
-            start_key: null,
+            start_key: startKeys,
             searchedKeyword: searchValue,
             pageIndexValue: pageIndexValue
         }
@@ -93,7 +94,7 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent }) {
         setDataFromChild(data);
 
 
-    }, [pageSize, userRole, searchValue, globalFilter, setGlobalFilter]);
+    }, [pageSize, userRole, searchValue, globalFilter, setGlobalFilter, startKeys]);
 
 
     // const conformDelete = () => {
@@ -348,6 +349,17 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent }) {
         setPageIndexValue(pageIndexValue + 1);
 
         sendDataToParent(dataFromChild.pageIndexValue = pageIndexValue);
+        callParentFunction()
+
+        console.log("dataFromChild utv : ", dataFromChild);
+
+    }
+    const prevCustomPage = () => {
+
+        setPageIndexValue(pageIndexValue - 1);
+
+        sendDataToParent(dataFromChild.pageIndexValue = pageIndexValue);
+        callParentFunction()
 
         console.log("dataFromChild utv : ", dataFromChild);
 
@@ -550,6 +562,7 @@ const UserTableViewStudent = ({ _userRole, sendDataToGrandParent }) => {
     console.log("options", options);
     console.log("multiDropOptions", multiDropOptions);
     const [selectAllCheckbox, setSelectAllCheckbox] = useState(false);
+    const [startKeys, setStartKeys] = useState("0");
     ///
     const [dataFromChild, setDataFromChild] = useState('');
     console.log("datafrom child ", dataFromChild)
@@ -617,7 +630,6 @@ const UserTableViewStudent = ({ _userRole, sendDataToGrandParent }) => {
                         user_role: user_role,
                         user_status: updateStatus,
                         school_id: schoolId
-
                     }
                 }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
             .then(async (response) => {
@@ -755,6 +767,14 @@ const UserTableViewStudent = ({ _userRole, sendDataToGrandParent }) => {
 
         const payLoadStatus = pageLocation === "active-users" ? 'Active' : 'Archived';
 
+        console.log("startKeys : ", startKeys);
+        console.log("Request for Pagination : ", {
+            page_size: dataFromChild.page_size === undefined ? 10 : dataFromChild.page_size,
+            user: _userRole,
+            start_key: startKeys,
+            searchedKeyword: dataFromChild.searchedKeyword === undefined ? "" : dataFromChild.searchedKeyword,
+        });
+
         axios.post(
             dynamicUrl.usersPagination,
             {
@@ -762,7 +782,7 @@ const UserTableViewStudent = ({ _userRole, sendDataToGrandParent }) => {
                     page_size: dataFromChild.page_size === undefined ? 10 : dataFromChild.page_size,
                     user: _userRole,
                     // user: dataFromChild.user,
-                    start_key: null,
+                    start_key: startKeys,
                     searchedKeyword: dataFromChild.searchedKeyword === undefined ? "" : dataFromChild.searchedKeyword,
                 }
             },
@@ -910,7 +930,16 @@ const UserTableViewStudent = ({ _userRole, sendDataToGrandParent }) => {
                                                                 </Card.Title>
                                                             </Card.Header>
                                                             <Card.Body>
-                                                                <Table columns={columns} data={userData} userRole={_userRole} selectAllCheckbox={selectAllCheckbox} sendDataToParent={handleDataFromChild} dataFromChild={dataFromChild} />
+                                                                <Table
+                                                                    columns={columns}
+                                                                    data={userData}
+                                                                    userRole={_userRole}
+                                                                    selectAllCheckbox={selectAllCheckbox}
+                                                                    sendDataToParent={handleDataFromChild}
+                                                                    dataFromChild={dataFromChild}
+                                                                    callParentFunction={fetchUserData}
+
+                                                                />
                                                             </Card.Body>
                                                         </Card>
 
