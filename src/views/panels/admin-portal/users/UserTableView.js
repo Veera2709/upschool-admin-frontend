@@ -472,16 +472,20 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
             <>
               <Link to={'/admin-portal/add-users'}>
                 <Button
-                  style={{ whiteSpace: "nowrap" }}
-                  variant="success"
-                  className="btn-sm btn-round has-ripple ml-2">
+
+                  className="btn-sm btn-round has-ripple ml-2 btn btn-success"
+                  style={{
+                    whiteSpace: "nowrap"
+                  }}
+                >
+
                   <i className="feather icon-plus" /> Add Users
                 </Button>
               </Link>
 
               <Button
-                variant="danger"
-                className="btn-sm btn-round has-ripple ml-2"
+
+                className="btn-sm btn-round has-ripple ml-2  btn btn-danger"
                 // style={{ marginLeft: "1.5rem" }}
                 style={{ whiteSpace: "nowrap" }}
                 onClick={() => { getAlldata() }}
@@ -503,7 +507,7 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
           )}
 
         </Col>
-      </Row>
+      </Row >
 
       <BTable striped bordered hover responsive {...getTableProps()}>
         <thead>
