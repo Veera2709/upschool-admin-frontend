@@ -122,9 +122,9 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
         console.log("userRole : ", userRole);
 
         let arrIds = [];
-        let userId = (userRole === "Students") ? "student_id" : "N.A.";
+        let userId = (userRole === "Student") ? "student_id" : "N.A.";
 
-        let userRolePayload = (userRole === "Students") ? "Student" : "N.A.";
+        let userRolePayload = (userRole === "Student") ? "Student" : "N.A.";
 
         console.log(userId);
         for (let k = 0; k < data.length; k++) {
@@ -220,13 +220,13 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
         console.log("selectedFlatRows", selectedFlatRows);
         let arrayWithStudentIds = [];
 
-        let userRolePayload = (userRole === "Students") ? "Student" : "N.A.";
+        let userRolePayload = (userRole === "Student") ? "Student" : "N.A.";
 
         console.log("ROLE : ", userRolePayload);
 
         selectedFlatRows.map((items) => {
             console.log("Student Id : ", items.original.student_id);
-            if (userRole === "Students") {
+            if (userRole === "Student") {
                 console.log("Student Id : ", items.original.student_id);
                 arrayWithStudentIds.push({ user_id: items.original.student_id, school_id: items.original.school_id });
             }
@@ -276,9 +276,9 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
                                 hideLoader();
                                 // sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
                                 pageLocation === 'active-users' ?
-                                    sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: (userRole === "Students") ? MESSAGES.ERROR.DeletingStudents : MESSAGES.ERROR.InvalidUser })
+                                    sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: (userRole === "Student") ? MESSAGES.ERROR.DeletingStudents : MESSAGES.ERROR.InvalidUser })
                                     :
-                                    sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: (userRole === "Students") ? MESSAGES.ERROR.RestoringStudents : MESSAGES.ERROR.InvalidUser });
+                                    sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: (userRole === "Student") ? MESSAGES.ERROR.RestoringStudents : MESSAGES.ERROR.InvalidUser });
 
                                 history.push('/admin-portal/' + pageLocation)
                                 // fetchUserData();
@@ -287,7 +287,7 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
                                 if (response.data === 200) {
                                     // hideLoader();
                                     MySwal.fire({
-                                        title: (userRole === "Students") && pageLocation === 'active-users' ? 'Students Deleted' : 'Students Restored',
+                                        title: (userRole === "Student") && pageLocation === 'active-users' ? 'Student Deleted' : 'Student Restored',
                                         icon: "success",
                                         text: pageLocation === 'active-users' ? 'User Deleted' : 'User Restored',
                                         // type: 'success',
@@ -696,7 +696,7 @@ const UserTableViewStudent = ({ _userRole, sendDataToGrandParent }) => {
         let responseData = _data.Items;
         // let responseData = [];
 
-        let userId = (_userRole === "Students") ? "student_id" : "N.A.";
+        let userId = (_userRole === "Student") ? "student_id" : "N.A.";
 
         console.log("responseData", responseData);
 
