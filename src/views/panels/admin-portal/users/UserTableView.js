@@ -19,9 +19,10 @@ import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import BasicSpinner from '../../../../helper/BasicSpinner';
 
 
-function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParentFunction, onPageChange }) {
-  console.log("data", data);
-  console.log("_userRole in Table", userRole);
+function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParentFunction, onPageChange, pageCountRes }) {
+  // console.log("data", data);
+  // console.log("_userRole in Table", userRole);
+  console.log("pageCountRes", pageCountRes)
 
 
   const [stateUser, setStateUser] = useState([])
@@ -47,7 +48,7 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
   const startIndex = pageIndex * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentPageData = data.slice(startIndex, endIndex);
-
+  const [initialValue, setInitialValue] = useState("");
 
   const sweetAlertHandler = (alert) => {
     MySwal.fire({
@@ -92,7 +93,7 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
 
   const user_status = pageLocation === 'active-users' ? "Active" : "Archived"
 
-  console.log("user_status : ", user_status);
+  // console.log("user_status : ", user_status);
 
 
   useEffect(() => {
@@ -412,23 +413,23 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
   const nextCustomPage = () => {
 
     // setPageIndexValue(pageIndexValue + 1);
-    setPageIndex(Math.min(pageIndex + 1, totalPages - 1));
+    setPageIndex(Math.min(pageIndex + 1, pageCountRes - 1));
 
     sendDataToParent(dataFromChild.pageIndexValue = pageIndexValue);
     callParentFunction()
 
-    console.log("dataFromChild utv : ", dataFromChild);
+    // console.log("dataFromChild utv : ", dataFromChild);
 
   }
 
   const prevCustomPage = () => {
 
     // setPageIndexValue(pageIndexValue - 1);
-    setPageIndex(Math.min(pageIndex + 1, totalPages - 1));
+    setPageIndex(Math.min(pageIndex - 1, pageCountRes + 1));
     sendDataToParent(dataFromChild.pageIndexValue = pageIndexValue);
     callParentFunction()
 
-    console.log("dataFromChild utv : ", dataFromChild);
+    // console.log("dataFromChild utv : ", dataFromChild);
 
   }
 
@@ -436,13 +437,44 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
     setPageIndex(Math.max(Math.min(page, totalPages - 1), 0));
   }
 
+  // const handleInputChange = (e) => {
+  //   const inputValue = e.target.value;
+  //   if (inputValue !== "") {
+  //     sessionStorage.setItem('inputValue', inputValue);
+  //   }
+  //   console.log('Input value:', inputValue);
+  //   const newPageNumber = parseInt(e.target.value, 10) - 1;
+  //   onPageChange(newPageNumber);
+
+  // };
+
+  // // const initialValue = sessionStorage.getItem('inputValue') || pageIndex + 1;
+  // const storedInputValue = sessionStorage.getItem('inputValue');
+  // const initialValue = storedInputValue !== null && storedInputValue !== '' ? storedInputValue : ""
+
+
+  // // On page reload, clear the stored input value
+  // window.addEventListener('beforeunload', () => {
+  //   sessionStorage.removeItem('inputValue');
+  // });
+
   const handleInputChange = (e) => {
     const inputValue = e.target.value;
+    if (inputValue !== "") {
+      sessionStorage.setItem('inputValue', inputValue);
+    }
     console.log('Input value:', inputValue);
     const newPageNumber = parseInt(e.target.value, 10) - 1;
     onPageChange(newPageNumber);
-  };
 
+    setInitialValue(inputValue)
+  }
+
+
+  useEffect(() => {
+    // Clear the stored input value when the component mounts
+    sessionStorage.removeItem('inputValue');
+  }, []);
   return (
     <>
       <Row className="mb-3">
@@ -563,42 +595,24 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
             <strong>
               {' '}
               {/* {pageIndex + 1} of {pageOptions.length}{' '} */}
-              {pageIndex + 1} of {totalPages}
+              {pageIndex + 1} of {pageCountRes}
             </strong>{' '}
             | Go to page:{' '}
             <input
               className="form-control ml-2"
               type="number"
-              defaultValue={pageIndex + 1}
               onChange={handleInputChange}
-              // onChange={(e) => {
-              //   const page = e.target.value ? Number(e.target.value) - 1 : 0;
-              //   gotoPage(page);
-              // }}
-              // onChange={(e) => goToPage(parseInt(e.target.value, 10) - 1)}
-              onWheel={(e) => e.target.blur()}
+              value={initialValue}
               style={{ width: '100px' }}
             />
           </span>
         </Col>
         <Col>
           <Pagination className="justify-content-end">
-            {/* <Pagination.First onClick={() => gotoPage(0)} disabled={!canPreviousPage} />
-            <Pagination.Prev onClick={() => previousPage()} disabled={!canPreviousPage} />
-            <Pagination.Next onClick={() => nextPage()} disabled={!canNextPage} />
-            <Pagination.Last onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage} /> */}
-
-            {/* <Pagination.First onClick={() => gotoPage(0)} />
-            <Pagination.Prev onClick={() => prevCustomPage()} />
-            <Pagination.Next onClick={() => nextCustomPage()} />
-            <Pagination.Last onClick={() => gotoPage(pageCount - 1)} /> */}
-
             <Pagination.First onClick={() => gotoPage(0)} />
             <Pagination.Prev onClick={prevCustomPage} disabled={pageIndex === 0} />
-            <Pagination.Next onClick={nextCustomPage} disabled={pageIndex === totalPages - 1} />
+            <Pagination.Next onClick={nextCustomPage} disabled={pageIndex === pageCountRes - 1} />
             <Pagination.Last onClick={() => gotoPage(pageCount - 1)} />
-
-
           </Pagination>
         </Col>
       </Row>
@@ -607,7 +621,7 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
 }
 
 const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
-  console.log("_userRole : ", _userRole);
+  // console.log("_userRole : ", _userRole);
 
 
   const [dataFromChild, setDataFromChild] = useState('');
@@ -645,6 +659,7 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
   const [startKeys, setStartKeys] = useState(null);
   const [lastKeys, setLastKeys] = useState([]);
   const [indexes, setIndexes] = useState(0)
+  const [pageCountRes, setPageCountRes] = useState()
 
   const handleDataFromChild = (data) => {
     console.log('Data received in Parent:', data);
@@ -654,22 +669,33 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
     sendDataToGrandParent(data);
   };
   const handlePageChange = (pageNumber) => {
+    console.log('Page number received:', pageNumber);
 
 
+    console.log('Type of pageNumber:', typeof pageNumber);
+    console.log('Value of pageNumber:', pageNumber);
 
-    // const parsedNumber = parseInt(pageNumber, 10);
-    // if (!isNaN(parsedNumber)) {
-    //   setIndexes(parsedNumber);
-    // }
-    console.log('Page number changed to:', pageNumber);
-    console.log(typeof (Number(pageNumber)));
-    setIndexes(Number(pageNumber))
-    console.log('Updated indexes state:', indexes);
+
+    const parsedNumber = Number(pageNumber);
+
+    console.log('Parsed number:', parsedNumber);
+    console.log('Is parsedNumber NaN?', isNaN(parsedNumber));
+    console.log("lastKeys : ", lastKeys);
+
+
+    if (!isNaN(parsedNumber)) {
+      console.log("number---");
+      setIndexes(parsedNumber);
+    } else { // Handle the case where parsing failed 
+      console.log('Invalid page number:', pageNumber);
+    }
+
+    console.log("index set", indexes);
 
   };
 
 
-  console.log("check : ", check);
+  // console.log("check : ", check);
 
   const phoneRegExp = /^(\+91[\-\s]?)?[0]?(91)?[6789]\d{9}$/;
 
@@ -693,7 +719,7 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
   };
   // console.log("------------", outPutData)
 
-  console.log("type of response data", typeof responseData);
+  // console.log("type of response data", typeof responseData);
 
 
   const handleCheckboxChange = event => {
@@ -708,17 +734,7 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
   };
 
   const columns = React.useMemo(() => [
-    // {
-    //   Header:
-    //     <input
-    //       className="selectAllCheck"
-    //       type="checkbox"
-    //       id="chooseAll"
-    //       // checked={selectAllCheckbox}
-    //       onChange={() => handleSelectAll("chooseAll")}
-    //     />,
-    //   accessor: 'actn'
-    // },
+
     {
       id: "selection",
       Header: ({ getToggleAllRowsSelectedProps }) => (
@@ -913,7 +929,7 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
       school_id: schoolId
     };
 
-    console.log(values);
+    // console.log(values);
 
     axios
       .post(dynamicUrl.toggleUserStatus,
@@ -992,28 +1008,15 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
   const updateValues = async (_data) => {
     let responseData = _data.Items;
 
-    console.log("updateValues responseData", responseData);
+    // console.log("updateValues responseData", responseData);
     setCheckedStatus(new Array(responseData.length).fill(false));
 
-    // const handleCheckStatus = (e) => {
-    //   // console.log("handleCheckStatus", e.target.id);
-    //   console.log("boolean here ", document.getElementById(e.target.id).checked)
-    //   // console.log("check: ", check);
 
-    //   // document.getElementById(e.target.id).checked =
-    //   // setCheck();
-
-    //   // console.log("checked status", checkedStatus);
-    //   // const updateStatus = checkedStatus.map((item, index) =>
-    //   //   index === position ? !item : item
-    //   // );
-    //   // setCheckedStatus(updateStatus);
-    // }
 
     let finalDataArray = [];
     let userId = (_userRole === "Teachers") ? "teacher_id" : (_userRole === "Students") ? "student_id" : (_userRole === "Parents") ? "parent_id" : "N.A.";
-    console.log("while setting", userId);
-    console.log("responseData : ", responseData);
+    // console.log("while setting", userId);
+    // console.log("responseData : ", responseData);
 
     let allCheckBoxIds = [];
     for (let index = 0; index < responseData.length; index++) {
@@ -1023,24 +1026,6 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
 
       responseData[index].id = index + 1;
 
-      // responseData[index]['actn'] = (
-      //   <>
-      //     <input type="checkbox"
-      //       name={responseData[index]["id"]}
-      //       id={responseData[index][userId]}
-      //     // checked={data.checked}
-      //     // onChange={handleCheckboxChange}
-
-      //     // checked={selectAllCheckbox}
-      //     // defaultChecked={check}
-      //     // value={selectAllCheckbox}
-      //     // checkboxName
-      //     />
-      //   </>
-      // )
-
-      //checkbox teacher
-
       responseData[index]['action'] = (
         <>
           {pageLocation === 'active-users' ? (
@@ -1048,18 +1033,7 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
 
               {responseData[index].user_role === "Teacher" ? (
                 <>
-                  {/* <Button
-                    size="sm"
-                    className="btn btn-icon btn-rounded btn-info"
-                    onClick={(e) => {
-                      setOpenSectionAllocation(true);
-                      setSchoolId(responseData[index].school_id);
-                      setTeacherId(responseData[index].teacher_id)
-                    }}
-                  >
-                    <i className="feather icon-plus" /> &nbsp; Allocate Section
-                  </Button>{' '}
-                  &nbsp; */}
+
 
                   <Button
                     size="sm"
@@ -1136,94 +1110,185 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
       );
       finalDataArray.push(responseData[index]);
     }
-    console.log(finalDataArray);
+    // console.log(finalDataArray);
     setUserData(finalDataArray);
-    console.log("ALL N SET : ", allCheckBoxIds, checkBoxId);
+    // console.log("ALL N SET : ", allCheckBoxIds, checkBoxId);
     _setAllCheckId(allCheckBoxIds);
-    console.log("ALL N SET 2 : ", allCheckBoxIds, checkBoxId);
+    // console.log("ALL N SET 2 : ", allCheckBoxIds, checkBoxId);
     setIsLoading(false);
   }
 
 
 
 
-  const fetchUserData = () => {
+  // const fetchUserData = () => {
 
-    console.log("fetch User Data calling");
-    // setIsLoading(true);
-    showLoader();
-    setIsSHow(true);
+  //   console.log("fetch User Data calling");
+  //   // setIsLoading(true);
+  //   showLoader();
+  //   setIsSHow(true);
 
-    const payLoadStatus = pageLocation === "active-users" ? 'Active' : 'Archived';
+  //   const payLoadStatus = pageLocation === "active-users" ? 'Active' : 'Archived';
 
 
-    console.log("startKeys : ", startKeys);
-    console.log("Request for Pagination : ", {
-      page_size: dataFromChild.page_size === undefined ? 10 : dataFromChild.page_size,
-      user: _userRole,
-      start_key: startKeys,
-      searchedKeyword: dataFromChild.searchedKeyword === undefined ? "" : dataFromChild.searchedKeyword,
-    });
+  //   console.log("startKeys : ", startKeys);
+  //   console.log("Request for Pagination : ", {
+  //     page_size: dataFromChild.page_size === undefined ? 10 : dataFromChild.page_size,
+  //     user: _userRole,
+  //     start_key: startKeys,
+  //     searchedKeyword: dataFromChild.searchedKeyword === undefined ? "" : dataFromChild.searchedKeyword,
+  //   });
 
-    axios.post(
-      dynamicUrl.usersPagination,
-      {
-        data: {
-          page_size: dataFromChild.page_size === undefined ? 10 : dataFromChild.page_size,
-          user: _userRole.replace("s", ""),
-          start_key: startKeys,
-          searchedKeyword: dataFromChild.searchedKeyword === undefined ? "" : dataFromChild.searchedKeyword,
-        }
-      },
-      {
-        headers: { Authorization: sessionStorage.getItem('user_jwt') }
-      })
-      .then((response) => {
+  //   axios.post(
+  //     dynamicUrl.usersPagination,
+  //     {
+  //       data: {
+  //         page_size: dataFromChild.page_size === undefined ? 10 : dataFromChild.page_size,
+  //         user: _userRole.replace("s", ""),
+  //         start_key: startKeys,
+  //         searchedKeyword: dataFromChild.searchedKeyword === undefined ? "" : dataFromChild.searchedKeyword,
+  //       }
+  //     },
+  //     {
+  //       headers: { Authorization: sessionStorage.getItem('user_jwt') }
+  //     })
+  //     .then((response) => {
 
-        let resultData = response.data;
-        console.log("resultData", resultData);
+  //       let resultData = response.data;
+  //       console.log("resultData", resultData);
 
-        if (resultData) {
+  //       if (resultData) {
 
-          setIsLoading(false);
-          updateValues(resultData);
-          setTemData(resultData)
-          hideLoader();
-          // setStartKeys(resultData.lastKey);
-          // console.log("resultData.lastKey", resultData.lastKey);
+  //         setIsLoading(false);
+  //         updateValues(resultData);
+  //         setTemData(resultData)
+  //         hideLoader();
+  //         // setStartKeys(resultData.lastKey);
+  //         // console.log("resultData.lastKey", resultData.lastKey);
 
-          const newStartKey = resultData.lastKey[1]
-          if (newStartKey !== startKeys) {
-            handleStartKeysUpdate(newStartKey);
+  //         const newStartKey = resultData.lastKey[1]
+  //         if (newStartKey !== startKeys && newStartKey !== null) {
+  //           handleStartKeysUpdate(newStartKey);
+
+  //         }
+  //         else {
+  //           console.log("Response or response data is undefined.");
+
+  //         }
+  //       }
+
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //       console.log(error.response.data);
+
+  //       if (error.response.data && error.response.data === 'Invalid Token') {
+  //         console.log("---------err")
+  //         sessionStorage.clear();
+  //         localStorage.clear();
+
+  //         history.push('/auth/signin-1');
+  //         window.location.reload();
+
+  //       }
+  //       else {
+
+  //         fetchUserData();
+
+  //       }
+
+  //     })
+
+  // };
+
+
+  const fetchUserData = async () => {
+    try {
+      showLoader();
+      setIsSHow(true);
+      console.log("startKeys : ", startKeys);
+      console.log("indexes : ", indexes);
+      console.log("userData : ", userData);
+
+      const payLoadStatus = pageLocation === "active-users" ? 'Active' : 'Archived';
+
+      // let startKey = "";
+      // if (startKeys === null || startKeys === undefined) {
+      //   console.log("Null Value : ");
+      //   startKey = null;
+      // } else {
+      //   console.log("userData.lastKey[indexes] : ", userData.lastKey);
+
+      //   startKey = userData.lastKey[indexes]
+      // }
+
+
+      const response = await axios.post(
+        dynamicUrl.usersPagination,
+        {
+          data: {
+            page_size: dataFromChild.page_size === undefined ? 10 : dataFromChild.page_size,
+            user: _userRole.replace("s", ""),
+            start_key: startKeys,
+            searchedKeyword: dataFromChild.searchedKeyword === undefined ? "" : dataFromChild.searchedKeyword,
           }
-          else {
-            console.log("Response or response data is undefined.");
-
-          }
+        },
+        {
+          headers: { Authorization: sessionStorage.getItem('user_jwt') }
         }
+      );
 
-      })
-      .catch((error) => {
-        console.log(error);
-        console.log(error.response);
+      const resultData = response.data;
+      // console.log("resultData", resultData);
 
-        if (error.response.data && error.response.data === 'Invalid Token') {
+      if (resultData) {
+        setIsLoading(false);
+        updateValues(resultData);
+        setTemData(resultData);
+        setPageCountRes(resultData.pagesCount)
+        hideLoader();
 
-          sessionStorage.clear();
-          localStorage.clear();
+        const newStartKey = resultData.lastKey;
 
-          history.push('/auth/signin-1');
-          window.location.reload();
+        resultData.lastKey !== undefined && setLastKeys(resultData.lastKey);
+        console.log("lastKey : ", resultData.lastKey);
 
-        }
-        else {
+        // if (newStartKey !== startKeys && newStartKey !== null) {
+        //   handleStartKeysUpdate(newStartKey);
+        // if (Array.isArray(newStartKey) && newStartKey.length > 0) {
 
-          fetchUserData();
-        }
+        //   newStartKey.forEach(jsonObj => {
 
-      })
+        //     // console.log(jsonObj);
+        //     setLastKeys(jsonObj)
 
+        //   });
+        //   // console.log(newStartKey.length);
+
+        // } else {
+        //   console.log("Response or response data is undefined.");
+        // }
+      }
+    } catch (error) {
+      console.log(error);
+
+      if (error.response && error.response.data === 'Invalid Token') {
+        console.log("Invalid Token");
+        sessionStorage.clear();
+        localStorage.clear();
+        history.push('/auth/signin-1');
+        window.location.reload();
+      } else {
+        console.log("Fetching user data failed:", error);
+      }
+    }
   };
+
+
+
+
+
+
   /////
   const handleStartKeysUpdate = (newStartKey) => {
 
@@ -1247,15 +1312,30 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
     //   fetchUserData();
     // }
     else {
+      console.log('Updated indexes state useeff:', indexes);
       fetchUserData();
     }
-  }, [pageLocation, _userRole, dataFromChild.page_size, dataFromChild.searchedKeyword, dataFromChild.pageIndexValue, indexes]);
+  }, [pageLocation, _userRole, dataFromChild.page_size, dataFromChild.searchedKeyword, dataFromChild.pageIndexValue]);
 
   useEffect(() => {
-    console.log('Updated indexes state:', indexes);
-  }, [indexes]);
-  return (
+    console.log('Updated indexes state useeff:', indexes);
+    if (indexes > 1) {
+      let startKey = lastKeys[indexes];
 
+      setStartKeys(startKey);
+    }
+    fetchUserData();
+
+  }, [indexes])
+
+  useEffect(() => {
+
+    fetchUserData();
+
+  }, [startKeys])
+
+
+  return (
     <React.Fragment>
       <div>
 
@@ -1323,6 +1403,7 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
                                       dataFromChild={dataFromChild}
                                       callParentFunction={fetchUserData}
                                       onPageChange={handlePageChange}
+                                      pageCountRes={pageCountRes}
                                     />
 
                                   </Card.Body>
