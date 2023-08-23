@@ -45,14 +45,14 @@ export const GetYearDifference = (startDate, endDate) => {
 };
 
 export const areFilesInvalid = (filesArray) => {
-  console.log("filesArray ",filesArray);
+  console.log("filesArray ", filesArray);
 
   let invalidFileCount = 0;
   filesArray.forEach((oneFile) => {
     if (
       oneFile.type === 'image/png' ||
       oneFile.type === 'image/jpg' ||
-      oneFile.type === 'image/jpeg' 
+      oneFile.type === 'image/jpeg'
     ) {
       if (oneFile.size > 2000000) {
         console.log('File is too large');
@@ -70,16 +70,16 @@ export const areFilesInvalid = (filesArray) => {
 };
 
 export const voiceInvalid = (filesArray) => {
-  console.log("filesArray in voice note",filesArray);
+  console.log("filesArray in voice note", filesArray);
   let invalidFileCount = 0;
-  if (filesArray[0].values=='false') {
+  if (filesArray[0].values == 'false') {
     return invalidFileCount
-  }else{
+  } else {
     filesArray.forEach((oneFile) => {
       if (
         oneFile.type === 'audio/mp3' ||
-        oneFile.type === 'audio/mpeg'||
-        oneFile.type === 'audio/wav' 
+        oneFile.type === 'audio/mpeg' ||
+        oneFile.type === 'audio/wav'
       ) {
         if (oneFile.size > 100000000) {
           console.log('File is too large');
@@ -98,22 +98,22 @@ export const voiceInvalid = (filesArray) => {
 };
 
 export const documentInvalid = (filesArray) => {
-  console.log("filesArray in voice note",filesArray);
+  console.log("filesArray in voice note", filesArray);
   let invalidFileCount = 0;
-  if (filesArray[0].values=='false') {
+  if (filesArray[0].values == 'false') {
     return invalidFileCount
-  }else{
+  } else {
     filesArray.forEach((oneFile) => {
       if (
         oneFile.type === 'application/pdf' ||
-        oneFile.type === 'application/doc'||
-        oneFile.type === 'application/ppt'||
-        oneFile.type === 'application/docx'||
-        oneFile.type === 'application/xml'||
-        oneFile.type === 'application/txt'||
-        oneFile.type === 'application/xls'||
-        oneFile.type === 'application/xlsx'||
-        oneFile.type === 'application/xps' 
+        oneFile.type === 'application/doc' ||
+        oneFile.type === 'application/ppt' ||
+        oneFile.type === 'application/docx' ||
+        oneFile.type === 'application/xml' ||
+        oneFile.type === 'application/txt' ||
+        oneFile.type === 'application/xls' ||
+        oneFile.type === 'application/xlsx' ||
+        oneFile.type === 'application/xps'
       ) {
         if (oneFile.size > 100000000) {
           console.log('File is too large');
@@ -166,3 +166,7 @@ export const splitWithDelimitter = (date, delimitter) => date.split(delimitter).
 export const arrayIntersection = (array1, array2) => array1.filter((value) => array2.includes(value));
 
 export const arrayDifference = (array1, array2) => array1.filter((x) => !array2.includes(x));
+
+
+
+

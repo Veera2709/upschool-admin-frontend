@@ -308,6 +308,7 @@ function Table({ columns, data, modalOpen }) {
                         | Go to page:{' '}
                         <input
                             type="number"
+                            onWheel={(e) => e.target.blur()}
                             className="form-control ml-2"
                             defaultValue={pageIndex + 1}
                             onChange={(e) => {

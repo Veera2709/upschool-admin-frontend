@@ -24,7 +24,6 @@ const AddCognitiveSkills = ({ setIsOpenAddCognitiveSkills }) => {
 
         <>
             <React.Fragment>
-
                 < Formik
 
                     initialValues={
@@ -96,8 +95,6 @@ const AddCognitiveSkills = ({ setIsOpenAddCognitiveSkills }) => {
                                     setCognitiveSkillsTitleErr(true);
                                     setCognitiveSkillsTitleErrMessage("err");
                                     // window.location.reload();
-
-
                                 }
                             })
                             .catch((error) => {

@@ -61,7 +61,7 @@ function Table({ columns, data }) {
         pageLocation === 'active-cognitiveSkills' ? (
             sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: MESSAGES.INFO.ABLE_TO_RECOVER }, cognitive_id, updateStatus)
         ) : (
-            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: 'This will restore the Question Category!' }, cognitive_id, updateStatus)
+            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: 'This will restore the Cognitive Skills!' }, cognitive_id, updateStatus)
         )
 
     };
@@ -120,7 +120,7 @@ function Table({ columns, data }) {
                                         }}
                                     >
                                         <i className="feather icon-edit" /> &nbsp; Edit
-                                    </Button>{' '}
+                                    </Button>
                                     &nbsp;
                                     <Button
                                         size="sm"
@@ -268,18 +268,20 @@ function Table({ columns, data }) {
 
     const multiDelete = async (status) => {
 
+
         console.log("selectedFlatRows", selectedFlatRows);
         const cognitiveSkillsIDs = [];
 
         selectedFlatRows.map((item) => {
             cognitiveSkillsIDs.push(item.original.cognitive_id)
         })
+        console.log("selectedFlatRows", selectedFlatRows);
 
         if (cognitiveSkillsIDs.length > 0) {
 
             MySwal.fire({
                 title: 'Are you sure?',
-                text: `Confirm ${pageLocation === 'active-cognitiveSkills' ? "deleting" : "restoring"} the selected Question Categories!`,
+                text: `Confirm ${pageLocation === 'active-cognitiveSkills' ? "deleting" : "restoring"} the selected Cognitive Skills!`,
                 type: 'warning',
                 showCloseButton: true,
                 showCancelButton: true
@@ -302,12 +304,13 @@ function Table({ columns, data }) {
                             history.push('/auth/signin-1');
                             window.location.reload();
                         } else {
+                            console.log("Else : ");
                             return MySwal.fire('Sorry', ResultData.Error.response.data, 'warning').then(() => {
                                 window.location.reload();
                             });
                         }
                     } else {
-                        return MySwal.fire('Success', `All the chosen Question Categories have been ${status === 'Active' ? 'restored' : "deleted"} successfully!`, 'success').then(() => {
+                        return MySwal.fire('Success', `All the chosen Cognitive Skills have been ${status === 'Active' ? 'restored' : "deleted"} successfully!`, 'success').then(() => {
                             window.location.reload();
                         });
                     }
@@ -315,8 +318,8 @@ function Table({ columns, data }) {
             });
 
         } else {
-
-            return MySwal.fire('Sorry', 'No Question Categories are selected!', 'warning');
+            console.log("Work : ");
+            return MySwal.fire('Sorry', 'No Cognitive Skills  are selected!', 'warning');
         }
     }
 
@@ -545,7 +548,7 @@ const CognitiveSkillsTableView = ({ userStatus }) => {
         pageLocation === 'active-cognitiveSkills' ? (
             sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: MESSAGES.INFO.ABLE_TO_RECOVER }, cognitive_id, updateStatus)
         ) : (
-            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: 'This will restore the Question Category!' }, cognitive_id, updateStatus)
+            sweetConfirmHandler({ title: MESSAGES.TTTLES.AreYouSure, type: 'warning', text: 'This will restore the Cognitive Skills!' }, cognitive_id, updateStatus)
         );
 
     };
@@ -583,7 +586,7 @@ const CognitiveSkillsTableView = ({ userStatus }) => {
             hideLoader();
             _setShowLoader(false);
 
-            console.log('inside res fetch Unit And Questions Category');
+
             console.log(ResultData);
 
             if (ResultData.Items) {
@@ -707,7 +710,7 @@ const CognitiveSkillsTableView = ({ userStatus }) => {
                                         pageLocation === 'active-cognitiveSkills' ? (
                                             < React.Fragment >
                                                 <div>
-                                                    <h3 style={{ textAlign: 'center' }}>No {pageLocation === "active-cognitiveSkills" ? 'Active Question Categories' : 'Archived Question Categories'} Found</h3>
+                                                    <h3 style={{ textAlign: 'center' }}>No {pageLocation === "active-cognitiveSkills" ? 'Active Cognitive Skills' : 'Archived  Cognitive Skills'} Found</h3>
                                                     <div className="form-group fill text-center">
                                                         <br></br>
                                                         <Button
@@ -737,7 +740,7 @@ const CognitiveSkillsTableView = ({ userStatus }) => {
                                                 </Modal>
                                             </React.Fragment>
                                         ) : (
-                                            <h3 style={{ textAlign: 'center' }}>No {pageLocation === "active-cognitiveSkills" ? 'Active Question Categories' : 'Archived Question Categories'} Found</h3>
+                                            <h3 style={{ textAlign: 'center' }}>No {pageLocation === "active-cognitiveSkills" ? 'Active  Cognitive Skills' : 'Archived  Cognitive Skills'} Found</h3>
                                         )
                                     }
 

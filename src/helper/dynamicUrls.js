@@ -1,7 +1,7 @@
-const baseUrl = 'https://w72a5si42a.execute-api.ap-south-1.amazonaws.com/dev/v1'; // Dev env URL
-//const baseUrl = 'https://n4w2247vsi.execute-api.ap-south-1.amazonaws.com/dev/v1'; // Old Dev env URL
+// const baseUrl = 'https://w72a5si42a.execute-api.ap-south-1.amazonaws.com/dev/v1'; // Dev env URL
 // const baseUrl = 'https://dssqy2gip2.execute-api.ap-south-1.amazonaws.com/testing/v1'; // testing env URL
 // const baseUrl = process.env.REACT_APP_LAMBDA_URL;
+
 
 const dynamicUrl = {
 
@@ -113,7 +113,6 @@ const dynamicUrl = {
     editQuestion: baseUrl + '/editQuestion',
     fetchAllQuestionsData: baseUrl + '/fetchAllQuestionsData',
     addQuestions: baseUrl + '/addQuestions',
-    fetchAllQuestionCategories: baseUrl + '/fetchAllQuestionCategories',
     fetchDisclaimersandCategories: baseUrl + '/fetchDisclaimersandCategories',
     fetchQuestionMasters: baseUrl + '/fetchQuestionMasters',
     bulkToggleQuestionStatus: baseUrl + '/bulkToggleQuestionStatus',
@@ -134,6 +133,7 @@ const dynamicUrl = {
     toggleGroupStatus: baseUrl + '/toggleGroupStatus',
     editGroup: baseUrl + '/editGroup',
     fetchDigicardIdAndName: baseUrl + '/fetchDigicardIdAndName',
+    bulkToggleGroupsStatus: baseUrl + '/bulkToggleGroupsStatus',
 
     // CMS users
     addCMSUser: baseUrl + '/addCMSUser',
@@ -157,6 +157,29 @@ const dynamicUrl = {
     addQuestionDisclaimer: baseUrl + '/addQuestionDisclaimer',
     fetchIndividualDisclaimer: baseUrl + '/fetchIndividualDisclaimer',
     updateQuestionDisclaimer: baseUrl + '/updateQuestionDisclaimer',
+
+
+    //settings - Source of Question
+    fetchSourcesBasedonStatus: baseUrl + '/fetchSourcesBasedonStatus',
+    addQuestionSource: baseUrl + '/addQuestionSource',
+    fetchIndividualSource: baseUrl + '/fetchIndividualSource',
+    toggleQuestionSourceStatus: baseUrl + '/toggleQuestionSourceStatus',
+    bulkToggleQuestionSourceStatus: baseUrl + '/bulkToggleQuestionSourceStatus',
+    updateQuestionSource: baseUrl + '/updateQuestionSource',
+
+    //settings - cognitive Skills
+    fetchSkillsBasedonStatus: baseUrl + '/fetchSkillsBasedonStatus',
+    toggleCognitiveSkillStatus: baseUrl + '/toggleCognitiveSkillStatus',
+    bulkToggleCognitiveSkillStatus: baseUrl + '/bulkToggleCognitiveSkillStatus',
+    addCognitiveSkill: baseUrl + '/addCognitiveSkill',
+    updateCognitiveSkill: baseUrl + '/updateCognitiveSkill',
+    fetchIndividualCognitiveSkill: baseUrl + '/fetchIndividualCognitiveSkill',
+
+    //Blue print
+    addBluePrint: baseUrl + '/addBluePrint',
+    fetchBluePrintsBasedonStatus: baseUrl + '/fetchBluePrintsBasedonStatus',
+    toggleBluePrintStatus: baseUrl + '/toggleBluePrintStatus',
+    fetchIndividualBluePrint: baseUrl + '/fetchIndividualBluePrint'
 }
 
 export default dynamicUrl;

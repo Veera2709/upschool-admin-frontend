@@ -22,7 +22,6 @@ const MESSAGES = {
     DeletingUser: 'Error in deleting User',
     DeletingSchool: 'Error in deleting School',
     RestoringUser: 'Error in restoring User',
-    DeletingGroup: 'Error in deleting Group',
     DeletingUnit: 'Error in deleting Unit',
     RestoringUnit: 'Error in restoring Unit',
     DeletingConcept: 'Error in deleting Concept',
@@ -48,6 +47,8 @@ const MESSAGES = {
   SUCCESS: {
     SchoolRestoredSuccessfully: 'School restored Successfully!',
     UpdatingQuizConfiguration: 'Updated Quiz Configuration settings successfully!',
+    UpdatingPreQuizConfiguration: 'Updated Pre Quiz Configuration settings successfully!',
+    UpdatingPostQuizConfiguration: 'Updated Post Quiz Configuration settings successfully!',
     UpdatingSubscriptionFeatures: 'Updated Subscription Features successfully!',
     AddingDigiCard: 'Added DigiCard Successfully',
     EditDigiCard: 'DigiCard Updated Successfully',

@@ -134,6 +134,7 @@ function Table({ columns, data, modalOpen }) {
                         | Go to page:{' '}
                         <input
                             type="number"
+                            onWheel={(e) => e.target.blur()}
                             className="form-control ml-2"
                             defaultValue={pageIndex + 1}
                             onChange={(e) => {
@@ -428,7 +429,7 @@ const SchoolChild = (props) => {
                                                             <h5>Schools List</h5>
                                                             <h5>Total Entries :- {schoolData.length}</h5>
                                                         </Card.Title>
-                                                        
+
                                                     </Card.Header>
                                                     <Card.Body>
                                                         <Table columns={columns} data={schoolData} modalOpen={openHandler} />

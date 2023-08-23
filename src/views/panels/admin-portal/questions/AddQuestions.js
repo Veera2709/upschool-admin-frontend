@@ -2,17 +2,18 @@ import React, { useEffect, useState } from 'react';
 import { Row, Col, Button, Card, CloseButton, Form, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import Select from 'react-select';
 import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
 import axios from 'axios';
 import ArticleRTE from './ArticleRTE'
 import * as Yup from 'yup';
 import { Formik } from 'formik';
 import { useHistory } from 'react-router-dom';
-import withReactContent from 'sweetalert2-react-content';
 import MathJax from "react-mathjax";
 
 import dynamicUrl from '../../../../helper/dynamicUrls';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import { isEmptyArray, areFilesInvalid, voiceInvalid } from '../../../../util/utils';
+import { updateSyncWarnings } from 'redux-form';
 
 const AddQuestions = ({ className, ...rest }) => {
 
@@ -28,6 +29,12 @@ const AddQuestions = ({ className, ...rest }) => {
         { value: 'Equation', label: 'Equation' }
     ];
 
+    const difficultylevel = [
+        { value: 'lessDifficult', label: 'Less Difficult' },
+        { value: 'moderatelyDifficult', label: 'Moderately Difficult' },
+        { value: 'highlyDifficult', label: 'Highly Difficult' },
+    ]
+    const [isDuplicatePresent, setIsDuplicatePresent] = useState(false);/////////
     const [descriptiveAnswerErrMsg, setDescriptiveAnswerErrMsg] = useState(false);
     const [questionTypeErrMsg, setQuestionTypeErrMsg] = useState(false);
     const [questionCategoryErrMsg, setQuestionCategoryErrMsg] = useState(false);
@@ -38,6 +45,13 @@ const AddQuestions = ({ className, ...rest }) => {
     const [unitWeightageErrMsg, setUnitWeightageErrMsg] = useState(false);
     const [negativeMarksErrMsg, setNegativeMarksErrMsg] = useState(false);
     const [answerTypeErrMsg, setAnswerTypeErrMsg] = useState(false);
+    const [weightageEmpty, setWeightageEmpty] = useState(false);
+    const [keyWordsEmptyErr, setKeyWordsEmptyErr] = useState(false);
+    const [answersEmptyErr, setAnswersEmptyErr] = useState(false);
+    const [optionsEmptyErr, setOptionsEmptyErr] = useState(false);
+    const [mismatchWeightageErr, setMismatchWeightageErr] = useState(false);
+    const [answerTypeEmptyErr, setAnswerTypeEmptyErr] = useState(false);
+    const [blanksMismatchErr, setBlanksMismatchErr] = useState(false);
 
     const [selectedQuestionType, setSelectedQuestionType] = useState([]);
     const [selectedQuestionCategory, setSelectedQuestionCategory] = useState({});
@@ -48,7 +62,7 @@ const AddQuestions = ({ className, ...rest }) => {
     const [displayHeading, setDisplayHeading] = useState(sessionStorage.getItem('question_active_status'));
     const threadLinks = document.getElementsByClassName('page-header');
     const [showMathKeyboard, setShowMathKeyboard] = useState('No');
-    const [workSheetOrTest, setWorkSheetOrTest] = useState('Test');
+    const [workSheetOrTest, setWorkSheetOrTest] = useState('preOrPost');
     const [answerTypeOptions, setAnswerTypeOptions] = useState([]);
     const [descriptiveAnswerOptionsForm, setDescriptiveAnswerOptionsForm] = useState([]);
     const [selectedAnswerType, setSelectedAnswerType] = useState('');
@@ -77,9 +91,12 @@ const AddQuestions = ({ className, ...rest }) => {
     const [optionsSource, setOptionsSource] = useState([]);
     const [optionsDisclaimer, setOptionsDisclaimer] = useState([]);
 
-    const [errorMessage, setErrorMessage] = useState("");//for question category
+    const [errorMessage, setErrorMessage] = useState("");
 
-    const [selectedValueDisclaimer, setSelectedValueDisclaimer] = useState([]);
+    const [selectedValueDisclaimer, setSelectedValueDisclaimer] = useState("N.A.");
+
+    const [selectedDifficultyLevel, setSelectedDifficultyLevel] = useState();
+    const [isDefficultyLevelErr, setIsDefficultyLevelErr] = useState(false)
 
     const [questionLabelAlreadyExists, setQuestionLabelAlreadyExists] = useState(false);
     const [answerOptionsForm, setAnswerOptionsForm] = useState([
@@ -92,6 +109,12 @@ const AddQuestions = ({ className, ...rest }) => {
         }
     ]);
 
+
+    const handleChildStateChange = (newState) => {
+        setIsDuplicatePresent(newState);
+    };
+
+
     useEffect(() => {
 
         console.log("Request : ", {
@@ -100,7 +123,7 @@ const AddQuestions = ({ className, ...rest }) => {
             }
         });
         axios
-            // .post("api-url")
+
             .post(
                 dynamicUrl.fetchQuestionMasters,
                 {
@@ -130,20 +153,10 @@ const AddQuestions = ({ className, ...rest }) => {
                 (response.data.cognitive_skills.map(e => { tempCognitiveSkillArr.push({ value: e.cognitive_id, label: e.cognitive_name }) }));
                 (response.data.question_sources.map(e => { tempSourceArr.push({ value: e.source_id, label: e.source_name }) }));
 
-                if (isEmptyArray(tempCategoryArr)) {
-
-                    setOptionsCategory([]);
-                    setOptionsDisclaimer([]);
-                    setOptionsCongnitiveSkills([]);
-                    setOptionsSource([]);
-
-                } else {
-
-                    setOptionsCategory(tempCategoryArr);
-                    setOptionsDisclaimer(tempDisclaimerArr);
-                    setOptionsCongnitiveSkills(tempCognitiveSkillArr);
-                    setOptionsSource(tempSourceArr);
-                }
+                isEmptyArray(tempCategoryArr) ? setOptionsCategory([]) : setOptionsCategory(tempCategoryArr);
+                isEmptyArray(tempDisclaimerArr) ? setOptionsDisclaimer([]) : setOptionsDisclaimer(tempDisclaimerArr);
+                isEmptyArray(tempCognitiveSkillArr) ? setOptionsCongnitiveSkills([]) : setOptionsCongnitiveSkills(tempCognitiveSkillArr);
+                isEmptyArray(tempSourceArr) ? setOptionsSource([]) : setOptionsSource(tempSourceArr);
 
             })
 
@@ -217,9 +230,8 @@ const AddQuestions = ({ className, ...rest }) => {
     }
 
     const handleWorkSheetOrTest = (e) => {
-
         _setRadioWorkSheetOrTest(!_radioWorkSheetOrTest);
-        _radioWorkSheetOrTest === true ? setWorkSheetOrTest('Test') : setWorkSheetOrTest('Worksheet');
+        _radioWorkSheetOrTest === true ? setWorkSheetOrTest('preOrPost') : setWorkSheetOrTest('worksheetOrTest');
     }
 
     const [answerBlanksOptions, setAnswerBlanksOptions] = useState([]);
@@ -233,9 +245,9 @@ const AddQuestions = ({ className, ...rest }) => {
     const handleQuestionType = (event) => {
 
         setAnswerTypeOptions((currentOptions) => currentOptions.filter((currentOption) => !selectedAnswerType.includes(currentOption)));
-        setSelectedQuestionCategory([]);
-        setSelectedQuestionCognitiveSkill([]);
-        setSelectedQuestionSource([]);
+        // setSelectedQuestionCategory([]);
+        // setSelectedQuestionCognitiveSkill([]);
+        // setSelectedQuestionSource([]);
 
         console.log(answerTypeOptions);
         // setAnswerTypeOptions([]);
@@ -254,7 +266,14 @@ const AddQuestions = ({ className, ...rest }) => {
         setQuestionSourceErrMsg(false);
         setQuestionEmptyErrMsg(false);
         setAnsWeightageErrMsg(false);
+        setWeightageEmpty(false);
+        setKeyWordsEmptyErr(false);
+        setAnswersEmptyErr(false);
+        setOptionsEmptyErr(false);
+        setMismatchWeightageErr(false);
         setUnitWeightageErrMsg(false);
+        setAnswerTypeEmptyErr(false);
+        setBlanksMismatchErr(false);
 
         setEquation([]);
         setDescriptiveEquation([]);
@@ -267,17 +286,12 @@ const AddQuestions = ({ className, ...rest }) => {
 
         if (valuesSelected === 'Descriptive') {
 
-            _setRadioWorkSheetOrTest(true);
-            setWorkSheetOrTest('Worksheet');
             setDescriptiveAnswerOptionsForm([{
                 answer_type: '',
                 answer_content: '',
                 answer_weightage: ''
             }]);
 
-        } else {
-            _setRadioWorkSheetOrTest(false);
-            setWorkSheetOrTest('Test');
         }
 
         valuesSelected === 'Subjective' ? setAnswerTypeOptions([
@@ -299,6 +313,13 @@ const AddQuestions = ({ className, ...rest }) => {
     const handleDescriptiveAnswerBlanks = (event, index) => {
 
         let data = [...descriptiveAnswerOptionsForm];
+        setWeightageEmpty(false);
+        setKeyWordsEmptyErr(false);
+        setAnswersEmptyErr(false);
+        setOptionsEmptyErr(false);
+        setMismatchWeightageErr(false);
+        setAnswerTypeEmptyErr(false);
+        setBlanksMismatchErr(false);
 
         if (event.target.name === 'answer_type') {
 
@@ -323,6 +344,13 @@ const AddQuestions = ({ className, ...rest }) => {
     }
 
     const handleAnswerBlanks = (event, index) => {
+
+        setKeyWordsEmptyErr(false);
+        setAnswersEmptyErr(false);
+        setOptionsEmptyErr(false);
+        setMismatchWeightageErr(false);
+        setAnswerTypeEmptyErr(false);
+        setBlanksMismatchErr(false);
 
         let data = [...answerOptionsForm];
 
@@ -390,13 +418,13 @@ const AddQuestions = ({ className, ...rest }) => {
             data[index][event.target.name] = Number(event.target.value);
         }
 
-
         console.log(data);
 
         setAnswerOptionsForm(data);
 
         if (event.target.name === 'answer_weightage') {
             setAnsWeightageErrMsg(false);
+            setWeightageEmpty(false);
         }
 
         if (event.target.name === 'unit_weightage') {
@@ -777,6 +805,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                 onSubmit={async (values, { setErrors, setStatus, setSubmitting, }) => {
 
                                     console.log(values);
+
                                     setSubmitting(true);
 
                                     console.log(sessionStorage.getItem('click_event') !== "");
@@ -796,78 +825,227 @@ const AddQuestions = ({ className, ...rest }) => {
                                             setQuestionCognitiveSkillErrMsg(true);
                                         } else if (isEmptyArray(selectedQuestionSource)) {
                                             setQuestionSourceErrMsg(true);
+                                        } else if (_radioWorkSheetOrTest === true && (selectedDifficultyLevel === '' || selectedDifficultyLevel === undefined)) {
+                                            setIsDefficultyLevelErr(true)
                                         } else if (articleDataTitle === "" || articleDataTitle === undefined || articleDataTitle === 'undefined' || articleDataTitle === "<p><br></p>" || articleDataTitle === "<p></p>" || articleDataTitle === "<br>") {
                                             setQuestionEmptyErrMsg(true);
                                         } else if (selectedQuestionType === 'Descriptive') {
 
-                                            console.log(values.descriptive_answer);
+                                            let payLoad = {
+                                                question_type: selectedQuestionType,
+                                                question_category: selectedQuestionCategory,
+                                                question_source: selectedQuestionSource,
+                                                cognitive_skill: selectedQuestionCognitiveSkill,
+                                                question_voice_note: selectedQuestionVoiceNote,
+                                                question_content: articleDataTitle,
+                                                answers_of_question: descriptiveAnswerOptionsForm,
+                                                question_status: sessionStorage.getItem('click_event'),
+                                                question_disclaimer: selectedValueDisclaimer,
+                                                show_math_keyboard: showMathKeyboard,
+                                                appears_in: workSheetOrTest,
+                                                question_label: questionLabelValue,
+                                                display_answer: values.descriptive_answer,
+                                                marks: values.marks,
+                                                difficulty_level: _radioWorkSheetOrTest ? selectedDifficultyLevel : 'N.A',
+                                                answer_explanation: values.answer_explanation === undefined || values.answer_explanation === "undefined" || values.answer_explanation === "" ? "N.A." : values.answer_explanation
+
+                                            }
+
+                                            console.log("payLoad", payLoad);
+
                                             if (values.descriptive_answer === undefined || values.descriptive_answer === 'undefined' || values.descriptive_answer === "") {
                                                 setDescriptiveAnswerErrMsg(true);
                                             } else {
 
-                                                let payLoad = {
-                                                    question_type: selectedQuestionType,
-                                                    question_category: selectedQuestionCategory,
-                                                    question_source: selectedQuestionSource,
-                                                    cognitive_skill: selectedQuestionCognitiveSkill,
-                                                    question_voice_note: selectedQuestionVoiceNote,
-                                                    question_content: articleDataTitle,
-                                                    answers_of_question: descriptiveAnswerOptionsForm,
-                                                    question_status: sessionStorage.getItem('click_event'),
-                                                    question_disclaimer: selectedValueDisclaimer,
-                                                    show_math_keyboard: showMathKeyboard,
-                                                    appears_in: workSheetOrTest,
-                                                    question_label: questionLabelValue,
-                                                    display_answer: values.descriptive_answer,
-                                                    marks: values.marks,
-                                                    answer_explanation: values.answer_explanation === undefined || values.answer_explanation === "undefined" ? "N.A." : values.answer_explanation
+                                                if (Number(values.marks) < 0) {
+                                                    setNegativeMarksErrMsg(true);
+                                                } else {
+
+                                                    let answerTypeSelected = descriptiveAnswerOptionsForm.filter(value => (value.answer_type === '' || value.answer_type === 'N.A.' || value.answer_type === 'Select...' || value.answer_type === 'undefined' || value.answer_type === undefined) && sessionStorage.getItem('click_event') === 'Submit');
+
+                                                    if (answerTypeSelected.length === 0) {
+
+                                                        let keywordsGiven = descriptiveAnswerOptionsForm.filter(value => (value.answer_content === '' || value.answer_content === 'N.A.' || value.answer_content === 'undefined' || value.answer_content === undefined) && sessionStorage.getItem('click_event') === 'Submit');
+
+                                                        if (keywordsGiven.length === 0) {
+
+                                                            if (sessionStorage.getItem('click_event') === 'Submit') {
+
+                                                                let weightageGiven = descriptiveAnswerOptionsForm.filter(value => (value.answer_weightage === '' || value.answer_weightage === 'N.A.' || value.answer_weightage === 'undefined' || value.answer_weightage === undefined) && sessionStorage.getItem('click_event') === 'Submit');
+
+                                                                if (weightageGiven.length === 0) {
+
+                                                                    let sumOfAllWeightage = descriptiveAnswerOptionsForm.reduce((acc, item) => acc + Number(item.answer_weightage), 0);
+                                                                    let allEqual = sumOfAllWeightage === Number(values.marks);
+
+                                                                    console.log("allEqual", allEqual);
+
+                                                                    if (allEqual) {
+                                                                        showLoader();
+                                                                        _addQuestions(payLoad);
+                                                                    } else {
+                                                                        setMismatchWeightageErr(true);
+                                                                    }
+
+                                                                } else {
+                                                                    setWeightageEmpty(true);
+                                                                }
+
+                                                            } else {
+                                                                showLoader();
+                                                                _addQuestions(payLoad);
+                                                            }
+
+                                                        } else {
+                                                            setKeyWordsEmptyErr(true);
+                                                        }
+
+                                                    } else {
+                                                        setAnswerTypeEmptyErr(true);
+                                                    }
 
                                                 }
-
-                                                console.log("payLoad", payLoad);
-
-                                                showLoader();
-                                                _addQuestions(payLoad);
                                             }
 
                                         } else if (selectedQuestionType === 'Subjective' || selectedQuestionType === 'Objective') {
 
+                                            let payLoad = {
+                                                question_type: selectedQuestionType,
+                                                question_category: selectedQuestionCategory,
+                                                question_source: selectedQuestionSource,
+                                                cognitive_skill: selectedQuestionCognitiveSkill,
+                                                question_voice_note: selectedQuestionVoiceNote,
+                                                question_content: articleDataTitle,
+                                                answers_of_question: answerOptionsForm,
+                                                question_status: sessionStorage.getItem('click_event'),
+                                                question_disclaimer: selectedValueDisclaimer,
+                                                show_math_keyboard: showMathKeyboard,
+                                                appears_in: workSheetOrTest,
+                                                question_label: questionLabelValue,
+                                                display_answer: "N.A.",
+                                                marks: values.marks,
+                                                difficulty_level: _radioWorkSheetOrTest ? selectedDifficultyLevel : 'N.A',
+                                                answer_explanation: values.answer_explanation === undefined || values.answer_explanation === "undefined" || values.answer_explanation === "" ? "N.A." : values.answer_explanation
+                                            };
+
+                                            console.log("payLoad", payLoad);
+
                                             let tempAnsWeightage = answerOptionsForm.filter(value => value.answer_weightage < 0);
                                             let tempUnitWeightage = answerOptionsForm.filter(value => value.unit_weightage < 0);
+                                            console.log("selectedDifficultyLevel", selectedDifficultyLevel);
 
                                             if (Number(values.marks) < 0) {
                                                 setNegativeMarksErrMsg(true);
                                             } else if (tempAnsWeightage.length !== 0) {
                                                 setAnsWeightageErrMsg(true);
+                                            } else if (_radioWorkSheetOrTest === true && (selectedDifficultyLevel === '' || selectedDifficultyLevel === undefined)) {
+                                                setIsDefficultyLevelErr(true);
                                             } else if (tempUnitWeightage.length !== 0) {
                                                 setUnitWeightageErrMsg(true);
                                             } else {
 
-                                                console.log('Data inserted!', values.question_disclaimer);
+                                                let answerTypeSelected = answerOptionsForm.filter(value => (value.answer_type === '' || value.answer_type === 'N.A.' || value.answer_type === 'Select...' || value.answer_type === 'undefined' || value.answer_type === undefined) && sessionStorage.getItem('click_event') === 'Submit');
 
-                                                let payLoad = {
-                                                    question_type: selectedQuestionType,
-                                                    question_category: selectedQuestionCategory,
-                                                    question_source: selectedQuestionSource,
-                                                    cognitive_skill: selectedQuestionCognitiveSkill,
-                                                    question_voice_note: selectedQuestionVoiceNote,
-                                                    question_content: articleDataTitle,
-                                                    answers_of_question: answerOptionsForm,
-                                                    question_status: sessionStorage.getItem('click_event'),
-                                                    question_disclaimer: selectedValueDisclaimer,
-                                                    show_math_keyboard: showMathKeyboard,
-                                                    appears_in: workSheetOrTest,
-                                                    question_label: questionLabelValue,
-                                                    display_answer: "N.A.",
-                                                    marks: values.marks,
-                                                    answer_explanation: values.answer_explanation === undefined || values.answer_explanation === "undefined" ? "N.A." : values.answer_explanation
-                                                };
+                                                if (answerTypeSelected.length === 0) {
 
-                                                console.log("payLoad", payLoad);
+                                                    let placegolderSelected = answerOptionsForm.filter(value => (value.answer_option === '' || value.answer_option === 'N.A.' || value.answer_option === 'Select...' || value.answer_option === 'undefined' || value.answer_option === undefined) && sessionStorage.getItem('click_event') === 'Submit');
 
-                                                showLoader();
-                                                _addQuestions(payLoad);
+                                                    if (placegolderSelected.length === 0) {
 
+                                                        let answersGiven = answerOptionsForm.filter(value => (value.answer_content === '' || value.answer_content === 'N.A.' || value.answer_content === 'undefined' || value.answer_content === undefined) && sessionStorage.getItem('click_event') === 'Submit');
+
+                                                        if (answersGiven.length === 0) {
+
+                                                            if (sessionStorage.getItem('click_event') === 'Submit') {
+
+                                                                let weightageGiven = answerOptionsForm.filter(value => (value.answer_weightage === '' || value.answer_weightage === 'N.A.' || value.answer_weightage === 'undefined' || value.answer_weightage === undefined) && sessionStorage.getItem('click_event') === 'Submit');
+
+                                                                if (weightageGiven.length === 0) {
+
+                                                                    if (selectedQuestionType === 'Objective') {
+
+                                                                        let sumOfAllWeightage = answerOptionsForm.filter(item => item.answer_display === "Yes").reduce((acc, item) => acc + Number(item.answer_weightage), 0);
+
+                                                                        let allEqual = sumOfAllWeightage === Number(values.marks);
+                                                                        console.log("allEqual", allEqual);
+
+                                                                        if (allEqual) {
+                                                                            if (isDuplicatePresent) {
+                                                                                console.log("Duplicates are present, skip form submission");
+                                                                                Swal.fire({
+                                                                                    title: 'Duplicates Found',
+                                                                                    text: 'Duplicate values are present between $$ markers in Question Field',
+                                                                                    icon: 'warning',
+                                                                                });
+                                                                                return;
+                                                                            } else {
+                                                                                showLoader();
+                                                                                _addQuestions(payLoad);
+                                                                            }
+                                                                        } else {
+                                                                            setMismatchWeightageErr(true);
+                                                                        }
+                                                                    } else {
+
+                                                                        console.log("answerBlanksOptions", answerBlanksOptions.map(value => value.value));
+                                                                        console.log("answerOptionsForm", answerOptionsForm.map(value => value.answer_option));
+
+                                                                        let allOptionsPresent = answerBlanksOptions.map(value => value.value).every(item => answerOptionsForm.map(value => value.answer_option).includes(item));
+
+                                                                        console.log("allOptionsPresent", allOptionsPresent);
+
+                                                                        if (allOptionsPresent) {
+                                                                            if (isDuplicatePresent) {
+
+                                                                                console.log("Duplicates are present, skip form submission");
+                                                                                Swal.fire({
+                                                                                    title: 'Duplicates Found',
+                                                                                    text: 'Duplicate values are present between $$ markers in Question Field',
+                                                                                    icon: 'warning',
+                                                                                });
+                                                                                return
+                                                                            } else {
+                                                                                showLoader();
+                                                                                _addQuestions(payLoad);
+                                                                            }
+                                                                        } else {
+                                                                            setBlanksMismatchErr(true);
+                                                                        }
+
+                                                                    }
+
+                                                                } else {
+                                                                    setWeightageEmpty(true);
+                                                                }
+
+                                                            } else {
+
+                                                                if (isDuplicatePresent) {
+
+                                                                    console.log("Duplicates are present, skip form submission");
+                                                                    Swal.fire({
+                                                                        title: 'Duplicates Found',
+                                                                        text: 'Duplicate values are present between $$ markers in Question Field',
+                                                                        icon: 'warning',
+                                                                    });
+                                                                    return
+                                                                } else {
+                                                                    showLoader();
+                                                                    _addQuestions(payLoad);
+                                                                }
+                                                            }
+
+                                                        } else {
+                                                            setAnswersEmptyErr(true);
+                                                        }
+
+                                                    } else {
+                                                        setOptionsEmptyErr(true);
+                                                    }
+
+                                                } else {
+                                                    setAnswerTypeEmptyErr(true);
+                                                }
                                             }
                                         } else {
                                             console.log("Invalid option!");
@@ -1180,47 +1358,63 @@ const AddQuestions = ({ className, ...rest }) => {
                                                     Question Appears in
                                                 </label>
 
-                                                {selectedQuestionType === 'Descriptive' ? (<>
-                                                    <div className="col">
-                                                        <div className="row profile-view-radio-button-view">
-                                                            <Form.Check
-                                                                disabled
-                                                                id={`radio-fresher`}
-                                                                error={touched.fresher && errors.fresher}
-                                                                type="switch"
-                                                                variant={'outline-primary'}
-                                                                name="radio-fresher"
-                                                                checked={_radioWorkSheetOrTest}
-                                                                onChange={(e) => handleWorkSheetOrTest(e)}
-                                                            /> &nbsp;
+                                                <div className="col">
+                                                    <div className="row profile-view-radio-button-view">
+                                                        <Form.Check
+                                                            id={`radio-fresher`}
+                                                            error={touched.fresher && errors.fresher}
+                                                            type="switch"
+                                                            variant={'outline-primary'}
+                                                            name="radio-fresher"
+                                                            checked={_radioWorkSheetOrTest}
+                                                            onChange={(e) => {
+                                                                handleWorkSheetOrTest(e);
+                                                                setSelectedDifficultyLevel('');
+                                                                setIsDefficultyLevelErr(false)
+                                                            }}
+                                                        /> &nbsp;
 
-                                                            <Form.Label className="profile-view-question" id={`radio-fresher`}>
-                                                                {_radioWorkSheetOrTest === true ? 'Worksheet' : 'Test'}
-                                                            </Form.Label>
-                                                        </div>
+                                                        <Form.Label className="profile-view-question" id={`radio-fresher`}>
+                                                            {_radioWorkSheetOrTest === true ? 'Worksheet/Test' : 'Pre/Post'}
+                                                        </Form.Label>
                                                     </div>
-                                                </>) : (<>
-                                                    <div className="col">
-                                                        <div className="row profile-view-radio-button-view">
-                                                            <Form.Check
-                                                                id={`radio-fresher`}
-                                                                error={touched.fresher && errors.fresher}
-                                                                type="switch"
-                                                                variant={'outline-primary'}
-                                                                name="radio-fresher"
-                                                                checked={_radioWorkSheetOrTest}
-                                                                onChange={(e) => handleWorkSheetOrTest(e)}
-                                                            /> &nbsp;
+                                                </div>
 
-                                                            <Form.Label className="profile-view-question" id={`radio-fresher`}>
-                                                                {_radioWorkSheetOrTest === true ? 'Worksheet' : 'Test'}
-                                                            </Form.Label>
-                                                        </div>
-                                                    </div>
-                                                </>)}
                                             </Col>
                                         </Row>
+                                        <br />
+                                        {
+                                            _radioWorkSheetOrTest && (
+                                                <>
+                                                    <Row>
+                                                        <Col sm={6}>
 
+                                                            <div className="form-group fill" style={{ position: 'relative', zIndex: 10 }}>
+                                                                <label className="floating-label" >
+                                                                    <small className="text-danger">* </small>
+                                                                    Level of Difficulty
+                                                                </label>
+                                                                <Select
+                                                                    className="basic-single"
+                                                                    classNamePrefix="select"
+                                                                    name="color"
+                                                                    options={difficultylevel}
+                                                                    onChange={(e) => {
+                                                                        setSelectedDifficultyLevel(e.value);
+                                                                        setIsDefficultyLevelErr(false)
+                                                                    }}
+                                                                    styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+
+                                                                />
+                                                            </div>
+                                                            {isDefficultyLevelErr && (
+                                                                <small style={{ color: 'red' }}>Field required!</small>
+                                                            )}
+                                                        </Col>
+                                                    </Row>
+                                                </>
+                                            )
+                                        }
                                         <br />
                                         <Row>
                                             <Col>
@@ -1230,6 +1424,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                 </label>
 
                                                 <ArticleRTE
+                                                    onChildStateChange={handleChildStateChange}////
                                                     setArticleSize={setArticleSize}
                                                     setImageCount={setImageCount}
                                                     imageCount={imageCount}
@@ -1272,6 +1467,9 @@ const AddQuestions = ({ className, ...rest }) => {
                                                             type="number"
                                                             min="0.01"
                                                             placeholder="Enter the total marks this question carries"
+                                                            // onWheel={e => e.preventDefault()}
+                                                            onWheel={(e) => e.target.blur()}
+
                                                         />
 
                                                         {
@@ -1293,8 +1491,6 @@ const AddQuestions = ({ className, ...rest }) => {
                                             <>
                                                 <br />
                                                 {answerOptionsForm.map((form, index) => {
-
-                                                    console.log(answerOptionsForm);
 
                                                     return (
                                                         <Card
@@ -1388,7 +1584,6 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                             <>
 
                                                                                                 {selectedArr.map((optionsData) => {
-                                                                                                    { console.log(optionsData) }
                                                                                                     return <option
                                                                                                         value={optionsData.value}
                                                                                                         key={optionsData.value}
@@ -1496,6 +1691,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                     min="0.01"
                                                                                     onChange={event => handleAnswerBlanks(event, index)}
                                                                                     placeholder="Enter Weightage"
+                                                                                    onWheel={(e) => e.target.blur()}
                                                                                 />
                                                                             </Col>
 
@@ -1636,6 +1832,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                         handleAnswerBlanks(event, index)
                                                                                     }}
                                                                                     placeholder="Enter Weightage"
+                                                                                    onWheel={(e) => e.target.blur()}
                                                                                 />
                                                                             </Col>
 
@@ -1643,7 +1840,7 @@ const AddQuestions = ({ className, ...rest }) => {
 
                                                                         <br />
                                                                         <Row>
-                                                                            <Col xs={6}>
+                                                                            <Col xs={12}>
                                                                                 <label className="floating-label">
                                                                                     <small className="text-danger"></small>
                                                                                     Answer
@@ -1660,32 +1857,97 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                         handleAnswerBlanks(event, index);
                                                                                     }}
                                                                                     placeholder="Enter Equation"
-                                                                                />
-                                                                            </Col>
+                                                                                    style={{
+                                                                                        height: '250px',
+                                                                                        resize: 'vertical',
+                                                                                        fontSize: '14px',
+                                                                                        lineHeight: '1.5',
 
-                                                                            <Col xs={6}>
+                                                                                    }}
+                                                                                />
+
+                                                                            </Col>
+                                                                        </Row>
+
+                                                                        <br />
+                                                                        <Row>
+                                                                            <Col xs={12}>
                                                                                 <label className="floating-label">
                                                                                     <small className="text-danger"></small>
                                                                                     Preview
                                                                                 </label>
+                                                                                <div className="preview-container" style={{
+                                                                                    maxHeight: '100px',
+                                                                                    overflowY: 'auto',
+                                                                                    overflowX: 'auto',
+                                                                                    resize: 'vertical',
+                                                                                    whiteSpace: 'pre-wrap',
+                                                                                    backgroundColor: '#f5f5f5',
+                                                                                }}>
+                                                                                    {equation.length >= 1 && form.answer_content && (
+                                                                                        <MathJax.Provider>
+                                                                                            {equation[index] && (
+                                                                                                <div style={{
+                                                                                                    fontSize: '14px',
+                                                                                                    fontWeight: 'normal',
+                                                                                                    marginBottom: '10px',
+                                                                                                    marginTop: '10px',
+                                                                                                    fontFamily: 'Arial'
+                                                                                                }}>
+                                                                                                    <MathJax.Node formula={equation[index]}
 
-                                                                                {equation.length >= 1 && (
-                                                                                    <MathJax.Provider>
-                                                                                        {
-                                                                                            (
-                                                                                                equation[index] && (
-                                                                                                    <div>
-                                                                                                        <MathJax.Node inline formula={equation[index]} />
-                                                                                                    </div>
-                                                                                                )
-                                                                                            )
-                                                                                        }
-
-                                                                                    </MathJax.Provider>
-                                                                                )}
-
+                                                                                                    />
+                                                                                                </div>
+                                                                                            )}
+                                                                                        </MathJax.Provider>
+                                                                                    )}
+                                                                                </div>
                                                                             </Col>
                                                                         </Row>
+                                                                        {/* ////////////////////////////////////////////////// */}
+
+                                                                        {/* <Row>
+                                                                            <Col xs={12}>
+                                                                                <label className="floating-label">
+                                                                                    <small className="text-danger"></small>
+                                                                                    Preview
+                                                                                </label>
+                                                                                <div className="preview-container" style={{
+                                                                                    maxHeight: '100px',
+                                                                                    overflowY: 'auto',
+                                                                                    // overflowX: 'auto',
+                                                                                    resize: 'vertical',
+                                                                                    whiteSpace: 'pre-wrap',
+                                                                                    backgroundColor: '#f5f5f5',
+                                                                                }}>
+                                                                                    {equation.length >= 1 && form.answer_content && (
+                                                                                        <MathJax.Provider options={{
+                                                                                            tex: {
+                                                                                                packages: { '[+]': ['base', 'autoload-all'] },
+                                                                                                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                                                                                                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                                                                                                processEscapes: true
+                                                                                            },
+                                                                                            'HTML-CSS': {
+                                                                                                linebreaks: { automatic: true }
+                                                                                            }
+                                                                                        }}>
+                                                                                            {equation[index] && (
+                                                                                                <div style={{
+                                                                                                    fontSize: '14px',
+                                                                                                    fontWeight: 'normal',
+                                                                                                    marginBottom: '10px',
+                                                                                                    marginTop: '10px',
+                                                                                                    fontFamily: 'Arial'
+                                                                                                }}>
+                                                                                                    <MathJax.Node formula={equation[index]} />
+                                                                                                </div>
+                                                                                            )}
+                                                                                        </MathJax.Provider>
+                                                                                    )}
+                                                                                </div>
+                                                                            </Col>
+                                                                        </Row> */}
 
                                                                     </>
 
@@ -1765,6 +2027,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                     name="answer_content"
                                                                                     onBlur={handleBlur}
                                                                                     type="number"
+                                                                                    onWheel={(e) => e.target.blur()}
                                                                                     value={values.answer_content}
                                                                                     onChange={event => handleAnswerBlanks(event, index)}
                                                                                     placeholder="Enter Answer"
@@ -1833,6 +2096,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                     value={form.answer_weightage}
                                                                                     onChange={event => handleAnswerBlanks(event, index)}
                                                                                     placeholder="Enter Weightage"
+                                                                                    onWheel={(e) => e.target.blur()}
                                                                                 />
                                                                             </Col>
 
@@ -1858,6 +2122,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                             name="answer_range_from"
                                                                                             onBlur={handleBlur}
                                                                                             type="number"
+                                                                                            onWheel={(e) => e.target.blur()}
                                                                                             value={values.answer_range_from}
                                                                                             onChange={event => handleAnswerBlanks(event, index)}
                                                                                             placeholder="From"
@@ -1876,6 +2141,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                             name="answer_range_to"
                                                                                             onBlur={handleBlur}
                                                                                             type="number"
+                                                                                            onWheel={(e) => e.target.blur()}
                                                                                             value={values.answer_range_to}
                                                                                             onChange={event => handleAnswerBlanks(event, index)}
                                                                                             placeholder="To"
@@ -1964,6 +2230,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                             name="answer_content"
                                                                                             onBlur={handleBlur}
                                                                                             type="number"
+                                                                                            onWheel={(e) => e.target.blur()}
                                                                                             value={values.answer_content}
                                                                                             onChange={event => handleAnswerBlanks(event, index)}
                                                                                             placeholder="Enter Answer"
@@ -2007,10 +2274,12 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                             onBlur={handleBlur}
                                                                                             // onChange={handleChange}
                                                                                             type="number"
+                                                                                            onWheel={(e) => e.target.blur()}
                                                                                             min="0.01"
                                                                                             value={form.answer_weightage}
                                                                                             onChange={event => handleAnswerBlanks(event, index)}
                                                                                             placeholder="Enter Weightage for Answer"
+
                                                                                         />
                                                                                     </Col>
 
@@ -2031,6 +2300,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                             value={form.unit_weightage}
                                                                                             onChange={event => handleAnswerBlanks(event, index)}
                                                                                             placeholder="Enter Weightage for Unit"
+                                                                                            onWheel={(e) => e.target.blur()}
                                                                                         />
                                                                                     </Col>
 
@@ -2098,6 +2368,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                             name="answer_range_from"
                                                                                             onBlur={handleBlur}
                                                                                             type="number"
+                                                                                            onWheel={(e) => e.target.blur()}
                                                                                             value={values.answer_range_from}
                                                                                             onChange={event => handleAnswerBlanks(event, index)}
                                                                                             placeholder="From"
@@ -2116,6 +2387,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                             name="answer_range_to"
                                                                                             onBlur={handleBlur}
                                                                                             type="number"
+                                                                                            onWheel={(e) => e.target.blur()}
                                                                                             value={values.answer_range_to}
                                                                                             onChange={event => handleAnswerBlanks(event, index)}
                                                                                             placeholder="To"
@@ -2261,6 +2533,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                             value={form.answer_weightage}
                                                                                             onChange={event => handleAnswerBlanks(event, index)}
                                                                                             placeholder="Enter Weightage"
+                                                                                            onWheel={(e) => e.target.blur()}
                                                                                         />
                                                                                     </Col>
 
@@ -2402,6 +2675,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                         handleAnswerBlanks(event, index)
                                                                                     }}
                                                                                     placeholder="Enter Weightage"
+                                                                                    onWheel={(e) => e.target.blur()}
                                                                                 />
                                                                             </Col>
 
@@ -2614,6 +2888,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                     value={form.answer_weightage}
                                                                                     onChange={event => handleAnswerBlanks(event, index)}
                                                                                     placeholder="Enter Weightage"
+                                                                                    onWheel={(e) => e.target.blur()}
                                                                                 />
                                                                             </Col>
 
@@ -2836,6 +3111,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                                         min="0.01"
                                                                                         onChange={event => handleDescriptiveAnswerBlanks(event, index)}
                                                                                         placeholder="Enter Weightage"
+                                                                                        onWheel={(e) => e.target.blur()}
                                                                                     />
                                                                                 </Col>
                                                                             )}
@@ -2883,49 +3159,70 @@ const AddQuestions = ({ className, ...rest }) => {
 
                                                                         )}
 
+
                                                                         {form.answer_type === "Equation" && descriptiveAnswerOptionsForm && (
-
-                                                                            <Row key={index}>
-
-                                                                                <Col xs={6}>
-                                                                                    <label className="floating-label">
-                                                                                        <small className="text-danger"></small>
-                                                                                        Keyword
-                                                                                    </label>
-                                                                                    <textarea
-                                                                                        value={form.answer_content}
-                                                                                        className="form-control"
-                                                                                        error={touched.answer_content && errors.answer_content}
-                                                                                        label="answer_content"
-                                                                                        name="answer_content"
-                                                                                        onBlur={handleBlur}
-                                                                                        type="textarea"
-                                                                                        onChange={(event) => {
-                                                                                            handleDescriptiveAnswerBlanks(event, index);
-                                                                                        }}
-                                                                                        placeholder="Enter Keyword"
-                                                                                    />
-                                                                                </Col>
-
-                                                                                <Col xs={6}>
-                                                                                    <label className="floating-label">
-                                                                                        <small className="text-danger"></small>
-                                                                                        Preview
-                                                                                    </label>
-
-                                                                                    {descriptiveEquation.length >= 1 && (
-                                                                                        <MathJax.Provider>
-                                                                                            {(descriptiveEquation[index] && (<div>
-                                                                                                <MathJax.Node inline formula={descriptiveEquation[index]} />
-                                                                                            </div>))}
-                                                                                        </MathJax.Provider>
-                                                                                    )}
-
-                                                                                </Col>
-
-                                                                            </Row>
-
+                                                                            <>
+                                                                                <Row key={index}>
+                                                                                    <Col xs={12}>
+                                                                                        <label className="floating-label">
+                                                                                            <small className="text-danger"></small>
+                                                                                            Keyword
+                                                                                        </label>
+                                                                                        <textarea
+                                                                                            value={form.answer_content}
+                                                                                            className="form-control"
+                                                                                            error={touched.answer_content && errors.answer_content}
+                                                                                            label="answer_content"
+                                                                                            name="answer_content"
+                                                                                            onBlur={handleBlur}
+                                                                                            type="textarea"
+                                                                                            onChange={(event) => {
+                                                                                                handleDescriptiveAnswerBlanks(event, index);
+                                                                                            }}
+                                                                                            placeholder="Enter Keyword"
+                                                                                        />
+                                                                                    </Col>
+                                                                                </Row>
+                                                                                <br />
+                                                                                <Row key={index}>
+                                                                                    <Col xs={12}>
+                                                                                        <label className="floating-label">
+                                                                                            <small className="text-danger"></small>
+                                                                                            Preview
+                                                                                        </label>
+                                                                                        <div
+                                                                                            style={{
+                                                                                                maxHeight: "200px", // Set the maximum height of the preview container
+                                                                                                overflowY: "auto", // Enable vertical scrolling when content exceeds the height
+                                                                                            }}
+                                                                                        >
+                                                                                            {descriptiveEquation.length >= 1 && form.answer_content && (
+                                                                                                <MathJax.Provider>
+                                                                                                    {descriptiveEquation[index] && (
+                                                                                                        <div
+                                                                                                            style={{
+                                                                                                                display: "contents",
+                                                                                                            }}
+                                                                                                        >
+                                                                                                            <MathJax.Node
+                                                                                                                styles={{
+                                                                                                                    ".MathJax_Display": {
+                                                                                                                        display: "contents",
+                                                                                                                    },
+                                                                                                                }}
+                                                                                                                inline
+                                                                                                                formula={descriptiveEquation[index]}
+                                                                                                            />
+                                                                                                        </div>
+                                                                                                    )}
+                                                                                                </MathJax.Provider>
+                                                                                            )}
+                                                                                        </div>
+                                                                                    </Col>
+                                                                                </Row>
+                                                                            </>
                                                                         )}
+
 
                                                                     </Card.Body>
                                                                 </Card>
@@ -2977,7 +3274,6 @@ const AddQuestions = ({ className, ...rest }) => {
 
                                         <br />
                                         <Row className="my-3">
-                                            <Col></Col>
                                             <Col>
                                                 {ansWeightageErrMsg && (
                                                     <>
@@ -3001,9 +3297,64 @@ const AddQuestions = ({ className, ...rest }) => {
                                                     </>
                                                 )}
 
+                                                {weightageEmpty && (
+                                                    <> <div
+                                                        style={{ color: 'red' }}
+                                                        className="error">
+                                                        Weightage cannot be empty, please fill weightage in each option!
+                                                    </div></>
+                                                )}
+
+                                                {keyWordsEmptyErr && (
+                                                    <> <div
+                                                        style={{ color: 'red' }}
+                                                        className="error">
+                                                        Keywords cannot be empty, please fill Keyword in each option!
+                                                    </div> </>
+                                                )}
+
+                                                {answersEmptyErr && (
+                                                    <> <div
+                                                        style={{ color: 'red' }}
+                                                        className="error">
+                                                        Answers cannot be empty, please fill Answer in each option!
+                                                    </div> </>
+                                                )}
+
+                                                {mismatchWeightageErr && (
+                                                    <> <div
+                                                        style={{ color: 'red' }}
+                                                        className="error">
+                                                        The addition of all the weightage options is not equal to Marks!
+                                                    </div> </>
+                                                )}
+
+                                                {optionsEmptyErr && (
+                                                    <> <div
+                                                        style={{ color: 'red' }}
+                                                        className="error">
+                                                        Placeholder cannot be empty, please select any of the options!
+                                                    </div> </>
+                                                )}
+
+                                                {answerTypeEmptyErr && (
+                                                    <> <div
+                                                        style={{ color: 'red' }}
+                                                        className="error">
+                                                        Answer Type cannot be empty, please select any of the types!
+                                                    </div> </>
+                                                )}
+
+                                                {blanksMismatchErr && (
+                                                    <> <div
+                                                        style={{ color: 'red' }}
+                                                        className="error">
+                                                        Options is not provided for every blank, please re-check!
+                                                    </div> </>
+                                                )}
 
                                             </Col>
-                                            <Col>
+                                            <Col xs={4}>
                                                 <Row>
                                                     <Col>
                                                         <Button
@@ -3022,7 +3373,18 @@ const AddQuestions = ({ className, ...rest }) => {
                                                             size="small"
                                                             type="submit"
                                                             variant="info"
-                                                            onClick={() => sessionStorage.setItem('click_event', 'Save')}>
+                                                            onClick={() => {
+                                                                setKeyWordsEmptyErr(false);
+                                                                setAnswersEmptyErr(false);
+                                                                setOptionsEmptyErr(false);
+                                                                setWeightageEmpty(false);
+                                                                setBlanksMismatchErr(false);
+                                                                setMismatchWeightageErr(false);
+                                                                setAnswerTypeEmptyErr(false);
+                                                                setBlanksMismatchErr(false);
+                                                                sessionStorage.setItem('click_event', 'Save');
+                                                            }}
+                                                        >
                                                             Save
                                                         </Button>
                                                     </Col>
@@ -3033,7 +3395,17 @@ const AddQuestions = ({ className, ...rest }) => {
                                                             size="small"
                                                             type="submit"
                                                             variant="success"
-                                                            onClick={() => sessionStorage.setItem('click_event', 'Submit')}>
+                                                            onClick={() => {
+                                                                setKeyWordsEmptyErr(false);
+                                                                setAnswersEmptyErr(false);
+                                                                setWeightageEmpty(false);
+                                                                setBlanksMismatchErr(false);
+                                                                setOptionsEmptyErr(false);
+                                                                setMismatchWeightageErr(false);
+                                                                setAnswerTypeEmptyErr(false);
+                                                                setBlanksMismatchErr(false);
+                                                                sessionStorage.setItem('click_event', 'Submit');
+                                                            }}>
                                                             Submit
                                                         </Button>
                                                     </Col>

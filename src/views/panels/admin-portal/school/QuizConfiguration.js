@@ -353,8 +353,8 @@ const QuizConfiguration = ({ className, rest, id }) => {
 
     useEffect(() => {
 
-        setIsLoading(true);
-        fetchIndividualSchoolDetails();
+        // setIsLoading(true);
+        // fetchIndividualSchoolDetails();
 
 
     }, []);
@@ -394,9 +394,9 @@ const QuizConfiguration = ({ className, rest, id }) => {
                                             setStatus({ success: true });
                                             setSubmitting(true);
 
-                                            if (selectedTestMode === '' || selectedTestMode === undefined || selectedTestMode === null|| selectedTestMode === 'Select...') {
+                                            if (selectedTestMode === '' || selectedTestMode === undefined || selectedTestMode === null || selectedTestMode === 'Select...') {
                                                 setTestModeErr(true)
-                                            } else if (selectedTestType === '' || selectedTestType === undefined || selectedTestType === null|| selectedTestType === 'Select...') {
+                                            } else if (selectedTestType === '' || selectedTestType === undefined || selectedTestType === null || selectedTestType === 'Select...') {
                                                 setTestTypeErr(true)
                                             } else {
                                                 const formData = {
@@ -612,6 +612,7 @@ const QuizConfiguration = ({ className, rest, id }) => {
                                                             onBlur={handleBlur}
                                                             onChange={handleChange}
                                                             type="number"
+                                                            onWheel={(e) => e.target.blur()}
                                                             value={values.min_no_of_questions}
                                                             placeholder="Minimum Number Of Questions"
                                                         />
@@ -620,7 +621,7 @@ const QuizConfiguration = ({ className, rest, id }) => {
                                                     </Col>
                                                     <Col style={{ display: 'flex', gap: '55px', marginTop: 'auto' }}>
                                                         <label className="floating-label">
-                                                            <small className="text-danger"></small>Topic_selection?
+                                                            <small className="text-danger"></small>Topic Selection?
                                                         </label>
                                                         <div className="row profile-view-radio-button-view">
                                                             <Form.Check
@@ -660,6 +661,7 @@ const QuizConfiguration = ({ className, rest, id }) => {
                                                             onBlur={handleBlur}
                                                             onChange={handleChange}
                                                             type="number"
+                                                            onWheel={(e) => e.target.blur()}
                                                             value={values.passPercentageL1Pre}
                                                         // placeholder="To clear the Quiz"
                                                         />
@@ -680,6 +682,7 @@ const QuizConfiguration = ({ className, rest, id }) => {
                                                             onBlur={handleBlur}
                                                             onChange={handleChange}
                                                             type="number"
+                                                            onWheel={(e) => e.target.blur()}
                                                             value={values.passPercentageL2Pre}
                                                         // placeholder="To clear the Quiz"
                                                         />
@@ -714,6 +717,7 @@ const QuizConfiguration = ({ className, rest, id }) => {
                                                                     onBlur={handleBlur}
                                                                     onChange={handleChange}
                                                                     type="number"
+                                                                    onWheel={(e) => e.target.blur()}
                                                                     value={values.minStudentsPre}
                                                                 // placeholder="To clear the Quiz"
                                                                 />
@@ -747,6 +751,7 @@ const QuizConfiguration = ({ className, rest, id }) => {
                                                                     onBlur={handleBlur}
                                                                     onChange={handleChange}
                                                                     type="number"
+                                                                    onWheel={(e) => e.target.blur()}
                                                                     // placeholder="After unlocking from Need Attention"
                                                                     value={values.noOfAttemptsPre}
                                                                 />
@@ -894,6 +899,7 @@ const QuizConfiguration = ({ className, rest, id }) => {
                                                                                     onBlur={handleBlur}
                                                                                     onChange={handleChange}
                                                                                     type="number"
+                                                                                    onWheel={(e) => e.target.blur()}
                                                                                     // placeholder="After unlocking from Need Attention"
                                                                                     value={values.percentageOfStudentsPre}
                                                                                 />
@@ -930,6 +936,7 @@ const QuizConfiguration = ({ className, rest, id }) => {
                                                             onBlur={handleBlur}
                                                             onChange={handleChange}
                                                             type="number"
+                                                            onWheel={(e) => e.target.blur()}
                                                             value={values.passPercentageL1Post}
                                                         // placeholder="To clear the Quiz"
                                                         />
@@ -950,6 +957,7 @@ const QuizConfiguration = ({ className, rest, id }) => {
                                                             onBlur={handleBlur}
                                                             onChange={handleChange}
                                                             type="number"
+                                                            onWheel={(e) => e.target.blur()}
                                                             value={values.passPercentageL2Post}
                                                         // placeholder="To clear the Quiz"
                                                         />
@@ -974,6 +982,7 @@ const QuizConfiguration = ({ className, rest, id }) => {
                                                             onBlur={handleBlur}
                                                             onChange={handleChange}
                                                             type="number"
+                                                            onWheel={(e) => e.target.blur()}
                                                             value={values.passPercentageL3Post}
                                                         // placeholder="To clear the Quiz"
                                                         />
@@ -1005,6 +1014,7 @@ const QuizConfiguration = ({ className, rest, id }) => {
                                                                     onBlur={handleBlur}
                                                                     onChange={handleChange}
                                                                     type="number"
+                                                                    onWheel={(e) => e.target.blur()}
                                                                     value={values.minStudentsPost}
                                                                 // placeholder="To clear the Quiz"
                                                                 />
@@ -1043,6 +1053,7 @@ const QuizConfiguration = ({ className, rest, id }) => {
                                                                     onBlur={handleBlur}
                                                                     onChange={handleChange}
                                                                     type="number"
+                                                                    onWheel={(e) => e.target.blur()}
                                                                     // placeholder="After unlocking from Need Attention"
                                                                     value={values.noOfAttemptsPost}
                                                                 />
@@ -1164,6 +1175,7 @@ const QuizConfiguration = ({ className, rest, id }) => {
                                                                                 onBlur={handleBlur}
                                                                                 onChange={handleChange}
                                                                                 type="number"
+                                                                                onWheel={(e) => e.target.blur()}
                                                                                 // placeholder="After unlocking from Need Attention"
                                                                                 value={values.percentageOfStudentsPost}
                                                                             />

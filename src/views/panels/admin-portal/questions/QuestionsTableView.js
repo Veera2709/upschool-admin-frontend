@@ -299,12 +299,12 @@ function Table({ columns, data, modalOpen }) {
             <input
               className="form-control ml-2"
               type="number"
+
               defaultValue={pageIndex + 1}
               onChange={(e) => {
                 const page = e.target.value ? Number(e.target.value) - 1 : 0;
                 gotoPage(page);
               }}
-              onWheel={(e) => e.target.blur()}
               style={{ width: '100px' }}
             />
           </span>
@@ -339,6 +339,10 @@ const QuestionsTableView = ({ _questionStatus }) => {
     {
       Header: 'Question',
       accessor: 'question_label'
+    },
+    {
+      Header: 'Appears in',
+      accessor: 'appears_in'
     },
     // {
     //   Header: 'Status',
@@ -501,7 +505,7 @@ const QuestionsTableView = ({ _questionStatus }) => {
         } else {
           hideLoader();
           setIsEditModalOpen(false);
-          sweetAlertHandler({ title: MESSAGES.TTTLES.Goodjob, type: 'success', text: MESSAGES.SUCCESS.UpdatingUser });
+          sweetAlertHandler({ type: 'success', text: MESSAGES.SUCCESS.UpdatingUser });
 
           fetchUserData();
 
@@ -555,6 +559,7 @@ const QuestionsTableView = ({ _questionStatus }) => {
     for (let index = 0; index < responseData.length; index++) {
 
       responseData[index].id = index + 1;
+      responseData[index].appears_in = responseData[index].appears_in === 'preOrPost' ? 'Pre/Post' : responseData[index].appears_in === 'worksheetOrTest' ? 'Worksheet/Test' : 'N.A.';
 
       responseData[index]['action'] = (
         <>
@@ -640,10 +645,13 @@ const QuestionsTableView = ({ _questionStatus }) => {
     axios.post(dynamicUrl.fetchAllQuestionsData, {
       data: {
         question_status: _questionStatus,
-        question_active_status: payLoadStatus
+        question_active_status: payLoadStatus,
+        questions_type: "All"
       }
     }, {
-      headers: { Authorization: sessionStorage.getItem('user_jwt') }
+      headers: {
+        Authorization: sessionStorage.getItem('user_jwt')
+      }
     })
       .then((response) => {
 
@@ -670,11 +678,7 @@ const QuestionsTableView = ({ _questionStatus }) => {
           history.push('/auth/signin-1');
           window.location.reload();
 
-        } else {
-
-          fetchUserData();
         }
-
       })
 
   };

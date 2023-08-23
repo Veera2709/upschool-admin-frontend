@@ -1136,21 +1136,6 @@ const AddQuestions = ({ className, ...rest }) => {
                                                     <small className="text-danger">* </small>
                                                     Question Category
                                                 </label>
-
-                                                {/* <select
-                                                        name="questionCategory"
-                                                        value={selectedValue}
-                                                        className="form-control"
-                                                        classNamePrefix="Select"
-                                                        onChange={event => handleQuestionCategory(event)}
-                                                    >
-                                                        {(options.length > 0) && options.map((option) => (
-                                                            <option key={option.value} value={option.value}>
-                                                                {option.label}
-                                                            </option>
-                                                        ))}
-                                                    </select> */}
-
                                                 <Select
                                                     name="questionCategory"
                                                     options={options}

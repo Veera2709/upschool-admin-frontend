@@ -6,6 +6,7 @@ import * as Yup from 'yup';
 import { Formik } from 'formik';
 import { useHistory } from 'react-router-dom';
 import withReactContent from 'sweetalert2-react-content';
+import Select from 'react-select';
 
 import MESSAGES from '../../../../helper/messages';
 import dynamicUrl from '../../../../helper/dynamicUrls';
@@ -14,6 +15,8 @@ import { bgvAlerts } from '../../../common-ui-components/sow/bgv-api/bgvAlerts';
 import { areFilesInvalidBulkUpload, isEmptyObject } from '../../../../util/utils';
 import { bulkUpload } from './user-bulk-upload-api/bulkUpload';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
+import { isEmptyArray } from '../../../../util/utils';
+
 
 const UsersBulkUpload = ({ className, ...rest }) => {
 
@@ -25,6 +28,8 @@ const UsersBulkUpload = ({ className, ...rest }) => {
   const [displayHeader, setDisplayHeader] = useState(true);
   const displayHeading = sessionStorage.getItem('user_type');
   const threadLinks = document.getElementsByClassName('page-header');
+  const [selectedSchoolId, setSelectedSchoolId] = useState('');
+  const [schoolMandatoryErr, setSchoolMandatoryErr] = useState(false);
 
   const sweetAlertHandler = (alert) => {
     const MySwal = withReactContent(Swal);
@@ -70,9 +75,21 @@ const UsersBulkUpload = ({ className, ...rest }) => {
 
           if (result) {
             console.log('inside res');
+            if (response.data.Items.length === 0) {
+              Swal.fire({
+                title: 'No Schools Available',
+                text: 'There is no data to display.',
+                icon: 'warning',
+                confirmButtonText: 'OK'
+              }).then(() => {
+                window.history.back();
+              });
+            }
 
-            let responseData = response.data;
-            setSchoolName_ID(responseData);
+            let tempCategoryArr = [];
+            (response.data.Items.map(e => { tempCategoryArr.push({ value: e.school_id, label: e.school_name }) }));
+            isEmptyArray(tempCategoryArr) ? setSchoolName_ID([]) : setSchoolName_ID(tempCategoryArr);
+
             hideLoader();
 
             console.log(threadLinks);
@@ -208,15 +225,21 @@ const UsersBulkUpload = ({ className, ...rest }) => {
         }
       } else {
         console.log('No files uploaded');
-        sweetAlertHandler({ 
+        sweetAlertHandler({
           // title: MESSAGES.TTTLES.Goodjob, 
           type: 'success',
-           text: MESSAGES.SUCCESS.FilesUploaded });
+          text: MESSAGES.SUCCESS.FilesUploaded
+        });
         hideLoader();
         setDisableButton(false);
       }
     }
   };
+
+  const getSelectedSchoolDetails = (e) => {
+    console.log('School ID', e.value);
+    setSelectedSchoolId(e.value);
+  }
 
   return (
 
@@ -267,40 +290,47 @@ const UsersBulkUpload = ({ className, ...rest }) => {
                   onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
 
                     setSubmitting(true);
-                    showLoader();
 
                     let excelFile = document.getElementById('excelFileUploadUrl').files[0];
 
-                    const filteredResult = schoolName_ID.Items.find((e) => e.school_name.trim() === schoolNameRef.current.value.trim());
+                    console.log(selectedSchoolId);
 
-                    console.log(filteredResult);
-                    console.log(schoolName_ID.Items);
-                    console.log(schoolNameRef.current.value);
-
-                    let sendData = {
-                      school_id: '',
-                      ExcelFile: ''
-                    }
-
-                    if (excelFile) {
-
-                      sendData.school_id = filteredResult.school_id;
-                      sendData.ExcelFile = excelFile.name;
-
-                      console.log('Submitting', sendData);
-
-                      if (areFilesInvalidBulkUpload([excelFile]) !== 0) {
-                        sweetAlertHandler(bgvAlerts.invalidFilesPresentBulkUpload);
-                        hideLoader();
-                      } else {
-                        showLoader();
-                        setDisableButton(true);
-                        _uploadBulk(sendData);
-                      }
+                    if (selectedSchoolId === "" || selectedSchoolId === 'undefined' || selectedSchoolId === undefined) {
+                      setSchoolMandatoryErr(true);
                     } else {
-                      sweetAlertHandler(bgvAlerts.noFilesPresentBulkUpload);
-                      hideLoader();
+
+                      showLoader();
+                      const filteredResult = schoolName_ID.find((e) => e.value === selectedSchoolId);
+
+                      console.log(filteredResult);
+                      console.log(schoolName_ID);
+
+                      let sendData = {
+                        school_id: '',
+                        ExcelFile: ''
+                      }
+
+                      if (excelFile) {
+
+                        sendData.school_id = filteredResult.value;
+                        sendData.ExcelFile = excelFile.name;
+
+                        console.log('Submitting', sendData);
+
+                        if (areFilesInvalidBulkUpload([excelFile]) !== 0) {
+                          sweetAlertHandler(bgvAlerts.invalidFilesPresentBulkUpload);
+                          hideLoader();
+                        } else {
+                          showLoader();
+                          setDisableButton(true);
+                          _uploadBulk(sendData);
+                        }
+                      } else {
+                        sweetAlertHandler(bgvAlerts.noFilesPresentBulkUpload);
+                        hideLoader();
+                      }
                     }
+
 
                   }}
                 >
@@ -315,29 +345,29 @@ const UsersBulkUpload = ({ className, ...rest }) => {
                               <label>School</label>
                             </Col>
                             <Col sm={12}>
-                              <select
-                                className="form-control"
-                                error={touched.schoolName && errors.schoolName}
+
+                              <Select
                                 name="schoolName"
-                                onBlur={handleBlur}
-                                onChange={handleChange}
-                                type="text"
-                                ref={schoolNameRef}
-                                value={values.schoolName}
-                              >
+                                options={schoolName_ID}
+                                className="basic-multi-select"
+                                classNamePrefix="Select"
+                                onChange={(event) => {
+                                  setSchoolMandatoryErr(false)
+                                  getSelectedSchoolDetails(event)
+                                }}
+                                menuPortalTarget={document.body}
+                                styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                              />
 
-                                {schoolName_ID.Items.map((schoolData) => {
-
-                                  return <option key={schoolData.school_id}>
-                                    {schoolData.school_name}
-                                  </option>
-
-                                })}
-
-                              </select>
                               {touched.schoolName && errors.schoolName && (
                                 <small className="text-danger form-text">{errors.schoolName}</small>
                               )}
+
+                              {
+                                schoolMandatoryErr === true && (
+                                  <small className="text-danger form-text">{'School is required'}</small>
+                                )
+                              }
                             </Col>
                           </Row>
 

@@ -106,7 +106,8 @@ const AddDigiCard = (
   };
 
   const previewVoiceNote = (e) => {
-    setVoiceNote(URL.createObjectURL(e.target.files[0]));
+    let FileLength = e.target.files.length
+    FileLength === 1 ? setVoiceNote(URL.createObjectURL(e.target.files[0])) : setVoiceNote()
   }
 
   function encodeImageFileAsURL(e) {
@@ -264,7 +265,6 @@ const AddDigiCard = (
                   .trim()
                   .min(2, Constants.AddDigiCard.DigiCardtitleTooShort)
                   .max(32, Constants.AddDigiCard.DigiCardtitleTooLong)
-                  .matches(Constants.AddDigiCard.DigiCardtitleRegex, Constants.AddDigiCard.DigiCardtitleValidation)
                   .required(Constants.AddDigiCard.DigiCardtitleRequired),
                 digicard_image: Yup.string()
                   .trim()
@@ -459,15 +459,7 @@ const AddDigiCard = (
                             {touched.displayname && errors.displayname && <small className="text-danger form-text">{errors.displayname}</small>}
                           </div>
                         </Col>
-
-
                       </Row>
-
-
-
-
-
-
                       <div className="form-group fill">
                         <label className="floating-label" htmlFor="digicard_image">
                           <small className="text-danger">* </small>DigiCard Logo
@@ -566,11 +558,6 @@ const AddDigiCard = (
                         )}
                         <small className="text-danger form-text" style={{ display: docError ? 'none' : 'block' }}>Invalid File Type or File size is Exceed More Than 10MB</small>
                       </div>
-
-
-
-
-
 
                       <div className='ReactTags'>
                         <label className="floating-label">

@@ -21,6 +21,7 @@ import { Link, useHistory } from 'react-router-dom';
 function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
     const [imgFile, setImgFile] = useState('');
     const [data, setData] = useState({});
+    const [isFormValid, setIsFormValid] = useState(false);
     const [_radio, _setRadio] = useState(false);
     const [previousBoards, setPreviousBoards] = useState([]);
     const [previousLabel, setPreviousLabel] = useState([])
@@ -34,6 +35,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
     const [loader, showLoader, hideLoader] = useFullPageLoader();
     const [imgEmptyErr, setImgEmptyErr] = useState(false);
     const [schoolBoardErrMsg, setSchoolBoardErrMsg] = useState(false);
+    const [imageErr, setImageErr] = useState(false);
     const history = useHistory();
 
     const schoolNameRef = useRef('');
@@ -67,22 +69,33 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
     }
 
     const previewImage = (e) => {
+        console.log("event", e);
         console.log('imageURL: ', e.target.files[0]);
-        setImgFile(URL.createObjectURL(e.target.files[0]));
-        let imageFile = e.target.files[0];
-        setImgEmptyErr(false);
-        if (areFilesInvalid([imageFile]) !== 0) {
-            setIsOpen(false);
-            setImageStatus(true);
-            sweetAlertHandler({ title: 'Sorry', type: 'error', text: 'Invalid File or File size exceeds 2 MB!' });
-            hideLoader();
+        let FileLength = e.target.files.length
+        if (FileLength === 1) {
+            let imageFile = e.target.files[0];
+            // setImgEmptyErr(false);
+            if (areFilesInvalid([imageFile]) !== 0) {
+                console.log("if condition!");
+                setImageErr(true)
+                setImgFile('')
+            } else {
+                setImageErr(false)
+                setImgFile(URL.createObjectURL(e.target.files[0]));
+            }
+        } else {
+            setImgFile('')
         }
+
     }
 
     const handleRadioChange = (e) => {
         _setRadio(!_radio);
         _radio === true ? setScbscription_active('No') : setScbscription_active('Yes');
     }
+    // const handleRadioChange = (e) => {
+    //     _setRadio(e.target.checked);
+    // };
 
     const schoolBoardOptions = [
         { value: 'ICSE', label: 'ICSE' },
@@ -130,26 +143,46 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
         <>
             <Formik
                 enableReinitialize={true}
+                // initialValues={{
+                //     school_name: data === {} ? '' : data.school_name,
+                //     // school_board: data === {} ? '' : data.school_board,
+                //     school_logo: data === {} ? '' : data.school_logo,
+                //     subscription_active: scbscription_active,
+
+                //     contact_name: data === {} ? '' : data.contact_name,
+                //     address_line1: data === {} ? '' : data.address_line1,
+                //     address_line2: data === {} ? '' : data.address_line2,
+                //     city: data === {} ? '' : data.city,
+                //     pincode: data === {} ? '' : data.pincode,
+                //     phone_no: data === {} ? '' : data.phoneNumber,
+
+                //     contact_name2: data === {} ? '' : data.contact_name,
+                //     addres_line1_2: data === {} ? '' : data.address_line1,
+                //     address_line2_2: data === {} ? '' : data.address_line2,
+                //     city2: data === {} ? '' : data.city,
+                //     pincode2: data === {} ? '' : data.pincode,
+                //     phone_no2: data === {} ? '' : data.phoneNumber,
+                //     GST_no: data === {} ? '' : data.GST_no,
+                // }}
                 initialValues={{
-                    school_name: data === {} ? '' : data.school_name,
-                    // school_board: data === {} ? '' : data.school_board,
-                    school_logo: data === {} ? '' : data.school_logo,
-                    subscription_active: scbscription_active,
+                    school_name: "",
+                    school_logo: "",
+                    subscription_active: "",
 
-                    contact_name: data === {} ? '' : data.contact_name,
-                    address_line1: data === {} ? '' : data.address_line1,
-                    address_line2: data === {} ? '' : data.address_line2,
-                    city: data === {} ? '' : data.city,
-                    pincode: data === {} ? '' : data.pincode,
-                    phone_no: data === {} ? '' : data.phoneNumber,
+                    contact_name: "",
+                    address_line1: "",
+                    address_line2: "",
+                    city: "",
+                    pincode: "",
+                    phone_no: "",
 
-                    contact_name2: data === {} ? '' : data.contact_name,
-                    addres_line1_2: data === {} ? '' : data.address_line1,
-                    address_line2_2: data === {} ? '' : data.address_line2,
-                    city2: data === {} ? '' : data.city,
-                    pincode2: data === {} ? '' : data.pincode,
-                    phone_no2: data === {} ? '' : data.phoneNumber,
-                    GST_no: data === {} ? '' : data.GST_no,
+                    contact_name2: "",
+                    addres_line1_2: "",
+                    address_line2_2: "",
+                    city2: "",
+                    pincode2: "",
+                    phone_no2: "",
+                    GST_no: "",
                 }}
 
                 validationSchema={
@@ -161,6 +194,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                         contact_name: Yup.string().matches(Constants.Common.alphabetsWithSpaceRegex, 'Contact Name must contain only alphabets!').max(255).required('Contact Name is required'),
 
                         address_line1: Yup.string().max(255).required('Address Line 1 is required'),
+
 
                         address_line2: Yup.string().max(255).required('Address Line 2 is required'),
 
@@ -241,9 +275,10 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                             console.log('Submitting', sendData);
 
                             if (areFilesInvalid([imageFile]) !== 0) {
-                                setIsOpen(false);
-                                sweetAlertHandler({ title: 'Sorry', type: 'error', text: 'Invalid File or File size exceeds 2 MB!' });
-                                hideLoader();
+                                // setIsOpen(false);
+                                // sweetAlertHandler({ title: 'Sorry', type: 'error', text: 'Invalid File or File size exceeds 2 MB!' });
+                                // hideLoader();
+                                setImageErr(true)
                             } else {
                                 // console.log('formData: ', JSON.stringify(formData))
                                 console.log('formData: ', JSON.stringify({ data: formData }))
@@ -377,15 +412,17 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                                 allFilesData.push(selectedFile);
                             }
                         });
+
                     }
                     else {
-                        
+
                         console.log("CHOOSE SCHOOL BOARD");
                         setSchoolBoardErrMsg(true);
                         if (!imageFile) {
                             setImgEmptyErr(true);
                         }
                     }
+
                 }
                 }
             >
@@ -508,6 +545,9 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                                     {imgEmptyErr && (
                                         <small className="text-danger form-text">Logo required</small>
                                     )}
+                                    {imageErr && (
+                                        <small className='text-danger'>Invalid File or File size exceeds 2 MB!</small>
+                                    )}
                                 </div>
                             </div>
                             <div className="col-md-6">
@@ -539,9 +579,6 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                                         }}
                                     />
 
-                                    {schoolBoardErrMsg && (
-                                        <small className="text-danger form-text">{'Please select an option'}</small>
-                                    )}
 
                                 </div>
                             </div>
@@ -846,6 +883,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                                                 onChange={handleChange}
                                                 onWheel={(e) => e.target.blur()}
                                                 type="number"
+
                                                 // ref={permCrimPhoneNoRef}
                                                 value={values.pincode2}
                                             />
@@ -944,7 +982,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                         </div>
                     </form>
                 )}
-            </Formik>
+            </Formik >
             {loader}
         </>
     )
