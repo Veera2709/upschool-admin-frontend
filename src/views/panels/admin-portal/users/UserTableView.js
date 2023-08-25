@@ -22,7 +22,7 @@ import BasicSpinner from '../../../../helper/BasicSpinner';
 function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParentFunction, onPageChange, pageCountRes }) {
   // console.log("data", data);
   // console.log("_userRole in Table", userRole);
-  console.log("pageCountRes", pageCountRes)
+  // console.log("pageCountRes", pageCountRes)
 
 
   const [stateUser, setStateUser] = useState([])
@@ -1281,13 +1281,8 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
       } else {
         console.log("Fetching user data failed:", error);
       }
-    }
+    };
   };
-
-
-
-
-
 
   /////
   const handleStartKeysUpdate = (newStartKey) => {
