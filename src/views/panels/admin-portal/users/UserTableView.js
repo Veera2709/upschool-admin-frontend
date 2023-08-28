@@ -209,7 +209,6 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
           hideLoader();
           sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
           history.push('/admin-portal/' + pageLocation)
-          // fetchUserData();
         } else {
           console.log("response : ", response);
           if (response.data === 200) {
@@ -349,7 +348,6 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
                   });
 
                 history.push('/admin-portal/' + pageLocation)
-                // fetchUserData();
               } else {
                 console.log("response : ", response);
                 if (response.data === 200) {
@@ -465,6 +463,8 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
     }
     console.log('Input value:', inputValue);
     const newPageNumber = parseInt(e.target.value, 10) - 1;
+
+    console.log("newPageNumber", newPageNumber);
     onPageChange(newPageNumber);
 
     setInitialValue(inputValue)
@@ -622,8 +622,6 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
 
 const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
   // console.log("_userRole : ", _userRole);
-
-
   const [dataFromChild, setDataFromChild] = useState('');
   const [users, setUsers] = useState([])
   const history = useHistory();
@@ -665,6 +663,12 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
     console.log('Data received in Parent:', data);
     setDataFromChild(data);
 
+    // Reset indexes to 1 when search keyword changes
+    if (data.searchedKeyword !== dataFromChild.searchedKeyword) {
+      console.log('Search keyword changed. Resetting indexes to 1.');
+      setIndexes(1);
+    }
+
     // Pass the data to the GrandParentComponent
     sendDataToGrandParent(data);
   };
@@ -672,7 +676,7 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
     console.log('Page number received:', pageNumber);
 
 
-    console.log('Type of pageNumber:', typeof pageNumber);
+    console.log('Type of pageNumber:', typeof (pageNumber));
     console.log('Value of pageNumber:', pageNumber);
 
 
@@ -1239,19 +1243,25 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
       );
 
       const resultData = response.data;
-      // console.log("resultData", resultData);
+      console.log("resultData", resultData.pagesCount);
 
       if (resultData) {
         setIsLoading(false);
         updateValues(resultData);
         setTemData(resultData);
-        setPageCountRes(resultData.pagesCount)
+        let tempPageCount = resultData.pagesCount === undefined || resultData.pagesCount === 'undefined' || resultData.pagesCount === "" ? pageCountRes : resultData.pagesCount;
+        setPageCountRes(tempPageCount);
+        // setPageCountRes(resultData.pagesCount)
         hideLoader();
 
         const newStartKey = resultData.lastKey;
 
         resultData.lastKey !== undefined && setLastKeys(resultData.lastKey);
         console.log("lastKey : ", resultData.lastKey);
+
+
+
+
 
         // if (newStartKey !== startKeys && newStartKey !== null) {
         //   handleStartKeysUpdate(newStartKey);
@@ -1281,7 +1291,7 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
       } else {
         console.log("Fetching user data failed:", error);
       }
-    };
+    }
   };
 
   /////
@@ -1303,9 +1313,6 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
       history.push('/auth/signin-1');
       window.location.reload();
     }
-    // else if (startKeys !== null) {
-    //   fetchUserData();
-    // }
     else {
       console.log('Updated indexes state useeff:', indexes);
       fetchUserData();
@@ -1427,3 +1434,4 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
 };
 
 export default UserTableView;
+
