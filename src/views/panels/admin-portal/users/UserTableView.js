@@ -1393,8 +1393,6 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
                                   </Card.Header>
 
                                   <Card.Body>
-
-
                                     <Table
                                       columns={columns}
                                       data={userData}
@@ -1407,7 +1405,6 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
                                       onPageChange={handlePageChange}
                                       pageCountRes={pageCountRes}
                                     />
-
                                   </Card.Body>
                                 </Card>
 
