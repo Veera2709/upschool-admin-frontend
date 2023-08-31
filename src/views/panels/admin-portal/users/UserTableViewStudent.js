@@ -780,7 +780,7 @@ const UserTableViewStudent = ({ _userRole, sendDataToGrandParent }) => {
             {
                 data: {
                     page_size: dataFromChild.page_size === undefined ? 10 : dataFromChild.page_size,
-                    user: _userRole,
+                    user: _userRole.replace("s", ""),
                     // user: dataFromChild.user,
                     start_key: startKeys,
                     searchedKeyword: dataFromChild.searchedKeyword === undefined ? "" : dataFromChild.searchedKeyword,
