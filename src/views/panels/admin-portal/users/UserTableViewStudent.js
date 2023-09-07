@@ -13,11 +13,21 @@ import dynamicUrl from '../../../../helper/dynamicUrls';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import BasicSpinner from '../../../../helper/BasicSpinner';
 
-function Table({ columns, data, modalOpen, userRole }) {
-
+function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParentFunction }) {
     console.log("_userRole in Table", userRole);
-    const initiallySelectedRows = React.useMemo(() => new Set(["1"]), []);
+    const [loader, showLoader, hideLoader] = useFullPageLoader();
+    const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
+    const MySwal = withReactContent(Swal);
+    const history = useHistory();
+    const [searchValue, setSearchValue] = useState('');
 
+    const [pageIndexValue, setPageIndexValue] = useState(1);
+
+    const [dataFromChild, setDataFromChild] = useState('');
+    const [startKeys, setStartKeys] = useState("0");
+
+
+    const initiallySelectedRows = React.useMemo(() => new Set(["1"]), []);
     const {
         getTableProps,
         getTableBodyProps,
@@ -43,7 +53,7 @@ function Table({ columns, data, modalOpen, userRole }) {
         {
             columns,
             data,
-            initialState: { pageIndex: 0, pageSize: 10, selectedRowPaths: initiallySelectedRows },
+            initialState: { pageIndex: 0, pageSize: 10, selectedRowPaths: initiallySelectedRows, globalFilter: searchValue },
             userRole
         },
         useGlobalFilter,
@@ -52,12 +62,12 @@ function Table({ columns, data, modalOpen, userRole }) {
         useRowSelect
     );
 
-    const [loader, showLoader, hideLoader] = useFullPageLoader();
-    const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
 
 
-    const MySwal = withReactContent(Swal);
-    const history = useHistory();
+
+
+
+
     const sweetAlertHandler = (alert) => {
         MySwal.fire({
             title: alert.title,
@@ -68,23 +78,27 @@ function Table({ columns, data, modalOpen, userRole }) {
     const user_status = pageLocation === 'active-users' ? "Active" : "Archived"
     console.log("user_status : ", user_status);
 
+    useEffect(() => {
+        const data = {
+            page_size: pageSize,
+            user: userRole,
+            start_key: startKeys,
+            searchedKeyword: searchValue,
+            pageIndexValue: pageIndexValue
+        }
+
+        console.log('Data sent from stu child:', data);
+
+        sendDataToParent(data);
+        setGlobalFilter(searchValue);
+        setDataFromChild(data);
+
+
+    }, [pageSize, userRole, searchValue, globalFilter, setGlobalFilter, startKeys]);
+
+
     // const conformDelete = () => {
 
-    //     MySwal.fire({
-    //         title: 'Are you sure?',
-    //         text: 'Confirm deleting User',
-    //         type: 'warning',
-    //         showCloseButton: true,
-    //         showCancelButton: true
-    //     }).then((willDelete) => {
-    //         if (willDelete.value) {
-    //             console.log("api calling");
-    //             deleteStudentById();
-    //         } else {
-    //             return MySwal.fire('', 'User is safe!', 'error');
-    //         }
-    //     });
-    // }
     const restoreData = () => {
 
         MySwal.fire({
@@ -104,28 +118,18 @@ function Table({ columns, data, modalOpen, userRole }) {
     }
 
     const deleteStudentById = () => {
-        // let arrIds = [];
-        // stateStudent.forEach(d => {
-        //     if (d.select) {
-        //         arrIds.push(d.id)
-        //     }
-        // })
-        // console.log(arrIds)
-
         console.log("data check: ", data);
         console.log("userRole : ", userRole);
 
         let arrIds = [];
-        let userId = (userRole === "Students") ? "student_id" : "N.A.";
+        let userId = (userRole === "Student") ? "student_id" : "N.A.";
 
-        let userRolePayload = (userRole === "Students") ? "Student" : "N.A.";
+        let userRolePayload = (userRole === "Student") ? "Student" : "N.A.";
 
         console.log(userId);
         for (let k = 0; k < data.length; k++) {
 
             console.log(data[k][userId]);
-
-            // console.log("document.getElementById(data[k][userId]).checked ", document.getElementById(data[k][userId]).checked, "---", data[k][userId]);
 
             if (document.getElementById(data[k][userId]).checked) {
                 console.log("Inside Condition");
@@ -216,13 +220,13 @@ function Table({ columns, data, modalOpen, userRole }) {
         console.log("selectedFlatRows", selectedFlatRows);
         let arrayWithStudentIds = [];
 
-        let userRolePayload = (userRole === "Students") ? "Student" : "N.A.";
+        let userRolePayload = (userRole === "Student") ? "Student" : "N.A.";
 
         console.log("ROLE : ", userRolePayload);
 
         selectedFlatRows.map((items) => {
             console.log("Student Id : ", items.original.student_id);
-            if (userRole === "Students") {
+            if (userRole === "Student") {
                 console.log("Student Id : ", items.original.student_id);
                 arrayWithStudentIds.push({ user_id: items.original.student_id, school_id: items.original.school_id });
             }
@@ -272,9 +276,9 @@ function Table({ columns, data, modalOpen, userRole }) {
                                 hideLoader();
                                 // sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
                                 pageLocation === 'active-users' ?
-                                    sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: (userRole === "Students") ? MESSAGES.ERROR.DeletingStudents : MESSAGES.ERROR.InvalidUser })
+                                    sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: (userRole === "Student") ? MESSAGES.ERROR.DeletingStudents : MESSAGES.ERROR.InvalidUser })
                                     :
-                                    sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: (userRole === "Students") ? MESSAGES.ERROR.RestoringStudents : MESSAGES.ERROR.InvalidUser });
+                                    sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: (userRole === "Student") ? MESSAGES.ERROR.RestoringStudents : MESSAGES.ERROR.InvalidUser });
 
                                 history.push('/admin-portal/' + pageLocation)
                                 // fetchUserData();
@@ -283,7 +287,7 @@ function Table({ columns, data, modalOpen, userRole }) {
                                 if (response.data === 200) {
                                     // hideLoader();
                                     MySwal.fire({
-                                        title: (userRole === "Students") && pageLocation === 'active-users' ? 'Students Deleted' : 'Students Restored',
+                                        title: (userRole === "Student") && pageLocation === 'active-users' ? 'Student Deleted' : 'Student Restored',
                                         icon: "success",
                                         text: pageLocation === 'active-users' ? 'User Deleted' : 'User Restored',
                                         // type: 'success',
@@ -340,6 +344,27 @@ function Table({ columns, data, modalOpen, userRole }) {
         }
     }
 
+    const nextCustomPage = () => {
+
+        setPageIndexValue(pageIndexValue + 1);
+
+        sendDataToParent(dataFromChild.pageIndexValue = pageIndexValue);
+        callParentFunction()
+
+        console.log("dataFromChild utv : ", dataFromChild);
+
+    }
+    const prevCustomPage = () => {
+
+        setPageIndexValue(pageIndexValue - 1);
+
+        sendDataToParent(dataFromChild.pageIndexValue = pageIndexValue);
+        callParentFunction()
+
+        console.log("dataFromChild utv : ", dataFromChild);
+
+    }
+
     return (
         <>
             <Row className="mb-3">
@@ -362,7 +387,7 @@ function Table({ columns, data, modalOpen, userRole }) {
                     Entries
                 </Col>
                 <Col className="d-flex justify-content-end">
-                    <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
+                    <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} setSearchValue={setSearchValue} />
 
                     {user_status === "Active" ? (
                         <>
@@ -467,7 +492,9 @@ function Table({ columns, data, modalOpen, userRole }) {
                     <Pagination className="justify-content-end">
                         <Pagination.First onClick={() => gotoPage(0)} disabled={!canPreviousPage} />
                         <Pagination.Prev onClick={() => previousPage()} disabled={!canPreviousPage} />
-                        <Pagination.Next onClick={() => nextPage()} disabled={!canNextPage} />
+                        {/* <Pagination.Next onClick={() => nextPage()} disabled={!canNextPage} />
+                         */}
+                        <Pagination.Next onClick={() => nextCustomPage()} />
                         <Pagination.Last onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage} />
                     </Pagination>
                 </Col>
@@ -476,9 +503,10 @@ function Table({ columns, data, modalOpen, userRole }) {
     );
 }
 
-const UserTableViewStudent = ({ _userRole }) => {
+const UserTableViewStudent = ({ _userRole, sendDataToGrandParent }) => {
 
     console.log(_userRole);
+    // console.log(sendDataToParent);
 
     const columns = React.useMemo(() => [
 
@@ -534,8 +562,21 @@ const UserTableViewStudent = ({ _userRole }) => {
     console.log("options", options);
     console.log("multiDropOptions", multiDropOptions);
     const [selectAllCheckbox, setSelectAllCheckbox] = useState(false);
+    const [startKeys, setStartKeys] = useState("0");
+    ///
+    const [dataFromChild, setDataFromChild] = useState('');
+    console.log("datafrom child ", dataFromChild)
+
+    const handleDataFromChild = (data) => {
+        console.log('Data received in Parent:', data);
+        setDataFromChild(data);
+
+        // Pass the data to the GrandParentComponent
+        sendDataToGrandParent(data);
+    };
 
     const MySwal = withReactContent(Swal);
+
 
     const sweetAlertHandler = (alert) => {
         MySwal.fire({
@@ -589,7 +630,6 @@ const UserTableViewStudent = ({ _userRole }) => {
                         user_role: user_role,
                         user_status: updateStatus,
                         school_id: schoolId
-
                     }
                 }, { headers: { Authorization: SessionStorage.getItem('user_jwt') } })
             .then(async (response) => {
@@ -653,10 +693,10 @@ const UserTableViewStudent = ({ _userRole }) => {
     };
 
     const updateValues = (_data) => {
-        let responseData = _data;
+        let responseData = _data.Items;
         // let responseData = [];
 
-        let userId = (_userRole === "Students") ? "student_id" : "N.A.";
+        let userId = (_userRole === "Student") ? "student_id" : "N.A.";
 
         console.log("responseData", responseData);
 
@@ -722,19 +762,33 @@ const UserTableViewStudent = ({ _userRole }) => {
     const fetchUserData = () => {
 
         console.log("fetch User Data calling");
-        setIsLoading(true);
-        // showLoader();
+        // setIsLoading(true);
+        showLoader();
 
         const payLoadStatus = pageLocation === "active-users" ? 'Active' : 'Archived';
 
-        axios.post(dynamicUrl.fetchAllUsersData, {
-            data: {
-                user_role: _userRole,
-                user_status: payLoadStatus
-            }
-        }, {
-            headers: { Authorization: sessionStorage.getItem('user_jwt') }
-        })
+        console.log("startKeys : ", startKeys);
+        console.log("Request for Pagination : ", {
+            page_size: dataFromChild.page_size === undefined ? 10 : dataFromChild.page_size,
+            user: _userRole,
+            start_key: startKeys,
+            searchedKeyword: dataFromChild.searchedKeyword === undefined ? "" : dataFromChild.searchedKeyword,
+        });
+
+        axios.post(
+            dynamicUrl.usersPagination,
+            {
+                data: {
+                    page_size: dataFromChild.page_size === undefined ? 10 : dataFromChild.page_size,
+                    user: _userRole.replace("s", ""),
+                    // user: dataFromChild.user,
+                    start_key: startKeys,
+                    searchedKeyword: dataFromChild.searchedKeyword === undefined ? "" : dataFromChild.searchedKeyword,
+                }
+            },
+            {
+                headers: { Authorization: sessionStorage.getItem('user_jwt') }
+            })
             .then((response) => {
 
                 let resultData = response.data;
@@ -745,6 +799,7 @@ const UserTableViewStudent = ({ _userRole }) => {
 
                     setIsLoading(false);
                     updateValues(resultData);
+                    hideLoader();
 
                 }
 
@@ -801,9 +856,30 @@ const UserTableViewStudent = ({ _userRole }) => {
         }
         else {
             fetchUserData();
+
+
         }
 
     }, [_userRole]);
+
+    useEffect(() => {
+        const validateJWT = sessionStorage.getItem('user_jwt');
+
+        if (validateJWT === "" || validateJWT === null || validateJWT === undefined || validateJWT === "undefined") {
+
+            sessionStorage.clear();
+            localStorage.clear();
+
+            history.push('/auth/signin-1');
+            window.location.reload();
+
+        }
+        else {
+            fetchUserData();
+        }
+
+    }, [dataFromChild.page_size]);
+
 
     return (
 
@@ -854,7 +930,16 @@ const UserTableViewStudent = ({ _userRole }) => {
                                                                 </Card.Title>
                                                             </Card.Header>
                                                             <Card.Body>
-                                                                <Table columns={columns} data={userData} userRole={_userRole} selectAllCheckbox={selectAllCheckbox} />
+                                                                <Table
+                                                                    columns={columns}
+                                                                    data={userData}
+                                                                    userRole={_userRole}
+                                                                    selectAllCheckbox={selectAllCheckbox}
+                                                                    sendDataToParent={handleDataFromChild}
+                                                                    dataFromChild={dataFromChild}
+                                                                    callParentFunction={fetchUserData}
+
+                                                                />
                                                             </Card.Body>
                                                         </Card>
 
