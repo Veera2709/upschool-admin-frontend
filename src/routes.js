@@ -84,36 +84,6 @@ const routes = [
     path: '/admin-portal/preview/:digi_card_id',
     component: lazy(() => import('./views/panels/admin-portal/digicard/Preview'))
   },
-  // {
-  //   exact: true,
-  //   path: '/auth/signup-1',
-  //   component: lazy(() => import('./views/auth/signup/SignUp1'))
-  // },
-  // {
-  //   exact: true,
-  //   path: '/auth/signup-2',
-  //   component: lazy(() => import('./views/auth/signup/SignUp2'))
-  // },
-  // {
-  //   exact: true,
-  //   path: '/auth/signin-2',
-  //   component: lazy(() => import('./views/auth/signin/SignIn2'))
-  // },
-  // {
-  //   exact: true,
-  //   path: '/auth/reset-password-1',
-  //   component: lazy(() => import('./views/auth/reset-password/ResetPassword1'))
-  // },
-  // {
-  //   exact: true,
-  //   path: '/auth/reset-password-2',
-  //   component: lazy(() => import('./views/auth/reset-password/ResetPassword2'))
-  // },
-  // {
-  //   exact: true,
-  //   path: '/auth/change-password',
-  //   component: lazy(() => import('./views/auth/ChangePassword'))
-  // },
   {
     exact: true,
     path: '/auth/profile-settings',
@@ -224,19 +194,6 @@ const routes = [
         path: '/admin-portal/Topics/archived-topics',
         component: lazy(() => import('./views/panels/admin-portal/Topics/ActiveTopics'))
       },
-      // Add Topics
-      // {
-      //   exact: true,
-      //   path: '/admin-portal/Topics/addTopics',
-      //   component: lazy(() => import('./views/panels/admin-portal/Topics/AddTopics'))
-      // },
-      // Edit Topics
-      // {
-      //   exact: true,
-      //   path: '/admin-portal/Topics/editTopic/:topic_id',
-      //   component: lazy(() => import('./views/panels/admin-portal/Topics/EditTopics'))
-      // },
-
       // Questions
 
       {
@@ -303,18 +260,6 @@ const routes = [
         path: '/admin-portal/chapters/archived-chapter',
         component: lazy(() => import('./views/panels/admin-portal/chapters/ChaptersList'))
       },
-      //add chapter
-      // {
-      //   exact: true,
-      //   path: '/admin-portal/addChapters',
-      //   component: lazy(() => import('./views/panels/admin-portal/chapters/AddChapters'))
-      // },
-      //edit chapter
-      // {
-      //   exact: true,
-      //   path: '/admin-portal/editChapter/:chapter_id',
-      //   component: lazy(() => import('./views/panels/admin-portal/chapters/EditChapter'))
-      // },
       //units
       {
         exact: true,
@@ -326,18 +271,6 @@ const routes = [
         path: '/admin-portal/units/archived-units',
         component: lazy(() => import('./views/panels/admin-portal/units/UnitList'))
       },
-      //addUnits
-      // {
-      //   exact: true,
-      //   path: '/admin-portal/addUnits',
-      //   component: lazy(() => import('./views/panels/admin-portal/units/AddUnit'))
-      // },
-      //editUnit
-      // {
-      //   exact: true,
-      //   path: '/admin-portal/editunit/:unit_id',
-      //   component: lazy(() => import('./views/panels/admin-portal/units/EditUnit'))
-      // },
       {
         exact: true,
         path: '/admin-portal/classes/active-classes',
@@ -437,43 +370,6 @@ const routes = [
         component: lazy(() => import('./views/panels/admin-portal/bluePrint/ViewBluePrint'))
       },
 
-      // Add Standards
-      // {
-      //   exact: true,
-      //   path: '/admin-portal/Classes/addClass',
-      //   component: lazy(() => import('./views/panels/admin-portal/class/AddClass'))
-      // },
-      // Edit classes
-      // {
-      //   exact: true,
-      //   path: '/admin-portal/Classes/editClass/:class_id',
-      //   component: lazy(() => import('./views/panels/admin-portal/class/EditClass'))
-      // },
-      {
-        exact: true,
-        path: '/app/dashboard/analytics',
-        component: lazy(() => import('./views/dashboard/DashAnalytics'))
-      },
-      {
-        exact: true,
-        path: '/app/dashboard/sales',
-        component: lazy(() => import('./views/dashboard/DashSales'))
-      },
-      {
-        exact: true,
-        path: '/app/widgets/widget-statistic',
-        component: lazy(() => import('./views/widgets/WidgetStatistic'))
-      },
-      {
-        exact: true,
-        path: '/app/widgets/widget-data',
-        component: lazy(() => import('./views/widgets/WidgetData'))
-      },
-      {
-        exact: true,
-        path: '/app/widgets/widget-chart',
-        component: lazy(() => import('./views/widgets/WidgetChart'))
-      },
       {
         exact: true,
         path: '/layout/vertical/static',
@@ -538,11 +434,6 @@ const routes = [
         exact: true,
         path: '/users/user-cards',
         component: lazy(() => import('./views/users/UserCard'))
-      },
-      {
-        exact: true,
-        path: '/users/user-list',
-        component: lazy(() => import('./views/users/UserList'))
       },
       {
         exact: true,
@@ -618,226 +509,6 @@ const routes = [
         exact: true,
         path: '/basic/other',
         component: lazy(() => import('./views/ui-elements/basic/BasicOther'))
-      },
-      {
-        exact: true,
-        path: '/hospital/hosp-dashboard',
-        component: lazy(() => import('./views/panels/hospital/Dashboard'))
-      },
-      {
-        exact: true,
-        path: '/hospital/hosp-department',
-        component: lazy(() => import('./views/panels/hospital/Department'))
-      },
-      {
-        exact: true,
-        path: '/hospital/hosp-doctor',
-        component: lazy(() => import('./views/panels/hospital/Doctor'))
-      },
-      {
-        exact: true,
-        path: '/hospital/hosp-patient',
-        component: lazy(() => import('./views/panels/hospital/Patient'))
-      },
-      {
-        exact: true,
-        path: '/hospital/hosp-nurse',
-        component: lazy(() => import('./views/panels/hospital/Nurse'))
-      },
-      {
-        exact: true,
-        path: '/hospital/hosp-pharmacist',
-        component: lazy(() => import('./views/panels/hospital/Pharmacist'))
-      },
-      {
-        exact: true,
-        path: '/hospital/hosp-laboratory',
-        component: lazy(() => import('./views/panels/hospital/Laboratory'))
-      },
-      {
-        exact: true,
-        path: '/helpdesk/hd-dashboard',
-        component: lazy(() => import('./views/panels/helpdesk/Dashboard'))
-      },
-      {
-        exact: true,
-        path: '/helpdesk/hd-ticket',
-        component: lazy(() => import('./views/panels/helpdesk/CreateTicket'))
-      },
-      {
-        exact: true,
-        path: '/helpdesk/hd-ticket-list',
-        component: lazy(() => import('./views/panels/helpdesk/TicketList'))
-      },
-      {
-        exact: true,
-        path: '/helpdesk/hd-ticket-details',
-        component: lazy(() => import('./views/panels/helpdesk/TicketDetails'))
-      },
-      {
-        exact: true,
-        path: '/helpdesk/hd-customer-list',
-        component: lazy(() => import('./views/panels/helpdesk/Customer'))
-      },
-      {
-        exact: true,
-        path: '/project-crm/pc-dashboard',
-        component: lazy(() => import('./views/panels/project-crm/Dashboard'))
-      },
-      {
-        exact: true,
-        path: '/project-crm/pc-customers',
-        component: lazy(() => import('./views/panels/project-crm/Customers'))
-      },
-      {
-        exact: true,
-        path: '/project-crm/pc-project',
-        component: lazy(() => import('./views/panels/project-crm/Project'))
-      },
-      {
-        exact: true,
-        path: '/project-crm/pc-task',
-        component: lazy(() => import('./views/panels/project-crm/Task'))
-      },
-      {
-        exact: true,
-        path: '/membership/mshp-dashboard',
-        component: lazy(() => import('./views/panels/membership/Dashboard'))
-      },
-      {
-        exact: true,
-        path: '/membership/mshp-email',
-        component: lazy(() => import('./views/panels/membership/Email'))
-      },
-      {
-        exact: true,
-        path: '/membership/mshp-country',
-        component: lazy(() => import('./views/panels/membership/Country'))
-      },
-      {
-        exact: true,
-        path: '/membership/mshp-coupons',
-        component: lazy(() => import('./views/panels/membership/Coupons'))
-      },
-      {
-        exact: true,
-        path: '/membership/mshp-newsletter',
-        component: lazy(() => import('./views/panels/membership/Newsletter'))
-      },
-      {
-        exact: true,
-        path: '/membership/mshp-user',
-        component: lazy(() => import('./views/panels/membership/User'))
-      },
-      {
-        exact: true,
-        path: '/membership/mshp-membership',
-        component: lazy(() => import('./views/panels/membership/Membership'))
-      },
-      {
-        exact: true,
-        path: '/sis/sis-dashboard',
-        component: lazy(() => import('./views/panels/sis/Dashboard'))
-      },
-      {
-        exact: true,
-        path: '/sis/sis-leave',
-        component: lazy(() => import('./views/panels/sis/Leave'))
-      },
-      {
-        exact: true,
-        path: '/sis/sis-evaluation',
-        component: lazy(() => import('./views/panels/sis/Evaluation'))
-      },
-      {
-        exact: true,
-        path: '/sis/sis-event',
-        component: lazy(() => import('./views/panels/sis/Event'))
-      },
-      {
-        exact: true,
-        path: '/sis/sis-circular',
-        component: lazy(() => import('./views/panels/sis/Circular'))
-      },
-      {
-        exact: true,
-        path: '/sis/sis-course',
-        component: lazy(() => import('./views/panels/sis/Course'))
-      },
-      {
-        exact: true,
-        path: '/crypto/cp-dashboard',
-        component: lazy(() => import('./views/panels/crypto/Dashboard'))
-      },
-      {
-        exact: true,
-        path: '/crypto/cp-exchange',
-        component: lazy(() => import('./views/panels/crypto/Exchange'))
-      },
-      {
-        exact: true,
-        path: '/crypto/cp-wallet',
-        component: lazy(() => import('./views/panels/crypto/Wallet'))
-      },
-      {
-        exact: true,
-        path: '/crypto/cp-transactions',
-        component: lazy(() => import('./views/panels/crypto/Transaction'))
-      },
-      {
-        exact: true,
-        path: '/crypto/cp-history',
-        component: lazy(() => import('./views/panels/crypto/History'))
-      },
-      {
-        exact: true,
-        path: '/crypto/cp-trading',
-        component: lazy(() => import('./views/panels/crypto/Trading'))
-      },
-      {
-        exact: true,
-        path: '/crypto/cp-coin',
-        component: lazy(() => import('./views/panels/crypto/InitialCoin'))
-      },
-      {
-        exact: true,
-        path: '/crypto/cp-ico',
-        component: lazy(() => import('./views/panels/crypto/IcoListing'))
-      },
-      {
-        exact: true,
-        path: '/ecommerce/ecomm-product',
-        component: lazy(() => import('./views/panels/ecommerce/Product'))
-      },
-      {
-        exact: true,
-        path: '/ecommerce/ecomm-product-details',
-        component: lazy(() => import('./views/panels/ecommerce/ProductDetails'))
-      },
-      {
-        exact: true,
-        path: '/ecommerce/ecomm-order',
-        component: lazy(() => import('./views/panels/ecommerce/Order'))
-      },
-      {
-        exact: true,
-        path: '/ecommerce/ecomm-checkout',
-        component: lazy(() => import('./views/panels/ecommerce/Checkout'))
-      },
-      {
-        exact: true,
-        path: '/ecommerce/ecomm-cart',
-        component: lazy(() => import('./views/panels/ecommerce/Cart'))
-      },
-      {
-        exact: true,
-        path: '/ecommerce/ecomm-customer',
-        component: lazy(() => import('./views/panels/ecommerce/Customers'))
-      },
-      {
-        exact: true,
-        path: '/ecommerce/ecomm-seller',
-        component: lazy(() => import('./views/panels/ecommerce/Sellers'))
       },
       {
         exact: true,
@@ -946,41 +617,6 @@ const routes = [
       },
       {
         exact: true,
-        path: '/tables/bootstrap',
-        component: lazy(() => import('./views/tables/BootstrapTable'))
-      },
-      {
-        exact: true,
-        path: '/table/datatable/tbl-basic',
-        component: lazy(() => import('./views/tables/react-table/Basic'))
-      },
-      {
-        exact: true,
-        path: '/table/datatable/tbl-footer',
-        component: lazy(() => import('./views/tables/react-table/Footers'))
-      },
-      {
-        exact: true,
-        path: '/table/datatable/tbl-sorting',
-        component: lazy(() => import('./views/tables/react-table/Sorting'))
-      },
-      {
-        exact: true,
-        path: '/table/datatable/tbl-filtering',
-        component: lazy(() => import('./views/tables/react-table/Filtering'))
-      },
-      {
-        exact: true,
-        path: '/table/datatable/tbl-grouping',
-        component: lazy(() => import('./views/tables/react-table/Grouping'))
-      },
-      {
-        exact: true,
-        path: '/table/datatable/tbl-pagination',
-        component: lazy(() => import('./views/tables/react-table/Pagination'))
-      },
-      {
-        exact: true,
         path: '/charts/apex-chart',
         component: lazy(() => import('./views/charts/apex-chart'))
       },
@@ -1013,21 +649,6 @@ const routes = [
         exact: true,
         path: '/todo/todo-basic',
         component: lazy(() => import('./views/applications/to-do/ToDo'))
-      },
-      {
-        exact: true,
-        path: '/task/task-list',
-        component: lazy(() => import('./views/applications/task/TaskList'))
-      },
-      {
-        exact: true,
-        path: '/task/task-board',
-        component: lazy(() => import('./views/applications/task/TaskBoard'))
-      },
-      {
-        exact: true,
-        path: '/task/task-detail',
-        component: lazy(() => import('./views/applications/task/TaskDetails'))
       },
       {
         exact: true,
