@@ -19,7 +19,7 @@ import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import BasicSpinner from '../../../../helper/BasicSpinner';
 
 
-function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParentFunction, onPageChange, pageCountRes, onPageIndexUpdate }) {
+function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParentFunction, onPageChange, pageCountRes, onPageIndexUpdate, indexes }) {
   // console.log("data", data);
   // console.log("_userRole in Table", userRole);
   // console.log("pageCountRes", pageCountRes)
@@ -46,7 +46,7 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
   const startIndex = pageIndex * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentPageData = data.slice(startIndex, endIndex);
-  const [initialValue, setInitialValue] = useState("");
+  const [initialValue, setInitialValue] = useState(1);
 
   const sweetAlertHandler = (alert) => {
     MySwal.fire({
@@ -106,15 +106,14 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
     }
 
     console.log('Data sent from child:', data);
+    console.log("pageIndex : ", pageIndex);
+    
 
     sendDataToParent(data);
     setGlobalFilter(searchValue);
     setDataFromChild(data);
 
   }, [pageSize, userRole, searchValue, globalFilter, setGlobalFilter, startKeys, pageIndex, pageIndexValue, initialValue]);
-
-
-
 
   // const MySwal = withReactContent(Swal);
   const conformDelete = () => {
@@ -151,7 +150,6 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
       }
     });
   }
-
 
   const deleteUsersById = () => {
 
@@ -410,12 +408,16 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
   }
   const nextCustomPage = () => {
 
-    setPageIndexValue(pageIndexValue + 1);
-    setPageIndex(Math.min(pageIndex + 1, pageCountRes - 1));
-    onPageIndexUpdate(pageIndex + 1);
+    // console.log("Math.min(pageIndex + 1, pageCountRes - 1) : ", Math.min(pageIndex + 1, pageCountRes - 1));
 
-    sendDataToParent(dataFromChild.pageIndexValue = pageIndexValue);
-    callParentFunction()
+    // setPageIndexValue(pageIndexValue + 1);
+    // setPageIndex(Math.min(pageIndex + 1, pageCountRes - 1));
+    setPageIndex(pageIndex + 1);
+    setInitialValue(initialValue + 1); 
+    // onPageIndexUpdate(pageIndex + 1);
+
+    // sendDataToParent(dataFromChild.pageIndexValue = pageIndexValue);
+    // callParentFunction()
 
     // console.log("dataFromChild utv : ", dataFromChild);
 
@@ -433,62 +435,60 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
   //   callParentFunction();
   // }
 
-
-
   const prevCustomPage = () => {
 
-    setPageIndexValue(pageIndexValue - 1);
-    setPageIndex(Math.min(pageIndex - 1, pageCountRes + 1));
-    onPageIndexUpdate(pageIndex - 1);
-    sendDataToParent(dataFromChild.pageIndexValue = pageIndexValue);
-    callParentFunction()
+    // setPageIndexValue(pageIndexValue - 1);
+    // setPageIndex(Math.min(pageIndex - 1, pageCountRes + 1));
+    // onPageIndexUpdate(pageIndex - 1);
+    // sendDataToParent(dataFromChild.pageIndexValue = pageIndexValue);
+    // callParentFunction()
 
-    // console.log("dataFromChild utv : ", dataFromChild);
+    setPageIndex(pageIndex - 1);
+    setInitialValue(initialValue - 1); 
 
   }
 
-
   const goToPage = (page) => {
-    setPageIndex(Math.max(Math.min(page, pageCountRes - 1), 0));
-    onPageIndexUpdate(page);
+    // setPageIndex(Math.max(Math.min(page, pageCountRes - 1), 0));
+    // onPageIndexUpdate(page);
 
-    sendDataToParent(dataFromChild.pageIndexValue = pageIndexValue);
-    callParentFunction()
+    // sendDataToParent(dataFromChild.pageIndex = pageIndex);
+    // callParentFunction()
+    setPageIndex(page - 1); 
+    setInitialValue(page); 
 
   }
 
   const handleInputChange = (e) => {
-    // const inputValue = e.target.value === "" ? 0 : e.target.value;
+
     const inputValue = e.target.value;
-    console.log("INPUT PAGE NO : ======================= ", inputValue);
-    if (inputValue !== "") {
-      sessionStorage.setItem('inputValue', inputValue);
+
+    if(inputValue <= pageCountRes){
+      console.log("INPUT PAGE NO : ======================= ", inputValue);
+      if (inputValue !== "") {
+        sessionStorage.setItem('inputValue', inputValue);
+      }
+      console.log('Input value:', inputValue);
+      const newPageNumber = parseInt(inputValue, 10) - 1;
+  
+  
+      const neededPage = inputValue === "" ? inputValue : parseInt(inputValue, 10) - 1;
+  
+      onPageChange(neededPage);
+      // onPageChange(newPageNumber);
+      setPageIndex(newPageNumber);
+  
+      setInitialValue(inputValue);
+  
+      const pageNumber = parseInt(initialValue, 10);
+      if (!isNaN(pageNumber) && pageNumber >= 1 && pageNumber <= pageCountRes) {
+        setPageIndex(pageNumber - 1); // Adjust for zero-based indexing
+        // setInitialValue(''); // Clear input
+      }
     }
-    console.log('Input value:', inputValue);
-    const newPageNumber = parseInt(inputValue, 10) - 1;
-
-
-    const neededPage = inputValue === "" ? inputValue : parseInt(inputValue, 10) - 1;
-
-    onPageChange(neededPage);
-    // onPageChange(newPageNumber);
-    setPageIndex(newPageNumber);
-
-    setInitialValue(inputValue);
-
-    const pageNumber = parseInt(initialValue, 10);
-    if (!isNaN(pageNumber) && pageNumber >= 1 && pageNumber <= pageCountRes) {
-      setPageIndex(pageNumber - 1); // Adjust for zero-based indexing
-      // setInitialValue(''); // Clear input
-    }
+    
   }
 
-
-
-  // useEffect(() => {
-  //   // Clear the stored input value when the component mounts
-  //   sessionStorage.removeItem('inputValue');
-  // }, []);
   return (
     <>
       <Row className="mb-3">
@@ -601,7 +601,6 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
         </tbody>
       </BTable>
 
-
       <Row className="justify-content-between">
         <Col>
           <span className="d-flex align-items-center">
@@ -609,13 +608,14 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
             <strong>
               {' '}
               {/* {pageIndex + 1} of {pageOptions.length}{' '} */}
-              {pageIndex + 1} of {pageCountRes}
+              {initialValue === "" ? 1 : initialValue} of {pageCountRes}
             </strong>{' '}
             | Go to page:{' '}
             <input
               className="form-control ml-2"
               type="number"
-              onChange={handleInputChange}
+              onChange={handleInputChange} 
+              // {initialValue > pageCountRes && onKeydown="return false;"} 
               value={initialValue}
               style={{ width: '100px' }}
             />
@@ -626,8 +626,8 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
         </Col>
         <Col>
           <Pagination className="justify-content-end">
-            <Pagination.First onClick={() => goToPage(0)} />
-            <Pagination.Prev onClick={prevCustomPage} disabled={pageIndex === 0} />
+            <Pagination.First onClick={() => goToPage(1)} disabled={initialValue === 1}/>
+            <Pagination.Prev onClick={prevCustomPage} disabled={initialValue === 1} />
             <Pagination.Next onClick={nextCustomPage} disabled={pageIndex === pageCountRes - 1} />
             <Pagination.Last onClick={() => goToPage(pageCountRes - 1)} />
           </Pagination>
@@ -689,7 +689,6 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
     setDataFromChild(data);
     setInitialValue(dataFromChild.initialValue)
 
-
     // Reset indexes to 1 when search keyword changes
     if (data.searchedKeyword !== dataFromChild.searchedKeyword) {
       console.log('Search keyword changed. Resetting indexes to 1.');
@@ -700,38 +699,24 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
 
       console.log("pagendexfformparent,", pageIndexParent)
 
-
     }
 
     // Pass the data to the GrandParentComponent
     sendDataToGrandParent(data);
   };
   const handlePageChange = (pageNumber) => {
-    console.log("HANDLE PAGE CHANGE =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- : ", pageNumber);
-    console.log('Page number received:', pageNumber);
-
-    console.log('Type of pageNumber:', typeof (pageNumber));
-    console.log('Value of pageNumber:', pageNumber);
 
     const parsedNumber = Number(pageNumber);
 
     console.log('Parsed number:', parsedNumber);
-    console.log('Is parsedNumber NaN?', isNaN(parsedNumber));
-    // console.log("lastKeys : ", lastKeys);
 
     if (!isNaN(parsedNumber)) {
-      console.log("number---");
       setIndexes(parsedNumber);
     } else { // Handle the case where parsing failed 
       console.log('Invalid page number:', pageNumber);
     }
 
-    console.log("index set", indexes);
-
   };
-
-
-  // console.log("check : ", check);
 
   const phoneRegExp = /^(\+91[\-\s]?)?[0]?(91)?[6789]\d{9}$/;
 
@@ -753,10 +738,6 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
     // setOutPutData(updatedData);
     // setSelectAllCheckbox(checked);
   };
-  // console.log("------------", outPutData)
-
-  // console.log("type of response data", typeof responseData);
-
 
   const handleCheckboxChange = event => {
     // let userId = (_userRole === "Teacher") ? "teacher_id" : "N.A.";
@@ -1155,90 +1136,6 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
     setIsLoading(false);
   }
 
-
-
-
-  // const fetchUserData = () => {
-
-  //   console.log("fetch User Data calling");
-  //   // setIsLoading(true);
-  //   showLoader();
-  //   setIsSHow(true);
-
-  //   const payLoadStatus = pageLocation === "active-users" ? 'Active' : 'Archived';
-
-
-  //   console.log("startKeys : ", startKeys);
-  //   console.log("Request for Pagination : ", {
-  //     page_size: dataFromChild.page_size === undefined ? 10 : dataFromChild.page_size,
-  //     user: _userRole,
-  //     start_key: startKeys,
-  //     searchedKeyword: dataFromChild.searchedKeyword === undefined ? "" : dataFromChild.searchedKeyword,
-  //   });
-
-  //   axios.post(
-  //     dynamicUrl.usersPagination,
-  //     {
-  //       data: {
-  //         page_size: dataFromChild.page_size === undefined ? 10 : dataFromChild.page_size,
-  //         user: _userRole.replace("s", ""),
-  //         start_key: startKeys,
-  //         searchedKeyword: dataFromChild.searchedKeyword === undefined ? "" : dataFromChild.searchedKeyword,
-  //       }
-  //     },
-  //     {
-  //       headers: { Authorization: sessionStorage.getItem('user_jwt') }
-  //     })
-  //     .then((response) => {
-
-  //       let resultData = response.data;
-  //       console.log("resultData", resultData);
-
-  //       if (resultData) {
-
-  //         setIsLoading(false);
-  //         updateValues(resultData);
-  //         setTemData(resultData)
-  //         hideLoader();
-  //         // setStartKeys(resultData.lastKey);
-  //         // console.log("resultData.lastKey", resultData.lastKey);
-
-  //         const newStartKey = resultData.lastKey[1]
-  //         if (newStartKey !== startKeys && newStartKey !== null) {
-  //           handleStartKeysUpdate(newStartKey);
-
-  //         }
-  //         else {
-  //           console.log("Response or response data is undefined.");
-
-  //         }
-  //       }
-
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //       console.log(error.response.data);
-
-  //       if (error.response.data && error.response.data === 'Invalid Token') {
-  //         console.log("---------err")
-  //         sessionStorage.clear();
-  //         localStorage.clear();
-
-  //         history.push('/auth/signin-1');
-  //         window.location.reload();
-
-  //       }
-  //       else {
-
-  //         fetchUserData();
-
-  //       }
-
-  //     })
-
-  // };
-
-
   const fetchUserData = async () => {
     try {
       showLoader();
@@ -1246,18 +1143,23 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
       console.log("startKeys : ", startKeys);
       console.log("indexes : ", indexes);
       console.log("datafromchildinital", dataFromChild.initialValue)
-      // console.log("userData : ", userData);
 
       const payLoadStatus = pageLocation === "active-users" ? 'Active' : 'Archived';
-      const effectiveStartKeys = initialValue === "" ? null : startKeys;
-      console.log("",);
+
+      console.log("payload : ", {
+        page_size: dataFromChild.page_size === undefined ? 10 : dataFromChild.page_size,
+        user: _userRole.replace("s", ""),
+        start_key: startKeys,
+        searchedKeyword: dataFromChild.searchedKeyword === undefined ? "" : dataFromChild.searchedKeyword,
+      });
+
       const response = await axios.post(
         dynamicUrl.usersPagination,
         {
           data: {
             page_size: dataFromChild.page_size === undefined ? 10 : dataFromChild.page_size,
             user: _userRole.replace("s", ""),
-            start_key: effectiveStartKeys,
+            start_key: startKeys,
             searchedKeyword: dataFromChild.searchedKeyword === undefined ? "" : dataFromChild.searchedKeyword,
           }
         },
@@ -1267,14 +1169,15 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
       );
 
       const resultData = response.data;
-      console.log("resultData", resultData.pagesCount);
+      console.log("resultData.Items", resultData.Items); 
+      console.log("resultData.lastKey", resultData); 
 
       if (resultData) {
         setIsLoading(false);
-        updateValues(resultData);
         setTemData(resultData);
         let tempPageCount = resultData.pagesCount === undefined || resultData.pagesCount === 'undefined' || resultData.pagesCount === "" ? pageCountRes : resultData.pagesCount;
         setPageCountRes(tempPageCount);
+        updateValues(resultData);
         // setPageCountRes(resultData.pagesCount)
         hideLoader();
 
@@ -1288,21 +1191,6 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
         setItemsRes(items)
         console.log("itemsRes", itemsRes);
 
-        // if (newStartKey !== startKeys && newStartKey !== null) {
-        //   handleStartKeysUpdate(newStartKey);
-        // if (Array.isArray(newStartKey) && newStartKey.length > 0) {
-
-        //   newStartKey.forEach(jsonObj => {
-
-        //     // console.log(jsonObj);
-        //     setLastKeys(jsonObj)
-
-        //   });
-        //   // console.log(newStartKey.length);
-
-        // } else {
-        //   console.log("Response or response data is undefined.");
-        // }
       }
     } catch (error) {
       console.log(error);
@@ -1319,57 +1207,6 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
     }
   };
 
-  /////
-  const handleStartKeysUpdate = (newStartKey) => {
-
-    // if (newStartKey !== startKeys) {
-    setStartKeys(newStartKey);
-    // setLastKeys(newStartKey)
-    // }
-  };
-
-
-  // useEffect(() => {
-  //   const validateJWT = sessionStorage.getItem('user_jwt');
-
-  //   if (validateJWT === "" || validateJWT === null || validateJWT === undefined || validateJWT === "undefined") {
-  //     sessionStorage.clear();
-  //     localStorage.clear();
-  //     history.push('/auth/signin-1');
-  //     window.location.reload();
-  //   }
-  //   else {
-  //     console.log('Updated indexes state useeff:', indexes);
-  //     fetchUserData();
-  //   }
-  // }, [pageLocation, _userRole, dataFromChild.page_size, dataFromChild.searchedKeyword, dataFromChild.pageIndexValue, dataFromChild.pageIndex]);
-
-  // useEffect(() => {
-
-  //   console.log('Updated indexes state useeff:', indexes);
-  //   if (indexes > 1) {
-  //     let startKey = lastKeys[indexes];
-
-  //     setStartKeys(startKey);
-  //   }
-  //   fetchUserData();
-
-  // }, [indexes])
-
-  // useEffect(() => {
-
-  //   fetchUserData();
-
-  // }, [startKeys])
-
-  // useEffect(() => {
-  //   console.log("initialValue", initialValue);
-  //   if (initialValue === "" || initialValue === undefined) {
-  //     setStartKeys(null);
-  //   }
-  //   fetchUserData();
-  // }, [initialValue]);
-
 
   useEffect(() => {
     const validateJWT = sessionStorage.getItem('user_jwt');
@@ -1381,21 +1218,80 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
       window.location.reload();
     }
     else {
-      console.log('Updated indexes state useeff:', indexes);
-
-      if (indexes > 1) {
-        let startKey = lastKeys[indexes];
+     
+      if (dataFromChild.pageIndex > 0) {
+        let startKey = lastKeys[dataFromChild.pageIndex];
         setStartKeys(startKey);
-      }
-
-      if (initialValue === "" || initialValue === undefined) {
+      }else {
         setStartKeys(null);
       }
 
       fetchUserData();
     }
-  }, [pageLocation, _userRole, dataFromChild.page_size, dataFromChild.searchedKeyword, dataFromChild.pageIndexValue, dataFromChild.pageIndex, indexes, initialValue]);
+  }, [pageLocation, _userRole, dataFromChild.page_size, dataFromChild.searchedKeyword]);
+  
+  useEffect(() => {
+    const validateJWT = sessionStorage.getItem('user_jwt');
 
+    if (validateJWT === "" || validateJWT === null || validateJWT === undefined || validateJWT === "undefined") {
+      sessionStorage.clear();
+      localStorage.clear();
+      history.push('/auth/signin-1');
+      window.location.reload();
+    }
+    else {
+     
+      fetchUserData();
+    }
+  }, [startKeys]);
+  
+
+  console.log("dataFromChild.pageIndex : ", dataFromChild.pageIndex);
+
+  useEffect(() => {
+    const validateJWT = sessionStorage.getItem('user_jwt');
+
+    if (validateJWT === "" || validateJWT === null || validateJWT === undefined || validateJWT === "undefined") {
+      sessionStorage.clear();
+      localStorage.clear();
+      history.push('/auth/signin-1');
+      window.location.reload();
+    }
+    else {
+
+      if (dataFromChild.pageIndex > 0) {
+        let startKey = lastKeys[dataFromChild.pageIndex];
+        setStartKeys(startKey);
+      }else {
+        setStartKeys(null);
+      }
+
+    }
+  }, [dataFromChild.pageIndex]);
+
+  useEffect(() => {
+    const validateJWT = sessionStorage.getItem('user_jwt');
+
+    if (validateJWT === "" || validateJWT === null || validateJWT === undefined || validateJWT === "undefined") {
+      sessionStorage.clear();
+      localStorage.clear();
+      history.push('/auth/signin-1');
+      window.location.reload();
+    }
+    else {
+
+      console.log('Updated indexes state useeff:', dataFromChild.pageIndex, indexes);
+
+      if (indexes > 0) {
+        let startKey = lastKeys[indexes];
+        setStartKeys(startKey);
+      }else {
+        setStartKeys(null);
+      }
+
+    }
+  }, [indexes]);
+  
   return (
     <React.Fragment>
       <div>
@@ -1453,7 +1349,7 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
                                   </Card.Header>
 
                                   <Card.Body>
-                                    <Table
+                                      <Table
                                       columns={columns}
                                       data={userData}
                                       // data={itemsRes}
@@ -1466,7 +1362,9 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
                                       onPageChange={handlePageChange}
                                       pageCountRes={pageCountRes}
                                       onPageIndexUpdate={handlePageIndexUpdate}
+                                      indexes={indexes}
                                     />
+
                                   </Card.Body>
                                 </Card>
 
@@ -1483,8 +1381,6 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
             )
 
         }
-
-
 
       </div>
       {loader}
