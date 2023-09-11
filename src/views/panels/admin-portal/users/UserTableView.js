@@ -91,9 +91,6 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
 
   const user_status = pageLocation === 'active-users' ? "Active" : "Archived"
 
-  // console.log("user_status : ", user_status);
-
-
   useEffect(() => {
     const data = {
       page_size: pageSize,
@@ -107,7 +104,7 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
 
     console.log('Data sent from child:', data);
     console.log("pageIndex : ", pageIndex);
-    
+
 
     sendDataToParent(data);
     setGlobalFilter(searchValue);
@@ -407,86 +404,54 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
     }
   }
   const nextCustomPage = () => {
-
-    // console.log("Math.min(pageIndex + 1, pageCountRes - 1) : ", Math.min(pageIndex + 1, pageCountRes - 1));
-
-    // setPageIndexValue(pageIndexValue + 1);
-    // setPageIndex(Math.min(pageIndex + 1, pageCountRes - 1));
-    setPageIndex(pageIndex + 1);
-    setInitialValue(initialValue + 1); 
-    // onPageIndexUpdate(pageIndex + 1);
-
-    // sendDataToParent(dataFromChild.pageIndexValue = pageIndexValue);
-    // callParentFunction()
-
-    // console.log("dataFromChild utv : ", dataFromChild);
-
+    if(data.length !== 0){
+        setPageIndex(pageIndex + 1);
+        setInitialValue(initialValue + 1); 
+    }
   }
-  // const nextCustomPage = () => {
-  //   const newPageIndex = Math.min(pageIndex + 1, pageCountRes - 1);
-
-  //   setPageIndex(newPageIndex);
-
-
-  //   onPageIndexUpdate(newPageIndex);
-
-  //   sendDataToParent(dataFromChild.pageIndexValue = newPageIndex);
-
-  //   callParentFunction();
-  // }
 
   const prevCustomPage = () => {
-
-    // setPageIndexValue(pageIndexValue - 1);
-    // setPageIndex(Math.min(pageIndex - 1, pageCountRes + 1));
-    // onPageIndexUpdate(pageIndex - 1);
-    // sendDataToParent(dataFromChild.pageIndexValue = pageIndexValue);
-    // callParentFunction()
-
-    setPageIndex(pageIndex - 1);
-    setInitialValue(initialValue - 1); 
-
+    if(data.length !== 0){
+        setPageIndex(pageIndex - 1);
+        setInitialValue(initialValue - 1); 
+    }
   }
 
   const goToPage = (page) => {
-    // setPageIndex(Math.max(Math.min(page, pageCountRes - 1), 0));
-    // onPageIndexUpdate(page);
-
-    // sendDataToParent(dataFromChild.pageIndex = pageIndex);
-    // callParentFunction()
-    setPageIndex(page - 1); 
-    setInitialValue(page); 
-
+    if(data.length !== 0){
+        page === 1 ? setPageIndex(page - 1) : setPageIndex(page); 
+        page === 1  ? setInitialValue(page) : setInitialValue(page + 1); 
+    }
   }
 
   const handleInputChange = (e) => {
 
     const inputValue = e.target.value;
 
-    if(inputValue <= pageCountRes){
+    if (inputValue <= pageCountRes) {
       console.log("INPUT PAGE NO : ======================= ", inputValue);
       if (inputValue !== "") {
         sessionStorage.setItem('inputValue', inputValue);
       }
       console.log('Input value:', inputValue);
       const newPageNumber = parseInt(inputValue, 10) - 1;
-  
-  
+
+
       const neededPage = inputValue === "" ? inputValue : parseInt(inputValue, 10) - 1;
-  
+
       onPageChange(neededPage);
       // onPageChange(newPageNumber);
       setPageIndex(newPageNumber);
-  
+
       setInitialValue(inputValue);
-  
+
       const pageNumber = parseInt(initialValue, 10);
       if (!isNaN(pageNumber) && pageNumber >= 1 && pageNumber <= pageCountRes) {
         setPageIndex(pageNumber - 1); // Adjust for zero-based indexing
         // setInitialValue(''); // Clear input
       }
     }
-    
+
   }
 
   return (
@@ -521,7 +486,10 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
 
           {user_status === "Active" ? (
             <>
-              <Link to={'/admin-portal/add-users'}>
+            {
+              data.length === 0 ? (<></>) : (
+                <>
+                <Link to={'/admin-portal/add-users'}>
                 <Button
 
                   className="btn-sm btn-round has-ripple ml-2 btn btn-success"
@@ -544,6 +512,10 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
                 <i className="feather icon-trash-2" /> &nbsp;
                 Multi Delete
               </Button>
+                </>
+              )
+            }
+              
             </>
           ) : (
 
@@ -559,7 +531,7 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
 
         </Col>
       </Row>
-
+            
       <BTable striped bordered hover responsive {...getTableProps()}>
         <thead>
           {headerGroups.map((headerGroup) => (
@@ -601,22 +573,41 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
         </tbody>
       </BTable>
 
+      {data.length === 0 && ( <>
+              <div>
+                                      <h3 style={{ textAlign: 'center' }}>No {sessionStorage.getItem('user_type')} Found</h3>
+                                      <div className="form-group fill text-center">
+                                        <br></br>
+                                       
+                                        <Link to={'/admin-portal/add-users'}>
+                                          <Button variant="success" className="btn-sm btn-round has-ripple ml-2"
+                                          >
+                                            <i className="feather icon-plus" /> Add Users
+                                          </Button>
+                                        </Link>
+                                      </div>
+                                    </div>
+            </>
+
+            )}
+
       <Row className="justify-content-between">
         <Col>
           <span className="d-flex align-items-center">
             Page{' '}
             <strong>
               {' '}
-              {/* {pageIndex + 1} of {pageOptions.length}{' '} */}
-              {initialValue === "" ? 1 : initialValue} of {pageCountRes}
+              {data.length === 0 ? 0 : (initialValue === "" ? 1 : initialValue)} of {data.length === 0 ? 0 : (pageCountRes)} 
             </strong>{' '}
             | Go to page:{' '}
             <input
               className="form-control ml-2"
               type="number"
-              onChange={handleInputChange} 
+              onChange={handleInputChange}
               // {initialValue > pageCountRes && onKeydown="return false;"} 
-              value={initialValue}
+              // value={initialValue}
+              value={data.length === 0 ? 0 : initialValue}
+              disabled={data.length === 0}
               style={{ width: '100px' }}
             />
             {/* <button className="btn btn-primary ml-2" onClick={handleGoToPageClick}>
@@ -626,10 +617,10 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
         </Col>
         <Col>
           <Pagination className="justify-content-end">
-            <Pagination.First onClick={() => goToPage(1)} disabled={initialValue === 1}/>
+            <Pagination.First onClick={() => goToPage(1)} disabled={initialValue === 1} />
             <Pagination.Prev onClick={prevCustomPage} disabled={initialValue === 1} />
-            <Pagination.Next onClick={nextCustomPage} disabled={pageIndex === pageCountRes - 1} />
-            <Pagination.Last onClick={() => goToPage(pageCountRes - 1)} />
+            <Pagination.Next onClick={nextCustomPage} disabled={pageIndex === pageCountRes - 1 || data.length === 0} />
+            <Pagination.Last onClick={() => goToPage(pageCountRes - 1 || data.length === 0)} />
           </Pagination>
         </Col>
       </Row>
@@ -721,34 +712,6 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
   const phoneRegExp = /^(\+91[\-\s]?)?[0]?(91)?[6789]\d{9}$/;
 
   const MySwal = withReactContent(Swal);
-
-
-  const handleSelectAll = (allId) => {
-
-
-    console.log("ALL CEHCK IDS : ", checkBoxId);
-    if (document.getElementById(allId).checked === true) {
-      alert("Checked");
-    }
-    else {
-      alert("Un checked");
-    }
-    // const checked = event.target.checked;
-    // const updatedData = outPutData.map(data => ({ ...data, checked }));
-    // setOutPutData(updatedData);
-    // setSelectAllCheckbox(checked);
-  };
-
-  const handleCheckboxChange = event => {
-    // let userId = (_userRole === "Teacher") ? "teacher_id" : "N.A.";
-
-    // let userId = (_userRole === "Teachers") ? "teacher_id" : (_userRole === "Students") ? "student_id" : (_userRole === "Parents") ? "parent_id" : "N.A.";
-    // const id = event.target.id;
-    // const updatedData = outPutData.map(data =>
-    //   data[userId] === id ? { ...data, checked: event.target.checked } : data
-    // );
-    // setOutPutData(updatedData);
-  };
 
   const columns = React.useMemo(() => [
 
@@ -1025,6 +988,7 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
   const updateValues = async (_data) => {
     let responseData = _data.Items;
 
+
     // console.log("updateValues responseData", responseData);
     setCheckedStatus(new Array(responseData.length).fill(false));
 
@@ -1169,8 +1133,8 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
       );
 
       const resultData = response.data;
-      console.log("resultData.Items", resultData.Items); 
-      console.log("resultData.lastKey", resultData); 
+      console.log("resultData.Items", resultData.Items);
+      console.log("resultData.lastKey", resultData);
 
       if (resultData) {
         setIsLoading(false);
@@ -1218,18 +1182,18 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
       window.location.reload();
     }
     else {
-     
+
       if (dataFromChild.pageIndex > 0) {
         let startKey = lastKeys[dataFromChild.pageIndex];
         setStartKeys(startKey);
-      }else {
+      } else {
         setStartKeys(null);
       }
 
       fetchUserData();
     }
   }, [pageLocation, _userRole, dataFromChild.page_size, dataFromChild.searchedKeyword]);
-  
+
   useEffect(() => {
     const validateJWT = sessionStorage.getItem('user_jwt');
 
@@ -1240,11 +1204,11 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
       window.location.reload();
     }
     else {
-     
+
       fetchUserData();
     }
   }, [startKeys]);
-  
+
 
   console.log("dataFromChild.pageIndex : ", dataFromChild.pageIndex);
 
@@ -1262,7 +1226,7 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
       if (dataFromChild.pageIndex > 0) {
         let startKey = lastKeys[dataFromChild.pageIndex];
         setStartKeys(startKey);
-      }else {
+      } else {
         setStartKeys(null);
       }
 
@@ -1285,14 +1249,107 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
       if (indexes > 0) {
         let startKey = lastKeys[indexes];
         setStartKeys(startKey);
-      }else {
+      } else {
         setStartKeys(null);
       }
 
     }
   }, [indexes]);
-  
+
   return (
+    // <React.Fragment>
+    //   <div>
+
+    //     {
+    //       isLoading ? (
+    //         <BasicSpinner />
+    //       ) :
+    //         (
+    //           <>
+    //             {
+    //               userData.length <= 0 && _data ? (
+    //                 <>
+    //                   {
+    //                     pageLocation === 'active-users' ? (
+    //                       <div>
+    //                         <h3 style={{ textAlign: 'center' }}>No {sessionStorage.getItem('user_type')} Found</h3>
+    //                         <div className="form-group fill text-center">
+    //                           <br></br>
+    //                           {/* <Button variant="success" className="btn-sm btn-round has-ripple ml-2"
+    //                         onClick={handleButtonClicked}
+    //                       >
+    //                         <i className="feather icon-plus" /> Add Users
+    //                       </Button> */}
+    //                           <Link to={'/admin-portal/add-users'}>
+    //                             <Button variant="success" className="btn-sm btn-round has-ripple ml-2"
+    //                             >
+    //                               <i className="feather icon-plus" /> Add Users
+    //                             </Button>
+    //                           </Link>
+    //                         </div>
+    //                       </div>
+    //                     ) : (
+    //                       <h3 style={{ textAlign: 'center' }}>No {sessionStorage.getItem('user_type')} Found</h3>
+    //                     )
+    //                   }
+    //                 </>
+
+    //               ) : (
+
+    //                 <>
+    //                   {_data && (
+
+    //                     <>
+    //                       <React.Fragment>
+    //                         <Row>
+    //                           <Col sm={12}>
+    //                             <Card>
+    //                               <Card.Header>
+    //                                 <Card.Title as="h5" className='d-flex justify-content-between'>
+    //                                   <h5>User List</h5>
+    //                                   <h5>Total Entries :- {userData.length}</h5>
+
+    //                                 </Card.Title>
+    //                               </Card.Header>
+
+    //                               <Card.Body>
+    //                                   <Table
+    //                                   columns={columns}
+    //                                   data={userData}
+    //                                   modalOpen={openHandler}
+    //                                   userRole={_userRole}
+    //                                   selectAllCheckbox={selectAllCheckbox}
+    //                                   sendDataToParent={handleDataFromChild}
+    //                                   dataFromChild={dataFromChild}
+    //                                   callParentFunction={fetchUserData}
+    //                                   onPageChange={handlePageChange}
+    //                                   pageCountRes={pageCountRes}
+    //                                   onPageIndexUpdate={handlePageIndexUpdate}
+    //                                   indexes={indexes}
+    //                                 />
+
+    //                               </Card.Body>
+    //                             </Card>
+
+    //                           </Col>
+    //                         </Row>
+    //                       </React.Fragment>
+    //                     </>
+    //                   )}
+
+    //                 </>
+    //               )
+    //             }
+    //           </>
+    //         )
+
+    //     }
+
+    //   </div>
+    //   {loader}
+    // </React.Fragment>
+
+    ////////////////////////////////////
     <React.Fragment>
       <div>
 
@@ -1303,79 +1360,52 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
             (
               <>
                 {
-                  userData.length <= 0 && _data ? (
-                    <>
-                      {
-                        pageLocation === 'active-users' ? (
-                          <div>
-                            <h3 style={{ textAlign: 'center' }}>No {sessionStorage.getItem('user_type')} Found</h3>
-                            <div className="form-group fill text-center">
-                              <br></br>
-                              {/* <Button variant="success" className="btn-sm btn-round has-ripple ml-2"
-                            onClick={handleButtonClicked}
-                          >
-                            <i className="feather icon-plus" /> Add Users
-                          </Button> */}
-                              <Link to={'/admin-portal/add-users'}>
-                                <Button variant="success" className="btn-sm btn-round has-ripple ml-2"
-                                >
-                                  <i className="feather icon-plus" /> Add Users
-                                </Button>
-                              </Link>
-                            </div>
-                          </div>
-                        ) : (
-                          <h3 style={{ textAlign: 'center' }}>No {sessionStorage.getItem('user_type')} Found</h3>
-                        )
-                      }
-                    </>
+                  <>
+                    {
+                      pageLocation === 'active-users' ? (
 
-                  ) : (
+                        <React.Fragment>
+                          <Row>
+                            <Col sm={12}>
+                              <Card>
+                                <Card.Header>
+                                  <Card.Title as="h5" className='d-flex justify-content-between'>
+                                    <h5>User List</h5>
+                                    <h5>Total Entries :- {userData.length}</h5>
 
-                    <>
-                      {_data && (
+                                  </Card.Title>
+                                </Card.Header>
 
-                        <>
-                          <React.Fragment>
-                            <Row>
-                              <Col sm={12}>
-                                <Card>
-                                  <Card.Header>
-                                    <Card.Title as="h5" className='d-flex justify-content-between'>
-                                      <h5>User List</h5>
-                                      <h5>Total Entries :- {userData.length}</h5>
+                                <Card.Body>
 
-                                    </Card.Title>
-                                  </Card.Header>
+                                  <Table
+                                    columns={columns}
+                                    data={userData}
+                                    modalOpen={openHandler}
+                                    userRole={_userRole}
+                                    selectAllCheckbox={selectAllCheckbox}
+                                    sendDataToParent={handleDataFromChild}
+                                    dataFromChild={dataFromChild}
+                                    callParentFunction={fetchUserData}
+                                    onPageChange={handlePageChange}
+                                    pageCountRes={pageCountRes}
+                                    onPageIndexUpdate={handlePageIndexUpdate}
+                                    indexes={indexes}
+                                  />
 
-                                  <Card.Body>
-                                      <Table
-                                      columns={columns}
-                                      data={userData}
-                                      // data={itemsRes}
-                                      modalOpen={openHandler}
-                                      userRole={_userRole}
-                                      selectAllCheckbox={selectAllCheckbox}
-                                      sendDataToParent={handleDataFromChild}
-                                      dataFromChild={dataFromChild}
-                                      callParentFunction={fetchUserData}
-                                      onPageChange={handlePageChange}
-                                      pageCountRes={pageCountRes}
-                                      onPageIndexUpdate={handlePageIndexUpdate}
-                                      indexes={indexes}
-                                    />
+                                </Card.Body>
+                              </Card>
 
-                                  </Card.Body>
-                                </Card>
+                            </Col>
+                          </Row>
+                        </React.Fragment>
 
-                              </Col>
-                            </Row>
-                          </React.Fragment>
-                        </>
-                      )}
+                      ) : (
+                        <h3 style={{ textAlign: 'center' }}>No {sessionStorage.getItem('user_type')} Found</h3>
+                      )
+                    }
+                  </>
 
-                    </>
-                  )
                 }
               </>
             )
@@ -1385,6 +1415,7 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
       </div>
       {loader}
     </React.Fragment>
+
   );
 };
 
