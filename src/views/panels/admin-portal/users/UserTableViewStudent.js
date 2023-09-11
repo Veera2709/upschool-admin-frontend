@@ -13,7 +13,7 @@ import dynamicUrl from '../../../../helper/dynamicUrls';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import BasicSpinner from '../../../../helper/BasicSpinner';
 
-function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParentFunction }) {
+function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParentFunction, onPageChange, pageCountRes, onPageIndexUpdate, indexes }) {
     console.log("_userRole in Table", userRole);
     const [loader, showLoader, hideLoader] = useFullPageLoader();
     const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
@@ -24,7 +24,9 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
     const [pageIndexValue, setPageIndexValue] = useState(1);
 
     const [dataFromChild, setDataFromChild] = useState('');
-    const [startKeys, setStartKeys] = useState("0");
+    const [startKeys, setStartKeys] = useState(null);
+    const [initialValue, setInitialValue] = useState(1);
+    const [pageIndex, setPageIndex] = useState(0);
 
 
     const initiallySelectedRows = React.useMemo(() => new Set(["1"]), []);
@@ -48,7 +50,7 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
         setPageSize,
         selectedFlatRows,
         toggleAllRowsSelected,
-        state: { pageIndex, pageSize, selectedRowPaths }
+        state: { pageSize, selectedRowPaths }
     } = useTable(
         {
             columns,
@@ -61,12 +63,6 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
         usePagination,
         useRowSelect
     );
-
-
-
-
-
-
 
     const sweetAlertHandler = (alert) => {
         MySwal.fire({
@@ -84,7 +80,9 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
             user: userRole,
             start_key: startKeys,
             searchedKeyword: searchValue,
-            pageIndexValue: pageIndexValue
+            pageIndexValue: pageIndexValue,
+            pageIndex: pageIndex,
+            initialValue: initialValue
         }
 
         console.log('Data sent from stu child:', data);
@@ -94,7 +92,7 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
         setDataFromChild(data);
 
 
-    }, [pageSize, userRole, searchValue, globalFilter, setGlobalFilter, startKeys]);
+    }, [pageSize, userRole, searchValue, globalFilter, setGlobalFilter, startKeys, pageIndex, pageIndexValue, initialValue]);
 
 
     // const conformDelete = () => {
@@ -345,25 +343,55 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
     }
 
     const nextCustomPage = () => {
-
-        setPageIndexValue(pageIndexValue + 1);
-
-        sendDataToParent(dataFromChild.pageIndexValue = pageIndexValue);
-        callParentFunction()
-
-        console.log("dataFromChild utv : ", dataFromChild);
-
-    }
-    const prevCustomPage = () => {
-
-        setPageIndexValue(pageIndexValue - 1);
-
-        sendDataToParent(dataFromChild.pageIndexValue = pageIndexValue);
-        callParentFunction()
-
-        console.log("dataFromChild utv : ", dataFromChild);
-
-    }
+        if(data.length !== 0){
+            setPageIndex(pageIndex + 1);
+            setInitialValue(initialValue + 1); 
+        }
+      }
+    
+      const prevCustomPage = () => {
+        if(data.length !== 0){
+            setPageIndex(pageIndex - 1);
+            setInitialValue(initialValue - 1); 
+        }
+      }
+    
+      const goToPage = (page) => {
+        if(data.length !== 0){
+            page === 1 ? setPageIndex(page - 1) : setPageIndex(page); 
+            page === 1  ? setInitialValue(page) : setInitialValue(page + 1); 
+        }
+      }
+    
+      const handleInputChange = (e) => {
+    
+        const inputValue = e.target.value;
+    
+        if(inputValue <= pageCountRes){
+          console.log("INPUT PAGE NO : ======================= ", inputValue);
+          if (inputValue !== "") {
+            sessionStorage.setItem('inputValue', inputValue);
+          }
+          console.log('Input value:', inputValue);
+          const newPageNumber = parseInt(inputValue, 10) - 1;
+      
+      
+          const neededPage = inputValue === "" ? inputValue : parseInt(inputValue, 10) - 1;
+      
+          onPageChange(neededPage);
+          // onPageChange(newPageNumber);
+          setPageIndex(newPageNumber);
+      
+          setInitialValue(inputValue);
+      
+          const pageNumber = parseInt(initialValue, 10);
+          if (!isNaN(pageNumber) && pageNumber >= 1 && pageNumber <= pageCountRes) {
+            setPageIndex(pageNumber - 1); // Adjust for zero-based indexing
+            // setInitialValue(''); // Clear input
+          }
+        }
+        
+      }
 
     return (
         <>
@@ -391,23 +419,36 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
 
                     {user_status === "Active" ? (
                         <>
+                        {
+                          data.length === 0 ? (<></>) : (
+                            <>
                             <Link to={'/admin-portal/add-users'}>
-                                <Button
-                                    style={{ whiteSpace: "nowrap" }}
-                                    variant="success"
-                                    className="btn-sm btn-round has-ripple ml-2">
-                                    <i className="feather icon-plus" /> Add Users
-                                </Button>
-                            </Link>
-
                             <Button
-                                onClick={(e) => { deleteAllStudent() }}
-                                variant="danger"
-                                className="btn-sm btn-round has-ripple ml-2"
-                                style={{ whiteSpace: "nowrap" }} >
-                                <i className="feather icon-trash-2" /> &nbsp;
-                                Multi Delete
+            
+                              className="btn-sm btn-round has-ripple ml-2 btn btn-success"
+                              style={{
+                                whiteSpace: "nowrap"
+                              }}
+                            >
+            
+                              <i className="feather icon-plus" /> Add Users
                             </Button>
+                          </Link>
+            
+                          <Button
+            
+                            className="btn-sm btn-round has-ripple ml-2  btn btn-danger"
+                            // style={{ marginLeft: "1.5rem" }}
+                            style={{ whiteSpace: "nowrap" }}
+                            onClick={() => { deleteAllStudent() }}
+                          >
+                            <i className="feather icon-trash-2" /> &nbsp;
+                            Multi Delete
+                          </Button>
+                            </>
+                          )
+                        }
+                          
                         </>
 
                     )
@@ -464,7 +505,24 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
                     })}
                 </tbody>
             </BTable>
+            {data.length === 0 && ( <>
+              <div>
+                                      <h3 style={{ textAlign: 'center' }}>No {sessionStorage.getItem('user_type')} Found</h3>
+                                      <div className="form-group fill text-center">
+                                        <br></br>
+                                       
+                                        <Link to={'/admin-portal/add-users'}>
+                                          <Button variant="success" className="btn-sm btn-round has-ripple ml-2"
+                                          >
+                                            <i className="feather icon-plus" /> Add Users
+                                          </Button>
+                                        </Link>
+                                      </div>
+                                    </div>
+            </>
 
+            )}
+            
 
             <Row className="justify-content-between">
                 <Col>
@@ -472,30 +530,29 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
                         Page{' '}
                         <strong>
                             {' '}
-                            {pageIndex + 1} of {pageOptions.length}{' '}
+                            {data.length === 0 ? 0 : (initialValue === "" ? 1 : initialValue)} of {data.length === 0 ? 0 : (pageCountRes)} 
+
+
                         </strong>{' '}
                         | Go to page:{' '}
                         <input
                             className="form-control ml-2"
                             type="number"
                             defaultValue={pageIndex + 1}
-                            onChange={(e) => {
-                                const page = e.target.value ? Number(e.target.value) - 1 : 0;
-                                gotoPage(page);
-                            }}
+                            onChange={handleInputChange}
                             onWheel={(e) => e.target.blur()}
+                            value={data.length === 0 ? 0 : initialValue}
+                            disabled={data.length === 0}
                             style={{ width: '100px' }}
                         />
                     </span>
                 </Col>
                 <Col>
                     <Pagination className="justify-content-end">
-                        <Pagination.First onClick={() => gotoPage(0)} disabled={!canPreviousPage} />
-                        <Pagination.Prev onClick={() => previousPage()} disabled={!canPreviousPage} />
-                        {/* <Pagination.Next onClick={() => nextPage()} disabled={!canNextPage} />
-                         */}
-                        <Pagination.Next onClick={() => nextCustomPage()} />
-                        <Pagination.Last onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage} />
+                    <Pagination.First onClick={() => goToPage(1)} disabled={initialValue === 1}/>
+                    <Pagination.Prev onClick={prevCustomPage} disabled={initialValue === 1} />
+                    <Pagination.Next onClick={nextCustomPage} disabled={pageIndex === pageCountRes - 1 || data.length === 0} />
+                    <Pagination.Last onClick={() => goToPage(pageCountRes - 1)} disabled={data.length === 0}/>
                     </Pagination>
                 </Col>
             </Row>
@@ -562,18 +619,57 @@ const UserTableViewStudent = ({ _userRole, sendDataToGrandParent }) => {
     console.log("options", options);
     console.log("multiDropOptions", multiDropOptions);
     const [selectAllCheckbox, setSelectAllCheckbox] = useState(false);
-    const [startKeys, setStartKeys] = useState("0");
     ///
     const [dataFromChild, setDataFromChild] = useState('');
     console.log("datafrom child ", dataFromChild)
 
-    const handleDataFromChild = (data) => {
+    const [tempData, setTemData] = useState([]);
+    const [startKeys, setStartKeys] = useState(null);
+    const [lastKeys, setLastKeys] = useState([]);
+    const [indexes, setIndexes] = useState(0)
+    const [pageCountRes, setPageCountRes] = useState()
+    const [pageIndexParent, setPageIndexParent] = useState(0); // Initialize pageIndexParent in the parent component
+    const [itemsRes, setItemsRes] = useState([])
+    const [initialValue, setInitialValue] = useState('');
+    const [isOpen, setIsOpen] = useState(false);
+
+    const handlePageIndexUpdate = (pageIndex) => {
+        setPageIndexParent(pageIndex); // Update the parent's pageIndex state
+      };
+    
+      const handleDataFromChild = (data) => {
         console.log('Data received in Parent:', data);
         setDataFromChild(data);
-
+        setInitialValue(dataFromChild.initialValue)
+    
+        // Reset indexes to 1 when search keyword changes
+        if (data.searchedKeyword !== dataFromChild.searchedKeyword) {
+          console.log('Search keyword changed. Resetting indexes to 1.');
+    
+          setIndexes(1);
+          // setPageIndexParent(1)
+          handlePageIndexUpdate()
+    
+          console.log("pagendexfformparent,", pageIndexParent)
+    
+        }
+    
         // Pass the data to the GrandParentComponent
         sendDataToGrandParent(data);
-    };
+      };
+      const handlePageChange = (pageNumber) => {
+    
+        const parsedNumber = Number(pageNumber);
+    
+        console.log('Parsed number:', parsedNumber);
+    
+        if (!isNaN(parsedNumber)) {
+          setIndexes(parsedNumber);
+        } else { // Handle the case where parsing failed 
+          console.log('Invalid page number:', pageNumber);
+        }
+    
+      };
 
     const MySwal = withReactContent(Swal);
 
@@ -691,7 +787,9 @@ const UserTableViewStudent = ({ _userRole, sendDataToGrandParent }) => {
                 }
             });
     };
-
+    const openHandler = () => {
+        setIsOpen(true);
+      };
     const updateValues = (_data) => {
         let responseData = _data.Items;
         // let responseData = [];
@@ -770,10 +868,10 @@ const UserTableViewStudent = ({ _userRole, sendDataToGrandParent }) => {
         console.log("startKeys : ", startKeys);
         console.log("Request for Pagination : ", {
             page_size: dataFromChild.page_size === undefined ? 10 : dataFromChild.page_size,
-            user: _userRole,
+            user: _userRole.replace("s", ""),
             start_key: startKeys,
             searchedKeyword: dataFromChild.searchedKeyword === undefined ? "" : dataFromChild.searchedKeyword,
-        });
+          });
 
         axios.post(
             dynamicUrl.usersPagination,
@@ -781,26 +879,37 @@ const UserTableViewStudent = ({ _userRole, sendDataToGrandParent }) => {
                 data: {
                     page_size: dataFromChild.page_size === undefined ? 10 : dataFromChild.page_size,
                     user: _userRole.replace("s", ""),
-                    // user: dataFromChild.user,
                     start_key: startKeys,
                     searchedKeyword: dataFromChild.searchedKeyword === undefined ? "" : dataFromChild.searchedKeyword,
-                }
+                  }
             },
             {
                 headers: { Authorization: sessionStorage.getItem('user_jwt') }
             })
             .then((response) => {
 
-                let resultData = response.data;
-                console.log("resultData", response.data);
-                console.log("resultData", resultData);
-
+                const resultData = response.data;
+                console.log("resultData.Items", resultData.Items); 
+                console.log("resultData.lastKey", resultData); 
+          
                 if (resultData) {
-
-                    setIsLoading(false);
-                    updateValues(resultData);
-                    hideLoader();
-
+                  setIsLoading(false);
+                  setTemData(resultData);
+                  let tempPageCount = resultData.pagesCount === undefined || resultData.pagesCount === 'undefined' || resultData.pagesCount === "" ? pageCountRes : resultData.pagesCount;
+                  setPageCountRes(tempPageCount);
+                  updateValues(resultData);
+                  // setPageCountRes(resultData.pagesCount)
+                  hideLoader();
+          
+                  const newStartKey = resultData.lastKey;
+          
+                  resultData.lastKey !== undefined && setLastKeys(resultData.lastKey);
+                  console.log("lastKey : ", resultData.lastKey);
+          
+                  const items = resultData.Items
+                  console.log("items", items);
+                  setItemsRes(items)
+                  console.log("itemsRes", itemsRes);
                 }
 
             })
@@ -826,144 +935,155 @@ const UserTableViewStudent = ({ _userRole, sendDataToGrandParent }) => {
 
     useEffect(() => {
         const validateJWT = sessionStorage.getItem('user_jwt');
-
+    
         if (validateJWT === "" || validateJWT === null || validateJWT === undefined || validateJWT === "undefined") {
-
-            sessionStorage.clear();
-            localStorage.clear();
-
-            history.push('/auth/signin-1');
-            window.location.reload();
-
+          sessionStorage.clear();
+          localStorage.clear();
+          history.push('/auth/signin-1');
+          window.location.reload();
         }
         else {
-            fetchUserData();
+         
+          if (dataFromChild.pageIndex > 0) {
+            let startKey = lastKeys[dataFromChild.pageIndex];
+            setStartKeys(startKey);
+          }else {
+            setStartKeys(null);
+          }
+    
+          fetchUserData();
         }
-
-    }, [pageLocation]);
-
-    useEffect(() => {
+      }, [pageLocation, _userRole, dataFromChild.page_size, dataFromChild.searchedKeyword]);
+      
+      useEffect(() => {
         const validateJWT = sessionStorage.getItem('user_jwt');
-
+    
         if (validateJWT === "" || validateJWT === null || validateJWT === undefined || validateJWT === "undefined") {
-
-            sessionStorage.clear();
-            localStorage.clear();
-
-            history.push('/auth/signin-1');
-            window.location.reload();
-
+          sessionStorage.clear();
+          localStorage.clear();
+          history.push('/auth/signin-1');
+          window.location.reload();
         }
         else {
-            fetchUserData();
-
-
+         
+          fetchUserData();
         }
-
-    }, [_userRole]);
-
-    useEffect(() => {
+      }, [startKeys]);
+      
+    
+      console.log("dataFromChild.pageIndex : ", dataFromChild.pageIndex);
+    
+      useEffect(() => {
         const validateJWT = sessionStorage.getItem('user_jwt');
-
+    
         if (validateJWT === "" || validateJWT === null || validateJWT === undefined || validateJWT === "undefined") {
-
-            sessionStorage.clear();
-            localStorage.clear();
-
-            history.push('/auth/signin-1');
-            window.location.reload();
-
+          sessionStorage.clear();
+          localStorage.clear();
+          history.push('/auth/signin-1');
+          window.location.reload();
         }
         else {
-            fetchUserData();
+    
+          if (dataFromChild.pageIndex > 0) {
+            let startKey = lastKeys[dataFromChild.pageIndex];
+            setStartKeys(startKey);
+          }else {
+            setStartKeys(null);
+          }
+    
         }
-
-    }, [dataFromChild.page_size]);
-
-
+      }, [dataFromChild.pageIndex]);
+    
+      useEffect(() => {
+        const validateJWT = sessionStorage.getItem('user_jwt');
+    
+        if (validateJWT === "" || validateJWT === null || validateJWT === undefined || validateJWT === "undefined") {
+          sessionStorage.clear();
+          localStorage.clear();
+          history.push('/auth/signin-1');
+          window.location.reload();
+        }
+        else {
+    
+          console.log('Updated indexes state useeff:', dataFromChild.pageIndex, indexes);
+    
+          if (indexes > 0) {
+            let startKey = lastKeys[indexes];
+            setStartKeys(startKey);
+          }else {
+            setStartKeys(null);
+          }
+    
+        }
+      }, [indexes]);
+      
     return (
 
-        <React.Fragment>
-            <div>
+       <React.Fragment>
+      <div>
 
-                {isLoading ? (
-                    <BasicSpinner />
-                ) : (
-                    <>
+        {
+          isLoading ? (
+            <BasicSpinner />
+          ) :
+            (
+              <>
+                {
+                  <>
+                    {
+                      pageLocation === 'active-users' ? (
 
-                        {
-                            userData.length <= 0 && _data ? (
-                                <div>
+                        <React.Fragment>
+                          <Row>
+                            <Col sm={12}>
+                              <Card>
+                                <Card.Header>
+                                  <Card.Title as="h5" className='d-flex justify-content-between'>
+                                    <h5>User List</h5>
+                                    <h5>Total Entries :- {userData.length}</h5>
 
-                                    <h3 style={{ textAlign: 'center' }}>No {sessionStorage.getItem('user_type')} Found</h3>
-                                    <div className="form-group fill text-center">
-                                        <br></br>
+                                  </Card.Title>
+                                </Card.Header>
 
-                                        {
-                                            pageLocation === 'active-users' && (
-                                                <Link to={'/admin-portal/add-users'}>
-                                                    <Button variant="success" className="btn-sm btn-round has-ripple ml-2">
-                                                        <i className="feather icon-plus" /> Add Users
-                                                    </Button>
-                                                </Link>
-                                            )
-                                        }
+                                <Card.Body>
 
-                                    </div>
+                                <Table
+                                    columns={columns}
+                                    data={userData}
+                                    modalOpen={openHandler}
+                                    userRole={_userRole}
+                                    selectAllCheckbox={selectAllCheckbox}
+                                    sendDataToParent={handleDataFromChild}
+                                    dataFromChild={dataFromChild}
+                                    callParentFunction={fetchUserData}
+                                    onPageChange={handlePageChange}
+                                    pageCountRes={pageCountRes}
+                                    onPageIndexUpdate={handlePageIndexUpdate}
+                                    indexes={indexes}
+                                  />
 
-                                </div>
-                            ) : (
+                                </Card.Body>
+                              </Card>
 
-                                <>
-                                    {_data && (
+                            </Col>
+                          </Row>
+                        </React.Fragment>
 
-                                        <>
-
-                                            < React.Fragment >
-                                                <Row>
-                                                    <Col sm={12}>
-                                                        <Card>
-                                                            <Card.Header>
-                                                                <Card.Title as="h5" className='d-flex justify-content-between'>
-                                                                    <h5>User List</h5>
-                                                                    <h5>Total Entries :- {userData.length}</h5>
-                                                                </Card.Title>
-                                                            </Card.Header>
-                                                            <Card.Body>
-                                                                <Table
-                                                                    columns={columns}
-                                                                    data={userData}
-                                                                    userRole={_userRole}
-                                                                    selectAllCheckbox={selectAllCheckbox}
-                                                                    sendDataToParent={handleDataFromChild}
-                                                                    dataFromChild={dataFromChild}
-                                                                    callParentFunction={fetchUserData}
-
-                                                                />
-                                                            </Card.Body>
-                                                        </Card>
-
-                                                    </Col>
-                                                </Row>
-                                            </React.Fragment>
-
-
-                                        </>
-                                    )}
-
-                                </>
-                            )
-                        }
-                    </>
-                )
+                      ) : (
+                        <h3 style={{ textAlign: 'center' }}>No {sessionStorage.getItem('user_type')} Found</h3>
+                      )
+                    }
+                  </>
 
                 }
+              </>
+            )
 
+        }
 
-
-            </div>
-            {loader}
-        </React.Fragment>
+      </div>
+      {loader}
+    </React.Fragment>
     );
 };
 
