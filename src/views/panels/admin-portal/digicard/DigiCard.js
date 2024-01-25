@@ -22,6 +22,7 @@ import Swal from 'sweetalert2';
 function Table({ columns, data, modalOpen }) {
     const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
     const initiallySelectedRows = React.useMemo(() => new Set(["1"]), []);
+
     const MySwal = withReactContent(Swal);
     let digicardStatus = pageLocation === "active-digiCard" ? 'Active' : 'Archived';
 

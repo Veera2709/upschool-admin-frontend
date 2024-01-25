@@ -19,12 +19,14 @@ import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import BasicSpinner from '../../../../helper/BasicSpinner';
 
 
-function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParentFunction, onPageChange, pageCountRes, onPageIndexUpdate, indexes }) {
-  // console.log("data", data);
-  // console.log("_userRole in Table", userRole);
-  // console.log("pageCountRes", pageCountRes)
+function Table({ columns, data, modalOpen, userRole, sendDataToParent }) {
+
+  console.log("data", data);
+  console.log("_userRole in Table", userRole);
+
   const [stateUser, setStateUser] = useState([])
   const [check, setCheck] = useState(false)
+
   const [loader, showLoader, hideLoader] = useFullPageLoader();
   const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
   const initiallySelectedRows = React.useMemo(() => new Set(["1"]), []);
@@ -32,21 +34,11 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
   const history = useHistory();
   const [_showLoader, _setShowLoader] = useState(false);
   const [searchValue, setSearchValue] = useState('');
-
-  const [pageIndexValue, setPageIndexValue] = useState(1);
-  const [dataFromChild, setDataFromChild] = useState('');
-  const [startKeys, setStartKeys] = useState(null);
-
-
-  const [pageIndex, setPageIndex] = useState(0);
-  const itemsPerPage = 10; // Number of items per page
-  const totalItems = data.length; // Total number of items
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
-
-  const startIndex = pageIndex * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentPageData = data.slice(startIndex, endIndex);
-  const [initialValue, setInitialValue] = useState(1);
+  // const [dataToBeSent, setDataToBeSent] = useState({
+  //   page_size: 5,
+  //   user: '',
+  //   searchedKeyword: ''
+  // })
 
   const sweetAlertHandler = (alert) => {
     MySwal.fire({
@@ -74,7 +66,7 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
     setPageSize,
     selectedFlatRows,
     toggleAllRowsSelected,
-    state: { pageSize, selectedRowPaths }
+    state: { pageIndex, pageSize, selectedRowPaths }
   } = useTable(
     {
       columns,
@@ -91,26 +83,26 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
 
   const user_status = pageLocation === 'active-users' ? "Active" : "Archived"
 
+  console.log("user_status : ", user_status);
+
   useEffect(() => {
     const data = {
       page_size: pageSize,
       user: userRole,
-      start_key: startKeys,
-      searchedKeyword: searchValue,
-      pageIndexValue: pageIndexValue,
-      pageIndex: pageIndex,
-      initialValue: initialValue
+      start_key: null,
+      searchedKeyword: searchValue
     }
 
     console.log('Data sent from child:', data);
-    console.log("pageIndex : ", pageIndex);
-
 
     sendDataToParent(data);
     setGlobalFilter(searchValue);
-    setDataFromChild(data);
 
-  }, [pageSize, userRole, searchValue, globalFilter, setGlobalFilter, startKeys, pageIndex, pageIndexValue, initialValue]);
+
+  }, [pageSize, userRole, searchValue, globalFilter, setGlobalFilter]);
+
+
+
 
   // const MySwal = withReactContent(Swal);
   const conformDelete = () => {
@@ -147,6 +139,7 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
       }
     });
   }
+
 
   const deleteUsersById = () => {
 
@@ -204,6 +197,7 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
           hideLoader();
           sweetAlertHandler({ title: MESSAGES.TTTLES.Sorry, type: 'error', text: MESSAGES.ERROR.DeletingUser });
           history.push('/admin-portal/' + pageLocation)
+          // fetchUserData();
         } else {
           console.log("response : ", response);
           if (response.data === 200) {
@@ -343,6 +337,7 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
                   });
 
                 history.push('/admin-portal/' + pageLocation)
+                // fetchUserData();
               } else {
                 console.log("response : ", response);
                 if (response.data === 200) {
@@ -403,56 +398,9 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
 
     }
   }
-  const nextCustomPage = () => {
-    if(data.length !== 0){
-        setPageIndex(pageIndex + 1);
-        setInitialValue(initialValue + 1); 
-    }
-  }
-
-  const prevCustomPage = () => {
-    if(data.length !== 0){
-        setPageIndex(pageIndex - 1);
-        setInitialValue(initialValue - 1); 
-    }
-  }
-
-  const goToPage = (page) => {
-    if(data.length !== 0){
-        page === 1 ? setPageIndex(page - 1) : setPageIndex(page); 
-        page === 1  ? setInitialValue(page) : setInitialValue(page + 1); 
-    }
-  }
-
-  const handleInputChange = (e) => {
-
-    const inputValue = e.target.value;
-
-    if (inputValue <= pageCountRes) {
-      console.log("INPUT PAGE NO : ======================= ", inputValue);
-      if (inputValue !== "") {
-        sessionStorage.setItem('inputValue', inputValue);
-      }
-      console.log('Input value:', inputValue);
-      const newPageNumber = parseInt(inputValue, 10) - 1;
 
 
-      const neededPage = inputValue === "" ? inputValue : parseInt(inputValue, 10) - 1;
-
-      onPageChange(neededPage);
-      // onPageChange(newPageNumber);
-      setPageIndex(newPageNumber);
-
-      setInitialValue(inputValue);
-
-      const pageNumber = parseInt(initialValue, 10);
-      if (!isNaN(pageNumber) && pageNumber >= 1 && pageNumber <= pageCountRes) {
-        setPageIndex(pageNumber - 1); // Adjust for zero-based indexing
-        // setInitialValue(''); // Clear input
-      }
-    }
-
-  }
+  // console.log("Value of search input:", dataToBeSent);
 
   return (
     <>
@@ -486,25 +434,18 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
 
           {user_status === "Active" ? (
             <>
-            {
-              data.length === 0 ? (<></>) : (
-                <>
-                <Link to={'/admin-portal/add-users'}>
+              <Link to={'/admin-portal/add-users'}>
                 <Button
-
-                  className="btn-sm btn-round has-ripple ml-2 btn btn-success"
-                  style={{
-                    whiteSpace: "nowrap"
-                  }}
-                >
-
+                  style={{ whiteSpace: "nowrap" }}
+                  variant="success"
+                  className="btn-sm btn-round has-ripple ml-2">
                   <i className="feather icon-plus" /> Add Users
                 </Button>
               </Link>
 
               <Button
-
-                className="btn-sm btn-round has-ripple ml-2  btn btn-danger"
+                variant="danger"
+                className="btn-sm btn-round has-ripple ml-2"
                 // style={{ marginLeft: "1.5rem" }}
                 style={{ whiteSpace: "nowrap" }}
                 onClick={() => { getAlldata() }}
@@ -512,10 +453,6 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
                 <i className="feather icon-trash-2" /> &nbsp;
                 Multi Delete
               </Button>
-                </>
-              )
-            }
-              
             </>
           ) : (
 
@@ -531,7 +468,7 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
 
         </Col>
       </Row>
-            
+
       <BTable striped bordered hover responsive {...getTableProps()}>
         <thead>
           {headerGroups.map((headerGroup) => (
@@ -573,23 +510,6 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
         </tbody>
       </BTable>
 
-      {data.length === 0 && ( <>
-              <div>
-                                      <h3 style={{ textAlign: 'center' }}>No {sessionStorage.getItem('user_type')} Found</h3>
-                                      <div className="form-group fill text-center">
-                                        <br></br>
-                                       
-                                        <Link to={'/admin-portal/add-users'}>
-                                          <Button variant="success" className="btn-sm btn-round has-ripple ml-2"
-                                          >
-                                            <i className="feather icon-plus" /> Add Users
-                                          </Button>
-                                        </Link>
-                                      </div>
-                                    </div>
-            </>
-
-            )}
 
       <Row className="justify-content-between">
         <Col>
@@ -597,30 +517,28 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
             Page{' '}
             <strong>
               {' '}
-              {data.length === 0 ? 0 : (initialValue === "" ? 1 : initialValue)} of {data.length === 0 ? 0 : (pageCountRes)} 
+              {pageIndex + 1} of {pageOptions.length}{' '}
             </strong>{' '}
             | Go to page:{' '}
             <input
               className="form-control ml-2"
               type="number"
-              onChange={handleInputChange}
-              // {initialValue > pageCountRes && onKeydown="return false;"} 
-              // value={initialValue}
-              value={data.length === 0 ? 0 : initialValue}
-              disabled={data.length === 0}
+              defaultValue={pageIndex + 1}
+              onChange={(e) => {
+                const page = e.target.value ? Number(e.target.value) - 1 : 0;
+                gotoPage(page);
+              }}
+              onWheel={(e) => e.target.blur()}
               style={{ width: '100px' }}
             />
-            {/* <button className="btn btn-primary ml-2" onClick={handleGoToPageClick}>
-                Go
-              </button> */}
           </span>
         </Col>
         <Col>
           <Pagination className="justify-content-end">
-            <Pagination.First onClick={() => goToPage(1)} disabled={initialValue === 1} />
-            <Pagination.Prev onClick={prevCustomPage} disabled={initialValue === 1} />
-            <Pagination.Next onClick={nextCustomPage} disabled={pageIndex === pageCountRes - 1 || data.length === 0} />
-            <Pagination.Last onClick={() => goToPage(pageCountRes - 1 || data.length === 0)} />
+            <Pagination.First onClick={() => gotoPage(0)} disabled={!canPreviousPage} />
+            <Pagination.Prev onClick={() => previousPage()} disabled={!canPreviousPage} />
+            <Pagination.Next onClick={() => nextPage()} disabled={!canNextPage} />
+            <Pagination.Last onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage} />
           </Pagination>
         </Col>
       </Row>
@@ -629,8 +547,19 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
 }
 
 const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
-  // console.log("_userRole : ", _userRole);
+
+  console.log("_userRole : ", _userRole);
+
+
   const [dataFromChild, setDataFromChild] = useState('');
+
+  const handleDataFromChild = (data) => {
+    console.log('Data received in Parent:', data);
+    setDataFromChild(data);
+
+    // Pass the data to the GrandParentComponent
+    sendDataToGrandParent(data);
+  };
   const [users, setUsers] = useState([])
   const history = useHistory();
   const [userData, setUserData] = useState([]);
@@ -642,14 +571,15 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
   const [previousSchool, setPreviousSchool] = useState('');
   const [previousClass, setPreviousClass] = useState('');
   const [_userID, _setUserID] = useState('');
+
   const [isOpen, setIsOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isOpenSectionAllocation, setOpenSectionAllocation] = useState(false);
   const [teacherId, setTeacherId] = useState();
   const [selectDOBErr, setSelectDOBErr] = useState(false);
   const [checkedStatus, setCheckedStatus] = useState([]);
+
   const [isLoading, setIsLoading] = useState(false);
-  const [isShow, setIsSHow] = useState(false);
   const { user_id } = decodeJWT(sessionStorage.getItem('user_jwt'));
   const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
   const [selectClassErr, setSelectClassErr] = useState(false);
@@ -657,64 +587,64 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
   const [checkBoxId, _setAllCheckId] = useState([]);
   const classNameRef = useRef('');
   const schoolNameRef = useRef('');
+
   const [check, setCheck] = useState(false);
+
   const [selectAllCheckbox, setSelectAllCheckbox] = useState(false);
   // const [outPutData, setOutPutData] = useState(response.data);
 
   const [tempData, setTemData] = useState([]);
-  const [startKeys, setStartKeys] = useState(null);
-  const [lastKeys, setLastKeys] = useState([]);
-  const [indexes, setIndexes] = useState(0)
-  const [pageCountRes, setPageCountRes] = useState()
-  const [pageIndexParent, setPageIndexParent] = useState(0); // Initialize pageIndexParent in the parent component
-  const [itemsRes, setItemsRes] = useState([])
-  const [initialValue, setInitialValue] = useState('');
 
-
-  const handlePageIndexUpdate = (pageIndex) => {
-    setPageIndexParent(pageIndex); // Update the parent's pageIndex state
-  };
-
-  const handleDataFromChild = (data) => {
-    console.log('Data received in Parent:', data);
-    setDataFromChild(data);
-    setInitialValue(dataFromChild.initialValue)
-
-    // Reset indexes to 1 when search keyword changes
-    if (data.searchedKeyword !== dataFromChild.searchedKeyword) {
-      console.log('Search keyword changed. Resetting indexes to 1.');
-
-      setIndexes(1);
-      // setPageIndexParent(1)
-      handlePageIndexUpdate()
-
-      console.log("pagendexfformparent,", pageIndexParent)
-
-    }
-
-    // Pass the data to the GrandParentComponent
-    sendDataToGrandParent(data);
-  };
-  const handlePageChange = (pageNumber) => {
-
-    const parsedNumber = Number(pageNumber);
-
-    console.log('Parsed number:', parsedNumber);
-
-    if (!isNaN(parsedNumber)) {
-      setIndexes(parsedNumber);
-    } else { // Handle the case where parsing failed 
-      console.log('Invalid page number:', pageNumber);
-    }
-
-  };
+  console.log("check : ", check);
 
   const phoneRegExp = /^(\+91[\-\s]?)?[0]?(91)?[6789]\d{9}$/;
 
   const MySwal = withReactContent(Swal);
 
-  const columns = React.useMemo(() => [
 
+  const handleSelectAll = (allId) => {
+
+
+    console.log("ALL CEHCK IDS : ", checkBoxId);
+    if (document.getElementById(allId).checked === true) {
+      alert("Checked");
+    }
+    else {
+      alert("Un checked");
+    }
+    // const checked = event.target.checked;
+    // const updatedData = outPutData.map(data => ({ ...data, checked }));
+    // setOutPutData(updatedData);
+    // setSelectAllCheckbox(checked);
+  };
+  // console.log("------------", outPutData)
+
+  console.log("type of response data", typeof responseData);
+
+
+  const handleCheckboxChange = event => {
+    // let userId = (_userRole === "Teacher") ? "teacher_id" : "N.A.";
+
+    // let userId = (_userRole === "Teachers") ? "teacher_id" : (_userRole === "Students") ? "student_id" : (_userRole === "Parents") ? "parent_id" : "N.A.";
+    // const id = event.target.id;
+    // const updatedData = outPutData.map(data =>
+    //   data[userId] === id ? { ...data, checked: event.target.checked } : data
+    // );
+    // setOutPutData(updatedData);
+  };
+
+  const columns = React.useMemo(() => [
+    // {
+    //   Header:
+    //     <input
+    //       className="selectAllCheck"
+    //       type="checkbox"
+    //       id="chooseAll"
+    //       // checked={selectAllCheckbox}
+    //       onChange={() => handleSelectAll("chooseAll")}
+    //     />,
+    //   accessor: 'actn'
+    // },
     {
       id: "selection",
       Header: ({ getToggleAllRowsSelectedProps }) => (
@@ -909,7 +839,7 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
       school_id: schoolId
     };
 
-    // console.log(values);
+    console.log(values);
 
     axios
       .post(dynamicUrl.toggleUserStatus,
@@ -986,18 +916,30 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
   };
 
   const updateValues = async (_data) => {
-    let responseData = _data.Items;
+    let responseData = _data;
 
-
-    // console.log("updateValues responseData", responseData);
+    console.log("updateValues responseData", responseData);
     setCheckedStatus(new Array(responseData.length).fill(false));
 
+    const handleCheckStatus = (e) => {
+      // console.log("handleCheckStatus", e.target.id);
+      console.log("boolean here ", document.getElementById(e.target.id).checked)
+      // console.log("check: ", check);
 
+      // document.getElementById(e.target.id).checked =
+      // setCheck();
+
+      // console.log("checked status", checkedStatus);
+      // const updateStatus = checkedStatus.map((item, index) =>
+      //   index === position ? !item : item
+      // );
+      // setCheckedStatus(updateStatus);
+    }
 
     let finalDataArray = [];
     let userId = (_userRole === "Teachers") ? "teacher_id" : (_userRole === "Students") ? "student_id" : (_userRole === "Parents") ? "parent_id" : "N.A.";
-    // console.log("while setting", userId);
-    // console.log("responseData : ", responseData);
+    console.log("while setting", userId);
+    console.log("responseData : ", responseData);
 
     let allCheckBoxIds = [];
     for (let index = 0; index < responseData.length; index++) {
@@ -1007,6 +949,24 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
 
       responseData[index].id = index + 1;
 
+      // responseData[index]['actn'] = (
+      //   <>
+      //     <input type="checkbox"
+      //       name={responseData[index]["id"]}
+      //       id={responseData[index][userId]}
+      //     // checked={data.checked}
+      //     // onChange={handleCheckboxChange}
+
+      //     // checked={selectAllCheckbox}
+      //     // defaultChecked={check}
+      //     // value={selectAllCheckbox}
+      //     // checkboxName
+      //     />
+      //   </>
+      // )
+
+      //checkbox teacher
+
       responseData[index]['action'] = (
         <>
           {pageLocation === 'active-users' ? (
@@ -1014,7 +974,18 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
 
               {responseData[index].user_role === "Teacher" ? (
                 <>
-
+                  {/* <Button
+                    size="sm"
+                    className="btn btn-icon btn-rounded btn-info"
+                    onClick={(e) => {
+                      setOpenSectionAllocation(true);
+                      setSchoolId(responseData[index].school_id);
+                      setTeacherId(responseData[index].teacher_id)
+                    }}
+                  >
+                    <i className="feather icon-plus" /> &nbsp; Allocate Section
+                  </Button>{' '}
+                  &nbsp; */}
 
                   <Button
                     size="sm"
@@ -1091,333 +1062,192 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
       );
       finalDataArray.push(responseData[index]);
     }
-    // console.log(finalDataArray);
+    console.log(finalDataArray);
     setUserData(finalDataArray);
-    // console.log("userData : ", userData);
-    // console.log("ALL N SET : ", allCheckBoxIds, checkBoxId);
+    console.log("ALL N SET : ", allCheckBoxIds, checkBoxId);
     _setAllCheckId(allCheckBoxIds);
-    // console.log("ALL N SET 2 : ", allCheckBoxIds, checkBoxId);
+    console.log("ALL N SET 2 : ", allCheckBoxIds, checkBoxId);
     setIsLoading(false);
   }
 
-  const fetchUserData = async () => {
-    try {
-      showLoader();
-      setIsSHow(true);
-      console.log("startKeys : ", startKeys);
-      console.log("indexes : ", indexes);
-      console.log("datafromchildinital", dataFromChild.initialValue)
+  const fetchUserData = () => {
 
-      const payLoadStatus = pageLocation === "active-users" ? 'Active' : 'Archived';
+    console.log("fetch User Data calling");
+    setIsLoading(true);
+    // showLoader();
 
-      console.log("payload : ", {
-        page_size: dataFromChild.page_size === undefined ? 10 : dataFromChild.page_size,
-        user: _userRole.replace("s", ""),
-        start_key: startKeys,
-        searchedKeyword: dataFromChild.searchedKeyword === undefined ? "" : dataFromChild.searchedKeyword,
-      });
+    const payLoadStatus = pageLocation === "active-users" ? 'Active' : 'Archived';
 
-      const response = await axios.post(
-        dynamicUrl.usersPagination,
-        {
-          data: {
-            page_size: dataFromChild.page_size === undefined ? 10 : dataFromChild.page_size,
-            user: _userRole.replace("s", ""),
-            start_key: startKeys,
-            searchedKeyword: dataFromChild.searchedKeyword === undefined ? "" : dataFromChild.searchedKeyword,
-          }
-        },
-        {
-          headers: { Authorization: sessionStorage.getItem('user_jwt') }
+    axios.post(dynamicUrl.fetchAllUsersData, {
+      data: {
+        user_role: _userRole,
+        user_status: payLoadStatus
+      }
+    }, {
+      headers: { Authorization: sessionStorage.getItem('user_jwt') }
+    })
+      .then((response) => {
+
+        let resultData = response.data;
+        console.log("resultData", response.data);
+        console.log("resultData", resultData);
+
+        if (resultData) {
+
+          setIsLoading(false);
+          updateValues(resultData);
+          setTemData(resultData)
+
         }
-      );
 
-      const resultData = response.data;
-      console.log("resultData.Items", resultData.Items);
-      console.log("resultData.lastKey", resultData);
+      })
+      .catch((error) => {
+        console.log(error.response.data);
 
-      if (resultData) {
-        setIsLoading(false);
-        setTemData(resultData);
-        let tempPageCount = resultData.pagesCount === undefined || resultData.pagesCount === 'undefined' || resultData.pagesCount === "" ? pageCountRes : resultData.pagesCount;
-        setPageCountRes(tempPageCount);
-        updateValues(resultData);
-        // setPageCountRes(resultData.pagesCount)
-        hideLoader();
+        if (error.response.data === 'Invalid Token') {
 
-        const newStartKey = resultData.lastKey;
+          sessionStorage.clear();
+          localStorage.clear();
 
-        resultData.lastKey !== undefined && setLastKeys(resultData.lastKey);
-        console.log("lastKey : ", resultData.lastKey);
+          history.push('/auth/signin-1');
+          window.location.reload();
 
-        const items = resultData.Items
-        console.log("items", items);
-        setItemsRes(items)
-        console.log("itemsRes", itemsRes);
+        } else {
 
-      }
-    } catch (error) {
-      console.log(error);
+          fetchUserData();
+        }
 
-      if (error.response && error.response.data === 'Invalid Token') {
-        console.log("Invalid Token");
-        sessionStorage.clear();
-        localStorage.clear();
-        history.push('/auth/signin-1');
-        window.location.reload();
-      } else {
-        console.log("Fetching user data failed:", error);
-      }
-    }
+      })
+
   };
 
-
   useEffect(() => {
     const validateJWT = sessionStorage.getItem('user_jwt');
 
     if (validateJWT === "" || validateJWT === null || validateJWT === undefined || validateJWT === "undefined") {
+
       sessionStorage.clear();
       localStorage.clear();
+
       history.push('/auth/signin-1');
       window.location.reload();
+
     }
     else {
-
-      if (dataFromChild.pageIndex > 0) {
-        let startKey = lastKeys[dataFromChild.pageIndex];
-        setStartKeys(startKey);
-      } else {
-        setStartKeys(null);
-      }
-
       fetchUserData();
     }
-  }, [pageLocation, _userRole, dataFromChild.page_size, dataFromChild.searchedKeyword]);
+
+  }, [pageLocation]);
 
   useEffect(() => {
     const validateJWT = sessionStorage.getItem('user_jwt');
 
     if (validateJWT === "" || validateJWT === null || validateJWT === undefined || validateJWT === "undefined") {
+
       sessionStorage.clear();
       localStorage.clear();
+
       history.push('/auth/signin-1');
       window.location.reload();
+
     }
     else {
-
       fetchUserData();
     }
-  }, [startKeys]);
+
+  }, [_userRole]);
 
 
-  console.log("dataFromChild.pageIndex : ", dataFromChild.pageIndex);
 
-  useEffect(() => {
-    const validateJWT = sessionStorage.getItem('user_jwt');
 
-    if (validateJWT === "" || validateJWT === null || validateJWT === undefined || validateJWT === "undefined") {
-      sessionStorage.clear();
-      localStorage.clear();
-      history.push('/auth/signin-1');
-      window.location.reload();
-    }
-    else {
-
-      if (dataFromChild.pageIndex > 0) {
-        let startKey = lastKeys[dataFromChild.pageIndex];
-        setStartKeys(startKey);
-      } else {
-        setStartKeys(null);
-      }
-
-    }
-  }, [dataFromChild.pageIndex]);
-
-  useEffect(() => {
-    const validateJWT = sessionStorage.getItem('user_jwt');
-
-    if (validateJWT === "" || validateJWT === null || validateJWT === undefined || validateJWT === "undefined") {
-      sessionStorage.clear();
-      localStorage.clear();
-      history.push('/auth/signin-1');
-      window.location.reload();
-    }
-    else {
-
-      console.log('Updated indexes state useeff:', dataFromChild.pageIndex, indexes);
-
-      if (indexes > 0) {
-        let startKey = lastKeys[indexes];
-        setStartKeys(startKey);
-      } else {
-        setStartKeys(null);
-      }
-
-    }
-  }, [indexes]);
 
   return (
-    // <React.Fragment>
-    //   <div>
 
-    //     {
-    //       isLoading ? (
-    //         <BasicSpinner />
-    //       ) :
-    //         (
-    //           <>
-    //             {
-    //               userData.length <= 0 && _data ? (
-    //                 <>
-    //                   {
-    //                     pageLocation === 'active-users' ? (
-    //                       <div>
-    //                         <h3 style={{ textAlign: 'center' }}>No {sessionStorage.getItem('user_type')} Found</h3>
-    //                         <div className="form-group fill text-center">
-    //                           <br></br>
-    //                           {/* <Button variant="success" className="btn-sm btn-round has-ripple ml-2"
-    //                         onClick={handleButtonClicked}
-    //                       >
-    //                         <i className="feather icon-plus" /> Add Users
-    //                       </Button> */}
-    //                           <Link to={'/admin-portal/add-users'}>
-    //                             <Button variant="success" className="btn-sm btn-round has-ripple ml-2"
-    //                             >
-    //                               <i className="feather icon-plus" /> Add Users
-    //                             </Button>
-    //                           </Link>
-    //                         </div>
-    //                       </div>
-    //                     ) : (
-    //                       <h3 style={{ textAlign: 'center' }}>No {sessionStorage.getItem('user_type')} Found</h3>
-    //                     )
-    //                   }
-    //                 </>
-
-    //               ) : (
-
-    //                 <>
-    //                   {_data && (
-
-    //                     <>
-    //                       <React.Fragment>
-    //                         <Row>
-    //                           <Col sm={12}>
-    //                             <Card>
-    //                               <Card.Header>
-    //                                 <Card.Title as="h5" className='d-flex justify-content-between'>
-    //                                   <h5>User List</h5>
-    //                                   <h5>Total Entries :- {userData.length}</h5>
-
-    //                                 </Card.Title>
-    //                               </Card.Header>
-
-    //                               <Card.Body>
-    //                                   <Table
-    //                                   columns={columns}
-    //                                   data={userData}
-    //                                   modalOpen={openHandler}
-    //                                   userRole={_userRole}
-    //                                   selectAllCheckbox={selectAllCheckbox}
-    //                                   sendDataToParent={handleDataFromChild}
-    //                                   dataFromChild={dataFromChild}
-    //                                   callParentFunction={fetchUserData}
-    //                                   onPageChange={handlePageChange}
-    //                                   pageCountRes={pageCountRes}
-    //                                   onPageIndexUpdate={handlePageIndexUpdate}
-    //                                   indexes={indexes}
-    //                                 />
-
-    //                               </Card.Body>
-    //                             </Card>
-
-    //                           </Col>
-    //                         </Row>
-    //                       </React.Fragment>
-    //                     </>
-    //                   )}
-
-    //                 </>
-    //               )
-    //             }
-    //           </>
-    //         )
-
-    //     }
-
-    //   </div>
-    //   {loader}
-    // </React.Fragment>
-
-    ////////////////////////////////////
     <React.Fragment>
       <div>
 
-        {
-          isLoading ? (
-            <BasicSpinner />
-          ) :
-            (
-              <>
-                {
-                  <>
-                    {
-                      pageLocation === 'active-users' ? (
+        {isLoading ? (
+          <BasicSpinner />
+        ) : (
+          <>
 
-                        <React.Fragment>
-                          <Row>
-                            <Col sm={12}>
-                              <Card>
-                                <Card.Header>
-                                  <Card.Title as="h5" className='d-flex justify-content-between'>
-                                    <h5>User List</h5>
-                                    <h5>Total Entries :- {userData.length}</h5>
-
-                                  </Card.Title>
-                                </Card.Header>
-
-                                <Card.Body>
-
-                                  <Table
-                                    columns={columns}
-                                    data={userData}
-                                    modalOpen={openHandler}
-                                    userRole={_userRole}
-                                    selectAllCheckbox={selectAllCheckbox}
-                                    sendDataToParent={handleDataFromChild}
-                                    dataFromChild={dataFromChild}
-                                    callParentFunction={fetchUserData}
-                                    onPageChange={handlePageChange}
-                                    pageCountRes={pageCountRes}
-                                    onPageIndexUpdate={handlePageIndexUpdate}
-                                    indexes={indexes}
-                                  />
-
-                                </Card.Body>
-                              </Card>
-
-                            </Col>
-                          </Row>
-                        </React.Fragment>
-
-                      ) : (
+            {
+              userData.length <= 0 && _data ? (
+                <>
+                  {
+                    pageLocation === 'active-users' ? (
+                      <div>
                         <h3 style={{ textAlign: 'center' }}>No {sessionStorage.getItem('user_type')} Found</h3>
-                      )
-                    }
-                  </>
+                        <div className="form-group fill text-center">
+                          <br></br>
 
-                }
-              </>
-            )
+
+
+                          {/* <Button variant="success" className="btn-sm btn-round has-ripple ml-2"
+                            onClick={handleButtonClicked}
+                          >
+                            <i className="feather icon-plus" /> Add Users
+                          </Button> */}
+
+
+                          <Link to={'/admin-portal/add-users'}>
+                            <Button variant="success" className="btn-sm btn-round has-ripple ml-2"
+                            >
+                              <i className="feather icon-plus" /> Add Users
+                            </Button>
+                          </Link>
+
+
+                        </div>
+                      </div>
+                    ) : (
+                      <h3 style={{ textAlign: 'center' }}>No {sessionStorage.getItem('user_type')} Found</h3>
+                    )
+                  }
+                </>
+
+              ) : (
+
+                <>
+                  {_data && (
+
+                    <>
+                      <React.Fragment>
+                        <Row>
+                          <Col sm={12}>
+                            <Card>
+                              <Card.Header>
+                                <Card.Title as="h5" className='d-flex justify-content-between'>
+                                  <h5>User List</h5>
+                                  <h5>Total Entries :- {userData.length}</h5>
+                                </Card.Title>
+                              </Card.Header>
+
+                              <Card.Body>
+                                <Table columns={columns} data={userData} modalOpen={openHandler} userRole={_userRole} selectAllCheckbox={selectAllCheckbox} sendDataToParent={handleDataFromChild} dataFromChild={dataFromChild} />
+                              </Card.Body>
+                            </Card>
+
+                          </Col>
+                        </Row>
+                      </React.Fragment>
+                    </>
+                  )}
+
+                </>
+              )
+            }
+          </>
+        )
 
         }
+
+
 
       </div>
       {loader}
     </React.Fragment>
-
   );
 };
 
 export default UserTableView;
-

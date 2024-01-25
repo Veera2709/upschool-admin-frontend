@@ -789,7 +789,6 @@ export const toggleMultipleGroupStatus = (payLoad) => {
     });
 }
 
-
 export const fetchSourcesBasedonStatus = (payload) => {
 
     return new Promise((resolve, reject) => {
@@ -807,6 +806,7 @@ export const fetchSourcesBasedonStatus = (payload) => {
             })
     });
 }
+
 export const toggleQuestionSourceStatus = (payLoad) => {
     console.log("payLoad : ", payLoad);
     return new Promise((resolve, reject) => {
