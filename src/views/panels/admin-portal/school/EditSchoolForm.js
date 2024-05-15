@@ -224,7 +224,7 @@ const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive 
                                                         schoolName: isEmptyObject(previousData) ? '' : previousData.school_name,
                                                         school_logo: "",
                                                         subscription_active: subscription_active,
-                                                        school_admin_email: isEmptyObject(previousData) && !previousData.school_admin_email ? '' : previousData.school_admin_email,
+                                                        master_admin_email: isEmptyObject(previousData) && !previousData.master_admin_email ? '' : previousData.master_admin_email,                                                        
                                                         contact_name: isEmptyObject(previousData) ? '' : previousData.school_contact_info.business_address.contact_name,
                                                         address_line1: isEmptyObject(previousData) ? '' : previousData.school_contact_info.business_address.address_line1,
                                                         address_line2: isEmptyObject(previousData) ? '' : previousData.school_contact_info.business_address.address_line2,
@@ -247,7 +247,7 @@ const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive 
                                                     Yup.object().shape({
                                                         schoolName: Yup.string().max(255).required('School Name is required'),
                                                         contact_name: Yup.string().max(255).required('Contact Name is required'),
-                                                        school_admin_email: Yup.string().email('Must be a valid email !').required(helpConstant.cmsRole.userEmail),
+                                                        master_admin_email: Yup.string().email('Must be a valid email !').required(helpConstant.cmsRole.userEmail),
                                                         address_line1: Yup.string().max(255).required('Address Line 1 is required'),
                                                         address_line2: Yup.string().max(255).required('Address Line 2 is required'),
                                                         city: Yup.string().max(255).required('City is required'),
@@ -278,7 +278,8 @@ const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive 
                                                             school_labelling: schoolLabel,
                                                             school_logo: updatedImage === "" ? previousData.school_logo : updatedImage,
                                                             subscription_active: subscription_active,
-                                                            school_admin_email: values.school_admin_email,
+                                                            master_admin_email: values.master_admin_email,
+                                                            master_admin_id: isEmptyObject(previousData) && !previousData.master_admin_id ? '' : previousData.master_admin_id,
                                                             teacher_id: values.teacher_id,
                                                             school_contact_info: {
                                                                 business_address: {
@@ -852,15 +853,15 @@ const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive 
                                                                     </label>
                                                                     <input
                                                                         className="form-control"
-                                                                        error={touched.school_admin_email && errors.school_admin_email}
-                                                                        name="school_admin_email"
+                                                                        error={touched.master_admin_email && errors.master_admin_email}
+                                                                        name="master_admin_email"
                                                                         onBlur={handleBlur}
                                                                         onChange={handleChange}
                                                                         type="email"
-                                                                        value={values.school_admin_email}
+                                                                        value={values.master_admin_email}
 
                                                                     />
-                                                                    {touched.school_admin_email && errors.school_admin_email && <small className="text-danger form-text">{errors.school_admin_email}</small>}
+                                                                    {touched.master_admin_email && errors.master_admin_email && <small className="text-danger form-text">{errors.master_admin_email}</small>}
                                                                 </div>
                                                             </div>
                                                         </div>

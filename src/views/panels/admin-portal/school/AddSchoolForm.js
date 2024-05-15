@@ -169,7 +169,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                     school_name: "",
                     school_logo: "",
                     subscription_active: "",
-                    school_admin_email: "",
+                    master_admin_email: "",
 
                     contact_name: "",
                     address_line1: "",
@@ -195,7 +195,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
 
                         contact_name: Yup.string().matches(Constants.Common.alphabetsWithSpaceRegex, 'Contact Name must contain only alphabets!').max(255).required('Contact Name is required'),
 
-                        school_admin_email: Yup.string().email('Must be a valid email !').required(helpConstant.cmsRole.userEmail),
+                        master_admin_email: Yup.string().email('Must be a valid email !').required(helpConstant.cmsRole.userEmail),
 
                         address_line1: Yup.string().max(255).required('Address Line 1 is required'),
 
@@ -240,7 +240,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                         school_board: selectedBoards,
                         school_labelling: schoolLabel,
                         // school_logo: "testImg.png",
-                        school_admin_email: values.school_admin_email,
+                        master_admin_email: values.master_admin_email,
                         school_logo: values.school_logo,
                         subscription_active: scbscription_active,
                         school_contact_info: {
@@ -592,15 +592,15 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                                     </label>
                                     <input
                                         className="form-control"
-                                        error={touched.school_admin_email && errors.school_admin_email}
-                                        name="school_admin_email"
+                                        error={touched.master_admin_email && errors.master_admin_email}
+                                        name="master_admin_email"
                                         onBlur={handleBlur}
                                         onChange={handleChange}
                                         type="email"
-                                        value={values.school_admin_email}
+                                        value={values.master_admin_email}
 
                                     />
-                                    {touched.school_admin_email && errors.school_admin_email && <small className="text-danger form-text">{errors.school_admin_email}</small>}
+                                    {touched.master_admin_email && errors.master_admin_email && <small className="text-danger form-text">{errors.master_admin_email}</small>}
                                 </div>
                             </div>
                         </div>                        
