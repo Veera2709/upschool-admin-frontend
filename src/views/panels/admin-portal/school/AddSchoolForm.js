@@ -39,6 +39,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
     const history = useHistory();
 
     const schoolNameRef = useRef('');
+    const schoolEmailRef = useRef('');
     const schoolBoardRef = useRef('');
     const schoolBoardsRef = useRef('');
     const schoolLogoRef = useRef('');
@@ -166,6 +167,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                 // }}
                 initialValues={{
                     school_name: "",
+                    school_email: "",
                     school_logo: "",
                     subscription_active: "",
 
@@ -188,6 +190,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                 validationSchema={
                     Yup.object().shape({
                         school_name: Yup.string().matches(Constants.Common.alphabetsWithSpaceRegex, 'School Name must contain only alphabets!').max(255).required('School Name is required'),
+                        school_email: Yup.string().email('Invalid email format').required('Email is required'),
 
                         // school_board: Yup.string().matches.required('School Board is required'),
 
@@ -583,6 +586,30 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                                 </div>
                             </div>
                         </div>
+                        
+                        <div class="row">
+                            <div className='col-sm-6'>
+                                <div class="form-group fill">
+                                    <label class="floating-label" for="school_email">
+                                        <small class="text-danger">* </small>
+                                        School Admin Email</label>
+                                    <input
+                                        error={touched.school_email && errors.school_email}
+                                        class="form-control"
+                                        type="email"
+                                        name="school_email"
+                                        onBlur={handleBlur}
+                                        onChange={handleChange}
+                                        value={values.school_email}
+                                        ref={schoolEmailRef}
+                                    />
+                                    {touched.school_email && errors.school_email && (
+                                        <small className="text-danger form-text">{errors.school_email}</small>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                        
 
                         {/* <Row className="my-3">
                             <Col sm={12}>

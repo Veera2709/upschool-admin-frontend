@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Row, Col, Card, Button } from 'react-bootstrap';
 import Tour from 'reactour';
-import Joyride, { STATUS } from 'react-joyride';
+// import Joyride, { STATUS } from 'react-joyride';
 import ModuleNotification from '../../../components/Widgets/Statistic/Notification';
 
 import MainCard from '../../../components/Card/MainCard';
@@ -67,9 +67,9 @@ const AdvanceTour = () => {
   const handleJoyrideCallback = (data) => {
     const { status } = data;
 
-    if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
-      setRun(false);
-    }
+    // if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
+    //   setRun(false);
+    // }
   };
 
   return (
@@ -92,7 +92,7 @@ const AdvanceTour = () => {
               <Button onClick={() => setIsTourOpen(true)}>Start Basic Tour</Button>
               <Button onClick={() => setRun(true)}>Joy Ride</Button>
               <Tour steps={stepsTour} isOpen={isTourOpen} onRequestClose={() => setIsTourOpen(false)} />
-              <Joyride
+              {/* <Joyride
                 callback={handleJoyrideCallback}
                 run={run}
                 continuous
@@ -105,7 +105,7 @@ const AdvanceTour = () => {
                     zIndex: 10000
                   }
                 }}
-              />
+              /> */}
             </Card.Body>
           </Card>
           <MainCard isOption title="Hello tour" cardClass="tour-1 card-test" optionClass="card-option">

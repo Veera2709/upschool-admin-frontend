@@ -36,6 +36,7 @@ const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive 
     const [isLoading, setIsLoading] = useState(false);
 
     const contactNameRef = useRef('');
+    const schoolEmailRef = useRef('');
     const addressLine1Ref = useRef('');
     const addressLine2Ref = useRef('');
     const cityRef = useRef('');
@@ -221,6 +222,7 @@ const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive 
                                                 initialValues={
                                                     {
                                                         schoolName: previousData === {} ? '' : previousData.school_name,
+                                                        schoolEmail: previousData === {} ? '' : previousData.school_email,
                                                         school_logo: "",
                                                         subscription_active: subscription_active,
                                                         contact_name: previousData === {} ? '' : previousData.school_contact_info.business_address.contact_name,
@@ -244,6 +246,7 @@ const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive 
                                                 validationSchema={
                                                     Yup.object().shape({
                                                         schoolName: Yup.string().max(255).required('School Name is required'),
+                                                        schoolEmail: Yup.string().email('Invalid email format').required('Email is required'),
                                                         contact_name: Yup.string().max(255).required('Contact Name is required'),
                                                         address_line1: Yup.string().max(255).required('Address Line 1 is required'),
                                                         address_line2: Yup.string().max(255).required('Address Line 2 is required'),
@@ -838,6 +841,28 @@ const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive 
                                                             </div>
                                                         </div>
 
+                                                        <div class="row">
+                                                            <div className='col-sm-6'>
+                                                                <div class="form-group fill">
+                                                                    <label class="floating-label" for="schoolEmail">
+                                                                        <small class="text-danger">* </small>
+                                                                        School Admin Email</label>
+                                                                    <input
+                                                                        error={touched.schoolEmail && errors.schoolEmail}
+                                                                        class="form-control"
+                                                                        type="email"
+                                                                        name="schoolEmail"
+                                                                        onBlur={handleBlur}
+                                                                        onChange={handleChange}
+                                                                        value={values.schoolEmail}
+                                                                        ref={schoolEmailRef}
+                                                                    />
+                                                                    {touched.schoolEmail && errors.schoolEmail && (
+                                                                        <small className="text-danger form-text">{errors.schoolEmail}</small>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                        </div>
 
 
 
