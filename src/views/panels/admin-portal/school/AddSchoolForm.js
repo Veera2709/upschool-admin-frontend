@@ -10,6 +10,7 @@ import * as Yup from 'yup';
 import { Formik } from 'formik';
 import { areFilesInvalid, isEmptyArray } from '../../../../util/utils';
 import * as Constants from '../../../../config/constant'
+import * as helpConstant from '../../../../helper/constants';
 import withReactContent from 'sweetalert2-react-content';
 import Swal from 'sweetalert2';
 import dynamicUrl from '../../../../helper/dynamicUrls';
@@ -167,9 +168,9 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                 // }}
                 initialValues={{
                     school_name: "",
-                    school_email: "",
                     school_logo: "",
                     subscription_active: "",
+                    master_admin_email: "",
 
                     contact_name: "",
                     address_line1: "",
@@ -190,14 +191,13 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                 validationSchema={
                     Yup.object().shape({
                         school_name: Yup.string().matches(Constants.Common.alphabetsWithSpaceRegex, 'School Name must contain only alphabets!').max(255).required('School Name is required'),
-                        school_email: Yup.string().email('Invalid email format').required('Email is required'),
-
                         // school_board: Yup.string().matches.required('School Board is required'),
 
                         contact_name: Yup.string().matches(Constants.Common.alphabetsWithSpaceRegex, 'Contact Name must contain only alphabets!').max(255).required('Contact Name is required'),
 
-                        address_line1: Yup.string().max(255).required('Address Line 1 is required'),
+                        master_admin_email: Yup.string().email('Must be a valid email !').required(helpConstant.cmsRole.userEmail),
 
+                        address_line1: Yup.string().max(255).required('Address Line 1 is required'),
 
                         address_line2: Yup.string().max(255).required('Address Line 2 is required'),
 
@@ -240,6 +240,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                         school_board: selectedBoards,
                         school_labelling: schoolLabel,
                         // school_logo: "testImg.png",
+                        master_admin_email: values.master_admin_email,
                         school_logo: values.school_logo,
                         subscription_active: scbscription_active,
                         school_contact_info: {
@@ -561,18 +562,13 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                         <div class="row">
                             <div className='col-sm-6'>
                                 <div className="form-group fill">
-
                                     <label className="floating-label">
                                         School labelling
                                     </label>
-                                    {console.log("HERE : ", previousLabel)}
-
                                     <Select
                                         defaultValue={{ label: "Upschool", value: "Upschool" }}
                                         name="boards"
                                         options={schoolLabelling}
-
-
                                         className="basic-select"
                                         classNamePrefix="Select"
                                         onBlur={handleBlur}
@@ -581,91 +577,40 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                                             handleSchoolLabelling(e)
                                         }}
                                     />
-
-
                                 </div>
+                            </div>
+                            <div className='col-sm-6'>                                
                             </div>
                         </div>
                         
                         <div class="row">
                             <div className='col-sm-6'>
-                                <div class="form-group fill">
-                                    <label class="floating-label" for="school_email">
+                                <div className="form-group fill">
+                                    <label className="floating-label">
                                         <small class="text-danger">* </small>
-                                        School Admin Email</label>
+                                        School Admin Email
+                                    </label>
                                     <input
-                                        error={touched.school_email && errors.school_email}
-                                        class="form-control"
-                                        type="email"
-                                        name="school_email"
+                                        className="form-control"
+                                        error={touched.master_admin_email && errors.master_admin_email}
+                                        name="master_admin_email"
                                         onBlur={handleBlur}
                                         onChange={handleChange}
-                                        value={values.school_email}
-                                        ref={schoolEmailRef}
+                                        type="email"
+                                        value={values.master_admin_email}
+
                                     />
-                                    {touched.school_email && errors.school_email && (
-                                        <small className="text-danger form-text">{errors.school_email}</small>
-                                    )}
+                                    {touched.master_admin_email && errors.master_admin_email && <small className="text-danger form-text">{errors.master_admin_email}</small>}
                                 </div>
                             </div>
-                        </div>
-                        
-
-                        {/* <Row className="my-3">
-                            <Col sm={12}>
-                                <label>School labelling</label>
-                            </Col>
-                            <Col sm={12}>
-                                <select
-                                    className="form-control"
-                                    // error={touched.schoolName && errors.schoolName}
-                                    name="schoolLabelling"
-                                    options={schoolLabelling}
-                                    onBlur={handleBlur}
-                                    onChange={handleChange}
-                                    type="text"
-                                    // ref={schoolNameRef}
-                                    value={values.schoolLabelling}
-                                >
-
-                                    {/* {schoolName_ID.Items.map((schoolData) => {
-
-                                  return <option key={schoolData.school_id}>
-                                    {schoolData.school_name}
-                                  </option>
-
-                                })} */}
-
-                        {/* </select>
-                                {touched.schoolName && errors.schoolName && (
-                                    <small className="text-danger form-text">{errors.schoolName}</small>
-                                )}
-                            </Col>
-                        </Row> */}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                        </div>                        
 
                         <div className="row">
                             <div className='col-md-6'>
                                 <div class="form-group fill">
                                     <label class="floating-label" for="businessAddress">
                                         <small class="text-danger">* </small>
-                                        Business Address</label>
+                                        <strong>Business Address</strong></label>
 
                                     <Row className="my-3">
                                         <Col sm={5}>
@@ -806,7 +751,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                             <div className='col-md-6'>
                                 <div class="form-group fill">
                                     <label class="floating-label" for="billingAddress"><small class="text-danger">
-                                        * </small>Billing Address</label>
+                                        * </small><strong>Billing Address</strong></label>
                                     <Row className="my-3">
                                         <Col sm={5}>
                                             <label>Contact Name</label>
