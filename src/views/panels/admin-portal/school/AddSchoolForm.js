@@ -40,6 +40,7 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
     const history = useHistory();
 
     const schoolNameRef = useRef('');
+    const schoolEmailRef = useRef('');
     const schoolBoardRef = useRef('');
     const schoolBoardsRef = useRef('');
     const schoolLogoRef = useRef('');
@@ -190,7 +191,6 @@ function AddSchool({ className, rest, setIsOpen, fetchSchoolData }) {
                 validationSchema={
                     Yup.object().shape({
                         school_name: Yup.string().matches(Constants.Common.alphabetsWithSpaceRegex, 'School Name must contain only alphabets!').max(255).required('School Name is required'),
-
                         // school_board: Yup.string().matches.required('School Board is required'),
 
                         contact_name: Yup.string().matches(Constants.Common.alphabetsWithSpaceRegex, 'Contact Name must contain only alphabets!').max(255).required('Contact Name is required'),
