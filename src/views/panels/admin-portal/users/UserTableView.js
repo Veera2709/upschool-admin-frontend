@@ -404,23 +404,23 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
     }
   }
   const nextCustomPage = () => {
-    if(data.length !== 0){
-        setPageIndex(pageIndex + 1);
-        setInitialValue(initialValue + 1); 
+    if (data.length !== 0) {
+      setPageIndex(pageIndex + 1);
+      setInitialValue(initialValue + 1);
     }
   }
 
   const prevCustomPage = () => {
-    if(data.length !== 0){
-        setPageIndex(pageIndex - 1);
-        setInitialValue(initialValue - 1); 
+    if (data.length !== 0) {
+      setPageIndex(pageIndex - 1);
+      setInitialValue(initialValue - 1);
     }
   }
 
   const goToPage = (page) => {
-    if(data.length !== 0){
-        page === 1 ? setPageIndex(page - 1) : setPageIndex(page); 
-        page === 1  ? setInitialValue(page) : setInitialValue(page + 1); 
+    if (data.length !== 0) {
+      page === 1 ? setPageIndex(page - 1) : setPageIndex(page);
+      page === 1 ? setInitialValue(page) : setInitialValue(page + 1);
     }
   }
 
@@ -486,36 +486,36 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
 
           {user_status === "Active" ? (
             <>
-            {
-              data.length === 0 ? (<></>) : (
-                <>
-                <Link to={'/admin-portal/add-users'}>
-                <Button
+              {
+                data.length === 0 ? (<></>) : (
+                  <>
+                    <Link to={'/admin-portal/add-users'}>
+                      <Button
 
-                  className="btn-sm btn-round has-ripple ml-2 btn btn-success"
-                  style={{
-                    whiteSpace: "nowrap"
-                  }}
-                >
+                        className="btn-sm btn-round has-ripple ml-2 btn btn-success"
+                        style={{
+                          whiteSpace: "nowrap"
+                        }}
+                      >
 
-                  <i className="feather icon-plus" /> Add Users
-                </Button>
-              </Link>
+                        <i className="feather icon-plus" /> Add Users
+                      </Button>
+                    </Link>
 
-              <Button
+                    <Button
 
-                className="btn-sm btn-round has-ripple ml-2  btn btn-danger"
-                // style={{ marginLeft: "1.5rem" }}
-                style={{ whiteSpace: "nowrap" }}
-                onClick={() => { getAlldata() }}
-              >
-                <i className="feather icon-trash-2" /> &nbsp;
-                Multi Delete
-              </Button>
-                </>
-              )
-            }
-              
+                      className="btn-sm btn-round has-ripple ml-2  btn btn-danger"
+                      // style={{ marginLeft: "1.5rem" }}
+                      style={{ whiteSpace: "nowrap" }}
+                      onClick={() => { getAlldata() }}
+                    >
+                      <i className="feather icon-trash-2" /> &nbsp;
+                      Multi Delete
+                    </Button>
+                  </>
+                )
+              }
+
             </>
           ) : (
 
@@ -531,7 +531,7 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
 
         </Col>
       </Row>
-            
+
       <BTable striped bordered hover responsive {...getTableProps()}>
         <thead>
           {headerGroups.map((headerGroup) => (
@@ -573,23 +573,23 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
         </tbody>
       </BTable>
 
-      {data.length === 0 && ( <>
-              <div>
-                                      <h3 style={{ textAlign: 'center' }}>No {sessionStorage.getItem('user_type')} Found</h3>
-                                      <div className="form-group fill text-center">
-                                        <br></br>
-                                       
-                                        <Link to={'/admin-portal/add-users'}>
-                                          <Button variant="success" className="btn-sm btn-round has-ripple ml-2"
-                                          >
-                                            <i className="feather icon-plus" /> Add Users
-                                          </Button>
-                                        </Link>
-                                      </div>
-                                    </div>
-            </>
+      {data.length === 0 && (<>
+        <div>
+          <h3 style={{ textAlign: 'center' }}>No {sessionStorage.getItem('user_type')} Found</h3>
+          <div className="form-group fill text-center">
+            <br></br>
 
-            )}
+            <Link to={'/admin-portal/add-users'}>
+              <Button variant="success" className="btn-sm btn-round has-ripple ml-2"
+              >
+                <i className="feather icon-plus" /> Add Users
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </>
+
+      )}
 
       <Row className="justify-content-between">
         <Col>
@@ -597,7 +597,7 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
             Page{' '}
             <strong>
               {' '}
-              {data.length === 0 ? 0 : (initialValue === "" ? 1 : initialValue)} of {data.length === 0 ? 0 : (pageCountRes)} 
+              {data.length === 0 ? 0 : (initialValue === "" ? 1 : initialValue)} of {data.length === 0 ? 0 : (pageCountRes)}
             </strong>{' '}
             | Go to page:{' '}
             <input
@@ -1113,6 +1113,7 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
       console.log("payload : ", {
         page_size: dataFromChild.page_size === undefined ? 10 : dataFromChild.page_size,
         user: _userRole.replace("s", ""),
+        user_status: payLoadStatus,
         start_key: startKeys,
         searchedKeyword: dataFromChild.searchedKeyword === undefined ? "" : dataFromChild.searchedKeyword,
       });
@@ -1124,6 +1125,7 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
             page_size: dataFromChild.page_size === undefined ? 10 : dataFromChild.page_size,
             user: _userRole.replace("s", ""),
             start_key: startKeys,
+            user_status: payLoadStatus,
             searchedKeyword: dataFromChild.searchedKeyword === undefined ? "" : dataFromChild.searchedKeyword,
           }
         },
@@ -1401,7 +1403,43 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
                         </React.Fragment>
 
                       ) : (
-                        <h3 style={{ textAlign: 'center' }}>No {sessionStorage.getItem('user_type')} Found</h3>
+                        // <h3 style={{ textAlign: 'center' }}>No {sessionStorage.getItem('user_type')} Found{console.log({pageLocation})}</h3>
+
+                        <React.Fragment>
+                          <Row>
+                            <Col sm={12}>
+                              <Card>
+                                <Card.Header>
+                                  <Card.Title as="h5" className='d-flex justify-content-between'>
+                                    <h5>User List</h5>
+                                    <h5>Total Entries :- {userData.length}</h5>
+
+                                  </Card.Title>
+                                </Card.Header>
+
+                                <Card.Body>
+
+                                  <Table
+                                    columns={columns}
+                                    data={userData}
+                                    modalOpen={openHandler}
+                                    userRole={_userRole}
+                                    selectAllCheckbox={selectAllCheckbox}
+                                    sendDataToParent={handleDataFromChild}
+                                    dataFromChild={dataFromChild}
+                                    callParentFunction={fetchUserData}
+                                    onPageChange={handlePageChange}
+                                    pageCountRes={pageCountRes}
+                                    onPageIndexUpdate={handlePageIndexUpdate}
+                                    indexes={indexes}
+                                  />
+
+                                </Card.Body>
+                              </Card>
+
+                            </Col>
+                          </Row>
+                        </React.Fragment>
                       )
                     }
                   </>
