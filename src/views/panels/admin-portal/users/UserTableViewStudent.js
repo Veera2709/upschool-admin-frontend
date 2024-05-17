@@ -1070,8 +1070,41 @@ const UserTableViewStudent = ({ _userRole, sendDataToGrandParent }) => {
                         </React.Fragment>
 
                       ) : (
-                        <h3 style={{ textAlign: 'center' }}>No {sessionStorage.getItem('user_type')} Found</h3>
-                      )
+                        <React.Fragment>
+                        <Row>
+                          <Col sm={12}>
+                            <Card>
+                              <Card.Header>
+                                <Card.Title as="h5" className='d-flex justify-content-between'>
+                                  <h5>User List</h5>
+                                  <h5>Total Entries :- {userData.length}</h5>
+
+                                </Card.Title>
+                              </Card.Header>
+
+                              <Card.Body>
+
+                                <Table
+                                  columns={columns}
+                                  data={userData}
+                                  modalOpen={openHandler}
+                                  userRole={_userRole}
+                                  selectAllCheckbox={selectAllCheckbox}
+                                  sendDataToParent={handleDataFromChild}
+                                  dataFromChild={dataFromChild}
+                                  callParentFunction={fetchUserData}
+                                  onPageChange={handlePageChange}
+                                  pageCountRes={pageCountRes}
+                                  onPageIndexUpdate={handlePageIndexUpdate}
+                                  indexes={indexes}
+                                />
+
+                              </Card.Body>
+                            </Card>
+
+                          </Col>
+                        </Row>
+                      </React.Fragment>                      )
                     }
                   </>
 
