@@ -218,13 +218,13 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
         console.log("selectedFlatRows", selectedFlatRows);
         let arrayWithStudentIds = [];
 
-        let userRolePayload = (userRole === "Student") ? "Student" : "N.A.";
+        let userRolePayload = (userRole === "Teachers") ? "Teacher" : (userRole === "Students") ? "Student" : (userRole === "Parents") ? "Parent" : "N.A.";
 
         console.log("ROLE : ", userRolePayload);
 
         selectedFlatRows.map((items) => {
             console.log("Student Id : ", items.original.student_id);
-            if (userRole === "Student") {
+            if (userRole === "Students") {
                 console.log("Student Id : ", items.original.student_id);
                 arrayWithStudentIds.push({ user_id: items.original.student_id, school_id: items.original.school_id });
             }
