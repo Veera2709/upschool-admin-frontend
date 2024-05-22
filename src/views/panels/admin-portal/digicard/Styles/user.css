@@ -1,0 +1,16 @@
+.user-buttons {
+  display: flex;
+  justify-content: center;
+  margin: 15px;
+}
+.action-buttons {
+  width: 50px;
+}
+
+.validation {
+  color: red;
+  font-size: 14px;
+  margin: 0px;
+  padding: 2px;
+  margin-bottom: 7px;
+}

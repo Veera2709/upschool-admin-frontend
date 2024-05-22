@@ -1,0 +1,298 @@
+@import url("https://fonts.googleapis.com/css?family=Lato:400,400i,700");
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Teko:wght@600&display=swap');
+
+
+
+
+.App {
+  font-family: sans-serif;
+  text-align: center;
+}
+
+.main {
+  display: flex;
+  justify-content: space-between;
+}
+
+#img {
+  margin-top: 70px;
+  width: 200px;
+}
+
+.justify-content-md-cente {
+  display: flex;
+}
+
+/* span {
+  background-color: black;
+  color: white;
+  width: 80%;
+  margin: 5px auto;
+} */
+
+#digicardText {
+  height: 0px;
+  display: none
+}
+
+#digicardText h3 {
+  text-decoration: underline;
+}
+
+#digicardText {
+  /* padding: 17px 15px */
+  padding-left: 15px;
+  padding-right: 10px;
+}
+
+
+
+#deviceScroll {
+  height: 100px;
+  overflow-y: auto
+}
+
+
+
+#iphonex {
+  margin-top: 100px;
+  padding: 50px 50px 70px 50px;
+}
+
+#card {
+  margin-top: 60px;
+  padding: 50px 50px 70px 50px;
+}
+
+#card1 {
+  margin-top: 50px;
+  padding: 20px 20px 20px 20px;
+}
+
+
+
+#digicardText {
+  margin-top: 50px;
+}
+
+#iphonex {
+  margin-top: 50px;
+}
+
+/* h1 {
+  font-family: 'Teko', sans-serif;
+  background-color: rgb(172, 171, 191);
+  border-radius: 10px;
+} */
+
+/* h1>strong{
+  margin-left: 15px;
+  font-size: x-large;
+  font-family: 'Teko';
+} */
+/* 
+ol  {
+  clear: both;
+  list-style: none;
+  padding-left: 2%;
+}
+ol  li {
+  margin: 2em 0;
+  padding-top: 1em;
+  display: block;
+  position: relative;
+  counter-increment: inst;
+}
+ol  li::before {
+  content: counter(inst);
+  
+  background: rgba(255, 150, 0, 0.35);
+  color: #fff;
+  
+  font-size: 1em;
+  font-weight: 700;
+  font-style: italic;
+  text-shadow: 1px 1px rgba(255, 150, 0, 0.5);
+  
+  border-radius: 0 0.675em 0.675em 0;
+  font-size: 1.5em;
+  text-align: center;
+  
+  padding-top: 0;
+  padding-left: 2.25%;
+  left: -5%;
+  top: -0.65em;
+  height: 1.35em;
+  width: 1.35em;
+  position: absolute;
+  
+  transition: all 0.2s ease-in-out;
+  
+  z-index: -1;
+}
+@media (min-width: 33em) {
+  ol  li:before {
+    border-radius: 50%;
+    font-size: 1.5em;
+    height: 1.35em;
+    margin-left: 2.5%;
+    padding-left: 0;
+    padding-top: 0;
+    top: -0.15em;
+    width: 1.35em;
+    z-index: -1;
+  }
+} */
+
+
+
+ol {
+  counter-reset: my-awesome-counter;
+  list-style: none;
+  padding-left: 40px;
+}
+
+
+ol li {
+  margin: 0 0 1rem 0;
+  counter-increment: my-awesome-counter;
+  position: relative;
+  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  background: linear-gradient(135deg, #83e4e2 0%, #a2ed56 100%);
+  /* border-radius: 5%; */
+}
+
+ol li::before {
+  content: counter(my-awesome-counter);
+  color: #fcd000;
+  font-size: 1.5rem;
+  font-weight: bold;
+  position: absolute;
+  --size: 32px;
+  left: calc(-1 * var(--size) - 10px);
+  line-height: var(--size);
+  width: var(--size);
+  height: var(--size);
+  top: 0;
+  transform: rotate(-10deg);
+  background: black;
+  border-radius: 50%;
+  text-align: center;
+  box-shadow: 1px 1px 0 #999;
+}
+
+ul {
+  counter-reset: my-awesome-counter;
+  list-style: none;
+  padding-left: 40px;
+}
+
+
+ul li {
+  align-items: center;
+  margin: 0 0 1rem 0;
+  position: relative;
+  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  /* background-color: rgb(107, 250, 171); */
+  /* border-radius: 5%; */
+}
+
+ul li::before {
+  content: counter(my-awesome-counter);
+  color: black;
+  font-size: 1.5rem;
+  font-weight: bold;
+  position: absolute;
+  --size: 32px;
+  left: calc(-1 * var(--size) - 10px);
+  line-height: var(--size);
+  width: var(--size);
+  height: var(--size);
+  top: 0;
+  transform: rotate(-10deg);
+  background: black;
+  border-radius: 50%;
+  text-align: center;
+  box-shadow: 1px 1px 0 #999;
+}
+
+.closeBut {
+  margin-bottom: 10px;
+}
+
+table,
+th,
+td {
+  border: 1px solid;
+}
+
+th {
+  background-color: #999;
+}
+
+
+
+/* 
+ol {
+  list-style: none;
+  counter-reset: item;
+}
+li {
+  counter-increment: item;
+  margin-bottom: 5px;
+}
+li:before {
+  margin-right: 10px;
+  content: counter(item);
+  background: lightblue;
+  border-radius: 100%;
+  color: white;
+  width: 1.2em;
+  text-align: center;
+  display: inline-block;
+} */
+
+/* h2 {
+  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  font-size: 5px;
+} */
+
+/* h1 ,h2,h3,h4,h5,h6{
+  border-radius: 20px;
+  background: black;
+  color: white;
+  font-size: 30px;
+  overflow-wrap: break-word;
+  font-family: 'Courier New', Courier, monospace;
+  font-style: italic;
+} */
+
+
+
+
+
+#digicardTitle {
+  background: black;
+  border-radius: 100px / 120px;
+  text-align: center;
+  color: white;
+}
+
+blockquote {
+  display: block;
+  font-family: inherit;
+  font-size: inherit;
+  color: #999;
+  margin-block-start: 1em;
+  margin-block-end: 1em;
+  margin-inline-start: 0;
+  margin-inline-end: 0;
+  padding: 0 5px 0 20px;
+  border: solid #b1b1b1;
+  border-width: 0 0 0 5px;
+}
+/* 
+blockquote{
+  quotes: """ """;
+} */

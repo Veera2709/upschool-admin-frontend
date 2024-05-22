@@ -1,0 +1,223 @@
+import React, { useState } from 'react';
+import axios from 'axios';
+import { useHistory, Link } from 'react-router-dom';
+import { Row, Col, Button, Alert } from 'react-bootstrap';
+
+import * as Yup from 'yup';
+import { Formik } from 'formik';
+
+import jwt from 'jwt-decode';
+
+import { SessionStorage } from '../../../util/SessionStorage';
+import dynamicUrl from '../../../helper/dynamicUrls';
+import useFullPageLoader from '../../../helper/useFullPageLoader';
+
+const Login = ({ className, handleLogin, ...rest }) => {
+
+  let history = useHistory();
+  const [typeValueConfirmPass, setTypeValueConfirmPass] = useState('password');
+  const [eyeValueConfirmPass, setEyeValueConfirmPass] = useState('feather icon-eye-off');
+
+  const handleLoginWithOTP = () => {
+    history.push('/auth/loginWithOTP');
+    handleLogin();
+  }
+
+  const handleHideShowConfirmPassword = () => {
+    typeValueConfirmPass === 'password' ? setTypeValueConfirmPass('text') : setTypeValueConfirmPass('password');
+    eyeValueConfirmPass === 'feather icon-eye-off' ? setEyeValueConfirmPass('feather icon-eye') : setEyeValueConfirmPass('feather icon-eye-off');
+  }
+
+  const handleCreateResetPassword = () => {
+    history.push('/auth/createOrResetPassword');
+  }
+
+  const [loader, showLoader, hideLoader] = useFullPageLoader();
+
+  return (
+    <React.Fragment>
+
+      <>
+        <Formik
+          initialValues={{
+            email: '',
+            password: '',
+            submit: null
+          }}
+          validationSchema={Yup.object().shape({
+            email: Yup.string().max(255).required('Email/Username is required'),
+            password: Yup.string().max(255).required('Password is required')
+          })}
+          onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
+
+            setStatus({ success: true });
+            setSubmitting(true);
+
+            showLoader();
+
+            const formData = { user_email: values.email.trim().toLowerCase(), user_password: values.password };
+            axios
+              .post(
+                dynamicUrl.login,
+                {
+                  data: {
+                    user_email: formData.user_email,
+                    user_password: formData.user_password
+                  }
+                },
+                {
+                  headers: { Authorization: sessionStorage.getItem('user_jwt') }
+                }
+              )
+              .then((response) => {
+                console.log({ response });
+                hideLoader();
+
+                let user_data = jwt(response.data[0].jwt);
+
+                if (user_data.length !== 0) {
+                  SessionStorage.setItem('user_jwt', response.data[0].jwt);
+
+                  if (response.data[0].jwt === sessionStorage.getItem('user_jwt')) {
+
+                    history.push('/admin-portal/admin-dashboard');
+                    window.location.reload();
+
+                  } else {
+
+                    sessionStorage.clear();
+                    localStorage.clear();
+
+                    history.push('/auth/signin-1');
+                    window.location.reload();
+
+                  }
+
+                }
+              })
+              .catch((error) => {
+                if (error.response) {
+                  hideLoader();
+                  // Request made and server responded
+                  console.log(error.response.data);
+                  setStatus({ success: false });
+                  setErrors({ submit: error.response.data });
+                } else if (error.request) {
+                  // The request was made but no response was received
+                  console.log(error.request);
+                  hideLoader();
+                } else {
+                  // Something happened in setting up the request that triggered an Error
+                  console.log('Error', error.message);
+                  hideLoader();
+                }
+              });
+
+
+          }}
+        >
+          {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
+            <form noValidate onSubmit={handleSubmit} className={className} {...rest}>
+
+              <div className="form-group mb-3">
+
+                <input
+                  className="form-control"
+                  error={touched.email && errors.email}
+                  label="Email Address / Username"
+                  name="email"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  type="email"
+                  value={values.email}
+                  placeholder="Email Id/Username"
+                />
+
+                {touched.email && errors.email &&
+                  <small
+                    style={{ textAlign: 'initial' }}
+                    class="text-danger form-text">
+                    {errors.email}
+                  </small>
+                }
+              </div>
+              <div className="form-group mb-4">
+                <Row>
+                  <Col>
+                    <input
+                      className="form-control"
+                      error={touched.password && errors.password}
+                      label="Password"
+                      name="password"
+                      onBlur={handleBlur}
+                      onChange={handleChange}
+                      type={typeValueConfirmPass}
+                      value={values.password}
+                      placeholder="Password"
+                    />
+                    {
+                      touched.password && errors.password &&
+                      <small
+                        style={{ textAlign: 'initial' }}
+                        class="text-danger form-text">
+                        {errors.password}
+                      </small>
+                    }
+                  </Col>
+
+                  <Link
+                    to="#"
+                    onClick={handleHideShowConfirmPassword}>
+                    <i
+                      style={{
+                        position: 'absolute',
+                        marginTop: '10px',
+                        marginLeft: '-40px'
+                      }}
+                      className={eyeValueConfirmPass} />
+                  </Link>
+                </Row>
+              </div>
+
+              {errors.submit && (
+                <Col sm={12}>
+                  <Alert variant="danger">{errors.submit}</Alert>
+                </Col>
+              )}
+
+              {loader}
+
+              <Row>
+                <Col mt={2}>
+                  <Button className="btn-block" color="primary" disabled={isSubmitting} size="large" type="submit" variant="primary">
+                    Signin
+                  </Button>
+                </Col>
+              </Row>
+
+            </form>
+          )}
+        </Formik>
+
+        <hr />
+
+        <p
+          style={{ cursor: 'pointer', textAlign: 'center' }}
+          className="mb-2 text-muted"
+          onClick={() => {
+            handleCreateResetPassword();
+          }}>
+          Create/Forgot password{' '}
+        </p>
+
+        <p onClick={() => {
+          handleLoginWithOTP();
+        }} style={{ cursor: 'pointer' }} className="mb-0 text-muted f-w-400">
+          Login with OTP
+        </p>
+      </>
+    </React.Fragment >
+  );
+};
+
+export default Login;
