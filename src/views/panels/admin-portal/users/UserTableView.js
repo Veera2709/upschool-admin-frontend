@@ -660,6 +660,7 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
   const [check, setCheck] = useState(false);
   const [selectAllCheckbox, setSelectAllCheckbox] = useState(false);
   // const [outPutData, setOutPutData] = useState(response.data);
+  const school_id = sessionStorage.getItem('school_id');
 
   const [tempData, setTemData] = useState([]);
   const [startKeys, setStartKeys] = useState(null);
@@ -1101,9 +1102,11 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
   }
 
   const fetchUserData = async () => {
+    console.log("itemsRes1234", itemsRes)
     try {
       showLoader();
       setIsSHow(true);
+      console.log("school_id1234", school_id);
       console.log("startKeys : ", startKeys);
       console.log("indexes : ", indexes);
       console.log("datafromchildinital", dataFromChild.initialValue)
@@ -1112,6 +1115,7 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
 
       console.log("payload : ", {
         page_size: dataFromChild.page_size === undefined ? 10 : dataFromChild.page_size,
+        school_id: school_id,
         user: _userRole.replace("s", ""),
         user_status: payLoadStatus,
         start_key: startKeys,
@@ -1123,6 +1127,7 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
         {
           data: {
             page_size: dataFromChild.page_size === undefined ? 10 : dataFromChild.page_size,
+            school_id: sessionStorage.getItem('school_id'),
             user: _userRole.replace("s", ""),
             start_key: startKeys,
             user_status: payLoadStatus,
@@ -1155,8 +1160,8 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
         const items = resultData.Items
         console.log("items", items);
         setItemsRes(items)
-        console.log("itemsRes", itemsRes);
-
+        console.log("itemsRes?", resultData.Items[0].school_id);
+        sessionStorage.setItem('school_id', resultData.Items[0].school_id)
       }
     } catch (error) {
       console.log(error);
