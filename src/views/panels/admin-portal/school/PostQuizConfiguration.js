@@ -353,6 +353,7 @@ const PostQuizConfiguration = ({ className, rest, id }) => {
                                             percentageOfStudentsPre: previousDataPreQuiz.pct_of_student_for_focus === '' ? '' : previousDataPreQuiz.pct_of_student_for_focus,
                                             submit: null,
                                             classPercentageRep: previousDataPreQuiz.class_percentage_for_report === '' ? '' : previousDataPreQuiz.class_percentage_for_report,
+                                            class_Percentage: previousDataPreQuiz.class_percentage === '' ? '' : previousDataPreQuiz.class_percentage,
                                             martix_basic: paperMatrixBasic === '' ? '' : paperMatrixBasic,
                                             martix_intermediate: paperMatrixIntermediate === '' ? '' : paperMatrixIntermediate,
                                             martix_advanced: paperMatrixAdvanced === '' ? '' : paperMatrixAdvanced,
@@ -425,6 +426,7 @@ const PostQuizConfiguration = ({ className, rest, id }) => {
                                                             offline_mode: radioPaperBasedSelected,
                                                             unlock_digicard_mandatory: radioUnlockDigicardSelected,
                                                             class_percentage_for_report: values.classPercentageRep,
+                                                            class_percentage: values.class_Percentage,
                                                             topic_archive: selectedTopicSelection,
                                                             concept_mandatory: ConceptCompulsorialySelected,
                                                             min_qn_at_topic_level: values.minNoQustionManual_express,
@@ -726,6 +728,26 @@ const PostQuizConfiguration = ({ className, rest, id }) => {
                                                             />
 
                                                             {touched.classPercentageRep && errors.classPercentageRep && <small className="text-danger form-text">{errors.classPercentageRep}</small>}
+                                                        </Col>
+                                                        <Col sm={6}>
+                                                            <label className="floating-label">
+                                                                <small className="text-danger">* </small>
+                                                                Class Percentage
+                                                            </label>
+                                                            <input
+                                                                className="form-control"
+                                                                error={touched.class_Percentage && errors.class_Percentage}
+                                                                label="class_Percentage"
+                                                                name="class_Percentage"
+                                                                onBlur={handleBlur}
+                                                                onChange={handleChange}
+                                                                type="number"
+                                                                onWheel={(e) => e.target.blur()}
+                                                                value={values.class_Percentage}
+                                                            // placeholder="To clear the Quiz"
+                                                            />
+
+                                                            {touched.class_Percentage && errors.class_Percentage && <small className="text-danger form-text">{errors.class_Percentage}</small>}
                                                         </Col>
                                                     </Row>
                                                     <br />
