@@ -308,7 +308,7 @@ const AllocateClass = ({ schoolId, user_id }) => {
 
                             <Card>
                                 <Card.Body>
-                                    <Card.Title>Allocate Class And Section</Card.Title>
+                                    <Card.Title>Allocate Class And Sectio</Card.Title>
                                     <Formik
                                         initialValues={{
                                             client_class_id: '',
