@@ -552,38 +552,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
 
                                                     <br />
                                                     <Row>
-                                                        <Col xs={6}>
-                                                            <OverlayTrigger
-                                                                placement="top"
-                                                                overlay={
-                                                                    <Tooltip
-                                                                        id={`tooltip-top`}
-                                                                        style={{ zIndex: 1151, fontSize: '10px' }}
-                                                                    >
-                                                                        So that the teacher will get recommendations of Concepts to re-teach
-                                                                    </Tooltip>}>
-                                                                <div className="form-group fill">
-                                                                    <label className="floating-label">
-                                                                        <small className="text-danger">* </small>
-                                                                        Percentage of students to clear the quiz
-                                                                    </label>
-                                                                    <input
-                                                                        className="form-control"
-                                                                        error={touched.minStudentsPre && errors.minStudentsPre}
-                                                                        label="minStudentsPre"
-                                                                        name="minStudentsPre"
-                                                                        onBlur={handleBlur}
-                                                                        onChange={handleChange}
-                                                                        type="number"
-                                                                        onWheel={(e) => e.target.blur()}
-                                                                        value={values.minStudentsPre}
-                                                                    // placeholder="To clear the Quiz"
-                                                                    />
-                                                                    {touched.minStudentsPre && errors.minStudentsPre && <small className="text-danger form-text">{errors.minStudentsPre}</small>}
-                                                                </div>
-                                                            </OverlayTrigger>
-
-                                                        </Col>
+                                                        
                                                         <Col>
                                                             <OverlayTrigger
                                                                 placement="top"
@@ -618,10 +587,6 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                             </OverlayTrigger>
 
                                                         </Col>
-                                                    </Row>
-
-
-                                                    <Row>
                                                         <Col>
                                                             <div className="form-group fill">
 
@@ -645,6 +610,9 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                 {touched.noOfWorksheets && errors.noOfWorksheets && <small className="text-danger form-text">{errors.noOfWorksheets}</small>}
                                                             </div>
                                                         </Col>
+                                                    </Row>
+                                                    <Row>
+                                                        
                                                         <Col>
                                                             <div className="form-group fill">
 
@@ -668,8 +636,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                 {touched.noOfTestPapers && errors.noOfTestPapers && <small className="text-danger form-text">{errors.noOfTestPapers}</small>}
                                                             </div>
                                                         </Col>
-                                                    </Row>
-                                                    <Row>
+                                                    
                                                         <Col sm={6}>
                                                             <label className="floating-label">
                                                                 <small className="text-danger">* </small>
@@ -689,6 +656,45 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                             />
 
                                                             {touched.classPercentageRep && errors.classPercentageRep && <small className="text-danger form-text">{errors.classPercentageRep}</small>}
+                                                        </Col>
+                                                       
+                                                    </Row>
+                                                    <br />
+                                                    <Card.Title>
+                                                        Success Criteria
+                                                    </Card.Title>
+                                                    <Row>
+                                                    <Col xs={6}>
+                                                            <OverlayTrigger
+                                                                placement="top"
+                                                                overlay={
+                                                                    <Tooltip
+                                                                        id={`tooltip-top`}
+                                                                        style={{ zIndex: 1151, fontSize: '10px' }}
+                                                                    >
+                                                                        So that the teacher will get recommendations of Concepts to re-teach
+                                                                    </Tooltip>}>
+                                                                <div className="form-group fill">
+                                                                    <label className="floating-label">
+                                                                        <small className="text-danger">* </small>
+                                                                        Percentage of students to clear the quiz
+                                                                    </label>
+                                                                    <input
+                                                                        className="form-control"
+                                                                        error={touched.minStudentsPre && errors.minStudentsPre}
+                                                                        label="minStudentsPre"
+                                                                        name="minStudentsPre"
+                                                                        onBlur={handleBlur}
+                                                                        onChange={handleChange}
+                                                                        type="number"
+                                                                        onWheel={(e) => e.target.blur()}
+                                                                        value={values.minStudentsPre}
+                                                                    // placeholder="To clear the Quiz"
+                                                                    />
+                                                                    {touched.minStudentsPre && errors.minStudentsPre && <small className="text-danger form-text">{errors.minStudentsPre}</small>}
+                                                                </div>
+                                                            </OverlayTrigger>
+
                                                         </Col>
                                                         <Col sm={6}>
                                                             <label className="floating-label">
@@ -711,7 +717,6 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                             {touched.class_percentage && errors.class_percentage && <small className="text-danger form-text">{errors.class_percentage}</small>}
                                                         </Col>
                                                     </Row>
-                                                    <br />
                                                     <Row>
                                                         <Col xs={6}>
                                                             <Row>
