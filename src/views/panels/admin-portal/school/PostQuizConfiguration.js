@@ -573,61 +573,7 @@ const PostQuizConfiguration = ({ className, rest, id }) => {
 
                                                     <br />
                                                     <Row>
-                                                        <Col xs={6}>
-                                                            <label className="floating-label">
-                                                                <small className="text-danger">* </small>
-                                                                Pass Percentage for Quiz Level -3
-                                                            </label>
-                                                            <input
-                                                                className="form-control"
-                                                                error={touched.passPercentageL3Post && errors.passPercentageL3Post}
-                                                                label="passPercentageL3Post"
-                                                                name="passPercentageL3Post"
-                                                                onBlur={handleBlur}
-                                                                onChange={handleChange}
-                                                                type="number"
-                                                                onWheel={(e) => e.target.blur()}
-                                                                value={values.passPercentageL3Post}
-                                                            // placeholder="To clear the Quiz"
-                                                            />
-
-                                                            {touched.passPercentageL3Post && errors.passPercentageL3Post && <small className="text-danger form-text">{errors.passPercentageL3Post}</small>}
-                                                        </Col>
-
-                                                        <Col xs={6}>
-                                                            <OverlayTrigger
-                                                                placement="top"
-                                                                overlay={
-                                                                    <Tooltip
-                                                                        id={`tooltip-top`}
-                                                                        style={{ zIndex: 1151, fontSize: '10px' }}
-                                                                    >
-                                                                        So that the teacher will get recommendations of Concepts to re-teach
-                                                                    </Tooltip>}>
-                                                                <div className="form-group fill">
-                                                                    <label className="floating-label">
-                                                                        <small className="text-danger">* </small>
-                                                                        Percentage of students to clear the quiz
-                                                                    </label>
-                                                                    <input
-                                                                        className="form-control"
-                                                                        error={touched.minStudentsPre && errors.minStudentsPre}
-                                                                        label="minStudentsPre"
-                                                                        name="minStudentsPre"
-                                                                        onBlur={handleBlur}
-                                                                        onChange={handleChange}
-                                                                        type="number"
-                                                                        onWheel={(e) => e.target.blur()}
-                                                                        value={values.minStudentsPre}
-                                                                    // placeholder="To clear the Quiz"
-                                                                    />
-                                                                    {touched.minStudentsPre && errors.minStudentsPre && <small className="text-danger form-text">{errors.minStudentsPre}</small>}
-                                                                </div>
-                                                            </OverlayTrigger>
-                                                        </Col>
-                                                    </Row>
-                                                    <Row>
-                                                        <Col>
+                                                    <Col>
                                                             <div className="form-group fill">
 
                                                                 <label className="floating-label">
@@ -650,6 +596,31 @@ const PostQuizConfiguration = ({ className, rest, id }) => {
                                                                 {touched.noOfWorksheets && errors.noOfWorksheets && <small className="text-danger form-text">{errors.noOfWorksheets}</small>}
                                                             </div>
                                                         </Col>
+                                                        <Col xs={6}>
+                                                            <label className="floating-label">
+                                                                <small className="text-danger">* </small>
+                                                                Pass Percentage for Quiz Level -3
+                                                            </label>
+                                                            <input
+                                                                className="form-control"
+                                                                error={touched.passPercentageL3Post && errors.passPercentageL3Post}
+                                                                label="passPercentageL3Post"
+                                                                name="passPercentageL3Post"
+                                                                onBlur={handleBlur}
+                                                                onChange={handleChange}
+                                                                type="number"
+                                                                onWheel={(e) => e.target.blur()}
+                                                                value={values.passPercentageL3Post}
+                                                            // placeholder="To clear the Quiz"
+                                                            />
+
+                                                            {touched.passPercentageL3Post && errors.passPercentageL3Post && <small className="text-danger form-text">{errors.passPercentageL3Post}</small>}
+                                                        </Col>
+
+                                                       
+                                                    </Row>
+                                                    <Row>
+                                                        
                                                         <Col>
                                                             <div className="form-group fill">
 
@@ -673,9 +644,29 @@ const PostQuizConfiguration = ({ className, rest, id }) => {
                                                                 {touched.noOfTestPapers && errors.noOfTestPapers && <small className="text-danger form-text">{errors.noOfTestPapers}</small>}
                                                             </div>
                                                         </Col>
+                                                        <Col sm={6}>
+                                                            <label className="floating-label">
+                                                                <small className="text-danger">* </small>
+                                                                Class percentage to generate the reports
+                                                            </label>
+                                                            <input
+                                                                className="form-control"
+                                                                error={touched.classPercentageRep && errors.classPercentageRep}
+                                                                label="classPercentageRep"
+                                                                name="classPercentageRep"
+                                                                onBlur={handleBlur}
+                                                                onChange={handleChange}
+                                                                type="number"
+                                                                onWheel={(e) => e.target.blur()}
+                                                                value={values.classPercentageRep}
+                                                            // placeholder="To clear the Quiz"
+                                                            />
+
+                                                            {touched.classPercentageRep && errors.classPercentageRep && <small className="text-danger form-text">{errors.classPercentageRep}</small>}
+                                                        </Col>
                                                     </Row>
                                                     <Row>
-                                                        <Col>
+                                                        <Col xs={6}>
                                                             <OverlayTrigger
                                                                 placement="top"
                                                                 overlay={
@@ -709,25 +700,46 @@ const PostQuizConfiguration = ({ className, rest, id }) => {
                                                             </OverlayTrigger>
 
                                                         </Col>
-                                                        <Col sm={6}>
-                                                            <label className="floating-label">
-                                                                <small className="text-danger">* </small>
-                                                                Class percentage to generate the reports
-                                                            </label>
-                                                            <input
-                                                                className="form-control"
-                                                                error={touched.classPercentageRep && errors.classPercentageRep}
-                                                                label="classPercentageRep"
-                                                                name="classPercentageRep"
-                                                                onBlur={handleBlur}
-                                                                onChange={handleChange}
-                                                                type="number"
-                                                                onWheel={(e) => e.target.blur()}
-                                                                value={values.classPercentageRep}
-                                                            // placeholder="To clear the Quiz"
-                                                            />
 
-                                                            {touched.classPercentageRep && errors.classPercentageRep && <small className="text-danger form-text">{errors.classPercentageRep}</small>}
+                                                        
+                                                       
+                                                       
+                                                    </Row>
+                                                    <br />
+                                                    <Card.Title>
+                                                    Success Criteria
+                                                    </Card.Title>
+                                                    <Row>
+                                                    <Col xs={6}>
+                                                            <OverlayTrigger
+                                                                placement="top"
+                                                                overlay={
+                                                                    <Tooltip
+                                                                        id={`tooltip-top`}
+                                                                        style={{ zIndex: 1151, fontSize: '10px' }}
+                                                                    >
+                                                                        So that the teacher will get recommendations of Concepts to re-teach
+                                                                    </Tooltip>}>
+                                                                <div className="form-group fill">
+                                                                    <label className="floating-label">
+                                                                        <small className="text-danger">* </small>
+                                                                        Percentage of students to clear the quiz
+                                                                    </label>
+                                                                    <input
+                                                                        className="form-control"
+                                                                        error={touched.minStudentsPre && errors.minStudentsPre}
+                                                                        label="minStudentsPre"
+                                                                        name="minStudentsPre"
+                                                                        onBlur={handleBlur}
+                                                                        onChange={handleChange}
+                                                                        type="number"
+                                                                        onWheel={(e) => e.target.blur()}
+                                                                        value={values.minStudentsPre}
+                                                                    // placeholder="To clear the Quiz"
+                                                                    />
+                                                                    {touched.minStudentsPre && errors.minStudentsPre && <small className="text-danger form-text">{errors.minStudentsPre}</small>}
+                                                                </div>
+                                                            </OverlayTrigger>
                                                         </Col>
                                                         <Col sm={6}>
                                                             <label className="floating-label">
@@ -750,7 +762,6 @@ const PostQuizConfiguration = ({ className, rest, id }) => {
                                                             {touched.class_Percentage && errors.class_Percentage && <small className="text-danger form-text">{errors.class_Percentage}</small>}
                                                         </Col>
                                                     </Row>
-                                                    <br />
                                                     <Row>
                                                         <Col xs={6}>
                                                             <Row>
