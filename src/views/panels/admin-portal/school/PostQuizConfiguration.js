@@ -705,7 +705,8 @@ const PostQuizConfiguration = ({ className, rest, id }) => {
                                                        
                                                        
                                                     </Row>
-                                                    <br />
+                                                    <hr></hr>
+
                                                     <Card.Title>
                                                     Success Criteria
                                                     </Card.Title>
