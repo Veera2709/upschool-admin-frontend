@@ -659,7 +659,7 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                         </Col>
                                                        
                                                     </Row>
-                                                    <br />
+                                                    <hr></hr>
                                                     <Card.Title>
                                                         Success Criteria
                                                     </Card.Title>
