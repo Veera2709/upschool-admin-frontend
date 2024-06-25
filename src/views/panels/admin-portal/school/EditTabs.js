@@ -11,6 +11,8 @@ import SubscriptionFeatures from './SubscriptionFeatures';
 import BasicSpinner from '../../../../helper/BasicSpinner';
 import PreQuizConfiguration from './PreQuizConfiguration'
 import PostQuizConfiguration from './PostQuizConfiguration';
+import TeacherClass from './TeacherClass';
+
 
 const EditTabs = () => {
     const [_data, _setData] = useState([]);
@@ -83,6 +85,9 @@ const EditTabs = () => {
                         </Tab>
                         <Tab eventKey={6} title="Add Section">
                             <SectionsTableView id={school_id} />
+                        </Tab>
+                        <Tab eventKey={7} title="Teacher Class">
+                            <TeacherClass id={school_id} />
                         </Tab>
                     </Tabs>
                 </React.Fragment>
