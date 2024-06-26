@@ -1,0 +1,153 @@
+{
+    "Items": [
+        {
+            "school_board": [
+                "CBSE",
+                "STATE"
+            ],
+            "subscription_active": "Yes",
+            "teacher_access": {
+                "action_recommendations": "",
+                "chapterwise_performance": "",
+                "comprehensive_performance_analysis": "",
+                "prequiz_targetlearning": "Yes",
+                "postquiz_targetlearning": "Yes",
+                "assessment_summary": ""
+            },
+            "school_name": "Test School ok",
+            "school_logo": "uploads/92ab4677-724d-53e5-b266-440359db17c3.png",
+            "school_contact_info": {
+                "business_address": {
+                    "pincode": 678767,
+                    "phone_no": 9231231231,
+                    "contact_name": "a",
+                    "address_line2": "ae",
+                    "address_line1": "a",
+                    "city": "bangalore"
+                },
+                "billing_address": {
+                    "pincode": 678767,
+                    "phone_no": 9231231231,
+                    "contact_name": "a",
+                    "address_line2": "a",
+                    "address_line1": "a",
+                    "city": "bangalore",
+                    "GST_no": "22AAAAA0000A1Z5"
+                }
+            },
+            "school_subscribtion_feature": {
+                "types_of_report": [
+                    "Report2",
+                    "Report3",
+                    "Report4"
+                ],
+                "library_enable_on_app": "Yes",
+                "automated_evaluation": "Yes"
+            },
+            "pre_quiz_config": {
+                "no_of_randomized_order": 1,
+                "pass_pct_quiz_l2": 20,
+                "no_of_worksheet": 25,
+                "randomized_order_varient": "Enabled",
+                "pass_pct_quiz_l1": 25,
+                "test_matrix": {
+                    "Intermediate": 34,
+                    "Basic": 36,
+                    "Advanced": 30
+                },
+                "l2_mandatory": "No",
+                "read_digicard_mandatory": "No",
+                "min_qn_at_topic_level": 1,
+                "min_qn_at_chapter_level": 1,
+                "automated_type": "Enabled",
+                "unlock_digicard_mandatory": "Yes",
+                "class_percentage": 36,
+                "concept_mandatory": "Yes",
+                "no_of_test": 25,
+                "recommend_teacher_on_focus_area": "No",
+                "offline_mode": "Enabled",
+                "test_level": "moderatelyDifficult",
+                "online_mode": "Enabled",
+                "pct_of_student_for_reteach": 25,
+                "pct_of_student_for_focus": "",
+                "manual_type": "Enabled",
+                "class_percentage_for_report": 26,
+                "no_of_attempt_to_unlock": 25,
+                "topic_archive": "Yes",
+                "randomized_questions_varient": "Enabled",
+                "express_type": "Enabled"
+            },
+            "school_labelling": "Upschool",
+            "school_status": "Active",
+            "lc_school_name": "testschoolok",
+            "updated_ts": "2024-06-25T05:21:12.898Z",
+            "post_quiz_config": {
+                "no_of_randomized_order": 11,
+                "pass_pct_quiz_l2": 11,
+                "no_of_worksheet": 11,
+                "randomized_order_varient": "Enabled",
+                "choose_topic": "No",
+                "pass_pct_quiz_l3": 11,
+                "pass_pct_quiz_l1": 11,
+                "test_matrix": {
+                    "Intermediate": 35,
+                    "Basic": 35,
+                    "Advanced": 30
+                },
+                "l2_mandatory": "No",
+                "read_digicard_mandatory": "Yes",
+                "min_qn_at_topic_level": 11,
+                "min_qn_at_chapter_level": 11,
+                "automated_type": "Enabled",
+                "unlock_digicard_mandatory": "No",
+                "class_percentage": 20,
+                "concept_mandatory": "Yes",
+                "no_of_test": 11,
+                "recommend_teacher_on_focus_area": "Yes",
+                "offline_mode": "Enabled",
+                "test_level": "moderatelyDifficult",
+                "online_mode": "Disabled",
+                "pct_of_student_for_reteach": 11,
+                "pct_of_student_for_focus": 11,
+                "manual_type": "Enabled",
+                "class_percentage_for_report": 10,
+                "no_of_attempt_to_unlock": 10,
+                "topic_archive": "Yes",
+                "randomized_questions_varient": "Enabled",
+                "express_type": "Enabled"
+            },
+            "common_id": "61692656",
+            "school_quiz_config": {
+                "pre_learning": {
+                    "l2_mandatory": "No",
+                    "read_digicard_mandatory": "No",
+                    "recommend_teacher_on_focus_area": "No",
+                    "pass_pct_quiz_l2": 11,
+                    "pct_of_student_for_reteach": 11,
+                    "pct_of_student_for_focus": "",
+                    "no_of_attempt_to_unlock": 11,
+                    "pass_pct_quiz_l1": 11
+                },
+                "min_no_of_questions": 30,
+                "post_learning": {
+                    "read_digicard_mandatory": "No",
+                    "recommend_teacher_on_focus_area": "No",
+                    "pass_pct_quiz_l2": 11,
+                    "pass_pct_quiz_l3": 11,
+                    "pct_of_student_for_reteach": 11,
+                    "pct_of_student_for_focus": "",
+                    "no_of_attempt_to_unlock": 11,
+                    "pass_pct_quiz_l1": 11
+                },
+                "topic_selection": "Yes",
+                "test_mode": "Easy",
+                "test_type": "Manual"
+            },
+            "school_id": "2fa103b3-616e-59df-a54b-ce577e6e0b34",
+            "created_ts": "2023-02-10T05:43:09.265Z",
+            "school_logoURL": "https://dev-upschool.s3.ap-south-1.amazonaws.com/uploads/92ab4677-724d-53e5-b266-440359db17c3.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAQREMEI3PTKK4GBG5%2F20240625%2Fap-south-1%2Fs3%2Faws4_request&X-Amz-Date=20240625T053309Z&X-Amz-Expires=900&X-Amz-Signature=7d668ec7a5e31f9f090faf19c98e48743904971df46685a1ebd2db4b7ddf9e66&X-Amz-SignedHeaders=host",
+            "master_admin_id": "71ae2f2c-7c77-54df-8a2c-d99ac29b5976",
+            "master_admin_email": "simple@rhibhus.com"
+        }
+    ]
+}
