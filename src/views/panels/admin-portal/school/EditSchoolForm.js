@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { Col, Form, Alert, Card } from 'react-bootstrap';
 // import Select from 'react-select';
 import Select from "react-draggable-multi-select";
 import { useHistory } from 'react-router-dom';
@@ -9,9 +10,9 @@ import Swal from 'sweetalert2';
 import axios from 'axios';
 
 import * as Constants from '../../../../config/constant';
-import { Col, Form, Alert, Card } from 'react-bootstrap';
+import * as helpConstant from '../../../../helper/constants';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
-import { areFilesInvalid } from '../../../../util/utils';
+import { areFilesInvalid, isEmptyObject } from '../../../../util/utils';
 import dynamicUrl from "../../../../helper/dynamicUrls";
 import BasicSpinner from '../../../../helper/BasicSpinner';
 import MESSAGES from "../../../../helper/messages";
@@ -220,24 +221,25 @@ const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive 
 
                                                 initialValues={
                                                     {
-                                                        schoolName: previousData === {} ? '' : previousData.school_name,
+                                                        schoolName: isEmptyObject(previousData) ? '' : previousData.school_name,
                                                         school_logo: "",
                                                         subscription_active: subscription_active,
-                                                        contact_name: previousData === {} ? '' : previousData.school_contact_info.business_address.contact_name,
-                                                        address_line1: previousData === {} ? '' : previousData.school_contact_info.business_address.address_line1,
-                                                        address_line2: previousData === {} ? '' : previousData.school_contact_info.business_address.address_line2,
-                                                        city: previousData === {} ? '' : previousData.school_contact_info.business_address.city,
-                                                        pincode: previousData === {} ? '' : previousData.school_contact_info.business_address.pincode,
-                                                        phoneNumber: previousData === {} ? '' : previousData.school_contact_info.business_address.phone_no,
+                                                        master_admin_email: isEmptyObject(previousData) && !previousData.master_admin_email ? '' : previousData.master_admin_email,                                                        
+                                                        contact_name: isEmptyObject(previousData) ? '' : previousData.school_contact_info.business_address.contact_name,
+                                                        address_line1: isEmptyObject(previousData) ? '' : previousData.school_contact_info.business_address.address_line1,
+                                                        address_line2: isEmptyObject(previousData) ? '' : previousData.school_contact_info.business_address.address_line2,
+                                                        city: isEmptyObject(previousData) ? '' : previousData.school_contact_info.business_address.city,
+                                                        pincode: isEmptyObject(previousData) ? '' : previousData.school_contact_info.business_address.pincode,
+                                                        phoneNumber: isEmptyObject(previousData) ? '' : previousData.school_contact_info.business_address.phone_no,
 
 
-                                                        contact_name2: previousData === {} ? '' : previousData.school_contact_info.billing_address.contact_name,
-                                                        address_line1_2: previousData === {} ? '' : previousData.school_contact_info.billing_address.address_line1,
-                                                        address_line2_2: previousData === {} ? '' : previousData.school_contact_info.billing_address.address_line2,
-                                                        city2: previousData === {} ? '' : previousData.school_contact_info.billing_address.city,
-                                                        pincode2: previousData === {} ? '' : previousData.school_contact_info.billing_address.pincode,
-                                                        phoneNumber2: previousData === {} ? '' : previousData.school_contact_info.billing_address.phone_no,
-                                                        gst_number: previousData === {} ? '' : previousData.school_contact_info.billing_address.GST_no,
+                                                        contact_name2: isEmptyObject(previousData) ? '' : previousData.school_contact_info.billing_address.contact_name,
+                                                        address_line1_2: isEmptyObject(previousData) ? '' : previousData.school_contact_info.billing_address.address_line1,
+                                                        address_line2_2: isEmptyObject(previousData) ? '' : previousData.school_contact_info.billing_address.address_line2,
+                                                        city2: isEmptyObject(previousData) ? '' : previousData.school_contact_info.billing_address.city,
+                                                        pincode2: isEmptyObject(previousData) ? '' : previousData.school_contact_info.billing_address.pincode,
+                                                        phoneNumber2: isEmptyObject(previousData) ? '' : previousData.school_contact_info.billing_address.phone_no,
+                                                        gst_number: isEmptyObject(previousData) ? '' : previousData.school_contact_info.billing_address.GST_no,
                                                         // submit: null
                                                     }
                                                 }
@@ -245,6 +247,7 @@ const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive 
                                                     Yup.object().shape({
                                                         schoolName: Yup.string().max(255).required('School Name is required'),
                                                         contact_name: Yup.string().max(255).required('Contact Name is required'),
+                                                        master_admin_email: Yup.string().email('Must be a valid email !').required(helpConstant.cmsRole.userEmail),
                                                         address_line1: Yup.string().max(255).required('Address Line 1 is required'),
                                                         address_line2: Yup.string().max(255).required('Address Line 2 is required'),
                                                         city: Yup.string().max(255).required('City is required'),
@@ -275,6 +278,9 @@ const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive 
                                                             school_labelling: schoolLabel,
                                                             school_logo: updatedImage === "" ? previousData.school_logo : updatedImage,
                                                             subscription_active: subscription_active,
+                                                            master_admin_email: values.master_admin_email,
+                                                            master_admin_id: isEmptyObject(previousData) && !previousData.master_admin_id ? '' : previousData.master_admin_id,
+                                                            teacher_id: values.teacher_id,
                                                             school_contact_info: {
                                                                 business_address: {
                                                                     contact_name: values.contact_name,
@@ -838,16 +844,27 @@ const EditSchoolForm = ({ id, setIsOpenEditSchool, fetchSchoolData, setInactive 
                                                             </div>
                                                         </div>
 
+                                                        <div class="row">
+                                                            <div className='col-sm-6'>
+                                                                <div className="form-group fill">
+                                                                    <label className="floating-label">
+                                                                        <small class="text-danger">* </small>
+                                                                        School Admin Email
+                                                                    </label>
+                                                                    <input
+                                                                        className="form-control"
+                                                                        error={touched.master_admin_email && errors.master_admin_email}
+                                                                        name="master_admin_email"
+                                                                        onBlur={handleBlur}
+                                                                        onChange={handleChange}
+                                                                        type="email"
+                                                                        value={values.master_admin_email}
 
-
-
-
-
-
-
-
-
-
+                                                                    />
+                                                                    {touched.master_admin_email && errors.master_admin_email && <small className="text-danger form-text">{errors.master_admin_email}</small>}
+                                                                </div>
+                                                            </div>
+                                                        </div>
 
                                                         <div className="row">
                                                             <div className="col-md-6">

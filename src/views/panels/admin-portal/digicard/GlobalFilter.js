@@ -5,6 +5,8 @@ export const GlobalFilter = ({ filter, setFilter }) => {
   const [value, setValue] = useState(filter);
   const onChange = useAsyncDebounce((value) => {
     setFilter(value || undefined);
+    console.log('search:', value)
+
   }, 1000);
   return (
     <span className="d-flex align-items-center justify-content-end">

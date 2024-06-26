@@ -82,9 +82,9 @@ const ListUsers = () => {
             sessionStorage.setItem('user_type', storeValue);
             setState(true);
         }
-        if (dataFromChild !== {}) {
+        // if (dataFromChild !== {}) {
             // UsePaginationApi()
-        }
+        // }
     }, [dataFromChild, _userRole])
 
 
