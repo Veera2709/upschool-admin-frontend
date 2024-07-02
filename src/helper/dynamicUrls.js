@@ -1,8 +1,7 @@
-// const baseUrl = process.env.REACT_APP_LAMBDA_URL ? process.env.REACT_APP_LAMBDA_URL  : 'https://w72a5si42a.execute-api.ap-south-1.amazonaws.com/dev/v1'; // Dev env URL
+const baseUrl = process.env.REACT_APP_LAMBDA_URL ? process.env.REACT_APP_LAMBDA_URL  : 'https://w72a5si42a.execute-api.ap-south-1.amazonaws.com/dev/v1'; // Dev env URL
 // const baseUrl = 'https://dssqy2gip2.execute-api.ap-south-1.amazonaws.com/testing/v1'; // testing env URL
-const baseUrl = process.env.REACT_APP_LAMBDA_URL;
-// const baseUrl = 'http://localhost:3001/v1'
-
+// const baseUrl = process.env.REACT_APP_LAMBDA_URL;
+// const baseUrl = 'http://localhost:3001/v1';
 
 const dynamicUrl = {
 
@@ -108,6 +107,7 @@ const dynamicUrl = {
     toggleClassStatus: baseUrl + '/toggleClassStatus',
     editClass: baseUrl + '/editClass',
     bulkToggleClassStatus: baseUrl + '/bulkToggleClassStatus',
+    teacherAccess: baseUrl + '/teacherAccess',
 
     // Questions
     fetchIndividualQuestionData: baseUrl + '/fetchIndividualQuestionData',
