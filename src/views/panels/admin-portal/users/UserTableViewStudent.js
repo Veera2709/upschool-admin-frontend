@@ -20,6 +20,7 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
     const MySwal = withReactContent(Swal);
     const history = useHistory();
     const [searchValue, setSearchValue] = useState('');
+    const school_id = sessionStorage.getItem('school_id');
 
     const [pageIndexValue, setPageIndexValue] = useState(1);
 
@@ -27,6 +28,7 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
     const [startKeys, setStartKeys] = useState(null);
     const [initialValue, setInitialValue] = useState(1);
     const [pageIndex, setPageIndex] = useState(0);
+
 
 
     const initiallySelectedRows = React.useMemo(() => new Set(["1"]), []);
@@ -78,8 +80,10 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
         const data = {
             page_size: pageSize,
             user: userRole,
+            school_id: school_id,
             start_key: startKeys,
             searchedKeyword: searchValue,
+            user_status:pageLocation,
             pageIndexValue: pageIndexValue,
             pageIndex: pageIndex,
             initialValue: initialValue
@@ -218,13 +222,13 @@ function Table({ columns, data, modalOpen, userRole, sendDataToParent, callParen
         console.log("selectedFlatRows", selectedFlatRows);
         let arrayWithStudentIds = [];
 
-        let userRolePayload = (userRole === "Student") ? "Student" : "N.A.";
+        let userRolePayload = (userRole === "Teachers") ? "Teacher" : (userRole === "Students") ? "Student" : (userRole === "Parents") ? "Parent" : "N.A.";
 
         console.log("ROLE : ", userRolePayload);
 
         selectedFlatRows.map((items) => {
             console.log("Student Id : ", items.original.student_id);
-            if (userRole === "Student") {
+            if (userRole === "Students") {
                 console.log("Student Id : ", items.original.student_id);
                 arrayWithStudentIds.push({ user_id: items.original.student_id, school_id: items.original.school_id });
             }
@@ -615,7 +619,7 @@ const UserTableViewStudent = ({ _userRole, sendDataToGrandParent }) => {
     const [isLoading, setIsLoading] = useState(false);
     const pageLocation = useLocation().pathname.split('/')[2];
     const [_data, _setData] = useState([]);
-
+    const school_id = sessionStorage.getItem('school_id');
     console.log("options", options);
     console.log("multiDropOptions", multiDropOptions);
     const [selectAllCheckbox, setSelectAllCheckbox] = useState(false);
@@ -627,11 +631,13 @@ const UserTableViewStudent = ({ _userRole, sendDataToGrandParent }) => {
     const [startKeys, setStartKeys] = useState(null);
     const [lastKeys, setLastKeys] = useState([]);
     const [indexes, setIndexes] = useState(0)
+
     const [pageCountRes, setPageCountRes] = useState()
     const [pageIndexParent, setPageIndexParent] = useState(0); // Initialize pageIndexParent in the parent component
     const [itemsRes, setItemsRes] = useState([])
     const [initialValue, setInitialValue] = useState('');
     const [isOpen, setIsOpen] = useState(false);
+
 
     const handlePageIndexUpdate = (pageIndex) => {
         setPageIndexParent(pageIndex); // Update the parent's pageIndex state
@@ -868,8 +874,10 @@ const UserTableViewStudent = ({ _userRole, sendDataToGrandParent }) => {
         console.log("startKeys : ", startKeys);
         console.log("Request for Pagination : ", {
             page_size: dataFromChild.page_size === undefined ? 10 : dataFromChild.page_size,
+            school_id: school_id,
             user: _userRole.replace("s", ""),
             start_key: startKeys,
+            user_status: payLoadStatus,
             searchedKeyword: dataFromChild.searchedKeyword === undefined ? "" : dataFromChild.searchedKeyword,
           });
 
@@ -878,8 +886,10 @@ const UserTableViewStudent = ({ _userRole, sendDataToGrandParent }) => {
             {
                 data: {
                     page_size: dataFromChild.page_size === undefined ? 10 : dataFromChild.page_size,
+                    school_id: sessionStorage.getItem('school_id'),
                     user: _userRole.replace("s", ""),
                     start_key: startKeys,
+                    user_status: payLoadStatus,
                     searchedKeyword: dataFromChild.searchedKeyword === undefined ? "" : dataFromChild.searchedKeyword,
                   }
             },
@@ -909,7 +919,8 @@ const UserTableViewStudent = ({ _userRole, sendDataToGrandParent }) => {
                   const items = resultData.Items
                   console.log("items", items);
                   setItemsRes(items)
-                  console.log("itemsRes", itemsRes);
+                  console.log("itemsRes?", resultData.Items[0].school_id);
+                  sessionStorage.setItem('school_id', resultData.Items[0].school_id)
                 }
 
             })
@@ -1070,8 +1081,41 @@ const UserTableViewStudent = ({ _userRole, sendDataToGrandParent }) => {
                         </React.Fragment>
 
                       ) : (
-                        <h3 style={{ textAlign: 'center' }}>No {sessionStorage.getItem('user_type')} Found</h3>
-                      )
+                        <React.Fragment>
+                        <Row>
+                          <Col sm={12}>
+                            <Card>
+                              <Card.Header>
+                                <Card.Title as="h5" className='d-flex justify-content-between'>
+                                  <h5>User List</h5>
+                                  <h5>Total Entries :- {userData.length}</h5>
+
+                                </Card.Title>
+                              </Card.Header>
+
+                              <Card.Body>
+
+                                <Table
+                                  columns={columns}
+                                  data={userData}
+                                  modalOpen={openHandler}
+                                  userRole={_userRole}
+                                  selectAllCheckbox={selectAllCheckbox}
+                                  sendDataToParent={handleDataFromChild}
+                                  dataFromChild={dataFromChild}
+                                  callParentFunction={fetchUserData}
+                                  onPageChange={handlePageChange}
+                                  pageCountRes={pageCountRes}
+                                  onPageIndexUpdate={handlePageIndexUpdate}
+                                  indexes={indexes}
+                                />
+
+                              </Card.Body>
+                            </Card>
+
+                          </Col>
+                        </Row>
+                      </React.Fragment>                      )
                     }
                   </>
 
