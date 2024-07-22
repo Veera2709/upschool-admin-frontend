@@ -16,7 +16,7 @@ import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import withReactContent from 'sweetalert2-react-content';
 import { areFilesInvalid, isEmptyObject } from '../../../../util/utils';
 import { useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory , useParams } from 'react-router-dom';
 import Select from 'react-draggable-multi-select';
 import { getAllcognitiveSkills, allQuestionCategories } from '../../../api/CommonApi';
 
@@ -41,6 +41,8 @@ const AddBluePrint = () => {
         }
     ]
 
+    const { type } = useParams();
+    console.log("--------type=0----------", type);
     const [bluePrintData, setBluePrintData] = useState(sectionsData)
     const [loader, showLoader, hideLoader] = useFullPageLoader();
     const [disableButton, setDisableButton] = useState(false);
@@ -345,7 +347,8 @@ const AddBluePrint = () => {
                                         test_duration: values.bluePrintDuration,
                                         description: values.bluePrintDec,
                                         display_name: values.displayName,
-                                        sections: finalData
+                                        sections: finalData,
+                                        blueprint_type : type,
                                     }
 
                                     console.log({ formData })
@@ -366,7 +369,11 @@ const AddBluePrint = () => {
                                                     title: 'Blue Print added successfully!',
                                                     icon: 'success',
                                                 }).then((willDelete) => {
+
+                                                    if(type === 'questionPaper')
                                                     history.push('/admin-portal/active-blueprint')
+                                                    else
+                                                    history.push('/admin-portal/worksheet-blueprint')
                                                     window.location.reload();
                                                 })
 
