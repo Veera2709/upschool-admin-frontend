@@ -358,10 +358,21 @@ const routes = [
         component: lazy(() => import('./views/panels/admin-portal/bluePrint/BluePrintList'))
       },
 
+      {
+        exact: true,
+        path: '/admin-portal/archived-worksheet-blueprint',
+        component: lazy(() => import('./views/panels/admin-portal/bluePrint/BluePrintList'))
+      },
+      {
+        exact: true,
+        path: '/admin-portal/worksheet-blueprint',
+        component: lazy(() => import('./views/panels/admin-portal/bluePrint/BluePrintList'))
+      },
+
       //add Blue print
       {
         exact: true,
-        path: '/admin-portal/add-bluePrint',
+        path: '/admin-portal/add-bluePrint/:type',
         component: lazy(() => import('./views/panels/admin-portal/bluePrint/AddBluePrint'))
       },
       {
