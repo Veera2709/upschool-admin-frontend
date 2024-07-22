@@ -25,7 +25,7 @@ function Table({ columns, data, modalOpen }) {
     const [isOpenAddChapter, setOpenAddChapter] = useState(false);
     const initiallySelectedRows = React.useMemo(() => new Set(["1"]), []);
     const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
-    const bluePrintStatus = pageLocation === "active-blueprint" ? 'Active' : 'Archived';
+    const bluePrintStatus = pageLocation === "archived-blueprint" || pageLocation === "archived-worksheet-blueprint" ? 'Archived' : 'Active';
     const MySwal = withReactContent(Swal);
     let history = useHistory();
 
@@ -112,7 +112,7 @@ function Table({ columns, data, modalOpen }) {
                     {
                         bluePrintStatus === 'Active' ? (
                             <>
-                                <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={() => { history.push('/admin-portal/add-bluePrint') }}>
+                                <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={() => { history.push(`/admin-portal/add-bluePrint/${pageLocation === "active-blueprint" ? 'questionPaper' : 'worksheet'}`) }}>
                                     <i className="feather icon-plus" /> Add Blue Print
                                 </Button>
                             </>
@@ -372,12 +372,14 @@ const BluePrintList = (props) => {
 
 
     const allBluePritData = () => {
-        const bluePrintStatus = pageLocation === "active-blueprint" ? 'Active' : 'Archived';
-        console.log("bluePrintStatus", bluePrintStatus);
+        const bluePrintStatus = pageLocation === "archived-blueprint" || pageLocation === "archived-worksheet-blueprint" ? 'Archived' : 'Active';
+        console.log("pageLocation --- ", pageLocation);
         setIsLoading(true);
         axios.post(dynamicUrl.fetchBluePrintsBasedonStatus, {
             data: {
-                blueprint_status: bluePrintStatus
+                blueprint_status: bluePrintStatus ,
+                // ...(pageLocation !== "archived-blueprint" && { blueprint_type:  pageLocation === "active-blueprint" ? "questionPaper" :  "worksheet" })
+                blueprint_type:  pageLocation === "active-blueprint" || pageLocation === "archived-blueprint" ? "questionPaper" :  "worksheet" 
             }
         }, {
             headers: { Authorization: sessionStorage.getItem('user_jwt') }
@@ -514,7 +516,7 @@ const BluePrintList = (props) => {
                                             < React.Fragment >
                                                 <div>
 
-                                                    <h3 style={{ textAlign: 'center' }}>No {pageLocation === "active-blueprint" ? 'Active Blue Print' : 'Archived Blue Print'} Found</h3>
+                                                    <h3 style={{ textAlign: 'center' }}>No {pageLocation === "archived-blueprint" || pageLocation === "archived-worksheet-blueprint" ? 'Archived Blue Print' : 'Active Blue Print' } Found</h3>
                                                     <div className="form-group fill text-center">
                                                         <br></br>
                                                         <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={(e) => { history.push('/admin-portal/add-bluePrint') }}>
@@ -526,7 +528,7 @@ const BluePrintList = (props) => {
                                             </React.Fragment>
                                         ) : (
                                             <React.Fragment>
-                                                <h3 style={{ textAlign: 'center' }}>No {pageLocation === "active-blueprint" ? 'Active Blue Print' : 'Archived Blue Print'} Found</h3>
+                                                <h3 style={{ textAlign: 'center' }}>No {pageLocation === "archived-blueprint" || pageLocation === "archived-worksheet-blueprint" ? 'Archived Blue Print' :  'Active Blue Print'} Found</h3>
                                             </React.Fragment>
                                         )
                                     }
