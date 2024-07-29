@@ -512,14 +512,14 @@ const BluePrintList = (props) => {
                             bluePrintData.length <= 0 ? (
                                 <>
                                     {
-                                        pageLocation === 'active-blueprint' ? (
+                                        pageLocation !== 'archived-blueprint' ? (
                                             < React.Fragment >
                                                 <div>
 
                                                     <h3 style={{ textAlign: 'center' }}>No {pageLocation === "archived-blueprint" || pageLocation === "archived-worksheet-blueprint" ? 'Archived Blue Print' : 'Active Blue Print' } Found</h3>
                                                     <div className="form-group fill text-center">
                                                         <br></br>
-                                                        <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={(e) => { history.push('/admin-portal/add-bluePrint') }}>
+                                                        <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={() => { history.push(`/admin-portal/add-bluePrint/${pageLocation === "active-blueprint" ? 'questionPaper' : 'worksheet'}`) }}>
                                                             <i className="feather icon-plus" /> Add Blue Print
                                                         </Button>
                                                     </div>
