@@ -282,7 +282,27 @@ const menuItems = {
               title: 'Archived Blue Print',
               type: 'item',
               url: '/admin-portal/archived-blueprint'
-            }
+            },
+          ]
+        },
+        {
+          id: 'worksheet_blue_print',
+          title: 'Worksheet Blue Print',
+          type: 'collapse',
+          icon: 'fas fa-map',
+          children: [
+            {
+              id: 'worksheet-blueprint',
+              title: 'Active Blue Print',
+              type: 'item',
+              url: '/admin-portal/worksheet-blueprint'
+            },
+            {
+              id: 'worksheet_archived-blueprint',
+              title: 'Archived Blue Print',
+              type: 'item',
+              url: '/admin-portal/archived-worksheet-blueprint'
+            },
           ]
         },
         {
