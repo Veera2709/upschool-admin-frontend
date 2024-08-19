@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { ListGroup, Dropdown } from 'react-bootstrap';
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
@@ -13,6 +13,7 @@ import { ConfigContext } from '../../../../contexts/ConfigContext';
 import dynamicUrl from '../../../../helper/dynamicUrls';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import user from '../../../../assets/images/user/gravatar.png';
+import { decodeJWT } from '../../../../util/utils';
 // import avatar2 from '../../../../assets/images/user/avatar-2.jpg';
 // import avatar3 from '../../../../assets/images/user/avatar-3.jpg';
 // import avatar4 from '../../../../assets/images/user/avatar-4.jpg';
@@ -26,6 +27,16 @@ const NavRight = () => {
 
   const [listOpen, setListOpen] = useState(false);
   const [loader, showLoader, hideLoader] = useFullPageLoader();
+  const [adminName, setAdminName] = useState('')
+
+
+  
+
+  useEffect(() => {
+
+    const decodedRes = decodeJWT(sessionStorage.getItem('user_jwt'));
+    setAdminName(decodedRes.user_role);
+  }, []);
 
   // const handleLogout = async () => {
   //   try {
@@ -225,11 +236,11 @@ const NavRight = () => {
               <img src={user} className="img-radius wid-40" alt="User Profile" />
             </Dropdown.Toggle>
             <Dropdown.Menu alignRight className="profile-notification">
-              {/* <div className="pro-head">
+              <div className="pro-head">
                 <img src={user} className="img-radius" alt="User Profile" />
-                <span>UpSchool Admin</span>
+                <span>Hi, {adminName}!</span>
                
-              </div> */}
+              </div>
               <ListGroup as="ul" bsPrefix=" " variant="flush" className="pro-body">
                 {/* <ListGroup.Item as="li" bsPrefix=" ">
                   <Link to="#" className="dropdown-item">
