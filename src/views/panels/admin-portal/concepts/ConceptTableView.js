@@ -17,6 +17,7 @@ import {
   useGlobalFilter,
   useRowSelect,
 } from "react-table";
+
 import dynamicUrl from "../../../../helper/dynamicUrls";
 import useFullPageLoader from "../../../../helper/useFullPageLoader";
 import AddConcepts from "./AddConcepts";
@@ -482,6 +483,7 @@ function Table({ columns, data, _workSheetQuestions }) {
     useRowSelect
   );
 
+
   const toggleFunction = () => {
     let arrayWithConcepts = [];
     page.map((e) => {
@@ -585,6 +587,9 @@ function Table({ columns, data, _workSheetQuestions }) {
       }
     });
   };
+
+  console.log("Global Filter:", globalFilter);
+    console.log("Page Data:", page);
   return (
     <>
       {conceptData && data && (
@@ -609,7 +614,6 @@ function Table({ columns, data, _workSheetQuestions }) {
             </Col>
             <Col className="d-flex justify-content-end">
               <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
-
               {pageLocation === "active-concepts" ? (
                 <>
                   <Button
