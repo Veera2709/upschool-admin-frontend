@@ -22,6 +22,10 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
     const [paperMatrixBasic, setPaperMatrixBasic] = useState();
     const [paperMatrixIntermediate, setPaperMatrixIntermediate] = useState();
     const [paperMatrixAdvanced, setPaperMatrixAdvanced] = useState();
+
+    const [basic, setPassGroupBasic] = useState();
+    const [intermediate, setPassGroupIntermediate] = useState();
+    const [advanced, setPassGroupAdvanced] = useState();
     const [_radioL2MandatoryPre, _setRadioL2MandatoryPre] = useState(false);
     const [_radioReadDigicardPre, _setRadioReadDigicardPre] = useState(false);
     const [_radioTopicSelection, _setRadioTopicSelection] = useState(false);
@@ -263,6 +267,12 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                     setPaperMatrixIntermediate(previousDataPreQuiz.test_matrix.Intermediate)
                     setPaperMatrixAdvanced(previousDataPreQuiz.test_matrix.Advanced)
 
+                    //Pass Group
+                    setPassGroupBasic(previousDataPreQuiz.group_pass_percentage.Basic)
+                    setPassGroupIntermediate(previousDataPreQuiz.group_pass_percentage.Intermediate)
+                    setPassGroupAdvanced(previousDataPreQuiz.group_pass_percentage.Advanced)
+
+
                     //Concept Compulsorialy
                     const conceptCompulsorialy = previousDataPreQuiz.concept_mandatory === 'Yes' ? true : false;
                     _setConceptCompulsorialy(conceptCompulsorialy)
@@ -339,6 +349,9 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                             submit: null,
                                             classPercentageRep: previousDataPreQuiz.class_percentage_for_report === '' ? '' : previousDataPreQuiz.class_percentage_for_report,
                                             class_percentage: previousDataPreQuiz.class_percentage === '' ? '' : previousDataPreQuiz.class_percentage,
+                                            Advanced: advanced === '' ? '' : advanced,
+                                            Basic: basic === '' ? '' : basic,
+                                            Intermediate: intermediate === '' ? '' : intermediate,
                                             martix_basic: paperMatrixBasic === '' ? '' : paperMatrixBasic,
                                             martix_intermediate: paperMatrixIntermediate === '' ? '' : paperMatrixIntermediate,
                                             martix_advanced: paperMatrixAdvanced === '' ? '' : paperMatrixAdvanced,
@@ -396,6 +409,11 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                                 Basic: values.martix_basic,
                                                                 Intermediate: values.martix_intermediate,
                                                                 Advanced: values.martix_advanced,
+                                                            },
+                                                            group_pass_percentage: {
+                                                                Advanced: values.Advanced,
+                                                                Basic: values.Basic,
+                                                                Intermediate: values.Intermediate
                                                             },
                                                             no_of_test: values.noOfTestPapers,
                                                             no_of_worksheet: values.noOfWorksheets,
@@ -660,6 +678,86 @@ const PreQuizConfiguration = ({ className, rest, id }) => {
                                                        
                                                     </Row>
                                                     <hr></hr>
+                                                    <Card.Title>
+                                                    Groups of pass percentages
+                                                    </Card.Title>
+                                                    <Row>
+                                                    <Col xs={4}>
+                                                            <OverlayTrigger
+                                                                placement="top"
+                                                                overlay={
+                                                                    <Tooltip
+                                                                        id={`tooltip-top`}
+                                                                        style={{ zIndex: 1151, fontSize: '10px' }}
+                                                                    >
+                                                                        So that the teacher will get recommendations of Percentage to re-teach
+                                                                    </Tooltip>}>
+                                                                <div className="form-group fill">
+                                                                    <label className="floating-label">
+                                                                        <small className="text-danger">* </small>
+                                                                        Advanced
+                                                                    </label>
+                                                                    <input
+                                                                        className="form-control"
+                                                                        error={touched.Advanced && errors.Advanced}
+                                                                        label="Advanced"
+                                                                        name="Advanced"
+                                                                        onBlur={handleBlur}
+                                                                        onChange={handleChange}
+                                                                        type="number"
+                                                                        onWheel={(e) => e.target.blur()}
+                                                                        value={values.Advanced}
+                                                                    // placeholder="To clear the Quiz"
+                                                                    />
+                                                                    {touched.Advanced && errors.Advanced && <small className="text-danger form-text">{errors.Advanced}</small>}
+                                                                </div>
+                                                            </OverlayTrigger>
+                                                        </Col>
+                                                        <Col sm={4}>
+                                                            <label className="floating-label">
+                                                                <small className="text-danger">* </small>
+                                                                Basic
+                                                            </label>
+                                                            <input
+                                                                className="form-control"
+                                                                error={touched.Basic && errors.Basic}
+                                                                label="Basic"
+                                                                name="Basic"
+                                                                onBlur={handleBlur}
+                                                                onChange={handleChange}
+                                                                type="number"
+                                                                onWheel={(e) => e.target.blur()}
+                                                                value={values.Basic}
+                                                            // placeholder="To clear the Quiz"
+                                                            />
+
+                                                            {touched.Basic && errors.Basic && <small className="text-danger form-text">{errors.Basic}</small>}
+                                                        </Col>
+                                                        <Col sm={4}>
+                                                            <label className="floating-label">
+                                                                <small className="text-danger">* </small>
+                                                                Intermediate
+                                                            </label>
+                                                            <input
+                                                                className="form-control"
+                                                                error={touched.Intermediate && errors.Intermediate}
+                                                                label="Intermediate"
+                                                                name="Intermediate"
+                                                                onBlur={handleBlur}
+                                                                onChange={handleChange}
+                                                                type="number"
+                                                                onWheel={(e) => e.target.blur()}
+                                                                value={values.Intermediate}
+                                                                max={100}
+                                                            // placeholder="To clear the Quiz"
+                                                            />
+
+                                                            {touched.Intermediate && errors.Intermediate && <small className="text-danger form-text">{errors.Intermediate}</small>}
+                                                        </Col>
+                                                        
+                                                    </Row>
+                                                    <hr></hr>
+
                                                     <Card.Title>
                                                         Success Criteria
                                                     </Card.Title>

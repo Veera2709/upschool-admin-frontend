@@ -4,9 +4,15 @@ import { Row, Col, Card, Pagination, Button, Modal, Form } from 'react-bootstrap
 import BTable from 'react-bootstrap/Table';
 import withReactContent from 'sweetalert2-react-content';
 import Swal from 'sweetalert2';
-import { GlobalFilter } from './GlobalFilter';
 import MESSAGES from '../../../../helper/messages';
-import { useTable, useSortBy, usePagination, useGlobalFilter } from 'react-table';
+import { GlobalFilter } from '../../../common-ui-components/tables/GlobalFilter';
+import {
+    useTable,
+    useSortBy,
+    usePagination,
+    useGlobalFilter,
+    useRowSelect,
+} from "react-table";
 
 import AddSchoolForm from './AddSchoolForm';
 import dynamicUrl from '../../../../helper/dynamicUrls';
@@ -18,50 +24,67 @@ import { Link, useHistory } from 'react-router-dom';
 import BasicSpinner from '../../../../helper/BasicSpinner';
 
 function Table({ columns, data, modalOpen }) {
-    const [stateCustomer, setStateCustomer] = useState([])
-    const { getTableProps, getTableBodyProps, headerGroups, prepareRow, globalFilter, setGlobalFilter, page, canPreviousPage, canNextPage, pageOptions, pageCount, gotoPage, nextPage, previousPage, setPageSize, state: { pageIndex, pageSize } } = useTable(
+    const [stateCustomer, setStateCustomer] = useState([]);
+
+    // Log initial data to confirm it's being received correctly
+    console.log("Initial data:", data);
+
+    const {
+        getTableProps,
+        getTableBodyProps,
+        headerGroups,
+        prepareRow,
+        setGlobalFilter,
+        state,
+        page,
+        canPreviousPage,
+        canNextPage,
+        pageOptions,
+        pageCount,
+        gotoPage,
+        nextPage,
+        previousPage,
+        setPageSize,
+    } = useTable(
         {
             columns,
             data,
-            initialState: { pageIndex: 0, pageSize: 10 }
+            initialState: { pageIndex: 0, pageSize: 10 },
         },
         useGlobalFilter,
         useSortBy,
-        usePagination
+        usePagination,
+        useRowSelect
     );
 
+    const { globalFilter, pageIndex, pageSize } = state;
 
+    // Debugging: log the global filter and current page data
+    console.log("Global Filter:", globalFilter);
+    console.log("Page Data:", page);
 
-
-    //handle delete multi school
+    // Handle delete multi school
     const deleteSchoolById = () => {
         let arrIds = [];
         stateCustomer.forEach(d => {
             if (d.select) {
-                arrIds.push(d.id)
+                arrIds.push(d.id);
             }
-        })
-        console.log(arrIds)
-
-    }
-
+        });
+        console.log(arrIds);
+    };
 
     return (
         <>
             <Row className="mb-3">
-                {/* 
-                <Button onClick={deleteSchoolById} variant="danger" className="btn-sm btn-round has-ripple ml-2" style={{ marginLeft: "1.5rem" }} >Delete</Button> */}
-
                 <Col className="d-flex align-items-center">
                     Show
                     <select
                         className="form-control w-auto mx-2"
                         value={pageSize}
-                        onChange={(e) => {
-                            setPageSize(Number(e.target.value));
-                        }}
+                        onChange={(e) => setPageSize(Number(e.target.value))}
                     >
-                        {[5, 10, 20, 30, 40, 50].map((pageSize) => (
+                        {[5, 10, 20, 30, 40, 50].map(pageSize => (
                             <option key={pageSize} value={pageSize}>
                                 {pageSize}
                             </option>
@@ -76,23 +99,15 @@ function Table({ columns, data, modalOpen }) {
                         <i className="feather icon-plus" /> Add School
                     </Button>
                 </Col>
-
-                {/* <Button onClick={handleDeleteAll} variant="danger" className="btn-sm btn-round has-ripple ml-2" >Delete</Button> */}
             </Row>
 
-
-
-            {/* style={{ background: "red", color: "white" }} */}
             <BTable striped bordered hover responsive {...getTableProps()}>
                 <thead>
-                    {headerGroups.map((headerGroup) => (
+                    {headerGroups.map(headerGroup => (
                         <tr {...headerGroup.getHeaderGroupProps()}>
-                            {headerGroup.headers.map((column) => (
-                                // Add the sorting props to control sorting. For this example
-                                // we can add them into the header props
+                            {headerGroup.headers.map(column => (
                                 <th {...column.getHeaderProps(column.getSortByToggleProps())}>
                                     {column.render('Header')}
-                                    {/* Add a sort direction indicator */}
                                     <span>
                                         {column.isSorted ? (
                                             column.isSortedDesc ? (
@@ -103,7 +118,6 @@ function Table({ columns, data, modalOpen }) {
                                         ) : (
                                             ''
                                         )}
-
                                     </span>
                                 </th>
                             ))}
@@ -115,9 +129,9 @@ function Table({ columns, data, modalOpen }) {
                         prepareRow(row);
                         return (
                             <tr {...row.getRowProps()}>
-                                {row.cells.map((cell) => {
-                                    return <td  {...cell.getCellProps()}>{cell.render('Cell')}</td>;
-                                })}
+                                {row.cells.map(cell => (
+                                    <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                                ))}
                             </tr>
                         );
                     })}
@@ -128,16 +142,15 @@ function Table({ columns, data, modalOpen }) {
                     <span className="d-flex align-items-center">
                         Page{' '}
                         <strong>
-                            {' '}
-                            {pageIndex + 1} of {pageOptions.length}{' '}
-                        </strong>{' '}
+                            {pageIndex + 1} of {pageOptions.length}
+                        </strong>
                         | Go to page:{' '}
                         <input
                             type="number"
-                            onWheel={(e) => e.target.blur()}
+                            onWheel={e => e.target.blur()}
                             className="form-control ml-2"
                             defaultValue={pageIndex + 1}
-                            onChange={(e) => {
+                            onChange={e => {
                                 const page = e.target.value ? Number(e.target.value) - 1 : 0;
                                 gotoPage(page);
                             }}
@@ -154,10 +167,10 @@ function Table({ columns, data, modalOpen }) {
                     </Pagination>
                 </Col>
             </Row>
-
         </>
     );
 }
+
 
 const SchoolChild = (props) => {
     const { _data, fetchSchoolData, inactive, setInactive } = props
@@ -185,8 +198,6 @@ const SchoolChild = (props) => {
                 Header: 'Options',
                 accessor: 'actions'
             },
-
-
         ],
         []
     );
