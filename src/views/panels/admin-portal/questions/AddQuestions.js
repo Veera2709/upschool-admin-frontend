@@ -35,12 +35,14 @@ const AddQuestions = ({ className, ...rest }) => {
         { value: 'highlyDifficult', label: 'Highly Difficult' },
     ]
     const [isDuplicatePresent, setIsDuplicatePresent] = useState(false);/////////
+    const [isDuplicatePresent2, setIsDuplicatePresent2] = useState(false);/////////
     const [descriptiveAnswerErrMsg, setDescriptiveAnswerErrMsg] = useState(false);
     const [questionTypeErrMsg, setQuestionTypeErrMsg] = useState(false);
     const [questionCategoryErrMsg, setQuestionCategoryErrMsg] = useState(false);
     const [questionCognitiveSkillErrMsg, setQuestionCognitiveSkillErrMsg] = useState(false);
     const [questionSourceErrMsg, setQuestionSourceErrMsg] = useState(false);
     const [questionEmptyErrMsg, setQuestionEmptyErrMsg] = useState(false);
+    const [questionEmptyErrMsg2, setQuestionEmptyErrMsg2] = useState(false);
     const [ansWeightageErrMsg, setAnsWeightageErrMsg] = useState(false);
     const [unitWeightageErrMsg, setUnitWeightageErrMsg] = useState(false);
     const [negativeMarksErrMsg, setNegativeMarksErrMsg] = useState(false);
@@ -71,8 +73,11 @@ const AddQuestions = ({ className, ...rest }) => {
     const [selectedQuestionVoiceNote, setSelectedQuestionVoiceNote] = useState("");
 
     const [articleSize, setArticleSize] = useState(10);
+    const [articleSize2, setArticleSize2] = useState(10);
     const [imageCount, setImageCount] = useState(0);
+    const [imageCount2, setImageCount2] = useState(0);
     const [articleDataTitle, setArticleDataTtitle] = useState("");
+    const [articleDataTitle2, setArticleDataTtitle2] = useState("");
 
     const [questionLabelErr, setQuestionLabelErr] = useState(false);
     const [questionLabelValue, setQuestionLabelValue] = useState('');
@@ -112,6 +117,10 @@ const AddQuestions = ({ className, ...rest }) => {
 
     const handleChildStateChange = (newState) => {
         setIsDuplicatePresent(newState);
+    };
+
+    const handleChildStateChange2 = (newState) => {
+        setIsDuplicatePresent2(newState);
     };
 
 
@@ -235,6 +244,7 @@ const AddQuestions = ({ className, ...rest }) => {
     }
 
     const [answerBlanksOptions, setAnswerBlanksOptions] = useState([]);
+    const [answerBlanksOptions2, setAnswerBlanksOptions2] = useState([]);
     const answerDisplayOptions = [
         { value: 'No', label: 'No' },
         { value: 'Yes', label: 'Yes' }
@@ -829,6 +839,8 @@ const AddQuestions = ({ className, ...rest }) => {
                                             setIsDefficultyLevelErr(true)
                                         } else if (articleDataTitle === "" || articleDataTitle === undefined || articleDataTitle === 'undefined' || articleDataTitle === "<p><br></p>" || articleDataTitle === "<p></p>" || articleDataTitle === "<br>") {
                                             setQuestionEmptyErrMsg(true);
+                                        } else if (articleDataTitle2 === "" || articleDataTitle2 === undefined || articleDataTitle2 === 'undefined' || articleDataTitle2 === "<p><br></p>" || articleDataTitle2 === "<p></p>" || articleDataTitle2 === "<br>") {
+                                            setQuestionEmptyErrMsg2(true);
                                         } else if (selectedQuestionType === 'Descriptive') {
 
                                             let payLoad = {
@@ -847,7 +859,8 @@ const AddQuestions = ({ className, ...rest }) => {
                                                 display_answer: values.descriptive_answer,
                                                 marks: values.marks,
                                                 difficulty_level: _radioWorkSheetOrTest ? selectedDifficultyLevel : 'N.A',
-                                                answer_explanation: values.answer_explanation === undefined || values.answer_explanation === "undefined" || values.answer_explanation === "" ? "N.A." : values.answer_explanation
+                                                // answer_explanation: values.answer_explanation === undefined || values.answer_explanation === "undefined" || values.answer_explanation === "" ? "N.A." : values.answer_explanation
+                                                answer_explanation: articleDataTitle2
 
                                             }
 
@@ -925,7 +938,8 @@ const AddQuestions = ({ className, ...rest }) => {
                                                 display_answer: "N.A.",
                                                 marks: values.marks,
                                                 difficulty_level: _radioWorkSheetOrTest ? selectedDifficultyLevel : 'N.A',
-                                                answer_explanation: values.answer_explanation === undefined || values.answer_explanation === "undefined" || values.answer_explanation === "" ? "N.A." : values.answer_explanation
+                                                // answer_explanation: values.answer_explanation === undefined || values.answer_explanation === "undefined" || values.answer_explanation === "" ? "N.A." : values.answer_explanation
+                                                answer_explanation: articleDataTitle2
                                             };
 
                                             console.log("payLoad", payLoad);
@@ -3253,7 +3267,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                             <small className="text-danger"></small>
                                                             Answer Explanation
                                                         </label>
-                                                        <textarea
+                                                        {/* <textarea
                                                             rows="7"
                                                             value={values.answer_explanation}
                                                             className="form-control"
@@ -3264,7 +3278,20 @@ const AddQuestions = ({ className, ...rest }) => {
                                                             type="textarea"
                                                             onChange={handleChange}
                                                             placeholder="Enter Answer Explanation"
-                                                        />
+                                                        /> */}
+                                                <ArticleRTE
+                                                    onChildStateChange={handleChildStateChange2}
+                                                    setArticleSize={setArticleSize2}
+                                                    setImageCount={setImageCount2}
+                                                    imageCount={imageCount2}
+                                                    articleData={articleDataTitle2}
+                                                    setArticleData={setArticleDataTtitle2}
+                                                    setAnswerBlanksOptions={setAnswerBlanksOptions2}
+                                                    setQuestionEmptyErrMsg={setQuestionEmptyErrMsg2}
+                                                />
+                                                 {questionEmptyErrMsg2 && (
+                                                    <small className="text-danger form-text">{'Answer is required!'}</small>
+                                                )}
                                                     </Col>
                                                 </Row>
                                             </>
