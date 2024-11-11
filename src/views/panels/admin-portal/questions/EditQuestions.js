@@ -45,12 +45,14 @@ const EditQuestions = () => {
     ]
 
     const [isDuplicatePresent, setIsDuplicatePresent] = useState(false);/////////
+    const [isDuplicatePresent2, setIsDuplicatePresent2] = useState(false);/////////
     const [descriptiveAnswerErrMsg, setDescriptiveAnswerErrMsg] = useState(false);
     const [questionTypeErrMsg, setQuestionTypeErrMsg] = useState(false);
     const [questionCategoryErrMsg, setQuestionCategoryErrMsg] = useState(false);
     const [questionCognitiveSkillErrMsg, setQuestionCognitiveSkillErrMsg] = useState(false);
     const [questionSourceErrMsg, setQuestionSourceErrMsg] = useState(false);
     const [questionEmptyErrMsg, setQuestionEmptyErrMsg] = useState(false);
+    const [questionEmptyErrMsg2, setQuestionEmptyErrMsg2] = useState(false);
     const [ansWeightageErrMsg, setAnsWeightageErrMsg] = useState(false);
     const [unitWeightageErrMsg, setUnitWeightageErrMsg] = useState(false);
     const [negativeMarksErrMsg, setNegativeMarksErrMsg] = useState(false);
@@ -78,8 +80,11 @@ const EditQuestions = () => {
     const [selectedQuestionVoiceNote, setSelectedQuestionVoiceNote] = useState("");
 
     const [articleSize, setArticleSize] = useState(10);
+    const [articleSize2, setArticleSize2] = useState(10);
     const [imageCount, setImageCount] = useState(0);
+    const [imageCount2, setImageCount2] = useState(0);
     const [articleDataTitle, setArticleDataTtitle] = useState("");
+    const [articleDataTitle2, setArticleDataTtitle2] = useState("");
     const [newDigicard, setnNewDigicard] = useState(false);
 
     const [addAnserOptions, setAddAnswerOptions] = useState(false);
@@ -286,6 +291,8 @@ const EditQuestions = () => {
                         ]);
 
                         setArticleDataTtitle(individual_user_data.question_content);
+
+                        setArticleDataTtitle2(individual_user_data.answer_explanation === 'N.A.' ? '' : individual_user_data.answer_explanation);
 
                         let uploadParams = individual_user_data.answers_of_question;
                         let object;
@@ -610,8 +617,12 @@ const EditQuestions = () => {
     const handleChildStateChange = (newState) => {
         setIsDuplicatePresent(newState);
     };
+    const handleChildStateChange2 = (newState) => {
+        setIsDuplicatePresent2(newState);
+    };
 
     const [answerBlanksOptions, setAnswerBlanksOptions] = useState([]);
+    const [answerBlanksOptions2, setAnswerBlanksOptions2] = useState([]);
     const answerDisplayOptions = [
         { value: 'No', label: 'No' },
         { value: 'Yes', label: 'Yes' }
@@ -643,6 +654,7 @@ const EditQuestions = () => {
         setQuestionCognitiveSkillErrMsg(false);
         setQuestionSourceErrMsg(false);
         setQuestionEmptyErrMsg(false);
+        setQuestionEmptyErrMsg2(false);
         setAnsWeightageErrMsg(false);
         setUnitWeightageErrMsg(false);
 
@@ -1255,7 +1267,8 @@ const EditQuestions = () => {
                 question_source: selectedQuestionSource,
                 marks: document.getElementById('marks').value,
                 display_answer: selectedQuestionType === 'Subjective' || selectedQuestionType === 'Objective' ? 'N.A.' : document.getElementById('descriptive_answer').value,
-                answer_explanation: answerExplanation === undefined || answerExplanation === "undefined" || answerExplanation === "" ? "N.A." : answerExplanation,
+                // answer_explanation: answerExplanation === undefined || answerExplanation === "undefined" || answerExplanation === "" ? "N.A." : answerExplanation,
+                answer_explanation: articleDataTitle2,
                 difficulty_level: _radioWorkSheetOrTest ? selectedDifficultyLevel : 'N.A',
             }
 
@@ -1292,7 +1305,9 @@ const EditQuestions = () => {
             setIsDefficultyLevelErr(true)
         } else if (articleDataTitle === "" || articleDataTitle === undefined || articleDataTitle === 'undefined' || articleDataTitle === "<p><br></p>" || articleDataTitle === "<p></p>" || articleDataTitle === "<br>") {
             setQuestionEmptyErrMsg(true);
-        } else if (selectedQuestionType === 'Descriptive') {
+        }else if (articleDataTitle2 === "" || articleDataTitle2 === undefined || articleDataTitle2 === 'undefined' || articleDataTitle2 === "<p><br></p>" || articleDataTitle2 === "<p></p>" || articleDataTitle2 === "<br>") {
+        setQuestionEmptyErrMsg2(true);
+        }else if (selectedQuestionType === 'Descriptive') {
 
             console.log(document.getElementById('descriptive_answer').value);
             let descriptiveAnswer = document.getElementById('descriptive_answer').value;
@@ -1569,6 +1584,8 @@ const EditQuestions = () => {
                                                                 setIsDefficultyLevelErr(true)
                                                             } else if (articleDataTitle === "" || articleDataTitle === undefined || articleDataTitle === 'undefined' || articleDataTitle === "<p><br></p>" || articleDataTitle === "<p></p>" || articleDataTitle === "<br>") {
                                                                 setQuestionEmptyErrMsg(true);
+                                                            } else if (articleDataTitle2 === "" || articleDataTitle2 === undefined || articleDataTitle2 === 'undefined' || articleDataTitle2 === "<p><br></p>" || articleDataTitle2 === "<p></p>" || articleDataTitle2 === "<br>") {
+                                                                setQuestionEmptyErrMsg2(true);
                                                             } else if (selectedQuestionType === 'Descriptive') {
 
                                                                 console.log(values.descriptive_answer);
@@ -1643,7 +1660,8 @@ const EditQuestions = () => {
                                                                     question_source: selectedQuestionSource,
                                                                     marks: values.marks,
                                                                     display_answer: "N.A.",
-                                                                    answer_explanation: values.answer_explanation === undefined || values.answer_explanation === "undefined" || values.answer_explanation === "" ? "N.A." : values.answer_explanation,
+                                                                    // answer_explanation: values.answer_explanation === undefined || values.answer_explanation === "undefined" || values.answer_explanation === "" ? "N.A." : values.answer_explanation,
+                                                                    answer_explanation: articleDataTitle2,
                                                                     difficulty_level: _radioWorkSheetOrTest ? selectedDifficultyLevel : 'N.A'
                                                                 }
 
@@ -1789,6 +1807,8 @@ const EditQuestions = () => {
                                                                 setQuestionSourceErrMsg(true);
                                                             } else if (articleDataTitle === "" || articleDataTitle === undefined || articleDataTitle === 'undefined' || articleDataTitle === "<p><br></p>" || articleDataTitle === "<p></p>" || articleDataTitle === "<br>") {
                                                                 setQuestionEmptyErrMsg(true);
+                                                            } else if (articleDataTitle2 === "" || articleDataTitle2 === undefined || articleDataTitle2 === 'undefined' || articleDataTitle2 === "<p><br></p>" || articleDataTitle2 === "<p></p>" || articleDataTitle2 === "<br>") {
+                                                                setQuestionEmptyErrMsg2(true);
                                                             } else if (_radioWorkSheetOrTest === true && (selectedDifficultyLevel === '' || selectedDifficultyLevel === undefined)) {
                                                                 setIsDefficultyLevelErr(true)
                                                             } else if (selectedQuestionType === 'Descriptive') {
@@ -1821,7 +1841,8 @@ const EditQuestions = () => {
                                                                         question_source: selectedQuestionSource,
                                                                         marks: values.marks,
                                                                         display_answer: values.descriptive_answer,
-                                                                        answer_explanation: values.answer_explanation === undefined || values.answer_explanation === "undefined" || values.answer_explanation === "" ? "N.A." : values.answer_explanation,
+                                                                        // answer_explanation: values.answer_explanation === undefined || values.answer_explanation === "undefined" || values.answer_explanation === "" ? "N.A." : values.answer_explanation,
+                                                                        answer_explanation: articleDataTitle2,
                                                                         difficulty_level: _radioWorkSheetOrTest ? selectedDifficultyLevel : 'N.A',
 
                                                                     }
@@ -1908,7 +1929,8 @@ const EditQuestions = () => {
                                                                         question_source: selectedQuestionSource,
                                                                         marks: values.marks,
                                                                         display_answer: "N.A.",
-                                                                        answer_explanation: values.answer_explanation === undefined || values.answer_explanation === "undefined" || values.answer_explanation === "" ? "N.A." : values.answer_explanation,
+                                                                        // answer_explanation: values.answer_explanation === undefined || values.answer_explanation === "undefined" || values.answer_explanation === "" ? "N.A." : values.answer_explanation,
+                                                                        answer_explanation: articleDataTitle2,
                                                                         difficulty_level: _radioWorkSheetOrTest ? selectedDifficultyLevel : 'N.A',
                                                                     }
                                                                     console.log("payLoad", payLoad);
@@ -4110,7 +4132,7 @@ const EditQuestions = () => {
                                                                                 <small className="text-danger"></small>
                                                                                 Answer Explanation
                                                                             </label>
-                                                                            <textarea
+                                                                            {/* <textarea
                                                                                 rows="7"
                                                                                 id="answer_explanation"
                                                                                 value={values.answer_explanation}
@@ -4122,7 +4144,21 @@ const EditQuestions = () => {
                                                                                 type="textarea"
                                                                                 onChange={handleChange}
                                                                                 placeholder="Enter Answer Explanation"
-                                                                            />
+                                                                            /> */}
+                                                                    <ArticleRTE
+                                                                        onChildStateChange={handleChildStateChange2}
+                                                                        setArticleSize={setArticleSize2}
+                                                                        setImageCount={setImageCount2}
+                                                                        imageCount={imageCount2}
+                                                                        articleData={articleDataTitle2}
+                                                                        setArticleData={setArticleDataTtitle2}
+                                                                        setAnswerBlanksOptions={setAnswerBlanksOptions2}
+                                                                        setQuestionEmptyErrMsg={setQuestionEmptyErrMsg2}
+                                                                    />
+
+                                                                    {questionEmptyErrMsg && (
+                                                                        <small className="text-danger form-text">{'answer required!'}</small>
+                                                                    )}
                                                                         </Col>
                                                                     </Row>
                                                                 </>
