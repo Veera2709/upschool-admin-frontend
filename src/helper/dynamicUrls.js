@@ -182,6 +182,7 @@ const dynamicUrl = {
   fetchBluePrintsBasedonStatus: baseUrl + '/fetchBluePrintsBasedonStatus',
   toggleBluePrintStatus: baseUrl + '/toggleBluePrintStatus',
   fetchIndividualBluePrint: baseUrl + '/fetchIndividualBluePrint'
+  
 }
 
 export default dynamicUrl;
