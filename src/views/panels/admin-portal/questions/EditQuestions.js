@@ -4532,4 +4532,4 @@ const EditQuestions = () => {
     );
 }
 
-export default EditQuestions;
+export default EditQuestions
