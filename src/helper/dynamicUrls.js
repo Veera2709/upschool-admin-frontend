@@ -11,6 +11,7 @@ const dynamicUrl = {
   validateOTP: baseUrl + '/validateOTP',
   logout: baseUrl + '/logout',
   resetOrCreatePassword: baseUrl + '/resetOrCreatePassword',
+  
 
   // Digicard
   insertDigicard: baseUrl + '/addDigiCard',
