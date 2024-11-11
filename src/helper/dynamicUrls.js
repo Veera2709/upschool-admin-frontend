@@ -11,6 +11,7 @@ const dynamicUrl = {
   validateOTP: baseUrl + '/validateOTP',
   logout: baseUrl + '/logout',
   resetOrCreatePassword: baseUrl + '/resetOrCreatePassword',
+  
 
   // Digicard
   insertDigicard: baseUrl + '/addDigiCard',
@@ -182,6 +183,7 @@ const dynamicUrl = {
   fetchBluePrintsBasedonStatus: baseUrl + '/fetchBluePrintsBasedonStatus',
   toggleBluePrintStatus: baseUrl + '/toggleBluePrintStatus',
   fetchIndividualBluePrint: baseUrl + '/fetchIndividualBluePrint'
+  
 }
 
 export default dynamicUrl;
