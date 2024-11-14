@@ -64,7 +64,8 @@ const AddQuestions = ({ className, ...rest }) => {
     const [displayHeading, setDisplayHeading] = useState(sessionStorage.getItem('question_active_status'));
     const threadLinks = document.getElementsByClassName('page-header');
     const [showMathKeyboard, setShowMathKeyboard] = useState('No');
-    const [workSheetOrTest, setWorkSheetOrTest] = useState('preOrPost');
+    // const [workSheetOrTest, setWorkSheetOrTest] = useState('preOrPost');
+    const [workSheetOrTest, setWorkSheetOrTest] = useState(['preOrPost']);
     const [answerTypeOptions, setAnswerTypeOptions] = useState([]);
     const [descriptiveAnswerOptionsForm, setDescriptiveAnswerOptionsForm] = useState([]);
     const [selectedAnswerType, setSelectedAnswerType] = useState('');
@@ -238,10 +239,32 @@ const AddQuestions = ({ className, ...rest }) => {
         _radioShowMathKeyboard === true ? setShowMathKeyboard('No') : setShowMathKeyboard('Yes');
     }
 
+    // const handleWorkSheetOrTest = (e) => {
+    //     _setRadioWorkSheetOrTest(!_radioWorkSheetOrTest);
+    //     _radioWorkSheetOrTest === true ? setWorkSheetOrTest('preOrPost') : setWorkSheetOrTest('worksheetOrTest');
+    // }
+
     const handleWorkSheetOrTest = (e) => {
-        _setRadioWorkSheetOrTest(!_radioWorkSheetOrTest);
-        _radioWorkSheetOrTest === true ? setWorkSheetOrTest('preOrPost') : setWorkSheetOrTest('worksheetOrTest');
-    }
+        const value = e.target.value;
+        let updatedSelection;
+    
+        if (workSheetOrTest.includes(value)) {
+            // Remove the value if it's already selected (uncheck)
+            updatedSelection = workSheetOrTest.filter(item => item !== value);
+        } else {
+            // Add the value if it's not already selected (check)
+            updatedSelection = [...workSheetOrTest, value];
+        }
+    
+        setWorkSheetOrTest(updatedSelection);
+    
+        // Update _setRadioWorkSheetOrTest based on whether 'worksheetOrTest' is in the array
+        if (updatedSelection.includes('worksheetOrTest')) {
+            _setRadioWorkSheetOrTest(true);
+        } else {
+            _setRadioWorkSheetOrTest(false);
+        }
+    };
 
     const [answerBlanksOptions, setAnswerBlanksOptions] = useState([]);
     const [answerBlanksOptions2, setAnswerBlanksOptions2] = useState([]);
@@ -1366,7 +1389,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                 </div>
                                             </Col>
 
-                                            <Col>
+                                            {/* <Col>
                                                 <label className="floating-label">
                                                     <small className="text-danger"></small>
                                                     Question Appears in
@@ -1394,7 +1417,38 @@ const AddQuestions = ({ className, ...rest }) => {
                                                     </div>
                                                 </div>
 
-                                            </Col>
+                                            </Col> */}
+
+<Col>
+    <label className="floating-label">
+        <small className="text-danger"></small>
+        Question Appears in
+    </label>
+    <div className="col">
+        <div  className="row profile-view-checkbox-view">
+            <Form.Check 
+                type="checkbox" 
+                id="checkbox-preOrPost" 
+                label="Pre/Post" 
+                value="preOrPost"
+                className="blue-checkbox"
+                checked={workSheetOrTest.includes('preOrPost')}
+                onChange={handleWorkSheetOrTest}
+            />
+            &nbsp;
+
+            <Form.Check 
+                type="checkbox" 
+                id="checkbox-worksheetOrTest" 
+                label="Worksheet/Test" 
+                value="worksheetOrTest"
+                className="blue-checkbox"
+                checked={workSheetOrTest.includes('worksheetOrTest')}
+                onChange={handleWorkSheetOrTest}
+            />
+        </div>
+    </div>
+</Col>
                                         </Row>
                                         <br />
                                         {
