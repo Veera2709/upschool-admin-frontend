@@ -559,7 +559,21 @@ const QuestionsTableView = ({ _questionStatus }) => {
     for (let index = 0; index < responseData.length; index++) {
 
       responseData[index].id = index + 1;
-      responseData[index].appears_in = responseData[index].appears_in === 'preOrPost' ? 'Pre/Post' : responseData[index].appears_in === 'worksheetOrTest' ? 'Worksheet/Test' : 'N.A.';
+      // responseData[index].appears_in = responseData[index].appears_in === 'preOrPost' ? 'Pre/Post' : responseData[index].appears_in === 'worksheetOrTest' ? 'Worksheet/Test' : 'N.A.';
+
+      responseData[index].appears_in = Array.isArray(responseData[index].appears_in)
+    ? (responseData[index].appears_in.includes('worksheetOrTest') && responseData[index].appears_in.includes('preOrPost'))
+        ? 'Pre/Post, Worksheet/Test'
+        : responseData[index].appears_in.includes('worksheetOrTest')
+            ? 'Worksheet/Test'
+            : responseData[index].appears_in.includes('preOrPost')
+                ? 'Pre/Post'
+                : 'N.A.'
+    : (responseData[index].appears_in === 'preOrPost'
+        ? 'Pre/Post'
+        : responseData[index].appears_in === 'worksheetOrTest'
+            ? 'Worksheet/Test'
+            : 'N.A.');
 
       responseData[index]['action'] = (
         <>
