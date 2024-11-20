@@ -35,7 +35,8 @@ const AddQuestions = ({ className, ...rest }) => {
         { value: 'highlyDifficult', label: 'Highly Difficult' },
     ]
     const [isDuplicatePresent, setIsDuplicatePresent] = useState(false);/////////
-    const [isDuplicatePresent2, setIsDuplicatePresent2] = useState(false);/////////
+    const [isDuplicatePresent2, setIsDuplicatePresent2] = useState(false);
+    const [isDuplicatePresent3, setIsDuplicatePresent3] = useState(false);
     const [descriptiveAnswerErrMsg, setDescriptiveAnswerErrMsg] = useState(false);
     const [questionTypeErrMsg, setQuestionTypeErrMsg] = useState(false);
     const [questionCategoryErrMsg, setQuestionCategoryErrMsg] = useState(false);
@@ -43,6 +44,7 @@ const AddQuestions = ({ className, ...rest }) => {
     const [questionSourceErrMsg, setQuestionSourceErrMsg] = useState(false);
     const [questionEmptyErrMsg, setQuestionEmptyErrMsg] = useState(false);
     const [questionEmptyErrMsg2, setQuestionEmptyErrMsg2] = useState(false);
+    const [questionEmptyErrMsg3, setQuestionEmptyErrMsg3] = useState(false);
     const [ansWeightageErrMsg, setAnsWeightageErrMsg] = useState(false);
     const [unitWeightageErrMsg, setUnitWeightageErrMsg] = useState(false);
     const [negativeMarksErrMsg, setNegativeMarksErrMsg] = useState(false);
@@ -75,10 +77,13 @@ const AddQuestions = ({ className, ...rest }) => {
 
     const [articleSize, setArticleSize] = useState(10);
     const [articleSize2, setArticleSize2] = useState(10);
+    const [articleSize3, setArticleSize3] = useState(10);
     const [imageCount, setImageCount] = useState(0);
     const [imageCount2, setImageCount2] = useState(0);
+    const [imageCount3, setImageCount3] = useState(0);
     const [articleDataTitle, setArticleDataTtitle] = useState("");
     const [articleDataTitle2, setArticleDataTtitle2] = useState("");
+    const [articleDataTitle3, setArticleDataTtitle3] = useState("");
 
     const [questionLabelErr, setQuestionLabelErr] = useState(false);
     const [questionLabelValue, setQuestionLabelValue] = useState('');
@@ -122,6 +127,10 @@ const AddQuestions = ({ className, ...rest }) => {
 
     const handleChildStateChange2 = (newState) => {
         setIsDuplicatePresent2(newState);
+    };
+
+    const handleChildStateChange3 = (newState) => {
+        setIsDuplicatePresent3(newState);
     };
 
 
@@ -268,6 +277,7 @@ const AddQuestions = ({ className, ...rest }) => {
 
     const [answerBlanksOptions, setAnswerBlanksOptions] = useState([]);
     const [answerBlanksOptions2, setAnswerBlanksOptions2] = useState([]);
+    const [answerBlanksOptions3, setAnswerBlanksOptions3] = useState([]);
     const answerDisplayOptions = [
         { value: 'No', label: 'No' },
         { value: 'Yes', label: 'Yes' }
@@ -298,6 +308,8 @@ const AddQuestions = ({ className, ...rest }) => {
         setQuestionCognitiveSkillErrMsg(false);
         setQuestionSourceErrMsg(false);
         setQuestionEmptyErrMsg(false);
+        setQuestionEmptyErrMsg2(false);
+        setQuestionEmptyErrMsg3(false);
         setAnsWeightageErrMsg(false);
         setWeightageEmpty(false);
         setKeyWordsEmptyErr(false);
@@ -622,7 +634,6 @@ const AddQuestions = ({ className, ...rest }) => {
     }, []);
 
     const _addQuestions = (payLoad) => {
-
         axios
             .post(
                 dynamicUrl.addQuestions,
@@ -630,17 +641,9 @@ const AddQuestions = ({ className, ...rest }) => {
                 { headers: { Authorization: sessionStorage.getItem('user_jwt') } }
             )
             .then((response) => {
-
-                console.log({ response });
-                console.log(response.status);
-                console.log(response.data);
-
-                console.log(response.status === 200);
                 let result = response.status === 200;
 
                 if (result) {
-
-                    console.log('inside res');
 
                     let uploadParamsQuestionsNote = response.data.question_voice_note;
                     let uploadParamsAnswerOptions = response.data.answers_options;
@@ -653,20 +656,16 @@ const AddQuestions = ({ className, ...rest }) => {
 
                             let keyNameArr = Object.keys(uploadParamsQuestionsNote[index]);
                             let keyName = keyNameArr[1];
-                            console.log('KeyName', keyName);
 
                             let blobField = voiceNoteFileValues;
-                            console.log({ blobField });
 
                             let tempObj = uploadParamsQuestionsNote[index];
-                            console.log(tempObj);
 
                             let result = fetch(tempObj[keyName], {
                                 method: 'PUT',
                                 body: blobField
                             });
 
-                            console.log({ result });
                         }
 
 
@@ -676,22 +675,16 @@ const AddQuestions = ({ className, ...rest }) => {
 
                                 let keyNameArr = Object.keys(uploadParamsAnswerOptions[index]);
                                 let keyName = keyNameArr[1];
-                                console.log('KeyName', keyName);
 
                                 let blobField = fileValues[index];
-                                console.log({ blobField });
 
                                 let tempObjFile = uploadParamsAnswerOptions[index];
-                                console.log(tempObjFile);
-                                console.log(keyName);
-                                console.log(tempObjFile[keyName]);
 
                                 let result = fetch(tempObjFile[keyName], {
                                     method: 'PUT',
                                     body: blobField
                                 });
 
-                                console.log({ result });
                             }
 
                             const MySwal = withReactContent(Swal);
@@ -720,20 +713,15 @@ const AddQuestions = ({ className, ...rest }) => {
 
                                 let keyNameArr = Object.keys(uploadParamsAnswerOptions[index]);
                                 let keyName = keyNameArr[1];
-                                console.log('KeyName', keyName);
 
                                 let blobField = fileValues[index];
-                                console.log({ blobField });
 
                                 let tempObjFile = uploadParamsAnswerOptions[index];
-                                console.log(tempObjFile[keyName]);
 
                                 let result = fetch(tempObjFile[keyName], {
                                     method: 'PUT',
                                     body: blobField
                                 });
-
-                                console.log({ result });
                             }
 
                             const MySwal = withReactContent(Swal);
@@ -754,8 +742,6 @@ const AddQuestions = ({ className, ...rest }) => {
 
 
                 } else {
-
-                    console.log('else res');
                     hideLoader();
 
                 }
@@ -764,19 +750,14 @@ const AddQuestions = ({ className, ...rest }) => {
                 if (error.response) {
                     hideLoader();
 
-                    console.log(error.response.data);
                     if (error.response.data === "Question Label Already Exist!") {
                         setQuestionLabelAlreadyExists(true);
                     }
 
                 } else if (error.request) {
-
-                    console.log(error.request);
                     hideLoader();
 
                 } else {
-
-                    console.log('Error', error.message);
                     hideLoader();
                 }
             });
@@ -837,17 +818,11 @@ const AddQuestions = ({ className, ...rest }) => {
 
                                 onSubmit={async (values, { setErrors, setStatus, setSubmitting, }) => {
 
-                                    console.log(values);
-
                                     setSubmitting(true);
-
-                                    console.log(sessionStorage.getItem('click_event') !== "");
 
                                     if (sessionStorage.getItem('click_event') === "" || sessionStorage.getItem('click_event') === undefined || sessionStorage.getItem('click_event') === "undefined" || sessionStorage.getItem('click_event') === null) {
 
                                     } else {
-
-                                        console.log(questionLabelValue);
                                         if (questionLabelValue === "" || questionLabelValue === undefined || questionLabelValue === "undefined") {
                                             setQuestionLabelErr(true);
                                         } else if (isEmptyArray(selectedQuestionType)) {
@@ -864,8 +839,10 @@ const AddQuestions = ({ className, ...rest }) => {
                                             setQuestionEmptyErrMsg(true);
                                         } else if (articleDataTitle2 === "" || articleDataTitle2 === undefined || articleDataTitle2 === 'undefined' || articleDataTitle2 === "<p><br></p>" || articleDataTitle2 === "<p></p>" || articleDataTitle2 === "<br>") {
                                             setQuestionEmptyErrMsg2(true);
-                                        } else if (selectedQuestionType === 'Descriptive') {
-
+                                        // } else if (articleDataTitle3 === "" || articleDataTitle3 === undefined || articleDataTitle3 === 'undefined' || articleDataTitle3 === "<p><br></p>" || articleDataTitle3 === "<p></p>" || articleDataTitle3 === "<br>") {
+                                        //     setQuestionEmptyErrMsg3(true);
+                                        }
+                                        else if (selectedQuestionType === 'Descriptive') {
                                             let payLoad = {
                                                 question_type: selectedQuestionType,
                                                 question_category: selectedQuestionCategory,
@@ -879,15 +856,14 @@ const AddQuestions = ({ className, ...rest }) => {
                                                 show_math_keyboard: showMathKeyboard,
                                                 appears_in: workSheetOrTest,
                                                 question_label: questionLabelValue,
-                                                display_answer: values.descriptive_answer,
+                                                // display_answer: values.descriptive_answer,
+                                                display_answer: articleDataTitle3,
                                                 marks: values.marks,
                                                 difficulty_level: _radioWorkSheetOrTest ? selectedDifficultyLevel : 'N.A',
                                                 // answer_explanation: values.answer_explanation === undefined || values.answer_explanation === "undefined" || values.answer_explanation === "" ? "N.A." : values.answer_explanation
                                                 answer_explanation: articleDataTitle2
 
                                             }
-
-                                            console.log("payLoad", payLoad);
 
                                             if (values.descriptive_answer === undefined || values.descriptive_answer === 'undefined' || values.descriptive_answer === "") {
                                                 setDescriptiveAnswerErrMsg(true);
@@ -3079,7 +3055,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                             <small className="text-danger">* </small>
                                                             Answer to Display
                                                         </label>
-                                                        <textarea
+                                                        {/* <textarea
                                                             rows="5"
                                                             cols="80"
                                                             value={values.descriptive_answer}
@@ -3098,7 +3074,20 @@ const AddQuestions = ({ className, ...rest }) => {
 
                                                         {descriptiveAnswerErrMsg && (
                                                             <small className="text-danger form-text">{'Answer to Display is required'}</small>
-                                                        )}
+                                                        )} */}
+                                                         <ArticleRTE
+                                                    onChildStateChange={handleChildStateChange3}
+                                                    setArticleSize={setArticleSize3}
+                                                    setImageCount={setImageCount3}
+                                                    imageCount={imageCount3}
+                                                    articleData={articleDataTitle3}
+                                                    setArticleData={setArticleDataTtitle3}
+                                                    setAnswerBlanksOptions={setAnswerBlanksOptions3}
+                                                    setQuestionEmptyErrMsg={setQuestionEmptyErrMsg3}
+                                                />
+                                                 {questionEmptyErrMsg3 && (
+                                                    <small className="text-danger form-text">{'Answer to Display is required!'}</small>
+                                                )}
                                                     </Col>
 
 

@@ -29,11 +29,11 @@ const EditGroups = ({ className, ...rest }) => {
         { value: 'Intermediate', label: 'Intermediate' },
         { value: 'Advanced', label: 'Advanced' }
     ]);
-    const [levelsDropdown, setLevelsDropdown] = useState([
-        { value: 'Level_1', label: 'Level-1' },
-        { value: 'Level_2', label: 'Level-2' },
-        { value: 'Level_3', label: 'Level-3' }
-    ]);
+    // const [levelsDropdown, setLevelsDropdown] = useState([
+    //     { value: 'Level_1', label: 'Level-1' },
+    //     { value: 'Level_2', label: 'Level-2' },
+    //     { value: 'Level_3', label: 'Level-3' }
+    // ]);
 
     const [digicardsDropdown, setDigicardsDropdown] = useState([]);
     const [questionsDropdown, setQuestionsDropdown] = useState([]);
@@ -94,20 +94,20 @@ const EditGroups = ({ className, ...rest }) => {
         setSelectedDigicards(valuesArr);
     }
 
-    const handleLevelsChange = (event) => {
+    // const handleLevelsChange = (event) => {
 
-        setLevelsErrMsg(false);
-        console.log(event);
+    //     setLevelsErrMsg(false);
+    //     console.log(event);
 
-        let valuesArr = [];
-        if (event) {
-            for (let i = 0; i < event.length; i++) {
-                valuesArr.push(event[i].value)
-            }
-        }
-        console.log(valuesArr);
-        setSelectedLevels(valuesArr);
-    }
+    //     let valuesArr = [];
+    //     if (event) {
+    //         for (let i = 0; i < event.length; i++) {
+    //             valuesArr.push(event[i].value)
+    //         }
+    //     }
+    //     console.log(valuesArr);
+    //     setSelectedLevels(valuesArr);
+    // }
 
     const fetchQuestions = () => {
 
@@ -253,23 +253,23 @@ const EditGroups = ({ className, ...rest }) => {
                                             setPreviousDigicards(digicardsArr);
                                             setSelectedDigicards(resultDataIndGroup.group_related_digicard);
 
-                                            let levelsData = resultDataIndGroup.group_levels;
-                                            let levelsArr = [];
-                                            let getLevelsArr, getDataLevelsSec;
+                                            // let levelsData = resultDataIndGroup.group_levels;
+                                            // let levelsArr = [];
+                                            // let getLevelsArr, getDataLevelsSec;
 
-                                            if (Array.isArray(levelsData)) {
-                                                for (let index = 0; index < levelsData.length; index++) {
+                                            // if (Array.isArray(levelsData)) {
+                                            //     for (let index = 0; index < levelsData.length; index++) {
 
-                                                    getDataLevelsSec = levelsDropdown.filter(p => p.value === levelsData[index]);
-                                                    getLevelsArr = [{ label: getDataLevelsSec[0].label, value: levelsData[index] }];
-                                                    console.log(getLevelsArr);
-                                                    levelsArr.push(getLevelsArr[0]);
+                                            //         getDataLevelsSec = levelsDropdown.filter(p => p.value === levelsData[index]);
+                                            //         getLevelsArr = [{ label: getDataLevelsSec[0].label, value: levelsData[index] }];
+                                            //         console.log(getLevelsArr);
+                                            //         levelsArr.push(getLevelsArr[0]);
 
-                                                }
-                                            }
+                                            //     }
+                                            // }
 
-                                            setPreviousLevels(levelsArr);
-                                            setSelectedLevels(resultDataIndGroup.group_levels);
+                                            // setPreviousLevels(levelsArr);
+                                            // setSelectedLevels(resultDataIndGroup.group_levels);
 
                                             setPreviousGroupData(resultDataIndGroup);
 
@@ -425,7 +425,7 @@ const EditGroups = ({ className, ...rest }) => {
                                                 initialValues={{
                                                     group_name: previousGroupData.group_name,
                                                     display_name: previousGroupData.display_name,
-                                                    group_description: previousGroupData === {} ? '' : previousGroupData.group_description,
+                                                    group_description: previousGroupData.group_description ? previousGroupData.group_description : '' ,
                                                     question_duration: previousGroupData.question_duration
                                                 }}
 
@@ -464,8 +464,9 @@ const EditGroups = ({ className, ...rest }) => {
 
                                                     if (isEmptyArray(selectedQuestions)) {
                                                         setSelectedQuestionsErrMsg(true);
-                                                    } else if (isEmptyArray(selectedLevels)) {
-                                                        setLevelsErrMsg(true);
+                                                    // } 
+                                                    // else if (isEmptyArray(selectedLevels)) {
+                                                    //     setLevelsErrMsg(true);
                                                     } else if (isEmptyArray(selectedGroupType)) {
                                                         setGroupTypeErrMsg(true);
                                                     } else {
@@ -477,7 +478,7 @@ const EditGroups = ({ className, ...rest }) => {
                                                             display_name: values.display_name,
                                                             group_type: selectedGroupType,
                                                             group_question_id: selectedQuestions,
-                                                            group_levels: selectedLevels,
+                                                            // group_levels: selectedLevels,
                                                             group_related_digicard: selectedDigicards,
                                                             group_description: values.group_description,
                                                             question_duration: values.question_duration
@@ -704,7 +705,7 @@ const EditGroups = ({ className, ...rest }) => {
                                                                     )
                                                                 }
                                                             </Col>
-                                                            <Col>
+                                                            {/* <Col>
                                                                 <label className="floating-label">
                                                                     <small className="text-danger">* </small>
                                                                     Levels
@@ -723,7 +724,7 @@ const EditGroups = ({ className, ...rest }) => {
                                                                 {levelsErrMsg && (
                                                                     <small className="text-danger form-text">{'Levels required!'}</small>
                                                                 )}
-                                                            </Col>
+                                                            </Col> */}
                                                         </Row>
 
                                                         <br />

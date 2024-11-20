@@ -77,6 +77,7 @@ const Login = ({ className, handleLogin, ...rest }) => {
 
                 if (user_data.length !== 0) {
                   SessionStorage.setItem('user_jwt', response.data[0].jwt);
+                  SessionStorage.setItem('user_access_role', JSON.stringify(response.data[0].user_role));
 
                   if (response.data[0].jwt === sessionStorage.getItem('user_jwt')) {
 
