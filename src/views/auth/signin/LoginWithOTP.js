@@ -248,6 +248,8 @@ const LoginWithOTP = ({ className, handleLogin, ...rest }) => {
 
                                                         if (response.data[0].isFirstTimeLogin === 'Yes') {
                                                             SessionStorage.setItem('user_jwt', response.data[0].jwt);
+                                                            SessionStorage.setItem('user_access_role', JSON.stringify(response.data[0].user_role));
+
                                                             setOtpSent(false);
                                                             setCreateOrResetPassword(true);
                                                         } else {
@@ -258,6 +260,7 @@ const LoginWithOTP = ({ className, handleLogin, ...rest }) => {
                                                             if (user_data.length !== 0) {
 
                                                                 SessionStorage.setItem('user_jwt', response.data[0].jwt);
+                                                                SessionStorage.setItem('user_access_role', JSON.stringify(response.data[0].user_role));
                                                                 history.push('/admin-portal/admin-dashboard');
                                                                 window.location.reload();
 

@@ -263,10 +263,10 @@ const GroupsTableView = ({ _groupType }) => {
             Header: 'Group',
             accessor: 'group_name'
         },
-        {
-            Header: 'Levels',
-            accessor: 'group_levels'
-        },
+        // {
+        //     Header: 'Levels',
+        //     accessor: 'group_levels'
+        // },
         {
             Header: 'No.Questions',
             accessor: 'group_Questions'
@@ -293,11 +293,11 @@ const GroupsTableView = ({ _groupType }) => {
     const [pageLocation, setPageLocation] = useState(useLocation().pathname.split('/')[2]);
     const [_data, _setData] = useState([]);
 
-    const [levelsDropdown, setLevelsDropdown] = useState([
-        { value: 'Level_1', label: 'Level-1' },
-        { value: 'Level_2', label: 'Level-2' },
-        { value: 'Level_3', label: 'Level-3' }
-    ]);
+    // const [levelsDropdown, setLevelsDropdown] = useState([
+    //     { value: 'Level_1', label: 'Level-1' },
+    //     { value: 'Level_2', label: 'Level-2' },
+    //     { value: 'Level_3', label: 'Level-3' }
+    // ]);
 
     const MySwal = withReactContent(Swal);
 
@@ -422,7 +422,7 @@ const GroupsTableView = ({ _groupType }) => {
         console.log("responseData", responseData);
 
         let finalDataArray = [];
-        let levelNames;
+        // let levelNames;
 
         for (let index = 0; index < responseData.length; index++) {
             responseData[index].id = index + 1;
@@ -431,25 +431,25 @@ const GroupsTableView = ({ _groupType }) => {
                 className="badge badge-warning inline-block mr-1"
             >{responseData[index].questions_count}</span>;
 
-            levelNames = responseData[index]['group_levels'];
+            // levelNames = responseData[index]['group_levels'];
 
-            responseData[index]['group_levels'] = (
-                <>
-                    {
-                        levelNames.map((form, index) => {
-                            return (
-                                <>
-                                    &nbsp;
-                                    <span
-                                        style={{ backgroundColor: "cadetblue" }}
-                                        className="badge badge-warning inline-block mr-1"
-                                    >{levelsDropdown.filter(p => p.value === form)[0].label}</span>
-                                </>
-                            );
-                        })
-                    }
-                </>
-            );
+            // responseData[index]['group_levels'] = (
+            //     <>
+            //         {
+            //             levelNames.map((form, index) => {
+            //                 return (
+            //                     <>
+            //                         &nbsp;
+            //                         <span
+            //                             style={{ backgroundColor: "cadetblue" }}
+            //                             className="badge badge-warning inline-block mr-1"
+            //                         >{levelsDropdown.filter(p => p.value === form)[0].label}</span>
+            //                     </>
+            //                 );
+            //             })
+            //         }
+            //     </>
+            // );
 
             responseData[index].group_description = responseData[index].group_description === undefined ? "" : (responseData[index].group_description.length > 23 ? (responseData[index].group_description.substring(0, 20) + "...") : responseData[index].group_description);
             console.log("responseData[index].group_description.length : ", responseData[index].group_description);
