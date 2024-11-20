@@ -88,20 +88,20 @@ const AddGroups = ({ className, ...rest }) => {
         setSelectedDigicards(valuesArr);
     }
 
-    const handleLevelsChange = (event) => {
+    // const handleLevelsChange = (event) => {
 
-        setLevelsErrMsg(false);
-        console.log(event);
+    //     setLevelsErrMsg(false);
+    //     console.log(event);
 
-        let valuesArr = [];
-        if (event) {
-            for (let i = 0; i < event.length; i++) {
-                valuesArr.push(event[i].value)
-            }
-        }
-        console.log(valuesArr);
-        setSelectedLevels(valuesArr);
-    }
+    //     let valuesArr = [];
+    //     if (event) {
+    //         for (let i = 0; i < event.length; i++) {
+    //             valuesArr.push(event[i].value)
+    //         }
+    //     }
+    //     console.log(valuesArr);
+        // setSelectedLevels(valuesArr);
+    // }
 
     const fetchQuestions = () => {
 
@@ -346,9 +346,11 @@ const AddGroups = ({ className, ...rest }) => {
 
                                             if (isEmptyArray(selectedQuestions)) {
                                                 setSelectedQuestionsErrMsg(true);
-                                            } else if (isEmptyArray(selectedLevels)) {
-                                                setLevelsErrMsg(true);
-                                            } else if (isEmptyArray(selectedGroupType)) {
+                                            }
+                                            //  else if (isEmptyArray(selectedLevels)) {
+                                            //     setLevelsErrMsg(true);
+                                            // } 
+                                            else if (isEmptyArray(selectedGroupType)) {
                                                 setGroupTypeErrMsg(true);
                                             } else {
 
@@ -358,7 +360,7 @@ const AddGroups = ({ className, ...rest }) => {
                                                     display_name: values.displayname,
                                                     group_type: selectedGroupType,
                                                     group_question_id: selectedQuestions,
-                                                    group_levels: selectedLevels,
+                                                    // group_levels: selectedLevels,
                                                     group_related_digicard: selectedDigicards,
                                                     group_description: values.group_description,
                                                     question_duration: values.question_duration
@@ -585,7 +587,7 @@ const AddGroups = ({ className, ...rest }) => {
                                                             )
                                                         }
                                                     </Col>
-                                                    <Col>
+                                                    {/* <Col>
                                                         <label className="floating-label">
                                                             <small className="text-danger">* </small>
                                                             Levels
@@ -604,7 +606,7 @@ const AddGroups = ({ className, ...rest }) => {
                                                         {levelsErrMsg && (
                                                             <small className="text-danger form-text">{'Levels required!'}</small>
                                                         )}
-                                                    </Col>
+                                                    </Col> */}
                                                 </Row>
 
                                                 <br />

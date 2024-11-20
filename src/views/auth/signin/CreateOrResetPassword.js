@@ -233,6 +233,8 @@ const CreateResetPassword = ({ handleLogin, className, ...rest }) => {
                                                         if (user_data.length !== 0) {
 
                                                             sessionStorage.setItem('user_jwt', response.data[0].jwt);
+                                                            sessionStorage.setItem('user_access_role', JSON.stringify(response.data[0].user_role));
+
                                                             setOtpSent(false);
                                                             setCreateOrResetPassword(true);
                                                             // history.push('/admin-portal/admin-dashboard');
