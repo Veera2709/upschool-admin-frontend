@@ -125,30 +125,31 @@ const Navigation = () => {
     }
   
     if (entity.includes('Worksheet')) {
-      if (navigation2.items[1]) {
-        if (!doesItemExist(navigation2.items[0].children, 'worksheet_blue_print')) {
-          navigation2.items[0].children.push({
-            id: 'worksheet_blue_print',
-            title: 'Worksheet Blue Print',
-            type: 'collapse',
-            icon: 'fas fa-map',
-            children: [
-              {
-                id: 'worksheet-blueprint',
-                title: 'Active Blue Print',
-                type: 'item',
-                url: '/admin-portal/worksheet-blueprint',
-              },
-              {
-                id: 'worksheet_archived-blueprint',
-                title: 'Archived Blue Print',
-                type: 'item',
-                url: '/admin-portal/archived-worksheet-blueprint',
-              },
-            ],
-          });
-        }
-      } else {
+      // if (navigation2.items[1]) {
+      //   if (!doesItemExist(navigation2.items[0].children, 'worksheet_blue_print')) {
+      //     navigation2.items[0].children.push({
+      //       id: 'worksheet_blue_print',
+      //       title: 'Worksheet Blue Print',
+      //       type: 'collapse',
+      //       icon: 'fas fa-map',
+      //       children: [
+      //         {
+      //           id: 'worksheet-blueprint',
+      //           title: 'Active Blue Print',
+      //           type: 'item',
+      //           url: '/admin-portal/worksheet-blueprint',
+      //         },
+      //         {
+      //           id: 'worksheet_archived-blueprint',
+      //           title: 'Archived Blue Print',
+      //           type: 'item',
+      //           url: '/admin-portal/archived-worksheet-blueprint',
+      //         },
+      //       ],
+      //     });
+      //   }
+      // } 
+
         if (!doesItemExist(navigation2.items, 'management-panel')) {
           navigation2.items.push({
             id: 'management-panel',
@@ -180,7 +181,7 @@ const Navigation = () => {
           });
         }
       }
-    }
+    
   }
   
 
