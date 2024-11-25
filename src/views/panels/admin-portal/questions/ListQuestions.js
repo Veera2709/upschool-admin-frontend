@@ -148,7 +148,6 @@
 // };
 
 // export default ListQuestions;
-
 import React, { useState, useEffect } from 'react';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
@@ -163,11 +162,15 @@ const ListQuestions = () => {
     const userAccessRole = JSON.parse(sessionStorage.getItem('user_access_role'));
     console.log("user_access_role - ", userAccessRole);
 
-    // Extract roles for "Assessments"
-    const AssessmentsData = userAccessRole
-        ?.filter((item) => item.entity === "Assessments")
-        ?.flatMap((item) => item.roles) || [];
-    console.log("AssessmentsData (roles for Assessments) - ", AssessmentsData);
+    // Extract roles for "Assessments" or check if admin
+    const isAdmin = userAccessRole === "admin";
+    const AssessmentsData = Array.isArray(userAccessRole)
+        ? userAccessRole
+              .filter((item) => item.entity === "Assessments")
+              .flatMap((item) => item.roles)
+        : [];
+
+    console.log("AssessmentsData (roles for Assessments) - ", AssessmentsData, "isAdmin - ", isAdmin);
 
     const [_questionStatus, _setQuestionStatus] = useState('Save');
 
@@ -201,11 +204,15 @@ const ListQuestions = () => {
 
     const getTabsForRoles = () => {
         const roleTabMapping = {
-            admin: [1, 2, 3, 4, 5, 6, 7], // All tabs
+            admin: [1, 2, 3, 4, 5, 6, 7], // All tabs for admin
             creator: [1, 2, 3, 4],        // Saved, Submitted, Accepted, Rejected
-            publisher: [2, 3, 4],        // Submitted, Accepted, Rejected
-            reviewer: [3, 7],            // Accepted, Published
+            reviewer: [2, 3, 4],          // Submitted, Accepted, Rejected
+            publisher: [3, 7],            // Accepted, Published
         };
+
+        if (isAdmin) {
+            return roleTabMapping.admin; // Return all tabs for admin
+        }
 
         let tabsToShow = new Set();
 

@@ -264,16 +264,21 @@ const EditQuestions = () => {
                         }
 
                         const radioValueShowMathKeyboard = individual_user_data.show_math_keyboard === 'Yes' ? true : false;
-                        const radioValueWorkSheetOrTest = individual_user_data.appears_in === 'worksheetOrTest' ? true : false;
-
+                        
                         setIsLoading(false);
-
+                        
                         setShowMathKeyboard(individual_user_data.show_math_keyboard);
-
+                        let radioValueWorkSheetOrTest = false;
                         if(Array.isArray(individual_user_data.appears_in))
+                        {
+                         radioValueWorkSheetOrTest = individual_user_data.appears_in.includes('worksheetOrTest') ? true : false;
                             setWorkSheetOrTest(individual_user_data.appears_in);
+                        }
                         else
-                        setWorkSheetOrTest([individual_user_data.appears_in]);
+                        {
+                         radioValueWorkSheetOrTest = individual_user_data.appears_in === 'worksheetOrTest' ? true : false;
+                            setWorkSheetOrTest([individual_user_data.appears_in]);
+                        }
 
                         _setRadioShowMathKeyboard(radioValueShowMathKeyboard);
                         _setRadioWorkSheetOrTest(radioValueWorkSheetOrTest);
