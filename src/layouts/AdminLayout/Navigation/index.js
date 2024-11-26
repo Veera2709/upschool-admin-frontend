@@ -5,11 +5,185 @@ import useWindowSize from '../../../hooks/useWindowSize';
 
 import NavContent from './NavContent';
 import navigation from '../../../menu-items';
+import navigation2 from '../../../menu-items2';
 
 const Navigation = () => {
   const configContext = useContext(ConfigContext);
   const { layout, layoutType, navFixedLayout, collapseMenu, rtlLayout, boxLayout, subLayout, headerFixedLayout } = configContext.state;
   const windowSize = useWindowSize();
+  const user_access_role =  JSON.parse(sessionStorage.getItem('user_access_role'));
+
+  if (Array.isArray(user_access_role)) {
+    const entity = user_access_role.map(val => val.entity);
+    console.log("entity - ", entity);
+  
+    const doesItemExist = (array, id) => array.some(item => item.id === id);
+  
+    if (entity.includes('DigiCard')) {
+      if (!doesItemExist(navigation2.items[0].children, 'digicard')) {
+        navigation2.items[0].children.push({
+          id: 'digicard',
+          title: 'DigiCard',
+          type: 'collapse',
+          icon: 'fab fa-react',
+          children: [
+            {
+              id: 'active-digiCard',
+              title: 'Active Digicards',
+              type: 'item',
+              url: '/admin-portal/active-digiCard',
+            },
+            {
+              id: 'archived-digiCard',
+              title: 'Archived Digicards',
+              type: 'item',
+              url: '/admin-portal/digicard-Archived',
+            },
+          ],
+        });
+      }
+    }
+  
+    if (entity.includes('Assessments')) {
+      if (!doesItemExist(navigation2.items[0].children, 'questions')) {
+        navigation2.items[0].children.push({
+          id: 'questions',
+          title: 'Questions',
+          type: 'collapse',
+          icon: 'feather icon-check-square',
+          children: [
+            {
+              id: 'active-questions',
+              title: 'Active Questions',
+              type: 'item',
+              url: '/admin-portal/active-questions',
+            },
+            {
+              id: 'archived-questions',
+              title: 'Archived Questions',
+              type: 'item',
+              url: '/admin-portal/archived-questions',
+            },
+          ],
+        });
+      }
+      // if (!doesItemExist(navigation2.items, 'management-panel')) {
+      //   navigation2.items.push({
+      //     id: 'management-panel',
+      //     title: 'Management Panel',
+      //     type: 'group',
+      //     icon: 'icon-monitor',
+      //     children: [
+      //       {
+      //         id: 'blue_print',
+      //         title: 'Blue Print',
+      //         type: 'collapse',
+      //         icon: 'fas fa-map',
+      //         children: [
+      //           {
+      //             id: 'active-blueprint',
+      //             title: 'Active Blue Print',
+      //             type: 'item',
+      //             url: '/admin-portal/active-blueprint',
+      //           },
+      //           {
+      //             id: 'archived-blueprint',
+      //             title: 'Archived Blue Print',
+      //             type: 'item',
+      //             url: '/admin-portal/archived-blueprint',
+      //           },
+      //         ],
+      //       },
+      //     ],
+      //   });
+      // }
+    }
+  
+    if (entity.includes('Groups')) {
+      if (!doesItemExist(navigation2.items[0].children, 'groups')) {
+        navigation2.items[0].children.push({
+          id: 'groups',
+          title: 'Groups',
+          type: 'collapse',
+          icon: 'feather icon-folder',
+          children: [
+            {
+              id: 'active-groups',
+              title: 'Active Groups',
+              type: 'item',
+              url: '/admin-portal/active-groups',
+            },
+            {
+              id: 'archived-groups',
+              title: 'Archived Groups',
+              type: 'item',
+              url: '/admin-portal/archived-groups',
+            },
+          ],
+        });
+      }
+    }
+  
+    if (entity.includes('Worksheet')) {
+      // if (navigation2.items[1]) {
+      //   if (!doesItemExist(navigation2.items[0].children, 'worksheet_blue_print')) {
+      //     navigation2.items[0].children.push({
+      //       id: 'worksheet_blue_print',
+      //       title: 'Worksheet Blue Print',
+      //       type: 'collapse',
+      //       icon: 'fas fa-map',
+      //       children: [
+      //         {
+      //           id: 'worksheet-blueprint',
+      //           title: 'Active Blue Print',
+      //           type: 'item',
+      //           url: '/admin-portal/worksheet-blueprint',
+      //         },
+      //         {
+      //           id: 'worksheet_archived-blueprint',
+      //           title: 'Archived Blue Print',
+      //           type: 'item',
+      //           url: '/admin-portal/archived-worksheet-blueprint',
+      //         },
+      //       ],
+      //     });
+      //   }
+      // } 
+
+        if (!doesItemExist(navigation2.items, 'management-panel')) {
+          navigation2.items.push({
+            id: 'management-panel',
+            title: 'Management Panel',
+            type: 'group',
+            icon: 'icon-monitor',
+            children: [
+              {
+                id: 'worksheet_blue_print',
+                title: 'Worksheet Blue Print',
+                type: 'collapse',
+                icon: 'fas fa-map',
+                children: [
+                  {
+                    id: 'worksheet-blueprint',
+                    title: 'Active Blue Print',
+                    type: 'item',
+                    url: '/admin-portal/worksheet-blueprint',
+                  },
+                  {
+                    id: 'worksheet_archived-blueprint',
+                    title: 'Archived Blue Print',
+                    type: 'item',
+                    url: '/admin-portal/archived-worksheet-blueprint',
+                  },
+                ],
+              },
+            ],
+          });
+        }
+      }
+    
+  }
+  
 
   const scroll = () => {
     if (navFixedLayout && headerFixedLayout === false) {
@@ -78,13 +252,13 @@ const Navigation = () => {
   }
   let navContent = (
     <div className={navBarClass.join(' ')}>
-      <NavContent navigation={navigation.items} />
+      <NavContent navigation={user_access_role === 'admin' ? navigation.items : navigation2.items} />
     </div>
   );
   if (windowSize.width < 992) {
     navContent = (
       <div className="navbar-wrapper">
-        <NavContent navigation={navigation.items} />
+        <NavContent navigation={user_access_role === 'admin' ? navigation.items : navigation2.items} />
       </div>
     );
   }

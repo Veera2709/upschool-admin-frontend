@@ -46,6 +46,7 @@ const EditQuestions = () => {
 
     const [isDuplicatePresent, setIsDuplicatePresent] = useState(false);/////////
     const [isDuplicatePresent2, setIsDuplicatePresent2] = useState(false);/////////
+    const [isDuplicatePresent3, setIsDuplicatePresent3] = useState(false);/////////
     const [descriptiveAnswerErrMsg, setDescriptiveAnswerErrMsg] = useState(false);
     const [questionTypeErrMsg, setQuestionTypeErrMsg] = useState(false);
     const [questionCategoryErrMsg, setQuestionCategoryErrMsg] = useState(false);
@@ -53,6 +54,7 @@ const EditQuestions = () => {
     const [questionSourceErrMsg, setQuestionSourceErrMsg] = useState(false);
     const [questionEmptyErrMsg, setQuestionEmptyErrMsg] = useState(false);
     const [questionEmptyErrMsg2, setQuestionEmptyErrMsg2] = useState(false);
+    const [questionEmptyErrMsg3, setQuestionEmptyErrMsg3] = useState(false);
     const [ansWeightageErrMsg, setAnsWeightageErrMsg] = useState(false);
     const [unitWeightageErrMsg, setUnitWeightageErrMsg] = useState(false);
     const [negativeMarksErrMsg, setNegativeMarksErrMsg] = useState(false);
@@ -71,7 +73,7 @@ const EditQuestions = () => {
     const [selectedQuestionSource, setSelectedQuestionSource] = useState({});
     const [selectedQuestionDisclaimer, setSelectedQuestionDisclaimer] = useState([]);
     const [showMathKeyboard, setShowMathKeyboard] = useState('No');
-    const [workSheetOrTest, setWorkSheetOrTest] = useState('preOrPost');
+    const [workSheetOrTest, setWorkSheetOrTest] = useState(['preOrPost']);
     const [answerTypeOptions, setAnswerTypeOptions] = useState([]);
     const [descriptiveAnswerOptionsForm, setDescriptiveAnswerOptionsForm] = useState([]);
     const [selectedAnswerType, setSelectedAnswerType] = useState([]);
@@ -81,10 +83,13 @@ const EditQuestions = () => {
 
     const [articleSize, setArticleSize] = useState(10);
     const [articleSize2, setArticleSize2] = useState(10);
+    const [articleSize3, setArticleSize3] = useState(10);
     const [imageCount, setImageCount] = useState(0);
     const [imageCount2, setImageCount2] = useState(0);
+    const [imageCount3, setImageCount3] = useState(0);
     const [articleDataTitle, setArticleDataTtitle] = useState("");
     const [articleDataTitle2, setArticleDataTtitle2] = useState("");
+    const [articleDataTitle3, setArticleDataTtitle3] = useState("");
     const [newDigicard, setnNewDigicard] = useState(false);
 
     const [addAnserOptions, setAddAnswerOptions] = useState(false);
@@ -259,12 +264,21 @@ const EditQuestions = () => {
                         }
 
                         const radioValueShowMathKeyboard = individual_user_data.show_math_keyboard === 'Yes' ? true : false;
-                        const radioValueWorkSheetOrTest = individual_user_data.appears_in === 'worksheetOrTest' ? true : false;
-
+                        
                         setIsLoading(false);
-
+                        
                         setShowMathKeyboard(individual_user_data.show_math_keyboard);
-                        setWorkSheetOrTest(individual_user_data.appears_in);
+                        let radioValueWorkSheetOrTest = false;
+                        if(Array.isArray(individual_user_data.appears_in))
+                        {
+                         radioValueWorkSheetOrTest = individual_user_data.appears_in.includes('worksheetOrTest') ? true : false;
+                            setWorkSheetOrTest(individual_user_data.appears_in);
+                        }
+                        else
+                        {
+                         radioValueWorkSheetOrTest = individual_user_data.appears_in === 'worksheetOrTest' ? true : false;
+                            setWorkSheetOrTest([individual_user_data.appears_in]);
+                        }
 
                         _setRadioShowMathKeyboard(radioValueShowMathKeyboard);
                         _setRadioWorkSheetOrTest(radioValueWorkSheetOrTest);
@@ -293,6 +307,8 @@ const EditQuestions = () => {
                         setArticleDataTtitle(individual_user_data.question_content);
 
                         setArticleDataTtitle2(individual_user_data.answer_explanation === 'N.A.' ? '' : individual_user_data.answer_explanation);
+
+                        setArticleDataTtitle3(individual_user_data.display_answer === 'N.A.' ? '' : individual_user_data.display_answer);
 
                         let uploadParams = individual_user_data.answers_of_question;
                         let object;
@@ -608,11 +624,33 @@ const EditQuestions = () => {
         _radioShowMathKeyboard === true ? setShowMathKeyboard('No') : setShowMathKeyboard('Yes');
     }
 
-    const handleWorkSheetOrTest = (e) => {
+    // const handleWorkSheetOrTest = (e) => {
 
-        _setRadioWorkSheetOrTest(!_radioWorkSheetOrTest);
-        _radioWorkSheetOrTest === true ? setWorkSheetOrTest('preOrPost') : setWorkSheetOrTest('worksheetOrTest');
-    }
+    //     _setRadioWorkSheetOrTest(!_radioWorkSheetOrTest);
+    //     _radioWorkSheetOrTest === true ? setWorkSheetOrTest('preOrPost') : setWorkSheetOrTest('worksheetOrTest');
+    // }
+
+    const handleWorkSheetOrTest = (e) => {
+        const value = e.target.value;
+        let updatedSelection;
+    
+        if (workSheetOrTest.includes(value)) {
+            // Remove the value if it's already selected (uncheck)
+            updatedSelection = workSheetOrTest.filter(item => item !== value);
+        } else {
+            // Add the value if it's not already selected (check)
+            updatedSelection = [...workSheetOrTest, value];
+        }
+    
+        setWorkSheetOrTest(updatedSelection);
+    
+        // Update _setRadioWorkSheetOrTest based on whether 'worksheetOrTest' is in the array
+        if (updatedSelection.includes('worksheetOrTest')) {
+            _setRadioWorkSheetOrTest(true);
+        } else {
+            _setRadioWorkSheetOrTest(false);
+        }
+    };
 
     const handleChildStateChange = (newState) => {
         setIsDuplicatePresent(newState);
@@ -620,9 +658,13 @@ const EditQuestions = () => {
     const handleChildStateChange2 = (newState) => {
         setIsDuplicatePresent2(newState);
     };
+    const handleChildStateChange3 = (newState) => {
+        setIsDuplicatePresent3(newState);
+    };
 
     const [answerBlanksOptions, setAnswerBlanksOptions] = useState([]);
     const [answerBlanksOptions2, setAnswerBlanksOptions2] = useState([]);
+    const [answerBlanksOptions3, setAnswerBlanksOptions3] = useState([]);
     const answerDisplayOptions = [
         { value: 'No', label: 'No' },
         { value: 'Yes', label: 'Yes' }
@@ -655,6 +697,7 @@ const EditQuestions = () => {
         setQuestionSourceErrMsg(false);
         setQuestionEmptyErrMsg(false);
         setQuestionEmptyErrMsg2(false);
+        setQuestionEmptyErrMsg3(false);
         setAnsWeightageErrMsg(false);
         setUnitWeightageErrMsg(false);
 
@@ -1266,7 +1309,7 @@ const EditQuestions = () => {
                 cognitive_skill: selectedQuestionCognitiveSkill,
                 question_source: selectedQuestionSource,
                 marks: document.getElementById('marks').value,
-                display_answer: selectedQuestionType === 'Subjective' || selectedQuestionType === 'Objective' ? 'N.A.' : document.getElementById('descriptive_answer').value,
+                display_answer: selectedQuestionType === 'Subjective' || selectedQuestionType === 'Objective' ? 'N.A.' : articleDataTitle3,
                 // answer_explanation: answerExplanation === undefined || answerExplanation === "undefined" || answerExplanation === "" ? "N.A." : answerExplanation,
                 answer_explanation: articleDataTitle2,
                 difficulty_level: _radioWorkSheetOrTest ? selectedDifficultyLevel : 'N.A',
@@ -1317,9 +1360,13 @@ const EditQuestions = () => {
             if (Number(document.getElementById('marks').value) < 0) {
                 setNegativeMarksErrMsg(true);
             }
-            else if (descriptiveAnswer === undefined || descriptiveAnswer === 'undefined' || descriptiveAnswer === "") {
-                setDescriptiveAnswerErrMsg(true);
-            } else {
+            // else if (descriptiveAnswer === undefined || descriptiveAnswer === 'undefined' || descriptiveAnswer === "") {
+            //     setDescriptiveAnswerErrMsg(true);
+            // } 
+            else if (articleDataTitle3 === "" || articleDataTitle3 === undefined || articleDataTitle3 === 'undefined' || articleDataTitle3 === "<p><br></p>" || articleDataTitle3 === "<p></p>" || articleDataTitle3 === "<br>") {
+                setQuestionEmptyErrMsg3(true);
+            } 
+            else {
 
                 let answerTypeSelected = descriptiveAnswerOptionsForm.filter(value => (value.answer_type === '' || value.answer_type === 'N.A.' || value.answer_type === 'Select...' || value.answer_type === 'undefined' || value.answer_type === undefined) && sessionStorage.getItem('click_event') === 'Submit');
 
@@ -1593,9 +1640,13 @@ const EditQuestions = () => {
 
                                                                 if (Number(values.marks) < 0) {
                                                                     setNegativeMarksErrMsg(true);
-                                                                } else if (descriptiveAnswer === undefined || descriptiveAnswer === 'undefined' || descriptiveAnswer === "") {
-                                                                    setDescriptiveAnswerErrMsg(true);
-                                                                } else {
+                                                                // } else if (descriptiveAnswer === undefined || descriptiveAnswer === 'undefined' || descriptiveAnswer === "") {
+                                                                //     setDescriptiveAnswerErrMsg(true);
+                                                                // } 
+                                                            } else if (articleDataTitle3 === "" || articleDataTitle3 === undefined || articleDataTitle3 === 'undefined' || articleDataTitle3 === "<p><br></p>" || articleDataTitle3 === "<p></p>" || articleDataTitle3 === "<br>") {
+                                                                setQuestionEmptyErrMsg3(true);
+                                                                  } 
+                                                                else {
 
                                                                     let answerTypeSelected = descriptiveAnswerOptionsForm.filter(value => (value.answer_type === '' || value.answer_type === 'N.A.' || value.answer_type === 'Select...' || value.answer_type === 'undefined' || value.answer_type === undefined) && sessionStorage.getItem('click_event') === 'Submit');
 
@@ -1818,9 +1869,14 @@ const EditQuestions = () => {
 
                                                                 if (Number(values.marks) < 0) {
                                                                     setNegativeMarksErrMsg(true);
-                                                                } else if (descriptiveAnswer === undefined || descriptiveAnswer === 'undefined' || descriptiveAnswer === "") {
-                                                                    setDescriptiveAnswerErrMsg(true);
-                                                                } else {
+                                                                // } else if (descriptiveAnswer === undefined || descriptiveAnswer === 'undefined' || descriptiveAnswer === "") {
+                                                                //     setDescriptiveAnswerErrMsg(true);
+                                                                // } 
+                                                            } else if (articleDataTitle3 === "" || articleDataTitle3 === undefined || articleDataTitle3 === 'undefined' || articleDataTitle3 === "<p><br></p>" || articleDataTitle3 === "<p></p>" || articleDataTitle3 === "<br>") {
+                                                                setQuestionEmptyErrMsg3(true);
+                                                            } 
+                                                                
+                                                                else {
 
                                                                     console.log('Data inserted!');
 
@@ -1840,7 +1896,7 @@ const EditQuestions = () => {
                                                                         cognitive_skill: selectedQuestionCognitiveSkill,
                                                                         question_source: selectedQuestionSource,
                                                                         marks: values.marks,
-                                                                        display_answer: values.descriptive_answer,
+                                                                        display_answer: articleDataTitle3,
                                                                         // answer_explanation: values.answer_explanation === undefined || values.answer_explanation === "undefined" || values.answer_explanation === "" ? "N.A." : values.answer_explanation,
                                                                         answer_explanation: articleDataTitle2,
                                                                         difficulty_level: _radioWorkSheetOrTest ? selectedDifficultyLevel : 'N.A',
@@ -2339,34 +2395,35 @@ const EditQuestions = () => {
                                                                 </Col>
 
                                                                 <Col>
-                                                                    <label className="floating-label">
-                                                                        <small className="text-danger"></small>
-                                                                        Question Appears in
-                                                                    </label>
+    <label className="floating-label">
+        <small className="text-danger"></small>
+        Question Appears in
+    </label>
+    <div className="col">
+        <div  className="row profile-view-checkbox-view">
+            <Form.Check 
+                type="checkbox" 
+                id="checkbox-preOrPost" 
+                label="Pre/Post" 
+                value="preOrPost"
+                className="blue-checkbox"
+                checked={workSheetOrTest.includes('preOrPost')}
+                onChange={handleWorkSheetOrTest}
+            />
+            &nbsp;
 
-                                                                    <div className="col">
-                                                                        <div className="row profile-view-radio-button-view">
-                                                                            <Form.Check
-                                                                                id={`radio-fresher`}
-                                                                                error={touched.fresher && errors.fresher}
-                                                                                type="switch"
-                                                                                variant={'outline-primary'}
-                                                                                name="radio-fresher"
-                                                                                checked={_radioWorkSheetOrTest}
-                                                                                onChange={(e) => {
-                                                                                    handleWorkSheetOrTest(e);
-                                                                                    setDefaultLevel([]);
-                                                                                    setSelectedDifficultyLevel('');
-                                                                                    setIsDefficultyLevelErr(false)
-                                                                                }}
-                                                                            /> &nbsp;
-
-                                                                            <Form.Label className="profile-view-question" id={`radio-fresher`}>
-                                                                                {_radioWorkSheetOrTest === true ? 'Worksheet/Test' : 'Pre/Post'}
-                                                                            </Form.Label>
-                                                                        </div>
-                                                                    </div>
-                                                                </Col>
+            <Form.Check 
+                type="checkbox" 
+                id="checkbox-worksheetOrTest" 
+                label="Worksheet/Test" 
+                value="worksheetOrTest"
+                className="blue-checkbox"
+                checked={workSheetOrTest.includes('worksheetOrTest')}
+                onChange={handleWorkSheetOrTest}
+            />
+        </div>
+    </div>
+</Col>
                                                             </Row>
 
                                                             <br />
@@ -3907,7 +3964,7 @@ const EditQuestions = () => {
                                                                                 <small className="text-danger">* </small>
                                                                                 Answer to Display
                                                                             </label>
-                                                                            <textarea
+                                                                            {/* <textarea
                                                                                 rows="5"
                                                                                 cols="80"
                                                                                 id="descriptive_answer"
@@ -3927,7 +3984,21 @@ const EditQuestions = () => {
 
                                                                             {descriptiveAnswerErrMsg && (
                                                                                 <small className="text-danger form-text">{'Answer to Display is required'}</small>
-                                                                            )}
+                                                                            )} */}
+                                                                             <ArticleRTE
+                                                                        onChildStateChange={handleChildStateChange3}
+                                                                        setArticleSize={setArticleSize3}
+                                                                        setImageCount={setImageCount3}
+                                                                        imageCount={imageCount3}
+                                                                        articleData={articleDataTitle3}
+                                                                        setArticleData={setArticleDataTtitle3}
+                                                                        setAnswerBlanksOptions={setAnswerBlanksOptions3}
+                                                                        setQuestionEmptyErrMsg={setQuestionEmptyErrMsg3}
+                                                                    />
+
+                                                                    {questionEmptyErrMsg3 && (
+                                                                        <small className="text-danger form-text">{'Answer to Display is required!'}</small>
+                                                                    )}
                                                                         </Col>
 
 
@@ -4156,7 +4227,7 @@ const EditQuestions = () => {
                                                                         setQuestionEmptyErrMsg={setQuestionEmptyErrMsg2}
                                                                     />
 
-                                                                    {questionEmptyErrMsg && (
+                                                                    {questionEmptyErrMsg2 && (
                                                                         <small className="text-danger form-text">{'answer required!'}</small>
                                                                     )}
                                                                         </Col>
