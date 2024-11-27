@@ -843,6 +843,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                         //     setQuestionEmptyErrMsg3(true);
                                         }
                                         else if (selectedQuestionType === 'Descriptive') {
+                                          
                                             let payLoad = {
                                                 question_type: selectedQuestionType,
                                                 question_category: selectedQuestionCategory,
@@ -865,7 +866,7 @@ const AddQuestions = ({ className, ...rest }) => {
 
                                             }
 
-                                            if (values.descriptive_answer === undefined || values.descriptive_answer === 'undefined' || values.descriptive_answer === "") {
+                                            if (articleDataTitle3 === "" || articleDataTitle3 === undefined || articleDataTitle3 === 'undefined' || articleDataTitle3 === "<p><br></p>" || articleDataTitle3 === "<p></p>" || articleDataTitle3 === "<br>") {
                                                 setDescriptiveAnswerErrMsg(true);
                                             } else {
 
@@ -875,8 +876,7 @@ const AddQuestions = ({ className, ...rest }) => {
 
                                                     let answerTypeSelected = descriptiveAnswerOptionsForm.filter(value => (value.answer_type === '' || value.answer_type === 'N.A.' || value.answer_type === 'Select...' || value.answer_type === 'undefined' || value.answer_type === undefined) && sessionStorage.getItem('click_event') === 'Submit');
 
-                                                    if (answerTypeSelected.length === 0) {
-
+                                                    if (answerTypeSelected.length === 0) {      
                                                         let keywordsGiven = descriptiveAnswerOptionsForm.filter(value => (value.answer_content === '' || value.answer_content === 'N.A.' || value.answer_content === 'undefined' || value.answer_content === undefined) && sessionStorage.getItem('click_event') === 'Submit');
 
                                                         if (keywordsGiven.length === 0) {
@@ -884,7 +884,7 @@ const AddQuestions = ({ className, ...rest }) => {
                                                             if (sessionStorage.getItem('click_event') === 'Submit') {
 
                                                                 let weightageGiven = descriptiveAnswerOptionsForm.filter(value => (value.answer_weightage === '' || value.answer_weightage === 'N.A.' || value.answer_weightage === 'undefined' || value.answer_weightage === undefined) && sessionStorage.getItem('click_event') === 'Submit');
-
+                                                               
                                                                 if (weightageGiven.length === 0) {
 
                                                                     let sumOfAllWeightage = descriptiveAnswerOptionsForm.reduce((acc, item) => acc + Number(item.answer_weightage), 0);
@@ -893,10 +893,11 @@ const AddQuestions = ({ className, ...rest }) => {
                                                                     console.log("allEqual", allEqual);
 
                                                                     if (allEqual) {
-                                                                        showLoader();
+                                                                       showLoader();
                                                                         _addQuestions(payLoad);
                                                                     } else {
                                                                         setMismatchWeightageErr(true);
+                                              
                                                                     }
 
                                                                 } else {
