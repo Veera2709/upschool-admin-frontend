@@ -147,6 +147,11 @@ const routes = [
       },
       {
         exact: true,
+        path: '/admin-portal/add-bulk-groups',
+        component: lazy(() => import('./views/panels/admin-portal/groups/GroupsBulkUpload'))
+      },
+      {
+        exact: true,
         path: '/admin-portal/add-questions',
         component: lazy(() => import('./views/panels/admin-portal/questions/AddQuestions'))
       },
