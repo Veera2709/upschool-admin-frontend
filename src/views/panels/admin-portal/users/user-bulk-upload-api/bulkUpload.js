@@ -2,6 +2,7 @@ import axios from 'axios';
 import { SessionStorage } from '../../../../../util/SessionStorage';
 
 export const bulkUpload = async (url, data, component) => {
+  console.log({url})
   return new Promise((resolve, reject) => {
     axios
       .post(
