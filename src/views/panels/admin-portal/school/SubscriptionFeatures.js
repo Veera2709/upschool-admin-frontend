@@ -26,14 +26,16 @@ const SubscriptionFeatures = ({ className, rest, id }) => {
 
     const [_radioLibraryFeature, _setRadioLibraryFeature] = useState(false);
     const [_radioAutomateEvaluation, _setRadioAutomateEvaluation] = useState(false);
+    const [_predictiveEvaluation, _setPredictiveEvaluation] = useState(false);
 
     const [selectedLibraryFeature, setSelectedLibraryFeature] = useState('No');
     const [slectedAutomateEvaluation, setSlectedAutomateEvaluation] = useState('No');
+    const [selectedPredictiveEvaluation, setSelectedPredictiveEvaluation] = useState('No');
     const [selectedtypeOfReports, setSelectedTypeOfReports] = useState([]);
 
     const [typeOfReportsErrMsg, setTypeOfReportsErrMsg] = useState(false);
 
-    const testTypePre = [
+    const testTypePre = [   
         { label: 'Online', value: 'Online' },
         { label: 'Paper Based', value: 'Paper Based' },
         { label: 'Both', value: 'Both' }
@@ -91,6 +93,12 @@ const SubscriptionFeatures = ({ className, rest, id }) => {
         _radioAutomateEvaluation === true ? setSlectedAutomateEvaluation('No') : setSlectedAutomateEvaluation('Yes');
     }
 
+    const handlePridictiveEvaluation = (e) => {
+
+        _setPredictiveEvaluation(!_predictiveEvaluation);
+        _predictiveEvaluation === true ? setSelectedPredictiveEvaluation('No') : setSelectedPredictiveEvaluation('Yes');
+    }
+
     const fetchIndividualSchoolDetails = () => {
         axios
             .post(
@@ -130,12 +138,15 @@ const SubscriptionFeatures = ({ className, rest, id }) => {
 
                     const radioValueLibraryFeature = previousSubscriptionData.library_enable_on_app === 'Yes' ? true : false;
                     const radioValueAutomateEvaluation = previousSubscriptionData.automated_evaluation === 'Yes' ? true : false;
+                    const radioValuePredictiveEvaluation = previousSubscriptionData.predictive_evaluation && previousSubscriptionData.predictive_evaluation === 'Yes' ? true : false;
 
                     _setRadioLibraryFeature(radioValueLibraryFeature);
                     _setRadioAutomateEvaluation(radioValueAutomateEvaluation);
+                    _setPredictiveEvaluation(radioValuePredictiveEvaluation);
 
                     setSelectedLibraryFeature(previousSubscriptionData.library_enable_on_app);
                     setSlectedAutomateEvaluation(previousSubscriptionData.automated_evaluation);
+                    setSelectedPredictiveEvaluation(previousSubscriptionData.predictive_evaluation);
                     setSelectedTypeOfReports(valuesArr);
 
                     setPreviousTypeOfReports(dataArr);
@@ -214,7 +225,8 @@ const SubscriptionFeatures = ({ className, rest, id }) => {
                                                     school_subscribe_feature: {
                                                         types_of_report: selectedtypeOfReports,
                                                         library_enable_on_app: selectedLibraryFeature,
-                                                        automated_evaluation: slectedAutomateEvaluation
+                                                        automated_evaluation: slectedAutomateEvaluation,
+                                                        predictive_evaluation : selectedPredictiveEvaluation
                                                     }
                                                 }
                                             }
@@ -408,6 +420,33 @@ const SubscriptionFeatures = ({ className, rest, id }) => {
 
                                                     </Col>
                                                 </Row>
+                                                <Col xs={6}>
+                                                    <Row>
+                                                            <Col>
+                                                                <label className="floating-label">
+                                                                    <small className="text-danger"></small>Predictive Text
+                                                                </label>
+                                                            </Col>
+                                                            <Col xs={2}>
+                                                                <div className="row profile-view-radio-button-view">
+                                                                    <Form.Check
+                                                                        id={`radio-predictiveEvaluation`}
+                                                                        // label="Yes"
+                                                                        error={touched.predictiveEvaluation && errors.predictiveEvaluation}
+                                                                        type="switch"
+                                                                        variant={'outline-primary'}
+                                                                        name="radio-predictiveEvaluation"
+                                                                        checked={_predictiveEvaluation}
+                                                                        onChange={(e) => { handlePridictiveEvaluation(e); }}
+                                                                    // className='ml-3 col-md-6'
+                                                                    />
+                                                                    <Form.Label className="profile-view-question" id={`radio-predictiveEvaluation`}>
+                                                                        {_predictiveEvaluation === true ? 'Yes' : 'No'}
+                                                                    </Form.Label>
+                                                                </div>
+                                                            </Col>
+                                                        </Row>
+                                                        </Col>
 
                                                 {loader}
 
