@@ -1127,11 +1127,11 @@ const UserTableView = ({ _userRole, sendDataToGrandParent }) => {
         {
           data: {
             page_size: dataFromChild.page_size === undefined ? 10 : dataFromChild.page_size,
-            school_id: sessionStorage.getItem('school_id'),
+            school_id: sessionStorage.getItem('user_access_role')?null:sessionStorage.getItem('school_id'),
             user: _userRole.replace("s", ""),
             start_key: startKeys,
             user_status: payLoadStatus,
-            searchedKeyword: dataFromChild.searchedKeyword === undefined ? "" : dataFromChild.searchedKeyword,
+            searchedKeyword: dataFromChild.searchedKeyword === undefined ? "" : dataFromChild.searchedKeyword
           }
         },
         {
