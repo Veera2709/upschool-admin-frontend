@@ -273,7 +273,7 @@ const AddBluePrint = () => {
                                 bluePrintName: Yup.string()
                                     .trim()
                                     .min(2, "Blue Print Name To short!")
-                                    .max(32, "Blue Print Name To Long!")
+                                    // .max(32, "Blue Print Name To Long!")
                                     .required("Blue Print Name is required!"),
                                 bluePrintDuration: Yup.number()
                                     .min(1, "Duration is Less Then 1min!")
@@ -282,7 +282,7 @@ const AddBluePrint = () => {
                                 displayName: Yup.string()
                                     .trim()
                                     .min(2, "Display Name To short!")
-                                    .max(32, "Display Name To Long!")
+                                    // .max(32, "Display Name To Long!")
                                     .required("Display Name is required!"),
                             })}
 
@@ -549,10 +549,15 @@ const AddBluePrint = () => {
                                                                                     <Card>
                                                                                         <Card.Body style={{ background: '#aaaaaa' }}>
                                                                                             {item.questions.length > 1 ? (
+                                                                                                <div style={{display :'flex', flexDirection :"row", justifyContent :"space-between"}}>
+                                                                                                 <label className="floating-label" >{ind+1}. </label>
                                                                                                 <div className='d-flex justify-content-end'>
                                                                                                     <Button variant='danger' onClick={(e) => { removeQuestion(index, ind) }}><i className='feather icon-trash' /></Button>
                                                                                                 </div>
-                                                                                            ) : (null)}
+                                                                                                </div>
+                                                                                            ) : (  <label className="floating-label" >{ind+1}. </label>
+                                                                                                )
+                                                                                            }
                                                                                             <Row>
                                                                                                 <Col>
 
