@@ -167,7 +167,7 @@ const AddTopics = ({ setOpenAddTopic }) => {
                     topic_title: Yup.string()
                         .trim()
                         .min(2, Constants.AddTopic.TopictitleTooShort)
-                        .max(32, Constants.AddTopic.TopictitleTooLong)
+                        // .max(32, Constants.AddTopic.TopictitleTooLong)
                         .required(Constants.AddTopic.TopictitleRequired),
                     // duration: Yup.string()
                     //     .trim()
@@ -179,7 +179,7 @@ const AddTopics = ({ setOpenAddTopic }) => {
                     display_name: Yup.string()
                         .trim()
                         .min(2, Constants.AddTopic.DisplayNameTooShort)
-                        .max(32, Constants.AddTopic.DisplayNameTooLong)
+                        // .max(32, Constants.AddTopic.DisplayNameTooLong)
                         .required(Constants.AddTopic.DisplayNameRequired),
                 })}
                 // validationSchema

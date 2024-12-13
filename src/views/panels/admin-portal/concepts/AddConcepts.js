@@ -263,7 +263,7 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
                                     conceptTitle: Yup.string()
                                         .trim()
                                         .min(2, Constants.AddConcepts.ConceptTitleTooShort)
-                                        .max(32, Constants.AddConcepts.ConceptTitleTooLong)
+                                        // .max(32, Constants.AddConcepts.ConceptTitleTooLong)
                                         .required(Constants.AddConcepts.ConceptTitleRequired),
 
                                     displayName: Yup.string()

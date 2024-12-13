@@ -101,7 +101,7 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
                     valuesArr1.push({ value: _basicGroups[index].group_id, label: _basicGroups[index].group_name })
                 }
             }
-            setDropdownBasicGroups(valuesArr);
+            setDropdownBasicGroups(valuesArr1);
         // }
 
         // if (_intermediateGroups) {
@@ -114,7 +114,7 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
                     valuesArr2.push({ value: _intermediateGroups[index].group_id, label: _intermediateGroups[index].group_name })
                 }
             }
-            setDropdownIntermediateGroups(valuesArr);
+            setDropdownIntermediateGroups(valuesArr2);
         // }
 
         // if (_advancedGroups) {
@@ -127,7 +127,7 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
                     valuesArr3.push({ value: _advancedGroups[index].group_id, label: _advancedGroups[index].group_name })
                 }
             }
-            setDropdownAdvancedGroups(valuesArr);
+            setDropdownAdvancedGroups(valuesArr3);
         // }
 
 

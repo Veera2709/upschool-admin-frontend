@@ -346,7 +346,7 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                                                                     name="color"
                                                                     options={prePostOptions}
                                                                     onChange={(e) => { postPreOption(e) }}
-                                                                    isDisabled={true}
+                                                                    // isDisabled={true}
                                                                 />
 
                                                             ) : (
@@ -360,7 +360,7 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                                                                             name="color"
                                                                             options={prePostOptions}
                                                                             onChange={(e) => { postPreOption(e) }}
-                                                                            isDisabled={true}
+                                                                            // isDisabled={true}
                                                                         />
 
                                                                     )}
