@@ -256,7 +256,7 @@ const GroupsBulkUpload = ({ className, ...rest }) => {
                     <div className="row align-items-center">
                       <div className="col-md-12">
                         <div className="page-header-title">
-                          <h5 className="m-b-10">{displayHeading}</h5>
+                          <h5 className="m-b-10">Active Groups</h5>
                         </div><ul className="breadcrumb  ">
                           <li className="breadcrumb-item  ">
                             <a href="/upschool/admin-portal/admin-dashboard">
@@ -264,8 +264,8 @@ const GroupsBulkUpload = ({ className, ...rest }) => {
                               </i>
                             </a>
                           </li>
-                          <li className="breadcrumb-item  ">Users</li>
-                          <li className="breadcrumb-item  ">{displayHeading}</li>
+                          <li className="breadcrumb-item  ">Groups</li>
+                          <li className="breadcrumb-item  ">Active Groups</li>
                         </ul>
                       </div>
                     </div>

@@ -121,12 +121,12 @@ const AddUnit = ({ setOpenAddUnit }) => {
                     unittitle: Yup.string()
                         .trim()
                         .min(2, Constants.AddUnit.UnittitleTooShort)
-                        .max(30, Constants.AddUnit.UnittitleTooLong)
+                        // .max(30, Constants.AddUnit.UnittitleTooLong)
                         .required(Constants.AddUnit.UnittitleRequired),
                     displayname: Yup.string()
                         .trim()
                         .min(2, Constants.AddUnit.DisplayNameTooShort)
-                        .max(32, Constants.AddUnit.DisplayNameTooLong)
+                        // .max(32, Constants.AddUnit.DisplayNameTooLong)
                         .required(Constants.AddUnit.DisplayNameRequired),
                 })}
 
