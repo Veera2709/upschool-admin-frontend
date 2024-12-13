@@ -299,15 +299,15 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
 
                                 console.log('form Data: ', formData);
 
-                                if (selectedDigicards.length > 0) {
+                                // if (selectedDigicards.length > 0) {
 
                                     console.log("Digicards selected!");
 
-                                    if (selectedBasicGroups.length > 0) {
+                                    // if (selectedBasicGroups.length > 0) {
 
-                                        if (selectedIntermediateGroups.length > 0) {
+                                        // if (selectedIntermediateGroups.length > 0) {
 
-                                            if (selectedAdvancedGroups.length > 0) {
+                                            // if (selectedAdvancedGroups.length > 0) {
                                                 if (selectedWorkSheetQue.length > 0) {
                                                     showLoader();
 
@@ -394,29 +394,29 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
                                                     setWorkSheetQueErr(true);
                                                 }
 
-                                            } else {
+                                            // } else {
 
-                                                console.log("Advanced Groups empty");
-                                                setShowAdvancedGroupErr(true);
+                                            //     console.log("Advanced Groups empty");
+                                            //     setShowAdvancedGroupErr(true);
 
-                                            }
+                                            // }
 
-                                        } else {
-                                            console.log("Intermediate Groups empty");
-                                            setShowIntermediateGroupErr(true);
-                                        }
+                                        // } else {
+                                        //     console.log("Intermediate Groups empty");
+                                        //     setShowIntermediateGroupErr(true);
+                                        // }
 
-                                    } else {
-                                        console.log("Basic Groups empty");
-                                        setShowBasicGroupErr(true);
-                                    }
+                                    // } else {
+                                    //     console.log("Basic Groups empty");
+                                    //     setShowBasicGroupErr(true);
+                                    // }
 
 
-                                } else {
-                                    console.log("Digicard empty");
-                                    setShowDigicardErr(true);
+                                // } else {
+                                //     console.log("Digicard empty");
+                                //     setShowDigicardErr(true);
 
-                                }
+                                // }
 
                             }}>
 
@@ -515,7 +515,7 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
                                                     <div className="form-group fill">
 
                                                         <label className="floating-label">
-                                                            <small className="text-danger">* </small>
+                                                            {/* <small className="text-danger">* </small> */}
                                                             Digicards
                                                         </label>
                                                         {/* {console.log(previousBoards)} */}
@@ -557,7 +557,7 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
                                                     <div className="form-group fill">
 
                                                         <label className="floating-label">
-                                                            <small className="text-danger">* </small>
+                                                            {/* <small className="text-danger">* </small> */}
                                                             Basic Groups
                                                         </label>
                                                         {/* {console.log(previousBoards)} */}
@@ -577,7 +577,7 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
                                                     <div className="form-group fill">
 
                                                         <label className="floating-label">
-                                                            <small className="text-danger">* </small>
+                                                            {/* <small className="text-danger">* </small> */}
                                                             Intermediate Groups
                                                         </label>
                                                         {/* {console.log(previousBoards)} */}
@@ -599,7 +599,7 @@ const AddConcepts = ({ _digicards, _relatedConcepts, setIsOpenAddConcept, fetchA
                                                     <div className="form-group fill">
 
                                                         <label className="floating-label">
-                                                            <small className="text-danger">* </small>
+                                                            {/* <small className="text-danger">* </small> */}
                                                             Advanced Groups
                                                         </label>
                                                         {/* {console.log(previousBoards)} */}

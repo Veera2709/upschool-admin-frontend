@@ -137,6 +137,7 @@ const dynamicUrl = {
   editGroup: baseUrl + '/editGroup',
   fetchDigicardIdAndName: baseUrl + '/fetchDigicardIdAndName',
   bulkToggleGroupsStatus: baseUrl + '/bulkToggleGroupsStatus',
+  bulkGroupsUpload:baseUrl + '/bulkGroupsUpload',
 
   // CMS users
   addCMSUser: baseUrl + '/addCMSUser',
