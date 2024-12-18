@@ -145,7 +145,7 @@ const AddSubjects = ({ _units, _relatedSubjects, setIsOpenAddSubject, fetchAllSu
                                     subjectTitle: Yup.string()
                                         .trim()
                                         .min(2, Constants.AddSubjects.SubjectTitleTooShort)
-                                        .max(32, Constants.AddSubjects.SubjectTitleTooLong)
+                                        // .max(32, Constants.AddSubjects.SubjectTitleTooLong)
                                         .required(Constants.AddSubjects.SubjectTitleRequired),
                                     description: Yup.string()
                                         .trim()
@@ -155,7 +155,7 @@ const AddSubjects = ({ _units, _relatedSubjects, setIsOpenAddSubject, fetchAllSu
                                     displayname: Yup.string()
                                         .trim()
                                         .min(2, Constants.AddSubjects.DisplayNameTooShort)
-                                        .max(32, Constants.AddSubjects.DisplayNameTooLong)
+                                        // .max(32, Constants.AddSubjects.DisplayNameTooLong)
                                         .required(Constants.AddSubjects.DisplayNameRequired),
                                 })
                             }

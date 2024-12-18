@@ -157,6 +157,14 @@ function Table({ columns, data, modalOpen }) {
                             <Button variant="success" className="btn-sm btn-round has-ripple ml-2" onClick={(e) => { addingGroup() }}>
                                 <i className="feather icon-plus" /> Add Groups
                             </Button>
+                            <Link to={'/admin-portal/add-bulk-groups'}>
+                                <Button
+                                    style={{ whiteSpace: "nowrap" }}
+                                    variant="success"
+                                    className="btn-sm btn-round has-ripple ml-2">
+                                    <i className="feather icon-plus" /> Bulk Upload
+                                </Button>
+                            </Link>
                             <Button variant="success" className='btn-sm btn-round has-ripple ml-2 btn btn-danger'
                                 onClick={() => { multiDelete("Archived") }}
                                 style={{ marginRight: '15px' }}
