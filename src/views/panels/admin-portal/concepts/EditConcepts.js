@@ -599,13 +599,13 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
                                                     conceptTitle: Yup.string()
                                                         .trim()
                                                         .min(2, Constants.AddConcepts.ConceptTitleTooShort)
-                                                        .max(32, Constants.AddConcepts.ConceptTitleTooLong)
+                                                        // .max(32, Constants.AddConcepts.ConceptTitleTooLong)
                                                         .required(Constants.AddConcepts.ConceptTitleRequired),
 
                                                     displayName: Yup.string()
                                                         .trim()
                                                         .min(2, Constants.AddConcepts.DisplayNameTooShort)
-                                                        .max(32, Constants.AddConcepts.DisplayNameTooLong)
+                                                        // .max(32, Constants.AddConcepts.DisplayNameTooLong)
                                                         .required(Constants.AddConcepts.DisplayNameRequired),
 
 
