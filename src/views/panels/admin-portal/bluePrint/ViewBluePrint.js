@@ -339,7 +339,7 @@ const ViewBluePrint = () => {
                                             bluePrintName: Yup.string()
                                                 .trim()
                                                 .min(2, "Blue Print Name To short!")
-                                                .max(32, "Blue Print Name To Long!")
+                                                // .max(32, "Blue Print Name To Long!")
                                                 .required("Blue Print Name is required!"),
                                             bluePrintDuration: Yup.number()
                                                 .min(1, "Duration is Less Then 1min!")
@@ -348,7 +348,7 @@ const ViewBluePrint = () => {
                                             displayName: Yup.string()
                                                 .trim()
                                                 .min(2, "Display Name To short!")
-                                                .max(32, "Display Name To Long!")
+                                                // .max(32, "Display Name To Long!")
                                                 .required("Display Name is required!"),
                                         })}
 

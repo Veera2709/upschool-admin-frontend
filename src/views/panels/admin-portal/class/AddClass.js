@@ -133,13 +133,13 @@ const AddClass = ({ setOpenAddClass }) => {
           classTitle: Yup.string()
             .trim()
             .min(2, Constants.AddClasses.ClasstitleTooShort)
-            .max(32, Constants.AddClasses.ClasstitleTooLong)
+            // .max(32, Constants.AddClasses.ClasstitleTooLong)
             .required(Constants.AddClasses.ClasstitleRequired),
 
           displayname: Yup.string()
             .trim()
             .min(2, Constants.AddClasses.DisplayNameTooShort)
-            .max(32, Constants.AddClasses.DisplayNameTooLong)
+            // .max(32, Constants.AddClasses.DisplayNameTooLong)
             .required(Constants.AddClasses.DisplayNameRequired),
         })}
         onSubmit={async (

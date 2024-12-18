@@ -264,7 +264,7 @@ const AddDigiCard = (
                 digicardtitle: Yup.string()
                   .trim()
                   .min(2, Constants.AddDigiCard.DigiCardtitleTooShort)
-                  .max(32, Constants.AddDigiCard.DigiCardtitleTooLong)
+                  // .max(32, Constants.AddDigiCard.DigiCardtitleTooLong)
                   .required(Constants.AddDigiCard.DigiCardtitleRequired),
                 digicard_image: Yup.string()
                   .trim()
@@ -274,7 +274,7 @@ const AddDigiCard = (
                 displayname: Yup.string()
                   .trim()
                   .min(2, Constants.AddDigiCard.DisplayNameTooShort)
-                  .max(32, Constants.AddDigiCard.DisplayNameTooLong)
+                  // .max(32, Constants.AddDigiCard.DisplayNameTooLong)
                   .required(Constants.AddDigiCard.DisplayNameRequired),
               })}
 
