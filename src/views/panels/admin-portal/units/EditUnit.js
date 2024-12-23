@@ -161,14 +161,14 @@ const EditUnit = ({ setOpenEditUnit, unitId }) => {
                             unittitle: Yup.string()
                                 .trim()
                                 .min(2, Constants.AddUnit.UnittitleRequired)
-                                .max(30, Constants.AddUnit.UnittitleTooShort)
+                                // .max(30, Constants.AddUnit.UnittitleTooShort)
                                 .required(Constants.AddUnit.UnittitleTooLongs),
                             unit_description: Yup.string()
                                 .required(Constants.AddUnit.DescriptionRequired),
                             displayname: Yup.string()
                                 .trim()
                                 .min(2, Constants.AddUnit.DisplayNameTooShort)
-                                .max(32, Constants.AddUnit.DisplayNameTooLong)
+                                // .max(32, Constants.AddUnit.DisplayNameTooLong)
                                 .required(Constants.AddUnit.DisplayNameRequired),
                         })}
 

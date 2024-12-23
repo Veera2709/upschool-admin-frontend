@@ -78,7 +78,7 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
             concept_id: editConceptID
         };
 
-        if (_digicards) {
+        // if (_digicards) {
 
             let valuesArr = [];
 
@@ -89,46 +89,46 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
                 }
             }
             setDropdownDigicards(valuesArr);
-        }
+        // }
 
-        if (_basicGroups) {
+        // if (_basicGroups) {
 
-            let valuesArr = [];
+            let valuesArr1 = [];
 
             for (let index = 0; index < _basicGroups.length; index++) {
 
                 if (_basicGroups[index]) {
-                    valuesArr.push({ value: _basicGroups[index].group_id, label: _basicGroups[index].group_name })
+                    valuesArr1.push({ value: _basicGroups[index].group_id, label: _basicGroups[index].group_name })
                 }
             }
-            setDropdownBasicGroups(valuesArr);
-        }
+            setDropdownBasicGroups(valuesArr1);
+        // }
 
-        if (_intermediateGroups) {
+        // if (_intermediateGroups) {
 
-            let valuesArr = [];
+            let valuesArr2 = [];
 
             for (let index = 0; index < _intermediateGroups.length; index++) {
 
                 if (_intermediateGroups[index]) {
-                    valuesArr.push({ value: _intermediateGroups[index].group_id, label: _intermediateGroups[index].group_name })
+                    valuesArr2.push({ value: _intermediateGroups[index].group_id, label: _intermediateGroups[index].group_name })
                 }
             }
-            setDropdownIntermediateGroups(valuesArr);
-        }
+            setDropdownIntermediateGroups(valuesArr2);
+        // }
 
-        if (_advancedGroups) {
+        // if (_advancedGroups) {
 
-            let valuesArr = [];
+            let valuesArr3 = [];
 
             for (let index = 0; index < _advancedGroups.length; index++) {
 
                 if (_advancedGroups[index]) {
-                    valuesArr.push({ value: _advancedGroups[index].group_id, label: _advancedGroups[index].group_name })
+                    valuesArr3.push({ value: _advancedGroups[index].group_id, label: _advancedGroups[index].group_name })
                 }
             }
-            setDropdownAdvancedGroups(valuesArr);
-        }
+            setDropdownAdvancedGroups(valuesArr3);
+        // }
 
 
         if (_workSheetQuestions) {
@@ -578,7 +578,7 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
                 <BasicSpinner />
             ) : (
                 <>
-                    {previousData.length === 0 || previousDigicards.length === 0 ? (<></>) : (
+                    {/* {previousData.length === 0 || previousDigicards.length === 0 ? (<></>) : ( */}
                         <>
                             {_digicards && _relatedConcepts && (
 
@@ -599,13 +599,13 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
                                                     conceptTitle: Yup.string()
                                                         .trim()
                                                         .min(2, Constants.AddConcepts.ConceptTitleTooShort)
-                                                        .max(32, Constants.AddConcepts.ConceptTitleTooLong)
+                                                        // .max(32, Constants.AddConcepts.ConceptTitleTooLong)
                                                         .required(Constants.AddConcepts.ConceptTitleRequired),
 
                                                     displayName: Yup.string()
                                                         .trim()
                                                         .min(2, Constants.AddConcepts.DisplayNameTooShort)
-                                                        .max(32, Constants.AddConcepts.DisplayNameTooLong)
+                                                        // .max(32, Constants.AddConcepts.DisplayNameTooLong)
                                                         .required(Constants.AddConcepts.DisplayNameRequired),
 
 
@@ -639,14 +639,14 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
 
                                                 console.log('form Data: ', formData);
 
-                                                if (selectedDigicards.length > 0) {
+                                                // if (selectedDigicards.length > 0) {
                                                     console.log("Digicard selected");
 
-                                                    if (selectedBasicGroups.length > 0) {
+                                                    // if (selectedBasicGroups.length > 0) {
 
-                                                        if (selectedIntermediateGroups.length > 0) {
+                                                        // if (selectedIntermediateGroups.length > 0) {
 
-                                                            if (selectedAdvancedGroups.length > 0) {
+                                                            // if (selectedAdvancedGroups.length > 0) {
 
                                                                 if (selectedWorkSheetQue.length > 0) {
                                                                     showLoader();
@@ -713,31 +713,31 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
                                                                 } else {
                                                                     setWorkSheetQueErr(true)
                                                                 }
-                                                            } else {
+                                                            // } else {
 
-                                                                console.log("Advanced Groups empty");
-                                                                setShowAdvancedGroupErr(true);
+                                                            //     console.log("Advanced Groups empty");
+                                                            //     setShowAdvancedGroupErr(true);
 
-                                                            }
-                                                        } else {
+                                                            // }
+                                                        // } else {
 
-                                                            console.log("Intermediate Groups empty");
-                                                            setShowIntermediateGroupErr(true);
+                                                        //     console.log("Intermediate Groups empty");
+                                                        //     setShowIntermediateGroupErr(true);
 
-                                                        }
-                                                    } else {
+                                                        // }
+                                                    // } else {
 
-                                                        console.log("Basic Groups empty");
-                                                        setShowBasicGroupErr(true);
-                                                    }
+                                                    //     console.log("Basic Groups empty");
+                                                    //     setShowBasicGroupErr(true);
+                                                    // }
 
 
-                                                } else {
+                                                // } else {
 
-                                                    console.log("Digicard empty");
-                                                    setShowDigicardErr(true);
+                                                //     console.log("Digicard empty");
+                                                //     setShowDigicardErr(true);
 
-                                                }
+                                                // }
 
                                             }}>
 
@@ -832,7 +832,7 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
                                                                     <div className="form-group fill">
 
                                                                         <label className="floating-label">
-                                                                            <small className="text-danger">* </small>
+                                                                            {/* <small className="text-danger">* </small> */}
                                                                             Digicards
                                                                         </label>
                                                                         <Select
@@ -897,7 +897,7 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
                                                                     <div className="form-group fill">
 
                                                                         <label className="floating-label">
-                                                                            <small className="text-danger">* </small>
+                                                                            {/* <small className="text-danger">* </small> */}
                                                                             Basic Groups
                                                                         </label>
 
@@ -917,7 +917,7 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
                                                                     <div className="form-group fill">
 
                                                                         <label className="floating-label">
-                                                                            <small className="text-danger">* </small>
+                                                                            {/* <small className="text-danger">* </small> */}
                                                                             Intermediate Groups
                                                                         </label>
 
@@ -939,7 +939,7 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
                                                                     <div className="form-group fill">
 
                                                                         <label className="floating-label">
-                                                                            <small className="text-danger">* </small>
+                                                                            {/* <small className="text-danger">* </small> */}
                                                                             Advanced Groups
                                                                         </label>
 
@@ -1012,7 +1012,7 @@ const EditConcepts = ({ _digicards, _relatedConcepts, editConceptID, setIsOpenEd
                                 </>
                             )}
                         </>
-                    )}
+                    {/* )} */}
                 </>
             )}
         </div>

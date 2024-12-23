@@ -233,7 +233,7 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                                                 topic_title: Yup.string()
                                                     .trim()
                                                     .min(2, Constants.AddTopic.TopictitleTooShort)
-                                                    .max(32, Constants.AddTopic.TopictitleTooLong)
+                                                    // .max(32, Constants.AddTopic.TopictitleTooLong)
                                                     .required(Constants.AddTopic.TopictitleRequired),
 
                                                 topic_description: Yup.string()
@@ -243,7 +243,7 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                                                 display_name: Yup.string()
                                                     .trim()
                                                     .min(2, Constants.AddTopic.DisplayNameTooShort)
-                                                    .max(32, Constants.AddTopic.DisplayNameTooLong)
+                                                    // .max(32, Constants.AddTopic.DisplayNameTooLong)
                                                     .required(Constants.AddTopic.DisplayNameRequired),
 
 
@@ -346,7 +346,7 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                                                                     name="color"
                                                                     options={prePostOptions}
                                                                     onChange={(e) => { postPreOption(e) }}
-                                                                    isDisabled={true}
+                                                                    // isDisabled={true}
                                                                 />
 
                                                             ) : (
@@ -360,7 +360,7 @@ const EditTopics = ({ setOpenEditTopic, topicId }) => {
                                                                             name="color"
                                                                             options={prePostOptions}
                                                                             onChange={(e) => { postPreOption(e) }}
-                                                                            isDisabled={true}
+                                                                            // isDisabled={true}
                                                                         />
 
                                                                     )}

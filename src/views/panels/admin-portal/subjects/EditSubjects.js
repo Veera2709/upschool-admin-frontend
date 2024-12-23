@@ -335,7 +335,7 @@ const EditSubjects = ({ _units, _relatedSubjects, editSubjectID, setIsOpenEditSu
                                                     subjectTitle: Yup.string()
                                                         .trim()
                                                         .min(2, Constants.AddSubjects.SubjectTitleTooShort)
-                                                        .max(32, Constants.AddSubjects.SubjectTitleTooLong)
+                                                        // .max(32, Constants.AddSubjects.SubjectTitleTooLong)
                                                         .required(Constants.AddSubjects.SubjectTitleRequired),
                                                     description: Yup.string()
                                                         .trim()
