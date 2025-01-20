@@ -39,6 +39,11 @@ export const commonValidationPost = Yup.object().shape({
         .required('Field is required/Invalid Percentage!'),
 })
 
+export const validationForSuccessCriteria = Yup.object().shape({
+    minStudentsPre: Yup.string()
+        .matches(Constants.Common.passPercentageRegex, 'Invalid Percentage!')
+        .required('Field is required/Invalid Percentage!'),
+})
 
 export const commonValidationPre = Yup.object().shape({
     passPercentageL1Pre: Yup.string()
