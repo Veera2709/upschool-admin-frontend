@@ -11,6 +11,7 @@ import SubscriptionFeatures from './SubscriptionFeatures';
 import BasicSpinner from '../../../../helper/BasicSpinner';
 import PreQuizConfiguration from './PreQuizConfiguration'
 import PostQuizConfiguration from './PostQuizConfiguration';
+import TestConfiguration from './TestConfiguration';
 import TeacherClass from './TeacherClass';
 
 
@@ -80,13 +81,16 @@ const EditTabs = () => {
                         <Tab eventKey={4} title="Post Quiz Configuration">
                             <PostQuizConfiguration id={school_id} />
                         </Tab>
-                        <Tab eventKey={5} title="Subscribe Class">
+                        <Tab eventKey={5} title="Test Configuration">
+                            <TestConfiguration id={school_id} />
+                        </Tab>
+                        <Tab eventKey={6} title="Subscribe Class">
                             <SubscribeClass id={school_id} />
                         </Tab>
-                        <Tab eventKey={6} title="Add Section">
+                        <Tab eventKey={7} title="Add Section">
                             <SectionsTableView id={school_id} />
                         </Tab>
-                        <Tab eventKey={7} title="Teacher Class">
+                        <Tab eventKey={8} title="Teacher Class">
                             <TeacherClass id={school_id} />
                         </Tab>
                     </Tabs>
