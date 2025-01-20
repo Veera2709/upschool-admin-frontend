@@ -31,6 +31,7 @@ const dynamicUrl = {
   fetchUpschoolAndClientClasses: baseUrl + '/fetchUpschoolAndClientClasses',
   classSubscribe: baseUrl + '/classSubscribe',
   setQuizConfiguration: baseUrl + '/setQuizConfiguration',
+  setTestConfiguration: baseUrl + '/setTestConfiguration',
   schoolubscriptionFeatures: baseUrl + '/schoolubscriptionFeatures',
 
   // chapters
