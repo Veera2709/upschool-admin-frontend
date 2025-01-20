@@ -9,7 +9,7 @@ import dynamicUrl from "../../../../helper/dynamicUrls";
 import MESSAGES from '../../../../helper/messages';
 import useFullPageLoader from '../../../../helper/useFullPageLoader';
 import BasicSpinner from '../../../../helper/BasicSpinner';
-import { commonValidationPost } from "./validation";
+import { validationForSuccessCriteria } from "./validation";
 
 const TestConfiguration = ({ className, rest, id }) => {
     let history = useHistory();
@@ -48,6 +48,7 @@ const TestConfiguration = ({ className, rest, id }) => {
                     console.log('test_config', response.data.Items[0].test_config);
                     let previousDataTest = response.data.Items[0].test_config;
                     console.log(previousDataTest);
+                    setPreviousDataTest(previousDataTest);
                     setIsLoading(false);
                 } else {
                     hideLoader();
@@ -100,7 +101,7 @@ const TestConfiguration = ({ className, rest, id }) => {
                                             minStudentsPre: previousDataTest.pct_of_student_for_reteach === '' ? '' : previousDataTest.pct_of_student_for_reteach,
                                             class_Percentage: previousDataTest.class_percentage === '' ? '' : previousDataTest.class_percentage,
                                         }}
-                                        validationSchema={commonValidationPost}
+                                        validationSchema={validationForSuccessCriteria}
                                         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
                                             setStatus({ success: true });
                                             setSubmitting(true);
@@ -113,7 +114,7 @@ const TestConfiguration = ({ className, rest, id }) => {
                                                     }
                                                 }
                                             }
-                                            axios
+                                             await axios
                                                 .post(
                                                     dynamicUrl.setTestConfiguration,
                                                     formData,
